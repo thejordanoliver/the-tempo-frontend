@@ -10,11 +10,10 @@ import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
 
 import { BaseballTeam } from "types/baseball";
+import { BasketballTeam, NBATeam } from "types/basketball";
 import { FootballTeam } from "types/football";
-import { LeagueType } from "types/types";
-import { NBATeam } from "types/nba";
 import { NHLTeam } from "types/hockey";
-import { BasketballTeam } from "types/basketball";
+import { LeagueType } from "types/types";
 
 type Props = {
   teamId?: string | number;
@@ -97,7 +96,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Stadium" value={t.venue} team={t} />
+          <InfoCard label="Stadium" value={t.venueName} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
@@ -134,7 +133,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Stadium" value={t.venue} team={t} />
+          <InfoCard label="Stadium" value={t.venueName} team={t} />
         </View>
       );
     }

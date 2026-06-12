@@ -16,10 +16,10 @@ import { Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import BasketballGamePreviewModal from "../../Basketball/GamePreview/BasketballGamePreviewModal";
 import BasketballGameCard from "../../Basketball/Games/BasketballGameCard";
-import FootballGamePreviewModal from "../../NFL/GamePreview/FootballGamePreviewModal";
-import FootballGameCard from "../../NFL/Games/FootballGameCard";
-import HockeyGamePreviewModal from "../../NHL/GamePreview/HockeyGamePreviewModal";
-import HockeyGameCard from "../../NHL/Games/HockeyGameCard";
+import FootballGamePreviewModal from "../../Football/GamePreview/FootballGamePreviewModal";
+import FootballGameCard from "../../Football/Games/FootballGameCard";
+import HockeyGamePreviewModal from "../../Hockey/GamePreview/HockeyGamePreviewModal";
+import HockeyGameCard from "../../Hockey/Games/HockeyGameCard";
 
 type BaseProps = {
   error: string | null;

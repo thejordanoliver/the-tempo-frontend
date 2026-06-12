@@ -2,18 +2,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
-export function useLeagueForum(league: LeagueType) {
+export function useLeagueForum(league: string) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
-
-  // FIX #2: read currentUserId from AsyncStorage (written by useAuth on login)
-  //         rather than decoding it from an unverified JWT payload.
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   useEffect(() => {

@@ -79,7 +79,7 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
-  const endOfPeriod = gameStatusDescription === "End of Period";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
@@ -95,7 +95,7 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
   const winnerStyle = (teamWins: boolean): TextStyle => ({
     color: isDark ? Colors.white : Colors.black,
     opacity:
-      inProgress || isHalftime || endOfPeriod
+      inProgress || isHalftime || isEndOfPeriod
         ? 1
         : isFinal
           ? teamWins
@@ -142,7 +142,7 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
     if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
     if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
 
-    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+    if (isEndOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (

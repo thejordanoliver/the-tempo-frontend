@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Game } from "types/nba";
+import { Game } from "types/basketball";
 
 import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";
@@ -16,10 +16,7 @@ export interface HeadToHead {
   games: Game[];
 }
 
-export function useHeadToHeadGames(
-  team1: number,
-  team2: number,
-) {
+export function useHeadToHeadGames(team1: number, team2: number) {
   const [data, setData] = useState<HeadToHead | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

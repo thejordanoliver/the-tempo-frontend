@@ -64,14 +64,6 @@ export default function BaseballGamePreviewModal({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
-
-  const { details, score } = useBaseballGameDetails(
-    LEAGUE.toLowerCase(),
-    gameId,
-  );
-
   const homeTeam = isSB
     ? getSBTeam(home?.id)
     : isCB
@@ -103,6 +95,13 @@ export default function BaseballGamePreviewModal({
 
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
+
+  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
+  const { details, score } = useBaseballGameDetails(
+    LEAGUE.toLowerCase(),
+    gameId,
+  );
 
   const isLoading = !!details;
   const isChampionship = game?.season.slug === "championship-series";

@@ -17,7 +17,6 @@ import {
 import { getNBATeam } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import { useLastFiveGames } from "@/hooks/NBAHooks/useLastFiveGames";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
@@ -39,6 +38,7 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import type { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 
 type RouteParams = {
   game?: string | string[];
@@ -120,8 +120,6 @@ export default function GameDetailsScreen(
 
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
-
-
   const home = game?.home;
   const away = game?.away;
 
@@ -177,7 +175,9 @@ export default function GameDetailsScreen(
         })
       : "TBD";
 
-  const isLoading = !score || !details;
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const homeWins = homeScore > awayScore;
@@ -232,9 +232,6 @@ export default function GameDetailsScreen(
         fouls: p.fouls,
         avatarUrl: p.avatar ?? "",
       })) ?? [];
-
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
 
   /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;

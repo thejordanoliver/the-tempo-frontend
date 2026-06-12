@@ -3,7 +3,7 @@ import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard
 import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
 import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
-import { useLastTeamGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
+import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -37,10 +37,7 @@ export default function PlayerDetailScreen() {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useLastTeamGame({
-    teamId: teamId,
-    isWomen: isWomen,
-  });
+  } = useTeamLatestGame(league, teamId);
 
   const {
     seasonStats,

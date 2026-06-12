@@ -203,13 +203,6 @@ type TeamStatsApiResponse = {
   stats?: Record<string, StatGroup | undefined>;
 };
 
-type FootballLeague = "NFL" | "CFB";
-
-type UseTeamStatsOptions = {
-  teamId: number | string;
-  league?: FootballLeague;
-};
-
 type StatStore = {
   values: Record<string, number | undefined>;
   displays: Record<string, string | undefined>;
@@ -409,7 +402,7 @@ const getStatPair = (
   return { first, second };
 };
 
-export function useTeamStats({ teamId, league = "NFL" }: UseTeamStatsOptions) {
+export function useTeamStats(teamId: string | number, league: string) {
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
   const [teamStatsLoading, setTeamStatsLoading] = useState<boolean>(true);
   const [teamStatsError, setTeamStatsError] = useState<Error | null>(null);
@@ -425,10 +418,8 @@ export function useTeamStats({ teamId, league = "NFL" }: UseTeamStatsOptions) {
     setTeamStatsError(null);
 
     try {
-      const leaguePath = league.toLowerCase();
-
       const response = await apiClient.get<TeamStatsApiResponse>(
-        `/api/team/stats/${leaguePath}/${teamId}`,
+        `/api/team/stats/${league}/${teamId}`,
       );
 
       const statMaps = buildStatMaps(response.data);

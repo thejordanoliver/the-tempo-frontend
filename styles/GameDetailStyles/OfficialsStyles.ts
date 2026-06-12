@@ -20,9 +20,10 @@ export const officialsStyles = (isDark: boolean) =>
       marginLeft: 8,
       flex: 1,
     },
-    placeholder: {
+    refereeContainer: {
       width: 50,
       height: 50,
+      paddingTop: 12,
       borderRadius: 100,
       overflow: "hidden",
       justifyContent: "center",
@@ -30,10 +31,10 @@ export const officialsStyles = (isDark: boolean) =>
       borderWidth: 0.5,
       borderColor: isDark ? Colors.dark.white : Colors.light.black,
     },
-    initials: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
+    referee: {
+      height: 44,
+      width: 44,
+      resizeMode: "contain",
     },
     position: {
       fontSize: 14,

@@ -1,4 +1,4 @@
-import { NBATeam } from "types/nba";
+import { NBATeam } from "types/basketball";
 // Logos
 import SixersLogo from "../assets/Logos/76ers.png";
 import SixersLogoLight from "../assets/Logos/76ersLight.png";

@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Fonts, Colors } from "constants/styles";
 
 export const sportsListModalStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -27,11 +27,16 @@ export const sportsListModalStyles = (isDark: boolean) =>
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       overflow: "hidden",
-      paddingHorizontal: 16,
+      paddingHorizontal: 12,
       paddingTop: 60,
     },
     scrollContent: {
+      paddingTop: 12,
       paddingBottom: 40,
+      overflow: "hidden"
+    },
+    searcBarContainer: {
+      paddingTop: 12,
     },
     header: {
       position: "absolute",

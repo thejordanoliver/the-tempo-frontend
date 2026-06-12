@@ -57,17 +57,19 @@ export default function LineScore({
     score != null ? String(score) : "-";
 
   const baseColumns =
-    league === "cbb"
+    league === "soccer"
       ? 2
-      : league === "nhl"
-        ? 3
-        : league === "mlb"
-          ? 9
-          : league === "cb"
+      : league === "cbb"
+        ? 2
+        : league === "nhl"
+          ? 3
+          : league === "mlb"
             ? 9
-            : league === "sb"
-              ? 7
-              : 4;
+            : league === "cb"
+              ? 9
+              : league === "sb"
+                ? 7
+                : 4;
 
   const numColumns = Math.max(
     baseColumns,
@@ -93,7 +95,7 @@ export default function LineScore({
     }
 
     // ---------------- cbb ----------------
-    if (league === "cbb") {
+    if (league === "cbb" || league === "soccer") {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "OT";

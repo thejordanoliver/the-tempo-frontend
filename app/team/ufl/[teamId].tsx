@@ -1,6 +1,6 @@
-import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
-import Roster from "@/components/Sports/NFL/Team/Roster";
-import RosterStats from "@/components/Sports/NFL/Team/RosterStats";
+import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import Roster from "@/components/Sports/Football/Team/Roster";
+import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";

@@ -18,8 +18,7 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { BasketballTeam } from "types/basketball";
-import { NBATeam } from "types/nba";
+import { BasketballTeam, NBATeam } from "types/basketball";
 
 type AnyTeam = NBATeam | BasketballTeam;
 

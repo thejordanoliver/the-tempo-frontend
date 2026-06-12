@@ -1,11 +1,9 @@
-import { useCallback } from "react";
-import { FlatList, ListRenderItem, View } from "react-native";
-
 import HeadingTwo from "components/Headings/HeadingTwo";
-import OddsSkeleton from "components/Skeletons/GameDetails/OddsSkeleton";
-import { GameOdds, useUpcomingOdds } from "hooks/OddsHooks/useUpcomingOdds";
+import { useUpcomingOdds } from "hooks/OddsHooks/useUpcomingOdds";
+import { View } from "react-native";
 import { gameOddsStyles } from "styles/GameDetailStyles/Odds.styles";
 import { GameOddsSectionProps } from "types/odds";
+import { OddsSkeleton } from "../../../../Skeletons/GameDetails/OddsSkeleton";
 import { OddsCard } from "./OddsCard";
 
 export default function GameOddsSection({
@@ -14,7 +12,7 @@ export default function GameOddsSection({
   awayCode,
   awayLogo,
   homeLogo,
-  league = "nba",
+  league,
   isDark = false,
   gameStatusDescription,
 }: GameOddsSectionProps) {
@@ -32,29 +30,7 @@ export default function GameOddsSection({
     includeTimestamp: false,
   });
 
-  const isFinal =
-    String(gameStatusDescription || "")
-      .toLowerCase()
-      .trim() === "final";
-
-  const keyExtractor = useCallback((game: GameOdds) => String(game.id), []);
-
-  const renderOddsCard: ListRenderItem<GameOdds> = useCallback(
-    ({ item }) => (
-      <OddsCard
-        game={item}
-        awayLogo={awayLogo}
-        homeLogo={homeLogo}
-        awayCode={awayCode}
-        homeCode={homeCode}
-        error={error}
-        isDark={isDark}
-      />
-    ),
-    [awayCode, awayLogo, error, homeCode, homeLogo, isDark],
-  );
-
-  if (isFinal) {
+  if (!loading && upcomingOdds.length === 0) {
     return null;
   }
 
@@ -62,24 +38,26 @@ export default function GameOddsSection({
     return <OddsSkeleton />;
   }
 
-  if (upcomingOdds.length === 0) {
-    return null;
-  }
+  if (gameStatusDescription === "Final") return null;
 
   return (
     <View>
       <HeadingTwo isDark={isDark}>Betting Odds</HeadingTwo>
 
-      <FlatList
-        data={upcomingOdds}
-        keyExtractor={keyExtractor}
-        renderItem={renderOddsCard}
-        scrollEnabled={false}
-        nestedScrollEnabled={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.wrapper}
-        removeClippedSubviews={false}
-      />
+      <View style={styles.wrapper}>
+        {upcomingOdds.map((game) => (
+          <OddsCard
+            key={game.id}
+            game={game}
+            awayLogo={awayLogo}
+            homeLogo={homeLogo}
+            awayCode={awayCode}
+            homeCode={homeCode}
+            error={error}
+            isDark={isDark}
+          />
+        ))}
+      </View>
     </View>
   );
 }

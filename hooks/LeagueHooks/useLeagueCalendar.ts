@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type FootballCalendarWeek = {
@@ -20,7 +19,7 @@ export type MMACalendarEvent = {
   eventId: string | null;
 };
 
-type CalendarFormat = "raw" | "football" | "mma";
+type CalendarFormat = "raw" | "football" | "soccer" | "mma";
 
 type UseLeagueCalendarResult<T> = {
   calendar: T[];
@@ -36,26 +35,30 @@ const extractEventIdFromRef = (ref?: string | null) => {
 };
 
 export function useLeagueCalendar(
-  league: LeagueType,
+  league: string,
   format: "football",
 ): UseLeagueCalendarResult<FootballCalendarWeek>;
 
 export function useLeagueCalendar(
-  league: LeagueType,
+  league: string,
+  format: "soccer",
+): UseLeagueCalendarResult<FootballCalendarWeek>;
+
+
+export function useLeagueCalendar(
+  league: string,
   format: "mma",
 ): UseLeagueCalendarResult<MMACalendarEvent>;
 
 export function useLeagueCalendar(
-  league: LeagueType,
+  league: string,
   format?: "raw",
 ): UseLeagueCalendarResult<string>;
 
 export function useLeagueCalendar(
-  league: LeagueType,
+  league: string,
   format: CalendarFormat = "raw",
-): UseLeagueCalendarResult<
-  string | FootballCalendarWeek | MMACalendarEvent
-> {
+): UseLeagueCalendarResult<string | FootballCalendarWeek | MMACalendarEvent> {
   const [calendar, setCalendar] = useState<
     (string | FootballCalendarWeek | MMACalendarEvent)[]
   >([]);
@@ -77,6 +80,22 @@ export function useLeagueCalendar(
         if (!isMounted) return;
 
         if (format === "football") {
+          const flattened: FootballCalendarWeek[] =
+            data.calendar?.flatMap((phase: any) =>
+              (phase.entries ?? []).map((entry: any) => ({
+                label: entry.label,
+                stage: phase.label,
+                weekNumber: Number(entry.value),
+                startDate: entry.startDate,
+                endDate: entry.endDate,
+              })),
+            ) || [];
+
+          setCalendar(flattened);
+          return;
+        }
+
+         if (format === "soccer") {
           const flattened: FootballCalendarWeek[] =
             data.calendar?.flatMap((phase: any) =>
               (phase.entries ?? []).map((entry: any) => ({

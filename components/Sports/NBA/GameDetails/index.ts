@@ -1,12 +1,11 @@
 // components/GameDetails/index.ts
 export { default as BoxScore } from "../../Basketball/GameDetails/BoxScore";
 export { default as PlayersOnCourt } from "../../Basketball/GameDetails/PlayersOnCourt";
-export { default as GameOddsSection } from "../../Odds/GameOddsSection";
+export { CenterInfo } from "./CenterInfo";
 export { default as FanPredictionVote } from "./FanPredictionVote";
 export { default as ChatButton } from "./GameChat/ChatButton";
 export { default as LiveChat } from "./GameChat/LiveChat";
 export { default as GameHeader } from "./GameHeader";
-export { GameInfo } from "./GameInfo";
 export { default as GameLeaders } from "./GameLeaders";
 export { default as GameLocation } from "./GameLocation";
 export { default as GameSummary } from "./GameSummary";
@@ -19,6 +18,7 @@ export { default as LastFiveGames } from "./LastFiveGames";
 export { default as LastPlay } from "./LastPlay";
 export { default as LineScore } from "./LineScore";
 export { default as MatchupPredictor } from "./MatchupPredictor";
+export { default as GameOddsSection } from "./Odds/GameOddsSection";
 export { default as Officials } from "./Officials";
 export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
 export { default as PredictionBar } from "./PredictionBar";

@@ -1,10 +1,9 @@
+import { NBABracketMatchup } from "@/types/basketball";
+import { formatQuarter, getBroadcastDisplay } from "@/utils/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
-
 import { Text, View } from "react-native";
 import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
-import { BracketMatchup } from "types/nba";
-import { formatQuarter } from "utils/games";
 import { TeamRow } from "./TeamRow";
 
 type CardLayout = {
@@ -14,97 +13,175 @@ type CardLayout = {
   height: number;
 };
 
-const bottomTeamId = (matchup: BracketMatchup) =>
+const bottomTeamId = (matchup: NBABracketMatchup) =>
   matchup.bottomTeam?.id?.toString() ?? "";
-const topTeamId = (matchup: BracketMatchup) =>
+
+const topTeamId = (matchup: NBABracketMatchup) =>
   matchup.topTeam?.id?.toString() ?? "";
 
-const getSeriesRecord = (matchup: BracketMatchup) => {
+const getSeriesRecord = (matchup: NBABracketMatchup) => {
   const topWins = matchup.wins[topTeamId(matchup)] ?? 0;
   const bottomWins = matchup.wins[bottomTeamId(matchup)] ?? 0;
+
   return { topWins, bottomWins };
 };
-const getSeriesLeader = (matchup: BracketMatchup) => {
-  const leader = matchup.leader;
-  return { leader };
+
+const latestGame = (game: NBABracketMatchup["games"][number]) => {
+  const gameState = game?.status?.state;
+
+  if (gameState === "in") {
+    return true;
+  } else if (gameState === "pre") {
+    return true;
+  } else if (gameState === "post") {
+    return false;
+  }
+
+  const normalizedStatus = String(game.status?.description ?? "")
+    .trim()
+    .toLowerCase();
+
+  return !["scheduled", "final"].includes(normalizedStatus);
 };
 
-const isGameLive = (game: BracketMatchup["games"][number]) => {
-  if (game.status.short === 2) return true;
-
-  const normalizedStatus = game.status.long.trim().toLowerCase();
-  return !["scheduled", "finished"].includes(normalizedStatus);
-};
-
-const getLiveGame = (matchup: BracketMatchup) =>
-  matchup.games.find((game) => isGameLive(game));
+const getRecentGame = (matchup: NBABracketMatchup) =>
+  matchup.games.find((game) => latestGame(game));
 
 const getTeamGamePoints = (
-  game: BracketMatchup["games"][number],
-  teamId?: number,
+  game: NBABracketMatchup["games"][number],
+  teamId?: string | number,
 ) => {
-  if (!teamId) return 0;
-  if (game.teams.home.id === teamId) return game.scores.home.points ?? 0;
-  if (game.teams.visitors.id === teamId)
-    return game.scores.visitors.points ?? 0;
-  return 0;
+  if (teamId == null) return null;
+
+  if (String(game?.home?.id) === String(teamId)) {
+    return game?.home?.score ?? null;
+  }
+
+  if (String(game?.away?.id) === String(teamId)) {
+    return game?.away?.score ?? null;
+  }
+
+  return null;
 };
 
-const getLiveGameStatus = (
-  game: BracketMatchup["games"][number],
+const getGameStatus = (
+  game: NBABracketMatchup["games"][number] | undefined | null,
   isDark: boolean,
 ) => {
   const styles = nbaPlayoffBracketStyles(isDark);
-  const status = game.periods.current || 0;
-  const halftime = game.status.halftime;
-  const clock = game.status.clock?.trim();
-  const isEndOfPeriod = game.periods.endOfPeriod;
-  const period = formatQuarter(status);
 
-  if (isEndOfPeriod === true) {
+  if (!game) {
+    return null;
+  }
+
+  const safeDate = (date?: string | null) => {
+    if (!date) return new Date();
+    const d = new Date(date);
+    return isNaN(d.getTime()) ? new Date() : d;
+  };
+
+  const gameDate = safeDate(game.date);
+
+  const formattedDate = gameDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+
+  const formattedTime =
+    gameDate.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || "";
+
+  const clock = game.status?.clock;
+  const gameStatusDescription = game.status?.description;
+  const gameStatusDetail = game.status?.shortDetail;
+
+  const isFinal = gameStatusDescription === "Final";
+  const inProgress = gameStatusDescription === "In Progress";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const isHalftime = gameStatusDescription === "Halftime";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
+
+  const period = formatQuarter(game.status?.period || 0);
+
+  if (inProgress) {
     return (
       <View style={styles.statusWrapper}>
-        <Text style={styles.clock}>{`End of ${period}`}</Text>
+        <Text style={styles.period}>{period}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.clock}>{clock}</Text>
       </View>
     );
   }
-  if (halftime === true) {
+
+  if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended) {
+    return <Text style={styles.clock}>{gameStatusDescription}</Text>;
+  }
+
+  if (isHalftime) {
+    return <Text style={styles.clock}>Halftime</Text>;
+  }
+
+  if (isEndOfPeriod) {
+    return <Text style={styles.clock}>End of {period}</Text>;
+  }
+
+  if (isFinal) {
     return (
       <View style={styles.statusWrapper}>
-        <Text style={styles.clock}>Halftime</Text>
+        <Text style={styles.clock}>{gameStatusDetail}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.clock}>{formattedDate}</Text>
       </View>
     );
-  }
-  if (!clock || clock === "0.0") {
-    return status;
   }
 
   return (
     <View style={styles.statusWrapper}>
-      <Text style={styles.period}>{period}</Text>
-      <View style={styles.statusDivder} />
-      <Text style={styles.clock}>{clock}</Text>
+      <Text style={styles.date}>{formattedDate}</Text>
+      <View style={styles.statusDivider} />
+      <Text style={styles.date}>{formattedTime}</Text>
     </View>
   );
 };
 
-const getFooterLabel = (matchup: BracketMatchup) => {
-  const { topWins, bottomWins } = getSeriesRecord(matchup);
-  const { leader } = getSeriesLeader(matchup);
-  const teamName = getNBATeam(leader ?? 0)?.code;
+const getFooterLabel = (matchup: NBABracketMatchup) => {
+  if (matchup.seriesSummary) return matchup.seriesSummary;
 
-  if (topWins === bottomWins && topWins != 0 && bottomWins != 0) {
-    return `Series Tied`;
+  const { topWins, bottomWins } = getSeriesRecord(matchup);
+
+  const leaderTeam =
+    topWins === bottomWins
+      ? undefined
+      : topWins > bottomWins
+        ? matchup.topTeam
+        : matchup.bottomTeam;
+
+  const teamName =
+    leaderTeam?.code || getNBATeam(leaderTeam?.id ?? 0)?.code || "TBD";
+
+  if (topWins === bottomWins && topWins !== 0 && bottomWins !== 0) {
+    return "Series Tied";
   }
+
   if (bottomWins === 4) {
     return `${teamName} won series ${bottomWins}-${topWins}`;
   }
+
   if (topWins === 4) {
     return `${teamName} won series ${topWins}-${bottomWins}`;
   }
+
   if (topWins > bottomWins) {
     return `${teamName} leads ${topWins}-${bottomWins}`;
   }
+
   if (topWins < bottomWins) {
     return `${teamName} leads ${bottomWins}-${topWins}`;
   }
@@ -118,23 +195,27 @@ export const MatchupCard = ({
   isDark,
   finals = false,
 }: {
-  matchup: BracketMatchup;
+  matchup: NBABracketMatchup;
   layout: CardLayout;
   isDark: boolean;
   finals?: boolean;
 }) => {
   const styles = nbaPlayoffBracketStyles(isDark);
   const { topWins, bottomWins } = getSeriesRecord(matchup);
-  const liveGame = getLiveGame(matchup);
-  const liveTopPoints = liveGame
-    ? getTeamGamePoints(liveGame, matchup.topTeam?.id)
-    : null;
-  const liveBottomPoints = liveGame
-    ? getTeamGamePoints(liveGame, matchup.bottomTeam?.id)
-    : null;
 
-  const topTeam = getNBATeam(matchup?.topTeam?.id ?? 0);
-  const bottomTeam = getNBATeam(matchup?.bottomTeam?.id ?? 0);
+  const recentGame = getRecentGame(matchup);
+
+  const liveTopPoints =
+    recentGame?.status?.state === "in"
+      ? getTeamGamePoints(recentGame, matchup.topTeam?.id)
+      : null;
+
+  const liveBottomPoints =
+    recentGame?.status?.state === "post"
+      ? getTeamGamePoints(recentGame, matchup.bottomTeam?.id)
+      : null;
+
+  const broadcast = getBroadcastDisplay(recentGame?.broadcasts);
 
   return (
     <View
@@ -167,6 +248,7 @@ export const MatchupCard = ({
         score={liveTopPoints}
         isDark={isDark}
       />
+
       <View style={styles.divider} />
 
       <TeamRow
@@ -176,18 +258,15 @@ export const MatchupCard = ({
         score={liveBottomPoints}
         isDark={isDark}
       />
-      {liveGame && (
-        <View style={styles.statusContainer}>
-          <Text style={styles.clock}>
-            {getLiveGameStatus(liveGame, isDark)}
-          </Text>
-        </View>
-      )}
-      {!liveGame && (
-        <View style={styles.statusContainer}>
-          <Text style={styles.footerText}>{getFooterLabel(matchup)}</Text>
-        </View>
-      )}
+
+      <View style={styles.statusContainer}>
+        {broadcast ? <Text style={styles.broadcast}>{broadcast}</Text> : null}
+        {getGameStatus(recentGame, isDark)}
+      </View>
+
+      <View style={styles.statusContainer}>
+        <Text style={styles.footerText}>{getFooterLabel(matchup)}</Text>
+      </View>
     </View>
   );
 };

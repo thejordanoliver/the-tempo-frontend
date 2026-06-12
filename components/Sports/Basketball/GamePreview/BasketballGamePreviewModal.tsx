@@ -1,7 +1,7 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import { useLastFiveGames } from "@/hooks/NBAHooks/useLastFiveGames";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -171,8 +171,8 @@ export default function GamePreviewModal({
       }
     : undefined;
 
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
 
   /* ---------------- Neutral site / venue ---------------- */
   const neutralSite = details?.neutralSite;

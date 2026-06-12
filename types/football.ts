@@ -4,55 +4,6 @@ import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
 import { ImageSourcePropType } from "react-native";
 
-export interface NFLPlayer {
-  id: number;
-  player_id: number;
-  espn_id: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  height: string;
-  weight: string;
-  birth_date: string;
-  birth_city: string;
-  birth_state: string;
-  birth_country: string;
-  college: string;
-  position: string;
-  jersey_number: string;
-  experience: number;
-  group_name: string;
-  team_id: number;
-  headshot_url: string;
-  draft_round: number;
-  draft_year: number;
-  draft_number: number;
-}
-
-export interface CFBPlayer {
-  id: number;
-  player_id: number;
-  espn_id: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  height: string;
-  weight: string;
-  position: string;
-  jersey_number: string;
-  experience_years: number;
-  experience_display: string;
-  experience_abbr: string;
-  birth_city: string;
-  birth_state: string;
-  birth_country: string;
-  birth_display: string;
-  team_id: number;
-  headshot_url: string;
-}
-
 export type FootballTeam = {
   id: number;
   espnId: number;
@@ -83,59 +34,6 @@ export type FootballTeam = {
   isActive: boolean;
 };
 
-// export type FootballGame = {
-//   game: {
-//     id: string; // ✅
-//     stage: string;
-//     week: string;
-//     date: {
-//       timezone: string;
-//       date: string;
-//       time: string;
-//       timestamp: number;
-//       utc?: string;
-//       local?: string;
-//     };
-//     venueName: {
-//       name: string;
-//       city: string;
-//     };
-//     status: {
-//       short: string;
-//       long: string;
-//       timer?: string | null; // allow null too
-//     };
-//   };
-//   league: {
-//     id: number;
-//     name: string;
-//     season: string;
-//     logo: string;
-//   };
-//   teams: {
-//     home: FootballTeam;
-//     away: FootballTeam;
-//   };
-//   scores: {
-//     home: {
-//       total: number;
-//       quarter_1: number;
-//       quarter_2: number;
-//       quarter_3: number;
-//       quarter_4: number;
-//       overtime: number;
-//     };
-//     away: {
-//       total: number;
-//       quarter_1: number;
-//       quarter_2: number;
-//       quarter_3: number;
-//       quarter_4: number;
-//       overtime: number;
-//     };
-//   };
-// };
-
 export type FootballGame = {
   league: {
     id: number;
@@ -153,8 +51,8 @@ export type FootballGame = {
   startDate: string;
   timestamp: string;
   season: {
-    year: 2026;
-    type: 2;
+    year: number;
+    type: number;
     slug: "pre-season" | "regular-season" | "post-season";
   };
   week: {
@@ -169,7 +67,7 @@ export type FootballGame = {
     quarter: number;
     clock: number;
     displayClock: string;
-    completed: false;
+    completed: boolean;
   };
   venueName: {
     id: number;
@@ -273,7 +171,7 @@ export type FootballGameCardProps = {
   isCFB?: boolean;
 };
 
-export const emptyTeam: FootballTeam = {
+export const emptyTeam = {
   id: 0,
   espnId: 0,
   oddsId: "0",
@@ -299,7 +197,7 @@ export const emptyTeam: FootballTeam = {
   isActive: false,
 };
 
-export const emptyAwayTeam: FootballTeam = {
+export const emptyAwayTeam = {
   id: 0,
   espnId: -2,
   logo: PlaceholderLogo,
@@ -323,7 +221,7 @@ export const emptyAwayTeam: FootballTeam = {
   isActive: false,
 };
 
-export const emptyHomeTeam: FootballTeam = {
+export const emptyHomeTeam = {
   id: 0,
   espnId: -1,
   logo: PlaceholderLogo,

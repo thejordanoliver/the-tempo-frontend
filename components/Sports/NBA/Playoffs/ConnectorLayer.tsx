@@ -13,7 +13,7 @@ import {
   ROUND3_HEIGHT,
   ROUND3_WIDTH,
 } from "styles/NBAPlayoffBraketStyles";
-import { CardLayout } from "types/nba";
+import { CardLayout } from "types/basketball";
 export const centerY = (layout?: CardLayout) =>
   layout ? layout.y + layout.height / 2 : 0;
 export const rightX = (layout: CardLayout) => layout.x + layout.width;
@@ -246,12 +246,6 @@ export const ConnectorLayer = ({ isDark }: { isDark: boolean }) => {
     const finals = FINALS_LAYOUT;
 
     if (!westConf || !eastConf) return null;
-
-    // West side: line from right edge of West R3 card to left edge of Finals card
-    const westMidX = rightX(westConf) + (finals.x - rightX(westConf)) / 2;
-
-    // East side: line from left edge of East R3 card back to right edge of Finals card
-    const eastMidX = rightX(finals) + (eastConf.x - rightX(finals)) / 2;
 
     return (
       <>

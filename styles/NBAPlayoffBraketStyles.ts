@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { CardLayout } from "types/nba";
+import { CardLayout } from "types/basketball";
 export const CARD_WIDTH = 176;
 export const CANVAS_HEIGHT = 840;
 export const COL_WIDTH = 220;
@@ -62,9 +62,10 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     roundLabel: {
       position: "absolute",
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 18,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 16,
       color: Colors.midTone,
+      textTransform: "uppercase",
     },
     sideLabel: {
       position: "absolute",
@@ -148,11 +149,11 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
       justifyContent: "center",
       alignItems: "center",
     },
-    statusDivder: {
-      height: 12,
+    statusDivider: {
+      height: 10,
       width: 1,
-      marginHorizontal: 4,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      marginHorizontal: 3,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     footerText: {
       fontFamily: Fonts.OSREGULAR,
@@ -162,19 +163,25 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     broadcast: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
+      fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     period: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
+      fontSize: 10,
+      textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
+    },
+    date: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     clock: {
       fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
+      fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },

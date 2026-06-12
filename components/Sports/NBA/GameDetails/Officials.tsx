@@ -1,5 +1,7 @@
+import refereePlaceholder from "assets/Placeholders/refereePlaceholder.png";
+import refereePlaceholderLight from "assets/Placeholders/refereePlaceholderLight.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Image, Text, View } from "react-native";
 import { officialsStyles } from "styles/GameDetailStyles/OfficialsStyles";
 
 type Official = {
@@ -33,12 +35,6 @@ export default function Officials({
           data={officials}
           keyExtractor={(_, index) => index.toString()}
           renderItem={({ item, index }) => {
-            const initials = item.displayName
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
-              .toUpperCase();
-
             const isLast = index === officials.length - 1;
 
             return (
@@ -48,8 +44,13 @@ export default function Officials({
                   isLast && { borderBottomWidth: 0 }, // ✅ remove divider
                 ]}
               >
-                <View style={styles.placeholder}>
-                  <Text style={styles.initials}>{initials}</Text>
+                <View style={styles.refereeContainer}>
+                  <Image
+                    style={styles.referee}
+                    source={
+                      isDark ? refereePlaceholderLight : refereePlaceholder
+                    }
+                  />
                 </View>
 
                 <View style={styles.nameContainer}>

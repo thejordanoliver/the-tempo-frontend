@@ -1,4 +1,5 @@
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { BasketballGameCardProps } from "@/types/basketball";
@@ -29,7 +30,6 @@ import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLastFiveGames } from "hooks/NBAHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeatherForecast } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
@@ -108,8 +108,6 @@ export default function GameDetailsScreen(
   const gameDateStr = String(gameDateObj);
   const gameId = game?.id ?? "";
 
-  const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
-
   const home = game?.home;
   const away = game?.away;
 
@@ -147,6 +145,10 @@ export default function GameDetailsScreen(
           minute: "2-digit",
         })
       : "TBD";
+
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details;
   const homeScore = score?.home.total ?? 0;
@@ -206,9 +208,6 @@ export default function GameDetailsScreen(
         avatarUrl: p.avatar ?? "",
       })) ?? [];
   /* ---------------- Hooks ---------------- */
-
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
 
   /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;
@@ -448,8 +447,12 @@ export default function GameDetailsScreen(
 
               <ShotChart
                 plays={plays}
-                homeTeamId={String(homeEspnId)}
-                awayTeamId={String(awayEspnId)}
+                homeEspnId={String(homeEspnId)}
+                awayEspnId={String(awayEspnId)}
+                homeId={homeId}
+                awayId={awayId}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
                 league={LEAGUE}
                 gameStatusDescription={gameStatusDescription}
               />

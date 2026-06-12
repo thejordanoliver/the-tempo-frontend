@@ -1,3 +1,4 @@
+import LeagueForum from "@/components/Forum/LeagueForum";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -168,6 +169,11 @@ export default function SBLeagueScreen() {
           {/* STANDINGS */}
           <View key="standings">
             <CBStandingsList league="sb" />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

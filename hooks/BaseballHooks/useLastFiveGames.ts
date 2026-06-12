@@ -18,7 +18,11 @@ type GameResult = {
   opponentLogoLight?: any;
 };
 
-export const useLastFiveGames = (teamId: number, league: string) => {
+export const useLastFiveGames = (
+  teamId: number,
+  sport: "basketball" | "baseball" | "football" | "hockey" | "soccer",
+  league: string,
+) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -30,7 +34,7 @@ export const useLastFiveGames = (teamId: number, league: string) => {
         setError(null);
 
         const response = await apiClient.get(
-          `api/games/baseball/team/last-five/${league}/${teamId}`,
+          `api/games/${sport}/team/last-five/${league}/${teamId}`,
         );
 
         setGames(response.data.games);
@@ -51,6 +55,6 @@ export const useLastFiveGames = (teamId: number, league: string) => {
     };
 
     if (teamId) fetchLastGames();
-  }, [teamId, league]);
+  }, [teamId, sport, league]);
   return { games, loading, error };
 };

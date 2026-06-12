@@ -1,4 +1,4 @@
-import axios from "axios";
+import { isCancel } from "axios";
 import { useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -22,6 +22,7 @@ export interface GameOdds {
   away_team: string;
   bookmakers: Bookmaker[];
 }
+
 export interface EventOdds {
   id: string;
   commence_time: string;
@@ -45,7 +46,7 @@ const cache: Record<string, GameOdds[]> = {};
 
 interface UseUpcomingOddsOptions {
   league?: string;
-  timestamp?: string | number;
+  timestamp?: string | number | undefined | null;
   team1?: string;
   team2?: string;
   markets?: string;
@@ -131,7 +132,7 @@ export const useUpcomingOdds = ({
         cache[key] = games;
         setData(games);
       } catch (err: any) {
-        if (axios.isCancel(err) || err?.name === "CanceledError") return;
+        if (isCancel(err) || err?.name === "CanceledError") return;
 
         const message =
           err.response?.data?.error ||

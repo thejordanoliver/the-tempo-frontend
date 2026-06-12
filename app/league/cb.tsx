@@ -1,3 +1,4 @@
+import LeagueForum from "@/components/Forum/LeagueForum";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -27,7 +28,7 @@ import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function SBLeagueScreen() {
+export default function CBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
@@ -63,6 +64,11 @@ export default function SBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -71,15 +77,12 @@ export default function SBLeagueScreen() {
           league={"College Baseball" as "CB"}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
+          onOpenLeagueModal={openLeagueModal}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
   const handleScoresRefresh = useCallback(async () => {
     setGamesRefreshing(true);
@@ -172,6 +175,11 @@ export default function SBLeagueScreen() {
           {/* STANDINGS */}
           <View key="standings">
             <CBStandingsList league="cb" />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum">
+            <LeagueForum league={league} />
           </View>
         </PagerView>
       </View>

@@ -1,4 +1,5 @@
 // ---- LastFiveGames.tsx ----
+import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeamLogo } from "@/constants/teamsUFL";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
@@ -79,6 +80,8 @@ export default function LastFiveGames({
         return getCBBTeam(teamId, true);
       case "CFB":
         return getCFBTeam(teamId);
+      case "SOCC":
+        return getSOCCTeam(teamId);
       default:
         return undefined;
     }
@@ -112,6 +115,8 @@ export default function LastFiveGames({
         return getCBBTeamLogo(teamId, isDark, true);
       case "CFB":
         return getCFBTeamLogo(teamId, isDark);
+      case "SOCC":
+        return getSOCCTeamLogo(teamId, isDark);
       default:
         return undefined;
     }
@@ -170,7 +175,11 @@ export default function LastFiveGames({
 
           {opponentLogo && (
             <Image
-              source={opponentLogo}
+              source={
+                typeof opponentLogo === "string"
+                  ? { uri: opponentLogo }
+                  : opponentLogo
+              }
               style={styles.opponentLogo}
               resizeMode="contain"
             />
@@ -212,7 +221,11 @@ export default function LastFiveGames({
               <View style={styles.tabLabel}>
                 {teamLogo && (
                   <Image
-                    source={teamLogo}
+                    source={
+                      typeof teamLogo === "string"
+                        ? { uri: teamLogo }
+                        : teamLogo
+                    }
                     style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
                   />
                 )}

@@ -1,47 +1,27 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import { getCBBSeason, getWNBASeason } from "utils/dateUtils";
-
-// Leagues
-const MEN_CBB_LEAGUE = "116";
-const WOMEN_CBB_LEAGUE = "423";
-const WNBA_LEAGUE = "13";
 
 type GameResult = {
   id: number;
   date: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
   isHome: boolean;
   won: boolean;
-  home: {
-    id: number;
-    name: string;
-  };
-  homeScore: number;
-  away: {
-    id: number;
-    name: string;
-  };
-  awayScore: number;
-  opponent: {
-    id: number;
-    name: string;
-  };
+  teamLogo: any;
+  opponentId: number;
+  opponent: string;
+  opponentLogo: any;
+  opponentLogoLight?: any;
 };
 
-export const useLastFiveGames = (
-  teamId: number,
-  isWNBA = false,
-  isWCBB = false,
-) => {
+export const useLastFiveGames = (teamId: number, league: string) => {
   const [games, setGames] = useState<GameResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const season = isWNBA ? getWNBASeason() : getCBBSeason();
-  const league = isWNBA
-    ? WNBA_LEAGUE
-    : isWCBB
-      ? WOMEN_CBB_LEAGUE
-      : MEN_CBB_LEAGUE;
 
   useEffect(() => {
     const fetchLastGames = async () => {
@@ -49,17 +29,19 @@ export const useLastFiveGames = (
         setLoading(true);
         setError(null);
 
-        const res = await apiClient.get(
-          `api/games/basketball/last-five/${teamId}`,
-          {
-            params: {
-              league,
-              season,
-            },
-          },
+        const response = await apiClient.get(
+          `api/games/basketball/team/last-five/${league}/${teamId}`,
         );
 
-        setGames(res.data.games || []);
+        setGames(response.data.games);
+
+        await AsyncStorage.setItem(
+          `lastFiveGames_${teamId}`,
+          JSON.stringify({
+            timestamp: Date.now(),
+            data: response.data.games,
+          }),
+        );
       } catch (err) {
         console.error("Error fetching last five games", err);
         setError(err as Error);
@@ -69,7 +51,6 @@ export const useLastFiveGames = (
     };
 
     if (teamId) fetchLastGames();
-  }, [teamId, season, league, isWCBB, isWNBA]);
-
+  }, [teamId, league]);
   return { games, loading, error };
 };

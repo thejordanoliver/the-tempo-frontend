@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export interface NewsArticle {
@@ -20,7 +19,7 @@ export interface NewsResponse {
   articles: NewsArticle[];
 }
 
-export function useLeaguesNews(league: LeagueType, limit: number = 10) {
+export function useLeaguesNews(league: string, limit: number = 10) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);

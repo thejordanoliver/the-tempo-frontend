@@ -267,6 +267,7 @@ export default function TeamDetailScreen() {
             onSelect={(month, year, index) =>
               handleSelectMonth(month, year, index)
             }
+            loading={gamesLoading}
             gameCountByMonth={gameCountByMonth}
           />
 

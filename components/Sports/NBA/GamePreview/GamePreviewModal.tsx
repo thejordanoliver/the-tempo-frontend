@@ -1,6 +1,6 @@
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import { useLastFiveGames } from "@/hooks/NBAHooks/useLastFiveGames";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -64,8 +64,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   const gameId = game.id;
 
-  const { details, score } = useBasketballGameDetails("nba", gameId);
-
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
   const homeEspnId = game.home.espnId;
@@ -90,6 +88,10 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const headline = headlineText || holidayLabel;
   const isChampionship = headline?.includes("NBA Finals");
   const styles = gamePreviewModalStyle(isChampionship);
+
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const { details, score } = useBasketballGameDetails("nba", gameId);
 
   const isGameLoading = !score || !details || !home || !away;
 
@@ -124,9 +126,6 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
 
   const homeTeamPlayersData = useRoster(homeId, LEAGUE);
   const awayTeamPlayersData = useRoster(awayId, LEAGUE);

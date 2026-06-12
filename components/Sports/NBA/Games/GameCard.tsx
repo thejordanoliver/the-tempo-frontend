@@ -77,9 +77,10 @@ export default function GameCard({ game }: BasketballGameCardProps) {
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
-  const endOfPeriod = gameStatusDescription === "End of Period";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
@@ -131,12 +132,12 @@ export default function GameCard({ game }: BasketballGameCardProps) {
         </View>
       );
 
-    if (isDelayed || isCanceled || isPostponed || isForfeited)
+    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
 
-    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+    if (isEndOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (

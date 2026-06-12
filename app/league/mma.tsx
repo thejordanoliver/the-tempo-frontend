@@ -1,5 +1,13 @@
-import { useNavigation, useRouter } from "expo-router";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -7,7 +15,6 @@ import LeagueForum from "../../components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
 } from "../../components/League/SportsListModal";
-import WeekSelector from "../../components/League/WeekSelector";
 import NewsList from "../../components/News/NewsList";
 import MMAChampionsList from "../../components/Sports/MMA/Champions/MMAChampionsList";
 import MMAGamesList from "../../components/Sports/MMA/Games/MMAGamesList";
@@ -55,7 +62,6 @@ export default function UFCLeagueScreen() {
   const styles = getScoresStyles(isDark);
 
   const navigation = useNavigation();
-  const router = useRouter();
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
@@ -165,6 +171,11 @@ export default function UFCLeagueScreen() {
     [selectedFightEvent],
   );
 
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -173,15 +184,12 @@ export default function UFCLeagueScreen() {
           league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
-          onBack={() => router.back()}
+          onOpenLeagueModal={openLeagueModal}
+          onBack={goBack}
         />
       ),
     });
-  }, [navigation, router, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
   return (
     <>
@@ -214,15 +222,6 @@ export default function UFCLeagueScreen() {
           }}
         >
           <View key="fights" style={styles.contentArea}>
-            <WeekSelector
-              mode="mma"
-              events={mmaCalendar}
-              selectedEventIndex={selectedEventIndex}
-              onSelectEvent={setSelectedEventIndex}
-              isDark={isDark}
-              loading={calendarLoading}
-            />
-
             <MMAGamesList
               games={selectedEventGames}
               loading={loading}

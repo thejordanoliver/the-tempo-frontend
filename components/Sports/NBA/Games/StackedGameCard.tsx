@@ -4,6 +4,7 @@ import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
@@ -70,7 +71,7 @@ export default function StackedGameCard({
   const styles = stackedGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatQuarter(game.status.period);
-  const clock = game.status.displayClock;
+  const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
   const isFinal = gameStatusDescription === "Final";
@@ -81,7 +82,7 @@ export default function StackedGameCard({
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
-  const endOfPeriod = gameStatusDescription === "End of Period";
+  const isEndOfPeriod = gameStatusDescription === "End of Period";
 
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
@@ -127,7 +128,7 @@ export default function StackedGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
@@ -138,10 +139,7 @@ export default function StackedGameCard({
 
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
 
-    if (endOfPeriod)
-      return (
-        <Text style={styles.clock}>End of {formatQuarter(period ?? 0)}</Text>
-      );
+    if (isEndOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (
@@ -216,7 +214,22 @@ export default function StackedGameCard({
 
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
-      <View style={styles.card}>{renderCardContent()}</View>
-    </TouchableOpacity>
+        {isChampionship ? (
+          <LinearGradient
+            colors={
+              isDark
+                ? ["#846f4a", "#50412a"]
+                : (["#dbb145ff", "#CDA765"] as [string, string])
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.card}
+          >
+            {renderCardContent()}
+          </LinearGradient>
+        ) : (
+          <View style={styles.card}>{renderCardContent()}</View>
+        )}
+      </TouchableOpacity>
   );
 }

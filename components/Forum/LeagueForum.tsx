@@ -12,14 +12,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 import { forumStyles } from "./TeamForum";
 
 type LeagueForumProps = {
-  league?: LeagueType;
+  league?: string;
 };
 
 export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {

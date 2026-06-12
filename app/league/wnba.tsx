@@ -1,6 +1,5 @@
-// app/league/wnba.tsx
-
-import { useBasketballSeasonGames } from "@/hooks/BasketballHooks/useBasketballSeasonGames";
+import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
+import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -8,7 +7,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
@@ -31,7 +30,7 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { filterByDate, getWNBASeason } from "../../utils/dateUtils";
+import { getWNBASeason } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -39,6 +38,7 @@ dayjs.extend(isBetween);
 
 export default function WNBALeagueScreen() {
   const league = "WNBA";
+  const { calendar } = useLeagueCalendar(league);
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -69,51 +69,17 @@ export default function WNBALeagueScreen() {
   } = useLeaguesNews(league, 10);
 
   const {
-    games: wnbaGames,
-    loading: wnbaLoading,
-    refreshBasketballGames: refreshGames,
-  } = useBasketballSeasonGames({
-    isWNBA: true,
-  });
+    games,
+    error: gamesError,
+    refreshGames: refreshScoreGames,
+    loading: loadingGames,
+  } = useBasketballGames(selectedDate, "wnba");
 
-  const filteredSeasonGames = filterByDate(wnbaGames, selectedDate);
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
 
-  const changeDateByDays = (days: number) => {
-    setSelectedDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setDate(newDate.getDate() + days);
-      return newDate;
-    });
-  };
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await Promise.all([refreshGames()]);
-    } catch (error) {
-      console.warn("Failed to refresh:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const markDates = (gamesArray: any[]) =>
-    gamesArray.reduce(
-      (acc, game) => {
-        const localDate = new Date(game.date);
-        const iso = `${localDate.getFullYear()}-${String(
-          localDate.getMonth() + 1,
-        ).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
-        acc[iso] = {
-          marked: true,
-          dotColor: isDark ? Colors.white : Colors.black,
-        };
-        return acc;
-      },
-      {} as Record<string, { marked: boolean; dotColor: string }>,
-    );
-  /* -------------------------------
-     HEADER
-  -------------------------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -122,16 +88,44 @@ export default function WNBALeagueScreen() {
           league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
+          onOpenLeagueModal={openLeagueModal}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([refreshScoreGames()]);
+    } catch (error) {
+      console.warn("Failed to refresh:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const changeDateByDays = (days: number) => {
+    setSelectedDate((prev) =>
+      dayjs(prev).add(days, "day").startOf("day").toDate(),
+    );
+  };
+
+  const markDates = (calendarArray: string[]) =>
+    calendarArray.reduce(
+      (acc, dateStr) => {
+        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+
+        acc[iso] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return acc;
+      },
+      {} as Record<string, { marked: boolean; dotColor: string }>,
+    );
   /* -------------------------------
      RENDER
   -------------------------------- */
@@ -168,10 +162,13 @@ export default function WNBALeagueScreen() {
             />
 
             <BasketballGamesList
-              games={filteredSeasonGames}
-              loading={wnbaLoading}
+              games={games}
+              error={gamesError}
+              loading={loadingGames}
               refreshing={refreshing}
               onRefresh={handleRefresh}
+              scrollEnabled={true}
+              isWNBA={true}
             />
           </View>
 
@@ -232,7 +229,7 @@ export default function WNBALeagueScreen() {
           setShowCalendarModal(false);
         }}
         markedDates={{
-          ...markDates([...wnbaGames]),
+          ...markDates([...calendar]),
         }}
       />
 

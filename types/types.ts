@@ -1,4 +1,4 @@
-import { NBATeam } from "./nba";
+import { NBATeam } from "./basketball";
 
 export type PlayerStats = {
   playerId: number;
@@ -150,24 +150,24 @@ export type Team = {
   league?: string;
 };
 
-export type Arena = {
-  name: string;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-};
-
 export type LeagueType =
   | "NBA"
   | "WNBA"
   | "NFL"
   | "CFB"
   | "UFL"
+  | "EPL"
+  | "MLS"
+  | "CHAMPIONS"
+  | "EUROPA"
+  | "FIFA"
+  | "FIFAW"
+  | "BUNDESLIGA"
   | "CB"
   | "SB"
   | "CBB"
-  | "MLB"
   | "WCBB"
+  | "MLB"
   | "NHL"
   | "MMA";
 

@@ -1,6 +1,6 @@
-import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
-import Roster from "@/components/Sports/NFL/Team/Roster";
-import RosterStats from "@/components/Sports/NFL/Team/RosterStats";
+import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import Roster from "@/components/Sports/Football/Team/Roster";
+import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsList from "components/News/NewsList";
-import { CFBConferenceStandingsList } from "components/Sports/CFB/Standings/CFBConferenceStandingsList";
+import { CFBConferenceStandingsList } from "components/Sports/Football/Standings/CFBConferenceStandingsList";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -85,10 +85,8 @@ export default function TeamDetailScreen() {
   } = useRosterStats(league, teamIdNum);
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    {
-      teamId: espnId,
-      league: league,
-    },
+    espnId,
+    league,
   );
 
   const handleRefresh = async () => {

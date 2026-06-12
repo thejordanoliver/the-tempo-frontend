@@ -16,13 +16,6 @@ import {
   View,
 } from "react-native";
 
-type VoteTeam = {
-  id: string | number;
-  code?: string;
-  logo: any;
-  color?: string | null;
-};
-
 type Props = {
   gameId: string;
   awayId: string | number;
@@ -55,7 +48,7 @@ export default function FanPredictionVote({
   const styles = fanPredictionVoteStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const { votes: liveVotes, emitVote } = useLiveVotes(gameId);
   const [results, setResults] = useState<PollResult[]>([]);
   const [userVote, setUserVote] = useState<string | number | null>(null);
@@ -222,7 +215,11 @@ export default function FanPredictionVote({
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  if (gameStatusDescription === "Final") return null;
+  if (
+    gameStatusDescription === "Final" ||
+    gameStatusDescription === "Full Time"
+  )
+    return null;
 
   if (error)
     return (
@@ -273,7 +270,11 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={awayLogo}
+                    source={
+                      typeof awayLogo === "string"
+                        ? { uri: awayLogo }
+                        : awayLogo
+                    }
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />
@@ -319,7 +320,11 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                    source={homeLogo}
+                   source={
+                      typeof homeLogo === "string"
+                        ? { uri: homeLogo }
+                        : homeLogo
+                    }
                     style={styles.teamLogo}
                     resizeMode="cover"
                   />

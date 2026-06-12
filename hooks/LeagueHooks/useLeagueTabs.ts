@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LEAGUE_TABS,
   League,
@@ -8,10 +8,19 @@ import {
   TeamTab,
 } from "utils/tabs";
 
-export function useLeagueTabs<L extends League>(league: L) {
-  const tabs = LEAGUE_TABS[league];
+const FALLBACK_LEAGUE_TABS = ["scores", "news", "standings", "forum"] as const;
 
-  const [selectedTab, setSelectedTab] = useState<LeagueTab<L>>(tabs[0]);
+export function useLeagueTabs<L extends League>(league: L) {
+  const tabs = (LEAGUE_TABS[league] ??
+    FALLBACK_LEAGUE_TABS) as readonly LeagueTab<L>[];
+
+  const [selectedTab, setSelectedTab] = useState<LeagueTab<L>>(
+    tabs[0],
+  );
+
+  useEffect(() => {
+    setSelectedTab(tabs[0]);
+  }, [league, tabs]);
 
   return {
     tabs,
@@ -20,10 +29,16 @@ export function useLeagueTabs<L extends League>(league: L) {
   };
 }
 
-export function useTeamTabs<T extends Team>(Team: T) {
-  const tabs = TEAM_TABS[Team];
+export function useTeamTabs<T extends Team>(team: T) {
+  const tabs = TEAM_TABS[team] as readonly TeamTab<T>[];
 
-  const [selectedTab, setSelectedTab] = useState<TeamTab<T>>(tabs[0]);
+  const [selectedTab, setSelectedTab] = useState<TeamTab<T>>(
+    tabs[0],
+  );
+
+  useEffect(() => {
+    setSelectedTab(tabs[0]);
+  }, [team, tabs]);
 
   return {
     tabs,

@@ -737,7 +737,6 @@ export function CustomHeaderTitle({
   isNeutralSite = false,
   modalVisible = false,
   onOpenInfo,
-  setModalVisible = () => {},
   league = "Leagues",
   logo,
   messageAvatar,

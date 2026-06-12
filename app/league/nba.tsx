@@ -5,7 +5,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
@@ -29,7 +29,7 @@ import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
-import { usePlayoffGames } from "../../hooks/NBAHooks/usePlayoffGames";
+import { useNBAPlayoffGames } from "../../hooks/NBAHooks/useNBAPlayoffGames";
 import { useSeasonLeaders } from "../../hooks/NBAHooks/useSeasonLeaders";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
@@ -39,22 +39,16 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function NBALeagueScreen() {
+  const league = "NBA";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
-  const league = "NBA";
-
   const { calendar } = useLeagueCalendar(league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
+
   const [selectedDate, setSelectedDate] = React.useState<Date>(
     dayjs().startOf("day").toDate(),
   );
-  const {
-    games,
-    error: gamesError,
-    refreshGames,
-    loading: loadingGames,
-  } = useBasketballGames(selectedDate);
 
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
@@ -71,6 +65,24 @@ export default function NBALeagueScreen() {
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
+  const selectedSeason = getNBACalendarSeason();
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames: refreshScoreGames,
+    loading: loadingGames,
+  } = useBasketballGames(selectedDate);
+
+  const {
+    rounds: playoffRounds,
+    loading: playoffLoading,
+    error: playoffError,
+    refreshingGames: refreshingPlayoffGames,
+    refreshGames: refreshPlayoffGames,
+  } = useNBAPlayoffGames({
+    season: selectedSeason,
+  });
 
   const {
     articles,
@@ -80,13 +92,10 @@ export default function NBALeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  const {
-    bracket,
-    playoffsLoading,
-    playoffsError,
-    refreshing: playoffRefreshing,
-    onRefresh,
-  } = usePlayoffGames();
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -96,20 +105,17 @@ export default function NBALeagueScreen() {
           league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
+          onOpenLeagueModal={openLeagueModal}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refreshGames()]);
+      await Promise.all([refreshScoreGames()]);
     } catch (error) {
       console.warn("Failed to refresh:", error);
     } finally {
@@ -203,11 +209,11 @@ export default function NBALeagueScreen() {
           {/* PLAYOFFS */}
           <View key="playoffs" style={styles.contentArea}>
             <NBAPlayoffBracket
-              loading={playoffsLoading}
-              error={playoffsError}
-              bracket={bracket}
-              refreshing={playoffRefreshing}
-              onRefresh={onRefresh}
+              rounds={playoffRounds}
+              loading={playoffLoading}
+              error={playoffError}
+              refreshing={refreshingPlayoffGames}
+              onRefresh={refreshPlayoffGames}
             />
           </View>
 

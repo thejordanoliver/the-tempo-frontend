@@ -1,4 +1,4 @@
-import { NBATeam } from "types/nba";
+import { NBATeam } from "types/basketball";
 
 // Logos
 import AcesLogo from "../assets/Logos/WNBA/Aces.png";
@@ -280,8 +280,8 @@ export const wnbaTeams: NBATeam[] = [
     shortName: "Fire",
     fullName: "Portland Fire",
     code: "POR",
-    color: "#B22222",
-    secondaryColor: "#A52A2A",
+    color: "#b22222",
+    secondaryColor: "#a52a2a",
     logo: FireLogo,
     logoLight: FireLogoLight,
     location: "Portland, OR",

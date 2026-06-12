@@ -42,7 +42,7 @@ export type UseEventOddsParams = {
 };
 
 export type GameOddsSectionProps = {
-  date: string | undefined | null;
+  date: string | number | undefined | null;
   gameDate: string;
   neutralSite?: boolean;
   league?: string;

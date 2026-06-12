@@ -1,5 +1,7 @@
 // app/league/cbb.tsx
-import ConferenceListModal from "@/components/Sports/Basketball/ConferenceListModal";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "@/components/Sports/Basketball/ConferenceListModal";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { cbbConferences } from "@/constants/cbbConferences";
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
@@ -22,8 +24,7 @@ import RecruitsList from "../../components/League/Recruiting/CBB/RecruitsList";
 import NewsList from "../../components/News/NewsList";
 import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
-import { ConferenceListModalRef } from "../../components/Sports/CFB/ConferenceListModal";
-import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -52,22 +53,6 @@ export default function CBBLeagueScreen() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  const { calendar } = useLeagueCalendar(league);
-
-  const {
-    games,
-    error: gamesError,
-    refreshGames,
-    loading: loadingGames,
-  } = useBasketballGames(selectedDate);
-
-  const {
-    articles,
-    loading: newsLoading,
-    refreshing: refreshingNews,
-    error: newsError,
-    refresh: refreshNews,
-  } = useLeaguesNews(league, 10);
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
@@ -103,12 +88,29 @@ export default function CBBLeagueScreen() {
     return Number.isFinite(conferenceId) ? conferenceId : null;
   }, [selectedConference]);
 
+  const { calendar } = useLeagueCalendar(league);
+
+  const {
+    games,
+    error: gamesError,
+    refreshGames,
+    loading: loadingGames,
+  } = useBasketballGames(selectedDate, "cbb");
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league={league}
+          league={"Men's College Basketball" as "CBB"}
           modalVisible={isDropdownOpen}
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}

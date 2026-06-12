@@ -33,6 +33,8 @@ type Props = {
   league: "nba" | "wnba" | "nfl";
 };
 
+const CHUNK_SIZE = 20;
+
 const POSITION_MAP: Record<string, string> = {
   "1": "Point Guard",
   "2": "Shooting Guard",
@@ -67,11 +69,11 @@ export const getDefaultDraftYear = (league: "nba" | "wnba" | "nfl") => {
   const year = now.year();
 
   if (league === "nfl") {
-    return now.month() >= 3 ? year : year - 1; // April+
+    return now.month() >= 3 ? year : year - 1;
   }
 
   if (league === "nba") {
-    return now.month() >= 5 ? year : year - 1; // June+
+    return now.month() >= 5 ? year : year - 1;
   }
 
   return year;
@@ -90,16 +92,14 @@ export default function DraftList({
   const isDark = resolvedColorScheme === "dark";
   const styles = draftListStyles(isDark);
   const global = globalStyles(isDark);
-  const listRef = useRef<FlatList>(null);
+  const listRef = useRef<FlatList<DraftPick>>(null);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
+
   const toggleSearch = () => {
     setSearchOpen((prev) => !prev);
   };
-
-  useEffect(() => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [year, round, team, search]);
 
   const selectedYear = year;
   const selectedTeam = team;
@@ -107,11 +107,8 @@ export default function DraftList({
 
   useEffect(() => {
     listRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [selectedYear, selectedRound, selectedTeam]);
+  }, [selectedYear, selectedRound, selectedTeam, search, league]);
 
-  // ---------------------------
-  // YEAR OPTIONS
-  // ---------------------------
   const yearOptions = useMemo(() => {
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -119,19 +116,17 @@ export default function DraftList({
     let maxSeason: number;
 
     if (league === "nfl") {
-      // NFL Draft ~ April
-      const seasonHasStarted = now.getMonth() >= 3; // April = 3
+      const seasonHasStarted = now.getMonth() >= 3;
       maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
     } else if (league === "nba") {
-      // NBA Draft occurs in Jun
-      const seasonHasStarted =
-        now.getMonth() > 5 || (now.getMonth() === 9 && now.getDate() >= 15);
+      const seasonHasStarted = now.getMonth() >= 5;
       maxSeason = seasonHasStarted ? currentYear : currentYear - 1;
     } else {
       maxSeason = currentYear;
     }
 
     const arr = [];
+
     for (let y = maxSeason; y >= maxSeason - 24; y--) {
       arr.push({ label: String(y), value: String(y) });
     }
@@ -139,29 +134,27 @@ export default function DraftList({
     return arr;
   }, [league]);
 
-  const getDraftSeasonYear = (league: "nba" | "nfl" | "wnba") => {
+  const getDraftSeasonYear = (draftLeague: "nba" | "nfl" | "wnba") => {
     const now = new Date();
-    const year = now.getFullYear();
+    const currentYear = now.getFullYear();
 
-    if (league === "nfl") {
-      // NFL draft switches in April
+    if (draftLeague === "nfl") {
       const isNewSeason = now.getMonth() >= 3;
-      return isNewSeason ? year : year - 1;
+      return isNewSeason ? currentYear : currentYear - 1;
     }
 
-    if (league === "nba") {
-      // NBA draft switches in late June
+    if (draftLeague === "nba") {
       const isNewSeason =
         now.getMonth() > 5 || (now.getMonth() === 5 && now.getDate() >= 20);
 
-      return isNewSeason ? year : year - 1;
+      return isNewSeason ? currentYear : currentYear - 1;
     }
 
-    return year;
+    return currentYear;
   };
 
   const defaultYear = getDraftSeasonYear(league);
-  const safeYear = year ?? String(defaultYear);
+  const safeYear = year || String(defaultYear);
 
   useEffect(() => {
     if (!year) {
@@ -169,18 +162,13 @@ export default function DraftList({
     }
   }, [defaultYear, year, onYearChange]);
 
-  // ---------------------------
-  // FETCH NBA DRAFT
-  // ---------------------------
-  const { draft, loading, error, refresh, refreshing, onRefresh } = useDraft(
+  const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
     Number(safeYear),
   );
-  const picks = draft?.picks ?? [];
 
-  // ---------------------------
-  // ROUND OPTIONS
-  // ---------------------------
+  const picks = useMemo(() => draft?.picks ?? [], [draft?.picks]);
+
   const roundOptions = useMemo(() => {
     if (!picks.length) return [{ label: "All Rounds", value: "all" }];
 
@@ -197,48 +185,38 @@ export default function DraftList({
     ];
   }, [picks]);
 
-  // Choose correct team list based on league
-  const TEAM_LIST =
-    league === "nba" ? teams : league === "wnba" ? wnbaTeams : nflTeams;
+  const teamList = useMemo(() => {
+    if (league === "nba") return teams;
+    if (league === "wnba") return wnbaTeams;
 
-  // -------------------------------------------
-  // TEAM OPTIONS — league-dependent
-  // -------------------------------------------
-  const teamOptions = useMemo(() => {
-    const formatted = TEAM_LIST.map((t) => ({
-      label: t.name,
-      value: String(t.espnId),
-    })).sort((a, b) => a.label.localeCompare(b.label));
-
-    return [{ label: "All Teams", value: "all" }, ...formatted];
+    return nflTeams;
   }, [league]);
 
-  // -------------------------------------------
-  // TEAM NAME LOOKUP MAP — league-dependent
-  // -------------------------------------------
+  const teamOptions = useMemo(() => {
+    const formatted = teamList
+      .map((t) => ({
+        label: t.name,
+        value: String(t.espnId),
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    return [{ label: "All Teams", value: "all" }, ...formatted];
+  }, [teamList]);
+
   const teamNameMap = useMemo(() => {
     const map: Record<string, string> = {};
 
-    TEAM_LIST.forEach((t) => {
+    teamList.forEach((t) => {
       map[String(t.espnId)] = t.name.toLowerCase();
     });
 
     return map;
-  }, [league]);
+  }, [teamList]);
 
-  const CHUNK_SIZE = 20;
-
-  // How many picks are currently visible
-  const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
-
-  // Reset pagination whenever year/team/round/search changes
   useEffect(() => {
     setVisibleCount(CHUNK_SIZE);
   }, [selectedYear, selectedTeam, selectedRound, search, league]);
 
-  // ---------------------------
-  // FILTERED PLAYERS
-  // ---------------------------
   const filteredPicks = useMemo(() => {
     if (!picks.length) return [];
 
@@ -255,49 +233,98 @@ export default function DraftList({
     if (search.trim().length > 0) {
       const s = search.toLowerCase();
 
-      const POSITION_LOOKUP =
-        league === "nba" ? POSITION_MAP : NFL_POSITION_MAP;
+      const positionLookup = league === "nfl" ? NFL_POSITION_MAP : POSITION_MAP;
 
       list = list.filter((p: DraftPick) => {
         const nameMatch = p.athlete?.name?.toLowerCase().includes(s);
 
         const positionId = p.athlete?.positionId;
-        const pos = positionId
-          ? (POSITION_LOOKUP[String(positionId)] ?? "")
+        const position = positionId
+          ? (positionLookup[String(positionId)] ?? "")
           : "";
-        const posMatch = pos.toLowerCase().includes(s);
+        const positionMatch = position.toLowerCase().includes(s);
 
         const teamName = teamNameMap[String(p.teamId)];
         const teamMatch = teamName?.includes(s);
 
-        return nameMatch || posMatch || teamMatch;
+        return nameMatch || positionMatch || teamMatch;
       });
     }
 
     return list;
-  }, [picks, selectedRound, selectedTeam, search, league]);
+  }, [picks, selectedRound, selectedTeam, search, league, teamNameMap]);
 
   const visiblePicks = useMemo(
     () => filteredPicks.slice(0, visibleCount),
     [filteredPicks, visibleCount],
   );
 
-  if (error)
+  if (error) {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>Error: {String(error)}</Text>
       </View>
     );
-  if (loading)
+  }
+
+  if (loading) {
     return (
-      <FlatList
-        ref={listRef}
-        data={Array.from({ length: 10 })}
-        keyExtractor={(_, i) => "skel-" + i}
-        renderItem={() => <DraftCardSkeleton />}
-      />
+      <>
+        <View style={styles.dropdownContainer}>
+          <View style={styles.dropdownWrapper}>
+            <TouchableOpacity onPress={toggleSearch}>
+              <Ionicons
+                name={searchOpen ? "close" : "search"}
+                size={22}
+                color={isDark ? Colors.lightGray : Colors.darkGray}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.dropdownRow}>
+              <Dropdown
+                options={yearOptions}
+                selectedValue={safeYear}
+                onSelect={onYearChange}
+                isDark={isDark}
+                width={120}
+              />
+
+              <Dropdown
+                options={roundOptions}
+                selectedValue={round}
+                onSelect={onRoundChange}
+                isDark={isDark}
+                width={120}
+              />
+
+              <Dropdown
+                options={teamOptions}
+                selectedValue={team}
+                onSelect={onTeamChange}
+                isDark={isDark}
+                width={150}
+              />
+            </View>
+          </View>
+
+          <SearchBar
+            value={search}
+            onChangeText={setSearch}
+            visible={searchOpen}
+            placeholder="Search players..."
+          />
+        </View>
+
+        <FlatList
+          data={Array.from({ length: 10 })}
+          keyExtractor={(_, i) => `skel-${i}`}
+          renderItem={() => <DraftCardSkeleton />}
+        />
+      </>
     );
-  if (filteredPicks.length === 0)
+  }
+
+  if (filteredPicks.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.dropdownContainer}>
@@ -310,7 +337,6 @@ export default function DraftList({
               />
             </TouchableOpacity>
 
-            {/* RIGHT: Dropdowns */}
             <View style={styles.dropdownRow}>
               <Dropdown
                 options={yearOptions}
@@ -349,10 +375,12 @@ export default function DraftList({
         <Text style={global.emptyText}>No results found</Text>
       </View>
     );
+  }
 
   return (
     <View style={styles.container}>
-      <DraftNewsList year={year} league={league} />
+      <DraftNewsList year={safeYear} league={league} />
+
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity onPress={toggleSearch}>
@@ -363,7 +391,6 @@ export default function DraftList({
             />
           </TouchableOpacity>
 
-          {/* RIGHT: Dropdowns */}
           <View style={styles.dropdownRow}>
             <Dropdown
               options={yearOptions}
@@ -406,7 +433,6 @@ export default function DraftList({
         renderItem={({ item, index }) => (
           <DraftCard player={item} index={index} league={league} />
         )}
-        // 👇 ADD THIS
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -422,12 +448,8 @@ export default function DraftList({
         }}
         ListFooterComponent={
           visibleCount < filteredPicks.length ? (
-            <View style={{ padding: 20, alignItems: "center" }}>
-              <Text
-                style={{ color: isDark ? Colors.lightGray : Colors.darkGray }}
-              >
-                Loading more…
-              </Text>
+            <View style={styles.footerLoader}>
+              <Text style={styles.footerLoaderText}>Loading more…</Text>
             </View>
           ) : null
         }
@@ -442,7 +464,10 @@ export const draftListStyles = (isDark: boolean) =>
       flex: 1,
       paddingBottom: 80,
     },
-    dropdownContainer: { paddingHorizontal: 12, marginVertical: 12 },
+    dropdownContainer: {
+      paddingHorizontal: 12,
+      marginVertical: 12,
+    },
     dropdownWrapper: {
       flexDirection: "row",
       alignItems: "center",
@@ -469,6 +494,15 @@ export const draftListStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       fontSize: 14,
       marginTop: 20,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    footerLoader: {
+      padding: 20,
+      alignItems: "center",
+    },
+    footerLoaderText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

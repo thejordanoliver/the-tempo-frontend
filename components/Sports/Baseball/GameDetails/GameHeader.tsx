@@ -1,6 +1,6 @@
 import { ImageSourcePropType, Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { GameInfo } from "./GameInfo";
+import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
@@ -88,7 +88,7 @@ export default function GameHeader({
           league={league}
         />
 
-        <GameInfo
+        <CenterInfo
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
           date={date}

@@ -9,7 +9,14 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -23,9 +30,9 @@ import SportsListModal, {
 } from "../../components/League/SportsListModal";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
-import FootballGamesList from "../../components/Sports/NFL/Games/FootballGamesList";
-import { NFLPlayoffBracket } from "../../components/Sports/NFL/Playoffs/NFLPlayoffBracket";
-import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import FootballGamesList from "../../components/Sports/Football/Games/FootballGamesList";
+import { NFLPlayoffBracket } from "../../components/Sports/Football/NFLPlayoffs/NFLPlayoffBracket";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useNFLBracket } from "../../hooks/FootballHooks/usePlayoffGames";
@@ -187,6 +194,11 @@ export default function NFLLeagueScreen() {
     }
   }, [calendar, weekGroups]);
 
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -195,15 +207,12 @@ export default function NFLLeagueScreen() {
           league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
+          onOpenLeagueModal={openLeagueModal}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
   const handleRefresh = async () => {
     setScreenRefreshing(true);

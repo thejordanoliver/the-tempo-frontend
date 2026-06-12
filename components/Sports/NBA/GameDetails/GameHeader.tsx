@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { GameInfo } from "./GameInfo";
+import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
@@ -95,7 +95,7 @@ export default function GameHeader({
         />
 
         {/* Game Info */}
-        <GameInfo
+        <CenterInfo
           date={date}
           time={time}
           clock={clock}

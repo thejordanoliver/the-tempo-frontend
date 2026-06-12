@@ -1,17 +1,22 @@
+import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
+import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
+import NHLInjuries from "@/components/Sports/Hockey/GameDetails/NHLInjuries";
+import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { HockeyGameCardProps } from "@/types/hockey";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
-import { GameLocation, LineScore } from "components/Sports/NBA/GameDetails";
+import {
+  GameLocation,
+  LastFiveGames,
+  LineScore,
+} from "components/Sports/NBA/GameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import GameHeader from "components/Sports/NHL/GameDetails/GameHeader";
-import GameSummary from "components/Sports/NHL/GameDetails/GameSummary";
-import NHLInjuries from "components/Sports/NHL/GameDetails/NHLInjuries";
-import ShotChart from "components/Sports/NHL/GameDetails/ShotChart";
 import { getNeutralVenue } from "constants/neutralVenues";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -129,9 +134,11 @@ export default function GameDetailsScreen(
   const awayColor = useMemo(() => awayTeam?.color, [awayTeam?.color]);
   const homeColor = useMemo(() => homeTeam?.color, [homeTeam?.color]);
 
+  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE);
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
-  const isLoading = !score || !details;
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const plays = score?.plays;
@@ -309,6 +316,7 @@ export default function GameDetailsScreen(
               homeTeamId={String(homeEspnId)}
               awayTeamId={String(awayEspnId)}
               isDark={isDark}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <GameSummary plays={plays ?? []} isDark={isDark} />
@@ -319,6 +327,22 @@ export default function GameDetailsScreen(
               error={null}
               homeTeamId={String(homeEspnId)}
               awayTeamId={String(awayEspnId)}
+              isDark={isDark}
+            />
+
+            <LastFiveGames
+              home={{
+                teamId: homeId,
+                teamCode: homeCode,
+                games: homeLastGames.games,
+              }}
+              away={{
+                teamId: awayId,
+                teamCode: awayCode,
+                games: awayLastGames.games,
+              }}
+              league={LEAGUE.toUpperCase()}
+              gameStatusDescription={gameStatusDescription}
               isDark={isDark}
             />
 

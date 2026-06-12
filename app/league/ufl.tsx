@@ -19,7 +19,7 @@ import SportsListModal, {
 } from "../../components/League/SportsListModal";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
-import FootballGamesList from "../../components/Sports/NFL/Games/FootballGamesList";
+import FootballGamesList from "../../components/Sports/Football/Games/FootballGamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";

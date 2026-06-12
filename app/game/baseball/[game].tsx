@@ -106,8 +106,6 @@ export default function GameDetailsScreen(
   const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameId = game?.id;
 
-  const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
-
   const formattedDate =
     gameDateObj && isValidDate(gameDateObj)
       ? gameDateObj.toLocaleDateString([], {
@@ -177,10 +175,11 @@ export default function GameDetailsScreen(
       ? getCBTeamLogo(awayId, true)
       : getMLBTeamLogo(awayId, true);
 
-  const homeLastGames = useLastFiveGames(homeId ?? 0, LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId ?? 0, LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
+  const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
-  const isLoading = !score && !details;
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";

@@ -4,7 +4,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
@@ -18,7 +18,7 @@ import SportsListModal, {
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Baseball/Games/GamesList";
-import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -67,6 +67,11 @@ export default function MLBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
+  const openLeagueModal = useCallback(() => {
+    setLeagueModalVisible(true);
+    sportsModalRef.current?.present();
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -75,15 +80,12 @@ export default function MLBLeagueScreen() {
           league={league}
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
+          onOpenLeagueModal={openLeagueModal}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation, leagueModalVisible, league, openLeagueModal]);
 
   const handleScoresRefresh = React.useCallback(async () => {
     setGamesRefreshing(true);

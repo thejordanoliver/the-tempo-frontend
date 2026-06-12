@@ -1,6 +1,6 @@
-import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
-import Roster from "@/components/Sports/NFL/Team/Roster";
-import RosterStats from "@/components/Sports/NFL/Team/RosterStats";
+import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import Roster from "@/components/Sports/Football/Team/Roster";
+import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";
@@ -28,6 +28,7 @@ import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "NFL";
+  const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -73,7 +74,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum, "nfl", 2025);
+  } = useTeamGames(teamIdNum, league, currentSeason);
 
   const {
     rosterStats,
@@ -84,10 +85,8 @@ export default function TeamDetailScreen() {
   } = useRosterStats(league, teamIdNum);
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    {
-      teamId: espnId,
-      league,
-    },
+    espnId,
+    league,
   );
 
   const handleRefresh = async () => {

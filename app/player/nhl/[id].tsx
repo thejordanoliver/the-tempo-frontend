@@ -1,7 +1,7 @@
+import PlayerStatTable from "@/components/Sports/Hockey/Player/PlayerStatTable";
 import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
-import PlayerStatTable from "@/components/Sports/NHL/Player/PlayerStatTable";
-import { useTeamLatestGame } from "@/hooks/HockeyHooks/useTeamLatestGame";
 import { usePlayerSeasons } from "@/hooks/HockeyHooks/usePlayerSeasons";
+import { useTeamLatestGame } from "@/hooks/HockeyHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";

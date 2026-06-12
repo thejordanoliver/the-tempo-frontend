@@ -91,6 +91,22 @@ export type BaseballProps = {
   league: string;
 };
 
+export type SoccerProps = {
+  id: number;
+  name: string;
+  logo: any;
+  record: string;
+  size?: SizeType;
+  rank: number | undefined | null;
+  isDark: boolean;
+  isHome?: boolean;
+  score?: number;
+  isWinner?: boolean | undefined | null;
+  hideRecord?: boolean;
+  gameStatusDescription?: string;
+  league: string;
+};
+
 export type NHLProps = {
   id: number | null;
   logo: any;

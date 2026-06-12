@@ -1,8 +1,8 @@
+import { NBAPlayoffTeam } from "@/types/basketball";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { Image, Text, View } from "react-native";
 import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
-import { PlayoffTeam } from "types/nba";
 
 export const TeamRow = ({
   team,
@@ -11,17 +11,18 @@ export const TeamRow = ({
   oponnentWins,
   isDark,
 }: {
-  team?: PlayoffTeam;
+  team?: NBAPlayoffTeam;
   wins: number;
   oponnentWins: number;
   score: number | null;
   isDark: boolean;
 }) => {
   const styles = nbaPlayoffBracketStyles(isDark);
-  const teamId = team?.id ?? 0;
+  const teamId = team?.id;
   const teamLogo = getTeamLogo(teamId, isDark);
-  const teamData = getNBATeam(teamId);
-  const teamName = teamData?.code ?? "TBD";
+  const teamData = teamId != null ? getNBATeam(teamId) : undefined;
+  const teamName = teamData?.code || "TBD";
+  const seed = team?.playoffSeed ?? team?.seed;
   const getTeamCodeColor = () => {
     if (!team) return Colors.midTone;
 
@@ -45,7 +46,7 @@ export const TeamRow = ({
           },
         ]}
       >
-        {team?.seed ?? "-"}
+        {seed ?? "-"}
       </Text>
       <Image source={teamLogo} style={styles.teamLogo} resizeMode="contain" />
       <Text
@@ -54,14 +55,14 @@ export const TeamRow = ({
       >
         {teamName}
       </Text>
-      {score && (
+      {score != null && (
         <View style={styles.winsBadge}>
           <Text numberOfLines={1} style={styles.score}>
             {score}
           </Text>
         </View>
       )}
-      {!score && (
+      {score == null && (
         <View
           style={[
             styles.winsBadge,

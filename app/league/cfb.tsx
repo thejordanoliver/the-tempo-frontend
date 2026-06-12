@@ -1,4 +1,4 @@
-import FootballGamesList from "@/components/Sports/NFL/Games/FootballGamesList";
+import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
 import { cfbConferences } from "@/constants/cfbConferences";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
@@ -20,11 +20,11 @@ import WeekSelector, {
 import NewsList from "../../components/News/NewsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
-} from "../../components/Sports/CFB/ConferenceListModal";
-import { CFBPlayoffBracket } from "../../components/Sports/CFB/Playoffs/CFBPlayoffBracket";
-import { CFBConferenceStandingsList } from "../../components/Sports/CFB/Standings/CFBConferenceStandingsList";
-import { CFBStandingsList } from "../../components/Sports/CFB/Standings/CFBStandingsList";
-import SeasonLeadersList from "../../components/Sports/NFL/SeasonLeaderList";
+} from "../../components/Sports/Football/ConferenceListModal";
+import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
+import { CFBConferenceStandingsList } from "../../components/Sports/Football/Standings/CFBConferenceStandingsList";
+import { CFBStandingsList } from "../../components/Sports/Football/Standings/CFBStandingsList";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useCFPBracket } from "../../hooks/FootballHooks/useCFPBracket";
@@ -224,7 +224,7 @@ export default function CFBLeagueScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="League"
-          league={league}
+          league={"College Football" as "CFB"}
           modalVisible={isDropdownOpen}
           setModalVisible={setIsDropdownOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}

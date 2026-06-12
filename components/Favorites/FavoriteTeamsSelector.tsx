@@ -30,7 +30,7 @@ const FavoriteTeamsSelector = ({
 }: Props) => {
   const styles = useMemo(
     () => createStyles(isGridView, itemWidth),
-    [isGridView, itemWidth]
+    [isGridView, itemWidth],
   );
   const deferredSearch = useDeferredValue(search);
 
@@ -63,7 +63,7 @@ const FavoriteTeamsSelector = ({
     (league: LeagueType, id: string) => {
       toggleFavorite(league, id);
     },
-    [toggleFavorite]
+    [toggleFavorite],
   );
 
   const renderItem = useCallback(
@@ -80,12 +80,12 @@ const FavoriteTeamsSelector = ({
         />
       );
     },
-    [favoritesSet, handleToggle, isGridView, itemWidth]
+    [favoritesSet, handleToggle, isGridView, itemWidth],
   );
 
   const keyExtractor = useCallback(
     (item: LeagueTeam) => `${item.league}-${item.id}`,
-    []
+    [],
   );
 
   const getItemLayout = useCallback(
@@ -99,7 +99,7 @@ const FavoriteTeamsSelector = ({
         index,
       };
     },
-    []
+    [],
   );
 
   if (loading) {

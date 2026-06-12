@@ -1,17 +1,18 @@
+import { CombinedGamesSection } from "@/types/leagues";
 import { filterByDate, getFootballSeason } from "@/utils/dateUtils";
-import { CombinedGamesSection } from "components/League/CombinedGamesList";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useMemo, useState } from "react";
-import { isLiveGame, normalizeGames } from "utils/games";
+import { isGameLive, normalizeGames } from "utils/games";
 import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
 import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
 import { useAllNews } from "./NewsHooks/useAllNews";
+import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -110,6 +111,42 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshFights,
   } = useWeeklyFights();
 
+  const {
+    games: mlsGames,
+    loading: mlsLoading,
+    refreshGames: refreshMLSGames,
+  } = useSoccerGames(selectedDate, "mls");
+
+  const {
+    games: fifaGames,
+    loading: fifaLoading,
+    refreshGames: refreshFIFAGames,
+  } = useSoccerGames(selectedDate, "fifa");
+
+  const {
+    games: eplGames,
+    loading: eplLoading,
+    refreshGames: refreshEPLGames,
+  } = useSoccerGames(selectedDate, "epl");
+
+  const {
+    games: championsGames,
+    loading: championsLoading,
+    refreshGames: refreshChampionsGames,
+  } = useSoccerGames(selectedDate, "champions");
+
+  const {
+    games: europaGames,
+    loading: europaLoading,
+    refreshGames: refreshEuropaGames,
+  } = useSoccerGames(selectedDate, "europa");
+
+  const {
+    games: bundesligaGames,
+    loading: bundesligaLoading,
+    refreshGames: refreshBundesligaGames,
+  } = useSoccerGames(selectedDate, "bundesliga");
+
   // ===========================
   // NORMALIZED DATA
   // ===========================
@@ -157,6 +194,35 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const normalizedWNBA = useMemo(
     () => normalizeGames(wnbaGames, "WNBA"),
     [wnbaGames],
+  );
+
+  const normalizedMLS = useMemo(
+    () => normalizeGames(mlsGames, "MLS"),
+    [mlsGames],
+  );
+  const normalizedFIFA = useMemo(
+    () => normalizeGames(fifaGames, "FIFA"),
+    [fifaGames],
+  );
+
+  const normalizedEuropa = useMemo(
+    () => normalizeGames(europaGames, "EUROPA"),
+    [europaGames],
+  );
+
+  const normalizedChampions = useMemo(
+    () => normalizeGames(championsGames, "CHAMPIONS"),
+    [championsGames],
+  );
+
+  const normalizedEPL = useMemo(
+    () => normalizeGames(eplGames, "EPL"),
+    [eplGames],
+  );
+
+  const normalizedBundesliga = useMemo(
+    () => normalizeGames(bundesligaGames, "BUNDESLIGA"),
+    [bundesligaGames],
   );
 
   // ===========================
@@ -228,6 +294,36 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [normalizedWNBA, safeFilterByDate],
   );
 
+  const filteredMLS = useMemo(
+    () => safeFilterByDate(normalizedMLS, false),
+    [normalizedMLS, safeFilterByDate],
+  );
+
+  const filteredFIFA = useMemo(
+    () => safeFilterByDate(normalizedFIFA, false),
+    [normalizedFIFA, safeFilterByDate],
+  );
+
+  const filteredEPL = useMemo(
+    () => safeFilterByDate(normalizedEPL, false),
+    [normalizedEPL, safeFilterByDate],
+  );
+
+  const filteredCHAMPIONS = useMemo(
+    () => safeFilterByDate(normalizedChampions, false),
+    [normalizedChampions, safeFilterByDate],
+  );
+
+  const filteredEUROPA = useMemo(
+    () => safeFilterByDate(normalizedEuropa, false),
+    [normalizedEuropa, safeFilterByDate],
+  );
+
+  const filteredBUNDESLIGA = useMemo(
+    () => safeFilterByDate(normalizedBundesliga, false),
+    [normalizedBundesliga, safeFilterByDate],
+  );
+
   // ===========================
   // HELPERS
   // ===========================
@@ -247,7 +343,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
 
   const sortLiveFirst = useCallback(
     (games: any[]) =>
-      [...games].sort((a, b) => Number(isLiveGame(b)) - Number(isLiveGame(a))),
+      [...games].sort((a, b) => Number(isGameLive(b)) - Number(isGameLive(a))),
     [],
   );
 
@@ -278,6 +374,12 @@ export function useHomeData(selectedTab: "scores" | "news") {
       ...collect(filteredMensCBB, "CBB"),
       ...collect(filteredWomensCBB, "WCBB"),
       ...collect(filteredWNBA, "WNBA"),
+      ...collect(filteredMLS, "MLS"),
+      ...collect(filteredFIFA, "FIFA"),
+      ...collect(filteredEPL, "EPL"),
+      ...collect(filteredCHAMPIONS, "CHAMPIONS"),
+      ...collect(filteredEUROPA, "EUROPA"),
+      ...collect(filteredBUNDESLIGA, "EUROPA"),
     ];
   }, [
     isFavoriteGame,
@@ -290,6 +392,12 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredMensCBB,
     filteredWomensCBB,
     filteredWNBA,
+    filteredMLS,
+    filteredFIFA,
+    filteredEPL,
+    filteredCHAMPIONS,
+    filteredEUROPA,
+    filteredBUNDESLIGA,
   ]);
 
   // ===========================
@@ -327,6 +435,30 @@ export function useHomeData(selectedTab: "scores" | "news") {
         data: limitNonFavorites(filteredCFB, "CFB"),
       },
       {
+        category: "MLS",
+        data: limitNonFavorites(filteredMLS, "MLS"),
+      },
+      {
+        category: "FIFA World Cup",
+        data: limitNonFavorites(filteredFIFA, "FIFA"),
+      },
+      {
+        category: "UEFA Europa League",
+        data: limitNonFavorites(filteredEUROPA, "EUROPA"),
+      },
+      {
+        category: "UEFA Champions League",
+        data: limitNonFavorites(filteredCHAMPIONS, "CHAMPIONS"),
+      },
+      {
+        category: "English Premiere League",
+        data: limitNonFavorites(filteredEPL, "EPL"),
+      },
+      {
+        category: "German Bundesliga",
+        data: limitNonFavorites(filteredBUNDESLIGA, "BUNDESLIGA"),
+      },
+      {
         category: "Men's College Basketball",
         data: limitNonFavorites(filteredMensCBB, "CBB"),
       },
@@ -358,6 +490,12 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredMensCBB,
     filteredWomensCBB,
     filteredWNBA,
+    filteredMLS,
+    filteredEPL,
+    filteredFIFA,
+    filteredEUROPA,
+    filteredCHAMPIONS,
+    filteredBUNDESLIGA,
     fights,
   ]);
 
@@ -380,6 +518,12 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshMensCBB(),
           refreshWomensCBB(),
           refreshWNBA(),
+          refreshMLSGames(),
+          refreshEPLGames(),
+          refreshFIFAGames(),
+          refreshChampionsGames(),
+          refreshEuropaGames(),
+          refreshBundesligaGames(),
           refreshFights(),
         ]);
       }
@@ -402,6 +546,12 @@ export function useHomeData(selectedTab: "scores" | "news") {
     mensCBBLoading &&
     womensCBBLoading &&
     wnbaLoading &&
+    mlsLoading &&
+    fifaLoading &&
+    eplLoading &&
+    europaLoading &&
+    bundesligaLoading &&
+    championsLoading &&
     loadingFights &&
     gamesByCategory.length === 0;
 
@@ -412,12 +562,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshing,
     handleRefresh,
     gamesByCategory,
-
     newsError,
     errorFights,
     newsLoading,
     articles,
-
     loading: selectedTab === "scores" ? scoresLoading : newsLoading,
   };
 }

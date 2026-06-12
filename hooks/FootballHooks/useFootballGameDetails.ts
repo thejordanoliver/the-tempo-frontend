@@ -1,6 +1,6 @@
-import { Predictor } from "hooks/NBAHooks/useGameDetails";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { Predictor } from "../BasketballHooks/useBasketballGameDetails";
 
 /* ---------------------------------- */
 /* TYPES                              */
@@ -617,8 +617,7 @@ export const useFootballGameDetails = (
   const boxScore = score?.boxScore ?? null;
 
   const playersByCategory = useMemo(
-    () =>
-      getPlayersByCategory(boxScore, score?.homeTeamId, score?.awayTeamId),
+    () => getPlayersByCategory(boxScore, score?.homeTeamId, score?.awayTeamId),
     [boxScore, score?.homeTeamId, score?.awayTeamId],
   );
 

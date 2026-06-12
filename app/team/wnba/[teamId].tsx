@@ -1,6 +1,9 @@
 import BasketballGamesList from "@/components/Sports/Basketball/Games/GamesList";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
-import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
+import {
+  BasketballScheduleMonth,
+  useBasketballTeamGames,
+} from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -27,6 +30,29 @@ import PagerView from "react-native-pager-view";
 import { getWNBASeason, scrollToMonth } from "utils/dateUtils";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
+type MonthSelectorItem = {
+  key: string;
+  year: number;
+  month: number;
+  label: string;
+  count: number;
+};
+
+function getMonthKeyFromDate(date: Date | null) {
+  if (!date) return null;
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0",
+  )}`;
+}
+
+function getMonthIndex(monthGroup: BasketballScheduleMonth) {
+  if (typeof monthGroup.month !== "number") return null;
+
+  return monthGroup.month - 1;
+}
+
 export default function TeamDetailScreen() {
   const league = "WNBA";
   const { resolvedColorScheme } = usePreferences();
@@ -49,6 +75,7 @@ export default function TeamDetailScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
+  const rosterRef = useRef<{ refresh: () => void }>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -95,38 +122,67 @@ export default function TeamDetailScreen() {
   } = useLeaguesNews(league, 10);
 
   const {
-    games: selectedMonthGames,
-    gamesByMonth,
-    selectedMonth,
+    games,
+    months,
     loading: gamesLoading,
+    refreshing: gamesRefreshing,
     error: gamesError,
-    refreshGames,
-  } = useBasketballTeamGames(teamIdNum, {
-    isWNBA: true,
-    selectedDate: selectedDate,
-  });
+    refresh: refreshTeamGames,
+  } = useBasketballTeamGames("wnba", teamIdNum);
+
+  const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
+    return months
+      .map((monthGroup) => {
+        const monthIndex = getMonthIndex(monthGroup);
+
+        if (
+          typeof monthGroup.year !== "number" ||
+          typeof monthIndex !== "number"
+        ) {
+          return null;
+        }
+
+        return {
+          key: monthGroup.key,
+          year: monthGroup.year,
+          month: monthIndex,
+          label: monthGroup.label,
+          count: monthGroup.games.length,
+        };
+      })
+      .filter((monthGroup): monthGroup is MonthSelectorItem =>
+        Boolean(monthGroup),
+      );
+  }, [months]);
 
   const gameCountByMonth = useMemo(() => {
-    return new Map(gamesByMonth.map((group) => [group.key, group.count]));
-  }, [gamesByMonth]);
+    const counts = new Map<string, number>();
 
-  const monthsToShow = useMemo(() => {
-    return gamesByMonth.map((group) => ({
-      key: group.key,
-      year: group.year,
-      month: group.month,
-      label: group.label,
-      count: group.count,
-    }));
-  }, [gamesByMonth]);
+    monthsToShow.forEach((monthGroup) => {
+      counts.set(monthGroup.key, monthGroup.count);
+    });
+
+    return counts;
+  }, [monthsToShow]);
+
+  const selectedMonthKey = useMemo(
+    () => getMonthKeyFromDate(selectedDate),
+    [selectedDate],
+  );
+
+  const selectedMonthGames = useMemo(() => {
+    if (!selectedMonthKey) {
+      return games;
+    }
+
+    return (
+      months.find((monthGroup) => monthGroup.key === selectedMonthKey)?.games ??
+      []
+    );
+  }, [games, months, selectedMonthKey]);
 
   useEffect(() => {
     if (selectedDate || monthsToShow.length === 0) return;
-
-    if (selectedMonth) {
-      setSelectedDate(new Date(selectedMonth.year, selectedMonth.month, 1));
-      return;
-    }
 
     const today = new Date();
 
@@ -136,10 +192,19 @@ export default function TeamDetailScreen() {
         monthGroup.year === today.getFullYear(),
     );
 
-    const start = currentMonth ?? monthsToShow[0];
+    const upcomingMonth = monthsToShow.find((monthGroup) => {
+      if (monthGroup.year > today.getFullYear()) return true;
+
+      return (
+        monthGroup.year === today.getFullYear() &&
+        monthGroup.month >= today.getMonth()
+      );
+    });
+
+    const start = currentMonth ?? upcomingMonth ?? monthsToShow[0];
 
     setSelectedDate(new Date(start.year, start.month, 1));
-  }, [monthsToShow, selectedDate, selectedMonth]);
+  }, [monthsToShow, selectedDate]);
 
   const handleSelectMonth = (month: number, year: number, index: number) => {
     setSelectedDate(new Date(year, month, 1));
@@ -151,7 +216,19 @@ export default function TeamDetailScreen() {
 
     try {
       if (selectedTab === "schedule") {
-        await refreshGames();
+        await refreshTeamGames();
+      }
+
+      if (selectedTab === "news") {
+        await refreshNews();
+      }
+
+      if (selectedTab === "roster") {
+        rosterRef.current?.refresh();
+      }
+
+      if (selectedTab === "stats") {
+        await refreshRosterStats();
       }
     } finally {
       setRefreshing(false);
@@ -166,9 +243,9 @@ export default function TeamDetailScreen() {
           logo={teamLogo}
           teamColor={teamColor}
           onBack={goBack}
-          isTeamScreen={true}
+          isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -177,12 +254,20 @@ export default function TeamDetailScreen() {
   }, [
     navigation,
     team,
+    teamIdNum,
     teamLogo,
     teamColor,
     favorited,
     toggleFavorite,
-    teamIdNum,
   ]);
+
+  if (!team) {
+    return (
+      <View style={styles.loadContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
 
   if (!team) {
     return (
@@ -207,26 +292,25 @@ export default function TeamDetailScreen() {
         initialPage={tabToIndex(selectedTab)}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
-        {/* SCHEDULE*/}
+        {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
-          <View style={styles.monthSelector}>
-            <MonthSelector
-              months={monthsToShow}
-              selectedDate={selectedDate}
-              onSelect={(month, year, index) =>
-                handleSelectMonth(month, year, index)
-              }
-              gameCountByMonth={gameCountByMonth}
-            />
-          </View>
+          <MonthSelector
+            months={monthsToShow}
+            selectedDate={selectedDate}
+            onSelect={(month, year, index) =>
+              handleSelectMonth(month, year, index)
+            }
+            loading={gamesLoading}
+            gameCountByMonth={gameCountByMonth}
+          />
 
           <BasketballGamesList
-            games={selectedMonthGames}
-            loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
+            games={selectedMonthGames as any}
             error={gamesError}
-            showHeaders={false}
+            loading={gamesLoading}
+            refreshing={gamesRefreshing || refreshing}
+            onRefresh={handleRefresh}
+            scrollEnabled={true}
           />
         </View>
 

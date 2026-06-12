@@ -1,3 +1,8 @@
+import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
+import TeamDrives from "@/components/Sports/Football/GameDetails/InjuryReport/TeamDrives";
+import TeamInjuries from "@/components/Sports/Football/GameDetails/InjuryReport/TeamInjuries";
+import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
+import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import {
   FanPredictionVote,
   GameLocation,
@@ -7,11 +12,6 @@ import {
   Officials,
 } from "@/components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import GameLeaders from "@/components/Sports/NFL/GameDetails/GameLeaders";
-import TeamDrives from "@/components/Sports/NFL/GameDetails/InjuryReport/TeamDrives";
-import TeamInjuries from "@/components/Sports/NFL/GameDetails/InjuryReport/TeamInjuries";
-import PlayByPlayField from "@/components/Sports/NFL/GameDetails/PlayByPlayField";
-import TeamScoringSummary from "@/components/Sports/NFL/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -19,7 +19,7 @@ import { formatVenueAddress } from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import NFLGameHeader from "components/Sports/NFL/GameDetails/GameHeader";
+import NFLGameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNeutralVenue } from "constants/neutralVenues";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -104,11 +104,6 @@ export default function GameDetailsScreen(
   const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameId = game?.id ?? 0;
 
-  const { score, playersByCategory, details } = useFootballGameDetails(
-    LEAGUE,
-    gameId,
-  );
-
   const home = game?.home;
   const away = game?.away;
 
@@ -175,9 +170,14 @@ export default function GameDetailsScreen(
         })
       : "TBD";
 
-  const isLoading = !score || !details;
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
+  const { score, playersByCategory, details } = useFootballGameDetails(
+    LEAGUE,
+    gameId,
+  );
+
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";

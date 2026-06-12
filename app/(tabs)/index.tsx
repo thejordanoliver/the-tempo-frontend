@@ -5,7 +5,7 @@ import PagerView from "react-native-pager-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
-import CombinedGamesList from "../../components/League/CombinedGamesList";
+import LeagueGamesList from "../../components/League/LeagueGamesList";
 import { XFeed } from "../../components/League/Social/XFeed";
 import NewsList from "../../components/News/NewsList";
 import TabBar from "../../components/TabBars/TabBar";
@@ -18,11 +18,9 @@ import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 export default function HomeScreen() {
   const { resolvedColorScheme, viewMode } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const styles = homeStyles(isDark, insets.top);
-
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
     "scores",
@@ -100,7 +98,7 @@ export default function HomeScreen() {
                 isDark={isDark}
               />
 
-              <CombinedGamesList
+              <LeagueGamesList
                 gamesByCategory={gamesByCategory}
                 loading={gamesLoading}
                 refreshing={refreshing}

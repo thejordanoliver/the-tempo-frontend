@@ -1,4 +1,4 @@
-import GamesList from "@/components/Sports/NHL/Games/GamesList";
+import GamesList from "@/components/Sports/Hockey/Games/GamesList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { ScheduleMonth, useTeamGames } from "@/hooks/HockeyHooks/useTeamGames";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
