@@ -20,7 +20,6 @@ import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NFLGameHeader from "components/Sports/Football/GameDetails/GameHeader";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams } from "expo-router";
@@ -32,6 +31,7 @@ import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { FootballGameCardProps } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
+import { getVenue } from "../../../constants/venues";
 
 type RouteParams = {
   game?: string | string[];
@@ -196,7 +196,6 @@ export default function GameDetailsScreen(
   const previousDrives = score?.drives?.previous;
   const scoringPlays = score?.scoringPlays;
   const downDistance = score?.possession.downDistanceText;
-  const neutralSite = details?.neutralSite;
   const possessionTeamId = score?.possession.teamId;
   const homeHasPossesion = possessionTeamId === home?.espnId;
   const awayHasPossesion = possessionTeamId === away?.espnId;
@@ -219,28 +218,19 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay ?? "";
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+
+  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (homeTeam?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (homeTeam?.longitude ?? 0);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 

@@ -5,7 +5,6 @@ import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/G
 import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
@@ -20,6 +19,7 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
+import { getVenue } from "../../../../constants/venues";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -69,19 +69,19 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeEspnId = game.home.espnId;
   const awayEspnId = game.away.espnId;
 
-  const home = getNBATeam(homeId);
-  const away = getNBATeam(awayId);
+  const homeTeam = getNBATeam(homeId);
+  const awayTeam = getNBATeam(awayId);
 
-  const homeCode = home?.code || game.home?.shortName;
-  const awayCode = away?.code || game.away?.shortName;
-  const homeName = home?.fullName ?? "";
-  const awayName = away?.fullName ?? "";
+  const homeCode = homeTeam?.code || game.home?.shortName;
+  const awayCode = awayTeam?.code || game.away?.shortName;
+  const homeName = homeTeam?.fullName ?? "";
+  const awayName = awayTeam?.fullName ?? "";
 
   const homeLogo = getTeamLogo(homeId, true);
   const awayLogo = getTeamLogo(awayId, true);
 
-  const homeColor = home?.color ?? "";
-  const awayColor = away?.color ?? "";
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
 
   const headlineText = game?.headline;
   const holidayLabel = getHolidayLabel(gameDate);
@@ -93,7 +93,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
   const { details, score } = useBasketballGameDetails("nba", gameId);
 
-  const isGameLoading = !score || !details || !home || !away;
+  const isGameLoading = !score || !details || !homeTeam || !awayTeam;
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatQuarter(game.status.period);
@@ -135,32 +135,19 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     [String(awayEspnId)]: awayTeamPlayersData.players,
   };
 
-  /* ---------------- Neutral site / venue ---------------- */
-  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : home?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : home?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : home?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : home?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (home?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (home?.longitude ?? 0);
-  const venueAttendance = details?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, game.date);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   const homeScore = score?.home.total;
   const awayScore = score?.away.total;

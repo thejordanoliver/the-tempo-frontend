@@ -1,6 +1,5 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
-import { getNeutralVenue } from "@/constants/neutralVenues";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useWeatherForecast } from "@/hooks/useWeather";
@@ -13,8 +12,13 @@ import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { HockeyGame } from "types/hockey";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import {
+  formatQuarter,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
 import { snapPoints } from "utils/modalUtils";
+import { getVenue } from "../../../../constants/venues";
 import CenterInfo from "../../NBA/GamePreview/CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -101,39 +105,18 @@ export default function HockeyGamePreviewModal({
       }
     : undefined;
 
-  /* ---------------- Neutral site / venue ---------------- */
   const baseVenue = details?.venue;
-  const neutralSite = details?.neutralSite;
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const baseVenueAddress = baseVenue?.address;
-  const baseVenueAddressDisplay = [
-    baseVenueAddress?.city,
-    baseVenueAddress?.state,
-    baseVenueAddress?.zipCode,
-    baseVenueAddress?.country,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddressDisplay;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? null)
-    : (homeTeam?.latitude ?? null);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? null)
-    : (homeTeam?.longitude ?? null);
-  const venueAttendance = details?.venue?.attendance || null;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   return (

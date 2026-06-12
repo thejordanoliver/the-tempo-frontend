@@ -5,35 +5,32 @@ const normalize = (s?: unknown) => {
   return s.toLowerCase().replace(/[^a-z0-9]/g, "");
 };
 
-export function getNeutralVenue(venueName?: string, isNeutralSite?: boolean) {
-  // 🔒 Only allow neutral stadiums if it's actually a neutral-site game
-  if (!isNeutralSite) return null;
-
+export function getVenue(venueName?: string) {
   if (!venueName) return null;
 
   const normalizedInput = normalize(venueName);
 
   // 1. Exact match (fast path)
-  if (neutralVenues[venueName]) {
-    return neutralVenues[venueName];
+  if (venues[venueName]) {
+    return venues[venueName];
   }
 
   // 2. Fuzzy match
-  for (const key of Object.keys(neutralVenues)) {
+  for (const key of Object.keys(venues)) {
     const normalizedKey = normalize(key);
 
     if (
       normalizedInput.includes(normalizedKey) ||
       normalizedKey.includes(normalizedInput)
     ) {
-      return neutralVenues[key];
+      return venues[key];
     }
   }
 
   return null;
 }
 
-export const neutralVenues: Record<string, Venue> = {
+export const venues: Record<string, Venue> = {
   "Etihad Arena": {
     name: "Etihad Arena",
     address:

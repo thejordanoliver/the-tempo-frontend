@@ -5,7 +5,6 @@ import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/G
 import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,6 +18,7 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
+import { getVenue } from "../../../../constants/venues";
 import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -60,26 +60,26 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
     }) || "";
 
   const gameId = game.id;
-   const LEAGUE = game?.league?.code ?? "epl";
+  const LEAGUE = game?.league?.code ?? "epl";
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
 
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
 
-  const home = getSOCCTeam(homeId);
-  const away = getSOCCTeam(awayId);
+  const homeTeam = getSOCCTeam(homeId);
+  const awayTeam = getSOCCTeam(awayId);
 
-  const homeCode = home?.code || game.home?.shortName;
-  const awayCode = away?.code || game.away?.shortName;
-  const homeName = home?.fullName ?? "";
-  const awayName = away?.fullName ?? "";
+  const homeCode = homeTeam?.code || game.home?.shortName;
+  const awayCode = awayTeam?.code || game.away?.shortName;
+  const homeName = homeTeam?.fullName ?? "";
+  const awayName = awayTeam?.fullName ?? "";
 
   const homeLogo = getSOCCTeamLogo(homeId, true);
   const awayLogo = getSOCCTeamLogo(awayId, true);
 
-  const homeColor = home?.color ?? "";
-  const awayColor = away?.color ?? "";
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
 
   const headlineText = game?.headline;
   const holidayLabel = getHolidayLabel(gameDate);
@@ -87,7 +87,7 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const isChampionship = headline?.includes("Final");
   const styles = gamePreviewModalStyle(isChampionship);
 
-  const isGameLoading = !score || !details || !home || !away;
+  const isGameLoading = !score || !details || !homeTeam || !awayTeam;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatQuarter(game.status.period);
   const clock = game.status.clock;
@@ -116,32 +116,19 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE);
 
-  /* ---------------- Neutral site / venue ---------------- */
-  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : home?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : home?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : home?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : home?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (home?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (home?.longitude ?? 0);
-  const venueAttendance = details?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, game.date);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   const homeScore = score?.home.total;
   const awayScore = score?.away.total;

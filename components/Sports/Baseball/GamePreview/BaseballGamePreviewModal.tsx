@@ -1,5 +1,4 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
-import { getNeutralVenue } from "@/constants/neutralVenues";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useWeatherForecast } from "@/hooks/useWeather";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -17,6 +16,7 @@ import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/Gam
 import { BaseballGame } from "types/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
+import { getVenue } from "../../../../constants/venues";
 import { CenterInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 
@@ -123,7 +123,6 @@ export default function BaseballGamePreviewModal({
   const isTopInning = gameStatusDetail.includes("Top");
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-  const neutralSite = game?.isNeutralSite ?? false;
   const headline = game.headline;
   const officials = details?.officials ?? [];
   const outs = game?.situation.outs;
@@ -143,26 +142,15 @@ export default function BaseballGamePreviewModal({
 
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (homeTeam?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (homeTeam?.longitude ?? 0);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 

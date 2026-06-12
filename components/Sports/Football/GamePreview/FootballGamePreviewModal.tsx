@@ -1,6 +1,5 @@
 // ./NFL/GamePreview/NFLGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
-import { getNeutralVenue } from "@/constants/neutralVenues";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -23,6 +22,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { FootballGame } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
+import { getVenue } from "../../../../constants/venues";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 
@@ -69,19 +69,19 @@ export default function FootballGamePreviewModal({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const home = isNFL
+  const homeTeam = isNFL
     ? getNFLTeam(homeId)
     : isCFB
       ? getCFBTeam(homeId)
       : getUFLTeam(homeId);
-  const away = isNFL
+  const awayTeam = isNFL
     ? getNFLTeam(awayId)
     : isCFB
       ? getCFBTeam(awayId)
       : getUFLTeam(awayId);
 
-  const homeCode = home?.code ?? "";
-  const awayCode = away?.code ?? "";
+  const homeCode = homeTeam?.code ?? "";
+  const awayCode = awayTeam?.code ?? "";
 
   const homeLogo = isNFL
     ? getNFLTeamLogo(homeId, true)
@@ -94,13 +94,12 @@ export default function FootballGamePreviewModal({
       ? getCFBTeamLogo(awayId, true)
       : getUFLTeamLogo(awayId, true);
 
-  const homeColor = home?.color ?? "";
-  const awayColor = away?.color ?? "";
+  const homeColor = homeTeam?.color ?? "";
+  const awayColor = awayTeam?.color ?? "";
 
   const { score, details } = useFootballGameDetails(LEAGUE, gameId);
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
-  const neutralSite = game.isNeutralSite;
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
   const inProgress = gameStatusDescription === "In Progress";
@@ -131,8 +130,8 @@ export default function FootballGamePreviewModal({
     game?.headline?.includes("Super Bowl") ??
     game?.headline?.includes("Championship");
   const styles = gamePreviewModalStyle(isChampionship);
-  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
-  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+  const homeHasPossession = inProgress && possessionTeamId === homeTeam?.espnId;
+  const awayHasPossession = inProgress && possessionTeamId === awayTeam?.espnId;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
   const isTie = awayScore === homeScore;
@@ -142,30 +141,21 @@ export default function FootballGamePreviewModal({
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : home?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : home?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : home?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : home?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (home?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (home?.longitude ?? 0);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+
   const isLoading = !!details;
 
   // --------------------------------------------------------------

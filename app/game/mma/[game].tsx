@@ -1,9 +1,9 @@
+import { getVenue } from "../../../constants/venues";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { GameLocation } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -126,19 +126,15 @@ export default function GameDetailsScreen() {
   const displayClock = details?.fight?.status.displayClock ?? "";
   const headline = details?.event?.shortName ?? "";
   const baseVenue = details?.venue;
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, true);
+  const venue = getVenue(baseVenue?.fullName);
   const venueName = baseVenue?.fullName;
-  const venueAddress = neutralVenue?.address;
-  const venueCapacity = neutralVenue?.venueCapacity;
-  const venueImage = neutralVenue?.venueImage ? neutralVenue?.venueImage : null;
-  const venueLocation = neutralVenue?.city;
-  const venueLat = neutralVenue?.latitude ?? 0;
-  const venueLon = neutralVenue?.longitude ?? 0;
-  const { weather } = useWeatherForecast(
-    venueLat,
-    venueLon,
-    gameDateStr,
-  );
+  const venueAddress = venue?.address;
+  const venueCapacity = venue?.venueCapacity;
+  const venueImage = venue?.venueImage ? venue?.venueImage : null;
+  const venueLocation = venue?.city;
+  const venueLat = venue?.latitude ?? 0;
+  const venueLon = venue?.longitude ?? 0;
+  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateStr);
 
   const dontShowDetails = isDelayed || isCanceled || isPostponed;
 

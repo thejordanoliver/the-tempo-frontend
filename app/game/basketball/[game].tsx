@@ -16,6 +16,7 @@ import {
 
 import { getNBATeam } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
@@ -25,7 +26,6 @@ import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor
 import Officials from "components/Sports/NBA/GameDetails/Officials";
 import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
 import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -37,8 +37,12 @@ import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import type { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import {
+  formatQuarter,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
+import { getVenue } from "../../../constants/venues";
 
 type RouteParams = {
   game?: string | string[];
@@ -233,40 +237,20 @@ export default function GameDetailsScreen(
         avatarUrl: p.avatar ?? "",
       })) ?? [];
 
-  /* ---------------- Neutral site / venue ---------------- */
-  const baseVenue = details?.venue;
   const neutralSite = details?.neutralSite;
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const baseVenueAddress = baseVenue?.address;
-  const baseVenueAddressDisplay = [
-    baseVenueAddress?.city,
-    baseVenueAddress?.state,
-    baseVenueAddress?.zipCode,
-    baseVenueAddress?.country,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddressDisplay;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? null)
-    : (homeTeam?.latitude ?? null);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? null)
-    : (homeTeam?.longitude ?? null);
-  const venueAttendance = details?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, "");
+  const baseVenue = details?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   const lineScore = score?.periodScores?.length
     ? {

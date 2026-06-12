@@ -356,7 +356,7 @@ export default function LeagueGamesList({
       );
     }
 
-    // ✅ UFL
+    // ✅ SOCCER
     if (
       category === "MLS" ||
       category === "FIFA World Cup" ||

@@ -19,8 +19,8 @@ import {
   Officials,
 } from "../../../components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { getNeutralVenue } from "../../../constants/neutralVenues";
 import { Colors } from "../../../constants/styles";
+import { getVenue } from "../../../constants/venues";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
 import { useWeatherForecast } from "../../../hooks/useWeather";
@@ -150,7 +150,6 @@ export default function GameDetailsScreen(
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const neutralSite = game?.isNeutralSite ?? false;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const homeWins = homeScore > awayScore;
@@ -176,19 +175,19 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay;
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+
+  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : baseVenue?.fullName;
-  const venueAddress = neutralSite ? neutralVenue?.address : baseVenueAddress;
-  const venueCapacity = neutralSite ? neutralVenue?.venueCapacity : null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : baseVenue?.images?.[0]?.href;
-  const venueLat = neutralSite ? (neutralVenue?.latitude ?? 0) : null;
-  const venueLon = neutralSite ? (neutralVenue?.longitude ?? 0) : null;
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
@@ -345,7 +344,7 @@ export default function GameDetailsScreen(
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}
-              location={""}
+              location={venueLocation}
               address={venueAddress}
               venueCapacity={venueCapacity}
               venueAttendance={venueAttendance}

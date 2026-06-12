@@ -15,11 +15,11 @@ import {
   Officials,
 } from "../../../components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { getNeutralVenue } from "../../../constants/neutralVenues";
 import { Colors } from "../../../constants/styles";
 import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "../../../constants/teamsSB";
+import { getVenue } from "../../../constants/venues";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useBaseballGameDetails } from "../../../hooks/BaseballHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "../../../hooks/BaseballHooks/useLastFiveGames";
@@ -183,7 +183,6 @@ export default function GameDetailsScreen(
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const neutralSite = game?.isNeutralSite ?? false;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const homeWins = homeScore > awayScore;
@@ -216,28 +215,19 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay;
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+
+  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (homeTeam?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (homeTeam?.longitude ?? 0);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
   const venueAttendance = baseVenue?.attendance || null;
   const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 

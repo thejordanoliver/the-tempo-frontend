@@ -17,7 +17,6 @@ import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVo
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
 import Officials from "components/Sports/NBA/GameDetails/Officials";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
@@ -27,6 +26,7 @@ import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
+import { getVenue } from "../../../constants/venues";
 
 type RouteParams = {
   game?: string | string[];
@@ -162,7 +162,6 @@ export default function GameDetailsScreen(
   const officials = details?.officials ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
-  const neutralSite = details?.neutralSite;
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
@@ -170,30 +169,20 @@ export default function GameDetailsScreen(
       }
     : undefined;
 
-  /* ---------------- Neutral site / venue ---------------- */
+  const neutralSite = details?.neutralSite;
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddress;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : homeTeam?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? 0)
-    : (homeTeam?.latitude ?? 0);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? 0)
-    : (homeTeam?.longitude ?? 0);
-  const { weather } = useWeatherForecast(venueLat, venueLon, "");
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   useLayoutEffect(() => {
     if (isLoading || !game || !home || !away) {
@@ -360,7 +349,7 @@ export default function GameDetailsScreen(
               location={venueLocation}
               address={venueAddress}
               venueCapacity={venueCapacity}
-              venueAttendance={undefined}
+              venueAttendance={venueAttendance}
               weather={weather}
               isDark={isDark}
             />

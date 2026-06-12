@@ -24,7 +24,6 @@ import {
   TeamInjuries,
 } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { getNeutralVenue } from "constants/neutralVenues";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -36,7 +35,12 @@ import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import {
+  formatQuarter,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
+import { getVenue } from "../../constants/venues";
 
 type RouteParams = {
   game?: string | string[];
@@ -148,6 +152,13 @@ export default function GameDetailsScreen(
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
+  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
+
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details;
@@ -207,42 +218,21 @@ export default function GameDetailsScreen(
         fouls: p.fouls,
         avatarUrl: p.avatar ?? "",
       })) ?? [];
-  /* ---------------- Hooks ---------------- */
 
-  /* ---------------- Neutral site / venue ---------------- */
-  const baseVenue = details?.venue;
   const neutralSite = details?.neutralSite;
-  const neutralVenue = getNeutralVenue(baseVenue?.fullName, neutralSite);
-  const baseVenueAddress = baseVenue?.address;
-  const baseVenueAddressDisplay = [
-    baseVenueAddress?.city,
-    baseVenueAddress?.state,
-    baseVenueAddress?.zipCode,
-    baseVenueAddress?.country,
-  ]
-    .filter(Boolean)
-    .join(" ");
-  const venueName = neutralSite
-    ? neutralVenue?.name || baseVenue?.fullName
-    : homeTeam?.venueName || baseVenue?.fullName;
-  const venueAddress = neutralSite
-    ? neutralVenue?.address
-    : homeTeam?.address || baseVenueAddressDisplay;
-  const venueCapacity = neutralSite
-    ? neutralVenue?.venueCapacity
-    : homeTeam?.venueCapacity || null;
-  const venueImage = neutralSite
-    ? neutralVenue?.venueImage || baseVenue?.images?.[0]?.href
-    : homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = neutralSite ? neutralVenue?.city : home?.city;
-  const venueLat = neutralSite
-    ? (neutralVenue?.latitude ?? null)
-    : (homeTeam?.latitude ?? null);
-  const venueLon = neutralSite
-    ? (neutralVenue?.longitude ?? null)
-    : (homeTeam?.longitude ?? null);
-  const venueAttendance = details?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, "");
+  const baseVenue = details?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venue = getVenue(baseVenue?.fullName);
+  const venueName = venue?.name || baseVenue?.fullName;
+  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
+  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
+  const venueImage =
+    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
+  const venueLocation = venue?.city || homeTeam?.city;
+  const venueLat = venue?.latitude || homeTeam?.latitude || null;
+  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueAttendance = baseVenue?.attendance || null;
+  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -250,14 +240,6 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
 
   useLayoutEffect(() => {
     if (isLoading || !home || !away) {
