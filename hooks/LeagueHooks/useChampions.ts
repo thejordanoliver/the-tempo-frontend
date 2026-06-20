@@ -1,19 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type ChampionSeason = {
   id: number;
   season: string | number;
   team_name: string;
-
-  // CFB-only (nullable for NBA)
   selector?: string | null;
   era?: string | null;
-
-  // NBA-only (nullable for CFB)
   league?: string | null;
-
   team: {
     id: number;
     code: string;
@@ -27,7 +21,7 @@ export type ChampionSeason = {
 type Options = {
   enabled?: boolean;
   refreshToken?: number;
-  league: LeagueType;
+  league: string;
 };
 
 export function useChampions({

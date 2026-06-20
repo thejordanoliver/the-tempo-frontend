@@ -103,7 +103,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       });
 
       currentIndexRef.current = nextIndex;
-    }, 10000); // ⏱️ 10 seconds
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [highlights]);
@@ -206,8 +206,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   );
 
   if (!highlights || highlights.length === 0) return null;
-
-  if (highlights?.length > 0) return null;
 
   return (
     <View>

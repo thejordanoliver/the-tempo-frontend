@@ -1,3 +1,5 @@
+import { Colors } from "@/constants/styles";
+import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
@@ -31,7 +33,7 @@ export default function NewsCard({ content, isDark }: NewsCardProps) {
     addSuffix: true,
   });
 
-    const handlePress = () => {
+  const handlePress = () => {
     router.push({
       pathname: "/news/[id]",
       params: { id: newsId },
@@ -41,11 +43,19 @@ export default function NewsCard({ content, isDark }: NewsCardProps) {
   return (
     <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
       <View style={styles.card}>
-        <Image
-          source={imageError || !thumbnail ? { uri: "" } : { uri: thumbnail }}
-          onError={() => setImageError(true)}
-          style={styles.thumbnail}
-        />
+        {thumbnail && (
+          <Image source={{ uri: thumbnail }} style={styles.thumbnail} />
+        )}
+        {imageError ||
+          (!thumbnail && (
+            <View style={styles.thumbnailPlaceholder}>
+              <Ionicons
+                name="newspaper-outline"
+                size={100}
+                color={isDark ? Colors.lightGray : Colors.darkGray}
+              />
+            </View>
+          ))}
         <View style={styles.details}>
           <Text numberOfLines={2} style={styles.title}>
             {title}

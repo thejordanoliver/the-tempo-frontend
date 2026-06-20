@@ -1,7 +1,6 @@
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   BoxScore,
-  GameLeaders,
   GameLocation,
   GameTeamStats,
   HeadToHeadGames,
@@ -13,6 +12,7 @@ import {
 } from "components/Sports/NBA/GameDetails";
 import React from "react";
 import { LeagueType } from "types/types";
+import GameLeaders from "../../Basketball/GameDetails/GameLeaders";
 
 type GamePreviewContentProps = {
   homeTeamId: any;
@@ -36,13 +36,13 @@ type GamePreviewContentProps = {
   homeLastGames: { games: any[] };
   awayLastGames: { games: any[] };
   playerStats: any[];
+  leaders: any;
   teamStats: any[];
   officials: any[];
   injuries: any[];
   error?: string | null;
   teamPlayersMap: Record<string, any[]>;
   detailsLoading?: boolean;
-  gameLeaders: any[] | null;
   venueImage?: any;
   venueName?: string;
   venueLocation?: string;
@@ -50,9 +50,7 @@ type GamePreviewContentProps = {
   venueCapacity?: string | null;
   venueAttendance?: number | null;
   weather?: any;
-  gameLeadersLoading: boolean;
-  gameLeadersError: string | null;
-  gameStatusDescription: string;
+  state: string;
   league: LeagueType;
 };
 
@@ -79,9 +77,7 @@ export default function GamePreviewContent({
   officials,
   injuries,
   teamPlayersMap,
-  gameLeadersError,
-  gameLeadersLoading,
-  gameLeaders,
+  leaders,
   venueImage,
   venueName,
   venueLocation,
@@ -89,7 +85,7 @@ export default function GamePreviewContent({
   venueCapacity,
   venueAttendance,
   weather,
-  gameStatusDescription,
+  state,
   league,
 }: GamePreviewContentProps) {
   return (
@@ -103,7 +99,7 @@ export default function GamePreviewContent({
         homeCode={homeCode}
         league={league}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <MatchupPredictor
@@ -117,17 +113,20 @@ export default function GamePreviewContent({
         awayColor={awayColor}
         size={180}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <GameLeaders
-        gameLeaders={gameLeaders}
-        awayTeamId={awayTeamId}
-        homeTeamId={homeTeamId}
-        loading={gameLeadersLoading}
-        error={gameLeadersError}
+        leaders={leaders}
+        homeCode={homeCode}
+        homeLogo={homeLogo}
+        awayCode={awayCode}
+        awayLogo={awayLogo}
+        homeTeamId={Number(homeEspnId)}
+        awayTeamId={Number(awayEspnId)}
+        league={league}
+        state={state}
         isDark
-        gameStatusDescription={gameStatusDescription}
       />
 
       <BoxScore
@@ -140,7 +139,7 @@ export default function GamePreviewContent({
         awayName={awayName}
         isDark
         league={league}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <GameTeamStats
@@ -150,7 +149,7 @@ export default function GamePreviewContent({
         homeCode={homeCode}
         awayCode={awayCode}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <HeadToHeadGames
@@ -174,7 +173,7 @@ export default function GamePreviewContent({
           games: awayLastGames.games,
         }}
         league={league}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <TeamInjuries
@@ -184,11 +183,7 @@ export default function GamePreviewContent({
         isDark
       />
 
-      <Officials
-        officials={officials}
-        gameStatusDescription={gameStatusDescription}
-        isDark
-      />
+      <Officials officials={officials} state={state} isDark />
 
       <GameLocation
         venueImage={venueImage}

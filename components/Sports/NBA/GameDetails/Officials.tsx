@@ -14,18 +14,13 @@ type Official = {
 type Props = {
   officials: Official[];
   isDark: boolean;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
-export default function Officials({
-  officials,
-  isDark,
-  gameStatusDescription,
-}: Props) {
+export default function Officials({ officials, isDark, state }: Props) {
   const styles = officialsStyles(isDark);
 
-  if (!officials || officials.length === 0 || gameStatusDescription === "Final")
-    return null;
+  if (!officials || officials.length === 0 || state === "post") return null;
 
   return (
     <View>

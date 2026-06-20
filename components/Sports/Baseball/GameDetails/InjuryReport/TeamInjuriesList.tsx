@@ -1,9 +1,9 @@
 // TeamInjuriesList.tsx
+import { Player } from "@/hooks/LeagueHooks/useRoster";
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import { Player } from "hooks/MLBHooks/usePlayersByTeam";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
-import { TeamInjury } from "./MLBInjuries";
+import { TeamInjury } from "./TeamInjuries";
 
 type Props = {
   injuries: TeamInjury[];
@@ -37,7 +37,7 @@ export default function TeamInjuriesList({
               const dbPlayer = teamPlayers.find(
                 (p) => String(p.id) === String(espnId),
               );
-              const avatarUrl = dbPlayer?.avatarUrl || DEFAULT_HEADSHOT;
+              const avatarUrl = dbPlayer?.headshot_url || DEFAULT_HEADSHOT;
               const playerName = dbPlayer?.short_name || inj.athlete.fullName;
               const jersey = dbPlayer?.jersey_number || "N/A";
               const position = dbPlayer?.position || "—";

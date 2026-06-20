@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     position: "relative",
     minWidth: "100%", // ⭐ MAKES CENTERING WORK
   },

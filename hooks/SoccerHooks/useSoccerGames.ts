@@ -10,18 +10,9 @@ type FetchGamesOptions = {
 
 const LIVE_STATES = new Set(["in", "half"]);
 
-function isLiveBasketballGame(game: any) {
+function isLiveSoccerGame(game: any) {
   const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress")
-  );
+  return LIVE_STATES.has(state);
 }
 
 export function useSoccerGames(date?: Date, league = "epl") {
@@ -75,7 +66,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
-    return games.some(isLiveBasketballGame);
+    return games.some(isLiveSoccerGame);
   }, [games]);
 
   useEffect(() => {
@@ -83,7 +74,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
 
     const interval = setInterval(() => {
       fetchGames({ silent: true });
-    }, 10000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [hasLiveGame, fetchGames]);

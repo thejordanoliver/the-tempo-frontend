@@ -1,6 +1,8 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
-import { useWeatherForecast } from "@/hooks/useWeather";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import TeamInfo from "components/Sports/Baseball/GamePreview/TeamInfo";
 import { Colors } from "constants/styles";
@@ -16,7 +18,6 @@ import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/Gam
 import { BaseballGame } from "types/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { getVenue } from "../../../../constants/venues";
 import { CenterInfo } from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 
@@ -78,6 +79,8 @@ export default function BaseballGamePreviewModal({
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
+  const homeEspnId = homeTeam?.espnId ?? 0;
+  const awayEspnId = awayTeam?.espnId ?? 0;
   const homeCode = homeTeam?.code ?? homeTeam?.shortName ?? "";
   const awayCode = awayTeam?.code ?? awayTeam?.shortName ?? "";
 
@@ -96,6 +99,12 @@ export default function BaseballGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
+  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
+  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
   const { details, score } = useBaseballGameDetails(
@@ -108,6 +117,7 @@ export default function BaseballGamePreviewModal({
   const styles = gamePreviewModalStyle(isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const state = game?.status?.state;
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -125,6 +135,7 @@ export default function BaseballGamePreviewModal({
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const headline = game.headline;
   const officials = details?.officials ?? [];
+  const injuries = details?.injuries ?? [];
   const outs = game?.situation.outs;
 
   const bases = {
@@ -140,19 +151,23 @@ export default function BaseballGamePreviewModal({
       }
     : undefined;
 
+  const neutralSite = details?.neutralSite;
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "baseball", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? homeTeam?.address ?? baseVenueAddress;
+  const venueCapacity = !neutralSite ? homeTeam?.venueCapacity : null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   return (
     <BottomSheetModal
@@ -244,6 +259,9 @@ export default function BaseballGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  homeId={homeId}
+                  awayId={awayId}
+                  teamPlayersMap={teamPlayersMap}
                   homeLogo={homeLogo}
                   homeCode={homeCode}
                   homeColor={homeColor}
@@ -255,6 +273,7 @@ export default function BaseballGamePreviewModal({
                   homeChance={homeChance}
                   awayChance={awayChance}
                   lineScore={lineScore}
+                  injuries={injuries}
                   weather={weather}
                   venueImage={venueImage}
                   venueCapacity={venueCapacity}
@@ -263,6 +282,7 @@ export default function BaseballGamePreviewModal({
                   venueAddress={venueAddress}
                   venueAttendance={venueAttendance}
                   gameStatusDescription={gameStatusDescription}
+                  state={state}
                   officials={officials}
                   isChampionship={isChampionship}
                   league={LEAGUE}

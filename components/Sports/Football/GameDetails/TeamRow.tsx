@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   FootballTeamRowProps,
-  sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../../assets/icons8/Football.png";
@@ -19,7 +18,7 @@ export const TeamRow = ({
   isHome = false,
   score,
   isWinner,
-  size = "medium",
+
   gameStatusDescription,
   hasPossession = false,
   timeouts,
@@ -45,8 +44,6 @@ export const TeamRow = ({
       router.push(`/team/cfb/${id}`);
     }
   };
-
-
 
   const getScoreStyle = () => {
     if (score == null) {
@@ -97,8 +94,8 @@ export const TeamRow = ({
       <Text
         style={[
           isScheduled
-            ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-            : [styles.score, sizeStyles[size].score, getScoreStyle()],
+            ? [styles.preGameRecord]
+            : [styles.score, getScoreStyle()],
         ]}
       >
         {showRecordInsteadOfScore ? (record ?? "0-0") : score}
@@ -119,7 +116,7 @@ export const TeamRow = ({
 
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={logo} style={sizeStyles[size].logo} />
+          <Image source={logo} style={styles.logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>

@@ -1,27 +1,32 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors } from "constants/styles";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
-import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma";
-import { getBroadcastDisplay } from "utils/games";
-import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
+import {
+  formatPeriod,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { getGameDate } from "utils/nflGameCardUtils";
 import CenterInfo from "./CenterInfo";
 import FighterInfo from "./FighterInfo";
+import GamePreviewContent from "./GamePreviewContent";
+
+const leftStancePlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892206/leftStancePlaceholder_bplhud.png";
+const rightStancePlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892222/rightStancePlaceholder_igoaxo.png";
+const headshotPlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892365/playerPlaceholder_vi9zk3.png";
+
 type Props = {
-  game: MMAFight; // ✅ normalized type, consistent with NBA + Summer League
+  game: MMAFight;
   visible: boolean;
   onClose: () => void;
 };
@@ -29,36 +34,9 @@ type Props = {
 export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
 
-  const gameInfo = game;
-  const firstFighterId = game.fighters.first.id;
-  const secondFighterId = game.fighters.second.id;
-
-  const { fighter: firstFighter } = useMMAFighter(firstFighterId);
-  const { fighter: secondFighter } = useMMAFighter(secondFighterId);
-
-  const firstFighterName = game.fighters.first.info.last_name ?? "";
-  const secondFighterName = game.fighters.second.info.last_name ?? "";
-
-  const firstFighterPhoto = game.fighters.first.info.images[0]?.href ?? "";
-  const secondFighterPhoto = game.fighters.second.info.images[0]?.href ?? "";
-
-  const firstFighterEspnId = game.fighters.first.info.espn_id;
-  const secondFighterEspnId = game.fighters.second.info.espn_id;
-
-  const firstFighterColor = game.fighters.first.info.color ?? "";
-  const secondFighterColor = game.fighters.second.info.color ?? "";
-
-  /* ===============================
-     DATE / TIME
-  =============================== */
-  const timestamp = game?.timestamp;
-
-  const {
-    date: gameDate,
-    iso: gameDateStr,
-    formattedDate,
-    formattedTime,
-  } = getGameDate(timestamp);
+  function isValidDate(date: Date) {
+    return !Number.isNaN(date.getTime());
+  }
 
   // Modal open/close
   useEffect(() => {
@@ -66,39 +44,99 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const { details, loading } = useMMADetails(
-    "ufc",
-    firstFighterEspnId,
-    secondFighterEspnId,
-    gameDateStr,
-  );
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
 
-  const rawWonType = game.result?.wonType ?? "";
-  const firstFighterWinner = game.fighters.first.winner === true;
-  const secondFighterWinner = game.fighters.second.winner === true;
-  const wonType = getDecisionType(
-    rawWonType,
-    game.result?.score,
-    firstFighterWinner,
-    secondFighterWinner,
-  );
-  const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
-  const firstFighterRecord = game.fighters?.first?.info?.record;
-  const secondFighterRecord = game.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description ?? "";
-  const venue = details?.venue;
+  const formattedDate =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleDateString([], {
+          month: "short",
+          day: "numeric",
+        })
+      : "TBD";
 
-  const broadcasts = details?.fight?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-  const period = details?.fight?.status.period ?? 0;
-  const displayClock = details?.fight?.status.displayClock ?? "";
-  const headline = details?.event?.shortName;
-  const isMainEvent = game.is_main === true;
-  const isLiveScoreReady = !!details;
-  const styles = gamePreviewModalStyle(isMainEvent);
-  const isTie =
-    game.fighters.first.winner === false &&
-    game.fighters.second.winner === false;
+  const formattedTime =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "TBD";
+
+  const firstFighter = game?.competitors[0];
+  const secondFighter = game?.competitors[1];
+  const firstFighterId = Number(firstFighter?.id);
+  const secondFighterId = Number(secondFighter?.id);
+  const firstFighterLastName = firstFighter?.lastName ?? "TBD";
+  const secondFighterLastName = secondFighter?.lastName ?? "TBD";
+  const firstFighterName = firstFighter?.shortName ?? "TBD";
+  const secondFighterName = secondFighter?.shortName ?? "TBD";
+  const firstFighterColor = firstFighter?.color;
+  const secondFighterColor = secondFighter?.color;
+  const firstFighterPhoto = firstFighter?.headshot ?? headshotPlaceholder;
+  const secondFighterPhoto = secondFighter?.headshot ?? headshotPlaceholder;
+  const firstFighterStance =
+    firstFighter?.rightStance ?? rightStancePlaceholder;
+  const secondFighterStance =
+    secondFighter?.leftStance ?? leftStancePlaceholder;
+  const firstFighterAge = firstFighter?.age ?? "N/A";
+  const secondFighterAge = secondFighter?.age ?? "N/A";
+  const firstFighterCountry = firstFighter?.associationCountry ?? "N/A";
+  const secondFighterCountry = secondFighter?.associationCountry ?? "N/A";
+  const firstFighterWeight = firstFighter?.weight ?? "N/A";
+  const secondFighterWeight = secondFighter?.weight ?? "N/A";
+  const firstFighterHeight = firstFighter?.height ?? "N/A";
+  const secondFighterHeight = secondFighter?.height ?? "N/A";
+  const firstFighterReach = firstFighter?.reach ?? "N/A";
+  const secondFighterReach = secondFighter?.reach ?? "N/A";
+  const firstFighterFlag = firstFighter?.flag ?? "N/A";
+  const secondFighterFlag = secondFighter?.flag ?? "N/A";
+  const firstFighterRecord = firstFighter?.record ?? "0-0";
+  const secondFighterRecord = secondFighter?.record ?? "0-0";
+  const firstFighterClass = firstFighter?.weightClassShortName ?? "0-0";
+  const secondFighterClass = secondFighter?.weightClassShortName ?? "0-0";
+  const firstFighterWinner = firstFighter?.winner === true;
+  const secondFighterWinner = secondFighter?.winner === true;
+
+  const firstFighterIsChampion = firstFighter?.isChampion ?? false;
+  const secondFighterIsChampion = secondFighter?.isChampion ?? false;
+
+  const gameStatusDescription = game?.status.description;
+  const state = game?.status.state;
+
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+  const headline = game?.headline;
+  const results = game?.method;
+  const broadcasts = game?.broadcasts;
+  const broadcast = getBroadcastDisplay(broadcasts);
+  const period = formatPeriod({ period: game?.status.period, isMMA: true });
+  const clock = game?.status.displayClock;
+
+  const styles = gamePreviewModalStyle();
+
+  const venueId = Number(game?.venue?.id);
+  const { venue } = useVenue({ sport: "mma", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: formattedDate,
+  });
+  const baseVenue = game?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venueName = venue?.name ?? baseVenue?.fullName ?? baseVenue?.name;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity;
+  const venueAttendance = baseVenue?.attendance;
+  const venueImage = venue?.image ?? "";
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   return (
     <BottomSheetModal
@@ -120,17 +158,8 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
     >
       <View style={styles.container}>
         <LinearGradient
-          colors={
-            isMainEvent
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [
-                  secondFighterColor,
-                  secondFighterColor,
-                  firstFighterColor,
-                  firstFighterColor,
-                ]
-          }
-          locations={isMainEvent ? undefined : [0, 0.4, 0.6, 1]}
+          colors={[secondFighterColor, firstFighterColor]}
+          locations={[0, 0.4, 0.6, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
@@ -147,60 +176,82 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          {!isLiveScoreReady ? (
-            <View style={styles.loadingContainer}>
-              <CustomActivityIndicator />
-            </View>
-          ) : (
+          {headline && (
             <>
-              {headline && (
-                <>
-                  {headline && (
-                    <Text style={styles.headlineText}>{headline}</Text>
-                  )}
-                </>
-              )}
-              <View style={styles.gameHeaderContainer}>
-                <FighterInfo
-                  side="away"
-                  logo={secondFighterPhoto}
-                  name={secondFighterName}
-                  record={secondFighterRecord}
-                  gameStatusDescription={gameStatusDescription}
-                  headshot={secondFighterPhoto}
-                  isWinner={secondFighterWinner}
-                  fighter={secondFighter || undefined}
-                />
-                <CenterInfo
-                  isMainEvent={game.is_main}
-                  time={formattedTime}
-                  date={formattedDate}
-                  gameStatusDescription={gameStatusDescription}
-                  gameStatusDetail={resultText}
-                  period={period}
-                  displayClock={displayClock}
-                  broadcastNetworks={broadcastText}
-                  isDark={true}
-                />
-                <FighterInfo
-                  side="home"
-                  logo={firstFighterPhoto}
-                  name={firstFighterName}
-                  record={firstFighterRecord}
-                  gameStatusDescription={gameStatusDescription}
-                  headshot={firstFighterPhoto}
-                  isWinner={firstFighterWinner}
-                  fighter={firstFighter || undefined}
-                />
-              </View>
-              <BottomSheetScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.bottomSheetScrollViewContainer}
-                style={{ flex: 1 }}
-              >
-                <View style={{ gap: 20 }}></View>
-              </BottomSheetScrollView>
+              {headline && <Text style={styles.headlineText}>{headline}</Text>}
             </>
+          )}
+          <View style={styles.gameHeaderContainer}>
+            <FighterInfo
+              side="away"
+              headshot={secondFighterPhoto}
+              flag={secondFighterFlag}
+              name={secondFighterName}
+              record={secondFighterRecord}
+              gameStatusDescription={gameStatusDescription}
+              isWinner={secondFighterWinner}
+            />
+
+            <CenterInfo
+              time={formattedTime}
+              date={formattedDate}
+              period={period}
+              clock={clock}
+              broadcast={broadcast}
+              results={results}
+              gameStatusDescription={gameStatusDescription}
+            />
+
+            <FighterInfo
+              side="home"
+              headshot={firstFighterPhoto}
+              flag={firstFighterFlag}
+              name={firstFighterName}
+              record={firstFighterRecord}
+              gameStatusDescription={gameStatusDescription}
+              isWinner={firstFighterWinner}
+            />
+          </View>
+
+          {/* --- Scrollable Content --- */}
+          {!dontShowDetails && (
+            <GamePreviewContent
+              state={state}
+              firstFighterId={firstFighterId}
+              secondFighterId={secondFighterId}
+              firstFighterStance={firstFighterStance}
+              secondFighterStance={secondFighterStance}
+              firstFighterHeight={firstFighterHeight}
+              firstFighterAge={firstFighterAge}
+              secondFighterAge={secondFighterAge}
+              secondFighterHeight={secondFighterHeight}
+              firstFighterWeight={firstFighterWeight}
+              secondFighterWeight={secondFighterWeight}
+              firstFighterName={firstFighterLastName}
+              secondFighterName={secondFighterLastName}
+              firstFighterFlag={firstFighterFlag}
+              secondFighterFlag={secondFighterFlag}
+              firstFighterCountry={firstFighterCountry}
+              secondFighterCountry={secondFighterCountry}
+              firstFighterRecord={firstFighterRecord}
+              secondFighterRecord={secondFighterRecord}
+              firstFighterClass={firstFighterClass}
+              secondFighterClass={secondFighterClass}
+              firstFighterReach={firstFighterReach}
+              secondFighterReach={secondFighterReach}
+              firstFighterIsWinner={firstFighterWinner}
+              secondFighterIsWinner={secondFighterWinner}
+              secondFighterIsChampion={secondFighterIsChampion}
+              firstFighterIsChampion={firstFighterIsChampion}
+              gameStatusDescription={gameStatusDescription}
+              venueImage={venueImage}
+              venueLocation={venueLocation}
+              venueName={venueName}
+              venueAddress={venueAddress}
+              venueCapacity={venueCapacity}
+              venueAttendance={venueAttendance}
+              weather={weather}
+            />
           )}
         </BlurView>
       </View>

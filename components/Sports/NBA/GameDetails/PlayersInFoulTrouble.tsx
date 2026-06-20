@@ -24,7 +24,7 @@ type Props = {
   awayPlayers: Player[];
   isDark: boolean;
   league: string;
- gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 export default function PlayersInFoulTrouble({
@@ -38,7 +38,7 @@ export default function PlayersInFoulTrouble({
   awayPlayers,
   isDark,
   league = "NBA",
-  gameStatusDescription,
+  state,
 }: Props) {
   const styles = foulTroubleStyles(isDark);
 
@@ -103,10 +103,7 @@ export default function PlayersInFoulTrouble({
     );
   };
 
-  if (
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Final"
-  ) {
+  if (state !== "in") {
     return null;
   }
 

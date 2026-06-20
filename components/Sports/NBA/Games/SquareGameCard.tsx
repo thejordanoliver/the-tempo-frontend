@@ -8,7 +8,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TextStyle, TouchableOpacity, View } from "react-native";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function SquareGameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
@@ -66,8 +66,7 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
   const isChampionship = headline?.includes("NBA Finals");
   const styles = squareGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-
-  const period = formatQuarter(game.status.period);
+  const period = formatPeriod({ period: game.status.period });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;

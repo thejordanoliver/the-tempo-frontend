@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 
 import { Text, View } from "react-native";
 import { headToHeadStyles } from "styles/GameDetailStyles/HeadToHeadStyles";
-import { formatQuarter } from "utils/games";
+import { formatPeriod } from "utils/games";
 
 type Props = {
   game: BasketballGame;
@@ -58,7 +58,7 @@ export default function HeadToHeadGameRow({
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const period = formatQuarter(game.status?.period);
+  const period = formatPeriod(game.status?.period);
   const displayClock = game.status?.clock;
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {

@@ -8,7 +8,7 @@ import {
 } from "styles/ExploreStyles/GameWidgetStyles";
 import { HockeyGame } from "types/hockey";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 type GameWidgetProps = {
@@ -52,7 +52,7 @@ export default function HockeyGameWidget({
   const holidayLabel = getHolidayLabel(gameDate);
 
   const isLoading = !game;
-  const period = formatQuarter(game?.status.period, false, true);
+  const period = formatPeriod({ period: game.status.period, isNHL: true });
   const displayClock = game?.status.clock;
   const homeScore = game?.home.score;
   const awayScore = game?.away.score;
@@ -216,14 +216,14 @@ export default function HockeyGameWidget({
 
             {inProgress && !isHalftime && endOfPeriod && (
               <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period ?? 0)}
+                End of {period}
               </Text>
             )}
 
             {inProgress && !isHalftime && !endOfPeriod && (
               <View style={styles.infoWrapper}>
                 <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period ?? 0)}
+                  {period}
                 </Text>
                 <View style={styles.divider} />
                 {displayClock && (
@@ -306,14 +306,14 @@ export default function HockeyGameWidget({
 
             {inProgress && !isHalftime && endOfPeriod && (
               <Text style={styles.finalText} numberOfLines={1}>
-                End of {formatQuarter(period ?? 0)}
+                End of {period}
               </Text>
             )}
 
             {inProgress && !isHalftime && !endOfPeriod && (
               <View style={styles.infoWrapper}>
                 <Text style={styles.period} numberOfLines={1}>
-                  {formatQuarter(period ?? 0)}
+                  {period}
                 </Text>
                 <View style={styles.divider} />
                 {displayClock && (

@@ -154,7 +154,7 @@ function NewsRow({
 
 export default function NewsWidget({
   isDark,
-  size = "medium",
+
   containerWidth,
   containerHeight,
   widgetId,

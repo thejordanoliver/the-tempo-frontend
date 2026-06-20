@@ -1,176 +1,164 @@
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { apiClient } from "utils/apiClient";
 
 export type WeatherData = {
-  tempFahrenheit: number;
-  description: string;
-  icon: string;
-  cityName: string;
-  datetime: string; // forecast datetime
-  main: string;     // high-level condition, e.g. "Clear", "Clouds", "Rain"
-  localTime?: string; // ISO string of arena's local time (optional)
+  main?: string | null;
+  description?: string | null;
+  icon?: string | null;
+
+  tempFahrenheit?: number | null;
+  tempCelsius?: number | null;
+
+  temp?: number | null;
+  temperature?: number | null;
+  tempFeelsLike?: number | null;
+  humidity?: number | null;
+  windSpeed?: number | null;
+
+  [key: string]: unknown;
 };
 
-
-export type Arena = {
-  name: string;
-  latitude: number;
-  longitude: number;
+type UseWeatherOptions = {
+  lat?: number | string | null;
+  lon?: number | string | null;
+  location?: string | null;
+  date?: string | Date | number | null;
+  enabled?: boolean;
 };
 
-const getWeatherCacheKey = (
-  lat: number | null,
-  lon: number | null,
-  location: string | null,
-  dateStr: string
-) => {
-  if (lat && lon) return `weather_${lat}_${lon}_${dateStr}`;
-  if (location) return `weather_${location}_${dateStr}`;
-  return `weather_unknown_${dateStr}`;
+type UseWeatherReturn = {
+  weather: WeatherData | null;
+  loading: boolean;
+  error: string | null;
+  refetch: () => Promise<WeatherData | null>;
 };
 
-export function useWeatherForecast(
-  lat: number | null,
-  lon: number | null,
-  gameDateStr: string | null,
-  location: string | null = null
-) {
+function pad(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function formatDateForWeatherRoute(date: string | Date | number | null | undefined) {
+  if (!date) return null;
+
+  if (date instanceof Date) {
+    if (Number.isNaN(date.getTime())) return null;
+
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  if (typeof date === "number") {
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) return null;
+
+    return `${parsedDate.getFullYear()}-${pad(parsedDate.getMonth() + 1)}-${pad(
+      parsedDate.getDate()
+    )}T${pad(parsedDate.getHours())}:${pad(parsedDate.getMinutes())}`;
+  }
+
+  let normalized = String(date).trim();
+
+  // Handles malformed value like 2026-06-1507:25
+  normalized = normalized.replace(
+    /^(\d{4}-\d{2}-\d{2})(\d{2}:\d{2})$/,
+    "$1T$2"
+  );
+
+  // Handles ISO strings like 2026-06-15T07:25:00Z
+  const match = normalized.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/);
+
+  return match ? match[1] : normalized;
+}
+
+function hasValidLatLon(lat?: number | string | null, lon?: number | string | null) {
+  if (lat === null || lat === undefined || lon === null || lon === undefined) {
+    return false;
+  }
+
+  const parsedLat = Number(lat);
+  const parsedLon = Number(lon);
+
+  return !Number.isNaN(parsedLat) && !Number.isNaN(parsedLon);
+}
+
+export function useWeather({
+  lat,
+  lon,
+  location,
+  date,
+  enabled = true,
+}: UseWeatherOptions): UseWeatherReturn {
   const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [weatherLoading, setLoading] = useState(false);
-  const [weatherError, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if ((!lat || !lon) && !location) {
-      console.warn("Weather hook skipped due to missing inputs:", {
-        lat,
-        lon,
-        location,
-        gameDateStr,
-      });
-      return;
+  const formattedDate = useMemo(() => formatDateForWeatherRoute(date), [date]);
+
+  const canFetch = useMemo(() => {
+    const hasDate = Boolean(formattedDate);
+    const hasLocation = Boolean(location && String(location).trim().length > 0);
+    const hasCoords = hasValidLatLon(lat, lon);
+
+    return enabled && hasDate && (hasCoords || hasLocation);
+  }, [enabled, formattedDate, lat, lon, location]);
+
+  const refetch = useCallback(async () => {
+    if (!canFetch || !formattedDate) {
+      setWeather(null);
+      setLoading(false);
+      setError(null);
+      return null;
     }
-    if (!gameDateStr) return;
 
-    const cacheKey = getWeatherCacheKey(lat, lon, location, gameDateStr);
-
-    let isActive = true;
-
-    const fetchAndCacheWeather = async () => {
+    try {
       setLoading(true);
       setError(null);
 
-      try {
-        const apiKey = process.env.EXPO_PUBLIC_WEATHER_KEY;
+      const params: Record<string, string | number> = {
+        date: formattedDate,
+      };
 
-        // If lat/lon not provided, resolve from location
-        let resolvedLat = lat;
-        let resolvedLon = lon;
-
-        if ((!resolvedLat || !resolvedLon) && location) {
-          const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-            location
-          )}&limit=1&appid=${apiKey}`;
-          const geoRes = await fetch(geoUrl);
-          if (!geoRes.ok) throw new Error("Failed to geocode location");
-          const geoData = await geoRes.json();
-          if (!geoData[0]) throw new Error("No geocoding results for location");
-
-          resolvedLat = geoData[0].lat;
-          resolvedLon = geoData[0].lon;
-        }
-
-        if (!resolvedLat || !resolvedLon) {
-          throw new Error("No valid coordinates for weather lookup");
-        }
-
-        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${resolvedLat}&lon=${resolvedLon}&units=metric&appid=${apiKey}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch weather forecast");
-        }
-
-        
-
-        const data = await response.json();
-        if (!data.list || data.list.length === 0) {
-          throw new Error("No forecast data returned for this location");
-        }
-
-        // Find closest forecast to game datetime
-        const gameTimestamp = new Date(gameDateStr).getTime();
-        let closestForecast = data.list[0];
-        let minDiff = Math.abs(gameTimestamp - closestForecast.dt * 1000);
-
-        for (const forecast of data.list) {
-          const forecastTimestamp = forecast.dt * 1000;
-          const diff = Math.abs(gameTimestamp - forecastTimestamp);
-          if (diff < minDiff) {
-            minDiff = diff;
-            closestForecast = forecast;
-          }
-        }
-
-        const tempFahrenheit = closestForecast.main.temp * (9 / 5) + 32;
-
-      const freshWeather: WeatherData = {
-  tempFahrenheit,
-  description: closestForecast.weather[0].description,
-  icon: `https://openweathermap.org/img/wn/${closestForecast.weather[0].icon}@2x.png`,
-  cityName: data.city.name,
-  datetime: closestForecast.dt_txt,
-  main: closestForecast.weather[0].main, // e.g. "Rain", "Clear", "Clouds"
-  localTime: new Date(closestForecast.dt * 1000).toISOString(), // optional, ISO string
-};
-
-
-
-        await AsyncStorage.setItem(cacheKey, JSON.stringify(freshWeather));
-
-        if (isActive) {
-          setWeather(freshWeather);
-          setLoading(false);
-        }
-      } catch (err: any) {
-        console.error("Weather fetch error:", err);
-        if (isActive) {
-          setError(err.message);
-          setWeather(null);
-          setLoading(false);
-        }
-      }
-    };
-
-    const loadCachedThenFetch = async () => {
-      try {
-        const cached = await AsyncStorage.getItem(cacheKey);
-        if (cached) {
-          const cachedData: WeatherData = JSON.parse(cached);
-          if (isActive) {
-            setWeather(cachedData);
-            setLoading(false);
-          }
-        } else {
-          setLoading(true);
-        }
-      } catch (err: any) {
-        console.error("Weather cache read error:", err);
-        if (isActive) {
-          setError(err.message);
-          setWeather(null);
-          setLoading(false);
-        }
+      if (hasValidLatLon(lat, lon)) {
+        params.lat = Number(lat);
+        params.lon = Number(lon);
       }
 
-      // Fetch fresh in background regardless
-      fetchAndCacheWeather();
-    };
+      if (location && String(location).trim().length > 0) {
+        params.location = String(location).trim();
+      }
 
-    loadCachedThenFetch();
+      const response = await apiClient.get<WeatherData>("api/weather/forecast", {
+        params,
+      });
 
-    return () => {
-      isActive = false;
-    };
-  }, [lat, lon, location, gameDateStr]);
+      setWeather(response.data);
+      return response.data;
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to fetch weather forecast";
 
-  return { weather, weatherLoading, weatherError };
+      setError(message);
+      setWeather(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [canFetch, formattedDate, lat, lon, location]);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  return {
+    weather,
+    loading,
+    error,
+    refetch,
+  };
 }
+
+export default useWeather;

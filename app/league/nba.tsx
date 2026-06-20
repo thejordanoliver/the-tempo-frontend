@@ -45,20 +45,9 @@ export default function NBALeagueScreen() {
   const styles = getScoresStyles(isDark);
   const { calendar } = useLeagueCalendar(league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-
-  const [selectedDate, setSelectedDate] = React.useState<Date>(
-    dayjs().startOf("day").toDate(),
-  );
-
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const navigation = useNavigation();
-  const [draftYear, setDraftYear] = useState(() =>
-    getDefaultDraftYear("nba").toString(),
-  );
-  const [standingsYear, setStandingsYear] = useState(
-    getNBACalendarSeason().toString(),
-  );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
   const { leaders, loading, error } = useSeasonLeaders();
@@ -66,6 +55,15 @@ export default function NBALeagueScreen() {
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [refreshing, setRefreshing] = useState(false);
   const selectedSeason = getNBACalendarSeason();
+  const [selectedDate, setSelectedDate] = React.useState<Date>(
+    dayjs().startOf("day").toDate(),
+  );
+  const [draftYear, setDraftYear] = useState(() =>
+    getDefaultDraftYear("nba").toString(),
+  );
+  const [standingsYear, setStandingsYear] = useState(
+    getNBACalendarSeason().toString(),
+  );
 
   const {
     games,

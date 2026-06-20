@@ -3,16 +3,19 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   MMAProps,
-  sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
 export const FighterRow = ({
-  fighter,
+  id,
+  headshot,
+  name,
+  flag,
+  record = "0-0",
   isDark,
   isFirstFighter = false,
   isWinner,
-  size = "medium",
+
   gameStatusDescription,
 }: MMAProps) => {
   const router = useRouter();
@@ -21,18 +24,14 @@ export const FighterRow = ({
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
 
-  const record = fighter.record === "-" ? "" : fighter.record;
-  const displayRecord = record ?? "0-0";
   const route = "/player/mma/[id]";
-  // -----------------------------------------------------
-  // Routing
-  // -----------------------------------------------------
+
   const handleTeamPress = () => {
-    if (fighter.id)
+    if (id)
       router.push({
         pathname: route,
         params: {
-          id: fighter.id,
+          id: id,
         },
       });
   };
@@ -41,7 +40,7 @@ export const FighterRow = ({
    * Styles
    * --------------------------------------------------- */
   const getScoreStyle = () => {
-    if (isWinner == false && isFinal) {
+    if (isWinner === false && isFinal) {
       return { color: Colors.midTone, opacity: 0.5 };
     }
 
@@ -67,46 +66,27 @@ export const FighterRow = ({
   // -----------------------------------------------------
   return (
     <View style={styles.row}>
-      {/* Home Score */}
+      {/* First Fighter */}
       {isFirstFighter && (
-        <Text
-          style={[
-            styles.preGameRecord,
-            [styles.preGameRecord, sizeStyles[size].preGameRecord],
-            getScoreStyle(),
-          ]}
-        >
-          {displayRecord}
-        </Text>
+        <Text style={[styles.preGameRecord, getScoreStyle()]}>{record}</Text>
       )}
 
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
           <View style={styles.headshotContainer}>
-            <Image
-              source={{ uri: fighter.headshot }}
-              style={sizeStyles[size].logo}
-            />
+            <Image source={{ uri: headshot }} style={styles.headshot} />
           </View>
         </Pressable>
 
         <View style={styles.teamInfo}>
-          <Text style={styles.teamName}>{fighter.name}</Text>
+          <Text style={styles.teamName}>{name}</Text>
         </View>
       </View>
 
-      {/* Away Score */}
+      {/* Second Fighter */}
       {!isFirstFighter && (
-        <Text
-          style={[
-            styles.preGameRecord,
-            [styles.preGameRecord, sizeStyles[size].preGameRecord],
-            getScoreStyle(),
-          ]}
-        >
-          {displayRecord}
-        </Text>
+        <Text style={[styles.preGameRecord, getScoreStyle()]}>{record}</Text>
       )}
     </View>
   );

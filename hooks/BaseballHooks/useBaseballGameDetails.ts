@@ -6,6 +6,7 @@ import { apiClient } from "utils/apiClient";
 
 export type Venue = {
   id: string;
+  guid: string;
   fullName: string;
   address: {
     city: string;
@@ -238,6 +239,8 @@ export const useBaseballGameDetails = (
       }
     };
   }, [score, score?.status, fetchDetails]);
+
+
 
   const refresh = useCallback(() => {
     if (!skipFetch) fetchDetails(false);

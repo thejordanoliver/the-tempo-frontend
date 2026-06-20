@@ -785,6 +785,7 @@ export const getMLBTeam = (id: number | string) =>
 export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
   const team = mlbTeams.find((t) => String(t.id) === String(id));
   if (!team) return PlaceholderLogo;
+  
   return isDark ? team.logoLight || team.logo : team.logo;
 };
 

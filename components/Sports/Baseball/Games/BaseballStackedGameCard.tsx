@@ -172,15 +172,17 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
 
     if (isFinal)
       return (
-        <View>
+        <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
 
     return (
-      <View>
+      <View style={styles.infoWrapper}>
         <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.statusDivider} />
         <Text style={styles.date}>{formattedTime}</Text>
       </View>
     );

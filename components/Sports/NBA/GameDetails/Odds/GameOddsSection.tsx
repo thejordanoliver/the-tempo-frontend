@@ -14,7 +14,7 @@ export default function GameOddsSection({
   homeLogo,
   league,
   isDark = false,
-  gameStatusDescription,
+  state,
 }: GameOddsSectionProps) {
   const styles = gameOddsStyles(isDark);
 
@@ -38,7 +38,7 @@ export default function GameOddsSection({
     return <OddsSkeleton />;
   }
 
-  if (gameStatusDescription === "Final") return null;
+  if (state === "ind") return null;
 
   return (
     <View>

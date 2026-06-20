@@ -55,8 +55,8 @@ export default function Button({
 const buttonStyles = (isDark: boolean) =>
   StyleSheet.create({
     button: {
-      padding: 12,
-      borderRadius: 100,
+      padding: 16,
+      borderRadius: 12,
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",

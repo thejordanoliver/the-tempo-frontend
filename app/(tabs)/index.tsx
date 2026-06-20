@@ -113,7 +113,6 @@ export default function HomeScreen() {
           <View key="news" style={{ flex: 1 }}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ paddingBottom: 100 }}
               refreshControl={refreshControl()}
             >
               <XFeed

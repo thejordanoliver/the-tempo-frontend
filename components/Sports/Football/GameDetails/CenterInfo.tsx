@@ -1,12 +1,11 @@
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
 import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
-import { formatQuarter } from "utils/games";
 
 type CenterInfoProps = {
   date: string;
   time: string;
-  period: number | undefined | null;
+  period?: number | string | null;
   clock: string;
   downDistance: string | undefined | null;
   isDark: boolean;
@@ -85,7 +84,7 @@ export function CenterInfo({
         <>
           <View style={styles.infoWrapper}>
             <>
-              <Text style={styles.date}>{formatQuarter(period ?? 0)}</Text>
+              <Text style={styles.date}>{period}</Text>
               <View style={styles.statusDivider} />
               <Text style={styles.clock}>{clock}</Text>
             </>
@@ -98,7 +97,7 @@ export function CenterInfo({
         <>
           <View style={styles.infoWrapper}>
             <>
-              <Text style={styles.date}>{formatQuarter(period ?? 0)}</Text>
+              <Text style={styles.date}>{period}</Text>
               <View style={styles.statusDivider} />
               <Text style={styles.clock}>{clock}</Text>
             </>

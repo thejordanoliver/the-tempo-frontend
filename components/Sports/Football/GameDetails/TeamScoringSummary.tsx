@@ -1,4 +1,5 @@
 import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { formatPeriod } from "@/utils/games";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/styles";
 import { useMemo, useState } from "react";
@@ -113,15 +114,6 @@ export default function TeamScoringSummary({
     });
   }, [plays, selectedTeam]);
 
-  const periodMap: Record<string, string> = {
-    "1": "1st",
-    "2": "2nd",
-    "3": "3rd",
-    "4": "4th",
-    OT: "OT",
-    OVERTIME: "OT",
-  };
-
   if (!loading && plays.length === 0) return null;
 
   if (
@@ -168,28 +160,29 @@ export default function TeamScoringSummary({
         />
 
         <View style={styles.listContainer}>
-          {teamPlays.map((play, index) => (
-            <View
-              key={`${selectedTab}-score-play-${index}`}
-              style={styles.playRow}
-            >
-              <Text style={styles.periodText}>
-                {periodMap[String(play.period?.number)] ?? "-"}
-                <Text style={styles.clockText}>
-                  {" "}
-                  {play.clock?.displayValue ?? ""}
+          {teamPlays.map((play, index) => {
+            const period = formatPeriod({ period: play.period?.number });
+            return (
+              <View
+                key={`${selectedTab}-score-play-${index}`}
+                style={styles.playRow}
+              >
+                <Text style={styles.periodText}>
+                  <Text style={styles.clockText}>
+                    {period} {play.clock?.displayValue ?? ""}
+                  </Text>
                 </Text>
-              </Text>
 
-              <View style={{ flex: 1 }}>
-                <Text style={styles.playDesc}>{play.text}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.playDesc}>{play.text}</Text>
+                </View>
+
+                <Text style={styles.scoreText}>
+                  {play.awayScore}-{play.homeScore}
+                </Text>
               </View>
-
-              <Text style={styles.scoreText}>
-                {play.awayScore}-{play.homeScore}
-              </Text>
-            </View>
-          ))}
+            );
+          })}
 
           {teamPlays.length === 0 && !loading && (
             <Text style={styles.empty}>No scoring plays for this team.</Text>

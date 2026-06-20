@@ -18,11 +18,8 @@ export const forgotPassword = (email: string) =>
 export const verifyResetCode = (email: string, code: string) =>
   apiClient.post("/api/verify-reset-code", { email, code });
 
-export const resetPassword = (
-  email: string,
-  code: string,
-  password: string,
-) => apiClient.post("/api/reset-password", { email, code, password });
+export const resetPassword = (email: string, code: string, password: string) =>
+  apiClient.post("/api/reset-password", { email, code, password });
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 

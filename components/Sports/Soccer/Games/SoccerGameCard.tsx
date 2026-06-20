@@ -2,19 +2,20 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import { SoccerGameCardProps } from "../../../../types/soccer";
 
 export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+
+  const league = game?.league?.id ?? 0;
 
   const handlePress = () => {
     router.push({
@@ -29,7 +30,9 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
+
     const d = new Date(date);
+
     return isNaN(d.getTime()) ? new Date() : d;
   };
 
@@ -41,47 +44,44 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   });
 
   const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
+    gameDate.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
     }) || "";
 
-  const league = game?.league?.id ?? 0;
-
   const home = game.home;
   const away = game.away;
-
-  const homeId = home?.id ?? 0;
-  const awayId = away?.id ?? 0;
-
+  const homeId = Number(home?.id ?? 0);
+  const awayId = Number(away?.id ?? 0);
   const homeTeam = getSOCCTeam(homeId);
   const awayTeam = getSOCCTeam(awayId);
-
-  const homeName = homeTeam?.shortName || homeTeam?.shortName || "TBD";
-  const awayName = awayTeam?.shortName || awayTeam?.shortName || "TBD";
-
+  const homeName = homeTeam?.shortName || homeTeam?.name || home?.name || "TBD";
+  const awayName = awayTeam?.shortName || awayTeam?.name || away?.name || "TBD";
   const homeLogo = getSOCCTeamLogo(homeId, isDark);
   const awayLogo = getSOCCTeamLogo(awayId, isDark);
+  const homeScore = Number(game?.home?.score ?? 0);
+  const awayScore = Number(game?.away?.score ?? 0);
+  const homeRecord = game?.home?.record ?? "0-0-0";
+  const awayRecord = game?.away?.record ?? "0-0-0";
+  const homeWins = Boolean(game?.home?.winner);
+  const awayWins = Boolean(game?.away?.winner);
 
   const holidayLabel = getHolidayLabel(gameDate);
   const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
-  const isChampionship = headline?.includes("Final");
+  const isChampionship = Boolean(headline?.includes("Final"));
   const styles = gameCardStyles(isDark, isChampionship);
+
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const period = formatQuarter(game.status.period);
-  const clock = game.status.clock;
+  const period = formatPeriod({ period: game?.status.period, isSOCC: true });
+  const clock = game.status?.clock;
   const gameStatusDescription = game.status?.description;
-  const gameStatusDetail = game.status.shortDetail;
-  const isFinal = gameStatusDescription === "Full Time";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const gameStatusDetail = game.status?.shortDetail;
+  const inProgress = game.status.state === "in";
+  const isFinal = game.status.state === "post";
+  const isScheduled = game.status.state === "pre";
   const isSuspended = gameStatusDescription === "Suspended";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "First Half" ||
-    gameStatusDescription === "Second Half" ||
-    gameStatusDescription === "End of Period";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -89,29 +89,21 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const homeScore = game?.home?.score ?? 0;
-  const awayScore = game?.away?.score ?? 0;
-  const homeRecord = game?.home?.record ?? "0-0-0";
-  const awayRecord = game?.away?.record ?? "0-0-0";
-
-  // -----------------------------------------------------
-  // SCORE TEXT COMPONENT
-  // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
 
   const winnerStyle = (teamWins: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (teamWins ? 1 : 0.5) : 1,
+    opacity: !isFinal || isTie ? 1 : teamWins ? 1 : 0.35,
+    fontWeight: isFinal && teamWins ? ("700" as const) : ("500" as const),
   });
 
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    teamWins = false,
   }: {
-    score: number | undefined;
-    record: string | undefined;
+    score: number;
+    record: string;
     teamWins: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
@@ -130,7 +122,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   };
 
   const renderStatus = () => {
-    if (inProgress)
+    if (inProgress) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
@@ -138,15 +130,21 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );
+    }
 
-    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
+    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended) {
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+    }
 
-    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+    if (isHalftime) {
+      return <Text style={styles.finalText}>Halftime</Text>;
+    }
 
-    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+    if (endOfPeriod) {
+      return <Text style={styles.clock}>End of {period}</Text>;
+    }
 
-    if (isFinal)
+    if (isFinal) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusDetail}</Text>
@@ -154,6 +152,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
+    }
 
     return (
       <View style={styles.infoWrapper}>
@@ -166,38 +165,34 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
       <View style={styles.teamSection}>
         <Image
-          source={awayLogo}
+          source={{ uri: awayLogo }}
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
         />
         <Text style={styles.teamName}>{awayName}</Text>
       </View>
-      {/* Away Score / Record */}
+
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-      {/* headline */}
       <View style={styles.headlineContainer}>
-        <Text style={[styles.headlineText]}>{headline}</Text>
+        <Text style={styles.headlineText}>{headline}</Text>
       </View>
 
-      {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
+
         {!isFinal && broadcast && (
           <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>
 
-      {/* Home Score / Record */}
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
 
-      {/* Home Team */}
       <View style={styles.teamSection}>
         <Image
-          source={homeLogo}
+          source={{ uri: homeLogo }}
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
         />
@@ -210,11 +205,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
     <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
-          colors={
-            isDark
-              ? ["#846f4a", "#50412a"]
-              : (["#dbb145ff", "#CDA765"] as [string, string])
-          }
+          colors={isDark ? ["#846f4a", "#50412a"] : ["#dbb145ff", "#CDA765"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.card}

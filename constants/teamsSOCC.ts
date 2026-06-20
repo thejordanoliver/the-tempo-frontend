@@ -1,5 +1,6 @@
 import { SoccerTeam } from "@/types/soccer";
-import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
+const placeholderLogo =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
 
 export const soccerTeams: SoccerTeam[] = [
   {
@@ -3718,7 +3719,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 93,
@@ -3741,7 +3742,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 1068,
@@ -3764,7 +3765,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 83,
@@ -3787,7 +3788,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 85,
@@ -3810,7 +3811,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 3751,
@@ -3833,7 +3834,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 88,
@@ -3856,7 +3857,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 2922,
@@ -3879,7 +3880,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 9812,
@@ -3902,7 +3903,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 1538,
@@ -3925,7 +3926,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 84,
@@ -3948,7 +3949,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 97,
@@ -3971,7 +3972,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 101,
@@ -3994,7 +3995,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 244,
@@ -4017,7 +4018,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 86,
@@ -4040,7 +4041,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 92,
@@ -4063,7 +4064,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 89,
@@ -4086,7 +4087,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 243,
@@ -4109,7 +4110,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 94,
@@ -4132,7 +4133,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
   {
     id: 102,
@@ -4155,7 +4156,7 @@ export const soccerTeams: SoccerTeam[] = [
     latitude: 0,
     longitude: 0,
     venueImage: undefined,
-    venueCapacity: ""
+    venueCapacity: "",
   },
 ];
 
@@ -4168,13 +4169,12 @@ export function getSOCCTeamLogo(
   id: number | string | undefined,
   isDark: boolean,
 ) {
-  if (!id) return PlaceholderLogo;
-
   const team = soccerTeams.find((t) => String(t.id) === String(id));
+  if (!id || team?.logo === null || "") return placeholderLogo;
 
   return team
     ? isDark
-      ? team.logoLight || team.logo
-      : team.logo
-    : PlaceholderLogo;
+      ? team.logoLight || team.logo || placeholderLogo
+      : team.logo || placeholderLogo
+    : placeholderLogo;
 }

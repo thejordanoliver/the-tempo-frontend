@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { AwardSeason, LeagueType } from "types/types";
+import { AwardCategory, AwardSeason } from "types/types";
 import { apiClient } from "utils/apiClient";
-import { AwardCategory } from "types/types";
 
 type Options = {
   category?: AwardCategory;
-  league?: LeagueType;
+  league?: string;
   playerId?: string; // NBA only
   season?: string;
   enabled?: boolean;

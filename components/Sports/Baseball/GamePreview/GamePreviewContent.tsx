@@ -1,7 +1,7 @@
-import { LeagueType } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
+  LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
@@ -9,11 +9,14 @@ import {
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
 
 type GamePreviewContentProps = {
+  homeId: number;
   homeColor: string;
   homeCode: string;
   homeLogo: any;
+  awayId: number;
   awayColor: string;
   awayCode: string;
   awayLogo: any;
@@ -26,6 +29,8 @@ type GamePreviewContentProps = {
   homeLastGames: { games: any[] };
   awayLastGames: { games: any[] };
   officials: any[];
+  injuries: any[];
+  teamPlayersMap: Record<string, any[]>;
   error?: string | null;
   venueImage?: any;
   venueName?: string;
@@ -36,18 +41,25 @@ type GamePreviewContentProps = {
   weather?: any;
   gameStatusDescription: string;
   league: string;
+  state: string;
   isChampionship: boolean;
 };
 
 export default function GamePreviewContent({
+  homeId,
   homeColor,
   homeCode,
   homeLogo,
+  awayId,
   awayColor,
   awayCode,
   awayLogo,
+  homeLastGames,
+  awayLastGames,
   lineScore,
   officials,
+  injuries,
+  teamPlayersMap,
   homeChance,
   awayChance,
   venueImage,
@@ -58,7 +70,7 @@ export default function GamePreviewContent({
   venueAttendance,
   weather,
   isChampionship,
-  gameStatusDescription,
+  state,
   league,
 }: GamePreviewContentProps) {
   const styles = gamePreviewModalStyle(isChampionship);
@@ -80,7 +92,7 @@ export default function GamePreviewContent({
           awayColor={awayColor}
           size={180}
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={state}
         />
 
         <LineScore
@@ -88,14 +100,32 @@ export default function GamePreviewContent({
           homeCode={homeCode}
           awayCode={awayCode}
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={state}
           league={league}
         />
 
-        <Officials
-          officials={officials ?? []}
+        <Officials officials={officials ?? []} isDark state={state} />
+
+        <LastFiveGames
+          home={{
+            teamId: homeId,
+            teamCode: homeCode,
+            games: homeLastGames.games,
+          }}
+          away={{
+            teamId: awayId,
+            teamCode: awayCode,
+            games: awayLastGames.games,
+          }}
+          league={league}
+          state={state}
           isDark
-          gameStatusDescription={gameStatusDescription}
+        />
+
+        <TeamInjuries
+          injuries={injuries}
+          teamPlayersMap={teamPlayersMap}
+          isDark
         />
 
         <GameLocation

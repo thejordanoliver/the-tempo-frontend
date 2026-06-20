@@ -8,7 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function StackedGameCard({
   game,
@@ -70,7 +70,7 @@ export default function StackedGameCard({
   const isChampionship = headline?.includes("NBA Finals");
   const styles = stackedGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const period = formatQuarter(game.status.period);
+  const period = formatPeriod({ period: game.status.period });
   const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
@@ -214,22 +214,22 @@ export default function StackedGameCard({
 
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
-        {isChampionship ? (
-          <LinearGradient
-            colors={
-              isDark
-                ? ["#846f4a", "#50412a"]
-                : (["#dbb145ff", "#CDA765"] as [string, string])
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.card}
-          >
-            {renderCardContent()}
-          </LinearGradient>
-        ) : (
-          <View style={styles.card}>{renderCardContent()}</View>
-        )}
-      </TouchableOpacity>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
+    </TouchableOpacity>
   );
 }

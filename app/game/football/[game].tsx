@@ -15,7 +15,8 @@ import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/Ga
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { formatVenueAddress } from "@/utils/games";
+import { useVenue } from "@/hooks/useVenue";
+import { formatPeriod, formatVenueAddress } from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -25,13 +26,12 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams } from "expo-router";
 import { useLastFiveGames } from "hooks/FootballHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
-import { useWeatherForecast } from "hooks/useWeather";
+import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { FootballGameCardProps } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
-import { getVenue } from "../../../constants/venues";
 
 type RouteParams = {
   game?: string | string[];
@@ -101,9 +101,27 @@ export default function GameDetailsScreen(
   const LEAGUE = game?.league?.code ?? "nfl";
   const isCFB = LEAGUE === "cfb";
   const isUFL = LEAGUE === "ufl";
-  const gameDateObj = game?.date ? new Date(game.date) : null;
-  const gameId = game?.id ?? 0;
 
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
+  const formattedDate =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleDateString([], {
+          month: "short",
+          day: "numeric",
+        })
+      : "TBD";
+
+  const formattedTime =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "TBD";
+
+  const gameId = game?.id ?? 0;
   const home = game?.home;
   const away = game?.away;
 
@@ -154,22 +172,6 @@ export default function GameDetailsScreen(
   const awayColor = useMemo(() => awayTeam?.color, [awayTeam?.color]);
   const homeColor = useMemo(() => homeTeam?.color, [homeTeam?.color]);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
-
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
   const { score, playersByCategory, details } = useFootballGameDetails(
@@ -179,14 +181,17 @@ export default function GameDetailsScreen(
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const state = game?.status.state;
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
-  const dontShowDetails = isCanceled || isDelayed || isPostponed || isForfeited;
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.displayClock ?? "0:00";
-  const period = score?.period;
+  const period = formatPeriod({ period: game?.status.period });
   const redzone = score?.possession?.isRedZone;
   const headlineText = details?.headline;
   const holidayLabel = getHolidayLabel(gameDateObj);
@@ -220,19 +225,23 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights ?? [];
 
   const neutralSite = details?.neutralSite;
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "football", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
+
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
-  const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
+  const venueAttendance = baseVenue?.attendance ?? null;
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   useLayoutEffect(() => {
     if (isLoading || !game || !home || !away) {
@@ -338,7 +347,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeHeaderLogo}
               homeColor={homeColor}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LineScore
@@ -346,7 +355,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               awayCode={awayCode}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
               league={LEAGUE}
             />
 
@@ -410,8 +419,8 @@ export default function GameDetailsScreen(
                 games: awayLastGames.games,
               }}
               isDark={isDark}
-              league={LEAGUE.toUpperCase()}
-              gameStatusDescription={gameStatusDescription}
+              league={LEAGUE}
+              state={state}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -424,14 +433,10 @@ export default function GameDetailsScreen(
               homeTeamId={homeTeam.espnId}
               awayTeamAbbr={awayTeam.code}
               homeTeamAbbr={homeTeam.code}
-              isDark
+              isDark={isDark}
             />
 
-            <Officials
-              officials={officials}
-              isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
-            />
+            <Officials officials={officials} isDark={isDark} state={state} />
 
             <GameLocation
               venueImage={venueImage}
@@ -448,11 +453,14 @@ export default function GameDetailsScreen(
           </View>
         )}
       </ScrollView>
-      <GameLiveChatOverlay
-        gameId={String(game.id)}
-        opacityAnim={opacityAnim}
-        gameStatusDescription={gameStatusDescription}
-      />
+
+      {!dontShowDetails && (
+        <GameLiveChatOverlay
+          gameId={String(game.id)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
+      )}
     </>
   );
 }

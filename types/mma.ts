@@ -1,62 +1,332 @@
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
+import { Venue } from "./types";
+export type NullableString = string | null;
 
-export interface MMAEvent {
-  slug: string;
-  date: string;
-  timestamp: number;
-  timezone: string;
-  mainCard: MMAFight[];
-  prelims: MMAFight[];
-}
+export type MMALeagueInfo = {
+  id: string;
+  uid?: NullableString;
+  code?: NullableString;
+  name: string;
+  slug?: NullableString;
+};
+
+export type MMASeason = {
+  year?: number | null;
+  type?: number | null;
+  slug?: NullableString;
+};
+
+export type MMAStatusState = "pre" | "in" | "post" | string;
+
+export type MMAStatus = {
+  state: MMAStatusState;
+  description: string;
+  detail: string;
+  shortDetail: string;
+  period: number;
+  clock: number;
+  displayClock: string;
+  completed: boolean;
+  statusPrimary: NullableString;
+};
+
+export type RawMMAStatus = {
+  clock?: number;
+  displayClock?: string;
+  period?: number;
+  type?: {
+    id?: string;
+    name?: string;
+    state?: MMAStatusState;
+    completed?: boolean;
+    description?: string;
+    detail?: string;
+    shortDetail?: string;
+  };
+};
+
+export type MMAFlag = {
+  href: string;
+  alt?: NullableString;
+  rel?: string[];
+};
+
+export type MMAAccolade = {
+  id: string;
+  name: string;
+  type: string;
+};
+
+export type MMARecord = {
+  name?: string;
+  abbreviation?: string;
+  type?: string;
+  summary?: string;
+};
+
+export type RawMMAAthlete = {
+  id?: string;
+  uid?: string;
+  type?: string;
+  order?: number;
+  winner?: boolean;
+  athlete?: {
+    fullName?: string;
+    displayName?: string;
+    shortName?: string;
+    flag?: MMAFlag | null;
+    accolades?: MMAAccolade[];
+  };
+  records?: MMARecord[];
+};
+
+export type RawGeoBroadcast = {
+  type?: {
+    id?: NullableString;
+    shortName?: NullableString;
+  };
+  market?: {
+    id?: NullableString;
+    type?: NullableString;
+  };
+  media?: {
+    shortName?: NullableString;
+  };
+  lang?: NullableString;
+  region?: NullableString;
+};
+
+export type GeoBroadcast = {
+  type?: NullableString;
+  market?: NullableString;
+  media?: NullableString;
+  lang?: NullableString;
+  region?: NullableString;
+};
+
+export type MMABroadcast = {
+  market?: NullableString;
+  names?: string[];
+};
+
+export type MMADBEnrichedFighterFields = {
+  firstName?: NullableString;
+  lastName?: NullableString;
+  nickname?: NullableString;
+  fullName?: NullableString;
+
+  apiRef?: NullableString;
+  guid?: NullableString;
+  slug?: NullableString;
+
+  weight?: string | number | null;
+  height?: NullableString;
+  reach?: NullableString;
+  age?: number | null;
+  birthDate?: NullableString;
+  gender?: "M" | "F" | "MALE" | "FEMALE" | string | null;
+
+  weightClassId?: NullableString;
+  weightClassText?: NullableString;
+  weightClassShortName?: NullableString;
+  weightClassSlug?: NullableString;
+
+  stanceId?: NullableString;
+  stanceText?: NullableString;
+
+  associationId?: NullableString;
+  associationName?: NullableString;
+  associationCountry?: NullableString;
+
+  styleId?: NullableString;
+  styleText?: NullableString;
+
+  statusId?: NullableString;
+  statusName?: NullableString;
+  statusType?: NullableString;
+  statusAbbreviation?: NullableString;
+
+  active?: boolean | null;
+  linked?: boolean | null;
+  isChampion?: boolean | null;
+
+  citizenship?: NullableString;
+  citizenshipCountryId?: NullableString;
+  citizenshipCountryCode?: NullableString;
+  citizenshipCountryColor?: NullableString;
+  citizenshipCountryAltColor?: NullableString;
+
+  flagUrl?: NullableString;
+  headshotUrl?: NullableString;
+  leftStanceUrl?: NullableString;
+  rightStanceUrl?: NullableString;
+};
+
+export type MMACompetitor = MMADBEnrichedFighterFields & {
+  id?: string;
+  uid?: NullableString;
+  name?: string;
+  firstName?: NullableString;
+  lastName?: NullableString;
+  nickname?: NullableString;
+  shortName: NullableString;
+  headshot?: NullableString;
+  leftStance?: NullableString;
+  rightStance?: NullableString;
+  flag?: NullableString;
+  country?: NullableString;
+  color: string;
+  secondaryColor: string;
+  record?: NullableString;
+  winner?: boolean | null;
+  homeAway?: NullableString;
+  order?: number | null;
+  result?: NullableString;
+  raw?: RawMMAAthlete;
+};
+
+export type RawMMAFight = {
+  id: string;
+  uid: string;
+  date?: NullableString;
+  endDate?: NullableString;
+  type?: {
+    id?: string;
+    abbreviation?: string;
+  };
+  timeValid?: boolean;
+  neutralSite?: boolean;
+  playByPlayAvailable?: boolean;
+  recent?: boolean;
+  venue?: Venue;
+  competitors?: RawMMAAthlete[];
+  status?: RawMMAStatus;
+  broadcasts?: MMABroadcast[];
+  format?: {
+    regulation?: {
+      periods?: number;
+    };
+  };
+  startDate?: NullableString;
+  broadcast?: NullableString;
+  geoBroadcasts?: RawGeoBroadcast[];
+  highlights?: any[];
+};
 
 export type MMAFight = {
-  id: number;
-  date: string | null;
-  time: string | null;
-  timestamp: number;
-  timezone: string | null;
-  slug: string | null;
-  is_main: boolean;
-  category: string | null;
+  id: string;
+  uid: string;
+  name: string;
+  shortName: string;
 
-  status: {
-    long: string | null;
-    short: string | null;
-  };
+  status: MMAStatus;
 
-  fighters: {
-    first: {
-      id: number;
-      name: string | null;
-      logo: string | null;
-      winner: boolean | null;
-      info: MMAFighter;
-    };
-    second: {
-      id: number;
-      name: string | null;
-      logo: string | null;
-      winner: boolean | null;
-      info: MMAFighter;
-    };
-  };
+  weightClass?: NullableString;
+  cardSegment?: NullableString;
+  headline?: NullableString;
 
-  result: {
-    wonType: string | null;
-    round: number;
-    minute: string | null;
-    koType: string | null;
-    target: string | null;
-    subType: string | null;
-    score: string[];
-  };
+  competitors: MMACompetitor[];
+  winner?: MMACompetitor | null;
+
+  method?: NullableString;
+  round?: number | null;
+  time?: NullableString;
+  order?: number | null;
+
+  raw?: RawMMAFight;
+
+  gameId?: string | number | null;
+  eventId?: string | number | null;
+  parentEventId?: string | number | null;
+
+  league?: MMALeagueInfo | null;
+  season?: MMASeason | null;
+
+  date?: NullableString;
+  startDate?: NullableString;
+  timestamp?: number | null;
+
+  venue?: Venue;
+  broadcasts?: string[];
+  geoBroadcasts?: GeoBroadcast[];
+
+  eventName?: NullableString;
+  eventShortName?: NullableString;
+  parentEvent?: MMAEvent | null;
+  mainEvent?: MMAFight | null;
+  fights?: MMAFight[];
+};
+
+export type MMATeamLikeFighter = Pick<
+  MMADBEnrichedFighterFields,
+  | "nickname"
+  | "weightClassText"
+  | "stanceText"
+  | "associationName"
+  | "statusType"
+  | "active"
+  | "isChampion"
+> & {
+  id?: string;
+  name?: string;
+  shortName?: NullableString;
+  code?: NullableString;
+  logo?: NullableString;
+  record?: NullableString;
+  winner?: boolean | null;
+};
+
+export type MMAEvent = {
+  league: MMALeagueInfo;
+
+  id: string;
+  uid: string;
+  name: string;
+  shortName: string;
+  headline?: NullableString;
+
+  date: string;
+  startDate: string;
+  timestamp?: number | null;
+
+  season?: MMASeason | null;
+  status: MMAStatus;
+
+  venue?: Venue | null;
+  broadcasts: string[];
+  geoBroadcasts?: GeoBroadcast[];
+
+  fights: MMAFight[];
+  mainEvent?: MMAFight | null;
+
+  competitors?: MMACompetitor[];
+
+  home?: MMATeamLikeFighter | null;
+  away?: MMATeamLikeFighter | null;
+
+  isNeutralSite?: boolean;
+  attendance?: number | null;
+  playByPlayAvailable?: boolean;
+  recent?: boolean;
+  wasSuspended?: boolean;
+
+  raw?: any;
+};
+
+export type MMAGamesResponse = {
+  league: string;
+  leagueInfo: MMALeagueInfo;
+  season: MMASeason | null;
+  date: string;
+  count: number;
+  events: MMAEvent[];
+  games?: MMAEvent[];
 };
 
 export type MMAFightCardProps = {
   game: MMAFight;
 };
-
-export type MMAFighter = {
+export type MMAAthlete = {
   id: number; // API Sports ID
   espn_id: string | null; // ESPN ID can be null
   first_name: string;
@@ -93,37 +363,105 @@ export type MMAFighter = {
   alternate_color: string | null;
 };
 
-export type MMAChampion = {
-  championship_id: string;
-  reign: number;
-  is_current: boolean;
-  won_title_date: string;
-  lost_title_date: string | null;
-  method: string;
-  opponent: string;
-  event: string;
-  defenses: number;
-  notes: string | null;
-  fighter: MMAFighter;
-};
-
 export type MMADivision =
   | "Heavyweight"
   | "Light Heavyweight"
   | "Middleweight"
   | "Welterweight"
   | "Lightweight"
-  | "Men's Featherweight"
-  | "Men's Bantamweight"
-  | "Men's Flyweight"
+  | "Featherweight"
+  | "Bantamweight"
+  | "Flyweight"
   | "Women's Featherweight"
   | "Women's Bantamweight"
   | "Women's Flyweight"
   | "Women's Strawweight";
 
-export type MMAChampionsResponse = Record<MMADivision, MMAChampion[]>;
+export type MMAChampionFighter = MMAAthlete & {
+  api_ref?: string | null;
+  uid?: string | null;
+  guid?: string | null;
 
-export const emptyFighter: MMAFighter = {
+  first_name?: string | null;
+  last_name?: string | null;
+  full_name?: string | null;
+  display_name?: string | null;
+  short_name?: string | null;
+  nickname?: string | null;
+  slug?: string | null;
+
+  weight?: string | number | null;
+  height?: string | null;
+  reach?: string | null;
+  age?: number | null;
+  birth_date?: string | null;
+  date_of_birth?: string | null;
+  gender?: string | null;
+
+  active?: boolean | null;
+  linked?: boolean | null;
+
+  citizenship?: string | null;
+  citizenship_country_id?: string | null;
+  citizenship_country_code?: string | null;
+  citizenship_country_color?: string | null;
+  citizenship_country_alt_color?: string | null;
+  flag_url?: string | null;
+
+  headshot_url?: string | null;
+  left_stance_url?: string | null;
+  right_stance_url?: string | null;
+
+  weight_class_id?: string | null;
+  weight_class_text?: string | null;
+  weight_class_short_name?: string | null;
+  weight_class_slug?: string | null;
+
+  stance_id?: string | null;
+  stance_text?: string | null;
+
+  association_id?: string | null;
+  association_name?: string | null;
+  association_country?: string | null;
+
+  style_id?: string | null;
+  style_text?: string | null;
+
+  status_id?: string | null;
+  status_name?: string | null;
+  status_type?: string | null;
+  status_abbreviation?: string | null;
+
+  statistics_ref?: string | null;
+  records_ref?: string | null;
+
+  record?: string | null;
+};
+
+export type MMAChampion = {
+  fighter_id: string | number;
+
+  accolade_key: string | number | null;
+  accolade_id: string | number | null;
+  accolade_name: string;
+  accolade_type: string | null;
+
+  division: MMADivision | string | null;
+  division_slug: string | null;
+
+  is_current: boolean | null;
+
+  created_at: string | null;
+  updated_at: string | null;
+
+  fighter: MMAChampionFighter;
+};
+
+export type MMAChampionsResponse = Partial<
+  Record<MMADivision | string, MMAChampion[]>
+>;
+
+export const emptyFighter: MMAAthlete = {
   id: 0,
   espn_id: null,
   first_name: "Unknown",

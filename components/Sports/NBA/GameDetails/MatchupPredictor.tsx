@@ -15,7 +15,7 @@ interface Props {
   awayChance: number;
   size?: number;
   isDark: boolean;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 }
 
 const MatchupPredictor: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const MatchupPredictor: React.FC<Props> = ({
   awayChance,
   size = 184,
   isDark,
-  gameStatusDescription,
+  state,
 }) => {
   const styles = mathupPredictorStyles(isDark);
   const strokeWidth = 10;
@@ -125,7 +125,7 @@ const MatchupPredictor: React.FC<Props> = ({
   const dividerBottom = 50 + dividerHeight / 2;
 
   if (!homeChance || !awayChance) return null;
-  if (gameStatusDescription === "In Progress") return null;
+  if (state === "In Progress") return null;
 
   return (
     <View style={styles.outerContainer}>

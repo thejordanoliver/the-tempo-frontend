@@ -4,17 +4,24 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { MMAFightCardProps } from "types/mma";
-import { formatRound, getBroadcastDisplay } from "utils/games";
-import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
+import { formatPeriod, formatRound, getBroadcastDisplay } from "utils/games";
 
 export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const handlePress = () => {
+    router.push({
+      pathname: "/game/mma/[game]",
+      params: {
+        game: String(game.id),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    });
+  };
 
   const safeDate = (date?: string | null) => {
     if (!date) return new Date();
@@ -23,7 +30,6 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   };
 
   const gameDate = safeDate(game.date);
-  const gameDateStr = gameDate.toISOString();
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",
@@ -36,42 +42,22 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
       hour12: true,
     }) || "";
 
-  const firstFighterName =
-    game.fighters?.first?.info?.full_name ?? game.fighters.first.name;
-  const secondFighterName =
-    game.fighters?.second?.info?.full_name ?? game.fighters.second.name;
+  const firstFighter = game.competitors[0];
+  const secondFighter = game.competitors[1];
+  const firstFighterName = firstFighter?.shortName ?? "TBD";
+  const secondFighterName = secondFighter?.shortName ?? "TBD";
+  const firstFighterPhoto = firstFighter?.headshot ?? placeholderImage;
+  const secondFighterPhoto = secondFighter?.headshot ?? placeholderImage;
+  const firstFighterFlag = firstFighter?.flag ?? "";
+  const secondFighterFlag = secondFighter?.flag ?? "";
+  const firstFighterRecord = firstFighter?.record ?? "0-0";
+  const secondFighterRecord = secondFighter?.record ?? "0-0";
+  const firstFighterWinner = firstFighter.winner === true;
+  const secondFighterWinner = secondFighter.winner === true;
 
-  const firstFighterPhoto =
-    game.fighters?.first?.info?.images[0]?.href ?? placeholderImage;
-  const secondFighterPhoto =
-    game.fighters?.second?.info?.images[0]?.href ?? placeholderImage;
-  const firstFighterFlag = game.fighters?.first?.info?.flag_url ?? "";
-  const secondFighterFlag = game.fighters?.second?.info?.flag_url ?? "";
-
-  const firstFighterEspnId = game.fighters?.first?.info?.espn_id;
-  const secondFighterEspnId = game.fighters?.second?.info?.espn_id;
-
-  const { details } = useMMADetails(
-    "ufc",
-    firstFighterEspnId,
-    secondFighterEspnId,
-    gameDateStr,
-  );
-
-  const rawWonType = game.result?.wonType;
-  const firstFighterWinner = game.fighters.first.winner === true;
-  const secondFighterWinner = game.fighters.second.winner === true;
-  const wonType = getDecisionType(
-    rawWonType ?? "",
-    game.result?.score,
-    firstFighterWinner,
-    secondFighterWinner,
-  );
-  const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
-  const firstFighterRecord = game.fighters?.first?.info?.record;
-  const secondFighterRecord = game.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description;
-  const gameStatusDetail = details?.fight?.status.shortDetail;
+  const resultText = game.method;
+  const gameStatusDescription = game.status.description;
+  const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
@@ -82,16 +68,11 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const inProgress = gameStatusDescription === "In Progress";
   const inWalkouts = gameStatusDescription === "Walkouts";
   const isIntros = gameStatusDescription === "Intros";
-  const broadcasts = details?.fight?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-  const period = details?.fight?.status.period;
-  const displayClock = details?.fight?.status.displayClock;
-  const headline = details?.event?.shortName;
+  const broadcasts = game.broadcasts;
+  const broadcast = getBroadcastDisplay(broadcasts);
+  const period = formatPeriod({ period: game.status.period, isMMA: true });
+  const clock = game.status.displayClock;
   const styles = stackedGameCardStyles(isDark);
-
-  const isTie =
-    game.fighters.first.winner === false &&
-    game.fighters.second.winner === false;
 
   const ScoreText = ({
     record,
@@ -137,7 +118,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{formatRound(period)}</Text>
           <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{displayClock}</Text>
+          <Text style={styles.clock}>{clock}</Text>
         </View>
       );
 
@@ -224,8 +205,8 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcastText && (
-          <Text style={styles.broadcast}>{broadcastText}</Text>
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>
       {/* headlineText */}
@@ -234,15 +215,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() =>
-        router.push({
-          pathname: "/game/mma/[game]",
-          params: { game: JSON.stringify(game) },
-        })
-      }
-    >
+    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

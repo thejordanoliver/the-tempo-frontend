@@ -1,5 +1,3 @@
-import { ImageSourcePropType } from "react-native";
-
 export interface BaseballTeam {
   id: number;
   espnId?: number;
@@ -9,8 +7,8 @@ export interface BaseballTeam {
   code: string;
   color: string | null;
   secondaryColor: string;
-  logo: ImageSourcePropType | null;
-  logoLight: ImageSourcePropType | null;
+  logo: any | null;
+  logoLight: any | null;
   established: number;
   latitude: number;
   longitude: number;
@@ -136,6 +134,21 @@ export type BaseballGame = {
     city: string;
     state: string;
     indoor: boolean;
+  };
+  weather: {
+    displayValue: string;
+    temperature: number;
+    highTemperature: number;
+    conditionId: string;
+    link: {
+      language: string;
+      rel: string[];
+      href: string;
+      text: string;
+      shortText: string;
+      isExternal: boolean;
+      isPremium: boolean;
+    };
   };
   broadcasts: [];
   geoBroadcasts: [];

@@ -11,7 +11,7 @@ import { View } from "react-native";
 
 import { BaseballTeam } from "types/baseball";
 import { BasketballTeam, NBATeam } from "types/basketball";
-import { FootballTeam } from "types/football";
+import { Team } from "types/football";
 import { NHLTeam } from "types/hockey";
 import { LeagueType } from "types/types";
 
@@ -77,7 +77,6 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
             team={t}
           />
 
-          <InfoCard label="Arena" value={t.venueName} team={t} />
           <InfoCard label="Location" value={t.location} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
@@ -85,7 +84,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "CFB": {
-      const t = team as FootballTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -96,7 +95,6 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Stadium" value={t.venueName} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
@@ -122,7 +120,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "NFL": {
-      const t = team as FootballTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -133,7 +131,6 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Stadium" value={t.venueName} team={t} />
         </View>
       );
     }

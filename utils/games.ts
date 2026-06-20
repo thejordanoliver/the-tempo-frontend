@@ -35,24 +35,49 @@ export function isGameLive(game: any) {
   return true;
 }
 
-export const formatQuarter = (
-  period?: number | string,
-  isCBB?: boolean,
-  isNHL?: boolean,
-  statusText?: string,
-) => {
-  if (!period && !statusText) return "";
+type FormatPeriodArgs = {
+  period?: number | string | null;
+  isCBB?: boolean;
+  isNHL?: boolean;
+  isMMA?: boolean;
+  isSOCC?: boolean;
+  statusText?: string | null;
+};
+
+export const formatPeriod = ({
+  period,
+  isCBB = false,
+  isNHL = false,
+  isMMA = false,
+  isSOCC = false,
+  statusText,
+}: FormatPeriodArgs = {}) => {
+  const hasPeriod = period !== null && period !== undefined && period !== "";
+
+  if (!hasPeriod && !statusText) return "";
 
   if (typeof period === "string") {
-    const val = period.toLowerCase();
+    const val = period.trim().toLowerCase();
+
     if (val.includes("ot")) return val.toUpperCase();
     if (val.includes("halftime")) return "Halftime";
-    return val;
+    if (val.includes("half time")) return "Halftime";
+    if (val.includes("final")) return "Final";
+
+    const numericPeriod = Number(period);
+
+    if (!Number.isFinite(numericPeriod)) {
+      return statusText || period;
+    }
   }
 
   const p = Number(period);
 
-  // ✅ MEN: 2 halves
+  if (!Number.isFinite(p)) {
+    return statusText || "";
+  }
+
+  // College basketball: 2 halves
   if (isCBB) {
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
@@ -61,6 +86,7 @@ export const formatQuarter = (
     return ot === 1 ? "OT" : `${ot}OT`;
   }
 
+  // Hockey: 3 periods
   if (isNHL) {
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
@@ -70,6 +96,29 @@ export const formatQuarter = (
     return ot === 1 ? "OT" : `${ot}OT`;
   }
 
+  // MMA: rounds
+  if (isMMA) {
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+    if (p === 3) return "3rd";
+    if (p === 4) return "4th";
+    if (p === 5) return "5th";
+
+    return `R${p}`;
+  }
+
+  // Soccer: halves / extra time / penalties
+  if (isSOCC) {
+    if (p === 1) return "1st";
+    if (p === 2) return "2nd";
+    if (p === 3) return "ET";
+    if (p === 4) return "ET";
+    if (p === 5) return "Pens";
+
+    return statusText || "";
+  }
+
+  // Default: football / basketball quarters
   if (p === 1) return "1st";
   if (p === 2) return "2nd";
   if (p === 3) return "3rd";

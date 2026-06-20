@@ -31,10 +31,10 @@ type GamePreviewContentProps = {
   venueName?: string;
   venueLocation?: string;
   venueAddress?: string;
-  venueCapacity?: string | null;
+  venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
-  gameStatusDescription: string;
+  state: string;
   league: string;
 };
 
@@ -45,6 +45,8 @@ export default function GamePreviewContent({
   awayTeamId,
   awayCode,
   awayLogo,
+  homeColor,
+  awayColor,
   lineScore,
   homeLastGames,
   awayLastGames,
@@ -57,7 +59,7 @@ export default function GamePreviewContent({
   venueCapacity,
   venueAttendance,
   weather,
-  gameStatusDescription,
+  state,
   league,
 }: GamePreviewContentProps) {
   return (
@@ -71,7 +73,7 @@ export default function GamePreviewContent({
         homeCode={homeCode}
         league={league}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <GameTeamStats
@@ -80,12 +82,13 @@ export default function GamePreviewContent({
         awayLogo={awayLogo}
         homeCode={homeCode}
         awayCode={awayCode}
+        homeColor={homeColor}
+        awayColor={awayColor}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <LastFiveGames
-        isDark
         home={{
           teamId: homeTeamId,
           teamCode: homeCode,
@@ -96,15 +99,12 @@ export default function GamePreviewContent({
           teamCode: awayCode,
           games: awayLastGames.games,
         }}
-        league={league}
-        gameStatusDescription={gameStatusDescription}
-      />
-
-      <Officials
-        officials={officials}
-        gameStatusDescription={gameStatusDescription}
+        league={"SOCC"}
+        state={state}
         isDark
       />
+
+      <Officials officials={officials} state={state} isDark />
 
       <GameLocation
         venueImage={venueImage}

@@ -51,5 +51,5 @@ export type GameOddsSectionProps = {
   homeLogo: any;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };

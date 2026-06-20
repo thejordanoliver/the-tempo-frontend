@@ -1,10 +1,10 @@
 // TeamInjuries.tsx
+import TeamInjuriesList from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuriesList";
+import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import TeamInjuriesList from "components/Sports/Baseball/GameDetails/TeamInjuriesList";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
-import { Player } from "hooks/MLBHooks/usePlayersByTeam";
 import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
@@ -62,7 +62,7 @@ export default function TeamInjuries({
     if (!selectedTeamId && tabs.length) {
       setSelectedTeamId(tabs[0].id);
     }
-  }, [tabs]);
+  }, [tabs, selectedTeamId]);
 
   const currentInjuries = reorderedInjuries.find(
     (t) => String(t.team.id) === selectedTeamId,

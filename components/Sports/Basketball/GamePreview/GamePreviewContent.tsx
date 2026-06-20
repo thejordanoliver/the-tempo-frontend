@@ -41,10 +41,10 @@ type GamePreviewContentProps = {
   venueName?: string;
   venueLocation?: string;
   venueAddress?: string;
-  venueCapacity?: string | null;
+  venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
-  gameStatusDescription: string;
+  state: string;
   league: string;
 };
 
@@ -77,9 +77,10 @@ export default function GamePreviewContent({
   venueCapacity,
   venueAttendance,
   weather,
-  gameStatusDescription,
+  state,
   league,
 }: GamePreviewContentProps) {
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
@@ -91,7 +92,7 @@ export default function GamePreviewContent({
         homeCode={homeCode}
         league={league}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <MatchupPredictor
@@ -105,7 +106,7 @@ export default function GamePreviewContent({
         awayColor={awayColor}
         size={180}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <GameLeaders
@@ -117,7 +118,7 @@ export default function GamePreviewContent({
         homeTeamId={Number(homeEspnId)}
         awayTeamId={Number(awayEspnId)}
         league={league}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
         isDark
       />
 
@@ -129,7 +130,7 @@ export default function GamePreviewContent({
         homeName={homeCode}
         homeLogo={homeLogo}
         homeColor={homeColor}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
         isDark
       />
 
@@ -143,7 +144,7 @@ export default function GamePreviewContent({
         homeName={homeName}
         league={league}
         isDark
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
       <LastFiveGames
@@ -159,14 +160,10 @@ export default function GamePreviewContent({
         }}
         isDark
         league={league}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
 
-      <Officials
-        officials={officials}
-        isDark
-        gameStatusDescription={gameStatusDescription}
-      />
+      <Officials officials={officials} isDark state={state} />
 
       <GameLocation
         venueImage={venueImage}

@@ -34,7 +34,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: string;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 type Player = {
@@ -67,7 +67,7 @@ export default function PlayersOnCourt({
   isError = false,
   isDark,
   league,
-  gameStatusDescription,
+  state,
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
   const router = useRouter();
@@ -164,10 +164,7 @@ export default function PlayersOnCourt({
     </View>
   );
 
-  if (
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Final"
-  ) {
+  if (state !== "in") {
     return null;
   }
 

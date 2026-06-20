@@ -1,4 +1,3 @@
-import { getSOCCTeam } from "@/constants/teamsSOCC";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { useEffect, useRef, useState } from "react";
@@ -161,29 +160,32 @@ const STAT_KEYS = [
 
 export default function GameTeamStats({
   stats,
-  gameStatusDescription,
+  state,
   isDark,
   homeLogo,
   awayLogo,
   homeCode,
   awayCode,
+  awayColor,
+  homeColor,
 }: {
   homeLogo: any;
   awayLogo: any;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  gameStatusDescription: string | undefined;
+  awayColor: string;
+  homeColor: string;
+  state: string | undefined;
   stats: any[] | undefined;
   isDark: boolean;
 }) {
+  const isScheduled = state === "pre";
   const styles = gameTeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const heightAnim = useRef(
     new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
-
-  const isScheduled = gameStatusDescription === "Scheduled";
 
   useEffect(() => {
     const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
@@ -210,9 +212,6 @@ export default function GameTeamStats({
   const awayStats = mapStats(away.stats);
   const homeStats = mapStats(home.stats);
 
-  const awayTeam = getSOCCTeam(away.team.id);
-  const homeTeam = getSOCCTeam(home.team.id);
-
   const extractNumber = (value?: string) => {
     if (!value) return 0;
 
@@ -225,11 +224,9 @@ export default function GameTeamStats({
     return Number(value) || 0;
   };
 
-  const awayColor = isDark ? Colors.white : Colors.black;
+  const awayTeamColor = isDark ? Colors.white : awayColor;
 
-  const homeColor =
-    (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
-    (isDark ? Colors.white : Colors.black);
+  const homeTeamColor = homeColor;
 
   if (isScheduled) return null;
 
@@ -238,12 +235,12 @@ export default function GameTeamStats({
       <HeadingTwo isDark={isDark}>Team Stats</HeadingTwo>
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
-          <Image source={awayLogo} style={styles.logo} />
+          <Image source={{uri: awayLogo}} style={styles.logo} />
           <Text style={styles.teamLabel}>{awayCode}</Text>
         </View>
 
         <View style={styles.teamContainer}>
-          <Image source={homeLogo} style={styles.logo} />
+          <Image source={{uri: homeLogo}} style={styles.logo} />
           <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
@@ -282,7 +279,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(awayNum / max) * 100}%`,
-                          backgroundColor: awayColor,
+                          backgroundColor: awayTeamColor,
                         },
                       ]}
                     />
@@ -293,7 +290,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(homeNum / max) * 100}%`,
-                          backgroundColor: homeColor,
+                          backgroundColor: homeTeamColor,
                         },
                       ]}
                     />
@@ -359,7 +356,7 @@ export default function GameTeamStats({
                           >
                             <Path
                               d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
-                              stroke={awayColor}
+                              stroke={awayTeamColor}
                               strokeWidth={2}
                             />
                           </Pattern>
@@ -387,7 +384,7 @@ export default function GameTeamStats({
                         styles.bar,
                         {
                           width: `${(homeNum / max) * 100}%`,
-                          backgroundColor: homeColor,
+                          backgroundColor: homeTeamColor,
                           opacity: isTie ? 1 : homeWins ? 1 : 0.4,
                         },
                       ]}

@@ -1,3 +1,5 @@
+
+
 export type BasketballTeam = {
   id: number;
   wid: number;
@@ -51,14 +53,8 @@ export type NBATeam = {
   coach?: string;
   code: string;
   location: string;
-  address: string;
   city?: string;
   state?: string;
-  latitude: number;
-  longitude: number;
-  venueName: string;
-  venueImage: any;
-  venueCapacity: string;
   conference?: string;
   uniforms?: {
     home: any;
@@ -67,7 +63,6 @@ export type NBATeam = {
   isActive: boolean;
   isAllStar: boolean;
 };
-
 
 export type BasketballGame = {
   league: {
@@ -295,8 +290,6 @@ export type CardLayout = {
   width: number;
   height: number;
 };
-
-
 
 export type NBAPlayoffGamesResponse = {
   success: boolean;

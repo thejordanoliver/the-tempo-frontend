@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   BaseballProps,
-  sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
@@ -18,7 +17,6 @@ export const TeamRow = ({
   score,
   isWinner,
   league,
-  size = "medium",
   gameStatusDescription,
 }: BaseballProps) => {
   const router = useRouter();
@@ -75,8 +73,8 @@ export const TeamRow = ({
         <Text
           style={
             showRecordInsteadOfScore
-              ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-              : [styles.score, sizeStyles[size].score, getScoreStyle()]
+              ? styles.preGameRecord
+              : [styles.score, getScoreStyle()]
           }
         >
           {showRecordInsteadOfScore ? record : score}
@@ -86,7 +84,7 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={logo} style={sizeStyles[size].logo} />
+          <Image source={logo} style={styles.logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
@@ -107,8 +105,8 @@ export const TeamRow = ({
           <Text
             style={
               showRecordInsteadOfScore
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-                : [styles.score, sizeStyles[size].score, getScoreStyle()]
+                ? [styles.preGameRecord]
+                : [styles.score, getScoreStyle()]
             }
           >
             {showRecordInsteadOfScore ? record : (score ?? "")}

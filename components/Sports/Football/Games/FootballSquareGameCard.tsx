@@ -12,7 +12,7 @@ import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function FootballSquareGameCard({
   game,
@@ -74,7 +74,7 @@ function FootballSquareGameCard({
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const displayClock = game.status?.displayClock;
-  const period = game.status?.period;
+  const period = formatPeriod({ period: game.status.period });
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
@@ -90,7 +90,7 @@ function FootballSquareGameCard({
   const homeRank = game.home.rank ?? null;
   const awayRank = game.home.rank ?? null;
   const football = isDark ? FootballLight : Football;
- const headlineMatch = game?.headline?.toLowerCase();
+  const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
     headlineMatch?.includes("national championship");
@@ -162,7 +162,7 @@ function FootballSquareGameCard({
     if (inProgress)
       return (
         <View>
-          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
       );

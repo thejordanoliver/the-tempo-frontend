@@ -15,6 +15,7 @@ type Props = {
   homeScore: number;
   awayScore: number;
   isDark: boolean;
+  isTie: boolean | undefined | null;
   homeWins: boolean | undefined | null;
   awayWins: boolean | undefined | null;
   date: string;
@@ -26,6 +27,7 @@ type Props = {
   homeRecord: string;
   awayRecord: string;
   gameStatusDescription: string;
+  state: string;
   gameStatusDetail: string;
   league: string;
 };
@@ -44,9 +46,11 @@ export default function GameHeader({
   awayScore,
   homeWins,
   awayWins,
+  isTie,
   homeRecord,
   awayRecord,
   gameStatusDetail,
+  state,
   gameStatusDescription,
   isDark,
   date,
@@ -67,44 +71,47 @@ export default function GameHeader({
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
-          key={`away`}
           id={awayId}
           logo={awayLogo}
           name={awayName}
           score={awayScore}
           rank={awayRank}
+          isTie={isTie}
           isWinner={awayWins}
           record={awayRecord}
-          gameStatusDescription={gameStatusDescription}
           isHome={false}
           isDark={isDark}
           league={league}
+          state={state}
+          gameStatusDescription={gameStatusDescription}
         />
 
         <CenterInfo
-          gameStatusDescription={gameStatusDescription}
-          gameStatusShortDescription={gameStatusDetail}
           date={date}
           time={time}
           isDark={isDark}
           broadcast={broadcast}
           period={period}
           clock={clock}
+          state={state}
+          gameStatusDescription={gameStatusDescription}
+          gameStatusShortDescription={gameStatusDetail}
         />
 
         <TeamRow
-          key={`home`}
           id={homeId}
           logo={homeLogo}
           name={homeName}
           rank={homeRank}
           score={homeScore}
+          isTie={isTie}
           isWinner={homeWins}
           record={homeRecord}
-          gameStatusDescription={gameStatusDescription}
           isHome={true}
           isDark={isDark}
           league={league}
+          state={state}
+          gameStatusDescription={gameStatusDescription}
         />
       </View>
     </View>

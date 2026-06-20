@@ -10,7 +10,7 @@ import {
 } from "styles/ExploreStyles/GameWidgetStyles";
 import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 type GameWidgetProps = {
@@ -97,7 +97,7 @@ export default function BasketballGameWidget({
   const gameDate = safeDate(game?.date);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const period = formatQuarter(game.status?.period, isCBB);
+  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game?.status.clock;
 
   const gameStatusDescription = game.status?.description;
@@ -114,8 +114,7 @@ export default function BasketballGameWidget({
   const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
   const broadcast = getBroadcastDisplay(game.broadcasts);
-  const showBroadcast =
-    Boolean(broadcast) && (!isSmallLayout || height >= 180);
+  const showBroadcast = Boolean(broadcast) && (!isSmallLayout || height >= 180);
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {
     month: "short",

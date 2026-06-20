@@ -9,7 +9,7 @@ export type FootballCalendarWeek = {
   endDate: string;
 };
 
-export type MMACalendarEvent = {
+export type UFCCalendarEvent = {
   label: string;
   stage: string;
   eventNumber: number;
@@ -19,7 +19,7 @@ export type MMACalendarEvent = {
   eventId: string | null;
 };
 
-type CalendarFormat = "raw" | "football" | "soccer" | "mma";
+type CalendarFormat = "raw" | "football" | "soccer" | "ufc";
 
 type UseLeagueCalendarResult<T> = {
   calendar: T[];
@@ -47,8 +47,8 @@ export function useLeagueCalendar(
 
 export function useLeagueCalendar(
   league: string,
-  format: "mma",
-): UseLeagueCalendarResult<MMACalendarEvent>;
+  format: "ufc",
+): UseLeagueCalendarResult<UFCCalendarEvent>;
 
 export function useLeagueCalendar(
   league: string,
@@ -58,9 +58,9 @@ export function useLeagueCalendar(
 export function useLeagueCalendar(
   league: string,
   format: CalendarFormat = "raw",
-): UseLeagueCalendarResult<string | FootballCalendarWeek | MMACalendarEvent> {
+): UseLeagueCalendarResult<string | FootballCalendarWeek | UFCCalendarEvent> {
   const [calendar, setCalendar] = useState<
-    (string | FootballCalendarWeek | MMACalendarEvent)[]
+    (string | FootballCalendarWeek | UFCCalendarEvent)[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -111,8 +111,8 @@ export function useLeagueCalendar(
           return;
         }
 
-        if (format === "mma") {
-          const flattened: MMACalendarEvent[] =
+        if (format === "ufc") {
+          const flattened: UFCCalendarEvent[] =
             data.calendar?.map((event: any, index: number) => {
               const eventRef = event.event?.$ref ?? null;
 

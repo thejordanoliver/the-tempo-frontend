@@ -39,6 +39,38 @@ export type SoccerPlayEvent = {
   [key: string]: any;
 };
 
+export type SoccerKeyEvent = {
+  id?: string | number | null;
+  type?: {
+    id?: string | number | null;
+    text?: string | null;
+    type?: string | null;
+  };
+  text?: string | null;
+  shortText?: string | null;
+  period?: {
+    number?: number | null;
+  };
+  clock?: {
+    value?: number | null;
+    displayValue?: string | null;
+  };
+  scoringPlay?: boolean;
+  team?: {
+    id?: string | number | null;
+    displayName?: string | null;
+  };
+  participants?: {
+    athlete?: {
+      id?: string | number | null;
+      displayName?: string | null;
+    };
+  }[];
+  wallclock?: string | null;
+  shootout?: boolean;
+  [key: string]: any;
+};
+
 export type SoccerScore = {
   gameId: string;
   lastUpdated?: number;
@@ -103,7 +135,7 @@ export type SoccerScore = {
   }[];
 
   leaders: any[];
-
+  keyEvents?: SoccerKeyEvent[];
   scorers?: SoccerPlayEvent[];
   cards?: SoccerPlayEvent[];
   substitutions?: SoccerPlayEvent[];

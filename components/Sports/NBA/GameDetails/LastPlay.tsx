@@ -43,7 +43,7 @@ type LastPlayProps = {
   lastPlay?: string | LastPlayType;
   homeTeamId: number;
   awayTeamId: number;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
   league: string;
 };
 
@@ -53,7 +53,7 @@ export default function LastPlay({
   lastPlay,
   homeTeamId,
   awayTeamId,
-  gameStatusDescription,
+  state,
   league,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
@@ -145,12 +145,7 @@ export default function LastPlay({
       : team?.color || Colors.light.green;
   }
 
-  if (
-    gameStatusDescription === "Final" ||
-    gameStatusDescription === "Scheduled" ||
-    !currentPlay
-  )
-    return null;
+  if (state !== "in" || !currentPlay) return null;
 
   if (typeof currentPlay === "string") {
     return (

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -38,11 +38,11 @@ export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
                   ? `api/roster/wcbb/player/${playerId}`
                   : league === "MLB"
                     ? `api/roster/mlb/player/${playerId}`
-                  : league === "NHL"
-                    ? `api/roster/nhl/player/${playerId}`
-                    : league === "WNBA"
-                      ? `api/roster/wnba/player/${playerId}`
-                      : `api/roster/nfl/player/${playerId}`;
+                    : league === "NHL"
+                      ? `api/roster/nhl/player/${playerId}`
+                      : league === "WNBA"
+                        ? `api/roster/wnba/player/${playerId}`
+                        : `api/roster/nfl/player/${playerId}`;
 
         const res = await apiClient.get(url, {
           signal: controller.signal,
@@ -50,7 +50,7 @@ export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
 
         setPlayer(res.data.player);
       } catch (err: any) {
-        if (axios.isCancel(err)) return;
+        if (isCancel(err)) return;
 
         console.error("Player fetch error:", err);
         setError("Failed to load player");

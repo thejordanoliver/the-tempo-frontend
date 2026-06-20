@@ -1,8 +1,10 @@
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats";
+import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
+import { useVenue } from "@/hooks/useVenue";
 import { SoccerGameCardProps } from "@/types/soccer";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
@@ -20,13 +22,12 @@ import {
 } from "../../../components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
-import { getVenue } from "../../../constants/venues";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
-import { useWeatherForecast } from "../../../hooks/useWeather";
+import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import {
-  formatQuarter,
+  formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
 } from "../../../utils/games";
@@ -97,8 +98,9 @@ export default function GameDetailsScreen(
 
   const LEAGUE = game?.league?.code ?? "epl";
 
-  const gameDateObj = game?.date ? new Date(game.date) : null;
-  const gameId = game?.id;
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
 
   const formattedDate =
     gameDateObj && isValidDate(gameDateObj)
@@ -116,6 +118,7 @@ export default function GameDetailsScreen(
         })
       : "TBD";
 
+  const gameId = game?.id;
   const home = game?.home;
   const away = game?.away;
 
@@ -150,15 +153,19 @@ export default function GameDetailsScreen(
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const state = game?.status.state ?? "";
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
-  const homeWins = homeScore > awayScore;
-  const awayWins = awayScore > homeScore;
+  const homeWins = game?.home.winner;
+  const awayWins = game?.away.winner;
+  const isTie = game?.away.winner === game?.home.winner;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
-  const dontShowDetails = isCanceled || isDelayed || isPostponed || isForfeited;
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const teamStats = score?.teamStats;
   const lineScore = score?.periodScores?.length
     ? {
@@ -166,10 +173,9 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
   const homeRecord = home?.record ?? "0—0-0";
   const awayRecord = away?.record ?? "0—0-0";
-  const period = formatQuarter(game?.status.period);
+  const period = formatPeriod({ period: game?.status.period, isSOCC: true });
   const clock = game?.status.clock;
   const headline = game?.headline ?? "";
   const lastPlay = score?.lastPlay;
@@ -177,19 +183,23 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights ?? [];
 
   const neutralSite = details?.neutralSite;
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "soccer", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
+
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   useLayoutEffect(() => {
     if (isLoading || !game || !home || !away) {
@@ -267,11 +277,13 @@ export default function GameDetailsScreen(
           awayRecord={awayRecord}
           homeWins={homeWins}
           awayWins={awayWins}
+          isTie={isTie}
           homeRank={null}
           awayRank={null}
           homeId={homeId}
           awayId={awayId}
           gameStatusDescription={gameStatusDescription}
+          state={state}
           gameStatusDetail={gameStatusDetail}
           period={period}
           clock={clock}
@@ -295,7 +307,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeHeaderLogo}
               homeColor={homeColor}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LineScore
@@ -303,7 +315,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               awayCode={awayCode}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
               league={"soccer"}
             />
 
@@ -313,8 +325,22 @@ export default function GameDetailsScreen(
               awayLogo={awayLogo}
               homeCode={homeCode}
               awayCode={awayCode}
+              awayColor={awayColor}
+              homeColor={homeColor}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
+            />
+
+            <SoccerKeyEvents
+              keyEvents={score?.keyEvents}
+              awayTeamId={awayId}
+              homeTeamId={homeId}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              isDark={isDark}
+              gameStatusDescription={score?.gameStatusDescription}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -322,7 +348,7 @@ export default function GameDetailsScreen(
             <Officials
               officials={officials ?? []}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LastFiveGames
@@ -336,9 +362,9 @@ export default function GameDetailsScreen(
                 teamCode: awayCode,
                 games: awayLastGames.games,
               }}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
               isDark={isDark}
-              league={"SOCC"}
+              league={"socc"}
             />
 
             <GameLocation
@@ -358,7 +384,7 @@ export default function GameDetailsScreen(
       <GameLiveChatOverlay
         gameId={String(game.id)}
         opacityAnim={opacityAnim}
-        gameStatusDescription={gameStatusDescription}
+        state={state}
       />
     </>
   );

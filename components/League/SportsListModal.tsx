@@ -18,7 +18,7 @@ import UFLLogolight from "assets/Football/UFL_Logos/UFLLight.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import WNBALogo from "assets/Logos/WNBA/WNBA.png";
-import MMALogo from "assets/MMA/MMA_Logos/MMA.png";
+import UFCLogo from "assets/MMA/MMA_Logos/UFC.png";
 import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
 import BundesligaLogoLight from "assets/Soccer/Logos/BundesligaLight.png";
 import EPLLogo from "assets/Soccer/Logos/EPL.png";
@@ -77,7 +77,7 @@ const leagues: LeagueType[] = [
   "WCBB",
   "MLB",
   "NHL",
-  "MMA",
+  "UFC",
 ];
 
 const leagueConfig: Record<
@@ -174,10 +174,10 @@ const leagueConfig: Record<
     logo: NHLLogo,
     logoLight: NHLLogo,
   },
-  MMA: {
-    label: "MMA",
-    logo: MMALogo,
-    logoLight: MMALogo,
+  UFC: {
+    label: "UFC",
+    logo: UFCLogo,
+    logoLight: UFCLogo,
   },
 };
 
@@ -193,7 +193,7 @@ type LeagueRoute =
   | "/league/wcbb"
   | "/league/mlb"
   | "/league/nhl"
-  | "/league/mma"
+  | "/league/ufc"
   | "/league/socc";
 
 const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
@@ -208,7 +208,7 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   WCBB: "/league/wcbb",
   MLB: "/league/mlb",
   NHL: "/league/nhl",
-  MMA: "/league/mma",
+  UFC: "/league/ufc",
 
   EPL: "/league/socc",
   MLS: "/league/socc",

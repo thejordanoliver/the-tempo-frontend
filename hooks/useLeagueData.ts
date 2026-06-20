@@ -12,7 +12,7 @@ import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
-import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
+import { useMMAGames } from "./MMAHooks/useMMAGames";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 
 dayjs.extend(utc);
@@ -126,11 +126,15 @@ export function useLeagueData() {
   } = useBasketballGames(selectedDate, "wnba");
 
   const {
-    fights,
-    loading: loadingFights,
-    error: errorFights,
-    refreshFights,
-  } = useWeeklyFights();
+    data: mmaResponse,
+    loading: mmaLoading,
+    refreshGames: refreshMMAGames,
+    error: mmaError,
+  } = useMMAGames({
+    league: "ufc",
+    date: selectedDate,
+    enabled: Boolean(selectedDate),
+  });
 
   const {
     games: mlsGames,
@@ -167,6 +171,81 @@ export function useLeagueData() {
     loading: bundesligaLoading,
     refreshGames: refreshBundesligaGames,
   } = useSoccerGames(selectedDate, "bundesliga");
+
+
+
+   const mmaGames = useMemo(() => {
+    const events = Array.isArray(mmaResponse?.events)
+      ? mmaResponse.events
+      : Array.isArray(mmaResponse?.games)
+        ? mmaResponse.games
+        : [];
+
+    return events.flatMap((event: any) => {
+      const fights = Array.isArray(event?.fights) ? event.fights : [];
+
+      if (!fights.length) {
+        return [event];
+      }
+
+      return [...fights]
+        .filter(Boolean)
+        .sort((a: any, b: any) => {
+          const aOrder = Number(a?.order ?? 999);
+          const bOrder = Number(b?.order ?? 999);
+
+          return aOrder - bOrder;
+        })
+        .map((fight: any, index: number) => {
+          const fightId =
+            fight?.id ??
+            fight?.uid ??
+            `${event?.id ?? event?.uid ?? "ufc-event"}-fight-${index}`;
+
+          const fightDate =
+            fight?.date ??
+            fight?.startDate ??
+            fight?.raw?.date ??
+            fight?.raw?.startDate ??
+            event?.date ??
+            event?.startDate ??
+            null;
+
+          return {
+            ...fight,
+
+            id: fightId,
+            gameId: fightId,
+            eventId: fightId,
+            parentEventId: event?.id ?? null,
+
+            league: event?.league ?? mmaResponse?.leagueInfo ?? null,
+            season: event?.season ?? mmaResponse?.season ?? null,
+
+            date: fightDate,
+            startDate: fightDate,
+            timestamp: event?.timestamp ?? null,
+
+            venue: fight?.venue ?? fight?.raw?.venue ?? event?.venue ?? null,
+            broadcasts: Array.isArray(fight?.broadcasts)
+              ? fight.broadcasts
+              : event?.broadcasts ?? [],
+            geoBroadcasts:
+              fight?.geoBroadcasts ??
+              fight?.raw?.geoBroadcasts ??
+              event?.geoBroadcasts ??
+              [],
+
+            eventName: event?.name ?? null,
+            eventShortName: event?.shortName ?? null,
+            parentEvent: event,
+
+            mainEvent: fight,
+            fights: [fight],
+          };
+        });
+    });
+  }, [mmaResponse]);
 
   // ===========================
   // NORMALIZED DATA
@@ -260,6 +339,10 @@ export function useLeagueData() {
     () => normalizeGames(bundesligaGames, "BUNDESLIGA"),
     [bundesligaGames],
   );
+
+  const normalizedMMA = useMemo(() => {
+    return Array.isArray(mmaGames) ? mmaGames : [];
+  }, [mmaGames]);
 
   // ===========================
   // SAFE DATE FILTER
@@ -370,6 +453,11 @@ export function useLeagueData() {
     [normalizedBundesliga, safeFilterByDate],
   );
 
+  const filteredMMA = useMemo(
+    () => safeFilterByDate(normalizedMMA, true),
+    [normalizedMMA, safeFilterByDate],
+  );
+
   // ===========================
   // FAVORITES / SORT HELPERS
   // ===========================
@@ -424,6 +512,7 @@ export function useLeagueData() {
       ...collect(filteredCHAMPIONS, "CHAMPIONS"),
       ...collect(filteredEUROPA, "EUROPA"),
       ...collect(filteredBUNDESLIGA, "BUNDESLIGA"),
+      ...collect(filteredMMA, "MMA"),
     ];
   }, [
     isFavoriteGame,
@@ -444,6 +533,7 @@ export function useLeagueData() {
     filteredCHAMPIONS,
     filteredEUROPA,
     filteredBUNDESLIGA,
+    filteredMMA,
   ]);
 
   // ===========================
@@ -526,7 +616,7 @@ export function useLeagueData() {
       },
       {
         category: "MMA",
-        data: fights.slice(0, 5),
+        data: limitNonFavorites(filteredMMA, "MMA"),
       },
     ];
 
@@ -552,7 +642,7 @@ export function useLeagueData() {
     filteredEUROPA,
     filteredCHAMPIONS,
     filteredBUNDESLIGA,
-    fights,
+    filteredMMA,
   ]);
 
   // ===========================
@@ -580,6 +670,7 @@ export function useLeagueData() {
       ...normalizedEuropa,
       ...normalizedBundesliga,
       ...normalizedChampions,
+      ...normalizedMMA,
     ];
 
     const dotColor = isDark ? Colors.white : Colors.black;
@@ -610,6 +701,7 @@ export function useLeagueData() {
     normalizedEuropa,
     normalizedBundesliga,
     normalizedChampions,
+    normalizedMMA,
     isDark,
   ]);
 
@@ -641,7 +733,7 @@ export function useLeagueData() {
         refreshChampionsGames(),
         refreshEuropaGames(),
         refreshBundesligaGames(),
-        refreshFights(),
+        refreshMMAGames(),
       ]);
     } finally {
       setRefreshing(false);
@@ -673,7 +765,7 @@ export function useLeagueData() {
     europaLoading &&
     bundesligaLoading &&
     championsLoading &&
-    loadingFights &&
+    mmaLoading &&
     gamesByCategory.length === 0;
 
   return {
@@ -683,7 +775,7 @@ export function useLeagueData() {
     refreshing,
     handleRefresh,
     gamesByCategory,
-    errorFights,
+    errorFights: mmaError,
     loading,
     markedDates,
     viewMode,

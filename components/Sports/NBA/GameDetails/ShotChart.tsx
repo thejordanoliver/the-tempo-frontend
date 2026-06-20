@@ -37,7 +37,7 @@ interface ShotChartProps {
   awayLogo: any;
   league: string;
   neutralSite?: boolean;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 }
 
 type ShotChartTab =
@@ -59,7 +59,7 @@ export default function ShotChart({
   awayLogo,
   league,
   neutralSite = false,
-  gameStatusDescription,
+  state,
 }: ShotChartProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -230,7 +230,7 @@ export default function ShotChart({
     setLayout({ width, height });
   };
 
-  if (gameStatusDescription === "Scheduled") {
+  if (state === "pre") {
     return null;
   }
 

@@ -10,7 +10,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballGameCard({
   game,
@@ -112,7 +112,7 @@ export default function BasketballGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
 
-  const period = formatQuarter(game.status.period);
+  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game.status.clock;
 
   const gameStatusDescription = game.status?.description;

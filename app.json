@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "nba-scores-tracker",
-    "slug": "nba-scores-tracker",
+    "name": "the-tempo",
+    "slug": "the-tempo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",

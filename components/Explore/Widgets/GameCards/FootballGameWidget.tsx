@@ -12,7 +12,7 @@ import {
 } from "styles/ExploreStyles/GameWidgetStyles";
 import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
 export type FootballGameWidgetProps = {
@@ -94,7 +94,7 @@ export default function FootballGameWidget({
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const clock = game.status?.clock;
-  const period = formatQuarter(game.status?.period);
+  const period = formatPeriod({ period: game.status.period });
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
@@ -308,7 +308,7 @@ export default function FootballGameWidget({
           )}
         </View>
 
-          {isSmallLayout && (
+        {isSmallLayout && (
           <View style={styles.gameInfo}>
             {renderStatus()}
             {renderDownAndDistance()}

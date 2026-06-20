@@ -2,6 +2,8 @@ import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -10,17 +12,15 @@ import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useWeatherForecast } from "hooks/useWeather";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { getHolidayLabel } from "utils/dateUtils";
 import {
-  formatQuarter,
+  formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { getVenue } from "../../../../constants/venues";
 import CenterInfo from "../../NBA/GamePreview/CenterInfo";
 import TeamInfo from "../../NBA/GamePreview/TeamInfo";
 import GamePreviewContent from "./GamePreviewContent";
@@ -53,23 +53,26 @@ export default function GamePreviewModal({
     }
   }, [visible]);
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
+  function isValidDate(date: Date) {
+    return !Number.isNaN(date.getTime());
+  }
 
-  const gameDate = safeDate(game.date);
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const gameDateObj = game?.date ? new Date(game.date) : null;
+  const formattedDate =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleDateString([], {
+          month: "short",
+          day: "numeric",
+        })
+      : "TBD";
+
   const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "TBD";
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "cbb";
@@ -125,7 +128,7 @@ export default function GamePreviewModal({
   const awayColor = awayTeam?.color ?? "";
 
   const headlineText = game?.headline;
-  const holidayLabel = getHolidayLabel(gameDate);
+  const holidayLabel = getHolidayLabel(gameDateObj);
   const headline = headlineText || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
@@ -140,10 +143,11 @@ export default function GamePreviewModal({
 
   const isLoading = !!details;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const period = formatQuarter(game.status.period);
+  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
+  const state = game.status.state;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -174,20 +178,22 @@ export default function GamePreviewModal({
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
 
-  /* ---------------- Neutral site / venue ---------------- */
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "basketball", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   const homeScore = score?.home.total;
   const awayScore = score?.away.total;
@@ -287,7 +293,7 @@ export default function GamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
-                  gameStatusDescription={gameStatusDescription}
+                  state={state}
                   homeTeamId={homeId}
                   awayTeamId={awayId}
                   homeColor={homeColor}

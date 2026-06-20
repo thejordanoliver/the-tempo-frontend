@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { HockeyGameCardProps } from "types/hockey";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useRouter();
@@ -62,7 +62,7 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const period = formatQuarter(game.status.period, false, true);
+  const period = formatPeriod({ period: game.status.period, isNHL: true });
   const headlineText = game?.headline;
   const homeScore = game?.home?.score ?? 0;
   const awayScore = game?.away?.score ?? 0;

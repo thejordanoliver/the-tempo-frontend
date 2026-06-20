@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const newsHighlightsListStyles = (isDark: boolean) =>
+export const newsListStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       gap: 12,

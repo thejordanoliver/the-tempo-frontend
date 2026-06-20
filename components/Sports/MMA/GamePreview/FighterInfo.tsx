@@ -1,12 +1,11 @@
+import { NullableString } from "@/types/mma";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { MMAFighter } from "types/mma";
 
 type FighterInfoProps = {
-  fighter?: MMAFighter;
-  logo: any;
   headshot: string;
-  record?: string;
+  record: NullableString | string;
+  flag: string;
   side: "home" | "away";
   name: string;
   gameStatusDescription: string;
@@ -14,8 +13,9 @@ type FighterInfoProps = {
 };
 
 export default function FighterInfo({
-  logo,
+  headshot,
   record,
+  flag,
   name,
   gameStatusDescription,
   isWinner,
@@ -77,7 +77,7 @@ export default function FighterInfo({
       {/* ─────────── Fighter LOGO + NAME ─────────── */}
       <View style={styles.fighterContainer}>
         <View style={styles.fighterImageContainer}>
-          <Image source={{ uri: logo }} style={styles.fighter} />
+          <Image source={{ uri: headshot }} style={styles.fighter} />
         </View>
 
         <Text style={styles.fighterName} numberOfLines={1} ellipsizeMode="tail">

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { DBPlayer } from "types/types";
 
 type Props = {
@@ -15,8 +15,6 @@ export default function PlayerAwardList(player: Props) {
   const styles = playerAwardListStyles(isDark);
 
   const playerAwardsArray = player.player?.awards;
-
-  // If there are no awards, don't render anything
   if (!playerAwardsArray || playerAwardsArray.length === 0) return null;
 
   const playerAwards = playerAwardsArray.map((award, i) => {

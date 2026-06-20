@@ -10,7 +10,7 @@ import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
-import { useWeeklyFights } from "./MMAHooks/useWeeklyFights";
+import { useMMAGames } from "./MMAHooks/useMMAGames";
 import { useAllNews } from "./NewsHooks/useAllNews";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 
@@ -32,7 +32,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     loading: newsLoading,
     error: newsError,
     refresh,
-  } = useAllNews(10);
+  } = useAllNews(30);
 
   // ===========================
   // DATA SOURCES
@@ -105,11 +105,14 @@ export function useHomeData(selectedTab: "scores" | "news") {
   } = useBasketballGames(selectedDate, "wnba");
 
   const {
-    fights,
-    loading: loadingFights,
-    error: errorFights,
-    refreshFights,
-  } = useWeeklyFights();
+    games: mmaGames,
+    loading: mmaLoading,
+    error: mmaError,
+    refreshGames: refreshMMAGames,
+  } = useMMAGames({
+    date: selectedDate,
+    league: "ufc",
+  });
 
   const {
     games: mlsGames,
@@ -225,6 +228,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [bundesligaGames],
   );
 
+  const normalizedMMA = useMemo(() => {
+    return Array.isArray(mmaGames) ? mmaGames : [];
+  }, [mmaGames]);
+
   // ===========================
   // SAFE DATE FILTER
   // ===========================
@@ -324,6 +331,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [normalizedBundesliga, safeFilterByDate],
   );
 
+  const filteredMMA = useMemo(
+    () => safeFilterByDate(normalizedMMA, true),
+    [normalizedMMA, safeFilterByDate],
+  );
+
   // ===========================
   // HELPERS
   // ===========================
@@ -380,6 +392,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       ...collect(filteredCHAMPIONS, "CHAMPIONS"),
       ...collect(filteredEUROPA, "EUROPA"),
       ...collect(filteredBUNDESLIGA, "EUROPA"),
+      ...collect(filteredMMA, "MMA"),
     ];
   }, [
     isFavoriteGame,
@@ -398,6 +411,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredCHAMPIONS,
     filteredEUROPA,
     filteredBUNDESLIGA,
+    filteredMMA,
   ]);
 
   // ===========================
@@ -451,7 +465,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
         data: limitNonFavorites(filteredCHAMPIONS, "CHAMPIONS"),
       },
       {
-        category: "English Premiere League",
+        category: "English Premier League",
         data: limitNonFavorites(filteredEPL, "EPL"),
       },
       {
@@ -472,7 +486,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       },
       {
         category: "MMA",
-        data: fights.slice(0, 5),
+        data: limitNonFavorites(filteredMMA, "MMA"),
       },
     ];
 
@@ -496,7 +510,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredEUROPA,
     filteredCHAMPIONS,
     filteredBUNDESLIGA,
-    fights,
+    filteredMMA,
   ]);
 
   // ===========================
@@ -524,7 +538,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshChampionsGames(),
           refreshEuropaGames(),
           refreshBundesligaGames(),
-          refreshFights(),
+          refreshMMAGames(),
         ]);
       }
 
@@ -552,7 +566,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     europaLoading &&
     bundesligaLoading &&
     championsLoading &&
-    loadingFights &&
+    mmaLoading &&
     gamesByCategory.length === 0;
 
   return {
@@ -563,7 +577,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     handleRefresh,
     gamesByCategory,
     newsError,
-    errorFights,
+    errorFights: mmaError,
     newsLoading,
     articles,
     loading: selectedTab === "scores" ? scoresLoading : newsLoading,

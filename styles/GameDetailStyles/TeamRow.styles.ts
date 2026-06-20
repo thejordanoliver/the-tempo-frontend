@@ -1,6 +1,6 @@
 // styles/GameDetailStyles/TeamRow.styles.ts
 import { Colors, Fonts } from "constants/styles";
-import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { StyleSheet } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";
 
@@ -13,6 +13,7 @@ export type TeamRowTeam = {
   name?: string;
   record?: string;
 };
+
 export type FighterRow = {
   id?: string | number;
   espnId?: string | number;
@@ -65,7 +66,11 @@ export type BasketballTeamRowProps = {
 };
 
 export type MMAProps = {
-  fighter: FighterRow;
+  id?: number;
+  headshot: string;
+  name: string;
+  flag: string | undefined;
+  record: string | undefined;
   size?: SizeType;
   rank?: string;
   isDark: boolean;
@@ -101,8 +106,10 @@ export type SoccerProps = {
   isDark: boolean;
   isHome?: boolean;
   score?: number;
+  isTie?: boolean | undefined | null;
   isWinner?: boolean | undefined | null;
   hideRecord?: boolean;
+  state: string;
   gameStatusDescription?: string;
   league: string;
 };
@@ -132,22 +139,7 @@ export type NHLProps = {
 
 // Main static styles
 export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
-  StyleSheet.create<{
-    row: ViewStyle;
-    teamInfoContainer: ViewStyle;
-    headshotContainer: ViewStyle;
-    timeoutsContainer: ViewStyle;
-    teamInfo: ViewStyle;
-    nameRow: ViewStyle;
-    teamName: TextStyle;
-    record: TextStyle;
-    rank: TextStyle;
-    score: TextStyle;
-    preGameRecord: TextStyle;
-    bonus: TextStyle;
-    scoreWrapper: ViewStyle;
-    possessionIcon: ImageStyle;
-  }>({
+  StyleSheet.create({
     row: {
       flexDirection: "row",
       alignItems: "center",
@@ -169,12 +161,20 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
+    logo: { width: 50, height: 50 },
+
+    headshot: {
+      width: 50,
+      height: 50,
+      paddingTop: 4,
+    },
     nameRow: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
     },
     teamName: {
+      fontSize: 12,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -193,17 +193,22 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
         : isDark
           ? Colors.white
           : Colors.black,
+      fontSize: 12,
     },
     score: {
+      fontSize: 36,
       fontFamily: Fonts.OSBOLD,
       textAlign: "center",
       marginHorizontal: 16,
+      width: 60,
     },
     preGameRecord: {
       fontFamily: Fonts.OSBOLD,
       textAlign: "center",
       marginHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
+      fontSize: 20,
+      width: 80,
     },
     scoreWrapper: {
       justifyContent: "center",
@@ -230,31 +235,3 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       textAlign: "center",
     },
   });
-
-// Size-based dynamic styles
-export const sizeStyles = {
-  small: {
-    score: { fontSize: 36, width: 60 },
-    preGameRecord: { fontSize: 24, width: 60 },
-    logo: { width: 40, height: 40 },
-    teamName: { fontSize: 12 },
-    record: { fontSize: 12 },
-    bonus: { fontSize: 8 },
-  },
-  medium: {
-    score: { fontSize: 36, width: 60 },
-    preGameRecord: { fontSize: 20, width: 80 },
-    logo: { width: 50, height: 50 },
-    teamName: { fontSize: 12 },
-    record: { fontSize: 12 },
-    bonus: { fontSize: 8 },
-  },
-  large: {
-    score: { fontSize: 28, width: 70 },
-    preGameRecord: { fontSize: 18, width: 70 },
-    logo: { width: 60, height: 60 },
-    teamName: { fontSize: 12 },
-    record: { fontSize: 14 },
-    bonus: { fontSize: 8 },
-  },
-};

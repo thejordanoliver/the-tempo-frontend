@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors } from "constants/styles";
-import { EXPANDED_HEIGHT_THRESHOLD } from "constants/widgetLeaders";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -184,7 +183,6 @@ export default function WidgetSlider({
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentIndexRef = useRef(0);
 
-  const isExpanded = slideHeight >= EXPANDED_HEIGHT_THRESHOLD;
   const isResizing = useRef(false);
   const lockedIndex = useRef(0);
 
@@ -205,7 +203,7 @@ export default function WidgetSlider({
     if (dashboardMode) return;
 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [dashboardMode, isExpanded]);
+  }, [dashboardMode]);
 
   const slides = useMemo<WidgetSlide[]>(() => {
     return games.filter((game) => "data" in game) as WidgetSlide[];

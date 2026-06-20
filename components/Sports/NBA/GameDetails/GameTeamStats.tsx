@@ -194,7 +194,7 @@ const STAT_KEYS = [
 
 export default function GameTeamStats({
   stats,
-  gameStatusDescription,
+  state,
   isDark,
   homeLogo,
   awayLogo,
@@ -205,7 +205,7 @@ export default function GameTeamStats({
   awayLogo: any;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
   stats: any[] | undefined;
   isDark: boolean;
 }) {
@@ -215,7 +215,8 @@ export default function GameTeamStats({
   const heightAnim = useRef(
     new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
-  const isScheduled = gameStatusDescription === "Scheduled";
+
+  const isScheduled = state === "pre";
 
   useEffect(() => {
     const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
@@ -242,7 +243,6 @@ export default function GameTeamStats({
   const awayStats = mapStats(away.stats);
   const homeStats = mapStats(home.stats);
 
-  const awayTeam = getTeamByESPNId(away.team.id);
   const homeTeam = getTeamByESPNId(home.team.id);
 
   const extractNumber = (value?: string) => {

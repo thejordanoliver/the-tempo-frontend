@@ -259,3 +259,5 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       color: isDark ? Colors.white : Colors.black,
     },
   });
+
+  

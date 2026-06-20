@@ -19,6 +19,13 @@ export const newsCardStyles = (isDark: boolean) =>
       height: 300,
       resizeMode: "cover",
     },
+    thumbnailPlaceholder: {
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      height: 300,
+      backgroundColor: Colors.midTone,
+    },
     details: {
       paddingHorizontal: 12,
       marginTop: 8,

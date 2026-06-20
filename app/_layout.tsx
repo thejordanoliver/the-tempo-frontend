@@ -8,12 +8,19 @@ import {
   useFonts,
 } from "@expo-google-fonts/oswald";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationLightTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { Stack, usePathname, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Animated, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import CustomTabBar from "../components/CustomTabBar";
 import { Colors } from "../constants/styles";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
@@ -21,15 +28,8 @@ import {
   PreferencesProvider,
   usePreferences,
 } from "../contexts/PreferencesContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, usePathname, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../hooks/UserHooks/useAuth";
-import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { clearAuthSession } from "../utils/apiClient";
-import CustomTabBar from "../components/CustomTabBar";
 
 const CustomDarkTheme = {
   ...NavigationDarkTheme,

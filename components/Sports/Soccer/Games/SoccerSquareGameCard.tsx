@@ -3,11 +3,10 @@ import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyl
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Text, TextStyle, TouchableOpacity, View } from "react-native";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import { SoccerGameCardProps } from "../../../../types/soccer";
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useRouter();
@@ -58,25 +57,29 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
 
   const homeLogo = getSOCCTeamLogo(home.id, isDark);
   const awayLogo = getSOCCTeamLogo(away.id, isDark);
-
   const holidayLabel = getHolidayLabel(gameDate);
   const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
-  const isChampionship = headline?.includes("Finals");
+  const isChampionship = Boolean(headline?.includes("Final"));
+
   const styles = squareGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const period = formatQuarter(game.status.period);
-  const clock = game.status.clock;
+  const period = formatPeriod({ period: game?.status.period, isSOCC: true });
+  const clock = game.status?.clock;
+
   const gameStatusDescription = game.status?.description;
-  const gameStatusDetail = game.status.shortDetail;
+  const gameStatusDetail = game.status?.shortDetail;
+
   const isFinal = gameStatusDescription === "Full Time";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isSuspended = gameStatusDescription === "Suspended";
+
   const inProgress =
     gameStatusDescription === "In Progress" ||
     gameStatusDescription === "First Half" ||
     gameStatusDescription === "Second Half" ||
     gameStatusDescription === "End of Period";
+
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -84,52 +87,44 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const homeScore = game.home.score ?? 0;
-  const awayScore = game.away.score ?? 0;
-  const homeRecord = game.home.record ?? "0-0-0";
-  const awayRecord = game.away.record ?? "0-0-0";
+  const homeScore = Number(game?.home?.score ?? 0);
+  const awayScore = Number(game?.away?.score ?? 0);
+  const homeRecord = game?.home?.record ?? "0-0-0";
+  const awayRecord = game?.away?.record ?? "0-0-0";
+  const homeWins = Boolean(game?.home?.winner);
+  const awayWins = Boolean(game?.away?.winner);
 
-  // -----------------------------------------------------
-  // SCORE TEXT COMPONENT
-  // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
 
-  const winnerStyle = (teamWins: boolean): TextStyle => ({
+  const winnerStyle = (teamWins: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity:
-      inProgress || isHalftime || endOfPeriod
-        ? 1
-        : isFinal
-          ? teamWins
-            ? 1
-            : 0.5
-          : 1,
+    opacity: !isFinal || isTie ? 1 : teamWins ? 1 : 0.35,
+    fontWeight: isFinal && teamWins ? ("700" as const) : ("500" as const),
   });
 
   const ScoreText = ({
     score,
-    recordData,
-    teamWins,
-    showRecord,
+    record,
+    teamWins = false,
   }: {
-    score?: number;
-    recordData?: string;
+    score: number;
+    record: string;
     teamWins: boolean;
-    showRecord?: boolean;
   }) => {
-    const hasScore = typeof score === "number" && !isNaN(score);
-    const displayValue =
-      showRecord || !hasScore
-        ? (recordData ?? "-")
-        : (score?.toString() ?? "-");
-    const style =
-      showRecord || !hasScore
-        ? styles.teamRecord
-        : [styles.teamScore, winnerStyle(teamWins)];
-    return <Text style={style}>{displayValue}</Text>;
-  };
+    const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
+    return (
+      <Text
+        style={
+          showRecord
+            ? styles.teamRecord
+            : [styles.teamScore, winnerStyle(teamWins)]
+        }
+      >
+        {showRecord ? record : score}
+      </Text>
+    );
+  };
   const renderStatus = () => {
     if (inProgress)
       return (
@@ -142,6 +137,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
     if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
@@ -167,17 +163,16 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image
-              source={awayLogo}
+              source={{ uri: awayLogo }}
               style={styles.logo}
-              accessibilityLabel={`${awayName} logo`}
+              accessibilityLabel={`${homeName} logo`}
             />
             <Text style={styles.teamName}>{awayName}</Text>
           </View>
           <ScoreText
             score={awayScore}
-            recordData={awayRecord ?? undefined}
+            record={awayRecord}
             teamWins={awayWins}
-            showRecord={isScheduled || isDelayed || isPostponed || isCanceled}
           />
         </View>
 
@@ -185,7 +180,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image
-              source={homeLogo}
+              source={{ uri: homeLogo }}
               style={styles.logo}
               accessibilityLabel={`${homeName} logo`}
             />
@@ -193,9 +188,8 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
           </View>
           <ScoreText
             score={homeScore}
-            recordData={homeRecord}
+            record={homeRecord}
             teamWins={homeWins}
-            showRecord={isScheduled || isDelayed || isPostponed || isCanceled}
           />
         </View>
       </View>

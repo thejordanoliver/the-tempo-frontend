@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   SoccerProps,
-  sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
@@ -17,8 +16,9 @@ export const TeamRow = ({
   isHome = false,
   score,
   isWinner,
+  isTie,
   league,
-  size = "medium",
+  state,
   gameStatusDescription,
 }: SoccerProps) => {
   const router = useRouter();
@@ -30,12 +30,8 @@ export const TeamRow = ({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const isFinal = gameStatusDescription === "Full Time";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "First Half" ||
-    gameStatusDescription === "Second Half" ||
-    gameStatusDescription === "End of Period";
+  const isFinal = state === "post";
+  const inProgress = state === "in";
 
   const getScoreStyle = () => {
     if (score == null) {
@@ -52,7 +48,11 @@ export const TeamRow = ({
           ? isDark
             ? Colors.dark.white
             : Colors.light.black
-          : Colors.midTone,
+          : isTie
+            ? isDark
+              ? Colors.dark.white
+              : Colors.light.black
+            : Colors.midTone,
       };
     }
 
@@ -81,8 +81,8 @@ export const TeamRow = ({
         <Text
           style={
             showRecordInsteadOfScore
-              ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-              : [styles.score, sizeStyles[size].score, getScoreStyle()]
+              ? styles.preGameRecord
+              : [styles.score, getScoreStyle()]
           }
         >
           {showRecordInsteadOfScore ? record : score}
@@ -92,7 +92,7 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={{uri: logo}} style={sizeStyles[size].logo} />
+          <Image source={{ uri: logo }} style={styles.logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
@@ -113,8 +113,8 @@ export const TeamRow = ({
           <Text
             style={
               showRecordInsteadOfScore
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-                : [styles.score, sizeStyles[size].score, getScoreStyle()]
+                ? styles.preGameRecord
+                : [styles.score, getScoreStyle()]
             }
           >
             {showRecordInsteadOfScore ? record : (score ?? "")}

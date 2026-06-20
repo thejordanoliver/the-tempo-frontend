@@ -10,13 +10,17 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import MMAGameCard from "./MMAGameCard";
 
+import { MMAEvent } from "hooks/MMAHooks/useMMAGames";
 import { MMAFight } from "types/mma";
+import { getMMAGameId } from "utils/mmaEventUtils";
 import MMAGamePreviewModal from "../GamePreview/MMAGamePreviewModal";
 import MMASquareGameCard from "./MMASquareGameCard";
 import MMAStackedGameCard from "./MMAStackedGameCard";
 
+type MMAGameListItem = MMAFight | MMAEvent;
+
 type GamesListProps = {
-  games: MMAFight[];
+  games: MMAGameListItem[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -42,23 +46,23 @@ export default function MMAGamesList({
   const styles = gameListStyles;
   const global = globalStyles(isDark);
 
-  const [previewGame, setPreviewGame] = useState<MMAFight | null>(null);
+  const [previewGame, setPreviewGame] = useState<MMAGameListItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (game: MMAFight) => {
+  const handleLongPress = (game: MMAGameListItem) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
   };
 
-  const renderGameCard = (game: MMAFight) => {
+  const renderGameCard = (game: MMAGameListItem) => {
     if ((game as any)?._isPlaceholder) {
       return <View style={styles.gridItem} />;
     }
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <LongPressGestureHandler
-        key={game.id}
+        key={String(getMMAGameId(game) ?? "mma-game")}
         minDurationMs={300}
         onHandlerStateChange={({ nativeEvent }) => {
           if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
@@ -73,7 +77,7 @@ export default function MMAGamesList({
     if (viewMode === "list") {
       return (
         <Wrapper>
-          <MMAGameCard game={game} />
+          <MMAGameCard game={game as MMAFight} />
         </Wrapper>
       );
     }
@@ -81,14 +85,14 @@ export default function MMAGamesList({
     if (viewMode === "grid") {
       return (
         <Wrapper>
-          <MMASquareGameCard game={game} />
+          <MMASquareGameCard game={game as MMAFight} />
         </Wrapper>
       );
     }
 
     return (
       <Wrapper>
-        <MMAStackedGameCard game={game} />
+        <MMAStackedGameCard game={game as MMAFight} />
       </Wrapper>
     );
   };
@@ -159,7 +163,7 @@ export default function MMAGamesList({
     return renderSkeletons(count);
   }
 
-  if (!loading && games.length === 0) {
+  if (loading && games.length === 0) {
     return (
       <View style={styles.emptyWrapper}>
         <Text style={global.emptyText}>
@@ -184,7 +188,7 @@ export default function MMAGamesList({
           keyExtractor={(item, index) =>
             (item as any)?._isPlaceholder
               ? `placeholder-${index}`
-              : `game-${item.id}`
+              : `game-${String(getMMAGameId(item) ?? index)}`
           }
           numColumns={2}
           columnWrapperStyle={styles.gridRow}
@@ -198,7 +202,7 @@ export default function MMAGamesList({
 
         {modalVisible && previewGame && (
           <MMAGamePreviewModal
-            game={previewGame}
+            game={previewGame as MMAFight}
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
           />
@@ -212,7 +216,9 @@ export default function MMAGamesList({
     <>
       <FlatList
         data={games}
-        keyExtractor={(item) => `game-${item.id}`}
+        keyExtractor={(item, index) =>
+          `game-${String(getMMAGameId(item) ?? index)}`
+        }
         renderItem={({ item }) => renderGameCard(item)}
         refreshing={refreshing}
         onRefresh={onRefresh}
@@ -224,7 +230,7 @@ export default function MMAGamesList({
 
       {modalVisible && previewGame && (
         <MMAGamePreviewModal
-          game={previewGame}
+          game={previewGame as MMAFight}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

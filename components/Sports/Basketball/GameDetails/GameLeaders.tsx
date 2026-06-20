@@ -45,7 +45,7 @@ type Props = {
   loading?: boolean;
   error?: boolean;
   league?: string;
-  gameStatusDescription: string;
+  state?: string;
 };
 
 type StatProps = {
@@ -96,16 +96,14 @@ export default function GameLeaders({
   isDark,
   loading = false,
   error = false,
-  gameStatusDescription,
+  state,
 }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
 
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isInProgress =
-    gameStatusDescription !== "Scheduled" &&
-    gameStatusDescription !== "Finished";
+  const isScheduled = state === "pre";
+  const inProgress = state === "in";
 
   useEffect(() => {
     setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
@@ -123,9 +121,9 @@ export default function GameLeaders({
       isPlaceholder: true,
     });
 
-    if (!leaders?.length && !isInProgress) return [];
+    if (!leaders?.length && !inProgress) return [];
 
-    if (isInProgress && leaders?.length === 0) {
+    if (inProgress && leaders?.length === 0) {
       return [makePlaceholder(awayTeamId), makePlaceholder(homeTeamId)];
     }
 
@@ -224,7 +222,7 @@ export default function GameLeaders({
     leaders,
     selectedCategory,
     isScheduled,
-    isInProgress,
+    inProgress,
     awayTeamId,
     homeTeamId,
   ]);

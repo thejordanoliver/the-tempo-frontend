@@ -1,5 +1,5 @@
 import { NBABracketMatchup } from "@/types/basketball";
-import { formatQuarter, getBroadcastDisplay } from "@/utils/games";
+import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
 import { Text, View } from "react-native";
@@ -108,7 +108,7 @@ const getGameStatus = (
   const isHalftime = gameStatusDescription === "Halftime";
   const isEndOfPeriod = gameStatusDescription === "End of Period";
 
-  const period = formatQuarter(game.status?.period || 0);
+  const period = formatPeriod(game.status?.period || 0);
 
   if (inProgress) {
     return (

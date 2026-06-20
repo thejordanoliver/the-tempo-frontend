@@ -16,7 +16,7 @@ type GameHeaderProps = {
   awayScore: number;
   homeTimeouts?: number | null;
   awayTimeouts?: number | null;
-  period: number | undefined | null;
+  period?: number | string | null;
   clock: string;
   downDistance: string | undefined | null;
   awayPossesion: boolean | null;

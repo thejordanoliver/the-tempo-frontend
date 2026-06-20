@@ -15,16 +15,23 @@ import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 type Props = {
   title: string;
   refreshSignal?: number;
-  league: "CFB" | "CBB" | "WCBB" | "NBA" | "WNBA" | "NFL" | "NHL" | "MLB";
+  league: string;
 };
 
-export default function ChampionsTable({ title, league }: Props) {
+export default function ChampionsTable({
+  title,
+  league,
+  refreshSignal,
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = awardTableStyles(isDark);
   const global = globalStyles(isDark);
 
-  const { data, loading, error } = useChampions({ league });
+  const { data, loading, error } = useChampions({
+    league,
+    refreshToken: refreshSignal,
+  });
 
   if (loading) {
     return (

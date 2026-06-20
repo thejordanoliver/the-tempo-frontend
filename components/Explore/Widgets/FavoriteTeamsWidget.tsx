@@ -7,12 +7,7 @@ import {
   normalizeExploreFavoriteTeam,
 } from "hooks/WidgetHooks/useExploreWidgetGames";
 import { useMemo } from "react";
-import {
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import { ExploreWidgetSize } from "types/widgets";
 import { favoriteTeamsList } from "utils/teams";
 import FavoriteTeamsSlider, { FavoriteTeamSlide } from "./FavoriteTeamsSlider";
@@ -54,7 +49,7 @@ const resolveTeamLogo = (
 
 export default function FavoriteTeamsWidget({
   isDark,
-  size = "medium",
+
   width,
   height,
   containerWidth,
@@ -82,10 +77,7 @@ export default function FavoriteTeamsWidget({
   const verticalPadding = compact ? 10 : 14;
   const horizontalPadding = compact ? 10 : 14;
   const bodyWidth = Math.max(resolvedWidth - horizontalPadding * 2, 1);
-  const bodyHeight = Math.max(
-    resolvedHeight - verticalPadding * 2,
-    1,
-  );
+  const bodyHeight = Math.max(resolvedHeight - verticalPadding * 2, 1);
   const styles = favoriteTeamsWidgetStyles(isDark, compact);
   const showActions = isEditing && widgetId != null;
 

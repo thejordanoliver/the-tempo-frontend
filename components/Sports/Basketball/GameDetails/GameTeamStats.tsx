@@ -193,7 +193,7 @@ const STAT_KEYS = [
 
 export default function GameTeamStats({
   stats,
-  gameStatusDescription,
+  state,
   awayLogo,
   homeLogo,
   awayColor,
@@ -208,13 +208,12 @@ export default function GameTeamStats({
   homeColor: string;
   awayName: string;
   homeName: string;
-  gameStatusDescription: string;
+  state?: string;
   stats: any[];
   isDark: boolean;
-
 }) {
   const styles = gameTeamStatsStyles(isDark);
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const isScheduled = state === "pre";
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const heightAnim = useRef(

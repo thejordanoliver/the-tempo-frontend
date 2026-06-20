@@ -64,7 +64,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league: string;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 const normalizeIdentifier = (value: unknown) => {
@@ -130,7 +130,7 @@ export default function BoxScore({
   isError = false,
   league,
   isDark,
-  gameStatusDescription,
+  state,
 }: Props) {
   const styles = boxScoreStyles(isDark);
   const global = globalStyles(isDark);
@@ -479,7 +479,7 @@ export default function BoxScore({
     );
   };
 
-  if (gameStatusDescription === "Scheduled") {
+  if (state === "pre") {
     return null;
   }
 

@@ -1,4 +1,4 @@
-import { ImageSourcePropType, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
 import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
@@ -11,8 +11,8 @@ type Props = {
   awayName: string;
   homeId: number;
   awayId: number;
-  homeLogo: ImageSourcePropType;
-  awayLogo: ImageSourcePropType;
+  homeLogo: any;
+  awayLogo: any;
   homeScore: number;
   awayScore: number;
   isDark: boolean;
@@ -74,7 +74,6 @@ export default function GameHeader({
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
-          key={`away`}
           id={awayId}
           logo={awayLogo}
           name={awayName}
@@ -101,7 +100,6 @@ export default function GameHeader({
         />
 
         <TeamRow
-          key={`home`}
           id={homeId}
           logo={homeLogo}
           name={homeName}

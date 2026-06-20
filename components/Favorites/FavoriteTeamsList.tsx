@@ -28,16 +28,6 @@ type Props = {
   isCurrentUser: boolean;
 };
 
-/* ---------------- LOGO HELPER ---------------- */
-
-function resolveLogo(source: any) {
-  if (!source) return null;
-  if (typeof source === "number") return source;
-  if (typeof source === "object" && source.uri) return source;
-  if (typeof source === "string") return { uri: source };
-  return null;
-}
-
 /* ---------------- TEAM HELPERS ---------------- */
 
 const getTeamId = (team: TeamWithLeague) => {
@@ -63,13 +53,18 @@ const getLeagueBadgeColor = (league: LeagueType) => {
 const FavoriteTeamsList = ({
   favoriteTeams,
   isGridView,
+  itemWidth,
   isCurrentUser,
 }: Props) => {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = favoriteTeamsListStyles(isDark);
-  // ✅ shared context — same instance as ProfileScreenInner
+  const resolvedGridItemWidth =
+    typeof itemWidth === "number" && Number.isFinite(itemWidth) && itemWidth > 0
+      ? itemWidth
+      : "31%";
+
   const {
     previewTeam,
     modalVisible,
@@ -148,6 +143,7 @@ const FavoriteTeamsList = ({
                 style={({ pressed }) => [
                   pressed && styles.pressed,
                   isGridView ? styles.gridItem : styles.listItem,
+                  isGridView ? { width: resolvedGridItemWidth } : undefined,
                 ]}
                 onPress={() =>
                   router.push({

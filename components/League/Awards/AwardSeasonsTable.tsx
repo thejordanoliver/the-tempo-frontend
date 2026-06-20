@@ -1,7 +1,6 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   LayoutAnimation,
@@ -30,20 +29,11 @@ type Props = {
   error: string | null;
 };
 
-export function AwardSeasonsTable({
-  category,
-  title,
-  loading,
-  error,
-  data,
-}: Props) {
+export function AwardSeasonsTable({ title, loading, error, data }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = awardTableStyles(isDark);
   const global = globalStyles(isDark);
-  const router = useRouter();
-  const isCOY = category === "coy";
-
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -63,16 +53,6 @@ export function AwardSeasonsTable({
           : Colors.light.itemBackground
         : "transparent",
     [isDark],
-  );
-
-  const handlePlayerPress = useCallback(
-    (playerId: number, teamId?: number) => {
-      router.push({
-        pathname: "/player/[id]",
-        params: { id: String(playerId), teamId },
-      });
-    },
-    [router],
   );
 
   if (loading) {
@@ -107,29 +87,8 @@ export function AwardSeasonsTable({
                 { backgroundColor: getRowBackground(index) },
               ]}
             >
-              {!isCOY && row.player_id ? (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  onPress={() =>
-                    handlePlayerPress(
-                      Number(row.player_id),
-                      Number(row.current_team?.id),
-                    )
-                  }
-                >
-                  <Text style={styles.playerName}>{row.player_name}</Text>
-                </TouchableOpacity>
-              ) : (
-                <Text style={styles.playerName}>{row.player_name}</Text>
-              )}
-
-              <Text style={styles.seasonText}>
-                {row.season} ·{" "}
-                {row.award_team?.code ??
-                  row.team_code ??
-                  row.team_abbr ??
-                  row.school}
-              </Text>
+              <Text style={styles.playerName}>{row.player_name}</Text>
+              <Text style={styles.seasonText}>{row.season}</Text>
             </View>
           ))}
         </View>

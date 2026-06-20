@@ -669,7 +669,7 @@ function StandingsTable({
 
 export default function StandingsWidget({
   isDark,
-  size = "medium",
+
   containerWidth,
   containerHeight,
   widgetId,

@@ -2,7 +2,7 @@ import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import React from "react";
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
-import { newsHighlightsListStyles } from "styles/NewsStyles/NewsHighlightsListStyles";
+import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import NewsCard from "./NewsCard";
 
@@ -24,7 +24,7 @@ export default function NewsList({
   error,
   isDark,
 }: NewsHighlightsListProps) {
-  const styles = newsHighlightsListStyles(isDark);
+  const styles = newsListStyles(isDark);
   const global = globalStyles(isDark);
 
   if (error) return <Text style={global.errorText}>Failed to load news</Text>;

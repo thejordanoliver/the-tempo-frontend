@@ -1,3 +1,6 @@
+import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useVenue } from "@/hooks/useVenue";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
@@ -19,12 +22,11 @@ import { Colors } from "../../../constants/styles";
 import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "../../../constants/teamsSB";
-import { getVenue } from "../../../constants/venues";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useBaseballGameDetails } from "../../../hooks/BaseballHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "../../../hooks/BaseballHooks/useLastFiveGames";
 import { useScrollFade } from "../../../hooks/useScrollFade";
-import { useWeatherForecast } from "../../../hooks/useWeather";
+import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "../../../types/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
@@ -37,6 +39,42 @@ type RouteParams = {
 };
 
 type BaseballGame = BaseballGameCardProps["game"];
+
+type MLBTeamInjuriesProps = {
+  injuries: any[];
+  homeId: number;
+  awayId: number;
+  homeEspnId: number;
+  awayEspnId: number;
+  league: string;
+  isDark: boolean;
+};
+
+function MLBTeamInjuries({
+  injuries,
+  homeId,
+  awayId,
+  homeEspnId,
+  awayEspnId,
+  league,
+  isDark,
+}: MLBTeamInjuriesProps) {
+  const homeTeamPlayersData = useRoster(homeId, league);
+  const awayTeamPlayersData = useRoster(awayId, league);
+
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
+
+  return (
+    <TeamInjuries
+      injuries={injuries}
+      teamPlayersMap={teamPlayersMap}
+      isDark={isDark}
+    />
+  );
+}
 
 function getFirstParam(value?: string | string[]) {
   if (Array.isArray(value)) return value[0];
@@ -101,8 +139,11 @@ export default function GameDetailsScreen(
   );
 
   const LEAGUE = game?.league?.code ?? "mlb";
+  const normalizedLeague = LEAGUE.toLowerCase();
+  const isMLB = normalizedLeague === "mlb";
   const isCB = leagueId === 14;
   const isSB = leagueId === 102;
+
   const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameId = game?.id;
 
@@ -140,12 +181,17 @@ export default function GameDetailsScreen(
       ? getCBTeam(awayId)
       : getMLBTeam(awayId);
 
+  const homeEspnId = homeTeam?.espnId ?? 0;
+  const awayEspnId = awayTeam?.espnId ?? 0;
+
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+
   const awayColor = useMemo(
     () => awayTeam?.color ?? Colors.midTone,
     [awayTeam?.color],
   );
+
   const homeColor = useMemo(
     () => homeTeam?.color ?? Colors.midTone,
     [homeTeam?.color],
@@ -179,9 +225,9 @@ export default function GameDetailsScreen(
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
+  const state = game?.status.state ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
@@ -189,23 +235,31 @@ export default function GameDetailsScreen(
   const awayWins = awayScore > homeScore;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
-  const dontShowDetails = isCanceled || isDelayed || isPostponed || isForfeited;
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const outs = score?.outs ?? 0;
+
   const bases = {
     onFirst: score?.bases.onFirst ?? false,
     onSecond: score?.bases.onSecond ?? false,
     onThird: score?.bases?.onThird ?? false,
   };
+
   const homeRecord = home?.record ?? "0—0";
   const awayRecord = away?.record ?? "0—0";
   const homeRank = home?.homeRank;
@@ -215,24 +269,31 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay;
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+  const injuries = details?.injuries ?? [];
 
   const neutralSite = details?.neutralSite;
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "baseball", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
+
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
+
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
 
   useLayoutEffect(() => {
-    if (isLoading || !game || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
@@ -256,14 +317,10 @@ export default function GameDetailsScreen(
     });
   }, [
     LEAGUE,
-    away,
-    awayId,
     awayCode,
     game,
     awayHeaderLogo,
     homeHeaderLogo,
-    home,
-    homeId,
     homeCode,
     awayColor,
     homeColor,
@@ -280,7 +337,7 @@ export default function GameDetailsScreen(
     );
   }
 
-  if (!game || !homeTeam || !awayTeam) return <View />;
+  if (!game) return <View />;
 
   return (
     <>
@@ -336,7 +393,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeHeaderLogo}
               homeColor={homeColor}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <MatchupPredictor
@@ -350,7 +407,7 @@ export default function GameDetailsScreen(
               awayColor={awayColor}
               size={180}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LineScore
@@ -358,7 +415,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               awayCode={awayCode}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
               league={LEAGUE}
             />
 
@@ -367,7 +424,7 @@ export default function GameDetailsScreen(
             <Officials
               officials={officials ?? []}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LastFiveGames
@@ -381,10 +438,22 @@ export default function GameDetailsScreen(
                 teamCode: awayCode,
                 games: awayLastGames.games,
               }}
-              league={LEAGUE.toUpperCase()}
-              gameStatusDescription={gameStatusDescription}
+              league={LEAGUE}
+              state={state}
               isDark={isDark}
             />
+
+            {isMLB && (
+              <MLBTeamInjuries
+                injuries={injuries}
+                homeId={homeId}
+                awayId={awayId}
+                homeEspnId={homeEspnId}
+                awayEspnId={awayEspnId}
+                league={LEAGUE}
+                isDark={isDark}
+              />
+            )}
 
             <GameLocation
               venueImage={venueImage}
@@ -400,11 +469,13 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(game.id)}
-        opacityAnim={opacityAnim}
-        gameStatusDescription={gameStatusDescription}
-      />
+      {!dontShowDetails && (
+        <GameLiveChatOverlay
+          gameId={String(game.id)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
+      )}
     </>
   );
 }

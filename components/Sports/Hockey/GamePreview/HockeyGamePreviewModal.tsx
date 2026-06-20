@@ -2,7 +2,8 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
-import { useWeatherForecast } from "@/hooks/useWeather";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -13,12 +14,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { HockeyGame } from "types/hockey";
 import {
-  formatQuarter,
+  formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { getVenue } from "../../../../constants/venues";
 import CenterInfo from "../../NBA/GamePreview/CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -92,7 +92,7 @@ export default function HockeyGamePreviewModal({
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
-  const period = formatQuarter(game.status.period, false, true);
+  const period = formatPeriod({ period: game.status.period, isNHL: true });
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const homeRecord = game?.home?.record ?? "0-0";
@@ -105,19 +105,22 @@ export default function HockeyGamePreviewModal({
       }
     : undefined;
 
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue("hockey", venueId);
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   return (
     <BottomSheetModal

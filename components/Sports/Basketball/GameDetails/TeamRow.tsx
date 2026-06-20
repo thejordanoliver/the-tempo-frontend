@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   SizeType,
-  sizeStyles,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
@@ -36,9 +35,7 @@ export const TeamRow = ({
   score,
   isWinner,
   gameStatusDescription,
-  size = "medium",
   timeouts,
-  bonusState,
   league = "cbb",
 }: CollegeBasketballTeamRowProps) => {
   const router = useRouter();
@@ -59,7 +56,6 @@ export const TeamRow = ({
     gameStatusDescription === "Halftime" ||
     gameStatusDescription === "End of Period";
 
-  const isHalftime = gameStatusDescription === "Halftime";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -110,12 +106,8 @@ export const TeamRow = ({
           <Text
             style={
               showRecordInsteadOfScore
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
-                : [
-                    styles.score,
-                    sizeStyles[size].score,
-                    getScoreStyle(), // ✅ CALL IT
-                  ]
+                ? [styles.preGameRecord]
+                : [styles.score, getScoreStyle()]
             }
           >
             {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
@@ -126,7 +118,7 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={logo} style={sizeStyles[size].logo} />
+          <Image source={logo} style={styles.logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>
@@ -151,10 +143,10 @@ export const TeamRow = ({
           <Text
             style={
               showRecordInsteadOfScore
-                ? [styles.preGameRecord, sizeStyles[size].preGameRecord]
+                ? [styles.preGameRecord, styles.preGameRecord]
                 : [
                     styles.score,
-                    sizeStyles[size].score,
+                    styles.score,
                     getScoreStyle(), // ✅ CALL IT
                   ]
             }

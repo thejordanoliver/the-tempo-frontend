@@ -130,24 +130,29 @@ export type RosterStatsProps = {
 };
 
 export type Team = {
-  id: number;
-  wid?: any;
-  espnId?: string | number;
+  id: number | null;
+  wid?: number | null;
+  espnId: number | null;
+  summerLeagueId?: number | null;
   name: string;
+  shortName?: string;
   fullName?: string;
-  logo?: any;
-  logoLight?: any;
-  color?: string;
-  first_season?: string;
-  firstSeason?: string;
-  secondary_color?: string;
-  secondaryColor?: string;
-  code?: string;
-  primary_color?: string;
+  code: string;
+  city?: string;
+  location?: string;
+  coach?: string;
   conference?: string;
-  displayName?: string;
+  conferenceShortName?: string;
+  owner?: string;
+  established?: number;
+  logo: any;
+  logoLight?: any;
+  wLogo?: any;
+  color: string | null;
+  secondaryColor: string | null;
+  championships?: number[];
   isAllStar: boolean;
-  league?: string;
+  isActive: boolean;
 };
 
 export type LeagueType =
@@ -169,19 +174,26 @@ export type LeagueType =
   | "WCBB"
   | "MLB"
   | "NHL"
-  | "MMA";
+  | "UFC";
 
 export type LeagueTeam = Team & { league: LeagueType };
 
 export type Venue = {
-  name?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  latitude?: number;
-  longitude?: number;
-  venueCapacity?: string;
-  venueImage?: any;
+  id: string;
+  name: string;
+  fullName: string;
+  address?: {
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  grass?: boolean;
+  images?: {
+    href: string;
+    rel: string[];
+  }[];
+  attendance?: number;
 };
 
 export type DBPlayer = {
@@ -344,7 +356,7 @@ export type AwardSeason = {
 };
 
 export const AWARD_CONFIG: Partial<
-  Record<LeagueType, { label: string; value: AwardCategory; title: string }[]>
+  Record<string, { label: string; value: AwardCategory; title: string }[]>
 > = {
   NBA: [
     { label: "All Awards", value: "all", title: "" },

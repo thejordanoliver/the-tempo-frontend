@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type ChampionTeam = {
@@ -14,7 +13,7 @@ export type ChampionTeam = {
 };
 
 type Options = {
-  league: LeagueType;
+  league: string;
   enabled?: boolean;
   refreshToken?: number;
 };

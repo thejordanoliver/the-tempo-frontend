@@ -3,41 +3,40 @@ import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
 
 type GameInfoProps = {
   gameStatusDescription: string | undefined;
-  gameStatusDetail: string | undefined;
+  results?: string | null;
   date: string;
   time: string;
-  clock: string;
-  period?: number;
+  clock?: string;
+  period?: string;
   isDark: boolean;
-  broadcastNetworks?: string;
+  broadcast?: string;
 };
 
 export function GameInfo({
   gameStatusDescription,
-  gameStatusDetail,
+  results,
   date,
   time,
   clock,
   isDark,
   period,
-  broadcastNetworks,
+  broadcast,
 }: GameInfoProps) {
   const styles = gameInfoStyles(isDark);
 
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Round";
-  const endOfRound = gameStatusDescription === "End of Round";
-  const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeit";
+  const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isForfeited = gameStatusDescription === "Forfeited";
+  const isEndOfRound = gameStatusDescription === "End of Round";
+  const inProgress = gameStatusDescription === "In Progress";
+  const inWalkouts = gameStatusDescription === "Walkouts";
+  const isIntros = gameStatusDescription === "Intros";
 
   return (
     <View style={styles.container}>
-      {/* ⚾️ Scheduled */}
       {isScheduled && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{date}</Text>
@@ -46,7 +45,18 @@ export function GameInfo({
         </View>
       )}
 
-      {/* 🕒 In Play */}
+      {inWalkouts && (
+        <View>
+          <Text style={styles.date}>Walkouts</Text>
+        </View>
+      )}
+
+      {isIntros && (
+        <View>
+          <Text style={styles.date}>Intros</Text>
+        </View>
+      )}
+
       {inProgress && (
         <View>
           <View style={styles.infoWrapper}>
@@ -57,19 +67,23 @@ export function GameInfo({
         </View>
       )}
 
-      {/* 🏁 Final */}
+      {isEndOfRound && (
+        <View>
+          <Text style={styles.date}>End of {period}</Text>
+        </View>
+      )}
+
       {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <Text style={styles.finalText}>{results}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
 
-      {/* ❌ Canceled */}
       {isCanceled && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Canceled</Text>
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         </View>
       )}
 
@@ -101,10 +115,8 @@ export function GameInfo({
       )}
 
       {/* 📺 Broadcast */}
-      {(broadcastNetworks && inProgress) ||
-        (isScheduled && (
-          <Text style={styles.broadcasts}>{broadcastNetworks}</Text>
-        ))}
+      {(broadcast && inProgress) ||
+        (isScheduled && <Text style={styles.broadcasts}>{broadcast}</Text>)}
     </View>
   );
 }

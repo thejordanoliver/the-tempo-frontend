@@ -6,12 +6,14 @@ import { StyleSheet } from "react-native";
 export const favoriteTeamsListStyles = (isDark: boolean) =>
   StyleSheet.create({
     gridContainer: {
-      columnGap: 8,
-      rowGap: 8,
+      width: "100%",
+      columnGap: 12,
+      rowGap: 12,
       justifyContent: "flex-start",
     },
     gridItem: {
-      width: "32%",
+      flexGrow: 0,
+      flexShrink: 0,
     },
     listItem: {
       width: "100%",
@@ -68,7 +70,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       width: "100%",
       marginVertical: 12,
     },
-   
+
     favoritesContainer: {
       marginTop: 20,
       paddingHorizontal: 12,

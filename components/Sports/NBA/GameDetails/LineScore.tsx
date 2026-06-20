@@ -18,7 +18,7 @@ type Props = {
   isDark: boolean;
   loading?: boolean;
   league?: string;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 export default function LineScore({
@@ -28,7 +28,7 @@ export default function LineScore({
   isDark,
   loading,
   league = "nba",
-  gameStatusDescription,
+  state,
 }: Props) {
   const styles = lineScoreStyles(isDark);
 
@@ -95,11 +95,20 @@ export default function LineScore({
     }
 
     // ---------------- cbb ----------------
-    if (league === "cbb" || league === "soccer") {
+    if (league === "cbb") {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "OT";
       return `${index - 1}OT`;
+    }
+
+    if (league === "soccer") {
+      if (index === 0) return "1st";
+      if (index === 1) return "2nd";
+      if (index === 2) return "ET";
+      if (index === 3) return "ET";
+      if (index === 4) return "Pens";
+      return `${index - 1}`;
     }
 
     if (index < 4) return `${index + 1}`;
@@ -117,7 +126,7 @@ export default function LineScore({
     return <LineScoreSkeleton league={league} />;
   }
 
-  if (!linescore || gameStatusDescription === "Scheduled") return null;
+  if (!linescore || (state !== "in" && state !== "post")) return null;
 
   return (
     <View style={styles.container}>

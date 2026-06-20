@@ -27,7 +27,7 @@ type Props = {
   homeLogo: any;
   homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 export default function FanPredictionVote({
@@ -41,7 +41,7 @@ export default function FanPredictionVote({
   homeLogo,
   homeColor,
   onVoteCast,
-  gameStatusDescription,
+  state,
 }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -211,15 +211,11 @@ export default function FanPredictionVote({
         useNativeDriver: false,
       }),
     ]).start();
-  }, [displayPctAway, displayPctHome, resultsRevealed, userVote, barWidth]);
+  }, [displayPctAway, displayPctHome, resultsRevealed, userVote, barWidth, awayId, homeId, animPctAway, animPctHome, animTranslateAway, animTranslateHome, animOpacityAway, animOpacityHome, animScaleAway, animScaleHome]);
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  if (
-    gameStatusDescription === "Final" ||
-    gameStatusDescription === "Full Time"
-  )
-    return null;
+  if ((state !== "in" && state !== "pre" )) return null;
 
   if (error)
     return (
@@ -320,7 +316,7 @@ export default function FanPredictionVote({
                   }}
                 >
                   <Animated.Image
-                   source={
+                    source={
                       typeof homeLogo === "string"
                         ? { uri: homeLogo }
                         : homeLogo

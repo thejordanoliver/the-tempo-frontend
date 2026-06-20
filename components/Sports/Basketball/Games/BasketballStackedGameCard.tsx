@@ -9,7 +9,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballStackedGameCard({
   game,
@@ -74,8 +74,8 @@ export default function BasketballStackedGameCard({
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
 
-  const homeName = homeTeam?.name || game.home?.name;
-  const awayName = awayTeam?.name || game.away?.name;
+  const homeName = homeTeam?.fullName || game.home?.name;
+  const awayName = awayTeam?.fullName || game.away?.name;
 
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
@@ -110,7 +110,7 @@ export default function BasketballStackedGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
 
-  const period = game.status.period;
+  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
@@ -168,7 +168,7 @@ export default function BasketballStackedGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
@@ -179,10 +179,7 @@ export default function BasketballStackedGameCard({
 
     if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
 
-    if (endOfPeriod)
-      return (
-        <Text style={styles.clock}>End of {formatQuarter(period ?? 0)}</Text>
-      );
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
     if (isFinal)
       return (

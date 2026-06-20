@@ -1,15 +1,13 @@
+import { useMMAFighter } from "@/hooks/MMAHooks/useMMAFighter";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import useMMAFighter from "hooks/MMAHooks/useMMAFighter";
 import { useLayoutEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
-import { emptyFighter } from "types/mma";
-import { calculateAge } from "utils/dateUtils";
 
 export default function PlayerDetailScreen() {
   const { resolvedColorScheme } = usePreferences();
@@ -18,13 +16,13 @@ export default function PlayerDetailScreen() {
   const global = globalStyles(isDark);
   const navigation = useNavigation();
   const { id } = useLocalSearchParams<{
-    id?: string;
+    id: string;
   }>();
 
-  const { fighter, loading, error } = useMMAFighter(id ?? 0);
-  const flag = fighter?.flag_url;
-  const color = fighter?.color ?? fighter?.alternate_color ?? "";
-  // console.log(JSON.stringify(fighter, null, 2))
+  const { player, loading } = useMMAFighter(id);
+  const flag = player?.flag_url;
+  const color = player?.citizenship_country_alt_color ?? Colors.midTone;
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -38,7 +36,7 @@ export default function PlayerDetailScreen() {
         />
       ),
     });
-  }, [navigation, flag]);
+  }, [navigation, flag, color]);
 
   if (loading) {
     return (
@@ -50,11 +48,7 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader
-        fighter={fighter ?? emptyFighter}
-        isDark={isDark}
-        calculateAge={calculateAge}
-      />
+      <PlayerHeader player={player} isDark={isDark} />
     </ScrollView>
   );
 }

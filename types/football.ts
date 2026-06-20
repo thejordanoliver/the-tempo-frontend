@@ -2,11 +2,11 @@
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
-import { ImageSourcePropType } from "react-native";
 
-export type FootballTeam = {
+export type Team = {
   id: number;
   espnId: number;
+  summerLeagueId?: number;
   oddsId?: string;
   name: string;
   shortName?: string;
@@ -14,21 +14,16 @@ export type FootballTeam = {
   code: string;
   city: string;
   location: string;
-  address?: string;
   coach?: string;
   conference?: string;
   conferenceShortName?: string;
   owner?: string;
-  venueName: string;
   established: number;
   logo: any;
   logoLight?: any;
+  wLogo?: any;
   color: string;
   secondaryColor: string;
-  latitude: number;
-  longitude: number;
-  venueImage: any;
-  venueCapacity: string;
   championships?: number[];
   isAllStar: boolean;
   isActive: boolean;
@@ -247,7 +242,7 @@ export const emptyHomeTeam = {
 
 export type Conference = {
   name: string;
-  logo: ImageSourcePropType | null;
+  logo: any | null;
   teams: string[];
   color?: {
     primary: string;
@@ -263,8 +258,8 @@ export interface CFBPlayoffBracketTeam {
   shortName?: string;
   fullName?: string;
   code: string;
-  logo: ImageSourcePropType;
-  logoLight?: ImageSourcePropType;
+  logo: any;
+  logoLight?: any;
   abbreviation?: string;
   city?: string;
   location?: string;

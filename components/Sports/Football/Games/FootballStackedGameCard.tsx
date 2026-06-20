@@ -1,4 +1,5 @@
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
@@ -12,7 +13,7 @@ import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function FootballStackedGameCard({
   game,
@@ -49,18 +50,30 @@ function FootballStackedGameCard({
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
 
-  const home = isNFL ? getNFLTeam(homeId) : getCFBTeam(homeId);
-  const away = isNFL ? getNFLTeam(awayId) : getCFBTeam(awayId);
+  const home = isNFL
+    ? getNFLTeam(homeId)
+    : isCFB
+      ? getCFBTeam(homeId)
+      : getUFLTeam(homeId);
+  const away = isNFL
+    ? getNFLTeam(awayId)
+    : isCFB
+      ? getCFBTeam(awayId)
+      : getUFLTeam(awayId);
 
-  const homeName = home?.fullName ?? home?.name ?? game.home.name;
-  const awayName = away?.fullName ?? away?.name ?? game.away.name;
+  const homeName = home?.fullName ?? game?.home?.name;
+  const awayName = away?.fullName ?? game?.away?.name;
 
   const homeLogo = isNFL
     ? getNFLTeamLogo(homeId, isDark)
-    : getCFBTeamLogo(homeId, isDark);
+    : isCFB
+      ? getCFBTeamLogo(homeId, isDark)
+      : getUFLTeamLogo(homeId, isDark);
   const awayLogo = isNFL
     ? getNFLTeamLogo(awayId, isDark)
-    : getCFBTeamLogo(awayId, isDark);
+    : isCFB
+      ? getCFBTeamLogo(awayId, isDark)
+      : getUFLTeamLogo(awayId, isDark);
 
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
@@ -74,7 +87,7 @@ function FootballStackedGameCard({
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const displayClock = game.status?.displayClock;
-  const period = game.status?.period;
+  const period = formatPeriod({ period: game.status.period });
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
@@ -162,7 +175,7 @@ function FootballStackedGameCard({
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatQuarter(Number(period))}</Text>
+          <Text style={styles.date}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{displayClock ?? "0:00"}</Text>
         </View>
@@ -180,7 +193,7 @@ function FootballStackedGameCard({
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail || "Final"}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>

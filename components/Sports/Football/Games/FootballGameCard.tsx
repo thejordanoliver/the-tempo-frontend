@@ -13,7 +13,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function FootballGameCard({
   game,
@@ -87,9 +87,9 @@ function FootballGameCard({
   const isForfeited = gameStatusDescription === "Forfeited";
   const isSuspended = gameStatusDescription === "Suspended";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const clock = game.status?.clock;
-  const period = formatQuarter(game.status?.period);
-  const redzone = game?.situation.isRedZone;
+  const clock = game.status?.displayClock;
+  const period = formatPeriod({ period: game.status.period });
+  const redzone = game?.situation?.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);

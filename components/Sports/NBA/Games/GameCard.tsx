@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function GameCard({ game }: BasketballGameCardProps) {
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function GameCard({ game }: BasketballGameCardProps) {
   const isChampionship = headline?.includes("NBA Finals");
   const styles = gameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const period = formatQuarter(game.status.period);
+  const period = formatPeriod({ period: game.status.period });
   const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;

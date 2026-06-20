@@ -179,6 +179,7 @@ useFocusEffect(
       ),
     });
   }, [navigation, router, username, currentUserId, fullName, profileImage]);
+  
   const favoriteTeamsWithLeague = useMemo(
     () =>
       favorites

@@ -7,6 +7,7 @@ type CenterInfoProps = {
   clock?: string;
   isDark: boolean;
   broadcast: string | undefined;
+  state: string;
   gameStatusDescription: string;
   gameStatusShortDescription: string;
 };
@@ -18,18 +19,15 @@ export function CenterInfo({
   clock,
   isDark,
   broadcast,
+  state,
   gameStatusDescription,
   gameStatusShortDescription,
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
 
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "First Half" ||
-    gameStatusDescription === "Second Half" ||
-    gameStatusDescription === "End of Period";
+  const isFinal = state === "post";
+  const inProgress = state === "in";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const isFinal = gameStatusDescription === "Full Time";
   const isScheduled = gameStatusDescription === "Scheduled";
   const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";

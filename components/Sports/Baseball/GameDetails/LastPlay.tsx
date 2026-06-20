@@ -191,21 +191,21 @@ export default function LastPlay({
     return `${awayScore} - ${homeScore}`;
   }, [currentPlay]);
 
-  const countText = useMemo(() => {
-    if (!currentPlay || typeof currentPlay === "string") return null;
+  // const countText = useMemo(() => {
+  //   if (!currentPlay || typeof currentPlay === "string") return null;
 
-    const balls =
-      currentPlay.pitchCount?.balls ?? currentPlay.resultCount?.balls ?? null;
+  //   const balls =
+  //     currentPlay.pitchCount?.balls ?? currentPlay.resultCount?.balls ?? null;
 
-    const strikes =
-      currentPlay.pitchCount?.strikes ??
-      currentPlay.resultCount?.strikes ??
-      null;
+  //   const strikes =
+  //     currentPlay.pitchCount?.strikes ??
+  //     currentPlay.resultCount?.strikes ??
+  //     null;
 
-    if (balls === null || strikes === null) return null;
+  //   if (balls === null || strikes === null) return null;
 
-    return `${balls}-${strikes}`;
-  }, [currentPlay]);
+  //   return `${balls}-${strikes}`;
+  // }, [currentPlay]);
 
   const inningText = useMemo(() => {
     if (!currentPlay || typeof currentPlay === "string") return null;

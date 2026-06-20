@@ -42,23 +42,23 @@ export default function ResultItemRow({
   // -------------------------
   const renderTeam = (team: TeamResult) => {
     if (team.is_active === false) return null;
-    let localTeamLogo: string | undefined;
+    let teamLogo: string | undefined;
 
     if (team.isNFL && team.id != null)
-      localTeamLogo = getNFLTeamLogo(team.id, isDark);
+      teamLogo = getNFLTeamLogo(team.id, isDark);
     else if (team.isWNBA && team.id != null)
-      localTeamLogo = getWNBATeamLogo(team.id, isDark);
+      teamLogo = getWNBATeamLogo(team.id, isDark);
     else if (team.isMLB && team.id != null)
-      localTeamLogo = getMLBTeamLogo(team.id, isDark);
+      teamLogo = getMLBTeamLogo(team.id, isDark);
     else if (team.isNHL && team.id != null)
-      localTeamLogo = getNHLTeamLogo(team.id, isDark);
+      teamLogo = getNHLTeamLogo(team.id, isDark);
     else if (team.isCFB && team.id != null)
-      localTeamLogo = getCFBTeamLogo(team.id, isDark);
+      teamLogo = getCFBTeamLogo(team.id, isDark);
     else if (team.isCBB && team.id != null)
-      localTeamLogo = getCBBTeamLogo(team.id, isDark);
+      teamLogo = getCBBTeamLogo(team.id, isDark);
     else if (team.isWCBB && team.wid != null)
-      localTeamLogo = getCBBTeamLogo(team.wid, isDark, true); // WCBB uses wid
-    else if (team.id != null) localTeamLogo = getTeamLogo(team.id, isDark);
+      teamLogo = getCBBTeamLogo(team.wid, isDark, true); // WCBB uses wid
+    else if (team.id != null) teamLogo = getTeamLogo(team.id, isDark);
 
     return (
       <View style={styles.itemRow}>
@@ -69,9 +69,7 @@ export default function ResultItemRow({
           accessibilityLabel={`Open ${team.full_name || team.name}`}
         >
           <View style={styles.userRow}>
-            {localTeamLogo && (
-              <Image source={localTeamLogo} style={styles.teamLogo} />
-            )}
+            {teamLogo && <Image source={teamLogo} style={styles.teamLogo} />}
             <View>
               <Text style={styles.name}>{team.full_name || team.name}</Text>
               {team.isWCBB && <Text style={styles.tag}>WCBB</Text>}
@@ -104,8 +102,9 @@ export default function ResultItemRow({
     const headshot = player.headshot_url ?? playerPlaceholderImage;
     const playerName = player.full_name;
     const teamId = player.team_id ?? null;
+    const association = player.association_name;
 
-    const localTeam =
+    const team =
       teamId && player.isNBA
         ? getNBATeam(teamId)
         : teamId && player.isWNBA
@@ -138,9 +137,9 @@ export default function ResultItemRow({
             </View>
             <View>
               <Text style={styles.name}>{playerName}</Text>
-              {localTeam?.fullName && (
+              {(team?.fullName || player.association_name) && (
                 <Text style={styles.playerTeam}>
-                  {localTeam?.fullName || "Free Agent"}
+                  {team?.fullName || player.association_name || "Free Agent"}
                 </Text>
               )}
             </View>

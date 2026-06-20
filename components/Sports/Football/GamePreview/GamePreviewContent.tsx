@@ -33,7 +33,7 @@ type GamePreviewContentProps = {
   venueCapacity?: string | null;
   venueAttendance?: number | null;
   weather?: any;
-  gameStatusDescription: string;
+  state: string;
   league: string;
   isChampionship: boolean;
 };
@@ -57,7 +57,7 @@ export default function GamePreviewContent({
   venueAttendance,
   weather,
   isChampionship,
-  gameStatusDescription,
+  state,
   league,
 }: GamePreviewContentProps) {
   const styles = gamePreviewModalStyle(isChampionship);
@@ -79,7 +79,7 @@ export default function GamePreviewContent({
           awayColor={awayColor}
           size={180}
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={state}
         />
 
         <LineScore
@@ -87,14 +87,14 @@ export default function GamePreviewContent({
           homeCode={homeCode}
           awayCode={awayCode}
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={state}
           league={league}
         />
 
         <Officials
           officials={officials ?? []}
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={state}
         />
 
         <GameLocation

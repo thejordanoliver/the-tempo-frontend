@@ -4,6 +4,7 @@ import NHLInjuries from "@/components/Sports/Hockey/GameDetails/NHLInjuries";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -21,12 +22,15 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useScrollFade } from "hooks/useScrollFade";
-import { useWeatherForecast } from "hooks/useWeather";
+import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
-import { getVenue } from "../../../constants/venues";
+import {
+  formatPeriod,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
 
 type RouteParams = {
   game?: string | string[];
@@ -92,7 +96,9 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const gameDateObj = game?.date ? new Date(game.date) : null;
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
 
   const formattedDate =
     gameDateObj && isValidDate(gameDateObj)
@@ -141,15 +147,19 @@ export default function GameDetailsScreen(
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const state = game?.status.state;
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const headline = details?.headline ?? "";
   const broadcast = getBroadcastDisplay(details?.broadcasts);
-  const period = score?.period ?? "";
+  const period = formatPeriod({ period: game?.status.period, isNHL: true });
   const clock = score?.displayClock ?? "0:00";
   const homeScore = score?.home?.total ?? 0;
   const awayScore = score?.away?.total ?? 0;
@@ -170,19 +180,22 @@ export default function GameDetailsScreen(
     : undefined;
 
   const neutralSite = details?.neutralSite;
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue({ sport: "hockey", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   useLayoutEffect(() => {
     if (isLoading || !game || !home || !away) {
@@ -288,7 +301,7 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeHeaderLogo}
               homeColor={homeColor}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <LineScore
@@ -297,7 +310,7 @@ export default function GameDetailsScreen(
               awayCode={awayCode}
               league={LEAGUE}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
             />
 
             <ShotChart
@@ -330,18 +343,14 @@ export default function GameDetailsScreen(
                 teamCode: awayCode,
                 games: awayLastGames.games,
               }}
-              league={LEAGUE.toUpperCase()}
-              gameStatusDescription={gameStatusDescription}
+              league={LEAGUE}
+              state={state}
               isDark={isDark}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
 
-            <Officials
-              officials={officials}
-              isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
-            />
+            <Officials officials={officials} isDark={isDark} state={state} />
 
             <GameLocation
               venueImage={venueImage}
@@ -357,11 +366,13 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(game.id)}
-        opacityAnim={opacityAnim}
-        gameStatusDescription={gameStatusDescription}
-      />
+      {!dontShowDetails && (
+        <GameLiveChatOverlay
+          gameId={String(game.id)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
+      )}
     </>
   );
 }

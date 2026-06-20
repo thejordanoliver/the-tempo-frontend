@@ -136,7 +136,7 @@ export default function LastPlay({
   };
 
   let teamColor = Colors.light.green;
-
+  const isString = typeof currentPlay !== "string";
   if (typeof currentPlay !== "string" && currentPlay?.team?.id) {
     const team = getTeamByESPNId(currentPlay.team.id);
     teamColor = isDark

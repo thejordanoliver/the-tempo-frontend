@@ -1,43 +1,51 @@
 import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
-import { MMAFighter } from "types/mma";
 import { FighterRow } from "./FighterRow";
 import { GameInfo } from "./GameInfo";
 type Props = {
-  headlineText: string | null;
-  seasonState?: string | null;
-  firstFighter: MMAFighter;
-  secondFighter: MMAFighter;
+  headline?: string | null;
+  firstFighterId?: number;
+  secondFighterId?: number;
+  firstFighterHeadshot: string;
+  secondFighterHeadshot: string;
+  firstFighterName: string;
+  secondFighterName: string;
   firstFighterIsWinner: boolean;
   secondFighterIsWinner: boolean;
-  period?: number;
-  displayClock: string;
-  isDark: boolean;
-  formattedDate?: string;
-  time?: string;
-  networkString?: string;
-  refreshTick?: number;
   firstFighterRecord?: string;
   secondFighterRecord?: string;
+  firstFighterFlag?: string;
+  secondFighterFlag?: string;
+  period?: string;
+  clock: string | undefined;
+  isDark: boolean;
+  date?: string;
+  time?: string;
+  broadcast?: string;
   gameStatusDescription: string | undefined;
-  gameStatusDetail: string | undefined;
+  results: string | null | undefined;
 };
 
 export default function GameHeader({
-  headlineText,
-  firstFighter,
-  secondFighter,
+  headline,
+  firstFighterId,
+  secondFighterId,
+  firstFighterHeadshot,
+  firstFighterName,
+  secondFighterHeadshot,
+  secondFighterName,
   firstFighterRecord,
+  firstFighterFlag,
+  secondFighterFlag,
   secondFighterRecord,
-  gameStatusDetail,
+  results,
   gameStatusDescription,
   period,
-  displayClock,
+  clock,
   isDark,
-  formattedDate = "",
+  date = "",
   time = "",
-  networkString = "",
-  refreshTick = 0,
+  broadcast = "",
   firstFighterIsWinner,
   secondFighterIsWinner,
 }: Props) {
@@ -45,52 +53,48 @@ export default function GameHeader({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headlineText}>{headlineText}</Text>
+      <Text style={styles.headlineText}>{headline}</Text>
 
       <View style={styles.teamsContainer}>
+        
         {/* Away Team Row */}
         <FighterRow
-          key={`secondFighter-${refreshTick}`}
-          fighter={{
-            id: secondFighter?.id,
-            name: secondFighter?.last_name ?? "",
-            record: secondFighterRecord,
-            headshot: secondFighter?.images[0]?.href,
-          }}
-          isDark={isDark}
+          id={secondFighterId}
+          headshot={secondFighterHeadshot}
+          name={secondFighterName}
+          record={secondFighterRecord}
+          flag={secondFighterFlag}
           isWinner={secondFighterIsWinner}
           gameStatusDescription={gameStatusDescription}
           isFirstFighter={false}
+          isDark={isDark}
         />
 
         <View>
           {/* Game Info */}
           <GameInfo
-            key={`gameinfo-${refreshTick}`}
             gameStatusDescription={gameStatusDescription}
-            gameStatusDetail={gameStatusDetail}
-            date={formattedDate || new Date().toISOString()}
+            results={results}
+            date={date}
             time={time}
             period={period}
-            clock={displayClock}
+            clock={clock}
             isDark={isDark}
-            broadcastNetworks={networkString}
+            broadcast={broadcast}
           />
         </View>
 
         {/* Home Team Row */}
         <FighterRow
-          key={`firstFighter-${refreshTick}`}
-          fighter={{
-            id: firstFighter?.id,
-            name: firstFighter?.last_name ?? "",
-            record: firstFighterRecord,
-            headshot: firstFighter?.images[0]?.href,
-          }}
-          isDark={isDark}
+          id={firstFighterId}
+          headshot={firstFighterHeadshot}
+          name={firstFighterName}
+          record={firstFighterRecord}
+          flag={firstFighterFlag}
           isWinner={firstFighterIsWinner}
           gameStatusDescription={gameStatusDescription}
           isFirstFighter={true}
+          isDark={isDark}
         />
       </View>
     </View>

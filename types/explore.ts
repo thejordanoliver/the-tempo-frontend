@@ -5,6 +5,8 @@ export type PlayerResult = {
   espn_id: string;
   full_name: string;
   headshot_url: string;
+  nickname: string;
+  association_name: string;
   position: string;
   isNFL?: boolean;
   isMMA?: boolean;

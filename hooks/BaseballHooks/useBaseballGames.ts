@@ -10,23 +10,9 @@ type FetchGamesOptions = {
   silent?: boolean;
 };
 
-const LIVE_STATES = new Set(["in", "half"]);
-
 function isLiveBaseballGame(game: any) {
   const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress") ||
-    description.includes("live") ||
-    detail.includes("live") ||
-    shortDetail.includes("live")
-  );
+  return state.includes("in");
 }
 
 function getBaseballEndpoint(league: League) {

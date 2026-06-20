@@ -4,10 +4,11 @@ import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
-import { useWeatherForecast } from "@/hooks/useWeather";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import {
-  formatQuarter,
+  formatPeriod,
   formatVenueAddress,
   getBroadcastDisplay,
 } from "@/utils/games";
@@ -22,7 +23,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { FootballGame } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
-import { getVenue } from "../../../../constants/venues";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 
@@ -102,6 +102,7 @@ export default function FootballGamePreviewModal({
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
+  const state = game?.status.state ?? "";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -109,7 +110,7 @@ export default function FootballGamePreviewModal({
   const isForfeited = gameStatusDescription === "Forfeited";
   const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
   const clock = game.status?.displayClock;
-  const period = formatQuarter(game.status?.period);
+  const period = formatPeriod({ period: game.status.period });
   const isRedzone = game?.situation.isRedZone;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
@@ -142,19 +143,22 @@ export default function FootballGamePreviewModal({
       }
     : undefined;
 
+  const venueId = Number(details?.venue?.id);
+  const { venue } = useVenue("football", venueId);
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = venue?.name || baseVenue?.fullName;
-  const venueAddress = venue?.address || homeTeam?.address || baseVenueAddress;
-  const venueCapacity = venue?.venueCapacity || homeTeam?.venueCapacity || null;
-  const venueImage =
-    venue?.venueImage || homeTeam?.venueImage || baseVenue?.images?.[0]?.href;
-  const venueLocation = venue?.city || homeTeam?.city;
-  const venueLat = venue?.latitude || homeTeam?.latitude || null;
-  const venueLon = venue?.longitude || homeTeam?.longitude || null;
+  const venueName = venue?.name ?? baseVenue?.fullName;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
   const venueAttendance = baseVenue?.attendance || null;
-  const { weather } = useWeatherForecast(venueLat, venueLon, formattedDate);
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
   const isLoading = !!details;
 
@@ -274,7 +278,7 @@ export default function FootballGamePreviewModal({
                   venueLocation={venueLocation}
                   venueAddress={venueAddress}
                   venueAttendance={venueAttendance}
-                  gameStatusDescription={gameStatusDescription}
+                  state={state}
                   officials={officials}
                   isChampionship={isChampionship}
                   league={LEAGUE}

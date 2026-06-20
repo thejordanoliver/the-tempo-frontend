@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { BasketballGameCardProps } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
-import { formatQuarter, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballSquareGameCard({
   game,
@@ -108,7 +108,7 @@ export default function BasketballSquareGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
 
-  const period = game.status.period;
+  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
@@ -166,7 +166,7 @@ export default function BasketballSquareGameCard({
     if (inProgress)
       return (
         <View>
-          <Text style={styles.period}>{formatQuarter(period ?? 0)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );

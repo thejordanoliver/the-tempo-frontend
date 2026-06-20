@@ -14,14 +14,14 @@ import { useChampionTeams } from "hooks/LeagueHooks/useChampionTeams";
 import { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
-import { AWARD_CONFIG, AwardCategory, LeagueType } from "types/types";
+import { AWARD_CONFIG, AwardCategory } from "types/types";
 import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
 import ChampionsTable from "./ChampionsTable";
 import TopThreeTeams from "./TopThreeTeams";
 type ViewMode = "champions" | "players" | "teams";
 
-const LEAGUE_CHAMPIONS_TITLE: Partial<Record<LeagueType, string>> = {
+const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
   CFB: "College Football Champions",
   WNBA: "WNBA Champions",
   CBB: "Men's College Basketball Champions",
@@ -33,7 +33,7 @@ const LEAGUE_CHAMPIONS_TITLE: Partial<Record<LeagueType, string>> = {
 };
 
 type Props = {
-  league: LeagueType;
+  league: string;
 };
 
 export default function AwardSeasons({ league }: Props) {
@@ -41,6 +41,7 @@ export default function AwardSeasons({ league }: Props) {
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => awardTableStyles(isDark), [isDark]);
   const [refreshing, setRefreshing] = useState(false);
+  const [refreshSignal, setRefreshSignal] = useState(0);
   const [selectedAward, setSelectedAward] = useState<AwardCategory>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("players");
 
@@ -136,9 +137,17 @@ export default function AwardSeasons({ league }: Props) {
   /* Refresh                                          */
   /* ------------------------------------------------ */
   const handleRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([refetch()]);
-    setRefreshing(false);
+    try {
+      setRefreshing(true);
+
+      // This tells child hooks/tables to refresh
+      setRefreshSignal((prev) => prev + 1);
+
+      // This refreshes player awards
+      await Promise.all([refetch()]);
+    } finally {
+      setRefreshing(false);
+    }
   };
   /* ------------------------------------------------ */
   /* Render                                           */
@@ -155,7 +164,6 @@ export default function AwardSeasons({ league }: Props) {
       }
       contentContainerStyle={styles.contentContainerStyle}
     >
-      {/* Dropdowns */}
       <View style={styles.dropdownRow}>
         {viewMode !== "champions" && awards.length > 0 && (
           <Dropdown
@@ -167,7 +175,7 @@ export default function AwardSeasons({ league }: Props) {
         )}
 
         <Dropdown
-          options={VIEW_MODE_OPTIONS} // now "Teams" is only in CFB/CBB/WCBB
+          options={VIEW_MODE_OPTIONS}
           selectedValue={viewMode}
           onSelect={(val) => setViewMode(val as ViewMode)}
           isDark={isDark}
@@ -225,21 +233,14 @@ export default function AwardSeasons({ league }: Props) {
       {/* Champions Table                                  */}
       {/* ------------------------------------------------ */}
 
-      {viewMode === "champions" &&
-        (league === "NBA" ||
-          league === "WNBA" ||
-          league === "NFL" ||
-          league === "MLB" ||
-          league === "CFB" ||
-          league === "CBB" ||
-          league === "NHL" ||
-          league === "WCBB") && (
-          <ChampionsTable
-            key={`${league}-champions`}
-            title={LEAGUE_CHAMPIONS_TITLE[league] ?? "Champions"}
-            league={league}
-          />
-        )}
+      {viewMode === "champions" && (
+        <ChampionsTable
+          key={`${league}-champions`}
+          title={LEAGUE_CHAMPIONS_TITLE[league] ?? "Champions"}
+          league={league}
+          refreshSignal={refreshSignal}
+        />
+      )}
 
       {/* ------------------------------------------------ */}
       {/* Teams Table (Unified)                            */}

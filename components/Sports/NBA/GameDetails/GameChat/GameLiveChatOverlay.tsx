@@ -11,8 +11,8 @@ type GameChatSessionProps = {
 };
 type GameLiveChat = {
   gameId: string;
-  gameStatusDescription: string;
   opacityAnim: Animated.Value;
+  state?: string;
 };
 
 const GameChatSession = memo(function GameChatSession({
@@ -50,7 +50,7 @@ const GameChatSession = memo(function GameChatSession({
 
 export default function GameLiveChatOverlay({
   gameId,
-  gameStatusDescription,
+  state,
   opacityAnim,
 }: GameLiveChat) {
   const [chatOpen, setChatOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function GameLiveChatOverlay({
     setChatOpen(false);
   }, [gameId]);
 
-  if (gameStatusDescription === "Final") return null;
+  if (state === "post") return null;
 
   return (
     <>

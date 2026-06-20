@@ -1,79 +1,195 @@
-import { getVenue } from "../../../constants/venues";
+import {
+  FanPredictionVote,
+  GameLocation,
+} from "@/components/Sports/NBA/GameDetails";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
+
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
-import { GameLocation } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useMMADetails } from "hooks/MMAHooks/useMMADetails";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useScrollFade } from "hooks/useScrollFade";
-import { useWeatherForecast } from "hooks/useWeather";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { emptyFighter, MMAFight } from "types/mma";
-import { getBroadcastDisplay } from "utils/games";
-import getDecisionType, { resultTypeMap } from "utils/MMAUtils/resultsUtils";
+import { MMAFightCardProps } from "types/mma";
+import {
+  formatPeriod,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
+import MatchupComparison from "../../../components/Sports/MMA/GameDetails/MatchupComparison/MatchupComparison";
+const LEAGUE = "MMA";
 
-const LEAGUE = "NHL";
+const leftStancePlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892206/leftStancePlaceholder_bplhud.png";
+const rightStancePlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892222/rightStancePlaceholder_igoaxo.png";
+const headshotPlaceholder =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892365/playerPlaceholder_vi9zk3.png";
 
-export default function GameDetailsScreen() {
+type RouteParams = {
+  game?: string | string[];
+  data?: string | string[];
+  leagueId?: string | string[];
+  league?: string | string[];
+};
+
+type MMAFight = MMAFightCardProps["game"];
+
+function getFirstParam(value?: string | string[]) {
+  if (Array.isArray(value)) return value[0];
+  return value;
+}
+
+function safeDecode(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function parseGameParam(value?: string | string[]): MMAFight | undefined {
+  const rawValue = getFirstParam(value);
+
+  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
+    return undefined;
+  }
+
+  const decodedValue = safeDecode(rawValue).trim();
+
+  // Dynamic route params are often just the game id.
+  // Only JSON strings should be parsed into a full game object.
+  if (!decodedValue.startsWith("{")) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(decodedValue) as MMAFight;
+  } catch {
+    return undefined;
+  }
+}
+
+function isValidDate(date: Date) {
+  return !Number.isNaN(date.getTime());
+}
+
+export default function GameDetailsScreen(
+  props: Partial<MMAFightCardProps> = {},
+) {
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
-  const { game } = useLocalSearchParams();
   const styles = gameDetailsScreenStyles;
-  const parsedGame: MMAFight | null = game
-    ? (JSON.parse(game as string) as MMAFight)
-    : null;
+  const params = useLocalSearchParams<RouteParams>();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
 
-  const gameDate = safeDate(parsedGame?.date);
-  const gameDateStr = gameDate.toISOString();
+  const game = useMemo(() => {
+    return (
+      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+    );
+  }, [params.data, params.game, props.game]);
 
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
+
+  const formattedDate =
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleDateString([], {
+          month: "short",
+          day: "numeric",
+        })
+      : "TBD";
+
   const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+    gameDateObj && isValidDate(gameDateObj)
+      ? gameDateObj.toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "TBD";
 
-  const firstFighter = parsedGame?.fighters?.first.info ?? emptyFighter;
-  const secondFighter = parsedGame?.fighters?.second.info ?? emptyFighter;
+  const gameId = game?.id;
+  const firstFighter = game?.competitors[0];
+  const secondFighter = game?.competitors[1];
+  const firstFighterId = Number(firstFighter?.id);
+  const secondFighterId = Number(secondFighter?.id);
+  const firstFighterLastName = firstFighter?.lastName ?? "TBD";
+  const secondFighterLastName = secondFighter?.lastName ?? "TBD";
+  const firstFighterName = firstFighter?.shortName ?? "TBD";
+  const secondFighterName = secondFighter?.shortName ?? "TBD";
+  const firstFighterColor = firstFighter?.color;
+  const secondFighterColor = secondFighter?.color;
+  const firstFighterPhoto = firstFighter?.headshot ?? headshotPlaceholder;
+  const secondFighterPhoto = secondFighter?.headshot ?? headshotPlaceholder;
+  const firstFighterStance =
+    firstFighter?.rightStance ?? rightStancePlaceholder;
+  const secondFighterStance =
+    secondFighter?.leftStance ?? leftStancePlaceholder;
+  const firstFighterAge = firstFighter?.age ?? "N/A";
+  const secondFighterAge = secondFighter?.age ?? "N/A";
+  const firstFighterCountry = firstFighter?.associationCountry ?? "N/A";
+  const secondFighterCountry = secondFighter?.associationCountry ?? "N/A";
+  const firstFighterWeight = firstFighter?.weight ?? "N/A";
+  const secondFighterWeight = secondFighter?.weight ?? "N/A";
+  const firstFighterHeight = firstFighter?.height ?? "N/A";
+  const secondFighterHeight = secondFighter?.height ?? "N/A";
+  const firstFighterReach = firstFighter?.reach ?? "N/A";
+  const secondFighterReach = secondFighter?.reach ?? "N/A";
+  const firstFighterFlag = firstFighter?.flag ?? "N/A";
+  const secondFighterFlag = secondFighter?.flag ?? "N/A";
+  const firstFighterRecord = firstFighter?.record ?? "0-0";
+  const secondFighterRecord = secondFighter?.record ?? "0-0";
+  const firstFighterClass = firstFighter?.weightClassShortName ?? "0-0";
+  const secondFighterClass = secondFighter?.weightClassShortName ?? "0-0";
+  const firstFighterWinner = firstFighter?.winner === true;
+  const secondFighterWinner = secondFighter?.winner === true;
+  const firstFighterIsChampion = firstFighter?.isChampion ?? false;
+  const secondFighterIsChampion = secondFighter?.isChampion ?? false;
 
-  const firstFighterId = parsedGame?.fighters?.first.id;
-  const secondFighterId = parsedGame?.fighters?.second.id;
+  const gameStatusDescription = game?.status.description;
+  const state = game?.status.state;
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+  const headline = game?.headline;
+  const results = game?.method;
+  const broadcasts = game?.broadcasts;
+  const broadcast = getBroadcastDisplay(broadcasts);
+  const period = formatPeriod({ period: game?.status.period, isMMA: true });
+  const clock = game?.status.displayClock;
+  const isLoading = !game;
 
-  const firstFighterLastName =
-    parsedGame?.fighters?.first?.info?.last_name ?? "";
+  const venueId = Number(game?.venue?.id);
+  const { venue } = useVenue({ sport: "mma", id: venueId });
+  const { weather } = useWeather({
+    lat: Number(venue?.latitude),
+    lon: Number(venue?.longitude),
+    location: venue?.city,
+    date: gameDateObj,
+  });
 
-  const secondFighterLastName =
-    parsedGame?.fighters?.second?.info?.last_name ?? "";
+  const baseVenue = game?.venue;
+  const baseVenueAddress = formatVenueAddress(baseVenue?.address);
+  const venueName = venue?.name ?? baseVenue?.fullName ?? baseVenue?.name;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
+  const venueImage = venue?.image ?? "";
+  const venueAttendance = baseVenue?.attendance || null;
+  const venueLocation = `${venue?.city}, ${venue?.state}`;
 
-  const firstFighterEspnId = parsedGame?.fighters?.first?.info?.espn_id;
-  const secondFighterEspnId = parsedGame?.fighters?.second?.info?.espn_id;
-
-  const { details, loading: isLoading } = useMMADetails(
-    "ufc",
-    firstFighterEspnId,
-    secondFighterEspnId,
-    gameDateStr,
-  );
-  // console.log(details?.fight?.fightDetails[0].type.text)
   useLayoutEffect(() => {
-    if (isLoading || !details) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
@@ -84,11 +200,13 @@ export default function GameDetailsScreen() {
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
-          onBack={goBack}
-          homeTeamId={firstFighterId}
-          awayTeamId={secondFighterId}
-          homeTeamCode={firstFighterLastName}
+          onBack={() => router.back()}
           awayTeamCode={secondFighterLastName}
+          homeTeamCode={firstFighterLastName}
+          homeLogo={firstFighterFlag}
+          awayLogo={secondFighterFlag}
+          awayColor={secondFighterColor}
+          homeColor={firstFighterColor}
           isNeutralSite
           league={LEAGUE}
         />
@@ -97,48 +215,15 @@ export default function GameDetailsScreen() {
   }, [
     navigation,
     isLoading,
-    details,
-    firstFighterId,
-    secondFighterId,
-    firstFighterLastName,
     secondFighterLastName,
+    firstFighterLastName,
+    firstFighterFlag,
+    secondFighterFlag,
+    secondFighterColor,
+    firstFighterColor,
   ]);
 
-  const rawWonType = parsedGame?.result?.wonType;
-  const firstFighterWinner = parsedGame?.fighters?.first?.winner === true;
-  const secondFighterWinner = parsedGame?.fighters?.second?.winner === true;
-  const wonType = getDecisionType(
-    rawWonType ?? "",
-    parsedGame?.result?.score,
-    firstFighterWinner,
-    secondFighterWinner,
-  );
-  const resultText = wonType ? (resultTypeMap[wonType] ?? wonType) : "Result";
-  const firstFighterRecord = parsedGame?.fighters?.first?.info?.record;
-  const secondFighterRecord = parsedGame?.fighters?.second?.info?.record;
-  const gameStatusDescription = details?.fight?.status.description ?? "";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const broadcasts = details?.fight?.broadcasts;
-  const broadcastText = getBroadcastDisplay(broadcasts);
-  const period = details?.fight?.status.period ?? 0;
-  const displayClock = details?.fight?.status.displayClock ?? "";
-  const headline = details?.event?.shortName ?? "";
-  const baseVenue = details?.venue;
-  const venue = getVenue(baseVenue?.fullName);
-  const venueName = baseVenue?.fullName;
-  const venueAddress = venue?.address;
-  const venueCapacity = venue?.venueCapacity;
-  const venueImage = venue?.venueImage ? venue?.venueImage : null;
-  const venueLocation = venue?.city;
-  const venueLat = venue?.latitude ?? 0;
-  const venueLon = venue?.longitude ?? 0;
-  const { weather } = useWeatherForecast(venueLat, venueLon, gameDateStr);
-
-  const dontShowDetails = isDelayed || isCanceled || isPostponed;
-
-  if (isLoading || !details) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <CustomActivityIndicator />
@@ -146,7 +231,7 @@ export default function GameDetailsScreen() {
     );
   }
 
-  /* ---------------- Render ---------------- */
+  if (!game) return <View />;
 
   return (
     <>
@@ -158,30 +243,82 @@ export default function GameDetailsScreen() {
         stickyHeaderIndices={[0]}
       >
         <GameHeader
-          headlineText={headline}
-          firstFighter={firstFighter}
-          secondFighter={secondFighter}
-          firstFighterRecord={firstFighterRecord}
-          secondFighterRecord={secondFighterRecord}
-          displayClock={displayClock}
+          headline={headline}
+          clock={clock}
           period={period}
           isDark={isDark}
-          formattedDate={formattedDate}
+          date={formattedDate}
           time={formattedTime}
-          networkString={broadcastText}
+          broadcast={broadcast}
+          results={results}
+          firstFighterId={firstFighterId}
+          secondFighterId={secondFighterId}
+          firstFighterHeadshot={firstFighterPhoto}
+          secondFighterHeadshot={secondFighterPhoto}
+          firstFighterFlag={firstFighterFlag}
+          secondFighterFlag={secondFighterFlag}
+          firstFighterName={firstFighterName}
+          secondFighterName={secondFighterName}
+          firstFighterRecord={firstFighterRecord}
+          secondFighterRecord={secondFighterRecord}
           gameStatusDescription={gameStatusDescription}
-          gameStatusDetail={resultText}
           firstFighterIsWinner={firstFighterWinner}
           secondFighterIsWinner={secondFighterWinner}
         />
+
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
+            <FanPredictionVote
+              gameId={String(gameId)}
+              awayId={secondFighterId}
+              awayCode={secondFighterLastName}
+              awayLogo={secondFighterFlag}
+              awayColor={secondFighterColor}
+              homeId={firstFighterId}
+              homeCode={firstFighterLastName}
+              homeLogo={firstFighterFlag}
+              homeColor={firstFighterColor}
+              state={state}
+            />
+
+            <MatchupComparison
+              firstFighterId={firstFighterId}
+              secondFighterId={secondFighterId}
+              firstFighterStance={firstFighterStance}
+              secondFighterStance={secondFighterStance}
+              firstFighterHeight={firstFighterHeight}
+              firstFighterAge={firstFighterAge}
+              secondFighterAge={secondFighterAge}
+              secondFighterHeight={secondFighterHeight}
+              firstFighterWeight={firstFighterWeight}
+              secondFighterWeight={secondFighterWeight}
+              firstFighterName={firstFighterLastName}
+              secondFighterName={secondFighterLastName}
+              firstFighterFlag={firstFighterFlag}
+              secondFighterFlag={secondFighterFlag}
+              firstFighterCountry={firstFighterCountry}
+              secondFighterCountry={secondFighterCountry}
+              firstFighterRecord={firstFighterRecord}
+              secondFighterRecord={secondFighterRecord}
+              firstFighterClass={firstFighterClass}
+              secondFighterClass={secondFighterClass}
+              firstFighterReach={firstFighterReach}
+              secondFighterReach={secondFighterReach}
+              firstFighterIsWinner={firstFighterWinner}
+              secondFighterIsWinner={secondFighterWinner}
+              secondFighterIsChampion={secondFighterIsChampion}
+              firstFighterIsChampion={firstFighterIsChampion}
+              gameStatusDescription={gameStatusDescription}
+              isDark={isDark}
+            />
+
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}
               location={venueLocation}
               address={venueAddress}
               venueCapacity={venueCapacity}
+              venueAttendance={venueAttendance}
               weather={weather}
               isDark={isDark}
             />
@@ -189,11 +326,13 @@ export default function GameDetailsScreen() {
         )}
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(parsedGame?.id)}
-        opacityAnim={opacityAnim}
-        gameStatusDescription={gameStatusDescription}
-      />
+      {!dontShowDetails && (
+        <GameLiveChatOverlay
+          gameId={String(gameId)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
+      )}
     </>
   );
 }

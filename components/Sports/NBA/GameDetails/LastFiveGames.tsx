@@ -1,6 +1,6 @@
 // ---- LastFiveGames.tsx ----
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import { getUFLTeamLogo } from "@/constants/teamsUFL";
+import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
@@ -41,7 +41,7 @@ type Props = {
   home: TeamData;
   away: TeamData;
   league: string;
-  gameStatusDescription: string;
+  state?: string;
 };
 
 export default function LastFiveGames({
@@ -49,7 +49,7 @@ export default function LastFiveGames({
   home,
   away,
   league,
-  gameStatusDescription,
+  state,
 }: Props) {
   const [selected, setSelected] = useState<"home" | "away">("away");
   const team = selected === "home" ? home : away;
@@ -60,27 +60,29 @@ export default function LastFiveGames({
     if (!teamId) return undefined;
 
     switch (league) {
-      case "NBA":
+      case "nba":
         return getNBATeam(teamId);
-      case "WNBA":
+      case "wnba":
         return getWNBATeam(teamId);
-      case "NFL":
+      case "nfl":
         return getNFLTeam(teamId);
-      case "NHL":
+      case "ufl":
+        return getUFLTeam(teamId);
+      case "nhl":
         return getNHLTeam(teamId);
-      case "MLB":
+      case "mlb":
         return getMLBTeam(teamId);
-      case "CB":
+      case "cb":
         return getCBTeam(teamId);
-      case "SB":
+      case "sb":
         return getSBTeam(teamId);
-      case "CBB":
+      case "cbb":
         return getCBBTeam(teamId, false);
-      case "WCBB":
+      case "wcbb":
         return getCBBTeam(teamId, true);
-      case "CFB":
+      case "cfb":
         return getCFBTeam(teamId);
-      case "SOCC":
+      case "socc":
         return getSOCCTeam(teamId);
       default:
         return undefined;
@@ -91,31 +93,31 @@ export default function LastFiveGames({
     if (!teamId) return undefined;
 
     switch (league) {
-      case "NBA":
+      case "nba":
         return getTeamLogo(teamId, isDark);
-      case "WNBA":
+      case "wnba":
         return getWNBATeamLogo(teamId, isDark);
-      case "NFL":
+      case "nfl":
         return getNFLTeamLogo(teamId, isDark);
-      case "UFL":
+      case "ufl":
         return getUFLTeamLogo(teamId, isDark);
-      case "NHL":
+      case "nhl":
         return getNHLTeamLogo(teamId, isDark);
-      case "MLB": {
+      case "mlb": {
         const mlbTeam = getMLBTeam(teamId);
         return getMLBTeamLogo(mlbTeam?.id ?? teamId, isDark);
       }
-      case "CB":
+      case "cb":
         return getCBTeamLogo(teamId, isDark);
-      case "SB":
+      case "sb":
         return getSBTeamLogo(teamId, isDark);
-      case "CBB":
+      case "cbb":
         return getCBBTeamLogo(teamId, isDark, false);
-      case "WCBB":
+      case "wcbb":
         return getCBBTeamLogo(teamId, isDark, true);
-      case "CFB":
+      case "cfb":
         return getCFBTeamLogo(teamId, isDark);
-      case "SOCC":
+      case "socc":
         return getSOCCTeamLogo(teamId, isDark);
       default:
         return undefined;
@@ -201,7 +203,7 @@ export default function LastFiveGames({
 
   if (!hasHomeGames && !hasAwayGames) return null;
 
-  if (gameStatusDescription === "Final") return null;
+  if (state === "post") return null;
 
   return (
     <View style={styles.container}>

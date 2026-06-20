@@ -126,7 +126,7 @@ export type ScoringPlay = {
 
 export type ScoringPlays = ScoringPlay[];
 
-export type FootballTeam = {
+export type Team = {
   id: number | string | null;
   espnId?: number | null;
   espnIdRaw?: string | null;
@@ -173,7 +173,7 @@ export type BoxScoreStatCategory = {
 };
 
 export type BoxScoreTeam = {
-  team: FootballTeam;
+  team: Team;
   statistics: TeamBoxScoreStat[];
   displayOrder?: number;
   homeAway?: "home" | "away";
@@ -184,7 +184,7 @@ export type BoxScoreTeam = {
 };
 
 export type BoxScorePlayerTeam = {
-  team: FootballTeam;
+  team: Team;
   statistics: BoxScoreStatCategory[];
   displayOrder?: number;
 

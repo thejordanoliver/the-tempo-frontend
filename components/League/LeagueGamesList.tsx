@@ -59,7 +59,10 @@ import MMAGamePreviewModal from "../Sports/MMA/GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "../Sports/MMA/Games/MMAGameCard";
 import MMASquareGameCard from "../Sports/MMA/Games/MMASquareGameCard";
 import MMAStackedGameCard from "../Sports/MMA/Games/MMAStackedGameCard";
+import SoccerGamePreviewModal from "../Sports/Soccer/GamePreview/GamePreviewModal";
 import SoccerGameCard from "../Sports/Soccer/Games/SoccerGameCard";
+import SoccerSquareGameCard from "../Sports/Soccer/Games/SoccerSquareGameCard";
+import SoccerStackedGameCard from "../Sports/Soccer/Games/SoccerStackedGameCard";
 
 const NBA_LEAGUE_ID = 46;
 const NBA_SUMMER_LEAGUE_ID = 46;
@@ -75,7 +78,29 @@ const MLS_LEAGUE_ID = 770;
 const EPL_LEAGUE_ID = 700;
 const FIFA_LEAGUE_ID = 606;
 const CHAMPIONS_LEAGUE_ID = 775;
-const BUNDESLINGA_LEAGUE_ID = 720;
+const BUNDESLIGA_LEAGUE_ID = 720;
+
+const FOOTBALL_PREVIEW_CATEGORIES = ["NFL", "UFL", "College Football"];
+const HOCKEY_PREVIEW_CATEGORIES = ["NHL", "Men's College Hockey"];
+const BASKETBALL_PREVIEW_CATEGORIES = [
+  "Men's College Basketball",
+  "Women's College Basketball",
+  "WNBA",
+];
+const BASEBALL_PREVIEW_CATEGORIES = [
+  "MLB",
+  "College Baseball",
+  "College Softball",
+];
+const SOCCER_PREVIEW_CATEGORIES = [
+  "MLS",
+  "FIFA World Cup",
+  "FIFA Women's World Cup",
+  "German Bundesliga",
+  "UEFA Champions League",
+  "UEFA Europa League",
+  "English Premier League",
+];
 
 export type CombinedGamesListProps = {
   gamesByCategory: CombinedGamesSection[];
@@ -162,7 +187,7 @@ export const getCategoryForFavorites = (item: CombinedGame): LeagueCategory => {
     return "UEFA Champions League";
   }
   // German Bundesliga
-  if (league.id === BUNDESLINGA_LEAGUE_ID) {
+  if (league.id === BUNDESLIGA_LEAGUE_ID) {
     return "German Bundesliga";
   }
 
@@ -185,10 +210,35 @@ export default function LeagueGamesList({
 }: CombinedGamesListProps) {
   const styles = combinedGameListStyles(isDark);
   const [previewGame, setPreviewGame] = useState<CombinedGame | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const [previewCategory, setPreviewCategory] = useState<LeagueCategory | null>(
     null,
   );
-  const [modalVisible, setModalVisible] = useState(false);
+
+  const isBasketballPreview =
+    previewCategory !== null &&
+    previewCategory !== undefined &&
+    BASKETBALL_PREVIEW_CATEGORIES.includes(previewCategory);
+
+  const isBaseballPreview =
+    previewCategory !== null &&
+    previewCategory !== undefined &&
+    BASEBALL_PREVIEW_CATEGORIES.includes(previewCategory);
+
+  const isHockeyPreview =
+    previewCategory !== null &&
+    previewCategory !== undefined &&
+    HOCKEY_PREVIEW_CATEGORIES.includes(previewCategory);
+
+  const isFootballPreview =
+    previewCategory !== null &&
+    previewCategory !== undefined &&
+    FOOTBALL_PREVIEW_CATEGORIES.includes(previewCategory);
+
+  const isSoccerPreview =
+    previewCategory !== null &&
+    previewCategory !== undefined &&
+    SOCCER_PREVIEW_CATEGORIES.includes(previewCategory);
 
   const getItemId = (item: CombinedGame): string => {
     if ("game" in item) return String((item as any).game?.id ?? "unknown");
@@ -322,8 +372,11 @@ export default function LeagueGamesList({
       if (viewMode === "list")
         return wrapper(<FootballGameCard game={nflGame} isNFL={true} />);
       if (viewMode === "grid")
-        return wrapper(<FootballGameCard game={nflGame} isNFL={true} />, index);
-      return wrapper(<FootballGameCard game={nflGame} isNFL={true} />);
+        return wrapper(
+          <FootballSquareGameCard game={nflGame} isNFL={true} />,
+          index,
+        );
+      return wrapper(<FootballStackedGameCard game={nflGame} isNFL={true} />);
     }
 
     // ✅ College Football
@@ -370,8 +423,8 @@ export default function LeagueGamesList({
       if (viewMode === "list")
         return wrapper(<SoccerGameCard game={soccerGame} />);
       if (viewMode === "grid")
-        return wrapper(<SoccerGameCard game={soccerGame} />, index);
-      return wrapper(<SoccerGameCard game={soccerGame} />);
+        return wrapper(<SoccerSquareGameCard game={soccerGame} />, index);
+      return wrapper(<SoccerStackedGameCard game={soccerGame} />);
     }
 
     // ✅ MLB
@@ -600,6 +653,7 @@ export default function LeagueGamesList({
       case "FIFA World Cup":
       case "UEFA Europa League":
       case "English Premier League":
+      case "German Bundesliga":
       case "MMA":
       case "Men's College Basketball":
       case "Women's College Basketball":
@@ -698,36 +752,28 @@ export default function LeagueGamesList({
         }}
       />
 
-      {modalVisible &&
-        previewGame &&
-        (previewCategory === "NFL" ||
-          previewCategory === "College Football" ||
-          previewCategory === "UFL") && (
-          <FootballGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as FootballGame}
-            onClose={() => setModalVisible(false)}
-            isNFL={previewCategory === "NFL"}
-            isCFB={previewCategory === "College Football"}
-          />
-        )}
+      {modalVisible && previewGame && isFootballPreview && (
+        <FootballGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as FootballGame}
+          onClose={() => setModalVisible(false)}
+          isNFL={previewCategory === "NFL"}
+          isCFB={previewCategory === "College Football"}
+        />
+      )}
 
-      {modalVisible &&
-        previewGame &&
-        (previewCategory === "MLB" ||
-          previewCategory === "College Baseball" ||
-          previewCategory === "College Softball") && (
-          <BaseballGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as BaseballGame}
-            onClose={() => setModalVisible(false)}
-            isMLB={previewCategory === "MLB"}
-            isCB={previewCategory === "College Baseball"}
-            isSB={previewCategory === "College Softball"}
-          />
-        )}
+      {modalVisible && previewGame && isBaseballPreview && (
+        <BaseballGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as BaseballGame}
+          onClose={() => setModalVisible(false)}
+          isMLB={previewCategory === "MLB"}
+          isCB={previewCategory === "College Baseball"}
+          isSB={previewCategory === "College Softball"}
+        />
+      )}
 
-      {modalVisible && previewGame && previewCategory === "NHL" && (
+      {modalVisible && previewGame && isHockeyPreview && (
         <NHLGamePreviewModal
           visible={modalVisible}
           game={previewGame as HockeyGame}
@@ -736,20 +782,25 @@ export default function LeagueGamesList({
           isMCH={false}
         />
       )}
-      {modalVisible &&
-        previewGame &&
-        (previewCategory === "Men's College Basketball" ||
-          previewCategory === "WNBA" ||
-          previewCategory === "Women's College Basketball") && (
-          <BasketballGamePreviewModal
-            visible={modalVisible}
-            game={previewGame as BasketballGame}
-            isCBB={previewCategory === "Men's College Basketball"}
-            isWCBB={previewCategory === "Women's College Basketball"}
-            isWNBA={previewCategory === "WNBA"}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
+
+      {modalVisible && previewGame && isSoccerPreview && (
+        <SoccerGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as SoccerGame}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
+
+      {modalVisible && previewGame && isBasketballPreview && (
+        <BasketballGamePreviewModal
+          visible={modalVisible}
+          game={previewGame as BasketballGame}
+          isCBB={previewCategory === "Men's College Basketball"}
+          isWCBB={previewCategory === "Women's College Basketball"}
+          isWNBA={previewCategory === "WNBA"}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
 
       {modalVisible && previewGame && previewCategory === "NBA" && (
         <GamePreviewModal
