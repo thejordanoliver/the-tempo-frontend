@@ -55,7 +55,6 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const firstFighterWinner = firstFighter.winner === true;
   const secondFighterWinner = secondFighter.winner === true;
 
-  const resultText = game.method;
   const gameStatusDescription = game.status.description;
   const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -73,6 +72,13 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const period = formatPeriod({ period: game.status.period, isMMA: true });
   const clock = game.status.displayClock;
   const styles = stackedGameCardStyles(isDark);
+  const resultText = game.method;
+  const results =
+    resultText?.toLowerCase() === "submission"
+      ? "SUB"
+      : resultText?.toLowerCase() === "decision"
+        ? "DEC"
+        : resultText;
 
   const ScoreText = ({
     record,
@@ -116,7 +122,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
     if (inProgress)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.period}>{formatRound(period)}</Text>
+          <Text style={styles.period}>{period}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
@@ -135,7 +141,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{resultText}</Text>
+          <Text style={styles.finalText}>{results}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>

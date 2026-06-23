@@ -1,3 +1,4 @@
+import { snapPoints } from "@/utils/modalUtils";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -15,7 +16,7 @@ import { getWNBATeam } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { useChampions } from "hooks/LeagueHooks/useChampions";
 import { useTeamCoaches } from "hooks/useTeamCoaches";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
@@ -38,8 +39,10 @@ export default function TeamInfoModal({
   league,
   isDark,
 }: Props) {
-  const insets = useSafeAreaInsets(); // ✅ MOVE HERE
+  const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
+  const isPresentedRef = useRef(false);
+
   const styles = TeamInfoModalStyles(isDark, insets);
 
   const isChampionsSupported =
@@ -58,14 +61,12 @@ export default function TeamInfoModal({
   );
 
   const { data: champions } = useChampions({
-    league: league,
+    league,
   });
 
-  // --------------------------------------------------
-  // UNIVERSAL TEAM LOOKUP
-  // --------------------------------------------------
   const team = useMemo(() => {
-    if (!teamId) return null;
+    if (teamId == null) return null;
+
     switch (league) {
       case "CBB":
         return getCBBTeam(teamId);
@@ -88,21 +89,18 @@ export default function TeamInfoModal({
     }
   }, [teamId, league]);
 
-  function getTeamId(team: any, league: LeagueType) {
-    if (!team) return undefined;
+  const getTeamId = useCallback((teamData: any, leagueType: LeagueType) => {
+    if (!teamData) return undefined;
 
-    if (league === "WCBB" && "wid" in team) {
-      return team.wid;
+    if (leagueType === "WCBB" && "wid" in teamData) {
+      return teamData.wid;
     }
 
-    return team.id;
-  }
+    return teamData.id;
+  }, []);
 
-  // --------------------------------------------------
-  // CHAMPIONSHIP NOTES / YEARS
-  // --------------------------------------------------
   const teamChampionshipNotes = useMemo(() => {
-    if (!isChampionsSupported || !teamId || !champions) return [];
+    if (!isChampionsSupported || teamId == null || !champions) return [];
 
     return champions
       .filter((c) => Number(c.team?.id) === Number(teamId))
@@ -111,29 +109,47 @@ export default function TeamInfoModal({
       .sort((a, b) => Number(a) - Number(b));
   }, [champions, teamId, isChampionsSupported]);
 
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  );
+
   useEffect(() => {
-    if (visible) sheetRef.current?.present();
-    else sheetRef.current?.dismiss();
+    if (visible) {
+      const timeout = setTimeout(() => {
+        isPresentedRef.current = true;
+        sheetRef.current?.present();
+      }, 0);
+
+      return () => clearTimeout(timeout);
+    }
+
+    if (isPresentedRef.current) {
+      sheetRef.current?.dismiss();
+    }
   }, [visible]);
 
-  const snapPoints = useMemo(() => ["60%", "92%"], []);
+  const handleDismiss = useCallback(() => {
+    isPresentedRef.current = false;
+    onClose();
+  }, [onClose]);
 
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={0}
       snapPoints={snapPoints}
-      onDismiss={onClose}
+      index={0}
+      onDismiss={handleDismiss}
       enablePanDownToClose
       enableDynamicSizing={false}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          pressBehavior="close"
-        />
-      )}
+      backdropComponent={renderBackdrop}
       backgroundStyle={styles.backgroundStyle}
       handleStyle={styles.handleStyle}
       handleIndicatorStyle={styles.handleIndicatorStyle}
@@ -141,12 +157,11 @@ export default function TeamInfoModal({
       <View style={styles.container}>
         <BlurView
           intensity={100}
-          tint={"systemThinMaterial"}
+          tint={"systemMaterial"}
           style={StyleSheet.absoluteFill}
         />
 
         <View style={styles.wrapper}>
-          {/* TEAM NAME */}
           {team?.fullName && (
             <Text style={styles.teamName}>{team.fullName}</Text>
           )}
@@ -155,10 +170,8 @@ export default function TeamInfoModal({
             contentContainerStyle={styles.contentContainerStyle}
             showsVerticalScrollIndicator={false}
           >
-            {/* HEADER */}
             <Text style={styles.sectionTitle}>Championships</Text>
 
-            {/* CHAMPIONSHIP BANNERS */}
             <ChampionshipBanner
               years={
                 isChampionsSupported
@@ -174,11 +187,10 @@ export default function TeamInfoModal({
               isDark={isDark}
             />
 
-            {/* TEAM INFO CARD */}
             <TeamInfoCard
               teamId={getTeamId(team, league)}
               league={league}
-              coach={coaches[0]}
+              coach={coaches?.[0]}
             />
           </BottomSheetScrollView>
         </View>
@@ -189,20 +201,24 @@ export default function TeamInfoModal({
 
 const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
   StyleSheet.create({
-    backgroundStyle: { backgroundColor: "transparent" },
+    backgroundStyle: { backgroundColor: "transparent", overflow: "hidden" },
     handleStyle: {
       backgroundColor: "transparent",
-      paddingTop: 12,
+      height: 40,
+      justifyContent: "center",
       alignItems: "center",
       position: "absolute",
-      left: 0,
-      right: 0,
+      left: 8,
+      right: 8,
+      top: 0,
     },
     handleIndicatorStyle: {
       backgroundColor: Colors.midTone,
       width: 36,
       height: 4,
       borderRadius: 2,
+      zIndex: 9999,
+      marginBottom: 4,
     },
     container: {
       flex: 1,
@@ -210,14 +226,20 @@ const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       borderTopRightRadius: 20,
       overflow: "hidden",
     },
-    wrapper: { paddingHorizontal: 12, flex: 1 },
-    contentContainerStyle: { paddingTop: 20, paddingBottom: 40 },
+    wrapper: {
+      paddingHorizontal: 12,
+      flex: 1,
+    },
+    contentContainerStyle: {
+      paddingTop: 20,
+      paddingBottom: 40,
+    },
     teamName: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 20,
       paddingBottom: 12,
       textAlign: "center",
-      paddingTop: insets.top - 20,
+      paddingTop: Math.max(insets.top - 20, 12),
       color: isDark ? Colors.white : Colors.black,
     },
     sectionTitle: {

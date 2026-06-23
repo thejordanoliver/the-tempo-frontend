@@ -113,7 +113,13 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const headline = game?.headline;
-  const results = game?.method;
+  const resultText = game.method;
+  const results =
+    resultText?.toLowerCase() === "submission"
+      ? "SUB"
+      : resultText?.toLowerCase() === "decision"
+        ? "DEC"
+        : resultText;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const period = formatPeriod({ period: game?.status.period, isMMA: true });

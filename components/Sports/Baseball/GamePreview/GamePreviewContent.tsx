@@ -36,13 +36,14 @@ type GamePreviewContentProps = {
   venueName?: string;
   venueLocation?: string;
   venueAddress?: string;
-  venueCapacity?: string | null;
+  venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
   gameStatusDescription: string;
   league: string;
   state: string;
   isChampionship: boolean;
+  isMLB: boolean;
 };
 
 export default function GamePreviewContent({
@@ -72,6 +73,7 @@ export default function GamePreviewContent({
   isChampionship,
   state,
   league,
+  isMLB,
 }: GamePreviewContentProps) {
   const styles = gamePreviewModalStyle(isChampionship);
 
@@ -125,6 +127,7 @@ export default function GamePreviewContent({
         <TeamInjuries
           injuries={injuries}
           teamPlayersMap={teamPlayersMap}
+          league={isMLB}
           isDark
         />
 

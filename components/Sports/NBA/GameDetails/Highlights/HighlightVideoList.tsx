@@ -196,6 +196,15 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       );
     },
     [
+      styles.cardWrapper,
+      styles.headline,
+      styles.headlineContainer,
+      styles.playButtonText,
+      styles.thumbnailWrapper,
+      styles.unavailable,
+      styles.thumbnail,
+      styles.video,
+      styles.playButtonOverlay,
       playingId,
       paused,
       handlePlay,

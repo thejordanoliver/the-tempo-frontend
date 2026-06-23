@@ -58,7 +58,7 @@ export default function BaseballGamePreviewModal({
     minute: "2-digit",
   });
 
-  const LEAGUE = game.league.code;
+  const LEAGUE = game?.league?.code ?? "mlb";
   const gameId = game?.id;
   const home = game?.home;
   const away = game?.away;
@@ -151,7 +151,6 @@ export default function BaseballGamePreviewModal({
       }
     : undefined;
 
-  const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "baseball", id: venueId });
   const { weather } = useWeather({
@@ -163,12 +162,11 @@ export default function BaseballGamePreviewModal({
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
-  const venueAddress = venue?.address ?? homeTeam?.address ?? baseVenueAddress;
-  const venueCapacity = !neutralSite ? homeTeam?.venueCapacity : null;
+  const venueAddress = venue?.address ?? baseVenueAddress;
+  const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? "";
-  const venueAttendance = baseVenue?.attendance || null;
+  const venueAttendance = baseVenue?.attendance ?? null;
   const venueLocation = `${venue?.city}, ${venue?.state}`;
-
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -286,6 +284,7 @@ export default function BaseballGamePreviewModal({
                   officials={officials}
                   isChampionship={isChampionship}
                   league={LEAGUE}
+                  isMLB={isMLB}
                 />
               )}
             </>

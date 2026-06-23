@@ -233,7 +233,6 @@ export default function GameDetailsScreen(
     location: venue?.city,
     date: gameDateObj,
   });
-
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;

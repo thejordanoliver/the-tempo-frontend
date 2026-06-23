@@ -122,7 +122,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   };
 
   const renderStatus = () => {
-    if (inProgress) {
+    if (inProgress && !isDelayed) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>

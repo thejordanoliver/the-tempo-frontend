@@ -58,7 +58,6 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const firstFighterWinner = firstFighter.winner === true;
   const secondFighterWinner = secondFighter.winner === true;
 
-  const resultText = game.method;
   const gameStatusDescription = game.status.description;
   const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -76,6 +75,13 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const period = formatPeriod({ period: game.status.period, isMMA: true });
   const clock = game.status.displayClock;
   const styles = squareGameCardStyles(isDark);
+  const resultText = game.method;
+  const results =
+    resultText?.toLowerCase() === "submission"
+      ? "SUB"
+      : resultText?.toLowerCase() === "decision"
+        ? "DEC"
+        : resultText;
 
   const ScoreText = ({
     record,
@@ -136,7 +142,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
     if (isFinal)
       return (
         <View>
-          <Text style={styles.finalText}>{resultText}</Text>
+          <Text style={styles.finalText}>{results}</Text>
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );

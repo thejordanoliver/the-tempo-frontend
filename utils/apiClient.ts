@@ -1,6 +1,6 @@
 // utils/apiClient.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios, { create } from "axios";
 import { router } from "expo-router";
 
 export const BASE_URL =
@@ -8,7 +8,7 @@ export const BASE_URL =
 
 // ─── Shared Axios Instance ────────────────────────────────────────────────────
 
-export const apiClient = axios.create({
+export const apiClient = create({
   baseURL: BASE_URL,
 });
 

@@ -8,7 +8,6 @@ import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
-
 import { BaseballTeam } from "types/baseball";
 import { BasketballTeam, NBATeam } from "types/basketball";
 import { Team } from "types/football";

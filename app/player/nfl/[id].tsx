@@ -14,7 +14,7 @@ import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
-export default function NFLPlayerDetailScreen() {
+export default function PlayerDetailScreen() {
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
     teamId: string;
@@ -84,6 +84,7 @@ export default function NFLPlayerDetailScreen() {
         error={gameError}
         isDark={isDark}
         league={league}
+        isNFL={true}
       />
 
       <PlayerStatTable

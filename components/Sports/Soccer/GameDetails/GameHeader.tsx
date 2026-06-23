@@ -95,7 +95,7 @@ export default function GameHeader({
           clock={clock}
           state={state}
           gameStatusDescription={gameStatusDescription}
-          gameStatusShortDescription={gameStatusDetail}
+          gameStatusDetail={gameStatusDetail}
         />
 
         <TeamRow

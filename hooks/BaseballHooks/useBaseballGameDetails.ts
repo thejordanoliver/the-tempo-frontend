@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+
 /* ---------------------------------- */
 /* Types                              */
 /* ---------------------------------- */
@@ -15,16 +16,10 @@ export type Venue = {
     country: string;
   };
   grass: boolean;
-  images: [
-    {
-      href: string;
-      rel: ["full", "day"];
-    },
-    {
-      href: string;
-      rel: ["full", "day", "interior"];
-    },
-  ];
+  images: {
+    href: string;
+    rel: string[];
+  }[];
   attendance?: number;
 };
 
@@ -34,22 +29,13 @@ export type SeriesSummary = {
   summary: string;
   completed: boolean;
   totalCompetitions: number;
-  competitors: [
-    {
-      id: string;
-      uid: string;
-      wins: number;
-      ties: number;
-      href: string;
-    },
-    {
-      id: string;
-      uid: string;
-      wins: number;
-      ties: number;
-      href: string;
-    },
-  ];
+  competitors: {
+    id: string;
+    uid: string;
+    wins: number;
+    ties: number;
+    href: string;
+  }[];
 };
 
 export type Predictor = {
@@ -67,10 +53,10 @@ export type Predictor = {
 };
 
 type TeamFouls = {
-  bonusState: string | null;
-  foulsToGive: number;
-  teamFouls: number;
-  teamFoulsCurrent: number;
+  bonusState?: string | null;
+  foulsToGive?: number | null;
+  teamFouls?: number | null;
+  teamFoulsCurrent?: number | null;
 };
 
 type TeamStat = {
@@ -78,44 +64,121 @@ type TeamStat = {
   displayValue: string;
 };
 
+export type PlayerStatItem = {
+  key: string;
+  name: string;
+  label: string;
+  description: string | null;
+  value: string | number | null;
+};
+
+export type PlayerStatAthlete = {
+  active: boolean | null;
+  starter: boolean;
+  batOrder: number | null;
+
+  athlete: any;
+  id: string | null;
+  uid: string | null;
+  guid: string | null;
+  displayName: string;
+  shortName: string;
+  headshot: string | null;
+  position: any | null;
+
+  atBats: any[];
+  stats: string[];
+  statsByKey: Record<string, string | number | null>;
+  statItems: PlayerStatItem[];
+};
+
+export type PlayerStatBlock = {
+  type: string | null;
+  names: string[];
+  keys: string[];
+  labels: string[];
+  descriptions: string[];
+  totals: string[];
+
+  totalsByKey: Record<string, string | number | null>;
+  totalItems: PlayerStatItem[];
+
+  athletes: PlayerStatAthlete[];
+};
+
+export type PlayerStatsByTeam = {
+  team: any;
+  displayOrder: number | null;
+
+  // Backward-compatible primary block
+  type: string | null;
+  names: string[];
+  keys: string[];
+  labels: string[];
+  descriptions: string[];
+  totals: string[];
+  totalsByKey: Record<string, string | number | null>;
+  athletes: PlayerStatAthlete[];
+
+  // New full grouped stats
+  statBlocks: PlayerStatBlock[];
+  statBlocksByType: Record<string, PlayerStatBlock>;
+
+  batting: PlayerStatBlock | null;
+  pitching: PlayerStatBlock | null;
+  fielding: PlayerStatBlock | null;
+};
+
 export type Score = {
+  gameId?: string;
   home: { total: number };
   away: { total: number };
-  periodScores?: { period: number; home: number; away: number }[];
+
+  periodScores?: {
+    period: number;
+    home: number;
+    away: number;
+  }[];
+
   homeTeam: string;
   awayTeam: string;
+
   status: "canceled" | "scheduled" | "in_play" | "final";
+
   gameStatusDescription: string;
   gameStatusDetail: string;
   statusText?: string;
-  displayClock?: string;
-  period?: number;
+  displayClock?: string | null;
+  period?: number | null;
   lastUpdated?: number;
-  boxScore: any | null;
+
+  boxScore?: any | null;
+
   plays: any[];
-  lastPlay: string;
+  lastPlay: any | null;
+
   teamStats: {
     team: any;
     stats: TeamStat[];
   }[];
+
   outs: number;
-  playerStats: {
-    team: any;
-    names: string[];
-    keys: string[];
-    labels: string[];
-    athletes: any[];
-  }[];
+  resultCount?: any;
+
+  playerStats: PlayerStatsByTeam[];
 
   leaders: any[];
+
   timeouts: {
     home: number | null;
     away: number | null;
   };
+
   fouls: {
-    home: TeamFouls;
-    away: TeamFouls;
+    home: TeamFouls | number | null;
+    away: TeamFouls | number | null;
   };
+
   bases: {
     onFirst: boolean;
     onSecond: boolean;
@@ -131,24 +194,33 @@ export type TeamRecords = {
 };
 
 export type GameDetails = {
-  playoffRound: string;
-  seriesSummary: SeriesSummary;
+  playoffRound: string | number | null;
+  seriesSummary: SeriesSummary | any | null;
+  series?: SeriesSummary | any | null;
+  playoffSeries?: any | null;
   isPostseason: boolean;
-  seasonState: string;
-  homeRank: number;
-  awayRank: number;
+  seasonState: string | null;
+
+  homeRank: number | null;
+  awayRank: number | null;
+
   broadcast?: string | null;
   broadcasts?: string[];
+
   officials: any[];
   injuries: any[];
   highlights: any[];
   neutralSite: boolean;
   headline?: string | null;
-  predictor: Predictor;
+
+  predictor: Predictor | null;
+  odds?: any;
+
   records: {
     home: TeamRecords;
     away: TeamRecords;
   };
+
   venue?: Venue | null;
 };
 
@@ -171,8 +243,9 @@ export const useBaseballGameDetails = (
   const skipFetch = !league || !gameId;
 
   /* ---------------------------------- */
-  /* Fetch from /api/details             */
+  /* Fetch from /api/baseball/details    */
   /* ---------------------------------- */
+
   const fetchDetails = useCallback(
     async (silent = false) => {
       if (skipFetch) return;
@@ -181,12 +254,12 @@ export const useBaseballGameDetails = (
         if (!silent) setLoading(true);
         setWarning(null);
 
-        const params: Record<string, any> = {
+        const params: Record<string, string | number | undefined> = {
           league,
-          gameId,
+          gameId: gameId ?? undefined,
         };
 
-        const { data } = await apiClient.get(`api/baseball/details`, {
+        const { data } = await apiClient.get("api/baseball/details", {
           params,
         });
 
@@ -210,6 +283,7 @@ export const useBaseballGameDetails = (
   /* ---------------------------------- */
   /* Initial fetch                      */
   /* ---------------------------------- */
+
   useEffect(() => {
     if (skipFetch) return;
     fetchDetails(true);
@@ -218,6 +292,7 @@ export const useBaseballGameDetails = (
   /* ---------------------------------- */
   /* Poll LIVE games only               */
   /* ---------------------------------- */
+
   useEffect(() => {
     if (!score) return;
 
@@ -238,9 +313,11 @@ export const useBaseballGameDetails = (
         intervalRef.current = null;
       }
     };
-  }, [score, score?.status, fetchDetails]);
+  }, [score?.status, score, fetchDetails]);
 
-
+  /* ---------------------------------- */
+  /* Manual refresh                     */
+  /* ---------------------------------- */
 
   const refresh = useCallback(() => {
     if (!skipFetch) fetchDetails(false);
@@ -254,5 +331,15 @@ export const useBaseballGameDetails = (
     refresh,
     isLive: score?.status === "in_play",
     lastRefresh,
+
+    battingStats: score?.playerStats?.map((team) => ({
+      team: team.team,
+      batting: team.batting,
+    })),
+
+    pitchingStats: score?.playerStats?.map((team) => ({
+      team: team.team,
+      pitching: team.pitching,
+    })),
   };
 };

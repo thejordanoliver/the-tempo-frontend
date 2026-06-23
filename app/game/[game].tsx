@@ -189,7 +189,6 @@ export default function GameDetailsScreen(
   const awayTimeouts = score?.timeouts.away ?? 0;
   const plays = score?.plays ?? [];
   const highlights = details?.highlights ?? [];
-  console.log(highlights);
   const injuries = details?.injuries ?? [];
   const officials = details?.officials ?? [];
   const leaders = score?.leaders ?? [];

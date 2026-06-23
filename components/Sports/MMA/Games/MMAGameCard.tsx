@@ -58,7 +58,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const firstFighterWinner = firstFighter.winner === true;
   const secondFighterWinner = secondFighter.winner === true;
 
-  const resultText = game.method;
+  const styles = gameCardStyles(isDark);
   const gameStatusDescription = game.status.description;
   const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -75,7 +75,9 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const broadcast = getBroadcastDisplay(broadcasts);
   const period = formatPeriod({ period: game.status.period, isMMA: true });
   const clock = game.status.displayClock;
-  const styles = gameCardStyles(isDark);
+  const resultText = game.method;
+  const results =
+    resultText?.toLowerCase() === "submission" ? "SUB" : resultText?.toLowerCase() === "decision" ? "DEC" : resultText;
 
   const ScoreText = ({
     record,
@@ -137,7 +139,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
     if (isFinal)
       return (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{resultText}</Text>
+          <Text style={styles.finalText}>{results}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>

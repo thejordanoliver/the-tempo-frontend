@@ -220,7 +220,6 @@ const GameLocation: React.FC<Props> = ({
             </View>
 
             <View style={styles.venueTextWrap}>
-              <Text style={styles.eyebrow}>Game Location</Text>
               <Text style={styles.venueTitle}>{venueName}</Text>
 
               {!!location && (

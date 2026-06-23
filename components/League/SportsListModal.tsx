@@ -363,7 +363,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
       >
         <BlurView
           intensity={100}
-          tint="systemThinMaterial"
+          tint={"systemMaterial"}
           style={styles.blurContainer}
         >
           <View style={styles.searcBarContainer}>

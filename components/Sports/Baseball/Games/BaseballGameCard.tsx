@@ -158,7 +158,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
           <View style={styles.infoWrapper}>
             <Ionicons
               name={isTopInning ? "caret-up" : "caret-down"}
-              size={14}
+              size={10}
               color={isDark ? Colors.white : Colors.black}
             />
             <Text style={styles.period}>{gameStatusDetail}</Text>

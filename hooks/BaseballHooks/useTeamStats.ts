@@ -171,7 +171,7 @@ export function useTeamStats({
         const leaguePath = league.toLowerCase();
 
         const response = await apiClient.get<TeamStatsApiResponse>(
-          `http://localhost:4000/api/team/stats/${leaguePath}/${teamId}`,
+          `api/team/stats/${leaguePath}/${teamId}`,
           {
             params: season ? { season } : undefined,
           },
@@ -251,14 +251,8 @@ export function useTeamStats({
               1,
             ),
             opponentAvg: round(toNumber(pitching.opponentAvg), 3),
-            opponentOnBasePct: round(
-              toNumber(pitching.opponentOnBasePct),
-              3,
-            ),
-            opponentSluggingPct: round(
-              toNumber(pitching.opponentSlugAvg),
-              3,
-            ),
+            opponentOnBasePct: round(toNumber(pitching.opponentOnBasePct), 3),
+            opponentSluggingPct: round(toNumber(pitching.opponentSlugAvg), 3),
             opponentOps: round(toNumber(pitching.opponentOPS), 3),
           },
 
@@ -280,9 +274,7 @@ export function useTeamStats({
         setTeamStats(aggregated);
       } catch (err: unknown) {
         const normalizedError =
-          err instanceof Error
-            ? err
-            : new Error("Failed to load team stats");
+          err instanceof Error ? err : new Error("Failed to load team stats");
 
         console.error("❌ Error fetching team stats:", normalizedError.message);
 

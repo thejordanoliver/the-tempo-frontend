@@ -188,10 +188,12 @@ export default function GameDetailsScreen(
   const awayWins = awayScore > homeScore;
   const homeRecord = details?.records.home.overall ?? "0-0";
   const awayRecord = details?.records.away.overall ?? "0-0";
+  const homeTimeouts = score?.timeouts.home ?? 0;
+  const awayTimeouts = score?.timeouts.away ?? 0;
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const state = game?.status.state;
   const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const period = formatPeriod({ period: score?.period ?? 0, isCBB: true });
+  const period = formatPeriod({ period: score?.period ?? 0, isCBB: isCBB });
   const clock = score?.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -347,6 +349,8 @@ export default function GameDetailsScreen(
           awayScore={awayScore}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
+          homeTimeouts={homeTimeouts}
+          awayTimeouts={awayTimeouts}
           homeRank={homeRank}
           awayRank={awayRank}
           homeWins={homeWins}
@@ -511,7 +515,7 @@ export default function GameDetailsScreen(
             <TeamInjuries
               injuries={injuries}
               teamPlayersMap={teamPlayersMap}
-              league={"WNBA"}
+              league={"wnba"}
               isDark={isDark}
             />
 

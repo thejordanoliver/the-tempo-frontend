@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 
-// ✅ Define type for injuries
 export type TeamInjury = {
   team: {
     id: string | number;
@@ -34,14 +33,16 @@ export type TeamInjury = {
 
 type Props = {
   injuries: TeamInjury[];
-  isDark: boolean;
   loading?: boolean;
-  teamPlayersMap?: Record<string, Player[]>; // ✅ add this
+  league: boolean;
+  isDark: boolean;
+  teamPlayersMap?: Record<string, Player[]>;
 };
 
 export default function TeamInjuries({
   injuries,
   loading,
+  league,
   isDark,
   teamPlayersMap = {},
 }: Props) {
@@ -72,7 +73,7 @@ export default function TeamInjuries({
     return <TeamInjuriesSkeleton />;
   }
 
-  if (!injuries || injuries.length === 0 || !currentInjuries) {
+  if (!injuries || injuries.length === 0 || !currentInjuries || !league) {
     return null;
   }
 
@@ -111,7 +112,7 @@ export default function TeamInjuries({
             );
           }}
         />
-        {/* ✅ Pass teamPlayersMap down to the list */}
+
         <TeamInjuriesList
           injuries={[currentInjuries]}
           teamPlayersMap={teamPlayersMap}

@@ -64,6 +64,50 @@ const getChampionEntries = (
   return [...orderedEntries, ...extraEntries];
 };
 
+type MetaPillProps = {
+  label: string;
+  value: string;
+  isDark: boolean;
+};
+
+function MetaPill({ label, value, isDark }: MetaPillProps) {
+  const styles = getPillStyles(isDark);
+  return (
+    <View style={styles.pill}>
+      <Text style={styles.pillLabel}>{label}</Text>
+      <Text style={styles.pillValue} numberOfLines={1}>
+        {value}
+      </Text>
+    </View>
+  );
+}
+
+const getPillStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    pill: {
+      flex: 1,
+      backgroundColor: isDark
+        ? "rgba(255,255,255,0.06)"
+        : "rgba(0,0,0,0.05)",
+      borderRadius: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      gap: 1,
+    },
+    pillLabel: {
+      fontSize: 10,
+      fontFamily: Fonts.OSMEDIUM,
+      letterSpacing: 0.8,
+      textTransform: "uppercase",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    pillValue: {
+      fontSize: 13,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? Colors.white : Colors.black,
+    },
+  });
+
 export default function MMAChampionsList() {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -112,13 +156,8 @@ export default function MMAChampionsList() {
         />
       }
     >
-      <View style={styles.header}>
-        <Text style={styles.title}>Current Champions</Text>
-        <Text style={styles.subtitle}>
-          All active UFC titleholders by division
-        </Text>
-      </View>
-
+   
+      {/* Cards */}
       {champions.map(({ division, champion }) => {
         if (!champion) return null;
 
@@ -129,15 +168,17 @@ export default function MMAChampionsList() {
         const fighterId = String(fighter.id ?? champion.fighter_id);
         const nickname = fighter.nickname ? `"${fighter.nickname}"` : null;
         const country =
-          fighter.citizenship_country_code ?? fighter.citizenship ?? "Unknown";
-        const weight = fighter.weight ? `${fighter.weight} lbs` : "Unknown";
-        const stance = fighter.stance_text ?? "Unknown";
-        const camp = fighter.association_name ?? "Unknown";
+          fighter.citizenship_country_code ?? fighter.citizenship ?? "—";
+        const weight = fighter.weight ? `${fighter.weight} lbs` : "—";
+        const stance = fighter.stance_text ?? "—";
+        const camp = fighter.association_name ?? "—";
+        const isInterim = isInterimChampion(champion);
+        const divisionLabel = formatDivisionLabel(division);
 
         return (
           <TouchableOpacity
             key={`${division}-${champion.accolade_id}-${fighterId}`}
-            activeOpacity={0.85}
+            activeOpacity={0.82}
             style={styles.card}
             onPress={() =>
               router.push({
@@ -146,25 +187,20 @@ export default function MMAChampionsList() {
               })
             }
           >
-            <View style={styles.cardTopRow}>
-              <Text style={styles.division}>
-                {formatDivisionLabel(division)}
-              </Text>
-
-              <View
-                style={[
-                  styles.titleBadge,
-                  isInterimChampion(champion) && styles.interimBadge,
-                ]}
-              >
-                <Text style={styles.titleBadgeText}>
+           
+            {/* Top bar: division label + badge */}
+            <View style={styles.cardHeader}>
+              <Text style={styles.divisionLabel}>{divisionLabel}</Text>
+              <View style={[styles.badge, isInterim && styles.interimBadge]}>
+                <Text style={styles.badgeText}>
                   {getChampionBadgeLabel(champion)}
                 </Text>
               </View>
             </View>
 
-            <View style={styles.bodyRow}>
-              <View style={styles.avatarContainer}>
+            {/* Body: avatar + name block */}
+            <View style={styles.body}>
+              <View style={styles.avatarWrap}>
                 {avatarUrl ? (
                   <Image
                     source={{ uri: avatarUrl }}
@@ -172,7 +208,7 @@ export default function MMAChampionsList() {
                     contentFit="cover"
                   />
                 ) : (
-                  <View style={styles.avatarPlaceholder}>
+                  <View style={styles.avatarFallback}>
                     <Text style={styles.avatarInitial}>
                       {fighter.first_name?.[0] ?? fighter.full_name?.[0] ?? "?"}
                     </Text>
@@ -180,46 +216,26 @@ export default function MMAChampionsList() {
                 )}
               </View>
 
-              <View style={styles.info}>
-                <Text style={styles.name} numberOfLines={2}>
+              <View style={styles.nameBlock}>
+                <Text style={styles.fighterName} numberOfLines={2}>
                   {fighter.full_name ?? "Unknown Fighter"}
                 </Text>
-
                 {nickname ? (
                   <Text style={styles.nickname} numberOfLines={1}>
                     {nickname}
                   </Text>
                 ) : null}
-
-                <View style={styles.metaRow}>
-                  <Text style={styles.metaLabel}>Title</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>
-                    {champion.accolade_name}
-                  </Text>
-                </View>
-
-                <View style={styles.metaRow}>
-                  <Text style={styles.metaLabel}>Country</Text>
-                  <Text style={styles.metaValue}>{country}</Text>
-                </View>
-
-                <View style={styles.metaRow}>
-                  <Text style={styles.metaLabel}>Weight</Text>
-                  <Text style={styles.metaValue}>{weight}</Text>
-                </View>
-
-                <View style={styles.metaRow}>
-                  <Text style={styles.metaLabel}>Stance</Text>
-                  <Text style={styles.metaValue}>{stance}</Text>
-                </View>
-
-                <View style={styles.metaRow}>
-                  <Text style={styles.metaLabel}>Camp</Text>
-                  <Text style={styles.metaValue} numberOfLines={1}>
-                    {camp}
-                  </Text>
-                </View>
               </View>
+            </View>
+
+            {/* Meta pills */}
+            <View style={styles.pillRow}>
+              <MetaPill label="Country" value={country} isDark={isDark} />
+              <MetaPill label="Weight" value={weight} isDark={isDark} />
+            </View>
+            <View style={styles.pillRow}>
+              <MetaPill label="Stance" value={stance} isDark={isDark} />
+              <MetaPill label="Camp" value={camp} isDark={isDark} />
             </View>
           </TouchableOpacity>
         );
@@ -232,9 +248,9 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainer: {
       paddingHorizontal: 16,
-      paddingTop: 16,
+      paddingTop: 20,
       paddingBottom: 120,
-      gap: 12,
+      gap: 10,
     },
     stateContainer: {
       flex: 1,
@@ -242,66 +258,97 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       paddingHorizontal: 24,
     },
+
+    // ── Header ──────────────────────────────────────
     header: {
+      marginBottom: 12,
+    },
+    eyebrow: {
+      fontSize: 11,
+      fontFamily: Fonts.OSBOLD,
+      letterSpacing: 3,
+      color: isDark ? Colors.dark.gold : Colors.light.gold,
+      textTransform: "uppercase",
       marginBottom: 4,
     },
     title: {
-      fontSize: 28,
+      fontSize: 40,
+      lineHeight: 44,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },
-    subtitle: {
-      marginTop: 2,
-      fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+    headerDivider: {
+      marginTop: 14,
+      height: 1,
+      backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
     },
+
+    // ── Card ────────────────────────────────────────
     card: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 16,
+      borderRadius: 18,
       padding: 16,
+      overflow: "hidden",
+      gap: 12,
     },
-    cardTopRow: {
+
+    // Ghost watermark behind content
+    watermark: {
+      position: "absolute",
+      bottom: -8,
+      right: -4,
+      fontSize: 64,
+      fontFamily: Fonts.OSBOLD,
+      color: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.045)",
+      letterSpacing: -1,
+      // Prevent interaction / layout influence
+      pointerEvents: "none",
+    },
+
+    // Top bar
+    cardHeader: {
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 14,
-      gap: 12,
+      gap: 10,
     },
-    division: {
+    divisionLabel: {
       flex: 1,
-      fontSize: 18,
+      fontSize: 13,
       fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
+      letterSpacing: 0.4,
+      textTransform: "uppercase",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    titleBadge: {
+    badge: {
       borderRadius: 999,
       paddingHorizontal: 10,
       paddingVertical: 4,
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
     interimBadge: {
-      opacity: 0.85,
+      opacity: 0.75,
     },
-    titleBadgeText: {
-      fontSize: 12,
+    badgeText: {
+      fontSize: 11,
       fontFamily: Fonts.OSBOLD,
+      letterSpacing: 0.6,
       color: isDark ? Colors.white : Colors.black,
     },
-    bodyRow: {
+
+    // Body row
+    body: {
       flexDirection: "row",
       alignItems: "center",
       gap: 14,
     },
-    avatarContainer: {
-      width: 84,
-      height: 84,
-      borderRadius: 42,
+    avatarWrap: {
+      width: 72,
+      height: 72,
+      borderRadius: 14,
       overflow: "hidden",
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.background,
@@ -310,50 +357,39 @@ const getStyles = (isDark: boolean) =>
       width: "100%",
       height: "100%",
     },
-    avatarPlaceholder: {
+    avatarFallback: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      borderWidth: 1,
+      borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)",
+      borderRadius: 14,
     },
     avatarInitial: {
-      fontSize: 28,
+      fontSize: 26,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },
-    info: {
+    nameBlock: {
       flex: 1,
       gap: 2,
     },
-    name: {
-      fontSize: 24,
-      lineHeight: 28,
+    fighterName: {
+      fontSize: 22,
+      lineHeight: 26,
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     nickname: {
-      marginBottom: 6,
-      fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    metaRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginTop: 2,
-      gap: 10,
-    },
-    metaLabel: {
       fontSize: 13,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.OSREGULAR,
+      fontStyle: "italic",
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
     },
-    metaValue: {
-      flex: 1,
-      textAlign: "right",
-      fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : Colors.black,
+
+    // Meta pills
+    pillRow: {
+      flexDirection: "row",
+      gap: 8,
     },
   });

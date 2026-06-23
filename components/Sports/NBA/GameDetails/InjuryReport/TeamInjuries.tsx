@@ -81,9 +81,7 @@ export default function TeamInjuries({
 
   return (
     <View>
-      <HeadingTwo style={{ marginBottom: 12 }} isDark={isDark}>
-        Injury Report
-      </HeadingTwo>
+      <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
 
       <View style={styles.wrapper}>
         <FixedWidthTabBar

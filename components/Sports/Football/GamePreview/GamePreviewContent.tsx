@@ -30,7 +30,7 @@ type GamePreviewContentProps = {
   venueName?: string;
   venueLocation?: string;
   venueAddress?: string;
-  venueCapacity?: string | null;
+  venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
   state: string;

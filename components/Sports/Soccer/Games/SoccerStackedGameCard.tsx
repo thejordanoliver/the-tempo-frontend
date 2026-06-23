@@ -70,14 +70,10 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const clock = game.status?.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status?.shortDetail;
-  const isFinal = gameStatusDescription === "Full Time";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const inProgress = game.status.state === "in";
+  const isFinal = game.status.state === "post";
+  const isScheduled = game.status.state === "pre";
   const isSuspended = gameStatusDescription === "Suspended";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "First Half" ||
-    gameStatusDescription === "Second Half" ||
-    gameStatusDescription === "End of Period";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -117,7 +113,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   };
 
   const renderStatus = () => {
-    if (inProgress)
+    if (inProgress && !isDelayed)
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>

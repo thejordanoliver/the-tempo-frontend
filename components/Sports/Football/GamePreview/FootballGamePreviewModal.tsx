@@ -144,7 +144,7 @@ export default function FootballGamePreviewModal({
     : undefined;
 
   const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue("football", venueId);
+  const { venue } = useVenue({ sport: "football", id: venueId });
   const { weather } = useWeather({
     lat: Number(venue?.latitude),
     lon: Number(venue?.longitude),
@@ -157,9 +157,8 @@ export default function FootballGamePreviewModal({
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? "";
-  const venueAttendance = baseVenue?.attendance || null;
+  const venueAttendance = baseVenue?.attendance ?? null;
   const venueLocation = `${venue?.city}, ${venue?.state}`;
-
   const isLoading = !!details;
 
   // --------------------------------------------------------------

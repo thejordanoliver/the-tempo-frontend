@@ -106,6 +106,7 @@ export default function TeamDetailScreen() {
       setRefreshing(false);
     }
   };
+
   // --- Header ---
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -213,16 +214,13 @@ export default function TeamDetailScreen() {
         </View>
       </PagerView>
 
-      {/* --- Bottom Sheet --- */}
-      {team && (
-        <TeamInfoModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={team.id}
-          league={league}
-          isDark={isDark}
-        />
-      )}
+      <TeamInfoModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        teamId={team.id}
+        league={league}
+        isDark={isDark}
+      />
     </View>
   );
 }

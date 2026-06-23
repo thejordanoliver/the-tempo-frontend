@@ -9,7 +9,7 @@ type CenterInfoProps = {
   broadcast: string | undefined;
   state: string;
   gameStatusDescription: string;
-  gameStatusShortDescription: string;
+  gameStatusDetail: string;
 };
 
 export function CenterInfo({
@@ -21,7 +21,7 @@ export function CenterInfo({
   broadcast,
   state,
   gameStatusDescription,
-  gameStatusShortDescription,
+  gameStatusDetail,
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
 
@@ -40,13 +40,13 @@ export function CenterInfo({
     <View>
       {isFinal && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusShortDescription}</Text>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
           <View style={styles.finalStatusDivider} />
           <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
 
-      {inProgress && !endOfPeriod && (
+      {inProgress && !endOfPeriod && !isDelayed && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{period}</Text>
           <View style={styles.statusDivider} />
@@ -75,10 +75,10 @@ export function CenterInfo({
       )}
 
       {(isCanceled ||
-        isDelayed ||
         isSuspended ||
         isPostponed ||
-        isForfeited) && (
+        isForfeited ||
+        isDelayed) && (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusDescription}</Text>
         </View>

@@ -53,17 +53,12 @@ const getLeagueBadgeColor = (league: LeagueType) => {
 const FavoriteTeamsList = ({
   favoriteTeams,
   isGridView,
-  itemWidth,
   isCurrentUser,
 }: Props) => {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = favoriteTeamsListStyles(isDark);
-  const resolvedGridItemWidth =
-    typeof itemWidth === "number" && Number.isFinite(itemWidth) && itemWidth > 0
-      ? itemWidth
-      : "31%";
 
   const {
     previewTeam,
@@ -143,7 +138,6 @@ const FavoriteTeamsList = ({
                 style={({ pressed }) => [
                   pressed && styles.pressed,
                   isGridView ? styles.gridItem : styles.listItem,
-                  isGridView ? { width: resolvedGridItemWidth } : undefined,
                 ]}
                 onPress={() =>
                   router.push({
@@ -155,12 +149,10 @@ const FavoriteTeamsList = ({
                 <View
                   style={[
                     styles.teamItem,
-                    styles.teamItemBase,
                     {
+                      flex: 1,
                       backgroundColor: teamBackgroundColor,
                       flexDirection: isGridView ? "column" : "row",
-                      justifyContent: isGridView ? "center" : "flex-start",
-                      height: isGridView ? 130 : "auto",
                       paddingVertical: isGridView ? 20 : 12,
                     },
                   ]}

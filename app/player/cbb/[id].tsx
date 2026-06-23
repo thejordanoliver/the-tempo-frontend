@@ -27,10 +27,11 @@ export default function PlayerDetailScreen() {
   const global = globalStyles(isDark);
   const navigation = useNavigation();
   const playerId = Number(id);
-  const isWomen = league === "WCBB";
+  const isWCBB = league === "WCBB";
+  const isCBB = league === "CBB";
   const { player, loading, error } = usePlayerById(playerId, league);
-  const team = teamId ? getCBBTeam(teamId, isWomen) : null;
-  const teamLogo = getCBBTeamLogo(teamId, true, isWomen);
+  const team = teamId ? getCBBTeam(teamId, isWCBB) : null;
+  const teamLogo = getCBBTeamLogo(teamId, true, isWCBB);
   const teamColor = team?.color ?? Colors.midTone;
 
   const {
@@ -45,7 +46,7 @@ export default function PlayerDetailScreen() {
     careerStatsFlattened,
     loading: seasonsLoading,
     error: seasonsError,
-  } = usePlayerSeasons(playerId, isWomen);
+  } = usePlayerSeasons(playerId, isWCBB);
 
   // -------------------------
   // Header
@@ -94,6 +95,8 @@ export default function PlayerDetailScreen() {
         loading={gameLoading}
         league={league}
         isDark={isDark}
+        isCBB={isCBB}
+        isWCBB={isWCBB}
       />
 
       <PlayerStatTable

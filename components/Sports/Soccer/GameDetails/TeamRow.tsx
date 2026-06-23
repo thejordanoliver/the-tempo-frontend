@@ -27,7 +27,6 @@ export const TeamRow = ({
   const isScheduled = gameStatusDescription === "Scheduled";
   const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const isFinal = state === "post";
@@ -71,7 +70,6 @@ export const TeamRow = ({
     isForfeited ||
     isSuspended ||
     isCanceled ||
-    isDelayed ||
     score == null;
 
   return (
