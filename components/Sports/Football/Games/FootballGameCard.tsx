@@ -112,6 +112,7 @@ function FootballGameCard({
   const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
   const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
 
+
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -236,6 +237,7 @@ function FootballGameCard({
         {!isFinal && broadcast && (
           <Text style={styles.broadcast}>{broadcast}</Text>
         )}
+        
       </View>
 
       <View style={styles.teamSection}>

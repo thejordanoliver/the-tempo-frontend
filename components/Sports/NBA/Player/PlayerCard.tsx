@@ -24,19 +24,29 @@ export interface PlayerCardProps {
   statNumber?: string | number | null;
 }
 
-const LEAGUE_ROUTES = {
+type PlayerRoutePathname =
+  | "/player/[id]"
+  | "/player/wnba/[id]"
+  | "/player/mlb/[id]"
+  | "/player/nfl/[id]"
+  | "/player/mma/[id]"
+  | "/player/nhl/[id]"
+  | "/player/cfb/[id]"
+  | "/player/cbb/[id]";
+
+const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   NBA: "/player/[id]",
   WNBA: "/player/wnba/[id]",
   MLB: "/player/mlb/[id]",
   NFL: "/player/nfl/[id]",
+  UFC: "/player/mma/[id]",
   NHL: "/player/nhl/[id]",
   CFB: "/player/cfb/[id]",
   CBB: "/player/cbb/[id]",
   WCBB: "/player/cbb/[id]",
-  MMA: "/player/mma/[id]",
   CB: "/player/cbb/[id]",
   SB: "/player/cbb/[id]",
-} as const;
+};
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
   id,
@@ -81,6 +91,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
                   : null;
 
   const teamName = team?.name;
+
   const displayValue =
     statNumber != null && statNumber !== ""
       ? Number(statNumber).toLocaleString()
@@ -90,30 +101,36 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
   const route = LEAGUE_ROUTES[league];
 
+  const handlePress = () => {
+    if (!route) {
+      console.warn(`[PlayerCard] No player route configured for ${league}`);
+      return;
+    }
+
+    if (!teamId) {
+      console.warn(`[PlayerCard] No team found for "${teamName}" in ${league}`);
+      return;
+    }
+
+    router.push({
+      pathname: route,
+      params: {
+        id: String(id),
+        teamId: String(teamId),
+        league,
+      },
+    });
+  };
+
   return (
     <TouchableOpacity
       activeOpacity={0.85}
       style={styles.card}
-      onPress={() => {
-        if (!teamId) {
-          console.warn(
-            `[PlayerCard] No team found for "${teamName}" in ${league}`,
-          );
-          return;
-        }
-
-        router.push({
-          pathname: route,
-          params: {
-            id: id,
-            teamId: String(teamId),
-            league,
-          },
-        });
-      }}
+      onPress={handlePress}
     >
       <View style={styles.container}>
         {rank ? <Text style={styles.rank}>{rank}</Text> : null}
+
         <View style={styles.avatarContainer}>
           {headshot ? (
             <Image source={{ uri: headshot }} style={styles.avatar} />
@@ -125,9 +142,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>
 
-          {displayValue && (
+          {displayValue ? (
             <Text style={styles.jerseyNumber}>{displayValue}</Text>
-          )}
+          ) : null}
         </View>
       </View>
     </TouchableOpacity>

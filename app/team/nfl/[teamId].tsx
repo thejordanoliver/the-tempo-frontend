@@ -1,4 +1,5 @@
 import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import Roster from "@/components/Sports/Football/Team/Roster";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
@@ -164,7 +165,6 @@ export default function TeamDetailScreen() {
         <View key="news" style={styles.contentArea}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -192,6 +192,16 @@ export default function TeamDetailScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             league={league}
+          />
+        </View>
+        {/* DEPTH */}
+
+        <View key="depth" style={styles.contentArea}>
+          <DepthChart
+            teamId={espnId}
+            season={2026}
+            isDark={isDark}
+            league={"nfl"}
           />
         </View>
 

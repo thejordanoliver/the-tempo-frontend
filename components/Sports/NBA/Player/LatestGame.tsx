@@ -187,16 +187,15 @@ export default function LatestGame({
           isMCH={false}
         />
       )}
-      {league === "NFL" ||
-        (league === "CFB" && modalVisible && (
-          <FootballGamePreviewModal
-            game={game}
-            visible={modalVisible}
-            onClose={handleCloseModal}
-            isNFL={isNFL}
-            isCFB={isCFB}
-          />
-        ))}
+      {(league === "NFL" || league === "CFB") && modalVisible && (
+        <FootballGamePreviewModal
+          game={game}
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          isNFL={isNFL}
+          isCFB={isCFB}
+        />
+      )}
     </>
   );
 }

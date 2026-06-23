@@ -58,9 +58,9 @@ export const LEAGUE_TABS = {
 } as const;
 
 export const TEAM_TABS = {
-  NBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  NBA: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
   WNBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  NFL: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  NFL: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
   MLB: ["schedule", "news", "roster", "stats", "standings", "forum"],
   CB: ["schedule", "news", "standings", "forum"],
   SB: ["schedule", "news", "standings", "forum"],

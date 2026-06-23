@@ -1,14 +1,6 @@
 import { getMLBTeamByEspnId } from "@/constants/teamsMLB";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
-import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import {
-  FlatList,
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import { TeamInjury } from "./TeamInjuries";
 
@@ -24,8 +16,6 @@ type FlatItem = {
   player: Player | undefined;
   isLast: boolean;
 };
-
-const DEFAULT_HEADSHOT = playerPlaceholder;
 
 const normalizeName = (value?: string | null) =>
   String(value ?? "")
@@ -122,19 +112,6 @@ const getTeamPlayers = (
   return [];
 };
 
-const getAvatarSource = (
-  player: Player | undefined,
-  injury: TeamInjury["injuries"][number],
-): ImageSourcePropType => {
-  const url = player?.headshot_url || injury.athlete.headshot;
-
-  if (url) {
-    return { uri: url };
-  }
-
-  return DEFAULT_HEADSHOT;
-};
-
 export default function TeamInjuriesList({
   injuries,
   teamPlayersMap,
@@ -157,9 +134,14 @@ export default function TeamInjuriesList({
   const renderItem = ({ item }: { item: FlatItem }) => {
     const { injury: inj, player, isLast } = item;
 
-    const avatarSource = getAvatarSource(player, inj);
-    const playerName = getDisplayValue(player?.short_name || "Unknown Player");
-    const jersey = getDisplayValue(player?.jersey_number || "N/A");
+    const headshot = player?.headshot_url ?? inj?.athlete?.headshot?.href;
+
+    const playerName = getDisplayValue(
+      player?.short_name || inj.athlete.fullName || "Unknown Player",
+    );
+    const jersey = getDisplayValue(
+      player?.jersey_number || inj.athlete.jersey || "N/A",
+    );
     const position = getDisplayValue(player?.position || "—");
 
     return (
@@ -170,7 +152,7 @@ export default function TeamInjuriesList({
         ]}
       >
         <View style={styles.avatarWrapper}>
-          <Image source={avatarSource} style={styles.avatar} />
+          <Image source={{ uri: headshot }} style={styles.avatar} />
         </View>
 
         <View style={styles.infoSection}>

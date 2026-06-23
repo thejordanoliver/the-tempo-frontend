@@ -1,3 +1,4 @@
+import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import GamesList from "@/components/Sports/NBA/Games/GamesList";
 import {
   BasketballScheduleMonth,
@@ -324,6 +325,12 @@ export default function TeamDetailScreen() {
             league={league}
           />
         </View>
+
+           {/* DEPTH */}
+                <View key="depth" style={styles.contentArea}>
+                  <DepthChart teamId={espnId} season={2026} isDark={isDark} league={"nba"} />
+                </View>
+        
 
         <View key="stats" style={styles.contentArea}>
           <RosterStats

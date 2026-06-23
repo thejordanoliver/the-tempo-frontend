@@ -19,7 +19,10 @@ export type TeamInjury = {
     athlete: {
       id: string | number;
       fullName: string;
-      headshot?: string;
+      headshot?: {
+        alt: string;
+        href: string;
+      };
       position?: string;
       jersey?: string;
     };
