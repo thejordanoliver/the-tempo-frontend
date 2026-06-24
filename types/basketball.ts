@@ -102,7 +102,7 @@ export type BasketballGame = {
     state: string;
     indoor: boolean;
   };
-  broadcasts: [];
+  broadcasts: string[];
   geoBroadcasts: [
     {
       type: string;

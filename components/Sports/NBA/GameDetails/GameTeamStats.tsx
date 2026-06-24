@@ -1,6 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
-import { getTeamByESPNId } from "constants/teams";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -195,28 +194,31 @@ const STAT_KEYS = [
 export default function GameTeamStats({
   stats,
   state,
-  isDark,
-  homeLogo,
   awayLogo,
-  homeCode,
-  awayCode,
+  homeLogo,
+  awayColor,
+  homeColor,
+  awayName,
+  homeName,
+  isDark,
 }: {
-  homeLogo: any;
   awayLogo: any;
-  homeCode: string | undefined;
-  awayCode: string | undefined;
-  state: string | undefined;
-  stats: any[] | undefined;
+  homeLogo: any;
+  awayColor: string;
+  homeColor: string;
+  awayName: string;
+  homeName: string;
+  state?: string;
+  stats: any[];
   isDark: boolean;
 }) {
   const styles = gameTeamStatsStyles(isDark);
+  const isScheduled = state === "pre";
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const heightAnim = useRef(
     new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
-
-  const isScheduled = state === "pre";
 
   useEffect(() => {
     const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
@@ -243,12 +245,9 @@ export default function GameTeamStats({
   const awayStats = mapStats(away.stats);
   const homeStats = mapStats(home.stats);
 
-  const homeTeam = getTeamByESPNId(home.team.id);
-
   const extractNumber = (value?: string) => {
     if (!value) return 0;
 
-    // Handle "made-attempted" like "12-30"
     if (value.includes("-")) {
       const [made] = value.split("-");
       return Number(made) || 0;
@@ -256,12 +255,6 @@ export default function GameTeamStats({
 
     return Number(value) || 0;
   };
-
-  const awayColor = isDark ? Colors.white : Colors.black;
-
-  const homeColor =
-    (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
-    (isDark ? Colors.white : Colors.black);
 
   return (
     <View>
@@ -271,12 +264,12 @@ export default function GameTeamStats({
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
           <Image source={awayLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{awayCode}</Text>
+          <Text style={styles.teamLabel}>{awayName}</Text>
         </View>
 
         <View style={styles.teamContainer}>
           <Image source={homeLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{homeCode}</Text>
+          <Text style={styles.teamLabel}>{homeName}</Text>
         </View>
       </View>
       <ScrollView style={styles.container}>
@@ -403,18 +396,14 @@ export default function GameTeamStats({
                           >
                             <Path
                               d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
-                              stroke={awayColor}
+                              stroke={Colors.white}
                               strokeWidth={2}
                             />
                           </Pattern>
                         </Defs>
 
                         {/* Base color fill (optional but recommended) */}
-                        <Rect
-                          width="100%"
-                          height="100%"
-                          fill={isDark ? Colors.black : Colors.white}
-                        />
+                        <Rect width="100%" height="100%" fill={Colors.black} />
 
                         {/* Hatch overlay */}
                         <Rect
@@ -433,6 +422,8 @@ export default function GameTeamStats({
                           width: `${(homeNum / max) * 100}%`,
                           backgroundColor: homeColor,
                           opacity: isTie ? 1 : homeWins ? 1 : 0.4,
+                          borderWidth: 1,
+                          borderColor: isDark ? Colors.white : "transparent",
                         },
                       ]}
                     />

@@ -235,12 +235,12 @@ export default function GameTeamStats({
       <HeadingTwo isDark={isDark}>Team Stats</HeadingTwo>
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
-          <Image source={{uri: awayLogo}} style={styles.logo} />
+          <Image source={{ uri: awayLogo }} style={styles.logo} />
           <Text style={styles.teamLabel}>{awayCode}</Text>
         </View>
 
         <View style={styles.teamContainer}>
-          <Image source={{uri: homeLogo}} style={styles.logo} />
+          <Image source={{ uri: homeLogo }} style={styles.logo} />
           <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
@@ -386,6 +386,8 @@ export default function GameTeamStats({
                           width: `${(homeNum / max) * 100}%`,
                           backgroundColor: homeTeamColor,
                           opacity: isTie ? 1 : homeWins ? 1 : 0.4,
+                          borderWidth: 1,
+                          borderColor: isDark ? Colors.white : "transparent",
                         },
                       ]}
                     />

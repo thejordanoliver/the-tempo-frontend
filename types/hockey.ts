@@ -60,8 +60,8 @@ export type HockeyGame = {
     state: string;
     indoor: boolean;
   };
-  broadcasts: [];
-  geoBroadcasts: [];
+  broadcasts: string[];
+  geoBroadcasts: unknown[];
   innings: number;
   home: {
     id: number;
@@ -107,8 +107,8 @@ export type HockeyGame = {
 
 export type HockeyGameCardProps = {
   game: HockeyGame;
-  isNHL: boolean;
-  isMCH: boolean;
+  isNHL?: boolean;
+  isMCH?: boolean;
 };
 
 export interface NHLPlayer {

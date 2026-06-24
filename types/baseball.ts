@@ -150,8 +150,8 @@ export type BaseballGame = {
       isPremium: boolean;
     };
   };
-  broadcasts: [];
-  geoBroadcasts: [];
+  broadcasts: string[];
+  geoBroadcasts: unknown[];
   innings: number;
   home: {
     id: number;
@@ -246,7 +246,7 @@ export type BaseballGame = {
 
 export type BaseballGameCardProps = {
   game: BaseballGame;
-  isMLB: boolean;
-  isSB: boolean;
-  isCB: boolean;
+  isMLB?: boolean;
+  isSB?: boolean;
+  isCB?: boolean;
 };

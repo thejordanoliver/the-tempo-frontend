@@ -1,9 +1,9 @@
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import GameTeamStats from "@/components/Sports/Basketball/GameDetails/GameTeamStats";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
+  GameTeamStats,
   LineScore,
   MatchupPredictor,
 } from "components/Sports/NBA/GameDetails";
@@ -80,7 +80,6 @@ export default function GamePreviewContent({
   state,
   league,
 }: GamePreviewContentProps) {
-
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}

@@ -1,25 +1,24 @@
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import GameTeamStats from "@/components/Sports/Basketball/GameDetails/GameTeamStats";
 import PlayersOnCourt from "@/components/Sports/Basketball/GameDetails/PlayersOnCourt";
+import { getNBATeam } from "@/constants/teams";
+import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useVenue } from "@/hooks/useVenue";
+import { useWeather } from "@/hooks/useWeather";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import {
   GameHeader,
   GameLocation,
+  GameTeamStats,
   LastPlay,
   LineScore,
   TeamInjuries,
 } from "components/Sports/NBA/GameDetails";
-
-import { getNBATeam } from "@/constants/teams";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
-import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import { useVenue } from "@/hooks/useVenue";
-import { useWeather } from "@/hooks/useWeather";
 import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";

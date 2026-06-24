@@ -12,7 +12,6 @@ import {
   GameHeader,
   GameLocation,
   GameOddsSection,
-  GameTeamStats,
   HighlightVideoList,
   LastFiveGames,
   LastPlay,
@@ -41,6 +40,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
+import GameTeamStats from "../../components/Sports/NBA/GameDetails/GameTeamStats";
 
 type RouteParams = {
   game?: string | string[];
@@ -464,12 +464,14 @@ export default function GameDetailsScreen(
 
               <GameTeamStats
                 stats={teamStats}
-                homeLogo={homeLogo}
+                awayName={awayCode}
                 awayLogo={awayLogo}
-                homeCode={homeCode}
-                awayCode={awayCode}
-                isDark={isDark}
+                awayColor={awayColor}
+                homeName={homeCode}
+                homeLogo={homeLogo}
+                homeColor={homeColor}
                 state={state}
+                isDark={isDark}
               />
 
               <LastFiveGames

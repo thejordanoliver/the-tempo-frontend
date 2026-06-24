@@ -25,15 +25,22 @@ const MatchupPredictor: React.FC<Props> = ({
   homeChance,
   awayCode,
   awayLogo,
-  awayColor,
   awayChance,
   size = 184,
   isDark,
   state,
 }) => {
-  const styles = mathupPredictorStyles(isDark);
+  const styles = matchupPredictorStyles(isDark);
+
   const strokeWidth = 10;
-  const radius = 44.8;
+  const homeBorderThickness = 0.5;
+  const homeBorderWidth = strokeWidth + homeBorderThickness * 2;
+  const homeBorderColor = isDark ? Colors.white : Colors.black;
+
+  const svgCenter = 50;
+  const svgPadding = 1.5;
+
+  const radius = svgCenter - homeBorderWidth / 2 - svgPadding;
 
   const animatedHome = useRef(new Animated.Value(0)).current;
   const animatedAway = useRef(new Animated.Value(0)).current;
@@ -41,7 +48,6 @@ const MatchupPredictor: React.FC<Props> = ({
   const [homePercent, setHomePercent] = useState(0);
   const [awayPercent, setAwayPercent] = useState(0);
 
-  // Animate percentage values
   useEffect(() => {
     animatedHome.setValue(0);
     animatedAway.setValue(0);
@@ -60,7 +66,6 @@ const MatchupPredictor: React.FC<Props> = ({
     ]).start();
   }, [homeChance, awayChance, animatedHome, animatedAway]);
 
-  // Sync animated values to state
   useEffect(() => {
     const homeListener = animatedHome.addListener(({ value }) => {
       setHomePercent(value);
@@ -83,46 +88,136 @@ const MatchupPredictor: React.FC<Props> = ({
     degrees: number,
   ) => {
     const radians = ((degrees - 90) * Math.PI) / 180;
+
     return {
       x: cx + r * Math.cos(radians),
       y: cy + r * Math.sin(radians),
     };
   };
 
-  const createArcPath = (
-    startAngle: number,
-    percentage: number,
-    clockwise: boolean = true,
-  ) => {
-    const GAP = 2.5; // gap size at BOTH top and bottom
-    const TOP = 0; // keep this since your top already looks correct
-
+  const getArcAngles = (percentage: number, clockwise: boolean = true) => {
+    const GAP = 2.5;
+    const TOP = 0;
     const halfGap = GAP / 2;
-
-    // usable arc space excludes both gaps
     const usableDegrees = 360 - GAP * 2;
+    const safePercentage = Math.max(0, Math.min(percentage, 100));
 
     const adjustedStart = clockwise ? TOP + halfGap : TOP - halfGap;
-
-    const sweep = (percentage / 100) * usableDegrees;
-
+    const sweep = (safePercentage / 100) * usableDegrees;
     const endAngle = clockwise ? adjustedStart + sweep : adjustedStart - sweep;
 
-    const start = polarToCartesian(50, 50, radius, adjustedStart);
-    const end = polarToCartesian(50, 50, radius, endAngle);
+    return {
+      startAngle: adjustedStart,
+      endAngle,
+      sweep,
+      clockwise,
+    };
+  };
+
+  const createArcPath = (percentage: number, clockwise: boolean = true) => {
+    const { startAngle, endAngle, sweep } = getArcAngles(percentage, clockwise);
+
+    const start = polarToCartesian(svgCenter, svgCenter, radius, startAngle);
+    const end = polarToCartesian(svgCenter, svgCenter, radius, endAngle);
 
     const largeArc = sweep > 180 ? 1 : 0;
 
     return `
-    M ${start.x} ${start.y}
-    A ${radius} ${radius} 0 ${largeArc} ${clockwise ? 1 : 0}
-    ${end.x} ${end.y}
-  `;
+      M ${start.x} ${start.y}
+      A ${radius} ${radius} 0 ${largeArc} ${clockwise ? 1 : 0}
+      ${end.x} ${end.y}
+    `;
   };
 
+  const createArcBandPath = ({
+    percentage,
+    clockwise = true,
+    outerRadius,
+    innerRadius,
+  }: {
+    percentage: number;
+    clockwise?: boolean;
+    outerRadius: number;
+    innerRadius: number;
+  }) => {
+    const { startAngle, endAngle, sweep } = getArcAngles(percentage, clockwise);
+
+    if (sweep <= 0) return "";
+
+    const outerStart = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      outerRadius,
+      startAngle,
+    );
+    const outerEnd = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      outerRadius,
+      endAngle,
+    );
+    const innerStart = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      innerRadius,
+      startAngle,
+    );
+    const innerEnd = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      innerRadius,
+      endAngle,
+    );
+
+    const largeArc = sweep > 180 ? 1 : 0;
+    const outerSweepFlag = clockwise ? 1 : 0;
+    const innerSweepFlag = clockwise ? 0 : 1;
+
+    return `
+      M ${outerStart.x} ${outerStart.y}
+      A ${outerRadius} ${outerRadius} 0 ${largeArc} ${outerSweepFlag}
+      ${outerEnd.x} ${outerEnd.y}
+      L ${innerEnd.x} ${innerEnd.y}
+      A ${innerRadius} ${innerRadius} 0 ${largeArc} ${innerSweepFlag}
+      ${innerStart.x} ${innerStart.y}
+      Z
+    `;
+  };
+
+  const homeAngles = getArcAngles(homePercent, true);
+
+  const homeBorderOuterRadius = radius + homeBorderWidth / 2;
+  const homeBorderInnerRadius = radius - homeBorderWidth / 2;
+
+  const homeOuterRadius = radius + strokeWidth / 2;
+  const homeInnerRadius = radius - strokeWidth / 2;
+
+  const createHomeEndCapPath = (angle: number) => {
+    const inner = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      homeInnerRadius,
+      angle,
+    );
+
+    const outer = polarToCartesian(
+      svgCenter,
+      svgCenter,
+      homeOuterRadius,
+      angle,
+    );
+
+    return `
+      M ${inner.x} ${inner.y}
+      L ${outer.x} ${outer.y}
+    `;
+  };
+
+  const showHomeCapBorders = homeAngles.sweep > 0;
+
   const dividerHeight = radius + 20;
-  const dividerTop = 50 - dividerHeight / 2;
-  const dividerBottom = 50 + dividerHeight / 2;
+  const dividerTop = svgCenter - dividerHeight / 2;
+  const dividerBottom = svgCenter + dividerHeight / 2;
 
   if (!homeChance || !awayChance) return null;
   if (state === "In Progress") return null;
@@ -150,42 +245,75 @@ const MatchupPredictor: React.FC<Props> = ({
               </Pattern>
             </Defs>
 
-            {/* Background ring */}
             <Circle
-              cx="50"
-              cy="50"
+              cx={svgCenter}
+              cy={svgCenter}
               r={radius}
-              stroke={"transparent"}
+              stroke="transparent"
               strokeWidth={strokeWidth}
               fill="none"
             />
 
-            {/* Away (left – counter clockwise from top) */}
+            {/* Away ring */}
             <Path
-              d={createArcPath(0, awayPercent, false)}
+              d={createArcPath(awayPercent, false)}
               stroke="url(#awayPattern)"
               strokeWidth={strokeWidth}
               fill="none"
             />
 
-            {/* Home (right – clockwise from top) */}
+            {/* Home full border shape */}
             <Path
-              d={createArcPath(0, homePercent, true)}
-              stroke={homeColor}
-              strokeWidth={strokeWidth}
-              fill="none"
+              d={createArcBandPath({
+                percentage: homePercent,
+                clockwise: true,
+                outerRadius: homeBorderOuterRadius,
+                innerRadius: homeBorderInnerRadius,
+              })}
+              fill={homeBorderColor}
             />
+
+            {/* Home color shape */}
+            <Path
+              d={createArcBandPath({
+                percentage: homePercent,
+                clockwise: true,
+                outerRadius: homeOuterRadius,
+                innerRadius: homeInnerRadius,
+              })}
+              fill={homeColor}
+            />
+
+            {/* Home end-cap borders */}
+            {showHomeCapBorders ? (
+              <>
+                <Path
+                  d={createHomeEndCapPath(homeAngles.startAngle)}
+                  stroke={homeBorderColor}
+                  strokeWidth={homeBorderThickness}
+                  strokeLinecap="butt"
+                  fill="none"
+                />
+
+                <Path
+                  d={createHomeEndCapPath(homeAngles.endAngle)}
+                  stroke={homeBorderColor}
+                  strokeWidth={homeBorderThickness}
+                  strokeLinecap="butt"
+                  fill="none"
+                />
+              </>
+            ) : null}
 
             {/* Center divider */}
             <Path
-              d={`M 50 ${dividerTop} L 50 ${dividerBottom}`}
+              d={`M ${svgCenter} ${dividerTop} L ${svgCenter} ${dividerBottom}`}
               stroke={isDark ? Colors.white : Colors.black}
               strokeWidth={0.6}
               strokeDasharray="1,1"
             />
           </Svg>
 
-          {/* Center content */}
           <View style={styles.innerContent}>
             <View style={styles.teamContainer}>
               <Image source={awayLogo} style={styles.logo} />
@@ -196,6 +324,7 @@ const MatchupPredictor: React.FC<Props> = ({
             </View>
           </View>
         </View>
+
         <View style={styles.legendContainer}>
           <View>
             <View style={styles.legendItem}>
@@ -215,6 +344,7 @@ const MatchupPredictor: React.FC<Props> = ({
                     />
                   </Pattern>
                 </Defs>
+
                 <Rect
                   x="0"
                   y="0"
@@ -225,18 +355,29 @@ const MatchupPredictor: React.FC<Props> = ({
                   fill="url(#legendAwayPattern)"
                 />
               </Svg>
+
               <Text style={styles.legendText}>{awayCode}</Text>
             </View>
+
             <Text style={styles.chanceText}>{awayChance.toFixed(1)}%</Text>
           </View>
 
           <View>
             <View style={styles.legendItem}>
               <View
-                style={[styles.legendSwatch, { backgroundColor: homeColor }]}
+                style={[
+                  styles.legendSwatch,
+                  {
+                    backgroundColor: homeColor,
+                    borderWidth: 1,
+                    borderColor: isDark ? Colors.white : "transparent",
+                  },
+                ]}
               />
+
               <Text style={styles.legendText}>{homeCode}</Text>
             </View>
+
             <Text style={styles.chanceText}>{homeChance.toFixed(1)}%</Text>
           </View>
         </View>
@@ -245,7 +386,7 @@ const MatchupPredictor: React.FC<Props> = ({
   );
 };
 
-const mathupPredictorStyles = (isDark: boolean) =>
+const matchupPredictorStyles = (isDark: boolean) =>
   StyleSheet.create({
     outerContainer: {
       flex: 1,
@@ -293,19 +434,16 @@ const mathupPredictorStyles = (isDark: boolean) =>
       marginTop: 16,
       width: "100%",
     },
-
     legendItem: {
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
     },
-
     legendSwatch: {
       width: 30,
       height: 20,
       borderRadius: 6,
     },
-
     legendText: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 16,

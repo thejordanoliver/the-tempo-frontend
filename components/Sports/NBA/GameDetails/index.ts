@@ -21,7 +21,6 @@ export { default as MatchupPredictor } from "./MatchupPredictor";
 export { default as GameOddsSection } from "./Odds/GameOddsSection";
 export { default as Officials } from "./Officials";
 export { default as PlayersInFoulTrouble } from "./PlayersInFoulTrouble";
-export { default as PredictionBar } from "./PredictionBar";
 export { default as ShotChart } from "./ShotChart";
 export { TeamRow } from "./TeamRow";
 export { default as Weather } from "./Weather";

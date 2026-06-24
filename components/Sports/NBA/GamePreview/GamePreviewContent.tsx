@@ -2,7 +2,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   BoxScore,
   GameLocation,
-  GameTeamStats,
   HeadToHeadGames,
   LastFiveGames,
   LineScore,
@@ -13,6 +12,7 @@ import {
 import React from "react";
 import { LeagueType } from "types/types";
 import GameLeaders from "../../Basketball/GameDetails/GameLeaders";
+import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
   homeTeamId: any;
@@ -144,12 +144,14 @@ export default function GamePreviewContent({
 
       <GameTeamStats
         stats={teamStats}
-        homeLogo={homeLogo}
+        awayName={awayCode}
         awayLogo={awayLogo}
-        homeCode={homeCode}
-        awayCode={awayCode}
-        isDark
+        awayColor={awayColor}
+        homeName={homeCode}
+        homeLogo={homeLogo}
+        homeColor={homeColor}
         state={state}
+        isDark
       />
 
       <HeadToHeadGames
