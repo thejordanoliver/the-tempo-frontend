@@ -45,7 +45,7 @@ const getChampionBadgeLabel = (champion: MMAChampion) =>
   isInterimChampion(champion) ? "INTERIM" : "CHAMPION";
 
 const getChampionEntries = (
-  data: Partial<Record<MMADivision, MMAChampion[]>>
+  data: Partial<Record<MMADivision, MMAChampion[]>>,
 ) => {
   const orderedEntries = DIVISION_ORDER.map((division) => ({
     division,
@@ -86,9 +86,7 @@ const getPillStyles = (isDark: boolean) =>
   StyleSheet.create({
     pill: {
       flex: 1,
-      backgroundColor: isDark
-        ? "rgba(255,255,255,0.06)"
-        : "rgba(0,0,0,0.05)",
+      backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
       borderRadius: 8,
       paddingHorizontal: 10,
       paddingVertical: 6,
@@ -156,7 +154,6 @@ export default function MMAChampionsList() {
         />
       }
     >
-   
       {/* Cards */}
       {champions.map(({ division, champion }) => {
         if (!champion) return null;
@@ -187,7 +184,6 @@ export default function MMAChampionsList() {
               })
             }
           >
-           
             {/* Top bar: division label + badge */}
             <View style={styles.cardHeader}>
               <Text style={styles.divisionLabel}>{divisionLabel}</Text>
@@ -345,13 +341,12 @@ const getStyles = (isDark: boolean) =>
       gap: 14,
     },
     avatarWrap: {
-      width: 72,
-      height: 72,
-      borderRadius: 14,
+      width: 60,
+      height: 60,
+      borderRadius: 100,
       overflow: "hidden",
-      backgroundColor: isDark
-        ? Colors.dark.background
-        : Colors.light.background,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.white : Colors.black,
     },
     avatar: {
       width: "100%",
@@ -381,9 +376,8 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     nickname: {
-      fontSize: 13,
+      fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
-      fontStyle: "italic",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
