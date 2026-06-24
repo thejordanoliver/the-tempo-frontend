@@ -1,5 +1,4 @@
 // hooks/CBBHooks/useCBBTournamentGames.ts
-import axios from "axios";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";

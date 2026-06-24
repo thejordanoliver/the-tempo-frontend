@@ -51,7 +51,7 @@ export default function RecruitDetailScreen() {
         );
       },
     });
-  }, [navigation, player?.committed_team_id, isDark, loading]);
+  }, [navigation, router, team, teamLogo, isDark, loading]);
 
   if (loading)
     return (

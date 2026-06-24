@@ -2,7 +2,7 @@ import { getCBBTeam } from "constants/teamsCBB";
 import { useEffect, useState } from "react";
 import { BasketballPlayer } from "types/basketball";
 import { apiClient } from "utils/apiClient";
-import { useLastTeamGame } from "./useTeamLatestGame";
+import useLastTeamGame from "./useTeamLatestGame";
 
 export function usePlayerDetail(
   playerId?: string,
@@ -25,10 +25,10 @@ export function usePlayerDetail(
 
   const teamObj = team ? { ...team } : undefined;
 
-  const { lastGame, loading: teamGameLoading } = useLastTeamGame({
-    teamId: teamNumericId,
-    isWomen,
-  });
+  const { game: lastGame, loading: teamGameLoading } = useLastTeamGame(
+    leaguePath,
+    teamNumericId,
+  );
 
   /* ---------------- Fetch player ---------------- */
   useEffect(() => {

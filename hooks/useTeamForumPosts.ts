@@ -1,18 +1,12 @@
 // hooks/useTeamForumPosts.ts
-import axios from "axios";
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust path if needed
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 interface UseTeamForumPostsParams {
   teamId: string;
   league?: LeagueType;
-}
-
-interface Pagination {
-  page: number;
-  totalPages: number;
 }
 
 export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
@@ -40,17 +34,17 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
 
-      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
+      if (pageNumber === 1) {
+        setLoading(true);
+      } else {
+        setRefreshing(true);
+      }
       setError(null);
 
       try {
-        const res = await axios.get(
-          `${BASE_URL}/api/forum/team/${league}/${teamId}`,
-          {
-            params: { page: pageNumber, limit: 10 },
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+      const res = await apiClient.get(`/api/forum/team/${league}/${teamId}`, {
+        params: { page: pageNumber, limit: 10 },
+      });
 
         const { posts: newPosts, pagination } = res.data;
 
@@ -100,9 +94,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
     async (postId: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      await axios.delete(`${BASE_URL}/api/forum/post/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete(`/api/forum/post/${postId}`);
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     },
@@ -114,11 +106,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
     async (postId: string, text: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      const res = await axios.put(
-        `${BASE_URL}/api/forum/posts/${postId}`,
-        { text },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await apiClient.put(`/api/forum/posts/${postId}`, { text });
 
       setPosts((prev) =>
         prev.map((p) => (p.id === postId ? res.data.post : p)),

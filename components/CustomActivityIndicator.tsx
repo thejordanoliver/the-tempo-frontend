@@ -28,7 +28,7 @@ export default function CustomActivityIndicator({
         useNativeDriver: true,
       }),
     ).start();
-  }, []);
+  }, [rotateAnim]);
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],

@@ -1,7 +1,6 @@
 // hooks/NFLHooks/useNFLGameLeaders.ts
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 export type PlayerStat = {
   name: string;

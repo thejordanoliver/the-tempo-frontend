@@ -125,7 +125,7 @@ export default function SoccerGamePreviewModal({
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE);
 
   const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue("soccer", venueId);
+  const { venue } = useVenue({ sport: "soccer", id: venueId });
   const { weather } = useWeather({
     lat: Number(venue?.latitude),
     lon: Number(venue?.longitude),

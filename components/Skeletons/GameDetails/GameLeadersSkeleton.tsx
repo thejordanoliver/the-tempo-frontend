@@ -34,7 +34,7 @@ const PulseBlock = ({ style }: { style: any }) => {
 
     pulse.start();
     return () => pulse.stop();
-  }, []);
+  }, [pulseAnim]);
 
   return (
     <Animated.View
@@ -73,7 +73,7 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
 
     pulse.start();
     return () => pulse.stop();
-  }, []);
+  }, [pulseAnim]);
 
   // Interpolate between two subtle border shades
   const borderColor = pulseAnim.interpolate({
@@ -153,7 +153,7 @@ export default function GameLeadersSkeleton() {
 
     pulse.start();
     return () => pulse.stop();
-  }, []);
+  }, [pulseAnim]);
 
   const borderColor = pulseAnim.interpolate({
     inputRange: [0.4, 1],

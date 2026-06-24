@@ -183,9 +183,11 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
       <View style={styles.info}>
         {renderStatus()}
 
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />

@@ -19,7 +19,7 @@ type SupportedFavoriteLeague = Extract<
 >;
 
 type TeamLookupItem = {
-  id: number | string;
+  id: number | string | null;
   wid?: number | string | null;
 };
 

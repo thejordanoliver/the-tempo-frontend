@@ -5,6 +5,8 @@ import type { LeagueTeam, LeagueType } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
 
+type LeagueTeamWithId = LeagueTeam & { id: number };
+
 type Props = {
   teams: LeagueTeam[];
   favorites: string[];
@@ -36,15 +38,17 @@ const FavoriteTeamsSelector = ({
 
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
-  const filteredTeams = useMemo(() => {
+  const filteredTeams = useMemo<LeagueTeamWithId[]>(() => {
     const query = deferredSearch.toLowerCase().trim();
-    if (!query) return teams;
+    const teamsWithIds = teams.filter(
+      (team): team is LeagueTeamWithId => team.id != null,
+    );
+    if (!query) return teamsWithIds;
 
-    return teams.filter((team) => {
+    return teamsWithIds.filter((team) => {
       const name = (
         team.fullName ||
         team.name ||
-        team.displayName ||
         ""
       ).toLowerCase();
 
@@ -67,7 +71,7 @@ const FavoriteTeamsSelector = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: LeagueTeam }) => {
+    ({ item }: { item: LeagueTeamWithId }) => {
       const key = `${item.league}:${item.id}`;
 
       return (
@@ -84,12 +88,12 @@ const FavoriteTeamsSelector = ({
   );
 
   const keyExtractor = useCallback(
-    (item: LeagueTeam) => `${item.league}-${item.id}`,
+    (item: LeagueTeamWithId) => `${item.league}-${item.id}`,
     [],
   );
 
   const getItemLayout = useCallback(
-    (_: ArrayLike<LeagueTeam> | null | undefined, index: number) => {
+    (_: ArrayLike<LeagueTeamWithId> | null | undefined, index: number) => {
       const itemHeight = 76;
       const separatorHeight = 12;
 

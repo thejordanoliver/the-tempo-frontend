@@ -15,9 +15,9 @@ import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import DraftList, {
+import Draft, {
   getDefaultDraftYear,
-} from "../../components/League/Draft/DraftList";
+} from "../../components/League/Draft/Draft";
 import SportsListModal, {
   SportsListModalRef,
 } from "../../components/League/SportsListModal";
@@ -195,7 +195,7 @@ export default function WNBALeagueScreen() {
 
           {/* DRAFT */}
           <View key="draft">
-            <DraftList
+            <Draft
               year={draftYear}
               team={draftTeam}
               round={draftRound}

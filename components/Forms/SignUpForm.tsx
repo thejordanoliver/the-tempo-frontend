@@ -82,7 +82,7 @@ export default function SignUpForm({
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
     }).start();
-  }, [signupStep]);
+  }, [progress, signupStep]);
 
   const progressWidth = progress.interpolate({
     inputRange: [0, 1],

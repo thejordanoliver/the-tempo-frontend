@@ -184,6 +184,8 @@ export default function GamesList({
       {modalVisible && previewGame && (
         <NHLGamePreviewModal
           game={previewGame}
+          isNHL={true}
+          isMCH={false}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
         />

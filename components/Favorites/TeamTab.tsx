@@ -26,6 +26,17 @@ type TeamWithLeague = {
   isDark: boolean;
 };
 
+type TeamRoute =
+  | "/team/[teamId]"
+  | "/team/wnba/[teamId]"
+  | "/team/nfl/[teamId]"
+  | "/team/cfb/[teamId]"
+  | "/team/cbb/[teamId]"
+  | "/team/wcbb/[teamId]"
+  | "/team/mlb/[teamId]"
+  | "/team/nhl/[teamId]"
+  | "/player/mma/[id]";
+
 // -------------------------
 // Render item
 // -------------------------
@@ -84,7 +95,7 @@ export const TeamTab = ({
       onPress={async () => {
         await Haptics.selectionAsync();
 
-        const routeMap: Record<LeagueType, string> = {
+        const routeMap: Partial<Record<LeagueType, TeamRoute>> = {
           NBA: "/team/[teamId]",
           WNBA: "/team/wnba/[teamId]",
           NFL: "/team/nfl/[teamId]",
@@ -98,10 +109,16 @@ export const TeamTab = ({
           MMA: "/player/mma/[id]",
         };
 
-        router.push({
-          pathname: routeMap[item.league] as any,
-          params: { teamId: item.id },
-        });
+        const pathname = routeMap[item.league];
+
+        if (!pathname) return;
+
+        if (pathname === "/player/mma/[id]") {
+          router.push({ pathname, params: { id: String(item.id) } });
+          return;
+        }
+
+        router.push({ pathname, params: { teamId: String(item.id) } });
       }}
     >
       <View

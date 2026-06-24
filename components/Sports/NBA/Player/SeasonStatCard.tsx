@@ -13,15 +13,6 @@ type Props = {
   selectedSeason?: string;
 };
 
-function getCurrentNBASeason() {
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-
-  return month >= 10
-    ? `${year}-${String(year + 1).slice(-2)}`
-    : `${year - 1}-${String(year).slice(-2)}`;
-}
-
 function toNumber(value?: number | string | null) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;

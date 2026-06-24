@@ -37,7 +37,7 @@ export default function FollowingButton({ isFollowing, onToggle }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [isFollowing]);
+  }, [isFollowing, opacityAnim]);
 
   const handlePress = (e: GestureResponderEvent) => {
     e.preventDefault();

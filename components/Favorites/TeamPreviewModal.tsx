@@ -46,7 +46,7 @@ export default function TeamPreviewModal({
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [scaleAnim, visible]);
 
   const isNBA = team.league === "NBA";
   const isWNBA = team.league === "WNBA";
@@ -57,10 +57,12 @@ export default function TeamPreviewModal({
   const isCFB = team.league === "CFB";
   const isNHL = team.league === "NHL";
 
-  const logo = isCBB
+  const logo = team.id == null
+    ? null
+    : isCBB
     ? getCBBTeamLogo(team.id, isDark, false)
     : isWCBB
-      ? getCBBTeamLogo((team as any).wid, isDark, true)
+      ? getCBBTeamLogo(team.wid ?? undefined, isDark, true)
       : isNBA
         ? getTeamLogo(team.id, isDark)
         : isWNBA
@@ -79,7 +81,7 @@ export default function TeamPreviewModal({
     ? team?.secondaryColor || Colors.midTone
     : team?.color || Colors.midTone;
 
-  const est = team.firstSeason ?? (team as any).established ?? "—";
+  const est = team.established ?? "—";
 
   return (
     <Modal animationType="fade" transparent visible={visible}>

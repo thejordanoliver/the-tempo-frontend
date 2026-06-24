@@ -201,9 +201,11 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
     </>
   );

@@ -94,7 +94,7 @@ export default function PostImagesModal({
     if (!likeState && postId) {
       setLike(postId, likedByCurrentUser, likesCount);
     }
-  }, [postId]);
+  }, [likeState, likedByCurrentUser, likesCount, postId, setLike]);
 
   const liked = likeState?.liked ?? likedByCurrentUser;
   const likeCount = likeState?.count ?? likesCount;
@@ -153,7 +153,7 @@ export default function PostImagesModal({
         }
       });
     });
-  }, [visible, initialIndex, media.length]);
+  }, [initialIndex, media.length, opacity, scale, visible]);
 
   useEffect(() => {
     if (!collapsedHeight || !expandedHeight) return;
@@ -164,7 +164,7 @@ export default function PostImagesModal({
       easing: Easing.out(Easing.ease),
       useNativeDriver: false, // ❗ height animation
     }).start();
-  }, [expanded, collapsedHeight, expandedHeight]);
+  }, [animatedHeight, collapsedHeight, expanded, expandedHeight]);
 
   useEffect(() => {
     if (visible) {
@@ -172,7 +172,7 @@ export default function PostImagesModal({
       setCollapsedHeight(0);
       setExpandedHeight(0);
     }
-  }, [visible]);
+  }, [captionOpacity, visible]);
 
   /* -------------------- Video Pauses On Swipe -------------------- */
 
@@ -215,7 +215,7 @@ export default function PostImagesModal({
       captionOpacity.setValue(1);
       setCaptionVisible(true);
     }
-  }, [visible]);
+  }, [captionOpacity, visible]);
 
   useEffect(() => {
     if (visible) {

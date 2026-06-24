@@ -82,7 +82,7 @@ export default function TeamInjuries({
     if (tabs[0] !== selected) {
       setSelected(tabs[0]);
     }
-  }, [tabs.join("|")]);
+  }, [selected, tabs]);
 
   const selectedInjuries = useMemo(() => {
     return selected === tabs[0] ? grouped.away : grouped.home;

@@ -2,9 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { PollResult } from "./useGameVotes";
-import { BASE_URL } from "utils/apiClient";
-// Use apiClient's token helper to stay consistent with the rest of the app
-import { getAccessToken } from "utils/apiClient";
+import { BASE_URL, getAccessToken } from "utils/apiClient";
 export function useLiveVotes(gameId: string) {
   const [votes, setVotes] = useState<PollResult[]>([]);
   const socketRef = useRef<Socket | null>(null);

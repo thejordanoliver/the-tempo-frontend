@@ -112,7 +112,7 @@ export default function MainScrollTabBar<T extends string>({
 
       scrollToActive(index);
     }
-  }, [selected, tabs]);
+  }, [selected, tabs, underlineWidth, underlineX]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,

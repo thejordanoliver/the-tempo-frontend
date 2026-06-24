@@ -49,7 +49,7 @@ const resolveTeamLogo = (
 
 export default function FavoriteTeamsWidget({
   isDark,
-
+  size = "medium",
   width,
   height,
   containerWidth,

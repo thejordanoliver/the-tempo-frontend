@@ -62,11 +62,11 @@ export default function FavoritesScroll({
 
         let baseTeam:
           | {
-              id: number;
+              id: number | null;
               name: string;
               logo?: any;
               color?: string | null;
-              wid?: number;
+              wid?: number | null;
             }
           | undefined;
 
@@ -100,7 +100,8 @@ export default function FavoritesScroll({
             return null;
         }
 
-        if (!baseTeam) return null;
+        if (!baseTeam || (league !== "WCBB" && baseTeam.id == null))
+          return null;
 
         return {
           ...baseTeam,
@@ -113,7 +114,7 @@ export default function FavoritesScroll({
         } as TeamWithLeague;
       })
       .filter((t): t is TeamWithLeague => t !== null);
-  }, [favoriteTeamIds, isDark]); // ✅ isDark added to deps so items update on theme change
+  }, [favoriteTeamIds, isDark]);
   if (loading) return <FavoritesScrollSkeleton isDark={isDark} />;
 
   // -------------------------

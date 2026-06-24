@@ -58,7 +58,7 @@ export default function HeadToHeadGameRow({
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const period = formatPeriod(game.status?.period);
+  const period = formatPeriod({ period: game.status?.period });
   const displayClock = game.status?.clock;
 
   const formattedDate = gameDate.toLocaleDateString("en-US", {

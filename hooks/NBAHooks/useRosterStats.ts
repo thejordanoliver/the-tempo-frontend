@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export function useRosterStats(teamId: number) {
@@ -7,10 +7,14 @@ export function useRosterStats(teamId: number) {
   const [refreshingStats, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchRoster = async (isRefresh = false) => {
+  const fetchRoster = useCallback(async (isRefresh = false) => {
     if (!teamId) return;
 
-    isRefresh ? setRefreshing(true) : setLoading(true);
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -22,13 +26,17 @@ export function useRosterStats(teamId: number) {
       console.error("❌ Error fetching roster:", err.message);
       setError(err);
     } finally {
-      isRefresh ? setRefreshing(false) : setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
-  };
+  }, [teamId]);
 
   useEffect(() => {
     fetchRoster();
-  }, [teamId]);
+  }, [fetchRoster]);
 
   return {
     teamRoster,

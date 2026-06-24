@@ -9,7 +9,6 @@ import { getMLBTeamByEspnId } from "constants/teamsMLB";
 import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId } from "constants/teamsNHL";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
-import { useRouter } from "expo-router";
 import {
   CFBTeamRank,
   useCFBRankings,
@@ -669,7 +668,7 @@ function StandingsTable({
 
 export default function StandingsWidget({
   isDark,
-
+  size = "medium",
   containerWidth,
   containerHeight,
   widgetId,
@@ -684,8 +683,6 @@ export default function StandingsWidget({
   favoriteLeagues = [],
   initialLeague,
 }: StandingsWidgetProps) {
-  const router = useRouter();
-
   const compact =
     size === "small" || (containerWidth != null && containerWidth < 260);
 

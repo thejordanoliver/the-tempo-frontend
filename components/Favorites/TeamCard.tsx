@@ -12,7 +12,7 @@ import { Image, Pressable, Text, View } from "react-native";
 import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
 import type { LeagueType, Team } from "types/types";
 
-type TeamWithLeague = Team & { league: LeagueType };
+type TeamWithLeague = Omit<Team, "id"> & { id: number; league: LeagueType };
 
 type Props = {
   item: TeamWithLeague;

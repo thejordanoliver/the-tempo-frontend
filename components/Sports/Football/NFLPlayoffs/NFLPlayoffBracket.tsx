@@ -3,12 +3,12 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { nflPlayoffBracketStyles } from "styles/NFLPlayoffBracketStyles";
 import type {
   Matchup,
-  NFLPlayoffBracket,
+  NFLPlayoffBracket as NFLPlayoffBracketData,
   NFLPlayoffTeam,
 } from "types/football";
 
@@ -267,7 +267,7 @@ const ConnectorLayer = ({
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
   const styles = nflPlayoffBracketStyles(isDark);
 
-  const connectOneToOne = (key: string, src?: CardLayout, tgt?: CardLayout) => {
+  const connectOneToOne = useCallback((key: string, src?: CardLayout, tgt?: CardLayout) => {
     if (!src || !tgt) return null;
 
     const srcRight = src.x + src.width;
@@ -327,7 +327,7 @@ const ConnectorLayer = ({
         />
       </View>
     );
-  };
+  }, [lineColor, styles.connectorH, styles.connectorV]);
   const connectors = useMemo(
     () => (
       <>
@@ -338,7 +338,7 @@ const ConnectorLayer = ({
         {connectOneToOne("r3-finals", r3, finals)}
       </>
     ),
-    [r1Slots, r2, r3, finals],
+    [connectOneToOne, finals, r1Slots, r2, r3],
   );
   return <>{connectors}</>;
 };
@@ -350,7 +350,7 @@ export function NFLPlayoffBracket({
   refreshing,
   onRefresh,
 }: {
-  bracket: NFLPlayoffBracket | null;
+  bracket: NFLPlayoffBracketData | null;
   loading: boolean;
   error: string | null;
   refreshing: any;

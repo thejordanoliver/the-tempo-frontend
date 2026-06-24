@@ -22,10 +22,11 @@ type GamePreviewContentProps = {
   venueLocation?: string;
   venueAddress?: string;
   venueCity?: string | null;
-  venueCapacity?: string | null;
+  venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
   gameStatusDescription: string;
+  gameState?: string;
   league: string;
 };
 
@@ -46,7 +47,7 @@ export default function GamePreviewContent({
   venueAttendance,
   venueCapacity,
   weather,
-  gameStatusDescription,
+  gameState,
   league,
 }: GamePreviewContentProps) {
   return (
@@ -59,9 +60,9 @@ export default function GamePreviewContent({
           linescore={lineScore}
           homeCode={homeCode}
           awayCode={awayCode}
-          league="NHL"
+          league="nhl"
           isDark
-          gameStatusDescription={gameStatusDescription}
+          state={gameState}
         />
       )}
 
@@ -78,7 +79,7 @@ export default function GamePreviewContent({
         }}
         isDark
         league={league}
-        gameStatusDescription={gameStatusDescription}
+        state={gameState}
       />
 
       <GameLocation

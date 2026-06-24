@@ -1,10 +1,9 @@
 // hooks/useLeagueForumPosts.ts
-import axios from "axios";
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 interface useLeagueForumPostsParams {
   teamId: string;
   league?: LeagueType;
@@ -35,13 +34,16 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
       if (isFetchingRef.current) return;
       isFetchingRef.current = true;
 
-      pageNumber === 1 ? setLoading(true) : setRefreshing(true);
+      if (pageNumber === 1) {
+        setLoading(true);
+      } else {
+        setRefreshing(true);
+      }
       setError(null);
 
       try {
-        const res = await axios.get(`${BASE_URL}/api/forum/league/${league}`, {
+        const res = await apiClient.get(`/api/forum/league/${league}`, {
           params: { page: pageNumber, limit: 10 },
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
 
         const { posts: newPosts, pagination } = res.data;
@@ -89,9 +91,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
     async (postId: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      await axios.delete(`${BASE_URL}/api/forum/post/${postId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiClient.delete(`/api/forum/post/${postId}`);
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
     },
@@ -103,13 +103,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
     async (postId: string, text: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      const res = await axios.put(
-        `${BASE_URL}/api/forum/posts/${postId}`,
-        { text },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await apiClient.put(`/api/forum/posts/${postId}`, { text });
 
       setPosts((prev) =>
         prev.map((p) => (p.id === postId ? res.data.post : p)),

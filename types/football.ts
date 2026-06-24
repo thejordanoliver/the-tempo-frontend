@@ -2,6 +2,7 @@
 
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors } from "constants/styles";
+import type { ImageSourcePropType } from "react-native";
 
 export type Team = {
   id: number;
@@ -25,6 +26,10 @@ export type Team = {
   color: string;
   secondaryColor: string;
   championships?: number[];
+  uniforms?: {
+    home?: ImageSourcePropType;
+    away?: ImageSourcePropType;
+  };
   isAllStar: boolean;
   isActive: boolean;
 };

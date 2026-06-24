@@ -51,7 +51,7 @@ export default function SignupSuccessScreen() {
         return () => clearTimeout(timeout);
       });
     });
-  }, []);
+  }, [id, router, screenFade, textFade, token]);
 
   return (
     <Animated.View

@@ -51,7 +51,7 @@ function TeamBubble({
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [opacity, scale]);
 
   return (
     <View style={styles.itemWrapper}>

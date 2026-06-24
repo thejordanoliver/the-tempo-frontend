@@ -79,15 +79,18 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
+
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
+  const isDelayed =
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Rain Delay";
   const homeScore = home?.score;
   const awayScore = away?.score;
   const homeRecord = home?.record;
@@ -136,7 +139,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
     record: string | undefined;
     teamWins: boolean;
   }) => {
-    const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
+    const showRecord = isScheduled || isCanceled || isPostponed;
 
     return (
       <Text
@@ -196,7 +199,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
 
   const renderCardContent = () => (
     <>
-      {/* Away Team */}
       <View style={styles.teamSection}>
         <Image
           source={awayLogo}
@@ -208,26 +210,22 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
           {awayName}
         </Text>
       </View>
-      {/* Away Score / Record */}
+
       <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
 
-      {/* headlineText */}
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headline}</Text>
       </View>
 
-      {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcast && (
+        {!isFinal && !isPostponed && !isCanceled && !isForfeited && broadcast && (
           <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>
 
-      {/* Home Score / Record */}
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
 
-      {/* Home Team */}
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}

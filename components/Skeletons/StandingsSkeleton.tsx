@@ -32,7 +32,7 @@ export const StandingsSkeleton = () => {
 
     animation.start();
     return () => animation.stop();
-  }, []);
+  }, [pulse]);
 
   const StatBar = () => (
     <Animated.View

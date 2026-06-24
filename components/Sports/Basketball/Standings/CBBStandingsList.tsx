@@ -79,11 +79,11 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = getCBBTeamByESPNId(item.team?.id ?? "");
     const teamId = team?.id;
-    const teamLogo = getCBBTeamLogo(teamId, isDark, isWomen);
+    const teamLogo = getCBBTeamLogo(teamId ?? undefined, isDark, isWomen);
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
-    const favorited = team ? isFavorite(league, team.id) : false;
+    const favorited = team?.id != null ? isFavorite(league, team.id) : false;
 
     return (
       <View
@@ -173,7 +173,7 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = getCBBTeamByESPNId(item.team?.id ?? "");
-    const favorited = team ? isFavorite(league, team.id) : false;
+    const favorited = team?.id != null ? isFavorite(league, team.id) : false;
     return (
       <View
         style={[

@@ -62,7 +62,7 @@ export default function GameLeadersTabBar<T extends string>({
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [selected, tabWidth, tabs]);
+  }, [selected, tabWidth, tabs, underlineX]);
 
   return (
     <View

@@ -6,7 +6,7 @@ import { getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { RecruitPredictedSchool } from "types/basketball";
+import { CBBRecruit, RecruitPredictedSchool } from "types/basketball";
 
 import React, { useEffect, useMemo, useRef } from "react";
 import {
@@ -19,7 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CBBRecruit } from "types/basketball";
 
 type Props = {
   recruit: CBBRecruit;

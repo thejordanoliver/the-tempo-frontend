@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export interface ArticleImage {
@@ -39,7 +39,7 @@ export function useArticle(articleId: number | string) {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchArticle = async () => {
+  const fetchArticle = useCallback(async () => {
     if (!articleId) return;
 
     setLoading(true);
@@ -60,11 +60,11 @@ export function useArticle(articleId: number | string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [articleId]);
 
   useEffect(() => {
     fetchArticle();
-  }, [articleId]);
+  }, [fetchArticle]);
 
   return {
     article,

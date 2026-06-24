@@ -49,7 +49,7 @@ export default function DeleteAccountSplashScreen() {
         }, 5000);
       });
     });
-  }, []);
+  }, [router, screenFade, textFade]);
 
   return (
     <Animated.View

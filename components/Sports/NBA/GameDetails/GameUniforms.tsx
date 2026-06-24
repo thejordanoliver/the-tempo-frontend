@@ -4,7 +4,8 @@ import { Colors, Fonts } from "constants/styles";
 import { teams } from "constants/teams";
 import { Image } from "expo-image";
 import { StyleSheet, Text, useColorScheme, View } from "react-native";
-type GameUniforms = {
+
+type GameUniformsProps = {
   homeTeamId: number;
   awayTeamId: number;
   lighter?: boolean; // <-- new prop
@@ -14,7 +15,7 @@ export default function GameUniforms({
   homeTeamId,
   awayTeamId,
   lighter = false,
-}: GameUniforms) {
+}: GameUniformsProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 

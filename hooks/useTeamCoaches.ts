@@ -1,5 +1,5 @@
 // hooks/useTeamCoaches.ts
-import axios from "axios";
+import { isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -52,7 +52,7 @@ export function useTeamCoaches(
           setError(data.error || "Unknown error");
         }
       } catch (err: any) {
-        if (axios.isCancel?.(err)) return;
+        if (isCancel(err)) return;
         setError(err.message || "Failed to fetch coaches");
       } finally {
         setLoading(false);

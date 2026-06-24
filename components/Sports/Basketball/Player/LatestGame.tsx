@@ -59,7 +59,12 @@ export default function LatestGame({
           minDurationMs={400}
         >
           <View>
-            <CBBGameCard game={game} isWomen={isWomen} />
+            <CBBGameCard
+              game={game}
+              isCBB={!isWomen}
+              isWCBB={isWomen}
+              isWNBA={false}
+            />
           </View>
         </LongPressGestureHandler>
       </View>
@@ -69,6 +74,9 @@ export default function LatestGame({
           game={previewGame}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+          isCBB={!isWomen}
+          isWCBB={isWomen}
+          isWNBA={false}
         />
       )}
     </>

@@ -236,7 +236,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcast && (
+        {!isFinal && !isPostponed && !isCanceled && !isForfeited && broadcast && (
           <Text style={styles.broadcast}>{broadcast}</Text>
         )}
       </View>

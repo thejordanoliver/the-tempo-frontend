@@ -1,7 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import XCardSkeleton from "components/Skeletons/XCardSkeleton";
-import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRef } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
@@ -21,7 +20,6 @@ export function XFeed({ items, loading }: XFeedProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = xFeedStyles;
-  const global = globalStyles(isDark);
   const listRef = useRef<FlatList>(null);
   if (!items.length) return null;
   if (loading)

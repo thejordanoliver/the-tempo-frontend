@@ -2,10 +2,9 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
-import { getTeamByESPNId } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useState } from "react";
-import { Image, LayoutChangeEvent, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
 type LastPlayType = {
@@ -57,13 +56,9 @@ export default function LastPlay({
   league,
 }: LastPlayProps) {
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
-  const [containerWidth, setContainerWidth] = useState(0);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
-
-  const onLayout = (e: LayoutChangeEvent) =>
-    setContainerWidth(e.nativeEvent.layout.width);
 
   useEffect(() => {
     setCurrentPlay(lastPlay);
@@ -136,27 +131,18 @@ export default function LastPlay({
       );
   };
 
-  let teamColor = Colors.light.green;
-
-  if (typeof currentPlay !== "string" && currentPlay?.team?.id) {
-    const team = getTeamByESPNId(currentPlay.team.id);
-    teamColor = isDark
-      ? team?.secondaryColor || Colors.light.green
-      : team?.color || Colors.light.green;
-  }
-
   if (state !== "in" || !currentPlay) return null;
 
   if (typeof currentPlay === "string") {
     return (
-      <View style={styles.simpleContainer} onLayout={onLayout}>
+      <View style={styles.simpleContainer}>
         <Text style={styles.simpleText}>{currentPlay}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container} onLayout={onLayout}>
+    <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Last Play</HeadingTwo>
       <View style={styles.wrapper}>
         <View style={styles.row}>

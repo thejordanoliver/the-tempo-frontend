@@ -15,7 +15,7 @@ type NewsCardProps = {
 export default function NewsCard({ content, isDark }: NewsCardProps) {
   const router = useRouter();
   const styles = newsCardStyles(isDark);
-  const [imageError, setImageError] = useState(false);
+  const [imageError] = useState(false);
   const formattedDate = new Date(content.published).toLocaleDateString(
     "en-US",
     {

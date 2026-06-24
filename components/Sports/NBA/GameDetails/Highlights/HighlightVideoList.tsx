@@ -38,7 +38,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   highlights,
   isDark,
 }) => {
-  const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
   const videoRefs = useRef<Record<string, Video>>(Object.create(null));
@@ -59,7 +58,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       setPlayingId(id);
       setPaused((prev) => ({ ...prev, [id]: false }));
       setHasPlayed((prev) => ({ ...prev, [id]: true }));
-      setIsLoaded((prev) => ({ ...prev, [id]: false }));
     },
     [playingId],
   );
@@ -148,8 +146,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
               resizeMode={ResizeMode.CONTAIN}
               shouldPlay={!isPaused}
               onLoad={() => {
-                setIsLoaded((prev) => ({ ...prev, [item.id]: true }));
-
                 // ---> FIX: Only present fullscreen AFTER loaded
                 requestAnimationFrame(() => {
                   const vid = videoRefs.current[item.id];

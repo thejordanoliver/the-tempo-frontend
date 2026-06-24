@@ -108,7 +108,7 @@ const getGameStatus = (
   const isHalftime = gameStatusDescription === "Halftime";
   const isEndOfPeriod = gameStatusDescription === "End of Period";
 
-  const period = formatPeriod(game.status?.period || 0);
+  const period = formatPeriod({ period: game.status?.period || 0 });
 
   if (inProgress) {
     return (

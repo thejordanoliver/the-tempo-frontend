@@ -77,7 +77,11 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const clock = game.status.displayClock;
   const resultText = game.method;
   const results =
-    resultText?.toLowerCase() === "submission" ? "SUB" : resultText?.toLowerCase() === "decision" ? "DEC" : resultText;
+    resultText?.toLowerCase() === "submission"
+      ? "SUB"
+      : resultText?.toLowerCase() === "decision"
+        ? "DEC"
+        : resultText;
 
   const ScoreText = ({
     record,
@@ -192,9 +196,11 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       {/* First Fighter Score / Record */}

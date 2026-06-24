@@ -2,7 +2,6 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
-import { LeagueType } from "types/types";
 import HeaderSkeleton from "../HeaderSkeleton";
 
 type Props = {

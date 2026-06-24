@@ -34,7 +34,7 @@ export default function SearchBar({
     if (!visible) {
       inputRef.current?.blur();
     }
-  }, [visible]);
+  }, [anim, visible]);
 
   return (
     <Animated.View

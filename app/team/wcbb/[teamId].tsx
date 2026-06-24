@@ -73,7 +73,7 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const pagerRef = useRef<PagerView>(null);
   const rosterRef = useRef<{ refresh: () => void }>(null);
-  const favorited = team ? isFavorite(league, team.id) : false;
+  const favorited = team?.id != null ? isFavorite(league, team.id) : false;
   const scrollViewRef = useRef<ScrollView>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
@@ -239,11 +239,13 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={teamColor}
+          teamColor={teamColor ?? undefined}
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => {
+            if (team?.id != null) toggleFavorite(league, team.id);
+          }}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -354,7 +356,7 @@ export default function TeamDetailScreen() {
       <TeamInfoModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        teamId={team.id}
+        teamId={team.id ?? teamIdNum}
         league={league}
         isDark={isDark}
       />

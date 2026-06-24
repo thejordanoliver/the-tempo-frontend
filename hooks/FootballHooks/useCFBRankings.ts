@@ -55,7 +55,7 @@ export const useCFBRankings = () => {
 
   /* ---------------- Cache Helpers ---------------- */
 
-  const saveCache = async (data: CFBRankPoll[]) => {
+  const saveCache = useCallback(async (data: CFBRankPoll[]) => {
     try {
       await AsyncStorage.setItem(
         CACHE_KEY,
@@ -64,9 +64,9 @@ export const useCFBRankings = () => {
     } catch (err) {
       console.warn("⚠️ Failed to cache CFB rankings:", err);
     }
-  };
+  }, []);
 
-  const loadCache = async (): Promise<CFBRankPoll[] | null> => {
+  const loadCache = useCallback(async (): Promise<CFBRankPoll[] | null> => {
     try {
       const cached = await AsyncStorage.getItem(CACHE_KEY);
       if (!cached) return null;
@@ -82,11 +82,11 @@ export const useCFBRankings = () => {
       console.warn("⚠️ Failed to read CFB cache:", err);
       return null;
     }
-  };
+  }, []);
 
   /* ---------------- Normalize ---------------- */
 
-  const normalizePoll = (raw: any, type: CFBRankPoll["type"]): CFBRankPoll => {
+  const normalizePoll = useCallback((raw: any, type: CFBRankPoll["type"]): CFBRankPoll => {
     if (!raw) {
       return {
         type,
@@ -126,11 +126,11 @@ export const useCFBRankings = () => {
           ? nested.droppedOut
           : []) || [],
     };
-  };
+  }, []);
 
   /* ---------------- Fetch Latest ---------------- */
 
-  const fetchLatest = async () => {
+  const fetchLatest = useCallback(async () => {
     try {
       const res = await apiClient.get("api/standings/cfb/rankings");
 
@@ -152,11 +152,11 @@ export const useCFBRankings = () => {
       console.error("❌ Fetch latest rankings failed:", err);
       setError(err.message || "Failed to fetch rankings");
     }
-  };
+  }, [normalizePoll, saveCache]);
 
   /* ---------------- Background Refresh ---------------- */
 
-  const fetchLatestInBackground = async () => {
+  const fetchLatestInBackground = useCallback(async () => {
     try {
       const res = await apiClient.get("/api/cfb-rankings");
 
@@ -177,7 +177,7 @@ export const useCFBRankings = () => {
     } catch (err) {
       console.warn("⚠️ Background refresh failed:", err);
     }
-  };
+  }, [normalizePoll, saveCache]);
 
   /* ---------------- Main Fetch ---------------- */
 
@@ -204,7 +204,7 @@ export const useCFBRankings = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchLatest, fetchLatestInBackground, loadCache]);
 
   useEffect(() => {
     fetchRankings();

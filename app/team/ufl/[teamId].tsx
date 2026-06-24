@@ -84,10 +84,8 @@ export default function TeamDetailScreen() {
   } = useRosterStats(league, teamIdNum);
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    {
-      teamId: espnId,
-      league,
-    },
+    espnId,
+    league,
   );
 
   const handleRefresh = async () => {

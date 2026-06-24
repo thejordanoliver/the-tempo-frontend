@@ -50,7 +50,7 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
 
-  const broadcasts = getBroadcastDisplay(game?.broadcasts);
+  const broadcast = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -187,9 +187,11 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcasts && (
-          <Text style={styles.broadcast}>{broadcasts}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       {/* headlineText */}

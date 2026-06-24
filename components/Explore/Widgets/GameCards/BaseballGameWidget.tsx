@@ -1,4 +1,4 @@
-import BasesIndicator from "@/components/Sports/Baseball/GameDetails/BasesIndicator";
+import { BasesIndicator } from "@/components/Sports/Baseball/GameDetails/BasesIndicator";
 import { getBroadcastDisplay } from "@/utils/games";
 import displayeValue from "@/utils/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";

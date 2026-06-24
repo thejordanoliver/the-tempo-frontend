@@ -56,7 +56,7 @@ export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
       pulse.stop();
       border.stop();
     };
-  }, []);
+  }, [borderPulse, pulseAnim]);
 
   const styles = skeletonStyles(isDark);
   const borderBottomColor = borderPulse.interpolate({

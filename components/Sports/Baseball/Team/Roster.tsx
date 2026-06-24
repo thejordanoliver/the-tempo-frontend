@@ -5,7 +5,7 @@ import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
+import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { rosterStyles } from "styles/TeamStyles/RosterStyles";

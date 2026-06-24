@@ -31,7 +31,7 @@ export default function FollowButton({
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-  }, [isFollowing]);
+  }, [isFollowing, opacityAnim]);
 
   const styles = profileStyles(isDark, isFollowing);
 

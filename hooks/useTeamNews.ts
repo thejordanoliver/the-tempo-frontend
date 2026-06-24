@@ -1,6 +1,6 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import sanitizeHtml from "sanitize-html";
+import { apiClient } from "utils/apiClient";
 
 export type NewsArticle = {
   id: string;
@@ -95,9 +95,7 @@ export function useTeamNews(
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-  const refreshNews = async () => {
+  const refreshNews = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -105,7 +103,7 @@ export function useTeamNews(
       let endpoint = "";
 
       if (league === "NBA") {
-        endpoint = `${API_URL}/api/news`;
+        endpoint = "/api/news";
       } 
       else if (league === "NFL" || league === "CFB" || league === "CBB" || league === "WCBB" ) {
         if (!teamName) {
@@ -113,10 +111,10 @@ export function useTeamNews(
           setLoading(false);
           return;
         }
-        endpoint = `${API_URL}/api/news/${league.toLowerCase()}/${encodeURIComponent(teamName)}`;
+        endpoint = `/api/news/${league.toLowerCase()}/${encodeURIComponent(teamName)}`;
       }
 
-      const response = await axios.get<NewsApiResponse>(endpoint);
+      const response = await apiClient.get<NewsApiResponse>(endpoint);
       const backendArticles = response.data.articles || [];
 
       const mapped: NewsArticle[] = backendArticles.map((article, index) => {
@@ -143,11 +141,11 @@ export function useTeamNews(
     } finally {
       setLoading(false);
     }
-  };
+  }, [league, teamName]);
 
   useEffect(() => {
     refreshNews();
-  }, [teamName, league]);
+  }, [refreshNews]);
 
   return {
     articles,

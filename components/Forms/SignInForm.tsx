@@ -49,7 +49,7 @@ export default function SignInForm({ ...props }: SignInFormProps) {
         useNativeDriver: true,
       }).start(),
     );
-  }, [props.showPassword]);
+  }, [props.showPassword, scaleAnim]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

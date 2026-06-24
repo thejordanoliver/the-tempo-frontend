@@ -106,7 +106,7 @@ export default function HockeyGamePreviewModal({
     : undefined;
 
   const venueId = Number(details?.venue?.id);
-  const { venue } = useVenue("hockey", venueId);
+  const { venue } = useVenue({ sport: "hockey", id: venueId });
   const { weather } = useWeather({
     lat: Number(venue?.latitude),
     lon: Number(venue?.longitude),
@@ -214,6 +214,7 @@ export default function HockeyGamePreviewModal({
                 <GamePreviewContent
                   homeColor={homeColor}
                   gameStatusDescription={gameStatusDescription}
+                  gameState={game.status.state}
                   awayCode={awayCode}
                   homeCode={homeCode}
                   awayColor={awayColor}

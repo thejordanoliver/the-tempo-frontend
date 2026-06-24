@@ -22,9 +22,9 @@ import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import DraftList, {
+import Draft, {
   getDefaultDraftYear,
-} from "../../components/League/Draft/DraftList";
+} from "../../components/League/Draft/Draft";
 import SportsListModal, {
   SportsListModalRef,
 } from "../../components/League/SportsListModal";
@@ -306,7 +306,7 @@ export default function NFLLeagueScreen() {
           </View>
 
           <View key="draft" style={styles.contentArea}>
-            <DraftList
+            <Draft
               year={draftYear}
               team={draftTeam}
               round={draftRound}

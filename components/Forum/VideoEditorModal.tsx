@@ -64,7 +64,13 @@ export default function VideoEditorModal({
     setThumbTimeMs(initialTrimStartMs);
     setThumbnailUri(initialThumbnailUri ?? null);
     setThumbnailChanged(false); // ✅ reset
-  }, [visible, videoUri]);
+  }, [
+    initialThumbnailUri,
+    initialTrimEndMs,
+    initialTrimStartMs,
+    videoUri,
+    visible,
+  ]);
 
   const maxEnd = useMemo(() => (durationMs > 0 ? durationMs : 1), [durationMs]);
 

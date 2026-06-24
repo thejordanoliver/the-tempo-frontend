@@ -61,12 +61,6 @@ type RecruitsHeaderProps = {
   onToggleSearch: () => void;
 };
 
-function getErrorMessage(error: unknown) {
-  if (!error) return "Something went wrong.";
-  if (error instanceof Error) return error.message;
-  return String(error);
-}
-
 function normalizeSearchValue(value: string | number | null | undefined) {
   return String(value ?? "")
     .toLowerCase()

@@ -249,9 +249,11 @@ function FootballSquareGameCard({
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
     </>
   );

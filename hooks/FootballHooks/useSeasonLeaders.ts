@@ -78,7 +78,7 @@ export function useSeasonLeaders(
         setLoading(false);
       }
     },
-    [season, league],
+    [cacheKey, season, league],
   );
 
   useEffect(() => {

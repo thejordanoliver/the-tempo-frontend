@@ -14,6 +14,8 @@ export type WeatherData = {
   tempFeelsLike?: number | null;
   humidity?: number | null;
   windSpeed?: number | null;
+  cityName?: string | null;
+  localTime?: string | number | Date | null;
 
   [key: string]: unknown;
 };

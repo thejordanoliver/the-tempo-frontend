@@ -1,5 +1,5 @@
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import PlayerCard from "components/Sports/NBA/Player/PlayerCard";
+import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam } from "constants/teams"; // import your teams list
 import { usePreferences } from "contexts/PreferencesContext";
@@ -110,8 +110,6 @@ export default function SeasonLeadersList({
               const headshotUrl = player.player.headshot_url;
 
               const team = getNBATeam(player.player.team_id);
-              const teamName = team?.name ?? "";
-
               return (
                 <TouchableOpacity
                   key={player.player.player_id}

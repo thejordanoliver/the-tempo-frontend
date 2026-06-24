@@ -13,9 +13,9 @@ import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import DraftList, {
+import Draft, {
   getDefaultDraftYear,
-} from "../../components/League/Draft/DraftList";
+} from "../../components/League/Draft/Draft";
 import SeasonLeadersList from "../../components/League/SeasonLeadersList";
 import SportsListModal, {
   SportsListModalRef,
@@ -226,7 +226,7 @@ export default function NBALeagueScreen() {
 
           {/* DRAFT */}
           <View key="draft">
-            <DraftList
+            <Draft
               year={draftYear}
               team={draftTeam}
               round={draftRound}

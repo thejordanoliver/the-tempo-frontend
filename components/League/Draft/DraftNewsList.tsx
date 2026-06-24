@@ -57,7 +57,7 @@ export default function DraftNewsList({ year, league }: Props) {
 
     animation.start();
     return () => animation.stop();
-  }, [singleSetWidth]);
+  }, [singleSetWidth, tickerX]);
 
   if (error)
     return (

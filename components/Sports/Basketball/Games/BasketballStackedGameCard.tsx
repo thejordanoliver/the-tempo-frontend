@@ -4,6 +4,7 @@ import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
@@ -245,16 +246,33 @@ export default function BasketballStackedGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
     </>
   );
 
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
-      <View style={styles.card}>{renderCardContent()}</View>
+      {isChampionship ? (
+        <LinearGradient
+          colors={
+            isDark
+              ? ["#846f4a", "#50412a"]
+              : (["#dbb145ff", "#CDA765"] as [string, string])
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.card}
+        >
+          {renderCardContent()}
+        </LinearGradient>
+      ) : (
+        <View style={styles.card}>{renderCardContent()}</View>
+      )}
     </TouchableOpacity>
   );
 }

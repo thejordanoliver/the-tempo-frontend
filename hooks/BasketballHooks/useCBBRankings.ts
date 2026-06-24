@@ -60,7 +60,7 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
      CACHE HELPERS
   -------------------------------------------------- */
 
-  const saveCache = async (data: CBBRankPoll[]) => {
+  const saveCache = useCallback(async (data: CBBRankPoll[]) => {
     try {
       await AsyncStorage.setItem(
         CACHE_KEY,
@@ -69,9 +69,9 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
     } catch (err) {
       console.warn("⚠️ Failed to cache CBB rankings:", err);
     }
-  };
+  }, [CACHE_KEY]);
 
-  const loadCache = async (): Promise<CBBRankPoll[] | null> => {
+  const loadCache = useCallback(async (): Promise<CBBRankPoll[] | null> => {
     try {
       const cached = await AsyncStorage.getItem(CACHE_KEY);
       if (!cached) return null;
@@ -86,13 +86,13 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
     } catch {
       return null;
     }
-  };
+  }, [CACHE_KEY]);
 
   /* --------------------------------------------------
      FETCH
   -------------------------------------------------- */
 
-  const fetchLatest = async () => {
+  const fetchLatest = useCallback(async () => {
     try {
       const res = await apiClient.get(`api/standings/cbb/rankings`, {
         params: { league },
@@ -116,13 +116,13 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
 
       setError(message);
     }
-  };
+  }, [LAST_REFRESH_KEY, league, saveCache]);
 
   /* --------------------------------------------------
      BACKGROUND REFRESH
   -------------------------------------------------- */
 
-  const fetchLatestInBackground = async () => {
+  const fetchLatestInBackground = useCallback(async () => {
     try {
       const last = await AsyncStorage.getItem(LAST_REFRESH_KEY);
 
@@ -130,7 +130,7 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
 
       await fetchLatest();
     } catch {}
-  };
+  }, [LAST_REFRESH_KEY, fetchLatest]);
 
   /* --------------------------------------------------
      INITIAL LOAD
@@ -151,7 +151,7 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
 
     await fetchLatest();
     setLoading(false);
-  }, [league]);
+  }, [fetchLatest, fetchLatestInBackground, loadCache]);
 
   useEffect(() => {
     fetchRankings();

@@ -1,5 +1,5 @@
 import { apiClient } from "@/utils/apiClient";
-import axios from "axios";
+import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { PlayerLeader, StatCategory } from "types/stats";
 
@@ -35,7 +35,7 @@ export function useSeasonLeaders() {
         }
       } catch (err) {
         if (!isCancelled) {
-          if (axios.isAxiosError(err)) {
+          if (isAxiosError(err)) {
             setError(err.response?.data?.error || err.message);
           } else if (err instanceof Error) {
             setError(err.message);

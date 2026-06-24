@@ -1,6 +1,6 @@
 // hooks/CFBHooks/useCFPBracket.ts
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   BracketData,
   BracketGame,
@@ -242,7 +242,7 @@ export function useCFPBracket() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const eventsRef = useRef<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
 
   /* ================= FETCH ================= */
 
@@ -267,7 +267,7 @@ export function useCFPBracket() {
         }
       });
 
-      eventsRef.current = Array.from(map.values());
+      setEvents(Array.from(map.values()));
     } catch (err) {
       console.error(err);
       setError("Failed to load CFP bracket.");
@@ -306,10 +306,8 @@ export function useCFPBracket() {
   /* ================= DERIVED ================= */
 
   const data = useMemo(() => {
-    return eventsRef.current.length > 0
-      ? buildBracket(eventsRef.current)
-      : null;
-  }, [eventsRef.current.length]);
+    return events.length > 0 ? buildBracket(events) : null;
+  }, [events]);
 
   return {
     data,

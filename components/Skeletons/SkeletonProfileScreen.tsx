@@ -2,7 +2,6 @@ import { Colors } from "constants/styles";
 import { useEffect, useRef } from "react";
 import {
   Animated,
-  Dimensions,
   Easing,
   ScrollView,
   StyleSheet,
@@ -10,8 +9,6 @@ import {
   ViewProps,
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
   const styles = profileStyles(isDark);

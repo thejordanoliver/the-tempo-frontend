@@ -121,11 +121,6 @@ export default function GameSummary({
       ? ["All", "1st Half", "2nd Half"]
       : ["All", "1st", "2nd", "3rd", "4th"];
 
-  const QUARTER_MAP: Record<string, number[] | number> =
-    league === "CBB"
-      ? { "1st Half": [1], "2nd Half": [2] }
-      : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
-
   // Call configureNext during render (before commit) so existing rows animate
   // downward when a new play is prepended. useEffect fires too late — by then
   // the layout has already jumped without animation.
@@ -136,11 +131,16 @@ export default function GameSummary({
   }
 
   const teamPlays = useMemo(() => {
+    const quarterMap: Record<string, number[] | number> =
+      league === "CBB"
+        ? { "1st Half": [1], "2nd Half": [2] }
+        : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
+
     return plays
       ?.filter((sp) => sp.period)
       .filter((sp) => {
         if (selectedQuarter === "All") return true;
-        const periods = QUARTER_MAP[selectedQuarter];
+        const periods = quarterMap[selectedQuarter];
         return Array.isArray(periods)
           ? periods.includes(sp.period!.number)
           : sp.period?.number === periods;
@@ -152,7 +152,7 @@ export default function GameSummary({
         return seqA - seqB;
       })
       .reverse(); // latest play on top
-  }, [plays, selectedQuarter, QUARTER_MAP]);
+  }, [league, plays, selectedQuarter]);
 
   if (!loading && plays?.length === 0) return null;
 
@@ -211,7 +211,8 @@ export default function GameSummary({
                 : league === "WNBA"
                   ? getWNBATeamLogo(team?.id, isDark)
                   : getCBBTeamLogo(
-                      league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id,
+                      (league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id) ??
+                        undefined,
                       isDark,
                     );
 

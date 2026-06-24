@@ -81,8 +81,7 @@ export function useDraft(league: League, year: number | string | undefined) {
 
         setDraft(data);
       } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Unknown error";
+        const message = err instanceof Error ? err.message : "Unknown error";
 
         console.error("Draft fetch failed:", message);
         setError("Failed to load Draft data");
@@ -116,7 +115,7 @@ export function useDraft(league: League, year: number | string | undefined) {
 
     intervalRef.current = setInterval(() => {
       fetchDraft("silent");
-    }, 25000);
+    }, 10000);
 
     return () => {
       if (intervalRef.current) {

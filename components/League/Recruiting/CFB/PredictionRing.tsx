@@ -72,16 +72,6 @@ function toNumber(value: number | string | null | undefined) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function formatPercent(value: number | string | null | undefined) {
-  const parsed = toNumber(value);
-
-  if (parsed === null) {
-    return null;
-  }
-
-  return Number.isInteger(parsed) ? `${parsed}%` : `${parsed.toFixed(1)}%`;
-}
-
 function getTopTiedSchools(
   predictedSchools: PredictionRingSchool[] | undefined,
 ) {
@@ -191,17 +181,6 @@ export default function PredictionRing({
       })
       .filter((school) => school.logo);
   }, [isDark, shouldShowSplitSchools, topTiedSchools]);
-
-  const splitLabel = useMemo(() => {
-    if (!shouldShowSplitSchools) {
-      return prediction || null;
-    }
-
-    return topTiedSchools
-      .slice(0, 2)
-      .map((school) => school.team_name)
-      .join(" / ");
-  }, [prediction, shouldShowSplitSchools, topTiedSchools]);
 
   const ringColor =
     progress >= 70 && isDark

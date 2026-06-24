@@ -50,7 +50,7 @@ export default function RecruitDetailScreen() {
         );
       },
     });
-  }, [navigation, teamId, isDark, loading]);
+  }, [navigation, router, team, teamLogo, isDark, loading]);
 
   if (loading)
     return (

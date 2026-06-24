@@ -19,7 +19,6 @@ import {
 } from "react-native";
 import DraftCardSkeleton from "../../Skeletons/DraftCardSkeleton";
 import DraftCard, { DraftPick } from "./DraftCard";
-import DraftNewsList from "./DraftNewsList";
 
 type Props = {
   year: string;
@@ -168,6 +167,17 @@ export default function DraftList({
   );
 
   const picks = useMemo(() => draft?.picks ?? [], [draft?.picks]);
+  const draftPickId = draft?.current?.pickId;
+
+  const currentPickId = useMemo(() => {
+    if (draftPickId !== undefined && draftPickId !== null) {
+      return draftPickId;
+    }
+
+    return picks.find(
+      (pick) => pick.status === "ON_THE_CLOCK" && pick.athlete === null,
+    )?.overall;
+  }, [draftPickId, picks]);
 
   const roundOptions = useMemo(() => {
     if (!picks.length) return [{ label: "All Rounds", value: "all" }];
@@ -379,8 +389,6 @@ export default function DraftList({
 
   return (
     <View style={styles.container}>
-      <DraftNewsList year={safeYear} league={league} />
-
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity onPress={toggleSearch}>
@@ -431,7 +439,15 @@ export default function DraftList({
         data={visiblePicks}
         keyExtractor={(item) => `${item.overall}`}
         renderItem={({ item, index }) => (
-          <DraftCard player={item} index={index} league={league} />
+          <DraftCard
+            player={item}
+            index={index}
+            league={league}
+            isFirstOnTheClock={
+              currentPickId !== undefined &&
+              Number(item.overall) === Number(currentPickId)
+            }
+          />
         )}
         refreshControl={
           <RefreshControl

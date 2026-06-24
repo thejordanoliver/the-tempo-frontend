@@ -19,6 +19,7 @@ import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import NBALogo from "assets/Logos/NBA.png";
 import WNBALogo from "assets/Logos/WNBA/WNBA.png";
 import UFCLogo from "assets/MMA/MMA_Logos/UFC.png";
+import MMALogo from "assets/MMA/MMA_Logos/MMA.png";
 import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
 import BundesligaLogoLight from "assets/Soccer/Logos/BundesligaLight.png";
 import EPLLogo from "assets/Soccer/Logos/EPL.png";
@@ -78,6 +79,7 @@ const leagues: LeagueType[] = [
   "MLB",
   "NHL",
   "UFC",
+  "MMA",
 ];
 
 const leagueConfig: Record<
@@ -178,6 +180,11 @@ const leagueConfig: Record<
     label: "UFC",
     logo: UFCLogo,
     logoLight: UFCLogo,
+  },
+  MMA: {
+    label: "MMA",
+    logo: MMALogo,
+    logoLight: MMALogo,
   },
 };
 

@@ -70,7 +70,7 @@ function AnimatedPlayRow({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [isLatest]);
+  }, [isLatest, opacity, translateX]);
 
   return (
     <Animated.View style={[style, { transform: [{ translateX }], opacity }]}>

@@ -8,7 +8,7 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Image, LayoutChangeEvent, Text, View } from "react-native";
+import { Animated, Image, Text, View } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
 import { emptyAwayTeam, emptyHomeTeam } from "types/football";
 import { LeagueType } from "types/types";
@@ -46,7 +46,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   const glowAnim = useRef(new Animated.Value(0)).current;
 
   const [currentPlay, setCurrentPlay] = useState(lastPlay);
-  const [containerWidth, setContainerWidth] = useState(0);
   const [fieldWidth, setFieldWidth] = useState(0);
   const [highlightEndzone, setHighlightEndzone] = useState<
     "home" | "away" | null
@@ -57,9 +56,6 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   } | null>(null);
 
   const textColor = isDark ? Colors.white : Colors.black;
-
-  const onLayout = (e: LayoutChangeEvent) =>
-    setContainerWidth(e.nativeEvent.layout.width);
 
   // Always update current play
   useEffect(() => {
@@ -120,7 +116,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
     } else {
       glowAnim.setValue(0);
     }
-  }, [highlightEndzone]);
+  }, [glowAnim, highlightEndzone]);
 
   // Compute field position
   const computePercent = (play?: PlayObject) => {
@@ -144,7 +140,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
       duration: 400,
       useNativeDriver: false,
     }).start();
-  }, [firstDownYardLine, isHomeOffense]);
+  }, [firstDownAnim, firstDownYardLine, isHomeOffense]);
 
   // Animate ball marker + detect scores
   useEffect(() => {
@@ -243,7 +239,16 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
 
       return () => clearTimeout(timeout);
     }
-  }, [lastPlay]);
+  }, [
+    awayEspnID,
+    homeEspnID,
+    isHomeOffense,
+    lastPlay,
+    playAnim,
+    possessionTeamId,
+    scoreAnim,
+    scoreReveal,
+  ]);
 
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
@@ -258,7 +263,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
 
       {isStringPlay && currentPlay && (
-        <View style={{ marginVertical: 12 }} onLayout={onLayout}>
+        <View style={{ marginVertical: 12 }}>
           <Text
             style={{
               fontFamily: Fonts.OSREGULAR,
@@ -276,11 +281,17 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
           <View style={styles.lastPlayTextContainer}>
             {currentPlay.athletesInvolved?.length ? (
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
-                {currentPlay.athletesInvolved.map((athlete: Athlete) => (
+                {currentPlay.athletesInvolved.map((athlete: Athlete) => {
+                  const headshotUri =
+                    typeof athlete.headshot === "string"
+                      ? athlete.headshot
+                      : athlete.headshot?.href;
+
+                  return (
                   <View key={athlete.id} style={styles.playerContainer}>
-                    {athlete.headshot && (
+                    {headshotUri && (
                       <Image
-                        source={{ uri: athlete.headshot }}
+                        source={{ uri: headshotUri }}
                         style={styles.headshot}
                       />
                     )}
@@ -294,7 +305,8 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
                       }`}</Text>
                     </View>
                   </View>
-                ))}
+                  );
+                })}
               </View>
             ) : null}
 

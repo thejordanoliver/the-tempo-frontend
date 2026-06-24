@@ -10,7 +10,7 @@ import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 
 type TeamColors = {
-  id?: string | number;
+  id?: string | number | null;
   name?: string;
   fullName?: string;
   color?: string | null;

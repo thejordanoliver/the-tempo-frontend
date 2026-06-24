@@ -168,7 +168,7 @@ export const Weather: React.FC<Props> = ({
                     { color: textColor, ...styles.textShadow },
                   ]}
                 >
-                  {titleCase(weather.main)}
+                  {titleCase(weather.main ?? "")}
                 </Text>
               </>
             )}

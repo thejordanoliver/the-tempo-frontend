@@ -127,20 +127,6 @@ export default function ChampionshipBanner({
   const isMany = safeYears.length > 10;
   const bannerList = isNone ? [null] : isMany ? [safeYears.length] : safeYears;
 
-  function resolveTeamLogo(team: any) {
-    if (!team) return undefined;
-
-    const rawLogo = team.logoLight || team.logo;
-
-    if (!rawLogo) return undefined;
-
-    if (typeof rawLogo !== "string") {
-      return rawLogo;
-    }
-
-    return { uri: rawLogo };
-  }
-
   return (
     <View style={styles.wrapper}>
       {bannerList.map((yearVal, index) => {

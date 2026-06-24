@@ -1,4 +1,3 @@
-import FollowButton from "components/Profile/FollowButton";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 

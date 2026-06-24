@@ -26,19 +26,11 @@ export default function HeadToHeadSkeleton() {
         }),
       ]),
     ).start();
-  }, []);
+  }, [pulseAnim]);
 
   const Block = ({ style }: { style: any }) => (
     <Animated.View style={[style, { opacity: pulseAnim }]} />
   );
-
-  const borderBottomColor = pulseAnim.interpolate({
-    inputRange: [0.3, 1],
-    outputRange: [
-      isDark ? Colors.darkGray : Colors.midTone,
-      isDark ? Colors.lightGray : Colors.midTone,
-    ],
-  });
 
   return (
     <View style={styles.container}>

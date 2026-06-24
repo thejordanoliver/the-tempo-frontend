@@ -75,20 +75,7 @@ export function getNBACalendarSeason(): string {
   const year = today.year();
   const month = today.month() + 1; // 1–12
 
-  let startYear: number;
-  let endYear: number;
-
-  // NBA season starts in October
-  if (month >= 10) {
-    startYear = year;
-    endYear = year + 1;
-  } else {
-    startYear = year - 1;
-    endYear = year;
-  }
-
-  // Return in "YYYY-YY" format
-  return `${String(endYear)}`;
+  return String(month >= 10 ? year + 1 : year);
 }
 
 export function getFootballSeason(date = new Date()) {

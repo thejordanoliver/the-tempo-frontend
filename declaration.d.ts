@@ -26,7 +26,7 @@ declare module "lottie-react-native" {
 
 // Asset modules
 declare module "*.png" {
-  const BaylorLogolvalue: any;
+  const value: any;
   export default value;
 }
 

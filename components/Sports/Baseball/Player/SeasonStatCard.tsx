@@ -1,4 +1,7 @@
-import { useMLBPlayerSeasons } from "@/hooks/BaseballHooks/usePlayerSeasons";
+import {
+  MlbStatValue,
+  usePlayerSeasons,
+} from "@/hooks/BaseballHooks/usePlayerSeasons";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -11,11 +14,14 @@ type Props = {
   season?: string; // e.g. "2025-26"
 };
 
-const safeFixed = (val?: number | null) =>
-  val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
+const safeFixed = (value: MlbStatValue) => {
+  const numericValue = Number(value);
+
+  return Number.isFinite(numericValue) ? numericValue.toFixed(1) : "0.0";
+};
 
 export default function SeasonStatCard({ playerId, season }: Props) {
-  const { seasons, loading, error } = useMLBPlayerSeasons(playerId);
+  const { seasons, loading, error } = usePlayerSeasons(playerId);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -46,21 +52,27 @@ export default function SeasonStatCard({ playerId, season }: Props) {
       seasons.find(
         (s) =>
           String(s.season) === season ||
-          s.displaySeason?.includes(season) ||
-          [],
+          (s.displaySeason?.includes(season) ?? false),
       )) ||
     seasons[0]; // most recent season
 
-  const displayYear = selectedSeason.displaySeason;
+  const displayYear = selectedSeason.displaySeason ?? String(selectedSeason.season);
 
   /* ------------------------------
      DERIVED PER-GAME STATS
   ------------------------------ */
 
-  const ppg = safeFixed(selectedSeason.stats);
-  const apg = safeFixed(selectedSeason.avgAssists);
-  const rpg = safeFixed(selectedSeason.avgRebounds);
-  const fg = safeFixed(selectedSeason.fieldGoalPct);
+  const battingStats = {
+    ...selectedSeason.totals,
+    ...selectedSeason.averages,
+    ...selectedSeason.careerBatting,
+  };
+  const battingAverage = safeFixed(
+    battingStats.battingAverage ?? battingStats.avg ?? battingStats.battingAvg,
+  );
+  const homeRuns = safeFixed(battingStats.homeRuns ?? battingStats.hr);
+  const runsBattedIn = safeFixed(battingStats.rbi ?? battingStats.runsBattedIn);
+  const hits = safeFixed(battingStats.hits ?? battingStats.h);
 
   const statColor = isDark ? Colors.white : Colors.black;
 
@@ -81,10 +93,10 @@ export default function SeasonStatCard({ playerId, season }: Props) {
       <CenteredHeader isDark={isDark}>{displayYear} Season</CenteredHeader>
       <View style={styles.card}>
         <View style={styles.statsRow}>
-          <StatItem label="PTS" value={ppg} />
-          <StatItem label="AST" value={apg} />
-          <StatItem label="REB" value={rpg} />
-          <StatItem label="FG%" value={fg} />
+          <StatItem label="AVG" value={battingAverage} />
+          <StatItem label="HR" value={homeRuns} />
+          <StatItem label="RBI" value={runsBattedIn} />
+          <StatItem label="H" value={hits} />
         </View>
       </View>
     </>

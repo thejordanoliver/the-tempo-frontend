@@ -56,7 +56,7 @@ export default function FixedWidthTabBar({
         useNativeDriver: true,
       }).start();
     }
-  }, [selected, tabWidth, orderedTabs]);
+  }, [selected, tabWidth, orderedTabs, underlineX]);
 
   const handleLayout = (e: LayoutChangeEvent) => {
     setContainerWidth(e.nativeEvent.layout.width);

@@ -48,7 +48,7 @@ export function CenterInfo({
 
       {inProgress && !endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{formatPeriod(period, false, true)}</Text>
+          <Text style={styles.date}>{formatPeriod({ period, isNHL: true })}</Text>
           <View style={styles.statusDivider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
@@ -64,7 +64,9 @@ export function CenterInfo({
 
       {endOfPeriod && (
         <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>End of {formatPeriod(period)}</Text>
+          <Text style={styles.finalText}>
+            End of {formatPeriod({ period, isNHL: true })}
+          </Text>
         </View>
       )}
       {isHalftime && (

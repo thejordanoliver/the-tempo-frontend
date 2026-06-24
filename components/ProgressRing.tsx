@@ -49,7 +49,7 @@ export default function ProgressRing({
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false, // SVG does not support native driver
     }).start();
-  }, [progress]);
+  }, [animatedProgress, duration, progress]);
 
   const strokeDashoffset = animatedProgress.interpolate({
     inputRange: [0, 1],

@@ -32,7 +32,16 @@ export const LEAGUE_TABS = {
   UFL: ["scores", "news", "standings", "stats", "forum"],
   MLB: ["scores", "news", "standings", "stats", "awards", "forum"],
   NHL: ["scores", "news", "standings", "playoffs", "stats", "forum"],
-  CFB: ["scores", "news", "standings", "stats", "playoffs", "recruits", "awards", "forum"],
+  CFB: [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "playoffs",
+    "recruits",
+    "awards",
+    "forum",
+  ],
   CBB: [
     "scores",
     "news",

@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import {
   Animated,
   LayoutChangeEvent,
@@ -21,6 +21,13 @@ export interface TabBarProps<T extends string> {
   isDark: boolean;
 }
 
+const UNDERLINE_SPRING_CONFIG = {
+  stiffness: 220,
+  damping: 24,
+  mass: 0.6,
+  useNativeDriver: false,
+};
+
 export default function TabBar<T extends string>({
   tabs,
   selected,
@@ -39,14 +46,7 @@ export default function TabBar<T extends string>({
   const initialized = useRef(false);
 
   // Smooth spring animation preset
-  const springConfig = {
-    stiffness: 220,
-    damping: 24,
-    mass: 0.6,
-    useNativeDriver: false,
-  };
-
-  const animateUnderline = (index: number) => {
+  const animateUnderline = useCallback((index: number) => {
     const textWidth = textMeasurements.current[index]?.width;
     const pressable = pressableMeasurements.current[index];
 
@@ -56,15 +56,15 @@ export default function TabBar<T extends string>({
 
     Animated.parallel([
       Animated.spring(underlineX, {
-        ...springConfig,
+        ...UNDERLINE_SPRING_CONFIG,
         toValue: x,
       }),
       Animated.spring(underlineWidth, {
-        ...springConfig,
+        ...UNDERLINE_SPRING_CONFIG,
         toValue: textWidth,
       }),
     ]).start();
-  };
+  }, [underlineWidth, underlineX]);
 
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     textMeasurements.current[index] = {
@@ -108,7 +108,7 @@ export default function TabBar<T extends string>({
     if (!initialized.current) return;
     const index = tabs.indexOf(selected);
     animateUnderline(index);
-  }, [selected]);
+  }, [animateUnderline, selected, tabs]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,

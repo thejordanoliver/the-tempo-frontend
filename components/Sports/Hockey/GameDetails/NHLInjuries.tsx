@@ -1,5 +1,4 @@
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import { globalStyles } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
 import { useEffect, useState } from "react";
 import { Image, Text, View } from "react-native";
@@ -55,7 +54,6 @@ export default function NHLInjuries({
   isDark,
 }: Props) {
   const styles = teamInjuryStyles(isDark);
-  const global = globalStyles(isDark);
 
   const reorderedInjuries = (() => {
     if (!injuries?.length) return [];
@@ -74,7 +72,7 @@ export default function NHLInjuries({
   // Select the first tab (away) whenever tabs change.
   useEffect(() => {
     if (tabs.length) setSelectedTeamId(tabs[0]);
-  }, [awayTeamId, homeTeamId]);
+  }, [tabs]);
 
   const currentTeam = reorderedInjuries.find(
     (t) => t.team.id === selectedTeamId,

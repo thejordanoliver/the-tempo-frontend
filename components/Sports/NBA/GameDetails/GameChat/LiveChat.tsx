@@ -16,6 +16,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ComponentProps,
   type PropsWithChildren,
 } from "react";
 import {
@@ -43,6 +44,18 @@ const NEAR_BOTTOM_THRESHOLD = 96;
 const ChatSheetContainer = ({ children }: PropsWithChildren) => {
   return <View style={StyleSheet.absoluteFill}>{children}</View>;
 };
+
+type BottomSheetChatListProps = ComponentProps<
+  typeof BottomSheetFlatList<ChatMessageItem>
+> & {
+  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  scrollEventThrottle?: number;
+};
+
+// The bottom-sheet implementation forwards these standard FlatList props even
+// though its published prop type omits them.
+const BottomSheetChatList = BottomSheetFlatList as unknown as React.ComponentType<BottomSheetChatListProps>;
+
 type Props = {
   messages: ChatMessageItem[];
   userCount: number;
@@ -304,7 +317,7 @@ export default function LiveChat({
       >
         <View style={styles.content}>
           {header}
-          <BottomSheetFlatList<ChatMessageItem>
+          <BottomSheetChatList
             ref={listRef}
             data={messages}
             keyExtractor={keyExtractor}

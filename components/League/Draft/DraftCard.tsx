@@ -94,32 +94,72 @@ export default function DraftCard({
       ? getNFLTeamLogo(team?.id, isDark)
       : getTeamLogo(team?.id, isDark);
 
-  // Animation
+  const athlete = player.athlete;
+  const pickIsIn = player.status === "PICK_IS_IN";
+  const isOnTheClock = Boolean(isFirstOnTheClock) && !pickIsIn;
+  const visualState = isOnTheClock
+    ? "ON_THE_CLOCK"
+    : pickIsIn
+      ? "PICK_IS_IN"
+      : player.status === "SELECTION_MADE" || athlete
+        ? "PICKED"
+        : "UPCOMING";
+  const animationKey = [
+    player.overall,
+    player.pick,
+    player.teamId,
+    athlete?.id ?? "no-athlete",
+    visualState,
+  ].join(":");
+
+  const cardSlideX = useRef(new Animated.Value(70)).current;
+  const cardFade = useRef(new Animated.Value(0)).current;
   const slideX = useRef(new Animated.Value(70)).current;
   const fade = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.parallel([
+    const delay = index * 60;
+
+    cardSlideX.setValue(70);
+    cardFade.setValue(0);
+    slideX.setValue(70);
+    fade.setValue(0);
+
+    const animation = Animated.parallel([
+      Animated.timing(cardSlideX, {
+        toValue: 0,
+        duration: 650,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardFade, {
+        toValue: 1,
+        duration: 650,
+        delay,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
       Animated.timing(slideX, {
         toValue: 0,
         duration: 650,
-        delay: index * 60,
+        delay,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
       Animated.timing(fade, {
         toValue: 1,
         duration: 650,
-        delay: index * 60,
-        easing: Easing.out(Easing.ease),
+        delay,
+        easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
-    ]).start();
-  }, []);
+    ]);
 
-  const athlete = player.athlete;
-  const pickIsIn = player.status === "PICK_IS_IN";
-  const isOnTheClock = isFirstOnTheClock;
+    animation.start();
+
+    return () => animation.stop();
+  }, [animationKey, cardFade, cardSlideX, fade, index, slideX]);
 
   const headshotSource = athlete?.headshot
     ? { uri: athlete.headshot }
@@ -129,218 +169,125 @@ export default function DraftCard({
       ? (POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId)
       : (NFL_POSITION_MAP[athlete?.positionId ?? ""] ?? athlete?.positionId);
 
-  return (
+  const renderBackground = () => (
     <>
-      {isOnTheClock && (
-        <View style={styles.cardWrapper}>
-          {/* Background logo */}
-          {logo && (
-            <Animated.View
-              style={[
-                styles.logoContainer,
-                { opacity: fade, transform: [{ translateX: slideX }] },
-              ]}
-            >
-              <Image source={logo} style={styles.backgroundLogo} />
-            </Animated.View>
-          )}
-
-          {/* Gradient overlay */}
-          <LinearGradient
-            colors={
-              isDark
-                ? [
-                    "rgba(29,29,29,0.9)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,0.5)",
-                    "rgba(29,29,29,0.1)",
-                    "transparent",
-                  ]
-                : [
-                    "rgba(255,255,255,0.9)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,0.5)",
-                    "rgba(255,255,255,0.1)",
-                    "transparent",
-                  ]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.cardGradient}
-          />
-
-          {/* Content */}
-          <View style={styles.cardContent}>
-            <View style={styles.row}>
-              <View
-                style={[
-                  styles.playerHeader,
-                  { flex: 1, justifyContent: "space-between" },
-                ]}
-              >
-                {isOnTheClock && (
-                  <Text style={styles.pickIsIn}>ON THE CLOCK</Text>
-                )}
-                <View style={styles.rankingBadge}>
-                  <Text style={styles.rankingText}>#{player.overall}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Bio row 1 */}
-            <View style={styles.playerBioRow}></View>
-          </View>
-        </View>
+      {logo && (
+        <Animated.View
+          style={[
+            styles.logoContainer,
+            { opacity: fade, transform: [{ translateX: slideX }] },
+          ]}
+        >
+          <Image source={logo} style={styles.backgroundLogo} />
+        </Animated.View>
       )}
 
-      {pickIsIn && (
-        <View style={styles.cardWrapper}>
-          {/* Background logo */}
-          {logo && (
-            <Animated.View
-              style={[
-                styles.logoContainer,
-                { opacity: fade, transform: [{ translateX: slideX }] },
-              ]}
-            >
-              <Image source={logo} style={styles.backgroundLogo} />
-            </Animated.View>
-          )}
-
-          {/* Gradient overlay */}
-          <LinearGradient
-            colors={
-              isDark
-                ? [
-                    "rgba(29,29,29,0.9)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,0.5)",
-                    "rgba(29,29,29,0.1)",
-                    "transparent",
-                  ]
-                : [
-                    "rgba(255,255,255,0.9)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,0.5)",
-                    "rgba(255,255,255,0.1)",
-                    "transparent",
-                  ]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.cardGradient}
-          />
-
-          {/* Content */}
-          <View style={styles.cardContent}>
-            <View style={styles.row}>
-              <View
-                style={[
-                  styles.playerHeader,
-                  { flex: 1, justifyContent: "space-between" },
-                ]}
-              >
-                <Text style={styles.pickIsIn}>PICK IS IN</Text>
-                <View style={styles.rankingBadge}>
-                  <Text style={styles.rankingText}>#{player.overall}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Bio row 1 */}
-            <View style={styles.playerBioRow}></View>
-          </View>
-        </View>
-      )}
-
-      {!pickIsIn && !isFirstOnTheClock && (
-        <View style={styles.cardWrapper}>
-          {/* Background logo */}
-          {logo && (
-            <Animated.View
-              style={[
-                styles.logoContainer,
-                { opacity: fade, transform: [{ translateX: slideX }] },
-              ]}
-            >
-              <Image source={logo} style={styles.backgroundLogo} />
-            </Animated.View>
-          )}
-
-          {/* Gradient overlay */}
-          <LinearGradient
-            colors={
-              isDark
-                ? [
-                    "rgba(29,29,29,0.9)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,1)",
-                    "rgba(29,29,29,0.5)",
-                    "rgba(29,29,29,0.1)",
-                    "transparent",
-                  ]
-                : [
-                    "rgba(255,255,255,0.9)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,1)",
-                    "rgba(255,255,255,0.5)",
-                    "rgba(255,255,255,0.1)",
-                    "transparent",
-                  ]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.cardGradient}
-          />
-
-          {/* Content */}
-          <View style={styles.cardContent}>
-            <View style={styles.row}>
-              <View style={styles.playerHeader}>
-                <Image source={headshotSource} style={styles.headshot} />
-
-                <Text style={styles.name}>{athlete?.name ?? "N/A"}</Text>
-
-                <View style={styles.divider} />
-
-                <Text style={styles.positionText}>{positionAbbr ?? "N/A"}</Text>
-              </View>
-
-              {/* Ranking badge */}
-              <View style={styles.rankingBadge}>
-                <Text style={styles.rankingText}>#{player.overall}</Text>
-              </View>
-            </View>
-
-            {/* Bio row 1 */}
-            <View style={styles.playerBioRow}>
-              <Text style={styles.subText}>{athlete?.college || "N/A"}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.subText}>{athlete?.height || "N/A"}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.subText}>{athlete?.weight || "N/A"}</Text>
-            </View>
-
-            {/* Bio row 2 */}
-            <View style={styles.playerBioRow}>
-              <Text style={styles.subText}>RD: {player.round}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.subText}>Pick: {player.pick}</Text>
-            </View>
-            {/* Bio row 2 */}
-            {player.traded && (
-              <View style={styles.playerBioRow}>
-                <Text style={styles.tradeNoteText}>{player.tradeNote}</Text>
-              </View>
-            )}
-          </View>
-        </View>
-      )}
+      <LinearGradient
+        colors={
+          isDark
+            ? [
+                "rgba(29,29,29,0.9)",
+                "rgba(29,29,29,1)",
+                "rgba(29,29,29,1)",
+                "rgba(29,29,29,0.5)",
+                "rgba(29,29,29,0.1)",
+                "transparent",
+              ]
+            : [
+                "rgba(255,255,255,0.9)",
+                "rgba(255,255,255,1)",
+                "rgba(255,255,255,1)",
+                "rgba(255,255,255,0.5)",
+                "rgba(255,255,255,0.1)",
+                "transparent",
+              ]
+        }
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.cardGradient}
+      />
     </>
+  );
+
+  const renderStatusCard = (label: "ON THE CLOCK" | "PICK IS IN") => (
+    <View style={styles.cardContent}>
+      <View style={styles.row}>
+        <View
+          style={[
+            styles.playerHeader,
+            { flex: 1, justifyContent: "space-between" },
+          ]}
+        >
+          <Text style={styles.pickIsIn}>{label}</Text>
+          <View style={styles.rankingBadge}>
+            <Text style={styles.rankingText}>#{player.overall}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.playerBioRow} />
+    </View>
+  );
+
+  const renderPickedCard = () => (
+    <View style={styles.cardContent}>
+      <View style={styles.row}>
+        <View style={styles.playerHeader}>
+          <Image source={headshotSource} style={styles.headshot} />
+
+          <Text style={styles.name}>{athlete?.name ?? "N/A"}</Text>
+
+          <View style={styles.divider} />
+
+          <Text style={styles.positionText}>{positionAbbr ?? "N/A"}</Text>
+        </View>
+
+        <View style={styles.rankingBadge}>
+          <Text style={styles.rankingText}>#{player.overall}</Text>
+        </View>
+      </View>
+
+      <View style={styles.playerBioRow}>
+        <Text style={styles.subText}>{athlete?.college || "N/A"}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.subText}>{athlete?.height || "N/A"}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.subText}>{athlete?.weight || "N/A"}</Text>
+      </View>
+
+      <View style={styles.playerBioRow}>
+        <Text style={styles.subText}>RD: {player.round}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.subText}>Pick: {player.pick}</Text>
+      </View>
+
+      {player.traded && (
+        <View style={styles.playerBioRow}>
+          <Text style={styles.tradeNoteText}>{player.tradeNote}</Text>
+        </View>
+      )}
+    </View>
+  );
+
+  const statusLabel = isOnTheClock
+    ? "ON THE CLOCK"
+    : pickIsIn
+      ? "PICK IS IN"
+      : null;
+
+  return (
+    <Animated.View
+      style={[
+        styles.cardWrapper,
+        {
+          opacity: cardFade,
+          transform: [{ translateX: cardSlideX }],
+        },
+      ]}
+    >
+      {renderBackground()}
+      {statusLabel ? renderStatusCard(statusLabel) : renderPickedCard()}
+    </Animated.View>
   );
 }
 
@@ -390,6 +337,7 @@ const draftCardStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     playerHeader: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       marginBottom: 4,
@@ -451,7 +399,6 @@ const draftCardStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      fontStyle: "italic",
     },
     pickIsIn: {
       fontFamily: Fonts.OSBOLD,
@@ -462,6 +409,5 @@ const draftCardStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      fontStyle: "italic",
     },
   });
