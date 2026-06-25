@@ -163,7 +163,8 @@ export default function GameCard({ game }: BasketballGameCardProps) {
       <View style={styles.teamSection}>
         <Image
           source={awayLogo}
-          style={styles.logo}
+          style={styles.expoLogo}
+          contentFit="contain"
           accessibilityLabel={`${awayName} logo`}
         />
         <Text style={styles.teamName}>{awayName}</Text>
@@ -193,7 +194,8 @@ export default function GameCard({ game }: BasketballGameCardProps) {
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}
-          style={styles.logo}
+          style={styles.expoLogo}
+          contentFit="contain"
           accessibilityLabel={`${homeName} logo`}
         />
         <Text style={styles.teamName}>{homeName}</Text>

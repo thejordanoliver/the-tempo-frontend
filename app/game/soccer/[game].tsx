@@ -197,9 +197,15 @@ export default function GameDetailsScreen(
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? "";
-  const venueAttendance = baseVenue?.attendance || null;
-  const venueLocation = `${venue?.city}, ${venue?.state}`;
+  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueAttendance = game?.attendance || null;
+  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueRegion =
+    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+  const venueLocation =
+    venueCity && venueRegion
+      ? `${venueCity}, ${venueRegion}`
+      : (venueCity ?? "");
 
   useLayoutEffect(() => {
     if (isLoading || !game || !home || !away) {

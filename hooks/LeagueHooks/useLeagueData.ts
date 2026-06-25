@@ -8,12 +8,12 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useMemo, useState } from "react";
 import { isGameLive, normalizeGames } from "utils/games";
-import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
-import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
-import { useFootballGames } from "./FootballHooks/useFootballGames";
-import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
-import { useMMAGames } from "./MMAHooks/useMMAGames";
-import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
+import { useBaseballGames } from "../BaseballHooks/useBaseballGames";
+import { useBasketballGames } from "../BasketballHooks/useBasketballGames";
+import { useFootballGames } from "../FootballHooks/useFootballGames";
+import { useHockeyGames } from "../HockeyHooks/useHockeyGames";
+import { useMMAGames } from "../MMAHooks/useMMAGames";
+import { useSoccerGames } from "../SoccerHooks/useSoccerGames";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -172,9 +172,7 @@ export function useLeagueData() {
     refreshGames: refreshBundesligaGames,
   } = useSoccerGames(selectedDate, "bundesliga");
 
-
-
-   const mmaGames = useMemo(() => {
+  const mmaGames = useMemo(() => {
     const events = Array.isArray(mmaResponse?.events)
       ? mmaResponse.events
       : Array.isArray(mmaResponse?.games)
@@ -229,7 +227,7 @@ export function useLeagueData() {
             venue: fight?.venue ?? fight?.raw?.venue ?? event?.venue ?? null,
             broadcasts: Array.isArray(fight?.broadcasts)
               ? fight.broadcasts
-              : event?.broadcasts ?? [],
+              : (event?.broadcasts ?? []),
             geoBroadcasts:
               fight?.geoBroadcasts ??
               fight?.raw?.geoBroadcasts ??

@@ -211,7 +211,11 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        <Image source={awayLogo} style={styles.logo} />
+        <Image
+          source={awayLogo}
+          style={styles.expoLogo}
+          contentFit="contain"
+        />
 
         <Text style={styles.teamName}>
           {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
@@ -222,7 +226,11 @@ function FootballGameCard({
       <View style={styles.teamSection}>
         <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
         {inProgress && awayHasPossession && (
-          <Image source={football} style={styles.awayPossession} />
+          <Image
+            source={football}
+            style={styles.expoAwayPossession}
+            contentFit="contain"
+          />
         )}
       </View>
 
@@ -247,12 +255,20 @@ function FootballGameCard({
       <View style={styles.teamSection}>
         <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
         {inProgress && homeHasPossession && (
-          <Image source={football} style={styles.homePossession} />
+          <Image
+            source={football}
+            style={styles.expoHomePossession}
+            contentFit="contain"
+          />
         )}
       </View>
 
       <View style={styles.teamSection}>
-        <Image source={homeLogo} style={styles.logo} />
+        <Image
+          source={homeLogo}
+          style={styles.expoLogo}
+          contentFit="contain"
+        />
         <Text style={styles.teamName}>
           {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
           {homeName}

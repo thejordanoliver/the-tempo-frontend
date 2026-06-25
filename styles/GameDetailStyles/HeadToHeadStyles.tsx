@@ -53,7 +53,6 @@ export const headToHeadStyles = (isDark: boolean) =>
     teamLogo: {
       width: 40,
       height: 40,
-      resizeMode: "contain",
     },
 
     teamName: {

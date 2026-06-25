@@ -20,7 +20,6 @@ export type Venue = {
     href: string;
     rel: string[];
   }[];
-  attendance?: number;
 };
 
 export type SeriesSummary = {

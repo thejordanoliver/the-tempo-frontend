@@ -1,8 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { AVPlaybackStatusSuccess, ResizeMode, Video } from "expo-av";
+import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
+import { useEventListener } from "expo";
+import { useVideoPlayer, VideoView } from "expo-video";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Modal,
@@ -12,9 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { Colors, Fonts } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   visible: boolean;
@@ -42,8 +42,6 @@ export default function VideoEditorModal({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
-
-  const videoRef = useRef<Video>(null);
   const [videoReady, setVideoReady] = useState(false);
 
   const [durationMs, setDurationMs] = useState(0);
@@ -54,6 +52,24 @@ export default function VideoEditorModal({
     initialThumbnailUri ?? null,
   );
   const [thumbnailChanged, setThumbnailChanged] = useState(false);
+  const player = useVideoPlayer(videoUri, (player) => {
+    player.loop = false;
+    player.pause();
+  });
+
+  useEventListener(player, "sourceLoad", ({ duration }) => {
+    const durationMillis = Math.floor(duration * 1000);
+
+    setDurationMs(durationMillis);
+    setTrimEndMs((prev) => (prev > 0 ? prev : durationMillis));
+    setVideoReady(true);
+  });
+
+  const scrubTo = async (ms: number) => {
+    try {
+      player.currentTime = ms / 1000;
+    } catch {}
+  };
 
   // --- Reset state when opening ---
   useEffect(() => {
@@ -80,18 +96,18 @@ export default function VideoEditorModal({
 
     const safeTime = Math.floor(
       Math.min(Math.max(timeMs, 0), Math.max(durationMs - 200, 0)),
-    ); // ✅ FORCE INT
+    );
 
     try {
-      await videoRef.current?.pauseAsync();
+      player.pause();
       await new Promise((r) => setTimeout(r, 150));
 
       const { uri } = await VideoThumbnails.getThumbnailAsync(videoUri, {
-        time: safeTime, // ✅ always Int64
+        time: safeTime,
       });
 
       setThumbnailUri(uri);
-      setThumbnailChanged(true); // ✅ mark as user-selected
+      setThumbnailChanged(true);
     } catch (e) {
       console.warn("Thumbnail capture failed", e);
       Alert.alert(
@@ -99,16 +115,6 @@ export default function VideoEditorModal({
         "Could not generate thumbnail from this video.",
       );
     }
-  };
-
-  // --- Video seek ---
-  const scrubTo = async (ms: number) => {
-    try {
-      await videoRef.current?.setPositionAsync(ms, {
-        toleranceMillisBefore: 0,
-        toleranceMillisAfter: 0,
-      });
-    } catch {}
   };
 
   return (
@@ -148,20 +154,12 @@ export default function VideoEditorModal({
           </View>
 
           {/* VIDEO */}
-          <Video
-            ref={videoRef}
-            source={{ uri: videoUri }}
+          <VideoView
+            player={player}
             style={styles.video}
-            resizeMode={ResizeMode.CONTAIN}
-            useNativeControls
-            onLoad={(status) => {
-              const s = status as AVPlaybackStatusSuccess;
-              if (!s.isLoaded || !s.durationMillis) return;
-
-              setDurationMs(s.durationMillis);
-              setTrimEndMs((prev) => (prev > 0 ? prev : s.durationMillis!));
-              setVideoReady(true);
-            }}
+            contentFit="contain"
+            nativeControls
+            fullscreenOptions={{ enable: true }}
           />
 
           {/* TRIM */}

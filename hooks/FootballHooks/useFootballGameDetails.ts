@@ -16,11 +16,10 @@ export type Venue = {
     country?: string;
   };
   grass?: boolean;
-  images?: {
+  images: {
     href: string;
     rel: string[];
   }[];
-  attendance?: number;
 };
 
 export type Athlete = {

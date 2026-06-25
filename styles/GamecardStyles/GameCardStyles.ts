@@ -59,6 +59,11 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       resizeMode: "contain",
     },
 
+    expoLogo: {
+      width: 40,
+      height: 40,
+    },
+
     teamName: {
       marginTop: 4,
       fontFamily: Fonts.OSREGULAR,
@@ -105,6 +110,11 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       width: 48,
       height: 48,
       resizeMode: "contain",
+    },
+
+    expoFighter: {
+      width: 48,
+      height: 48,
     },
 
     leftFighterFlag: {
@@ -239,10 +249,24 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       bottom: -14,
     },
 
+    expoAwayPossession: {
+      width: 22,
+      height: 22,
+      position: "absolute",
+      bottom: -14,
+    },
+
     homePossession: {
       width: 22,
       height: 22,
       resizeMode: "contain",
+      position: "absolute",
+      bottom: -14,
+    },
+
+    expoHomePossession: {
+      width: 22,
+      height: 22,
       position: "absolute",
       bottom: -14,
     },

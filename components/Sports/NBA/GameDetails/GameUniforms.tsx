@@ -38,6 +38,7 @@ export default function GameUniforms({
             <Image
               source={awayTeam.uniforms?.away}
               style={styles.uniformsImage}
+              contentFit="contain"
             />
             <Text style={styles.teamName}>{awayTeam.name} Away</Text>
           </View>
@@ -48,6 +49,7 @@ export default function GameUniforms({
             <Image
               source={homeTeam.uniforms?.home}
               style={styles.uniformsImage}
+              contentFit="contain"
             />
             <Text style={styles.teamName}>{homeTeam.name} Home</Text>
           </View>
@@ -78,7 +80,6 @@ const uniformStyles = (isDark: boolean) =>
     uniformsImage: {
       width: 200,
       height: 200,
-      resizeMode: "contain",
     },
     teamName: {
       fontFamily: Fonts.OSMEDIUM,

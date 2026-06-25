@@ -224,6 +224,12 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+  const homeHits = game?.home.hits;
+  const homeErrors = game?.home.errors;
+  const awayHits = game?.away.hits;
+  const awayErrors = game?.away.errors;
+  const homeRuns = game?.home.score;
+  const awayRuns = game?.away.score;
 
   const outs = score?.outs ?? 0;
 
@@ -261,9 +267,15 @@ export default function GameDetailsScreen(
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0].href;
-  const venueAttendance = baseVenue?.attendance || null;
-  const venueLocation = `${venue?.city}, ${venue?.state}`;
+  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueAttendance = game?.attendance || null;
+  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueRegion =
+    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+  const venueLocation =
+    venueCity && venueRegion
+      ? `${venueCity}, ${venueRegion}`
+      : (venueCity ?? "");
 
   const homeTeamPlayersData = useRoster(homeId, LEAGUE);
   const awayTeamPlayersData = useRoster(awayId, LEAGUE);
@@ -396,6 +408,12 @@ export default function GameDetailsScreen(
               linescore={lineScore}
               homeCode={homeCode}
               awayCode={awayCode}
+              homeHits={homeHits}
+              awayHits={awayHits}
+              homeRuns={homeRuns}
+              awayRuns={awayRuns}
+              awayErrors={awayErrors}
+              homeErrors={homeErrors}
               isDark={isDark}
               state={state}
               league={LEAGUE}

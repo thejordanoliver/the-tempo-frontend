@@ -23,7 +23,7 @@ export const favoritesScrollStyles = (isDark: boolean) =>
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
     },
-    logo: { width: 50, height: 50, resizeMode: "contain" },
+    logo: { width: 50, height: 50 },
     editIcon: {
       backgroundColor: isDark
         ? Colors.light.background

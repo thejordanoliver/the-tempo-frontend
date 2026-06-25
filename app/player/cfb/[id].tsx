@@ -21,7 +21,6 @@ export default function PlayerDetailScreen() {
     teamId: string;
     league: any;
   }>();
-
   const styles = playerScreenStyles;
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();

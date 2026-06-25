@@ -6,13 +6,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
 import LeagueGamesList from "../../components/League/LeagueGamesList";
-import { XFeed } from "../../components/League/Social/XFeed";
 import NewsList from "../../components/News/NewsList";
 import TabBar from "../../components/TabBars/TabBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useHomeData } from "../../hooks/useHomeData";
-import { mockSocialFeed } from "../../mocks/social";
 import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
@@ -115,12 +113,6 @@ export default function HomeScreen() {
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}
             >
-              <XFeed
-                items={mockSocialFeed}
-                loading={newsLoading}
-                error={newsError}
-              />
-
               <NewsList
                 items={articles}
                 isDark={isDark}

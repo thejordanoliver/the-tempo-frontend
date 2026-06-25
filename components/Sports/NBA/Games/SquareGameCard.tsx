@@ -167,7 +167,8 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
           <View style={styles.teamWrapper}>
             <Image
               source={awayLogo}
-              style={styles.logo}
+              style={styles.expoLogo}
+              contentFit="contain"
               accessibilityLabel={`${awayName} logo`}
             />
             <Text style={styles.teamName}>{awayName}</Text>
@@ -185,7 +186,8 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
           <View style={styles.teamWrapper}>
             <Image
               source={homeLogo}
-              style={styles.logo}
+              style={styles.expoLogo}
+              contentFit="contain"
               accessibilityLabel={`${homeName} logo`}
             />
             <Text style={styles.teamName}>{homeName}</Text>

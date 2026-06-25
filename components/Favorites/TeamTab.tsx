@@ -131,7 +131,11 @@ export const TeamTab = ({
           },
         ]}
       >
-        <Image source={logo} style={styles.logo} />
+        <Image
+          source={logo}
+          style={styles.logo}
+          contentFit="contain"
+        />
       </View>
 
       <View style={styles.teamLabelContainer}>

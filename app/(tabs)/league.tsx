@@ -1,4 +1,4 @@
-import { useLeagueData } from "@/hooks/useLeagueData";
+import { useLeagueData } from "@/hooks/LeagueHooks/useLeagueData";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";

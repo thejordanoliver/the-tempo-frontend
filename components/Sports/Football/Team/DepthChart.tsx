@@ -1,3 +1,4 @@
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import {
   DepthChartAthleteEntry,
@@ -6,15 +7,8 @@ import {
   useDepthCharts,
 } from "@/hooks/LeagueHooks/useDepthChart";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  type ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  ActivityIndicator,
   FlatList,
   Image,
   type ListRenderItemInfo,
@@ -41,17 +35,13 @@ type ChartOption = {
 
 type DepthChartStyles = ReturnType<typeof depthChartStyles>;
 
-const EMPTY_LIST: never[] = [];
-
 function hasTeamId(teamId: Props["teamId"]) {
   return (
     teamId !== null && teamId !== undefined && String(teamId).trim() !== ""
   );
 }
 
-function isDepthChart(
-  chart: DepthChartInfo | null,
-): chart is DepthChartInfo {
+function isDepthChart(chart: DepthChartInfo | null): chart is DepthChartInfo {
   return chart !== null;
 }
 
@@ -64,9 +54,7 @@ function getOrderedCharts(
 ) {
   const preferredCharts =
     league === "nfl"
-      ? [offensiveChart, defensiveChart, specialTeamsChart].filter(
-          isDepthChart,
-        )
+      ? [offensiveChart, defensiveChart, specialTeamsChart].filter(isDepthChart)
       : [];
 
   return Array.from(new Set([...preferredCharts, ...depthCharts]));
@@ -199,37 +187,6 @@ function hasMultipleSlots(athletes: DepthChartAthleteEntry[]) {
   );
 
   return slots.size > 1;
-}
-
-function DepthChartStateList({
-  children,
-  isDark,
-  onRefresh,
-  refreshing,
-  styles,
-}: {
-  children: ReactElement;
-  isDark: boolean;
-  onRefresh: () => void;
-  refreshing: boolean;
-  styles: DepthChartStyles;
-}) {
-  return (
-    <FlatList<never>
-      data={EMPTY_LIST}
-      renderItem={() => null}
-      ListEmptyComponent={children}
-      contentContainerStyle={styles.stateListContent}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor={isDark ? Colors.white : Colors.black}
-        />
-      }
-      showsVerticalScrollIndicator={false}
-    />
-  );
 }
 
 function PlayerRow({
@@ -409,13 +366,7 @@ export default function DepthChart({
         defensiveChart,
         specialTeamsChart,
       ),
-    [
-      defensiveChart,
-      depthCharts,
-      league,
-      offensiveChart,
-      specialTeamsChart,
-    ],
+    [defensiveChart, depthCharts, league, offensiveChart, specialTeamsChart],
   );
   const chartOptions = useMemo(
     () => createChartOptions(orderedCharts),
@@ -481,12 +432,6 @@ export default function DepthChart({
   const renderPositionsHeader = useCallback(
     () => (
       <View style={styles.listHeader}>
-        {showHeader ? (
-          <View style={styles.header}>
-            <Text style={styles.title}>Depth Chart</Text>
-          </View>
-        ) : null}
-
         {chartOptions.length > 1 ? (
           <FlatList
             horizontal
@@ -500,7 +445,7 @@ export default function DepthChart({
         ) : null}
       </View>
     ),
-    [chartOptions, renderChartTab, showHeader, styles],
+    [chartOptions, renderChartTab, styles],
   );
 
   const renderEmptyPositions = useCallback(
@@ -518,7 +463,12 @@ export default function DepthChart({
         </View>
       </View>
     ),
-    [global.emptyContainer, global.emptyText, isDark, styles.emptyChartCardWrap],
+    [
+      global.emptyContainer,
+      global.emptyText,
+      isDark,
+      styles.emptyChartCardWrap,
+    ],
   );
 
   const renderPositionSeparator = useCallback(
@@ -534,83 +484,42 @@ export default function DepthChart({
 
   if (!teamIdIsPresent) {
     return (
-      <DepthChartStateList
-        isDark={isDark}
-        onRefresh={refetch}
-        refreshing={loading}
-        styles={styles}
-      >
-        <View style={styles.stateCard}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={22}
-            color={isDark ? Colors.dark.icon : Colors.light.icon}
-          />
-          <Text style={global.emptyText}>Missing team ID.</Text>
-        </View>
-      </DepthChartStateList>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>Missing team ID.</Text>
+      </View>
     );
   }
 
   if (loading && depthCharts.length === 0) {
     return (
-      <DepthChartStateList
-        isDark={isDark}
-        onRefresh={refetch}
-        refreshing={loading}
-        styles={styles}
-      >
-        <View style={styles.stateCard}>
-          <ActivityIndicator
-            size="small"
-            color={isDark ? Colors.dark.yellow : Colors.light.yellow}
-          />
-          <Text style={global.emptyText}>Loading depth chart...</Text>
-        </View>
-      </DepthChartStateList>
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
     );
   }
 
   if (error && depthCharts.length === 0) {
     return (
-      <DepthChartStateList
-        isDark={isDark}
-        onRefresh={refetch}
-        refreshing={loading}
-        styles={styles}
-      >
-        <View style={[styles.stateCard, styles.errorStateCard]}>
-          <Ionicons
-            name="warning-outline"
-            size={22}
-            color={isDark ? Colors.dark.lightRed : Colors.light.red}
-          />
-          <Text selectable style={styles.stateText}>
-            {error}
-          </Text>
-          <Text style={styles.stateHint}>Pull down to refresh.</Text>
-        </View>
-      </DepthChartStateList>
+      <View style={global.emptyContainer}>
+        <Text selectable style={global.errorText}>
+          {error}
+        </Text>
+        <Text selectable style={global.emptyText}>
+          Pull down to refresh.
+        </Text>
+      </View>
     );
   }
 
   if (!activeChart) {
     return (
-      <DepthChartStateList
-        isDark={isDark}
-        onRefresh={refetch}
-        refreshing={loading}
-        styles={styles}
-      >
+      <View style={global.emptyContainer}>
         <View style={styles.stateCard}>
-          <Ionicons
-            name="list-outline"
-            size={22}
-            color={isDark ? Colors.dark.icon : Colors.light.icon}
-          />
-          <Text style={styles.stateText}>No depth chart available.</Text>
+          <Text selectable style={global.emptyText}>
+            No depth chart available.
+          </Text>
         </View>
-      </DepthChartStateList>
+      </View>
     );
   }
 

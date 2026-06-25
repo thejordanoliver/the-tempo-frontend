@@ -179,7 +179,7 @@ export default function ResultItemRow({
               <Image
                 source={{ uri: profileImageUrl }}
                 style={styles.avatar}
-                resizeMode="cover"
+                contentFit="cover"
               />
             </View>
             <View>

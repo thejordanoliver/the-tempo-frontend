@@ -1,8 +1,17 @@
+import { useMemo, useState } from "react";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
-import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import {
+  LayoutChangeEvent,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import { lineScoreStyles } from "styles/GameDetailStyles/LineScoreStyles";
 import LineScoreSkeleton from "../../../Skeletons/GameDetails/LineScoreSkeleton";
+
 type ScoreValue = string | number | null | undefined;
 
 type Props = {
@@ -13,13 +22,27 @@ type Props = {
       }
     | null
     | undefined;
+
   homeCode: string | undefined;
   awayCode: string | undefined;
   isDark: boolean;
   loading?: boolean;
   league?: string;
   state: string | undefined;
+
+  homeRuns?: ScoreValue;
+  awayRuns?: ScoreValue;
+  homeHits?: ScoreValue;
+  awayHits?: ScoreValue;
+  homeErrors?: ScoreValue;
+  awayErrors?: ScoreValue;
 };
+
+const BASEBALL_TEAM_WIDTH = 54;
+const BASEBALL_RHE_CELL_WIDTH = 28;
+const BASEBALL_RHE_WIDTH = BASEBALL_RHE_CELL_WIDTH * 3;
+const BASEBALL_MIN_INNING_WIDTH = 22;
+const BASEBALL_MAX_INNING_WIDTH = 36;
 
 export default function LineScore({
   linescore,
@@ -29,11 +52,29 @@ export default function LineScore({
   loading,
   league = "nba",
   state,
+
+  homeRuns,
+  awayRuns,
+  homeHits,
+  awayHits,
+  homeErrors,
+  awayErrors,
 }: Props) {
   const styles = lineScoreStyles(isDark);
+  const [baseballTableWidth, setBaseballTableWidth] = useState(0);
 
   const textColor = isDark ? Colors.white : Colors.black;
   const borderColor = isDark ? Colors.midTone : Colors.lightGray;
+
+  const normalizedLeague = league.toLowerCase();
+
+  const isBaseball =
+    normalizedLeague === "mlb" ||
+    normalizedLeague === "cb" ||
+    normalizedLeague === "sb";
+
+  const renderScore = (score: ScoreValue) =>
+    score !== null && score !== undefined ? String(score) : "-";
 
   const total = (scores: ScoreValue[]) => {
     const numericValues = scores
@@ -53,21 +94,18 @@ export default function LineScore({
   const homeTotal = total(homeScores);
   const awayTotal = total(awayScores);
 
-  const renderScore = (score: ScoreValue) =>
-    score != null ? String(score) : "-";
-
   const baseColumns =
-    league === "soccer"
+    normalizedLeague === "soccer"
       ? 2
-      : league === "cbb"
+      : normalizedLeague === "cbb"
         ? 2
-        : league === "nhl"
+        : normalizedLeague === "nhl"
           ? 3
-          : league === "mlb"
+          : normalizedLeague === "mlb"
             ? 9
-            : league === "cb"
+            : normalizedLeague === "cb"
               ? 9
-              : league === "sb"
+              : normalizedLeague === "sb"
                 ? 7
                 : 4;
 
@@ -78,33 +116,30 @@ export default function LineScore({
   );
 
   const getPeriodLabel = (index: number): string => {
-    // ---------------- mlb ----------------
-    if (league === "mlb" || league === "cb") {
+    if (normalizedLeague === "mlb" || normalizedLeague === "cb") {
       return `${index + 1}`;
     }
 
-    if (league === "sb") {
+    if (normalizedLeague === "sb") {
       return String(index + 1);
     }
 
-    // ---------------- nhl ----------------
-    if (league === "nhl") {
+    if (normalizedLeague === "nhl") {
       if (index < 3) return `${index + 1}`;
       if (index === 3) return "OT";
       return `${index - 2}OT`;
     }
 
-    // ---------------- cbb ----------------
-    if (league === "cbb") {
+    if (normalizedLeague === "cbb") {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "OT";
       return `${index - 1}OT`;
     }
 
-    if (league === "soccer") {
-      if (index === 0) return "1st";
-      if (index === 1) return "2nd";
+    if (normalizedLeague === "soccer") {
+      if (index === 0) return "1";
+      if (index === 1) return "2";
       if (index === 2) return "ET";
       if (index === 3) return "ET";
       if (index === 4) return "Pens";
@@ -120,7 +155,42 @@ export default function LineScore({
     getPeriodLabel(i),
   );
 
-  const columnStyle: ViewStyle = { flex: 1, alignItems: "center" };
+  const baseballInningWidth = useMemo(() => {
+    if (!baseballTableWidth || columns.length === 0) {
+      return BASEBALL_MIN_INNING_WIDTH;
+    }
+
+    const fixedWidth = BASEBALL_TEAM_WIDTH + BASEBALL_RHE_WIDTH;
+    const availableWidth = baseballTableWidth - fixedWidth;
+
+    if (availableWidth <= 0) {
+      return BASEBALL_MIN_INNING_WIDTH;
+    }
+
+    const fittedWidth = Math.floor(availableWidth / columns.length);
+
+    return Math.max(
+      BASEBALL_MIN_INNING_WIDTH,
+      Math.min(BASEBALL_MAX_INNING_WIDTH, fittedWidth),
+    );
+  }, [baseballTableWidth, columns.length]);
+
+  const baseballInningsContentWidth = baseballInningWidth * columns.length;
+
+  const columnStyle: ViewStyle = {
+    flex: 1,
+    alignItems: "center",
+  };
+
+  const baseballColumnStyle: ViewStyle = {
+    width: baseballInningWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  };
+
+  const handleBaseballTableLayout = (event: LayoutChangeEvent) => {
+    setBaseballTableWidth(event.nativeEvent.layout.width);
+  };
 
   if (loading) {
     return <LineScoreSkeleton league={league} />;
@@ -128,11 +198,198 @@ export default function LineScore({
 
   if (!linescore || (state !== "in" && state !== "post")) return null;
 
+  if (isBaseball) {
+    return (
+      <View style={styles.container}>
+        <HeadingTwo isDark={isDark}>Score Summary</HeadingTwo>
+
+        <View style={styles.wrapper}>
+          <View
+            style={baseballStyles.table}
+            onLayout={handleBaseballTableLayout}
+          >
+            {/* Fixed Team Column */}
+            <View style={baseballStyles.teamColumn}>
+              <View style={baseballStyles.headerCell}>
+                <Text style={[styles.teamCode, baseballStyles.hiddenText]}>
+                  -
+                </Text>
+              </View>
+
+              <View
+                style={[
+                  baseballStyles.teamCell,
+                  {
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: borderColor,
+                  },
+                ]}
+              >
+                <Text
+                  numberOfLines={1}
+                  style={[styles.teamCode, { color: textColor }]}
+                >
+                  {awayCode}
+                </Text>
+              </View>
+
+              <View style={baseballStyles.teamCell}>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.teamCode, { color: textColor }]}
+                >
+                  {homeCode}
+                </Text>
+              </View>
+            </View>
+
+            {/* Scrollable Innings Only */}
+            <ScrollView
+              horizontal
+              bounces={false}
+              showsHorizontalScrollIndicator={false}
+              style={baseballStyles.inningsScroll}
+              contentContainerStyle={[
+                baseballStyles.inningsContent,
+                { width: baseballInningsContentWidth },
+              ]}
+            >
+              <View>
+                <View style={baseballStyles.headerRow}>
+                  {columns.map((label, idx) => (
+                    <View
+                      key={`baseball-header-${idx}`}
+                      style={baseballColumnStyle}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.header, { color: textColor }]}
+                      >
+                        {label}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View
+                  style={[
+                    baseballStyles.scoreRow,
+                    {
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      borderBottomColor: borderColor,
+                    },
+                  ]}
+                >
+                  {columns.map((_, idx) => (
+                    <View
+                      key={`baseball-away-${idx}`}
+                      style={baseballColumnStyle}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.score, { color: textColor }]}
+                      >
+                        {renderScore(linescore.away[idx])}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View style={baseballStyles.scoreRow}>
+                  {columns.map((_, idx) => (
+                    <View
+                      key={`baseball-home-${idx}`}
+                      style={baseballColumnStyle}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.score, { color: textColor }]}
+                      >
+                        {renderScore(linescore.home[idx])}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
+
+            {/* Fixed R/H/E Column */}
+            <View
+              style={[
+                baseballStyles.rheColumn,
+                {
+                  borderLeftWidth: StyleSheet.hairlineWidth,
+                  borderLeftColor: borderColor,
+                },
+              ]}
+            >
+              <View style={baseballStyles.rheHeaderRow}>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.header, { color: textColor }]}>R</Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.header, { color: textColor }]}>H</Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.header, { color: textColor }]}>E</Text>
+                </View>
+              </View>
+
+              <View
+                style={[
+                  baseballStyles.rheScoreRow,
+                  {
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: borderColor,
+                  },
+                ]}
+              >
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.totalScore, { color: textColor }]}>
+                    {renderScore(awayRuns)}
+                  </Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.score, { color: textColor }]}>
+                    {renderScore(awayHits)}
+                  </Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.score, { color: textColor }]}>
+                    {renderScore(awayErrors)}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={baseballStyles.rheScoreRow}>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.totalScore, { color: textColor }]}>
+                    {renderScore(homeRuns)}
+                  </Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.score, { color: textColor }]}>
+                    {renderScore(homeHits)}
+                  </Text>
+                </View>
+                <View style={baseballStyles.rheCell}>
+                  <Text style={[styles.score, { color: textColor }]}>
+                    {renderScore(homeErrors)}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Score Summary</HeadingTwo>
+
       <View style={styles.wrapper}>
-        {/* Header */}
         <View style={styles.headerRow}>
           <Text style={[styles.teamCode, { color: "transparent" }]}>-</Text>
 
@@ -144,13 +401,13 @@ export default function LineScore({
                 </Text>
               </View>
             ))}
+
             <View style={columnStyle}>
               <Text style={[styles.header, { color: textColor }]}>Total</Text>
             </View>
           </View>
         </View>
 
-        {/* Away */}
         <View
           style={[
             styles.row,
@@ -163,6 +420,7 @@ export default function LineScore({
           <Text style={[styles.teamCode, { color: textColor }]}>
             {awayCode}
           </Text>
+
           <View style={styles.scoresWrapper}>
             {columns.map((_, idx) => (
               <View key={`away-${idx}`} style={columnStyle}>
@@ -171,6 +429,7 @@ export default function LineScore({
                 </Text>
               </View>
             ))}
+
             <View style={columnStyle}>
               <Text style={[styles.totalScore, { color: textColor }]}>
                 {awayTotal}
@@ -179,11 +438,11 @@ export default function LineScore({
           </View>
         </View>
 
-        {/* Home */}
         <View style={styles.row}>
           <Text style={[styles.teamCode, { color: textColor }]}>
             {homeCode}
           </Text>
+
           <View style={styles.scoresWrapper}>
             {columns.map((_, idx) => (
               <View key={`home-${idx}`} style={columnStyle}>
@@ -192,6 +451,7 @@ export default function LineScore({
                 </Text>
               </View>
             ))}
+
             <View style={columnStyle}>
               <Text style={[styles.totalScore, { color: textColor }]}>
                 {homeTotal}
@@ -203,3 +463,64 @@ export default function LineScore({
     </View>
   );
 }
+
+const baseballStyles = StyleSheet.create({
+  table: {
+    width: "100%",
+    flexDirection: "row",
+    overflow: "hidden",
+  },
+  teamColumn: {
+    width: BASEBALL_TEAM_WIDTH,
+    flexShrink: 0,
+  },
+  headerCell: {
+    height: 34,
+    justifyContent: "center",
+  },
+  teamCell: {
+    height: 42,
+    justifyContent: "center",
+    paddingLeft: 2,
+  },
+  hiddenText: {
+    color: "transparent",
+  },
+  inningsScroll: {
+    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
+  },
+  inningsContent: {
+    flexGrow: 0,
+  },
+  headerRow: {
+    height: 34,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  scoreRow: {
+    height: 42,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rheColumn: {
+    width: BASEBALL_RHE_WIDTH,
+    flexShrink: 0,
+  },
+  rheHeaderRow: {
+    height: 34,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rheScoreRow: {
+    height: 42,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rheCell: {
+    width: BASEBALL_RHE_CELL_WIDTH,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

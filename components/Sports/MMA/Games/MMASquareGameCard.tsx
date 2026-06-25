@@ -164,7 +164,8 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
             <View style={styles.fighterContainer}>
               <Image
                 source={{ uri: secondFighterPhoto }}
-                style={styles.fighter}
+                style={styles.expoFighter}
+                contentFit="contain"
                 accessibilityLabel={`${secondFighterName} headshot`}
               />
               <Image
@@ -189,7 +190,8 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
             <View style={styles.fighterContainer}>
               <Image
                 source={{ uri: firstFighterPhoto }}
-                style={styles.fighter}
+                style={styles.expoFighter}
+                contentFit="contain"
                 accessibilityLabel={`${firstFighterName} headshot`}
               />
               <Image

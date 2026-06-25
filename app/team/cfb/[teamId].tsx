@@ -196,7 +196,6 @@ export default function TeamDetailScreen() {
             refreshing={refreshingStats}
             onRefresh={refreshRosterStats}
             teamId={teamIdNum}
-            teamID={Number(team.id)}
             league={league}
           />
         </View>

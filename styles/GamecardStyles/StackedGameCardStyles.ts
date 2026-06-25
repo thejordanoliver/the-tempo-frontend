@@ -56,6 +56,7 @@ export const stackedGameCardStyles = (
       flex: 1,
     },
     logo: { width: 24, height: 24, resizeMode: "contain" },
+    expoLogo: { width: 24, height: 24 },
     footballIcon: { width: 28, height: 28, resizeMode: "contain" },
     teamName: {
       fontSize: 14,
@@ -190,6 +191,10 @@ export const stackedGameCardStyles = (
       height: 25,
       resizeMode: "contain",
     },
+    expoFootballPossesion: {
+      width: 25,
+      height: 25,
+    },
 
     mlbHeadlineText: {
       fontFamily: Fonts.OSREGULAR,
@@ -212,6 +217,10 @@ export const stackedGameCardStyles = (
       width: 30,
       height: 30,
       resizeMode: "contain",
+    },
+    expoFighter: {
+      width: 30,
+      height: 30,
     },
 
     fighterContainer: {

@@ -1,8 +1,9 @@
 // hooks/useLiveVotes.ts
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { PollResult } from "./useGameVotes";
 import { BASE_URL, getAccessToken } from "utils/apiClient";
+import { PollResult } from "./useGameVotes";
+
 export function useLiveVotes(gameId: string) {
   const [votes, setVotes] = useState<PollResult[]>([]);
   const socketRef = useRef<Socket | null>(null);
@@ -12,10 +13,6 @@ export function useLiveVotes(gameId: string) {
     let mounted = true;
 
     const connectSocket = async () => {
-      // FIX: use accessToken, not refreshToken — the socket server should
-      //      verify the short-lived access token, not the rotation token.
-      // FIX: removed the polling retry loop. If the token isn't in storage
-      //      the user isn't logged in and the connection should not proceed.
       const token = await getAccessToken();
 
       if (!mounted) return;

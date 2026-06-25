@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { Colors, Fonts } from "constants/styles";
-import { ResizeMode, Video } from "expo-av";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -23,8 +23,8 @@ import {
 import { useLikesStore } from "store/useLikesStore";
 import { BASE_URL } from "utils/apiClient";
 import { getAccessToken } from "utils/authStorage";
+import AppVideo from "../AppVideo";
 import { MediaItem } from "./PostImages";
-import { usePreferences } from "contexts/PreferencesContext";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -75,7 +75,6 @@ export default function PostImagesModal({
   const [expandedHeight, setExpandedHeight] = useState(0);
   const [isTruncated, setIsTruncated] = useState(false);
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  const videoRefs = useRef<Record<number, Video | null>>({});
   const [captionVisible, setCaptionVisible] = useState(true);
   const captionOpacity = useRef(new Animated.Value(1)).current;
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
@@ -175,15 +174,11 @@ export default function PostImagesModal({
   }, [captionOpacity, visible]);
 
   /* -------------------- Video Pauses On Swipe -------------------- */
-
   useEffect(() => {
-    Object.entries(videoRefs.current).forEach(([key, ref]) => {
-      const index = Number(key);
-      if (ref && index !== activeIndex) {
-        ref.pauseAsync?.();
-      }
-    });
-  }, [activeIndex]);
+    if (playingIndex !== null && playingIndex !== activeIndex) {
+      setPlayingIndex(null);
+    }
+  }, [activeIndex, playingIndex]);
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: any[] }) => {
@@ -274,22 +269,13 @@ export default function PostImagesModal({
               >
                 {item.type === "video" ? (
                   playingIndex === index ? (
-                    <Video
-                      ref={(ref) => {
-                        videoRefs.current[index] = ref;
-                      }}
-                      source={{ uri: item.uri }}
+                    <AppVideo
+                      uri={item.uri}
                       style={styles.media}
-                      resizeMode={ResizeMode.COVER}
-                      useNativeControls
-                      shouldPlay
-                      onPlaybackStatusUpdate={(status) => {
-                        if (!status.isLoaded) return;
-
-                        if (status.didJustFinish) {
-                          setPlayingIndex(null); // ✅ revert to thumbnail
-                        }
-                      }}
+                      contentFit="cover"
+                      autoPlay={playingIndex === index}
+                      nativeControls
+                      onEnd={() => setPlayingIndex(null)}
                     />
                   ) : (
                     <TouchableOpacity

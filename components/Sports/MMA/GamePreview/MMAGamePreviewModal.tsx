@@ -135,14 +135,21 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
     location: venue?.city,
     date: formattedDate,
   });
+
   const baseVenue = game?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venueName = venue?.name ?? baseVenue?.fullName ?? baseVenue?.name;
+  const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
-  const venueCapacity = venue?.capacity;
-  const venueAttendance = baseVenue?.attendance;
+  const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? "";
-  const venueLocation = `${venue?.city}, ${venue?.state}`;
+  const venueAttendance = baseVenue?.attendance || null;
+  const venueCity = venue?.city ?? baseVenue?.address?.city;
+  const venueRegion =
+    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+  const venueLocation =
+    venueCity && venueRegion
+      ? `${venueCity}, ${venueRegion}`
+      : (venueCity ?? "");
 
   return (
     <BottomSheetModal

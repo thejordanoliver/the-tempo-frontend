@@ -24,7 +24,7 @@ export type Venue = {
       rel: ["full", "day", "interior"];
     },
   ];
-  attendance?: number;
+  
 };
 
 export type SeriesSummary = {

@@ -1,6 +1,5 @@
+import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Dropdown } from "components/Dropdown";
-import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -21,6 +20,9 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
+
+const STAT_TABS = ["Player Stats", "Team Stats"] as const;
+type StatTab = (typeof STAT_TABS)[number];
 
 type FootballStatCategory =
   | "passing"
@@ -78,20 +80,20 @@ type FootballLeaderConfig = {
 };
 
 interface FootballRosterStatsProps {
-  rosterStats?: FootballRosterStatsPlayer[];
+  rosterStats: FootballRosterStatsPlayer[];
   teamStats: TeamStats | null;
-  loading?: boolean;
-  error?: Error | string | null;
-  teamID?: number;
-  teamId?: number;
+  loading: boolean;
+  error: Error | string | null;
+  teamId: number;
   category?: FootballStatCategory;
-  league?: "CFB" | "NFL";
-  refreshing?: boolean;
+  league: string;
+  refreshing: boolean;
   onRefresh?: () => void | Promise<void>;
 }
 
 const formatValue = (value: number | undefined | null, suffix = "") => {
   const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
+
   return `${safeValue}${suffix}`;
 };
 
@@ -667,27 +669,48 @@ const buildFootballStatCategories = (
   },
 ];
 
+type PlayerRoutePathname = "/player/nfl/[id]" | "/player/cfb/[id]";
+type PlayerRouteLeague = "NFL" | "CFB";
+
+const LEAGUE_ROUTES: Record<PlayerRouteLeague, PlayerRoutePathname> = {
+  NFL: "/player/nfl/[id]",
+  CFB: "/player/cfb/[id]",
+};
+
+const isPlayerRouteLeague = (value: string): value is PlayerRouteLeague =>
+  Object.prototype.hasOwnProperty.call(LEAGUE_ROUTES, value);
+
 export default function RosterStats({
   rosterStats,
   teamStats,
+  league,
   loading = false,
   error = null,
-  teamID,
   teamId,
   category,
   refreshing = false,
   onRefresh = () => undefined,
 }: FootballRosterStatsProps) {
-  const [viewMode, setViewMode] = useState<"Player Stats" | "Team Stats">(
-    "Player Stats",
-  );
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
-  const resolvedTeamId = teamId ?? teamID;
   const roster = useMemo(() => rosterStats ?? [], [rosterStats]);
+  const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
+  const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
+    "Player Stats": true,
+    "Team Stats": false,
+  });
+
+  const handleTabPress = (tab: StatTab) => {
+    setSelectedTab(tab);
+
+    setMountedTabs((prev) => ({
+      ...prev,
+      [tab]: true,
+    }));
+  };
 
   const rowBg = (index: number) =>
     index % 2 === 1
@@ -753,12 +776,29 @@ export default function RosterStats({
     [roster],
   );
 
-  const navigateToPlayer = (player: FootballRosterStatsPlayer) => {
-    const playerId = player.playerId || player.player_id || player.id;
+  const route = isPlayerRouteLeague(league) ? LEAGUE_ROUTES[league] : undefined;
 
-    if (!playerId || !resolvedTeamId) return;
+  const handlePress = (player: FootballRosterStatsPlayer) => {
+    const id = player.playerId || player.player_id || player.id;
 
-    router.push(`/player/${playerId}?teamId=${resolvedTeamId}`);
+    if (!route) {
+      console.warn(`[RosterStats] No player route configured for ${league}`);
+      return;
+    }
+
+    if (!id) {
+      console.warn("[RosterStats] Missing player id", player);
+      return;
+    }
+
+    router.push({
+      pathname: route,
+      params: {
+        id: String(id),
+        teamId: String(teamId),
+        league,
+      },
+    });
   };
 
   const renderPlayerName = (player: FootballRosterStatsPlayer) => (
@@ -805,12 +845,14 @@ export default function RosterStats({
     <View key={leader.label} style={styles.cardWrapper}>
       <TouchableOpacity
         activeOpacity={0.75}
-        onPress={() => navigateToPlayer(leader.player)}
+        onPress={() => handlePress(leader.player)}
         style={styles.cardContainer}
       >
         <Text style={styles.cardLabel}>{leader.label}</Text>
+
         <View style={styles.statCard}>
           {renderLeaderAvatar(leader.player)}
+
           <View style={styles.nameValue}>
             <Text numberOfLines={1} style={styles.cardName}>
               {getPlayerName(leader.player)}{" "}
@@ -820,6 +862,7 @@ export default function RosterStats({
                 </Text>
               ) : null}
             </Text>
+
             <Text style={styles.cardValue}>
               {formatPlayerStatValue(leader.value)}
             </Text>
@@ -838,6 +881,7 @@ export default function RosterStats({
   ) => (
     <View key={table.title} style={{ marginBottom: 20 }}>
       <Text style={styles.categoryTitle}>{table.title}</Text>
+
       <View style={styles.tableWrapper}>
         <View style={styles.fixedColumnContainer}>
           <View style={[styles.tableRow, headerBg]}>
@@ -859,7 +903,7 @@ export default function RosterStats({
             >
               <TouchableOpacity
                 activeOpacity={0.75}
-                onPress={() => navigateToPlayer(player)}
+                onPress={() => handlePress(player)}
                 style={[styles.tableCell, { width: 140 }]}
               >
                 {renderPlayerName(player)}
@@ -1037,21 +1081,35 @@ export default function RosterStats({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <Dropdown
-        options={[
-          { label: "Player Stats", value: "Player Stats" },
-          { label: "Team Stats", value: "Team Stats" },
-        ]}
-        selectedValue={viewMode}
-        onSelect={(val: string) =>
-          setViewMode(val as "Team Stats" | "Player Stats")
-        }
+      <MainScrollTabBar
+        tabs={STAT_TABS}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
         isDark={isDark}
-        absolute
       />
-      <HeadingTwo isDark={isDark}>{viewMode}</HeadingTwo>
 
-      {viewMode === "Player Stats" ? renderPlayerStats() : renderTeamStats()}
+      {mountedTabs["Player Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Player Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Player Stats" ? "auto" : "none"}
+        >
+          {renderPlayerStats()}
+        </View>
+      )}
+      {mountedTabs["Team Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Team Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
+        >
+          {renderTeamStats()}
+        </View>
+      )}
     </ScrollView>
   );
 }

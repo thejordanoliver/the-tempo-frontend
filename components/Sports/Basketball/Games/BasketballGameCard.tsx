@@ -210,7 +210,8 @@ export default function BasketballGameCard({
       <View style={styles.teamSection}>
         <Image
           source={awayLogo}
-          style={styles.logo}
+          style={styles.expoLogo}
+          contentFit="contain"
           accessibilityLabel={`${awayName} logo`}
         />
         <Text style={styles.teamName}>
@@ -241,7 +242,8 @@ export default function BasketballGameCard({
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}
-          style={styles.logo}
+          style={styles.expoLogo}
+          contentFit="contain"
           accessibilityLabel={`${homeName} logo`}
         />
         <Text style={styles.teamName}>

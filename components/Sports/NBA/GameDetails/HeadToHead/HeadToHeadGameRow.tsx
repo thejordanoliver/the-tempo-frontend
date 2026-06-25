@@ -151,7 +151,11 @@ export default function HeadToHeadGameRow({
       {/* Away Team */}
       <View style={styles.teamRow}>
         <View style={styles.teamInfo}>
-          <Image source={awayLogo} style={styles.teamLogo} />
+          <Image
+            source={awayLogo}
+            style={styles.teamLogo}
+            contentFit="contain"
+          />
           <Text style={styles.teamName}>{awayTeamCode}</Text>
         </View>
         <ScoreText score={awayScore} record={awayRecord} teamWins={awayWon} />
@@ -164,7 +168,11 @@ export default function HeadToHeadGameRow({
       <View style={styles.teamRow}>
         <ScoreText score={homeScore} record={homeRecord} teamWins={homeWon} />
         <View style={styles.teamInfo}>
-          <Image source={homeLogo} style={styles.teamLogo} />
+          <Image
+            source={homeLogo}
+            style={styles.teamLogo}
+            contentFit="contain"
+          />
           <Text style={styles.teamName}>{homeTeamCode}</Text>
         </View>
       </View>

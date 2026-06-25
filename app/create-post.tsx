@@ -259,7 +259,11 @@ export default function CreatePostScreen() {
         {/* ── User identity row ── */}
         <View style={styles.userRow}>
           <View style={styles.avatar}>
-            <Image source={profileImage} style={styles.avatarImage} />
+            <Image
+              source={profileImage}
+              style={styles.avatarImage}
+              contentFit="cover"
+            />
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.username}>{user?.username}</Text>

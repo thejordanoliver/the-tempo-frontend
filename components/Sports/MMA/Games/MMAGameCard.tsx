@@ -169,7 +169,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
                 ? { uri: secondFighterPhoto }
                 : secondFighterPhoto
             }
-            style={styles.fighter}
+            style={styles.expoFighter}
+            contentFit="contain"
             accessibilityLabel={`${secondFighterName} headshot`}
           />
         </View>
@@ -218,7 +219,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
                 ? { uri: firstFighterPhoto }
                 : secondFighterPhoto
             }
-            style={styles.fighter}
+            style={styles.expoFighter}
+            contentFit="contain"
             accessibilityLabel={`${secondFighterName} headshot`}
           />
         </View>

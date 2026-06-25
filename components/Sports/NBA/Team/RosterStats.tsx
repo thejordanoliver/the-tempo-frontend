@@ -1,6 +1,5 @@
+import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Dropdown } from "components/Dropdown";
-import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router } from "expo-router";
@@ -15,6 +14,9 @@ import {
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 import { PlayerStats, RosterStatsProps } from "types/types";
+
+const STAT_TABS = ["Player Stats", "Team Stats"] as const;
+type StatTab = (typeof STAT_TABS)[number];
 
 const numberFormatter = new Intl.NumberFormat("en-US");
 
@@ -51,10 +53,20 @@ export default function RosterStats({
   const isDark = resolvedColorScheme === "dark";
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
+  const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
+  const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
+    "Player Stats": true,
+    "Team Stats": false,
+  });
 
-  const [viewMode, setViewMode] = useState<"Player Stats" | "Team Stats">(
-    "Player Stats",
-  );
+  const handleTabPress = (tab: StatTab) => {
+    setSelectedTab(tab);
+
+    setMountedTabs((prev) => ({
+      ...prev,
+      [tab]: true,
+    }));
+  };
 
   const activeRoster = useMemo(
     () =>
@@ -125,6 +137,183 @@ export default function RosterStats({
       {index < total - 1 && <View style={styles.divider} />}
     </View>
   );
+
+  const renderPlayerStats = () => {
+    if (!activeRoster.length) {
+      return (
+        <View style={styles.center}>
+          <Text style={global.emptyText}>No player stats available.</Text>
+        </View>
+      );
+    }
+
+    return (
+      <>
+        {/* Leader Cards */}
+        <ScrollView
+          horizontal
+          nestedScrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          style={{ marginBottom: 16 }}
+          snapToInterval={276}
+          decelerationRate="fast"
+          snapToAlignment="start"
+        >
+          {statLeaders
+            .filter((item) => item.player)
+            .map((item, idx) => (
+              <LeaderCard
+                key={item.label}
+                player={item.player!}
+                label={item.label}
+                statKey={item.key}
+                index={idx}
+                total={statLeaders.length}
+              />
+            ))}
+        </ScrollView>
+
+        {/* Player Table */}
+        <View style={styles.tableWrapper}>
+          {/* Fixed name column */}
+          <View style={styles.fixedColumnContainer}>
+            <View style={[styles.tableRow, headerBg]}>
+              <Text
+                style={[
+                  styles.tableCell,
+                  styles.nameHeaderText,
+                  { width: 120 },
+                ]}
+              >
+                Player
+              </Text>
+            </View>
+            {activeRoster.map((p, idx) => (
+              <View
+                key={p.playerId}
+                style={[
+                  styles.tableRow,
+                  rowBg(idx),
+                  idx === activeRoster.length - 1 && {
+                    borderBottomWidth: 0,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  onPress={() =>
+                    router.push(`/player/${p.playerId}?teamId=${teamId}`)
+                  }
+                >
+                  <Text
+                    style={[
+                      styles.tableCell,
+                      styles.playerName,
+                      { width: 140 },
+                    ]}
+                  >
+                    {p.short_name}{" "}
+                    <Text style={styles.number}>#{p.jersey_number}</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
+          {/* Scrollable stats */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View>
+              {/* Header */}
+              <View style={[styles.tableRow, headerBg]}>
+                {[
+                  "GP",
+                  "MIN",
+                  "PTS",
+                  "FGM",
+                  "FGA",
+                  "FG%",
+                  "3PM",
+                  "3PA",
+                  "3P%",
+                  "FTM",
+                  "FTA",
+                  "FT%",
+                  "OREB",
+                  "DREB",
+                  "REB",
+                  "AST",
+                  "STL",
+                  "BLK",
+                  "TO",
+                  "PF",
+                  "+/-",
+                ].map((h, i) => (
+                  <Text
+                    key={i}
+                    style={[styles.tableCell, styles.headerText, { width: 80 }]}
+                  >
+                    {h}
+                  </Text>
+                ))}
+              </View>
+
+              {/* Rows */}
+              {activeRoster.map((p, idx) => {
+                const s = p.latestSeason!;
+                const cells = [
+                  s.g,
+                  s.mpg,
+                  s.pts,
+                  s.fg,
+                  s.fga,
+                  `${s.fg_pct}%`,
+                  s.three_p,
+                  s.three_pa,
+                  `${s.three_pct}%`,
+                  s.ft,
+                  s.fta,
+                  `${s.ft_pct}%`,
+                  s.orb,
+                  s.drb,
+                  s.trb,
+                  s.ast,
+                  s.stl,
+                  s.blk,
+                  s.tov,
+                  s.pf,
+                  "—",
+                ];
+                return (
+                  <View
+                    key={p.playerId}
+                    style={[
+                      styles.tableRow,
+                      rowBg(idx),
+                      idx === activeRoster.length - 1 && {
+                        borderBottomWidth: 0,
+                      },
+                    ]}
+                  >
+                    {cells.map((val, i) => (
+                      <Text
+                        key={i}
+                        style={[
+                          styles.tableCell,
+                          styles.statValue,
+                          { width: 80 },
+                        ]}
+                      >
+                        {formatStatValue(val)}
+                      </Text>
+                    ))}
+                  </View>
+                );
+              })}
+            </View>
+          </ScrollView>
+        </View>
+      </>
+    );
+  };
 
   const renderTeamStats = () => {
     if (!teamStats) return null;
@@ -269,201 +458,41 @@ export default function RosterStats({
 
   return (
     <ScrollView
-      contentContainerStyle={[styles.scrollContainer, { flexGrow: 1 }]}
+      contentContainerStyle={styles.scrollContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       keyboardShouldPersistTaps="handled"
     >
-      <HeadingTwo isDark={isDark}>{viewMode}</HeadingTwo>
-
-      <Dropdown
-        options={[
-          { label: "Player Stats", value: "Player Stats" },
-          { label: "Team Stats", value: "Team Stats" },
-        ]}
-        selectedValue={viewMode}
-        onSelect={(val: string) =>
-          setViewMode(val as "Player Stats" | "Team Stats")
-        }
+      <MainScrollTabBar
+        tabs={STAT_TABS}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
         isDark={isDark}
-        absolute
       />
 
-      <View>
-        {viewMode === "Player Stats" ? (
-          <>
-            {/* Leader Cards */}
-            <ScrollView
-              horizontal
-              nestedScrollEnabled={false}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 16 }}
-              snapToInterval={276}
-              decelerationRate="fast"
-              snapToAlignment="start"
-            >
-              {statLeaders
-                .filter((item) => item.player)
-                .map((item, idx) => (
-                  <LeaderCard
-                    key={item.label}
-                    player={item.player!}
-                    label={item.label}
-                    statKey={item.key}
-                    index={idx}
-                    total={statLeaders.length}
-                  />
-                ))}
-            </ScrollView>
-
-            {/* Player Table */}
-            <View style={styles.tableWrapper}>
-              {/* Fixed name column */}
-              <View style={styles.fixedColumnContainer}>
-                <View style={[styles.tableRow, headerBg]}>
-                  <Text
-                    style={[
-                      styles.tableCell,
-                      styles.nameHeaderText,
-                      { width: 120 },
-                    ]}
-                  >
-                    Player
-                  </Text>
-                </View>
-                {activeRoster.map((p, idx) => (
-                  <View
-                    key={p.playerId}
-                    style={[
-                      styles.tableRow,
-                      rowBg(idx),
-                      idx === activeRoster.length - 1 && {
-                        borderBottomWidth: 0,
-                      },
-                    ]}
-                  >
-                    <TouchableOpacity
-                      onPress={() =>
-                        router.push(`/player/${p.playerId}?teamId=${teamId}`)
-                      }
-                    >
-                      <Text
-                        style={[
-                          styles.tableCell,
-                          styles.playerName,
-                          { width: 140 },
-                        ]}
-                      >
-                        {p.short_name}{" "}
-                        <Text style={styles.number}>#{p.jersey_number}</Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-
-              {/* Scrollable stats */}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View>
-                  {/* Header */}
-                  <View style={[styles.tableRow, headerBg]}>
-                    {[
-                      "GP",
-                      "MIN",
-                      "PTS",
-                      "FGM",
-                      "FGA",
-                      "FG%",
-                      "3PM",
-                      "3PA",
-                      "3P%",
-                      "FTM",
-                      "FTA",
-                      "FT%",
-                      "OREB",
-                      "DREB",
-                      "REB",
-                      "AST",
-                      "STL",
-                      "BLK",
-                      "TO",
-                      "PF",
-                      "+/-",
-                    ].map((h, i) => (
-                      <Text
-                        key={i}
-                        style={[
-                          styles.tableCell,
-                          styles.headerText,
-                          { width: 80 },
-                        ]}
-                      >
-                        {h}
-                      </Text>
-                    ))}
-                  </View>
-
-                  {/* Rows */}
-                  {activeRoster.map((p, idx) => {
-                    const s = p.latestSeason!;
-                    const cells = [
-                      s.g,
-                      s.mpg,
-                      s.pts,
-                      s.fg,
-                      s.fga,
-                      `${s.fg_pct}%`,
-                      s.three_p,
-                      s.three_pa,
-                      `${s.three_pct}%`,
-                      s.ft,
-                      s.fta,
-                      `${s.ft_pct}%`,
-                      s.orb,
-                      s.drb,
-                      s.trb,
-                      s.ast,
-                      s.stl,
-                      s.blk,
-                      s.tov,
-                      s.pf,
-                      "—",
-                    ];
-                    return (
-                      <View
-                        key={p.playerId}
-                        style={[
-                          styles.tableRow,
-                          rowBg(idx),
-                          idx === activeRoster.length - 1 && {
-                            borderBottomWidth: 0,
-                          },
-                        ]}
-                      >
-                        {cells.map((val, i) => (
-                          <Text
-                            key={i}
-                            style={[
-                              styles.tableCell,
-                              styles.statValue,
-                              { width: 80 },
-                            ]}
-                          >
-                            {formatStatValue(val)}
-                          </Text>
-                        ))}
-                      </View>
-                    );
-                  })}
-                </View>
-              </ScrollView>
-            </View>
-          </>
-        ) : (
-          renderTeamStats()
-        )}
-      </View>
+      {mountedTabs["Player Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Player Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Player Stats" ? "auto" : "none"}
+        >
+          {renderPlayerStats()}
+        </View>
+      )}
+      {mountedTabs["Team Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Team Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
+        >
+          {renderTeamStats()}
+        </View>
+      )}
     </ScrollView>
   );
 }

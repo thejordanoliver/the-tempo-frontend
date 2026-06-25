@@ -216,7 +216,8 @@ function FootballStackedGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={awayLogo}
-              style={[styles.logo]}
+              style={[styles.expoLogo]}
+              contentFit="contain"
               accessibilityLabel={`${awayName} logo`}
             />
             <Text style={styles.teamName}>
@@ -224,7 +225,11 @@ function FootballStackedGameCard({
               {awayName}
             </Text>
             {inProgress && awayHasPossession && (
-              <Image source={football} style={styles.footballPossesion} />
+              <Image
+                source={football}
+                style={styles.expoFootballPossesion}
+                contentFit="contain"
+              />
             )}
           </View>
           <ScoreText
@@ -239,7 +244,8 @@ function FootballStackedGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={homeLogo}
-              style={[styles.logo]}
+              style={[styles.expoLogo]}
+              contentFit="contain"
               accessibilityLabel={`${homeName} logo`}
             />
             <Text style={styles.teamName}>
@@ -247,7 +253,11 @@ function FootballStackedGameCard({
               {homeName}
             </Text>
             {inProgress && homeHasPossession && (
-              <Image source={football} style={styles.footballPossesion} />
+              <Image
+                source={football}
+                style={styles.expoFootballPossesion}
+                contentFit="contain"
+              />
             )}
           </View>
           <ScoreText

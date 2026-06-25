@@ -1,6 +1,6 @@
+import AppVideo from "@/components/AppVideo";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
-import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useCallback, useRef, useState } from "react";
 import {
@@ -40,7 +40,6 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
 }) => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [paused, setPaused] = useState<Record<string, boolean>>({});
-  const videoRefs = useRef<Record<string, Video>>(Object.create(null));
   const listRef = useRef<FlatList<Highlight>>(null);
   const currentIndexRef = useRef(0);
 
@@ -49,45 +48,11 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
   >({});
   const [hasPlayed, setHasPlayed] = useState<Record<string, boolean>>({});
   const styles = highlightStyles(isDark);
-  const handlePlay = useCallback(
-    (id: string) => {
-      if (playingId && playingId !== id) {
-        videoRefs.current[playingId]?.pauseAsync();
-      }
-
-      setPlayingId(id);
-      setPaused((prev) => ({ ...prev, [id]: false }));
-      setHasPlayed((prev) => ({ ...prev, [id]: true }));
-    },
-    [playingId],
-  );
-
-  const handlePlaybackStatusUpdate = useCallback(
-    (id: string, status: AVPlaybackStatus) => {
-      if (!status.isLoaded) return;
-
-      const isPaused = !status.isPlaying;
-      setPaused((prev) => ({ ...prev, [id]: isPaused }));
-
-      if (isPaused) {
-        setHeadlineVisible((prev) => ({ ...prev, [id]: true }));
-        setTimeout(() => {
-          setHeadlineVisible((prev) => ({ ...prev, [id]: false }));
-        }, 2500);
-      }
-
-      if (status.didJustFinish) {
-        const video = videoRefs.current[id];
-        video?.pauseAsync();
-        video?.setPositionAsync(0);
-
-        setPaused((prev) => ({ ...prev, [id]: true }));
-        setPlayingId(null);
-        setHeadlineVisible((prev) => ({ ...prev, [id]: false }));
-      }
-    },
-    [],
-  );
+  const handlePlay = useCallback((id: string) => {
+    setPlayingId(id);
+    setPaused((prev) => ({ ...prev, [id]: false }));
+    setHasPlayed((prev) => ({ ...prev, [id]: true }));
+  }, []);
 
   React.useEffect(() => {
     if (!highlights || highlights.length === 0) return;
@@ -136,31 +101,31 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       return (
         <View style={styles.cardWrapper}>
           {isPlaying ? (
-            <Video
-              ref={(ref) => {
-                if (ref) videoRefs.current[item.id] = ref;
-              }}
-              source={{ uri: videoSource }}
+            <AppVideo
+              uri={videoSource}
               style={styles.video}
-              useNativeControls={true}
-              resizeMode={ResizeMode.CONTAIN}
-              shouldPlay={!isPaused}
-              onLoad={() => {
-                // ---> FIX: Only present fullscreen AFTER loaded
-                requestAnimationFrame(() => {
-                  const vid = videoRefs.current[item.id];
-                  if (vid) {
-                    try {
-                      vid.presentFullscreenPlayer();
-                    } catch (e) {
-                      console.log("Fullscreen failed:", e);
-                    }
-                  }
-                });
+              contentFit="contain"
+              autoPlay={!isPaused}
+              nativeControls
+              onPlayingChange={(nextIsPlaying) => {
+                setPaused((prev) => ({ ...prev, [item.id]: !nextIsPlaying }));
+
+                if (!nextIsPlaying) {
+                  setHeadlineVisible((prev) => ({ ...prev, [item.id]: true }));
+
+                  setTimeout(() => {
+                    setHeadlineVisible((prev) => ({
+                      ...prev,
+                      [item.id]: false,
+                    }));
+                  }, 2500);
+                }
               }}
-              onPlaybackStatusUpdate={(status) =>
-                handlePlaybackStatusUpdate(item.id, status)
-              }
+              onEnd={() => {
+                setPaused((prev) => ({ ...prev, [item.id]: true }));
+                setPlayingId(null);
+                setHeadlineVisible((prev) => ({ ...prev, [item.id]: false }));
+              }}
             />
           ) : (
             <Pressable
@@ -204,7 +169,7 @@ export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
       playingId,
       paused,
       handlePlay,
-      handlePlaybackStatusUpdate,
+
       headlineVisible,
       hasPlayed,
     ],

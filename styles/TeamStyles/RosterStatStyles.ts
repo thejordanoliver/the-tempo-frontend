@@ -10,7 +10,6 @@ export const rosterStatsStyles = (isDark: boolean) =>
     scrollContainer: {
       flexGrow: 1,
       borderRadius: 4,
-      paddingTop: 20,
       overflow: "hidden",
       paddingHorizontal: 12,
       paddingBottom: 100,
@@ -131,11 +130,11 @@ export const rosterStatsStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
       marginLeft: 4,
     },
-    emptyText: {
-      textAlign: "center",
-      marginTop: 20,
-      fontSize: 20,
-      fontFamily: Fonts.OSLIGHT,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+
+    tabScene: {
+      flex: 1,
+    },
+    hiddenTabScene: {
+      display: "none",
     },
   });

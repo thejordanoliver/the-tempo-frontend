@@ -30,7 +30,6 @@ export const createPostStyles = (isDark: boolean) =>
     avatarImage: {
       width: 38,
       height: 38,
-      resizeMode: "cover",
     },
 
     userInfo: {
