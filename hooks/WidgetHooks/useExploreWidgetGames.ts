@@ -1,4 +1,4 @@
-import { FootballGame } from "@/types/football";
+import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey";
 import type { ExploreGameWidgetType } from "constants/exploreWidgets";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";

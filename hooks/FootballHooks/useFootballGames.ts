@@ -1,4 +1,4 @@
-import { FootballGame } from "@/types/football";
+import { FootballGame } from "@/types/football/football";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";

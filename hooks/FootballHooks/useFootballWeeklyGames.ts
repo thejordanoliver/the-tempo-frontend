@@ -1,5 +1,5 @@
+import { FootballGame } from "@/types/football/football";
 import { useCallback, useEffect, useState } from "react";
-import { FootballGame } from "types/football";
 import { apiClient } from "utils/apiClient";
 
 export function useFootballWeeklyGames(league?: number) {

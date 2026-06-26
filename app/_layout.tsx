@@ -15,9 +15,10 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { Stack, usePathname, useRouter } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, View } from "react-native";
+import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
 import CustomTabBar from "../components/CustomTabBar";
@@ -30,6 +31,14 @@ import {
 } from "../contexts/PreferencesContext";
 import { useAuth } from "../hooks/UserHooks/useAuth";
 import { clearAuthSession } from "../utils/apiClient";
+
+SplashScreen.preventAutoHideAsync().catch(() => {
+});
+
+SplashScreen.setOptions({
+  duration: 500,
+  fade: true,
+});
 
 const CustomDarkTheme = {
   ...NavigationDarkTheme,
@@ -74,6 +83,8 @@ function AppLayout() {
   const { user, loadingUser } = useAuth();
   const opacity = useRef(new Animated.Value(1)).current;
   const [visibleTabBar, setVisibleTabBar] = useState(true);
+  const [checkingStoredSession, setCheckingStoredSession] = useState(true);
+
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
   useEffect(() => {
@@ -82,33 +93,56 @@ function AppLayout() {
     const redirectIfUnauthenticated = async () => {
       const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
 
-      if (loadingUser || user || isPublicRoute) return;
-
-      const values = await AsyncStorage.multiGet([
-        "accessToken",
-        "userId",
-        "username",
-      ]);
-      const stored: Record<string, string | null> = Object.fromEntries(values);
-      const parsedUserId = stored.userId
-        ? Number.parseInt(stored.userId, 10)
-        : NaN;
-
-      if (!isMounted) return;
-
-      if (
-        stored.accessToken &&
-        stored.userId &&
-        stored.username &&
-        !Number.isNaN(parsedUserId)
-      ) {
+      if (loadingUser) {
         return;
       }
 
-      await clearAuthSession(stored.userId);
+      if (user || isPublicRoute) {
+        if (isMounted) {
+          setCheckingStoredSession(false);
+        }
+        return;
+      }
 
-      if (isMounted) {
-        router.replace("/login");
+      setCheckingStoredSession(true);
+
+      try {
+        const values = await AsyncStorage.multiGet([
+          "accessToken",
+          "userId",
+          "username",
+        ]);
+
+        const stored: Record<string, string | null> =
+          Object.fromEntries(values);
+
+        const parsedUserId = stored.userId
+          ? Number.parseInt(stored.userId, 10)
+          : NaN;
+
+        if (!isMounted) return;
+
+        if (
+          stored.accessToken &&
+          stored.userId &&
+          stored.username &&
+          !Number.isNaN(parsedUserId)
+        ) {
+          setCheckingStoredSession(false);
+          return;
+        }
+
+        await clearAuthSession(stored.userId);
+
+        if (isMounted) {
+          setCheckingStoredSession(false);
+          router.replace("/login");
+        }
+      } catch {
+        if (isMounted) {
+          setCheckingStoredSession(false);
+          router.replace("/login");
+        }
       }
     };
 
@@ -124,22 +158,16 @@ function AppLayout() {
     setVisibleTabBar(!shouldHideTabBar);
   }, [pathname, shouldHideTabBar]);
 
-  if (loadingUser) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: isDark ? Colors.black : Colors.white,
-        }}
-      >
-        <ActivityIndicator
-          size="large"
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </View>
-    );
+  useEffect(() => {
+    if (!loadingUser && !checkingStoredSession) {
+      SplashScreen.hideAsync().catch(() => {
+        // Prevents app crashes if the splash screen is already hidden.
+      });
+    }
+  }, [loadingUser, checkingStoredSession]);
+
+  if (loadingUser || checkingStoredSession) {
+    return null;
   }
 
   return (
@@ -210,15 +238,7 @@ export default function RootLayout() {
   });
 
   if (!fontsLoaded) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" />
-        </View>
-      </GestureHandlerRootView>
-    );
+    return null;
   }
 
   return (

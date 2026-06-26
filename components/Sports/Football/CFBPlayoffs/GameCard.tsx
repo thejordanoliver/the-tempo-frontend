@@ -1,9 +1,9 @@
+import { BracketGame, BracketTeam } from "@/types/football/football";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { BracketGame, BracketTeam } from "types/football";
 
 export function GameCard({
   game,
@@ -80,12 +80,11 @@ export function GameCard({
 
     return (
       <View style={styles.teamRow}>
-        
-          {team.seed && <Text style={styles.seedText}>{team.seed}</Text>}
-          <Image source={teamLogo} style={styles.teamLogo} />
-            <Text style={[styles.teamCode, { opacity: dimmed ? 0.5 : 1 }]}>
-              {team.code}
-            </Text>     
+        {team.seed && <Text style={styles.seedText}>{team.seed}</Text>}
+        <Image source={teamLogo} style={styles.teamLogo} />
+        <Text style={[styles.teamCode, { opacity: dimmed ? 0.5 : 1 }]}>
+          {team.code}
+        </Text>
         <View
           style={[
             styles.winsBadge,
@@ -150,7 +149,7 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      
+
       shadowColor: "#000",
       shadowOpacity: isDark ? 0.3 : 0.15,
       shadowRadius: 6,

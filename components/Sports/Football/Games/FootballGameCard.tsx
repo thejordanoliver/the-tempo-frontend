@@ -1,5 +1,6 @@
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { FootballGameCardProps } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/styles";
@@ -11,7 +12,6 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
@@ -112,7 +112,6 @@ function FootballGameCard({
   const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
   const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
 
-
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
@@ -211,11 +210,7 @@ function FootballGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.teamSection}>
-        <Image
-          source={awayLogo}
-          style={styles.expoLogo}
-          contentFit="contain"
-        />
+        <Image source={awayLogo} style={styles.expoLogo} contentFit="contain" />
 
         <Text style={styles.teamName}>
           {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
@@ -242,14 +237,11 @@ function FootballGameCard({
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}
-         {!isFinal &&
+        {!isFinal &&
           !isPostponed &&
           !isCanceled &&
           !isForfeited &&
-          broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
-        
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       <View style={styles.teamSection}>
@@ -264,11 +256,7 @@ function FootballGameCard({
       </View>
 
       <View style={styles.teamSection}>
-        <Image
-          source={homeLogo}
-          style={styles.expoLogo}
-          contentFit="contain"
-        />
+        <Image source={homeLogo} style={styles.expoLogo} contentFit="contain" />
         <Text style={styles.teamName}>
           {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
           {homeName}

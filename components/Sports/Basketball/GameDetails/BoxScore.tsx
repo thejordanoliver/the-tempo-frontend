@@ -308,7 +308,7 @@ export default function BoxScore({
         pathname: isNBA
           ? "/player/[id]"
           : leagueRoute
-            ? "/player/cbb/[id]"
+            ? "/player/basketball/[id]"
             : "/player/[id]",
         params: {
           id: String(playerId),

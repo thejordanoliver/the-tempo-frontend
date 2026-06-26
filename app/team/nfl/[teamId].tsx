@@ -215,7 +215,7 @@ export default function TeamDetailScreen() {
             refreshing={refreshingStats}
             onRefresh={refreshRosterStats}
             teamId={teamIdNum}
-            league={league.toLowerCase()}
+            league={league}
           />
         </View>
 

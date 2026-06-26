@@ -1,15 +1,24 @@
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
+import {
+  FootballLeaderConfig,
+  FootballPlayerStatTable,
+  FootballRosterStatsPlayer,
+  FootballRosterStatsProps,
+  FootballSeasonStats,
+  FootballStatGroup,
+  FootballStatPath,
+  FootballStatValue,
+  FootballTableColumn,
+  STAT_TABS,
+  StatDisplayCategory,
+  StatRow,
+  StatTab,
+  TeamStats,
+} from "@/types/football/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import {
-  type FootballRosterStatsPlayer,
-  type FootballSeasonStats,
-  type FootballStatGroup,
-  type FootballStatValue,
-} from "hooks/FootballHooks/useRosterStats";
-import { type TeamStats } from "hooks/FootballHooks/useTeamStats";
 import React, { useMemo, useState } from "react";
 import {
   Image,
@@ -20,77 +29,6 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
-
-const STAT_TABS = ["Player Stats", "Team Stats"] as const;
-type StatTab = (typeof STAT_TABS)[number];
-
-type FootballStatCategory =
-  | "passing"
-  | "rushing"
-  | "receiving"
-  | "efficiency"
-  | "defense"
-  | "returns"
-  | "kicking"
-  | "punting"
-  | "scoring";
-
-type StatRow = {
-  name: string;
-  displayName: string;
-  displayValue: string | number;
-  value: number;
-};
-
-type StatDisplayCategory = {
-  key: FootballStatCategory;
-  name: string;
-  stats: StatRow[];
-};
-
-type FootballPlayerStatGroupKey =
-  | "passing"
-  | "rushing"
-  | "receiving"
-  | "defensive"
-  | "returning"
-  | "kicking"
-  | "punting"
-  | "scoring";
-
-type FootballStatPath = {
-  group: FootballPlayerStatGroupKey;
-  key: string;
-};
-
-type FootballTableColumn = FootballStatPath & {
-  label: string;
-  width?: number;
-  fallbacks?: FootballStatPath[];
-};
-
-type FootballPlayerStatTable = {
-  title: string;
-  columns: FootballTableColumn[];
-};
-
-type FootballLeaderConfig = {
-  label: string;
-  path: FootballStatPath;
-};
-
-interface FootballRosterStatsProps {
-  rosterStats: FootballRosterStatsPlayer[];
-  teamStats: TeamStats | null;
-  loading: boolean;
-  error: Error | string | null;
-  teamId: number;
-  category?: FootballStatCategory;
-  league: string;
-  refreshing: boolean;
-  onRefresh?: () => void | Promise<void>;
-}
-
 const formatValue = (value: number | undefined | null, suffix = "") => {
   const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
 
@@ -669,17 +607,6 @@ const buildFootballStatCategories = (
   },
 ];
 
-type PlayerRoutePathname = "/player/nfl/[id]" | "/player/cfb/[id]";
-type PlayerRouteLeague = "NFL" | "CFB";
-
-const LEAGUE_ROUTES: Record<PlayerRouteLeague, PlayerRoutePathname> = {
-  NFL: "/player/nfl/[id]",
-  CFB: "/player/cfb/[id]",
-};
-
-const isPlayerRouteLeague = (value: string): value is PlayerRouteLeague =>
-  Object.prototype.hasOwnProperty.call(LEAGUE_ROUTES, value);
-
 export default function RosterStats({
   rosterStats,
   teamStats,
@@ -697,6 +624,7 @@ export default function RosterStats({
   const global = globalStyles(isDark);
   const router = useRouter();
   const roster = useMemo(() => rosterStats ?? [], [rosterStats]);
+
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
   const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
     "Player Stats": true,
@@ -776,8 +704,7 @@ export default function RosterStats({
     [roster],
   );
 
-  const route = isPlayerRouteLeague(league) ? LEAGUE_ROUTES[league] : undefined;
-
+  const route = league === "NFL" ? "/player/nfl/[id]" : "/player/cfb/[id]";
   const handlePress = (player: FootballRosterStatsPlayer) => {
     const id = player.playerId || player.player_id || player.id;
 

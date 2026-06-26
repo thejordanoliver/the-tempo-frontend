@@ -1,8 +1,8 @@
 // hooks/CFB/useCBBRecruits.ts
 
+import { CFBRecruit } from "@/types/football/football";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import { CFBRecruit } from "types/football";
 
 export interface RecruitOffer {
   visit: string | null;
@@ -24,9 +24,10 @@ export interface RecruitPredictedSchool {
   image_url?: string | null;
 }
 
-
-interface RawCFBRecruit
-  extends Omit<CFBRecruit, "predicted_schools" | "offers"> {
+interface RawCFBRecruit extends Omit<
+  CFBRecruit,
+  "predicted_schools" | "offers"
+> {
   predicted_schools?: RecruitPredictedSchool[] | string | null;
   offers?: RecruitOffer[] | string | null;
 }
@@ -61,9 +62,7 @@ function normalizePredictedSchool(
   prediction: Partial<RecruitPredictedSchool>,
 ): RecruitPredictedSchool | null {
   const teamName =
-    typeof prediction.team_name === "string"
-      ? prediction.team_name.trim()
-      : "";
+    typeof prediction.team_name === "string" ? prediction.team_name.trim() : "";
 
   if (!teamName) {
     return null;
@@ -71,7 +70,8 @@ function normalizePredictedSchool(
 
   return {
     team_id:
-      typeof prediction.team_id === "number" && Number.isFinite(prediction.team_id)
+      typeof prediction.team_id === "number" &&
+      Number.isFinite(prediction.team_id)
         ? prediction.team_id
         : null,
     team_name: teamName,

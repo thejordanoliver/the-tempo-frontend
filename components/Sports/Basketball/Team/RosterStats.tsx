@@ -150,7 +150,7 @@ export default function RosterStats({
 
   const navigateToPlayer = (playerId: number) => {
     router.push({
-      pathname: "/player/cbb/[id]",
+      pathname: "/player/basketball/[id]",
       params: {
         id: String(playerId),
         teamId: String(teamId),

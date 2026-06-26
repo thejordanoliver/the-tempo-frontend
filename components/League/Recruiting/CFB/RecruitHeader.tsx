@@ -1,7 +1,7 @@
+import { CFBRecruit } from "@/types/football/football";
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
-import { CFBRecruit } from "types/football";
 
 type Props = {
   player: CFBRecruit;

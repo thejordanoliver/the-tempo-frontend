@@ -1,3 +1,4 @@
+import { CFBRecruit } from "@/types/football/football";
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
@@ -23,7 +24,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CFBRecruit } from "types/football";
 import RecruitCardSkeleton from "../../../Skeletons/RecruitCardSkeleton";
 import TeamRankCardSkeleton from "../../../Skeletons/TeamRankCardSkeleton";
 import RecruitCard from "./RecruitCard";
@@ -70,7 +70,9 @@ function getErrorMessage(error: unknown) {
 }
 
 function normalizeSearchValue(value: string | number | null | undefined) {
-  return String(value ?? "").toLowerCase().trim();
+  return String(value ?? "")
+    .toLowerCase()
+    .trim();
 }
 
 const RecruitsHeader = memo(function RecruitsHeader({

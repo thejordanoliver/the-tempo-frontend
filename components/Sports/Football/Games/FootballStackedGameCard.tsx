@@ -1,6 +1,7 @@
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
+import { FootballGameCardProps } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors } from "constants/styles";
@@ -11,7 +12,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { FootballGameCardProps } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 

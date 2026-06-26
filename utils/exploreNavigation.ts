@@ -35,7 +35,7 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   { flag: "isMMA", pathname: "/player/mma/[id]", league: "MMA" },
   { flag: "isMLB", pathname: "/player/mlb/[id]", league: "MLB" },
   { flag: "isNHL", pathname: "/player/nhl/[id]", league: "NHL" },
-  { flag: "isWNBA", pathname: "/player/wnba/[id]", league: "WNBA" },
+  { flag: "isWNBA", pathname: "/player/basketball/[id]", league: "WNBA" },
 ];
 
 export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
@@ -44,7 +44,9 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
   }
 
   if (item.type === "team") {
-    const teamRoute = TEAM_LEAGUE_ROUTES.find((route) => Boolean(item[route.flag]));
+    const teamRoute = TEAM_LEAGUE_ROUTES.find((route) =>
+      Boolean(item[route.flag]),
+    );
 
     if (!teamRoute) {
       return `/team/${item.id}`;
@@ -58,7 +60,7 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
 
   if (item.isCBB || item.isWCBB) {
     return {
-      pathname: "/player/cbb/[id]",
+      pathname: "/player/basketball/[id]",
       params: {
         id: String(item.player_id),
         teamId: String(item.team_id ?? ""),

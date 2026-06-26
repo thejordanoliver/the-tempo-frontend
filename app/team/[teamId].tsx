@@ -326,11 +326,15 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-           {/* DEPTH */}
-                <View key="depth" style={styles.contentArea}>
-                  <DepthChart teamId={espnId} season={2026} isDark={isDark} league={"nba"} />
-                </View>
-        
+        {/* DEPTH */}
+        <View key="depth" style={styles.contentArea}>
+          <DepthChart
+            teamId={espnId}
+            season={2026}
+            isDark={isDark}
+            league={"nba"}
+          />
+        </View>
 
         <View key="stats" style={styles.contentArea}>
           <RosterStats

@@ -1,5 +1,5 @@
+import { FootballGame } from "@/types/football/football";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FootballGame } from "types/football";
 import { apiClient } from "utils/apiClient";
 
 type League = "nfl" | "cfb";
@@ -40,12 +40,12 @@ function isFootballGameLike(value: unknown): value is FootballGame {
 
   return Boolean(
     game.id ??
-      game.uid ??
-      game.name ??
-      game.shortName ??
-      game.date ??
-      game.startDate ??
-      game.status,
+    game.uid ??
+    game.name ??
+    game.shortName ??
+    game.date ??
+    game.startDate ??
+    game.status,
   );
 }
 
@@ -123,9 +123,7 @@ function normalizeFootballGameResponse(data: unknown): FootballGame | null {
 function normalizeTeamIds(teamIds: (string | number)[]) {
   return Array.from(
     new Set(
-      teamIds
-        .map((teamId) => String(teamId ?? "").trim())
-        .filter(Boolean),
+      teamIds.map((teamId) => String(teamId ?? "").trim()).filter(Boolean),
     ),
   );
 }
@@ -200,7 +198,10 @@ export function useMultipleFootballTeamGames({
       } catch (err: any) {
         if (requestIdRef.current !== requestId) return;
 
-        console.error(`Error fetching ${league.toUpperCase()} team games:`, err);
+        console.error(
+          `Error fetching ${league.toUpperCase()} team games:`,
+          err,
+        );
         setError(err?.message || "Failed to fetch last games");
       } finally {
         if (requestIdRef.current === requestId) {

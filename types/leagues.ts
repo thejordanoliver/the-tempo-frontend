@@ -1,6 +1,6 @@
 import { BaseballGame } from "./baseball";
 import { BasketballGame } from "./basketball";
-import { FootballGame } from "./football";
+import { FootballGame } from "./football/football";
 import { HockeyGame } from "./hockey";
 import { MMAFight } from "./mma";
 import { SoccerGame } from "./soccer";

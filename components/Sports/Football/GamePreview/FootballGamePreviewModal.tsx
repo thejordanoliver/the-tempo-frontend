@@ -7,6 +7,7 @@ import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { FootballGame } from "@/types/football/football";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -20,7 +21,6 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { FootballGame } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
 import GamePreviewContent from "./GamePreviewContent";

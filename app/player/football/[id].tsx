@@ -1,4 +1,5 @@
 import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
+import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { useTeamLatestGame } from "@/hooks/FootballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -20,15 +21,19 @@ export default function PlayerDetailScreen() {
     teamId: string;
     league: any;
   }>();
-  const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const navigation = useNavigation();
+  const isNFL = league === "NFL";
+  const isCFB = league === "CFB";
+  const styles = playerScreenStyles;
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
-  const team = getNFLTeam(teamId);
-  const teamLogo = getNFLTeamLogo(teamId, true);
+  const team = isNFL ? getNFLTeam(teamId) : getCFBTeam(teamId);
+  const teamLogo = isNFL
+    ? getNFLTeamLogo(teamId, true)
+    : getCFBTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
 
   /* ---------------- Last game ---------------- */
@@ -76,7 +81,7 @@ export default function PlayerDetailScreen() {
   /* ---------------- Render ---------------- */
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader player={player} isDark={isDark} />
+      <PlayerHeader player={player} isDark={isDark} isCFB={isCFB} />
 
       <LatestGame
         game={game}
@@ -84,7 +89,8 @@ export default function PlayerDetailScreen() {
         error={gameError}
         isDark={isDark}
         league={league}
-        isNFL={true}
+        isNFL={isNFL}
+        isCFB={isCFB}
       />
 
       <PlayerStatTable
@@ -92,6 +98,7 @@ export default function PlayerDetailScreen() {
         loading={seasonsLoading}
         error={seasonsError}
         position={player.position}
+        league={league}
       />
     </ScrollView>
   );

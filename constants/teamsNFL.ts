@@ -1,4 +1,5 @@
 //Logos
+import { Team } from "@/types/football/football";
 import NinersLogo from "assets/Football/NFL_Logos/49ers.png";
 import AFCLogo from "assets/Football/NFL_Logos/AFC.png";
 import BearsLogo from "assets/Football/NFL_Logos/Bears.png";
@@ -36,7 +37,6 @@ import TexansLogo from "assets/Football/NFL_Logos/Texans.png";
 import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Team } from "types/football";
 
 export const nflTeams: Team[] = [
   {

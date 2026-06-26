@@ -5,13 +5,13 @@ import { calculateAge, formatBirth } from "utils/dateUtils";
 type Props = {
   player: Player;
   isDark: boolean;
-  isCollegePlayer?: boolean;
+  isCFB?: boolean;
 };
 
 export default function PlayerHeader({
   player,
   isDark,
-  isCollegePlayer,
+  isCFB,
 }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
@@ -66,7 +66,7 @@ export default function PlayerHeader({
           <Text style={styles.statLabel}>LBS</Text>
         </View>
 
-        {!isCollegePlayer && age != null && (
+        {!isCFB && age != null && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -76,7 +76,7 @@ export default function PlayerHeader({
           </>
         )}
 
-        {isCollegePlayer && (
+        {isCFB && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -86,7 +86,7 @@ export default function PlayerHeader({
           </>
         )}
 
-        {!isCollegePlayer && experience != null && (
+        {!isCFB && experience != null && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -99,7 +99,7 @@ export default function PlayerHeader({
 
       {/* Info grid */}
       <View style={styles.infoGrid}>
-        {isCollegePlayer ? (
+        {isCFB ? (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>HOMETOWN</Text>
             <Text
@@ -130,7 +130,7 @@ export default function PlayerHeader({
           </View>
         )}
 
-        {!isCollegePlayer && (
+        {!isCFB && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>DRAFT</Text>
             <Text style={styles.infoValue}>{draftInfo}</Text>

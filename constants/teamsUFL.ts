@@ -9,7 +9,7 @@ import StallionsLogo from "assets/Football/UFL_Logos/Stallions.png";
 import StormLogo from "assets/Football/UFL_Logos/Storm.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-import { Team } from "types/football";
+import { Team } from "@/types/football/football";
 
 export const uflTeams: Team[] = [
   {

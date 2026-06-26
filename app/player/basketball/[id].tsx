@@ -1,18 +1,19 @@
+import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
-import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors, globalStyles } from "constants/styles";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
@@ -21,22 +22,34 @@ export default function PlayerDetailScreen() {
     teamId: string;
     league: any;
   }>();
-  const navigation = useNavigation();
+  const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
+  const navigation = useNavigation();
   const playerId = Number(id);
-  const styles = playerScreenStyles;
-  const team = getWNBATeam(teamId);
-  const teamLogo = getWNBATeamLogo(teamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
+  const isWCBB = league === "WCBB";
+  const isCBB = league === "CBB";
+  const isWNBA = league === "WNBA";
   const { player, loading, error } = usePlayerById(playerId, league);
+  const team =
+    teamId && isWNBA
+      ? getWNBATeam(teamId)
+      : teamId && isCBB
+        ? getCBBTeam(teamId, false)
+        : teamId && isWCBB
+          ? getCBBTeam(teamId, true)
+          : null;
+  const teamLogo = isWNBA
+    ? getWNBATeamLogo(teamId, true)
+    : getCBBTeamLogo(teamId, true, isWCBB);
+  const teamColor = team?.color ?? Colors.midTone;
 
   const {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useTeamLatestGame("wnba", teamId);
+  } = useTeamLatestGame(league, teamId);
 
   const {
     seasonStats,
@@ -44,7 +57,7 @@ export default function PlayerDetailScreen() {
     careerStatsFlattened,
     loading: seasonsLoading,
     error: seasonsError,
-  } = usePlayerSeasons(Number(playerId), false, true);
+  } = usePlayerSeasons(playerId, isWCBB);
 
   // -------------------------
   // Header
@@ -63,21 +76,23 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamLogo, teamColor]);
 
-  if (loading) {
+  if (loading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
-  }
 
-  if (!player) {
-    return null;
-  }
+  if (error || !player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader player={player} isDark={isDark} />
+      <PlayerHeader player={player} isDark={isDark} isWNBA={isWNBA} />
 
       <SeasonStatCard
         seasonStats={seasonStats}
@@ -91,7 +106,9 @@ export default function PlayerDetailScreen() {
         loading={gameLoading}
         league={league}
         isDark={isDark}
-        isWNBA={true}
+        isCBB={isCBB}
+        isWCBB={isWCBB}
+        isWNBA={isWNBA}
       />
 
       <PlayerStatTable
@@ -100,7 +117,7 @@ export default function PlayerDetailScreen() {
         loading={seasonsLoading}
         error={seasonsError}
         isDark={isDark}
-        isWNBA={true}
+        isWNBA={isWNBA}
       />
     </ScrollView>
   );

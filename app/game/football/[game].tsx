@@ -16,6 +16,7 @@ import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useVenue } from "@/hooks/useVenue";
+import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -30,7 +31,6 @@ import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { FootballGameCardProps } from "types/football";
 import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
 
 type RouteParams = {

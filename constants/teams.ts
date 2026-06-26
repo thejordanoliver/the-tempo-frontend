@@ -1,5 +1,5 @@
 // Logos
-import { Team } from "@/types/football";
+import { Team } from "@/types/football/football";
 import SixersLogo from "../assets/Logos/76ers.png";
 import SixersLogoLight from "../assets/Logos/76ersLight.png";
 import BucksLogo from "../assets/Logos/Bucks.png";

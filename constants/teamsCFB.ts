@@ -1,6 +1,6 @@
 // constants/cfbTeams.ts
+import { Team } from "@/types/football/football";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import { Team } from "types/football";
 
 //Team Logos
 import AirForceLogo from "assets/College_Logos/AirForce.png";

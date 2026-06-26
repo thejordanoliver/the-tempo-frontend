@@ -1,3 +1,8 @@
+import type {
+  Matchup,
+  NFLPlayoffBracket as NFLPlayoffBracketData,
+  NFLPlayoffTeam,
+} from "@/types/football/football";
 import NFLPlayoffsLogo from "assets/Football/NFL_Logos/NFLPlayoffsLogo.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
@@ -6,11 +11,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { nflPlayoffBracketStyles } from "styles/NFLPlayoffBracketStyles";
-import type {
-  Matchup,
-  NFLPlayoffBracket as NFLPlayoffBracketData,
-  NFLPlayoffTeam,
-} from "types/football";
 
 /* ---------------- LAYOUT CONSTANTS ---------------- */
 
@@ -267,67 +267,70 @@ const ConnectorLayer = ({
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
   const styles = nflPlayoffBracketStyles(isDark);
 
-  const connectOneToOne = useCallback((key: string, src?: CardLayout, tgt?: CardLayout) => {
-    if (!src || !tgt) return null;
+  const connectOneToOne = useCallback(
+    (key: string, src?: CardLayout, tgt?: CardLayout) => {
+      if (!src || !tgt) return null;
 
-    const srcRight = src.x + src.width;
-    const srcLeft = src.x;
+      const srcRight = src.x + src.width;
+      const srcLeft = src.x;
 
-    const tgtRight = tgt.x + tgt.width;
-    const tgtLeft = tgt.x;
+      const tgtRight = tgt.x + tgt.width;
+      const tgtLeft = tgt.x;
 
-    const isRightToLeft = src.x > tgt.x;
+      const isRightToLeft = src.x > tgt.x;
 
-    const x1 = isRightToLeft ? srcLeft : srcRight;
-    const x2 = isRightToLeft ? tgtRight : tgtLeft;
+      const x1 = isRightToLeft ? srcLeft : srcRight;
+      const x2 = isRightToLeft ? tgtRight : tgtLeft;
 
-    const y1 = centerY(src);
-    const y2 = centerY(tgt);
-    const midX = (x1 + x2) / 2;
+      const y1 = centerY(src);
+      const y2 = centerY(tgt);
+      const midX = (x1 + x2) / 2;
 
-    return (
-      <View key={key}>
-        {/* horizontal from source */}
-        <View
-          style={[
-            styles.connectorH,
-            {
-              left: Math.min(x1, midX),
-              top: y1,
-              width: Math.abs(midX - x1),
-              backgroundColor: lineColor,
-            },
-          ]}
-        />
+      return (
+        <View key={key}>
+          {/* horizontal from source */}
+          <View
+            style={[
+              styles.connectorH,
+              {
+                left: Math.min(x1, midX),
+                top: y1,
+                width: Math.abs(midX - x1),
+                backgroundColor: lineColor,
+              },
+            ]}
+          />
 
-        {/* vertical */}
-        <View
-          style={[
-            styles.connectorV,
-            {
-              left: midX,
-              top: Math.min(y1, y2),
-              height: Math.abs(y1 - y2),
-              backgroundColor: lineColor,
-            },
-          ]}
-        />
+          {/* vertical */}
+          <View
+            style={[
+              styles.connectorV,
+              {
+                left: midX,
+                top: Math.min(y1, y2),
+                height: Math.abs(y1 - y2),
+                backgroundColor: lineColor,
+              },
+            ]}
+          />
 
-        {/* horizontal to target */}
-        <View
-          style={[
-            styles.connectorH,
-            {
-              left: Math.min(midX, x2),
-              top: y2,
-              width: Math.abs(x2 - midX),
-              backgroundColor: lineColor,
-            },
-          ]}
-        />
-      </View>
-    );
-  }, [lineColor, styles.connectorH, styles.connectorV]);
+          {/* horizontal to target */}
+          <View
+            style={[
+              styles.connectorH,
+              {
+                left: Math.min(midX, x2),
+                top: y2,
+                width: Math.abs(x2 - midX),
+                backgroundColor: lineColor,
+              },
+            ]}
+          />
+        </View>
+      );
+    },
+    [lineColor, styles.connectorH, styles.connectorV],
+  );
   const connectors = useMemo(
     () => (
       <>

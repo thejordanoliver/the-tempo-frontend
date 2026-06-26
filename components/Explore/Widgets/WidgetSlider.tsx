@@ -1,3 +1,4 @@
+import { FootballGame } from "@/types/football/football";
 import { Ionicons } from "@expo/vector-icons";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors } from "constants/styles";
@@ -19,7 +20,6 @@ import {
 } from "react-native";
 import { BaseballGame } from "types/baseball";
 import { BasketballGame } from "types/basketball";
-import { FootballGame } from "types/football";
 import { HockeyGame } from "types/hockey";
 import { ExploreWidgetSize } from "types/widgets";
 import BaseballGameWidget from "./GameCards/BaseballGameWidget";

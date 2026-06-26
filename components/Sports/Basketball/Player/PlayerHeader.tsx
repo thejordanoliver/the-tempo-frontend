@@ -6,22 +6,24 @@ import { calculateAge, formatBirth } from "utils/dateUtils";
 type Props = {
   player: Player;
   isDark: boolean;
-  isCollegePlayer: boolean;
+  isWNBA?: boolean;
 };
 
 export default function PlayerHeader({
   player,
   isDark,
-  isCollegePlayer = false,
+  isWNBA = false,
 }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
-  const experience = isCollegePlayer
-    ? player.experience_abbr
-    : player.experience;
+  const experience =
+    player.experience === 0
+      ? "R"
+      : isWNBA
+        ? player.experience
+        : player.experience_abbr;
   const birthDate = formatBirth(player.birth_date);
-
   const draftInfo =
     player.draft_round && player.draft_number && player.draft_year
       ? `Rd ${player.draft_round}, Pick ${player.draft_number} · ${player.draft_year}`
@@ -57,7 +59,6 @@ export default function PlayerHeader({
         </Text>
       </View>
 
-      {/* Stats row: height / weight / age / experience */}
       <View style={styles.statsRow}>
         <View style={styles.statChip}>
           <Text style={styles.statValue}>{player.height ?? "—"}</Text>
@@ -71,7 +72,7 @@ export default function PlayerHeader({
           <Text style={styles.statLabel}>LBS</Text>
         </View>
 
-        {age != null && (
+        {age != null && isWNBA && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -87,29 +88,15 @@ export default function PlayerHeader({
             <View style={styles.statChip}>
               <Text style={styles.statValue}>{experience}</Text>
               <Text style={styles.statLabel}>
-                {isCollegePlayer ? `CLASS` : `YRS EXP`}
+                {isWNBA ? `YRS EXP` : `CLASS`}
               </Text>
             </View>
           </>
         )}
       </View>
 
-      {/* Info grid */}
       <View style={styles.infoGrid}>
-        {player.college ? (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>COLLEGE</Text>
-            <Text
-              style={styles.infoValue}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {player.college}
-            </Text>
-          </View>
-        ) : null}
-
-        {isCollegePlayer && (
+        {!isWNBA && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>HOMETOWN</Text>
             <Text
@@ -122,14 +109,27 @@ export default function PlayerHeader({
           </View>
         )}
 
-        {!isCollegePlayer && (
+        {isWNBA && (
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>COLLEGE</Text>
+            <Text
+              style={styles.infoValue}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {player.college}
+            </Text>
+          </View>
+        )}
+
+        {isWNBA && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>BORN</Text>
             <Text style={styles.infoValue}>{birthDate}</Text>
           </View>
         )}
 
-        {!isCollegePlayer && (
+        {isWNBA && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>DRAFT</Text>
             <Text style={styles.infoValue}>{draftInfo}</Text>

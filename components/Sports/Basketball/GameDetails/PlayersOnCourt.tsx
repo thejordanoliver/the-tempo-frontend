@@ -129,7 +129,9 @@ export default function PlayersOnCourt({
                 onPress={() => {
                   if (p.athlete.playerId || p.athlete.id) {
                     router.push({
-                      pathname: isNBA ? `/player/[id]` : `/player/cbb/[id]`,
+                      pathname: isNBA
+                        ? `/player/[id]`
+                        : `/player/basketball/[id]`,
                       params: {
                         id: isNBA ? p.athlete.playerId : p.athlete.id,
                         teamId: isNBA ? nbaTeamId : collegeTeamId, // <-- pass team ID here

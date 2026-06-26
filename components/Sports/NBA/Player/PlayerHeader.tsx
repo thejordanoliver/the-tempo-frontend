@@ -6,23 +6,13 @@ import { calculateAge, formatBirth } from "utils/dateUtils";
 type Props = {
   player: Player;
   isDark: boolean;
-  isCollegePlayer?: boolean;
 };
 
-export default function PlayerHeader({
-  player,
-  isDark,
-  isCollegePlayer = false,
-}: Props) {
+export default function PlayerHeader({ player, isDark }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
-  const experience =
-    player.experience === 0
-      ? "R"
-      : isCollegePlayer
-        ? player.experience_abbr
-        : player.experience;
+  const experience = player.experience === 0 ? "R" : player.experience;
   const birthDate = formatBirth(player.birth_date);
   const draftInfo =
     player.draft_round && player.draft_number && player.draft_year
@@ -72,7 +62,7 @@ export default function PlayerHeader({
           <Text style={styles.statLabel}>LBS</Text>
         </View>
 
-        {age != null && !isCollegePlayer && (
+        {age != null && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -87,54 +77,29 @@ export default function PlayerHeader({
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
               <Text style={styles.statValue}>{experience}</Text>
-              <Text style={styles.statLabel}>
-                {isCollegePlayer ? `CLASS` : `YRS EXP`}
-              </Text>
+              <Text style={styles.statLabel}>YRS EXP</Text>
             </View>
           </>
         )}
       </View>
 
       <View style={styles.infoGrid}>
-        {isCollegePlayer && (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>HOMETOWN</Text>
-            <Text
-              style={styles.infoValue}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {player.birth_display ?? "Unknown"}
-            </Text>
-          </View>
-        )}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>COLLEGE</Text>
+          <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+            {player.college}
+          </Text>
+        </View>
 
-        {!isCollegePlayer && (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>COLLEGE</Text>
-            <Text
-              style={styles.infoValue}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
-              {player.college}
-            </Text>
-          </View>
-        )}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>BORN</Text>
+          <Text style={styles.infoValue}>{birthDate}</Text>
+        </View>
 
-        {!isCollegePlayer && (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>BORN</Text>
-            <Text style={styles.infoValue}>{birthDate}</Text>
-          </View>
-        )}
-
-        {!isCollegePlayer && (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>DRAFT</Text>
-            <Text style={styles.infoValue}>{draftInfo}</Text>
-          </View>
-        )}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>DRAFT</Text>
+          <Text style={styles.infoValue}>{draftInfo}</Text>
+        </View>
       </View>
     </View>
   );

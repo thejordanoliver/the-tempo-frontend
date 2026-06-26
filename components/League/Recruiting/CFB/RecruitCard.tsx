@@ -1,5 +1,6 @@
 // components/CFB/RecruitCard.tsx
 
+import { CFBRecruit } from "@/types/football/football";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -18,7 +19,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { CFBRecruit } from "types/football";
 
 type Props = {
   recruit: CFBRecruit;

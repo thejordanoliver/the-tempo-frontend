@@ -14,6 +14,7 @@ import {
 import { default as FootballGameCard } from "@/components/Sports/Football/Games/FootballGameCard";
 import { default as FootballStackedGameCard } from "@/components/Sports/Football/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
+import { FootballGame } from "@/types/football/football";
 import {
   CombinedGame,
   CombinedGamesSection,
@@ -43,7 +44,6 @@ import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
 import { BaseballGame } from "types/baseball";
 import { BasketballGame } from "types/basketball";
-import { FootballGame } from "types/football";
 import { HockeyGame } from "types/hockey";
 import { MMAFight } from "types/mma";
 import HeadingTwo from "../Headings/HeadingTwo";

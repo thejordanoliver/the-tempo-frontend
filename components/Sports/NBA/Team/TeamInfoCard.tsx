@@ -1,3 +1,4 @@
+import { Team } from "@/types/football/football";
 import InfoCard from "components/Sports/NBA/Team/InfoCard";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -10,7 +11,6 @@ import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
 import { BaseballTeam } from "types/baseball";
 import { BasketballTeam, NBATeam } from "types/basketball";
-import { Team } from "types/football";
 import { NHLTeam } from "types/hockey";
 import { LeagueType } from "types/types";
 

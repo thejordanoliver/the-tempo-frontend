@@ -1,4 +1,5 @@
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { FootballGame } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -10,7 +11,6 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { FootballGame } from "types/football";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";

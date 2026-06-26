@@ -1,8 +1,8 @@
+import { CFBRecruit } from "@/types/football/football";
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View } from "react-native";
-import { CFBRecruit } from "types/football";
 
 type Props = {
   recruit: CFBRecruit;

@@ -26,26 +26,26 @@ export interface PlayerCardProps {
 
 type PlayerRoutePathname =
   | "/player/[id]"
-  | "/player/wnba/[id]"
+  | "/player/basketball/[id]"
   | "/player/mlb/[id]"
   | "/player/nfl/[id]"
   | "/player/mma/[id]"
   | "/player/nhl/[id]"
   | "/player/cfb/[id]"
-  | "/player/cbb/[id]";
+  | "/player/basketball/[id]";
 
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   NBA: "/player/[id]",
-  WNBA: "/player/wnba/[id]",
+  WNBA: "/player/basketball/[id]",
+  CBB: "/player/basketball/[id]",
+  WCBB: "/player/basketball/[id]",
   MLB: "/player/mlb/[id]",
-  NFL: "/player/nfl/[id]",
+  CB: "/player/baseball/[id]",
+  SB: "/player/baseball/[id]",
+  NFL: "/player/football/[id]",
+  CFB: "/player/football/[id]",
   UFC: "/player/mma/[id]",
   NHL: "/player/nhl/[id]",
-  CFB: "/player/cfb/[id]",
-  CBB: "/player/cbb/[id]",
-  WCBB: "/player/cbb/[id]",
-  CB: "/player/cbb/[id]",
-  SB: "/player/cbb/[id]",
 };
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({

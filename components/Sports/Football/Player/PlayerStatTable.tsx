@@ -1,4 +1,6 @@
 import { getCFBTeam } from "@/constants/teamsCFB";
+import { getNFLTeam } from "@/constants/teamsNFL";
+import { Category, Season, Stat, StatTableProps } from "@/types/football/stats";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
@@ -7,41 +9,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
-
-type Stat = {
-  name: string;
-  label?: string;
-  value: number | null;
-  displayValue: string;
-  displayName?: string;
-  description?: string;
-};
-
-type Category = {
-  name: string;
-  displayName: string;
-  stats: Stat[];
-};
-
-type Season = {
-  year: string;
-  season?: number;
-  displaySeason?: string;
-  teamId?: string;
-  espnTeamId?: string;
-  teamSlug?: string;
-  position?: string;
-  seasonType?: number;
-  seasonTypeName?: string;
-  categories: Category[];
-};
-
-type Props = {
-  data: Season[];
-  loading: boolean;
-  error: string | null;
-  position?: string;
-};
 
 const chunk = <T,>(arr: T[], size: number): T[][] => {
   const out: T[][] = [];
@@ -73,13 +40,15 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
   general: "General",
 };
 
-function getSeasonTeamCode(season: Season) {
-  const localTeam = season.teamId ? getCFBTeam(Number(season.teamId)) : null;
-  const espnTeam = season.espnTeamId
-    ? getCFBTeam(Number(season.espnTeamId))
-    : null;
+function getSeasonTeamCode(season: Season, league: "NFL" | "CFB") {
+  const team =
+    season.teamId && league === "NFL"
+      ? getNFLTeam(Number(season.teamId))
+      : season.teamId && league === "CFB"
+        ? getCFBTeam(Number(season.teamId))
+        : null;
 
-  return localTeam?.code || espnTeam?.code || "—";
+  return team?.code || "—";
 }
 
 function getOrderedStatGroups(position?: string) {
@@ -281,7 +250,8 @@ export default function PlayerStatTable({
   loading,
   error,
   position,
-}: Props) {
+  league,
+}: StatTableProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
@@ -331,11 +301,11 @@ export default function PlayerStatTable({
         seasonNumber: season.season,
         teamId: season.teamId,
         espnTeamId: season.espnTeamId,
-        teamCode: getSeasonTeamCode(season),
+        teamCode: getSeasonTeamCode(season, league),
         stats: category?.stats || [],
       };
     });
-  }, [data, activeGroup]);
+  }, [data, activeGroup, league]);
 
   const statKeys = useMemo(() => {
     const set = new Set<string>();
@@ -415,7 +385,9 @@ export default function PlayerStatTable({
       <View style={styles.tableWrapper}>
         <View style={styles.seasonColumn}>
           <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>SEASON</Text>
+            <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
+              SEASON
+            </Text>
           </View>
 
           {seasonsWithGroup.map((season, index) => {

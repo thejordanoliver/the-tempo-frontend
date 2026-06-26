@@ -1,5 +1,5 @@
+import type { BracketApiResponse } from "@/types/football/football";
 import { useCallback, useEffect, useState } from "react";
-import type { BracketApiResponse } from "types/football";
 import { apiClient } from "utils/apiClient";
 
 type UseNFLBracketResult = {

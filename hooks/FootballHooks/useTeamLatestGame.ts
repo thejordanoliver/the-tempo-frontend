@@ -1,4 +1,4 @@
-import { FootballGame } from "@/types/football";
+import { FootballGame } from "@/types/football/football";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 

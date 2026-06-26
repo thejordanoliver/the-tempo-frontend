@@ -1,12 +1,12 @@
 // hooks/CFBHooks/useCFPBracket.ts
 
-import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   BracketData,
   BracketGame,
   BracketTeam,
   Round,
-} from "types/football";
+} from "@/types/football/football";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 /* -----------------------------------------------------
    STABLE HELPERS

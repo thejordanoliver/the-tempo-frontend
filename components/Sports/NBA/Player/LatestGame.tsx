@@ -1,7 +1,7 @@
 import { globalStyles } from "@/constants/styles";
 import { BaseballGame } from "@/types/baseball";
 import { BasketballGame } from "@/types/basketball";
-import { FootballGame } from "@/types/football";
+import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey";
 import { LeagueType } from "@/types/types";
 import HeadingTwo from "components/Headings/HeadingTwo";

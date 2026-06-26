@@ -1,5 +1,5 @@
+import { CFBRecruit } from "@/types/football/football";
 import { useEffect, useState } from "react";
-import { CFBRecruit } from "types/football";
 import { apiClient } from "utils/apiClient";
 
 export function useCFBRecruit(id?: number) {

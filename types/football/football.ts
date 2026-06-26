@@ -171,32 +171,6 @@ export type FootballGameCardProps = {
   isCFB?: boolean;
 };
 
-export const emptyTeam = {
-  id: 0,
-  espnId: 0,
-  oddsId: "0",
-  name: "Unknown",
-  fullName: "Unknown",
-  code: "UNK",
-  city: "Unknown",
-  location: "Unknown",
-  conference: "Unknown",
-  owner: "Unknown",
-  venueName: "Unknown",
-  address: "Unknown",
-  established: 0,
-  logo: PlaceholderLogo,
-  logoLight: PlaceholderLogo,
-  color: Colors.white,
-  secondaryColor: Colors.black,
-  latitude: 0,
-  longitude: 0,
-  venueImage: null,
-  venueCapacity: "",
-  isAllStar: false,
-  isActive: false,
-};
-
 export const emptyAwayTeam = {
   id: 0,
   espnId: -2,

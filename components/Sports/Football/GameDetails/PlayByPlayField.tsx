@@ -2,6 +2,7 @@ import {
   Athlete,
   PlayObject,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { emptyAwayTeam, emptyHomeTeam } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -10,7 +11,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, View } from "react-native";
 import { playByPlayFieldStyles } from "styles/GameDetailStyles/PlayByPlayFieldStyles";
-import { emptyAwayTeam, emptyHomeTeam } from "types/football";
 import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {
@@ -288,23 +288,23 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
                       : athlete.headshot?.href;
 
                   return (
-                  <View key={athlete.id} style={styles.playerContainer}>
-                    {headshotUri && (
-                      <Image
-                        source={{ uri: headshotUri }}
-                        style={styles.headshot}
-                      />
-                    )}
-                    <View style={styles.playerContainer}>
-                      <Text style={styles.name}>{athlete.fullName}</Text>
-                      <Text style={styles.posistion}>
-                        {athlete.position || ""}
-                      </Text>
-                      <Text style={styles.number}>{`#${
-                        athlete.jersey || ""
-                      }`}</Text>
+                    <View key={athlete.id} style={styles.playerContainer}>
+                      {headshotUri && (
+                        <Image
+                          source={{ uri: headshotUri }}
+                          style={styles.headshot}
+                        />
+                      )}
+                      <View style={styles.playerContainer}>
+                        <Text style={styles.name}>{athlete.fullName}</Text>
+                        <Text style={styles.posistion}>
+                          {athlete.position || ""}
+                        </Text>
+                        <Text style={styles.number}>{`#${
+                          athlete.jersey || ""
+                        }`}</Text>
+                      </View>
                     </View>
-                  </View>
                   );
                 })}
               </View>

@@ -1,6 +1,7 @@
 import FootballGamePreviewModal from "@/components/Sports/Football/GamePreview/FootballGamePreviewModal";
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
 import FootballSquareGameCard from "@/components/Sports/Football/Games/FootballSquareGameCard";
+import { FootballGame } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
@@ -19,7 +20,6 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
-import { FootballGame } from "types/football";
 import FootballStackedGameCard from "./FootballStackedGameCard";
 
 type Props = {

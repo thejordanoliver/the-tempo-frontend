@@ -96,6 +96,7 @@ export default function PlayerDetailScreen() {
         seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
+        
       />
 
       <PlayerAwardList player={player} />
