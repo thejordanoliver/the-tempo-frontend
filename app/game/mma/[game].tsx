@@ -154,6 +154,7 @@ export default function GameDetailsScreen(
   const secondFighterIsChampion = secondFighter?.isChampion ?? false;
 
   const gameStatusDescription = game?.status.description;
+
   const state = game?.status.state;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";

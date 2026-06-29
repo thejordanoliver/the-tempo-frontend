@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
+import MessageThemeSettingsModal from "components/Messages/MessageThemeSettingsModal";
 import { GiphySearchModal } from "components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -33,6 +34,10 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DirectMessageItem, MessageAttachment } from "types/messages";
+import {
+  getReadableTextColor,
+  getReadableTimestampColor,
+} from "utils/messageTheme";
 
 const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
@@ -59,6 +64,10 @@ export default function MessageDetailScreen() {
   const {
     conversation,
     messages,
+    messageThemePreference,
+    messageAccent,
+    updateMessageThemePreference,
+    isUpdatingMessageThemePreference,
     isLoading,
     error,
     sendError,
@@ -72,6 +81,7 @@ export default function MessageDetailScreen() {
   const [selectedAttachment, setSelectedAttachment] =
     useState<MessageAttachment | null>(null);
   const [attachmentMenuVisible, setAttachmentMenuVisible] = useState(false);
+  const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [gifModalVisible, setGifModalVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -82,6 +92,7 @@ export default function MessageDetailScreen() {
   const displayFullName =
     conversation?.fullName ?? conversation?.full_name ?? "Direct message";
   const displayAvatar = conversation?.profileImageUrl || FALLBACK_AVATAR;
+  const usesCustomMessageAccent = messageThemePreference.mode !== "default";
 
   const handleBack = useCallback(() => {
     router.back();
@@ -95,6 +106,15 @@ export default function MessageDetailScreen() {
 
   const closeAttachmentMenu = useCallback(() => {
     setAttachmentMenuVisible(false);
+  }, []);
+
+  const handleOpenThemeSettings = useCallback(() => {
+    closeAttachmentMenu();
+    setThemeModalVisible(true);
+  }, [closeAttachmentMenu]);
+
+  const handleCloseThemeSettings = useCallback(() => {
+    setThemeModalVisible(false);
   }, []);
 
   const handleToggleAttachmentMenu = useCallback(() => {
@@ -213,7 +233,13 @@ export default function MessageDetailScreen() {
               styles.messageBubble,
               hasAttachment && styles.attachmentMessageBubble,
               item.isCurrentUser
-                ? styles.currentUserBubble
+                ? [
+                    styles.currentUserBubble,
+                    usesCustomMessageAccent && {
+                      backgroundColor: messageAccent.primary,
+                      borderColor: messageAccent.primary,
+                    },
+                  ]
                 : styles.otherUserBubble,
             ]}
           >
@@ -230,7 +256,12 @@ export default function MessageDetailScreen() {
                 style={[
                   styles.messageText,
                   hasAttachment && styles.attachmentCaptionText,
-                  item.isCurrentUser && styles.currentUserMessageText,
+                  item.isCurrentUser &&
+                    (usesCustomMessageAccent
+                      ? {
+                          color: getReadableTextColor(messageAccent.primary),
+                        }
+                      : styles.currentUserMessageText),
                 ]}
               >
                 {item.text}
@@ -241,7 +272,12 @@ export default function MessageDetailScreen() {
               style={[
                 styles.messageTime,
                 hasAttachment && styles.attachmentMessageTime,
-                item.isCurrentUser && styles.currentUserMessageTime,
+                item.isCurrentUser &&
+                  (usesCustomMessageAccent
+                    ? {
+                        color: getReadableTimestampColor(messageAccent.primary),
+                      }
+                    : styles.currentUserMessageTime),
               ]}
             >
               {item.timestamp}
@@ -267,6 +303,8 @@ export default function MessageDetailScreen() {
       styles.messageTime,
       styles.otherUserBubble,
       styles.otherUserRow,
+      messageAccent.primary,
+      usesCustomMessageAccent,
     ],
   );
 
@@ -299,7 +337,7 @@ export default function MessageDetailScreen() {
           <Text style={styles.emptyText}>{error}</Text>
 
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             style={styles.retryButton}
             onPress={refresh}
           >
@@ -489,7 +527,7 @@ export default function MessageDetailScreen() {
               <TouchableOpacity
                 onPress={handleRemoveAttachment}
                 style={styles.previewCloseButton}
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 hitSlop={8}
               >
                 <Ionicons name="close-circle" size={22} color={Colors.white} />
@@ -507,7 +545,7 @@ export default function MessageDetailScreen() {
               />
 
               <TouchableOpacity
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={handleToggleAttachmentMenu}
                 style={[
                   styles.attachmentButton,
@@ -522,6 +560,33 @@ export default function MessageDetailScreen() {
                 />
               </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={handleOpenThemeSettings}
+              style={[
+                styles.themeButton,
+                usesCustomMessageAccent && {
+                  backgroundColor: messageAccent.primary,
+                  borderColor: messageAccent.primary,
+                },
+              ]}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Open message theme settings"
+            >
+              <Ionicons
+                name="color-palette-outline"
+                size={19}
+                color={
+                  usesCustomMessageAccent
+                    ? getReadableTextColor(messageAccent.primary)
+                    : isDark
+                      ? Colors.white
+                      : Colors.black
+                }
+              />
+            </TouchableOpacity>
 
             <TextInput
               ref={inputRef}
@@ -548,7 +613,7 @@ export default function MessageDetailScreen() {
             />
 
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={handleSend}
               disabled={isSendDisabled}
               style={[
@@ -574,6 +639,15 @@ export default function MessageDetailScreen() {
         onClose={handleCloseGifPicker}
         onGifSelected={handleGifSelected}
         gifsCount={selectedAttachment?.type === "gif" ? 1 : 0}
+      />
+
+      <MessageThemeSettingsModal
+        visible={themeModalVisible}
+        isDark={isDark}
+        currentPreference={messageThemePreference}
+        isSaving={isUpdatingMessageThemePreference}
+        onClose={handleCloseThemeSettings}
+        onSave={updateMessageThemePreference}
       />
     </View>
   );
@@ -830,6 +904,17 @@ const messageDetailStyles = (isDark: boolean) =>
 
     attachmentButtonActive: {
       backgroundColor: isDark ? Colors.black : Colors.white,
+    },
+
+    themeButton: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: "transparent",
     },
 
     input: {

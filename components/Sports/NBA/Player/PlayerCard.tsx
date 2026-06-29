@@ -1,3 +1,4 @@
+import { activeOpacity } from "@/constants/styles";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -27,11 +28,10 @@ export interface PlayerCardProps {
 type PlayerRoutePathname =
   | "/player/[id]"
   | "/player/basketball/[id]"
-  | "/player/mlb/[id]"
-  | "/player/nfl/[id]"
+  | "/player/baseball/[id]"
   | "/player/mma/[id]"
   | "/player/nhl/[id]"
-  | "/player/cfb/[id]"
+  | "/player/football/[id]"
   | "/player/basketball/[id]";
 
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
@@ -39,7 +39,7 @@ const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   WNBA: "/player/basketball/[id]",
   CBB: "/player/basketball/[id]",
   WCBB: "/player/basketball/[id]",
-  MLB: "/player/mlb/[id]",
+  MLB: "/player/baseball/[id]",
   CB: "/player/baseball/[id]",
   SB: "/player/baseball/[id]",
   NFL: "/player/football/[id]",
@@ -124,7 +124,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.85}
+      activeOpacity={activeOpacity}
       style={styles.card}
       onPress={handlePress}
     >

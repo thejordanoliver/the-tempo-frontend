@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -62,6 +62,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const gameStatusDescription = game.status.description;
   const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
+  const isPreFight = gameStatusDescription === "Pre-fight";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -73,6 +74,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const isIntros = gameStatusDescription === "Intros";
   const broadcasts = game.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
+
   const period = formatPeriod({ period: game.status.period, isMMA: true });
   const clock = game.status.displayClock;
   const resultText = game.method;
@@ -131,12 +133,17 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
         </View>
       );
 
-    if (inWalkouts) return <Text style={styles.finalText}>Walkouts</Text>;
-    if (isIntros) return <Text style={styles.finalText}>Intros</Text>;
-    if (isDelayed) return <Text style={styles.finalText}>Delayed</Text>;
-    if (isCanceled) return <Text style={styles.finalText}>Canceled</Text>;
-    if (isPostponed) return <Text style={styles.finalText}>Postponed</Text>;
-    if (isForfeited) return <Text style={styles.finalText}>Forfeited</Text>;
+    if (
+      isPreFight ||
+      inWalkouts ||
+      isIntros ||
+      inWalkouts ||
+      isDelayed ||
+      isCanceled ||
+      isPostponed ||
+      isForfeited
+    )
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
     if (isEndOfRound) return <Text style={styles.clock}>End of {period}</Text>;
 
@@ -235,7 +242,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

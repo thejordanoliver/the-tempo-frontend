@@ -27,6 +27,7 @@ type Props = {
   visible: boolean;
   isCreating?: boolean;
   onClose: () => void;
+  onDismiss?: () => void;
   onSelectUser: (user: UserSearchResult) => void | Promise<void>;
 };
 
@@ -89,8 +90,6 @@ const NewMessageHeader = memo(function NewMessageHeader({
           onChangeText={onSearchChange}
         />
       </View>
-
-     
     </View>
   );
 });
@@ -99,6 +98,7 @@ export default function NewMessageModal({
   visible,
   isCreating = false,
   onClose,
+  onDismiss,
   onSelectUser,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
@@ -142,13 +142,13 @@ export default function NewMessageModal({
 
   const handleRequestClose = useCallback(() => {
     if (isCreating) return;
-    onClose();
-  }, [isCreating, onClose]);
+    sheetRef.current?.dismiss();
+  }, [isCreating]);
 
   const handleDismiss = useCallback(() => {
     resetState();
-    onClose();
-  }, [onClose, resetState]);
+    onDismiss?.();
+  }, [onDismiss, resetState]);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -221,17 +221,17 @@ export default function NewMessageModal({
     [
       handleSelectUser,
       isCreating,
-      styles.avatar,
-      styles.disabledRow,
-      styles.fullName,
       styles.userRow,
       styles.userRowPressed,
+      styles.disabledRow,
+      styles.avatar,
       styles.userTextWrap,
-      styles.username,
       styles.usernameRow,
+      styles.username,
       styles.verifiedIcon,
-      theme.icon,
+      styles.fullName,
       theme.primary,
+      theme.icon,
     ],
   );
 
@@ -248,11 +248,7 @@ export default function NewMessageModal({
     if (error) {
       return (
         <View style={styles.emptyState}>
-          <Ionicons
-            name="alert-circle-outline"
-            size={30}
-            color={theme.icon}
-          />
+          <Ionicons name="alert-circle-outline" size={30} color={theme.icon} />
 
           <Text style={styles.emptyTitle}>Search unavailable</Text>
           <Text style={styles.emptyText}>{error}</Text>
@@ -263,11 +259,7 @@ export default function NewMessageModal({
     if (trimmedQuery.length < 2) {
       return (
         <View style={styles.emptyState}>
-          <Ionicons
-            name="person-add-outline"
-            size={30}
-            color={theme.icon}
-          />
+          <Ionicons name="person-add-outline" size={30} color={theme.icon} />
 
           <Text style={styles.emptyTitle}>Search by name or username</Text>
           <Text style={styles.emptyText}>
@@ -307,23 +299,21 @@ export default function NewMessageModal({
         onRequestClose={handleRequestClose}
       />
     ),
-    [
-      handleRequestClose,
-      handleSearchChange,
-      isCreating,
-      query,
-      styles,
-      theme,
-    ],
+    [handleRequestClose, handleSearchChange, isCreating, query, styles, theme],
   );
 
   useEffect(() => {
-    if (visible) {
-      sheetRef.current?.present();
-      return;
-    }
+    const frame = requestAnimationFrame(() => {
+      if (visible) {
+        sheetRef.current?.present();
+      } else {
+        sheetRef.current?.dismiss();
+      }
+    });
 
-    sheetRef.current?.dismiss();
+    return () => {
+      cancelAnimationFrame(frame);
+    };
   }, [visible]);
 
   useEffect(() => {
@@ -378,14 +368,17 @@ export default function NewMessageModal({
       ref={sheetRef}
       index={0}
       snapPoints={snapPoints}
+      onDismiss={handleDismiss}
       enablePanDownToClose={!isCreating}
+      enableContentPanningGesture
+      enableHandlePanningGesture
+      enableDynamicSizing={false}
       backdropComponent={renderBackdrop}
       backgroundStyle={styles.sheetBackground}
       handleIndicatorStyle={styles.handleIndicator}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"
-      onDismiss={handleDismiss}
     >
       <BottomSheetFlatList
         data={users}
@@ -406,7 +399,9 @@ export default function NewMessageModal({
 
 const newMessageModalStyles = (isDark: boolean) => {
   const background = isDark ? Colors.black : Colors.white;
-  const card = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
+  const card = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
   const cardAlt = isDark ? Colors.black : Colors.white;
   const text = isDark ? Colors.white : Colors.black;
   const mutedText = isDark ? Colors.lightGray : Colors.darkGray;
@@ -478,25 +473,6 @@ const newMessageModalStyles = (isDark: boolean) => {
 
     searchBarWrap: {
       marginBottom: 12,
-    },
-
-    creatingBanner: {
-      minHeight: 40,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 16,
-      backgroundColor: card,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: border,
-    },
-
-    creatingText: {
-      fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
-      color: mutedText,
     },
 
     userRow: {

@@ -1,34 +1,35 @@
 import BasketballGamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
-import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import Roster from "@/components/Sports/NBA/Team/Roster";
+import RosterStats from "@/components/Sports/NBA/Team/RosterStats";
+import { Colors } from "@/constants/styles";
+import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
-import { useRosterStats } from "@/hooks/BasketballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
-import { scrollToMonth } from "@/utils/dateUtils";
-import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
-import Roster from "components/Sports/NBA/Team/Roster";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
+import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import PagerView from "react-native-pager-view";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { scrollToMonth } from "utils/dateUtils";
 
 type MonthSelectorItem = {
   key: string;
@@ -60,20 +61,18 @@ export default function TeamDetailScreen() {
   const styles = teamDetailStyles;
   const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
-  const teamIdNum = Number(teamIdStr);
-  const team = getCBBTeam(teamIdNum, false);
-  const teamLogo = getCBBTeamLogo(teamIdNum, true, false);
+  const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
+  const team = getCBBTeam(teamIdNum);
   const teamColor = team?.color;
   const espnId = team?.espnId ?? 0;
+  const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
-  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const pagerRef = useRef<PagerView>(null);
-  const rosterRef = useRef<{ refresh: () => void }>(null);
-  const favorited = team?.id != null ? isFavorite(league, team.id) : false;
   const scrollViewRef = useRef<ScrollView>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
@@ -89,12 +88,20 @@ export default function TeamDetailScreen() {
   };
 
   const {
-    rosterStats,
-    loading: statsLoading,
-    error: statsError,
+    articles,
+    loading: newsLoading,
+    error: newsError,
+    refreshing: refreshingNews,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
+  const {
+    teamRoster,
     refreshingStats,
-    onRefresh: refreshRosterStats,
-  } = useRosterStats(league, teamIdNum);
+    loading: rosterStatsLoading,
+    error: rosterStatsError,
+    refetch,
+  } = useRosterStats(teamIdNum, league);
 
   const {
     teamStats,
@@ -111,13 +118,7 @@ export default function TeamDetailScreen() {
     error: playersError,
   } = useRoster(teamIdNum, league);
 
-  const {
-    articles,
-    loading: newsLoading,
-    error: newsError,
-    refreshing: refreshingNews,
-    refresh: refreshNews,
-  } = useLeaguesNews(league, 10);
+  const favorited = team ? isFavorite(league, team.id ?? 0) : false;
 
   const {
     games,
@@ -208,7 +209,6 @@ export default function TeamDetailScreen() {
     setSelectedDate(new Date(year, month, 1));
     scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
   };
-
   const handleRefresh = async () => {
     setRefreshing(true);
 
@@ -221,12 +221,8 @@ export default function TeamDetailScreen() {
         await refreshNews();
       }
 
-      if (selectedTab === "roster") {
-        rosterRef.current?.refresh();
-      }
-
       if (selectedTab === "stats") {
-        await refreshRosterStats();
+        await refetch();
       }
     } finally {
       setRefreshing(false);
@@ -239,13 +235,11 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={teamColor ?? undefined}
+          teamColor={teamColor ?? Colors.midTone}
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => {
-            if (team?.id != null) toggleFavorite(league, team.id);
-          }}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -254,11 +248,11 @@ export default function TeamDetailScreen() {
   }, [
     navigation,
     team,
-    teamIdNum,
     teamLogo,
     teamColor,
     favorited,
     toggleFavorite,
+    teamIdNum,
   ]);
 
   if (!team) {
@@ -280,11 +274,10 @@ export default function TeamDetailScreen() {
 
       <PagerView
         ref={pagerRef}
-        style={{ flex: 1 }}
+        style={styles.contentArea}
         initialPage={tabToIndex(selectedTab)}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
-        {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
           <MonthSelector
             months={monthsToShow}
@@ -330,33 +323,34 @@ export default function TeamDetailScreen() {
 
         <View key="stats" style={styles.contentArea}>
           <RosterStats
+            rosterStats={teamRoster}
+            teamId={teamIdStr}
             teamStats={teamStats}
-            rosterStats={rosterStats}
-            teamId={teamIdNum}
-            league={league}
-            loading={statsLoading || teamStatsLoading}
-            error={statsError || teamStatsError}
+            loading={rosterStatsLoading || teamStatsLoading}
+            error={rosterStatsError || teamStatsError}
             refreshing={refreshingStats}
-            onRefresh={refreshRosterStats}
+            onRefresh={refetch}
+            league={league}
           />
         </View>
 
+        {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <CBBConferenceStandingsList
-            onlyTeamConference
+            onlyTeamConference={true}
             teamName={team.fullName}
           />
         </View>
 
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamIdStr ?? ""} league={league} />
+          <TeamForum teamId={teamIdStr} league={league} />
         </View>
       </PagerView>
 
       <TeamInfoModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        teamId={team.id ?? teamIdNum}
+        teamId={teamIdNum}
         league={league}
         isDark={isDark}
       />

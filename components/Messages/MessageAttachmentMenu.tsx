@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -115,7 +115,7 @@ function MessageAttachmentMenu({
       <TouchableOpacity
         onPress={handlePickImage}
         style={styles.menuItem}
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
       >
         <View style={styles.iconWrap}>
           <Ionicons
@@ -136,7 +136,7 @@ function MessageAttachmentMenu({
       <TouchableOpacity
         onPress={handleOpenGifPicker}
         style={styles.menuItem}
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
       >
         <View style={styles.iconWrap}>
           <Ionicons

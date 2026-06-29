@@ -1,7 +1,7 @@
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -213,7 +213,7 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

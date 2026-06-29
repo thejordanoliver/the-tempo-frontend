@@ -54,7 +54,8 @@ type BottomSheetChatListProps = ComponentProps<
 
 // The bottom-sheet implementation forwards these standard FlatList props even
 // though its published prop type omits them.
-const BottomSheetChatList = BottomSheetFlatList as unknown as React.ComponentType<BottomSheetChatListProps>;
+const BottomSheetChatList =
+  BottomSheetFlatList as unknown as React.ComponentType<BottomSheetChatListProps>;
 
 type Props = {
   messages: ChatMessageItem[];

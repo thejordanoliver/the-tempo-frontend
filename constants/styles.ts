@@ -6,6 +6,7 @@ import { StyleSheet } from "react-native";
 
 const tintColorLight = "#0a7ea4";
 const tintColorDark = "#fff";
+export const activeOpacity = 0.75;
 export const PLACEHOLDER_COLOR = "#888";
 
 export const Colors = {
@@ -137,7 +138,6 @@ export const Fonts = {
 export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
     errorText: {
-   
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,

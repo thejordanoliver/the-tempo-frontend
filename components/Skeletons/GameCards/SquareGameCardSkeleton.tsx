@@ -1,7 +1,4 @@
-import {
-  SkeletonBlock,
-  SkeletonCircle,
-} from "components/Skeletons/primitives";
+import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";

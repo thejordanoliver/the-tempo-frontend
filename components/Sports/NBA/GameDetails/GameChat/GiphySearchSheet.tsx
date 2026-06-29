@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -90,7 +90,7 @@ export const GiphySearchModal: React.FC<Props> = ({
   const renderItem = useCallback(
     ({ item }: { item: GifItem }) => (
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         onPress={() => handleGifSelect(item)}
         style={styles.gifContainer}
       >
@@ -137,7 +137,7 @@ export const GiphySearchModal: React.FC<Props> = ({
             <TouchableOpacity
               onPress={handleClose}
               style={styles.closeButton}
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               hitSlop={8}
             >
               <Ionicons

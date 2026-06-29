@@ -2,7 +2,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const homeStyles = (isDark: boolean, inset: number) =>
+export const homeStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,

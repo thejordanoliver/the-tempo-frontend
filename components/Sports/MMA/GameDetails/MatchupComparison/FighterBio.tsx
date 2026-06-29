@@ -64,8 +64,7 @@ const FighterBioStyles = (isDark: boolean) =>
       alignContent: "center",
     },
     stanceImage: {
-      height: 175,
-      width: "100%",
+      height: 250,
       resizeMode: "contain",
     },
     topInfo: {
@@ -75,7 +74,7 @@ const FighterBioStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
     bottomInfoText: {
-      fontSize:  12,
+      fontSize: 12,
       textAlign: "center",
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.white : Colors.black,

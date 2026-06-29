@@ -1,19 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import Button from "../components/Button";
-import ConfirmModal from "../components/ConfirmModal";
-import CropEditorModal from "../components/CropEditorModal";
-import CustomActivityIndicator from "../components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
-import PollEditorModal, { PollData } from "../components/Forum/PollEditorModal";
-import VideoEditorModal from "../components/Forum/VideoEditorModal";
-import { GiphySearchModal } from "../components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
-import { Colors, globalStyles } from "../constants/styles";
-import { usePreferences } from "../contexts/PreferencesContext";
+import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { MediaItem, useCreatePost } from "../hooks/ForumHooks/useCreatePost";
-import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useCallback, useLayoutEffect, useState } from "react";
 import {
   Animated,
@@ -26,6 +15,17 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
+import Button from "../components/Button";
+import ConfirmModal from "../components/ConfirmModal";
+import CropEditorModal from "../components/CropEditorModal";
+import CustomActivityIndicator from "../components/CustomActivityIndicator";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import PollEditorModal, { PollData } from "../components/Forum/PollEditorModal";
+import VideoEditorModal from "../components/Forum/VideoEditorModal";
+import { GiphySearchModal } from "../components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { MediaItem, useCreatePost } from "../hooks/ForumHooks/useCreatePost";
+import { useAuth } from "../hooks/UserHooks/useAuth";
 import { createPostStyles } from "../styles/ForumStyles/CreatePostStyles";
 import { LeagueType } from "../types/types";
 
@@ -167,7 +167,7 @@ export default function CreatePostScreen() {
             }}
             delayLongPress={150}
             onPress={() => onMediaPress(item, index)}
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
           >
             <View style={styles.mediaThumb}>
               {item.type === "image" || item.type === "gif" ? (
@@ -203,7 +203,7 @@ export default function CreatePostScreen() {
               style={styles.removeButton}
               onPress={() => removeMedia(item.id)}
               hitSlop={10}
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
             >
               <Ionicons name="close" size={12} color={Colors.white} />
             </TouchableOpacity>
@@ -307,7 +307,7 @@ export default function CreatePostScreen() {
                   onPress={() => setPoll(null)}
                   hitSlop={8}
                   style={styles.pollRemoveContainer}
-                  activeOpacity={0.85}
+                  activeOpacity={activeOpacity}
                 >
                   <Ionicons
                     name="trash-outline"
@@ -407,7 +407,10 @@ export default function CreatePostScreen() {
                 style={[
                   styles.charCountLabel,
                   charsRemaining <= 20 && {
-                    color: charsRemaining < 0 ? Colors.dark.lightRed : Colors.dark.orange,
+                    color:
+                      charsRemaining < 0
+                        ? Colors.dark.lightRed
+                        : Colors.dark.orange,
                   },
                 ]}
               >
@@ -449,11 +452,7 @@ export default function CreatePostScreen() {
               {poll ? "Poll active" : `${media.length} / 8 media`}
             </Text>
           </View>
-          <Button
-            onPress={createPost}
-            disabled={loading}
-            isDark={isDark}
-          >
+          <Button onPress={createPost} disabled={loading} isDark={isDark}>
             {loading ? "Posting..." : "Post"}
           </Button>
         </View>

@@ -11,7 +11,7 @@ export const awardTableStyles = (isDark: boolean) =>
       paddingBottom: 100,
       paddingTop: 12,
     },
-    
+
     table: {
       overflow: "hidden",
       borderColor: Colors.midTone,

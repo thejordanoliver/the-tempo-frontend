@@ -20,6 +20,10 @@ function parseString(value: string | null | undefined): string | null {
   return value;
 }
 
+function parseCachedString(value: string | null | undefined): string {
+  return parseString(value) ?? "";
+}
+
 export function useProfile() {
   /* ------------------ STATE ------------------ */
   const [isLoading, setIsLoading] = useState(true);
@@ -80,13 +84,31 @@ export function useProfile() {
   /* ------------------ SAVE TO CACHE ------------------ */
   const saveToCache = useCallback(async (data: any) => {
     try {
+      const username = parseCachedString(data.username);
+      const fullName = parseCachedString(data.fullName ?? data.full_name);
+      const profileImage = parseCachedString(
+        data.profileImage ?? data.profile_image,
+      );
+      const bannerImage = parseCachedString(
+        data.bannerImage ?? data.banner_image,
+      );
+
       const entries: [string, string][] = [
         ["userId", String(data.id)],
-        ["username", data.username ?? ""],
-        ["fullName", data.fullName ?? ""],
-        ["bio", data.bio ?? ""],
-        ["profileImage", data.profileImage ?? ""],
-        ["bannerImage", data.bannerImage ?? ""],
+        ["username", username],
+        ["fullName", fullName],
+        ["bio", parseCachedString(data.bio)],
+        ["profileImage", profileImage],
+        ["bannerImage", bannerImage],
+        [
+          "authUser",
+          JSON.stringify({
+            id: data.id,
+            username,
+            fullName,
+            profileImage,
+          }),
+        ],
       ];
 
       await AsyncStorage.multiSet(entries);
@@ -102,10 +124,10 @@ export function useProfile() {
 
       setCurrentUserId(data.id);
       setUsername(parseString(data.username));
-      setFullName(parseString(data.fullName));
+      setFullName(parseString(data.fullName ?? data.full_name));
       setBio(parseString(data.bio));
-      setProfileImage(parseImageUrl(data.profileImage));
-      setBannerImage(parseImageUrl(data.bannerImage));
+      setProfileImage(parseImageUrl(data.profileImage ?? data.profile_image));
+      setBannerImage(parseImageUrl(data.bannerImage ?? data.banner_image));
       setFollowersCount(data.followersCount ?? 0);
       setFollowingCount(data.followingCount ?? 0);
 

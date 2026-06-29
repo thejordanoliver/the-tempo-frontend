@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { useRouter } from "expo-router";
 import { NewsArticle, useAllNews } from "hooks/NewsHooks/useAllNews";
 import {
@@ -108,7 +108,7 @@ function NewsRow({
 
   return (
     <TouchableOpacity
-      activeOpacity={0.85}
+      activeOpacity={activeOpacity}
       style={styles.newsRow}
       onPress={() =>
         router.push({
@@ -201,7 +201,7 @@ export default function NewsWidget({
         <View style={styles.stateCard}>
           <Text style={styles.errorText}>Failed to load news</Text>
 
-          <TouchableOpacity activeOpacity={0.85} onPress={refresh}>
+          <TouchableOpacity activeOpacity={activeOpacity} onPress={refresh}>
             <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>

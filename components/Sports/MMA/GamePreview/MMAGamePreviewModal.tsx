@@ -171,7 +171,12 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
     >
       <View style={styles.container}>
         <LinearGradient
-          colors={[secondFighterColor, firstFighterColor]}
+          colors={[
+            secondFighterColor,
+            secondFighterColor,
+            firstFighterColor,
+            firstFighterColor,
+          ]}
           locations={[0, 0.4, 0.6, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 0 }}

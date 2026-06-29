@@ -1,5 +1,5 @@
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -203,7 +203,7 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

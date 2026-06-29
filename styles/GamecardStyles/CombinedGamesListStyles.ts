@@ -10,7 +10,7 @@ export const combinedGameListStyles = (isDark: boolean) =>
     listItem: { marginHorizontal: 12 },
     gridListContainer: { paddingBottom: 100 },
     contentContainer: { paddingBottom: 100 },
-     headerSkeleton: { paddingHorizontal: 12 },
+    headerSkeleton: { paddingHorizontal: 12 },
     emptyText: {
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,

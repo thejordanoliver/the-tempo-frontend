@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, Fonts } from "constants/styles";
-import { CBBRecruit } from "types/basketball";
 import { StyleSheet, Text, View } from "react-native";
+import { CBBRecruit } from "types/basketball";
 
 type Props = {
   recruit: CBBRecruit;

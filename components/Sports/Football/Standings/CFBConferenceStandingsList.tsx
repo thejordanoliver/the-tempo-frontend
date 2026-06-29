@@ -1,6 +1,6 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -181,7 +181,7 @@ export const CFBConferenceStandingsList = ({
     isLastRow: boolean;
   }) => {
     const espnId = item.teamId;
-    const team = getTeamByESPNId(espnId ?? 0);
+    const team = getCFBTeamByESPNId(espnId ?? 0);
     const teamId = team.id;
     const teamLogo = espnId ? getCFBTeamLogo(Number(teamId), isDark) : null;
     const teamCode = item.abbreviation || "-";
@@ -230,7 +230,7 @@ export const CFBConferenceStandingsList = ({
     showDivision: boolean;
   }) => {
     const espnId = item.teamId;
-    const team = getTeamByESPNId(espnId ?? 0);
+    const team = getCFBTeamByESPNId(espnId ?? 0);
     const teamId = team.id;
     const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
     const streakText = getStreakText(item.streak);

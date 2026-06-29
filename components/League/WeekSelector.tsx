@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, activeOpacity } from "@/constants/styles";
 import React, {
   useCallback,
   useEffect,
@@ -196,7 +196,7 @@ export default function WeekSelector({
           return (
             <TouchableOpacity
               key={group.key || `${group.season?.slug}-${group.week?.number}`}
-              activeOpacity={0.75}
+              activeOpacity={activeOpacity}
               onPress={() => handleSelectWeek(index)}
               style={styles.label}
             >
@@ -259,5 +259,3 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       color: isDark ? Colors.white : Colors.black,
     },
   });
-
-  

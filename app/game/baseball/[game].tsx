@@ -224,6 +224,7 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const homeHits = game?.home.hits;
   const homeErrors = game?.home.errors;
   const awayHits = game?.away.hits;

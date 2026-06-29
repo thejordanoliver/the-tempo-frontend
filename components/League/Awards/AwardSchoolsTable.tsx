@@ -216,7 +216,7 @@ export default function AwardSchoolsTable({
 
         {rows.length > COLLAPSED_ROWS && (
           <TouchableOpacity
-            activeOpacity={0.75}
+            activeOpacity={activeOpacity}
             onPress={() => setExpanded((prev) => !prev)}
             style={styles.showMoreButton}
           >

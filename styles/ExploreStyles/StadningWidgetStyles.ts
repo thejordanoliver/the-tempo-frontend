@@ -16,7 +16,7 @@ export const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
       position: "relative",
     },
 
-     heading: {
+    heading: {
       fontFamily: Fonts.OSMEDIUM,
       fontSize: compact ? 14 : 18,
       color: isDark ? Colors.white : Colors.black,

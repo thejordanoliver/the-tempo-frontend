@@ -1,8 +1,6 @@
 export type PlayerResult = {
   id: number;
-  player_id: number;
   team_id: number;
-  espn_id: string;
   full_name: string;
   headshot_url: string;
   nickname: string;

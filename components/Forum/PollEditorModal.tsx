@@ -71,22 +71,20 @@ export default function PollEditorModal({
     setQuestion(initial?.question ?? "");
     setOptions(initial?.options ?? makeDefaultOptions());
     setAllowsMultiple(initial?.allowsMultiple ?? false);
-  }, [
-    initial?.allowsMultiple,
-    initial?.options,
-    initial?.question,
-    visible,
-  ]);
+  }, [initial?.allowsMultiple, initial?.options, initial?.question, visible]);
 
   const addOption = () => {
     if (options.length >= MAX_OPTIONS) return;
     setOptions((prev) => [...prev, { id: makeId(), text: "" }]);
   };
 
-  const removeOption = useCallback((id: string) => {
-    if (options.length <= MIN_OPTIONS) return;
-    setOptions((prev) => prev.filter((o) => o.id !== id));
-  }, [options.length]);
+  const removeOption = useCallback(
+    (id: string) => {
+      if (options.length <= MIN_OPTIONS) return;
+      setOptions((prev) => prev.filter((o) => o.id !== id));
+    },
+    [options.length],
+  );
 
   const updateOption = (id: string, text: string) => {
     setOptions((prev) => prev.map((o) => (o.id === id ? { ...o, text } : o)));

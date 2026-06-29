@@ -1,6 +1,6 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -230,9 +230,11 @@ export default function BasketballGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && !isPostponed && !isCanceled && !isForfeited && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       {/* Home Score / Record */}
@@ -255,7 +257,7 @@ export default function BasketballGameCard({
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

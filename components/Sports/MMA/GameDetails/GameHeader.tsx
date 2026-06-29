@@ -56,8 +56,6 @@ export default function GameHeader({
       <Text style={styles.headlineText}>{headline}</Text>
 
       <View style={styles.teamsContainer}>
-        
-        {/* Away Team Row */}
         <FighterRow
           id={secondFighterId}
           headshot={secondFighterHeadshot}
@@ -70,21 +68,17 @@ export default function GameHeader({
           isDark={isDark}
         />
 
-        <View>
-          {/* Game Info */}
-          <GameInfo
-            gameStatusDescription={gameStatusDescription}
-            results={results}
-            date={date}
-            time={time}
-            period={period}
-            clock={clock}
-            isDark={isDark}
-            broadcast={broadcast}
-          />
-        </View>
+        <GameInfo
+          date={date}
+          time={time}
+          period={period}
+          clock={clock}
+          broadcast={broadcast}
+          gameStatusDescription={gameStatusDescription}
+          results={results}
+          isDark={isDark}
+        />
 
-        {/* Home Team Row */}
         <FighterRow
           id={firstFighterId}
           headshot={firstFighterHeadshot}

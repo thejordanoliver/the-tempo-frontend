@@ -1,12 +1,12 @@
 // components/Players/PlayerLeadersSlide.tsx
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import Animated, { SlideInDown, SlideOutUp } from "react-native-reanimated";
 import { PlayerLeadersSlideProps } from "types/playerLeader";
 import PlayerItem from "./PlayerItem";
-import { usePreferences } from "contexts/PreferencesContext";
 
 export default function PlayerLeadersSlide({
   header,

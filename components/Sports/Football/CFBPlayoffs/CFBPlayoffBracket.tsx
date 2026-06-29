@@ -7,7 +7,7 @@ import { BracketData } from "@/types/football/football";
 import ChampionTape from "assets/Placeholders/ChampionTape.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -267,7 +267,7 @@ export function CFBPlayoffBracket({
   const styles = bracketStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const winner = useMemo(() => getChampion(bracket), [bracket]);
-  const winnerTeam = getTeamByESPNId(winner?.espnId ?? 0);
+  const winnerTeam = getCFBTeamByESPNId(winner?.espnId ?? 0);
   const winnerLogo = getCFBTeamLogo(winnerTeam?.id, isDark);
   const cfpLogo = useMemo(() => (isDark ? CFPLogoLight : CFPLogo), [isDark]);
   const champCenter = getCardCenter(COLS.CHAMPIONSHIP);

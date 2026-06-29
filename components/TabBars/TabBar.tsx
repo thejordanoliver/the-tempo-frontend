@@ -46,25 +46,28 @@ export default function TabBar<T extends string>({
   const initialized = useRef(false);
 
   // Smooth spring animation preset
-  const animateUnderline = useCallback((index: number) => {
-    const textWidth = textMeasurements.current[index]?.width;
-    const pressable = pressableMeasurements.current[index];
+  const animateUnderline = useCallback(
+    (index: number) => {
+      const textWidth = textMeasurements.current[index]?.width;
+      const pressable = pressableMeasurements.current[index];
 
-    if (!textWidth || !pressable) return;
+      if (!textWidth || !pressable) return;
 
-    const x = pressable.x + (pressable.width - textWidth) / 2;
+      const x = pressable.x + (pressable.width - textWidth) / 2;
 
-    Animated.parallel([
-      Animated.spring(underlineX, {
-        ...UNDERLINE_SPRING_CONFIG,
-        toValue: x,
-      }),
-      Animated.spring(underlineWidth, {
-        ...UNDERLINE_SPRING_CONFIG,
-        toValue: textWidth,
-      }),
-    ]).start();
-  }, [underlineWidth, underlineX]);
+      Animated.parallel([
+        Animated.spring(underlineX, {
+          ...UNDERLINE_SPRING_CONFIG,
+          toValue: x,
+        }),
+        Animated.spring(underlineWidth, {
+          ...UNDERLINE_SPRING_CONFIG,
+          toValue: textWidth,
+        }),
+      ]).start();
+    },
+    [underlineWidth, underlineX],
+  );
 
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     textMeasurements.current[index] = {
@@ -161,7 +164,7 @@ export default function TabBar<T extends string>({
 const styles = StyleSheet.create({
   tabs: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     marginBottom: 10,
     position: "relative",
   },

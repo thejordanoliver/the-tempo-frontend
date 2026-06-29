@@ -24,7 +24,6 @@ export default function FavoriteTeamsSection({
 }: Props) {
   return (
     <>
-      {/* Header with toggle button (grid/list) */}
       <SectionHeaderWithToggle
         title="Favorite Teams"
         isGridView={isGridView}
@@ -37,7 +36,7 @@ export default function FavoriteTeamsSection({
           isGridView={isGridView}
           itemWidth={itemWidth}
           key={isGridView ? "grid" : "list"}
-          isCurrentUser={isCurrentUser} // ✅ enforce current user
+          isCurrentUser={isCurrentUser}
         />
       </Animated.View>
     </>

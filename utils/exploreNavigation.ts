@@ -62,7 +62,7 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
     return {
       pathname: "/player/basketball/[id]",
       params: {
-        id: String(item.player_id),
+        id: String(item.id),
         teamId: String(item.team_id ?? ""),
         league: item.isWCBB ? "WCBB" : "CBB",
       },
@@ -77,7 +77,7 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
     return {
       pathname: playerRoute.pathname,
       params: {
-        id: String(item.player_id),
+        id: String(item.id),
         teamId: String(item.team_id ?? ""),
         league: playerRoute.league,
       },
@@ -87,7 +87,7 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
   return {
     pathname: "/player/[id]",
     params: {
-      id: String(item.player_id),
+      id: String(item.id),
       teamId: String(item.team_id ?? ""),
       league: "NBA",
     },

@@ -1,7 +1,7 @@
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { getHolidayLabel } from "@/utils/dateUtils";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -203,7 +203,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

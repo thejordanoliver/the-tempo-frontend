@@ -6,7 +6,7 @@ import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getTeamByESPNId, nbaDivisionsById } from "constants/teams";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
-import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
+import { getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId as getNHLTeamByESPNId } from "constants/teamsNHL";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";

@@ -7,8 +7,10 @@ import { apiClient, clearAuthSession, saveTokens } from "utils/apiClient";
 interface User {
   id: number;
   username: string;
+  fullName?: string;
   full_name?: string;
   bio?: string;
+  profileImage?: string | null;
   profile_image?: string | null;
   banner_image?: string | null;
   favorites?: string[];
@@ -23,6 +25,18 @@ const normalizeImage = (value?: string | null): string | null => {
   if (!value || value === "null" || value === "undefined") return null;
   return value;
 };
+
+const normalizeString = (value?: string | null): string => {
+  if (!value || value === "null" || value === "undefined") return "";
+  return value;
+};
+
+const normalizeCachedAuthUser = (user: User) => ({
+  id: user.id,
+  username: normalizeString(user.username),
+  fullName: normalizeString(user.full_name ?? user.fullName),
+  profileImage: normalizeImage(user.profile_image ?? user.profileImage) ?? "",
+});
 
 const parseFavorites = (value: string | null): string[] => {
   if (!value) return [];
@@ -110,12 +124,16 @@ export function useAuth() {
 
     await AsyncStorage.multiSet([
       ["userId", user.id.toString()],
-      ["username", user.username],
-      ["fullName", user.full_name ?? ""],
-      ["bio", user.bio ?? ""],
-      ["profileImage", normalizeImage(user.profile_image) ?? ""],
+      ["username", normalizeString(user.username)],
+      ["fullName", normalizeString(user.full_name ?? user.fullName)],
+      ["bio", normalizeString(user.bio)],
+      [
+        "profileImage",
+        normalizeImage(user.profile_image ?? user.profileImage) ?? "",
+      ],
       ["bannerImage", normalizeImage(user.banner_image) ?? ""],
       [getFavoritesStorageKey(user.id), JSON.stringify(user.favorites ?? [])],
+      ["authUser", JSON.stringify(normalizeCachedAuthUser(user))],
     ]);
 
     await AsyncStorage.removeItem(LEGACY_FAVORITES_KEY);
@@ -209,6 +227,12 @@ export function useAuth() {
     }
 
     try {
+      try {
+        await AsyncStorage.removeItem("authUser");
+      } catch (err) {
+        console.warn("Failed to clear cached auth user:", err);
+      }
+
       await clearAuthSession(currentUserId);
       setUser(null);
       setToken(null);

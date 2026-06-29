@@ -32,10 +32,7 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
   const itemStep = ITEM_WIDTH + ITEM_SPACING;
 
   const rawItemsWidth = useMemo(() => {
-    return (
-      itemCount * ITEM_WIDTH +
-      ITEM_SPACING * Math.max(0, itemCount - 1)
-    );
+    return itemCount * ITEM_WIDTH + ITEM_SPACING * Math.max(0, itemCount - 1);
   }, [itemCount]);
 
   const needsScroll = rawItemsWidth + SIDE_PADDING * 2 > containerWidth;

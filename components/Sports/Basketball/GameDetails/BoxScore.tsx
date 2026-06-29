@@ -1,7 +1,6 @@
 import { Athlete } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, globalStyles } from "constants/styles";
-import { getTeamByESPNId as getNBATeamByESPNId } from "constants/teams";
+import { getNBATeam} from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { router } from "expo-router";
@@ -17,6 +16,11 @@ import {
   View,
 } from "react-native";
 import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
+import {
+  Colors,
+  activeOpacity,
+  globalStyles,
+} from "../../../../constants/styles";
 import BoxScoreSkeleton from "../../../Skeletons/GameDetails/BoxScoreSkeleton";
 
 const COLUMN_WIDTH = 50;
@@ -181,7 +185,7 @@ export default function BoxScore({
   const homeTeam = useMemo(
     () =>
       isNBA
-        ? getNBATeamByESPNId(homeTeamId)
+        ? getNBATeam(homeTeamId)
         : isWNBA
           ? getWNBATeamByESPNId(homeTeamId)
           : getCBBTeamByESPNId(homeTeamId),
@@ -191,7 +195,7 @@ export default function BoxScore({
   const awayTeam = useMemo(
     () =>
       isNBA
-        ? getNBATeamByESPNId(awayTeamId)
+        ? getNBATeam(awayTeamId)
         : isWNBA
           ? getWNBATeamByESPNId(awayTeamId)
           : getCBBTeamByESPNId(awayTeamId),
@@ -466,7 +470,7 @@ export default function BoxScore({
 
         {players.length > COLLAPSED_ROWS && (
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             onPress={() => toggleExpand(sectionKey)}
             style={{ padding: 10, alignItems: "center" }}
           >

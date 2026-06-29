@@ -29,8 +29,8 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
   const current = draft?.current;
   const hasBoardData = Boolean(
     current?.bestAvailable ||
-      current?.bestFit ||
-      current?.bestAvailablePicks?.length,
+    current?.bestFit ||
+    current?.bestAvailablePicks?.length,
   );
 
   return (

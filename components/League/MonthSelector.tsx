@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -55,8 +55,7 @@ export default function MonthSelector({
 
   const rawItemsWidth = useMemo(() => {
     return (
-      months.length * ITEM_WIDTH +
-      ITEM_SPACING * Math.max(0, months.length - 1)
+      months.length * ITEM_WIDTH + ITEM_SPACING * Math.max(0, months.length - 1)
     );
   }, [months.length]);
 
@@ -200,7 +199,7 @@ export default function MonthSelector({
             return (
               <TouchableOpacity
                 key={key}
-                activeOpacity={0.75}
+                activeOpacity={activeOpacity}
                 onPress={() => handleSelectMonth(month, year, index)}
                 style={styles.monthButton}
               >

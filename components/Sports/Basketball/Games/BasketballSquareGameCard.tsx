@@ -1,7 +1,7 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -254,7 +254,7 @@ export default function BasketballSquareGameCard({
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

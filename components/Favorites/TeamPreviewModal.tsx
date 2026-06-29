@@ -57,25 +57,26 @@ export default function TeamPreviewModal({
   const isCFB = team.league === "CFB";
   const isNHL = team.league === "NHL";
 
-  const logo = team.id == null
-    ? null
-    : isCBB
-    ? getCBBTeamLogo(team.id, isDark, false)
-    : isWCBB
-      ? getCBBTeamLogo(team.wid ?? undefined, isDark, true)
-      : isNBA
-        ? getTeamLogo(team.id, isDark)
-        : isWNBA
-          ? getWNBATeamLogo(team.id, isDark)
-          : isCFB
-            ? getCFBTeamLogo(team.id, isDark)
-            : isNFL
-              ? getNFLTeamLogo(team.id, isDark)
-              : isMLB
-                ? getMLBTeamLogo(team.id, isDark)
-                : isNHL
-                  ? getNHLTeamLogo(team.id, isDark)
-                  : null;
+  const logo =
+    team.id == null
+      ? null
+      : isCBB
+        ? getCBBTeamLogo(team.id, isDark, false)
+        : isWCBB
+          ? getCBBTeamLogo(team.wid ?? undefined, isDark, true)
+          : isNBA
+            ? getTeamLogo(team.id, isDark)
+            : isWNBA
+              ? getWNBATeamLogo(team.id, isDark)
+              : isCFB
+                ? getCFBTeamLogo(team.id, isDark)
+                : isNFL
+                  ? getNFLTeamLogo(team.id, isDark)
+                  : isMLB
+                    ? getMLBTeamLogo(team.id, isDark)
+                    : isNHL
+                      ? getNHLTeamLogo(team.id, isDark)
+                      : null;
 
   const baseColor = isDark
     ? team?.secondaryColor || Colors.midTone

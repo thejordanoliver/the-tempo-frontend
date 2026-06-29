@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { useMemo, useState } from "react";
 import {
   LayoutChangeEvent,
   ScrollView,

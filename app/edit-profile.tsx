@@ -1,15 +1,8 @@
 // screens/EditProfileScreen.tsx
+import { useProfileRefreshStore } from "@/store/profileRefreshStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Button from "../components/Button";
-import ConfirmModal from "../components/ConfirmModal";
-import CropEditorModal from "../components/CropEditorModal";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
-import LabeledInput from "../components/LabeledInput";
-import ProfileBanner from "../components/Profile/ProfileBanner";
-import { usePreferences } from "../contexts/PreferencesContext";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
-import { useEditProfile } from "../hooks/UserHooks/useEditProfile";
 import {
   useCallback,
   useEffect,
@@ -24,6 +17,14 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import Button from "../components/Button";
+import ConfirmModal from "../components/ConfirmModal";
+import CropEditorModal from "../components/CropEditorModal";
+import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import LabeledInput from "../components/LabeledInput";
+import ProfileBanner from "../components/Profile/ProfileBanner";
+import { usePreferences } from "../contexts/PreferencesContext";
+import { useEditProfile } from "../hooks/UserHooks/useEditProfile";
 import { AlertConfig } from "../types/alert";
 
 const MAX_BIO_LENGTH = 150;
@@ -41,6 +42,13 @@ type StoredProfileData = {
   bannerImage?: string | null;
 };
 
+type CachedAuthUser = {
+  id?: number;
+  username?: string;
+  fullName?: string;
+  profileImage?: string;
+};
+
 type EditableImageAsset = {
   uri?: string | null;
   fileName?: string | null;
@@ -48,6 +56,8 @@ type EditableImageAsset = {
 };
 
 type SavedProfileData = {
+  id?: number | string | null;
+  username?: string | null;
   full_name?: string | null;
   fullName?: string | null;
   bio?: string | null;
@@ -71,6 +81,40 @@ const normalizeStoredValue = (value?: string | null) => {
 const normalizeStoredImage = (value?: string | null) => {
   const normalized = normalizeStoredValue(value);
   return normalized || null;
+};
+
+const readCachedAuthUser = async (): Promise<CachedAuthUser> => {
+  const storedUser = await AsyncStorage.getItem("authUser");
+
+  if (!storedUser) return {};
+
+  try {
+    const parsed = JSON.parse(storedUser);
+
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      return parsed as CachedAuthUser;
+    }
+  } catch {
+    try {
+      await AsyncStorage.removeItem("authUser");
+    } catch (error) {
+      console.warn("Failed to clear invalid cached auth user:", error);
+    }
+  }
+
+  return {};
+};
+
+const mergeCachedAuthUser = async (updates: CachedAuthUser) => {
+  const cachedUser = await readCachedAuthUser();
+
+  await AsyncStorage.setItem(
+    "authUser",
+    JSON.stringify({
+      ...cachedUser,
+      ...updates,
+    }),
+  );
 };
 
 const getImageMimeType = (filenameOrUri: string, mimeType?: string | null) => {
@@ -179,6 +223,9 @@ export default function EditProfileScreen() {
   const isDark = resolvedColorScheme === "dark";
 
   const { saving, saveProfile } = useEditProfile();
+  const requestProfileRefresh = useProfileRefreshStore(
+    (state) => state.requestProfileRefresh,
+  );
 
   const [userId, setUserId] = useState<string | null>(null);
   const [username, setUsername] = useState("");
@@ -411,11 +458,16 @@ export default function EditProfileScreen() {
         formData,
       )) as SavedProfileData;
 
-      const nextFullName =
-        updatedUser.full_name ?? updatedUser.fullName ?? trimmedFullName;
-      const nextBio = updatedUser.bio ?? trimmedBio;
-      const nextProfileImage = getSavedProfileImage(updatedUser, profileImage);
-      const nextBannerImage = getSavedBannerImage(updatedUser, bannerImage);
+      const nextFullName = normalizeStoredValue(
+        updatedUser.full_name ?? updatedUser.fullName ?? trimmedFullName,
+      );
+      const nextBio = normalizeStoredValue(updatedUser.bio ?? trimmedBio);
+      const nextProfileImage = normalizeStoredImage(
+        getSavedProfileImage(updatedUser, profileImage),
+      );
+      const nextBannerImage = normalizeStoredImage(
+        getSavedBannerImage(updatedUser, bannerImage),
+      );
 
       setFullName(nextFullName);
       setBio(nextBio);
@@ -437,10 +489,33 @@ export default function EditProfileScreen() {
 
       await AsyncStorage.multiSet(storageUpdates);
 
+      const parsedUserId = Number.parseInt(
+        String(updatedUser.id ?? userId),
+        10,
+      );
+      const nextUsername = normalizeStoredValue(
+        updatedUser.username ?? username,
+      );
+      const authUserUpdates: CachedAuthUser = {
+        fullName: nextFullName,
+        profileImage: nextProfileImage ?? "",
+      };
+
+      if (!Number.isNaN(parsedUserId)) {
+        authUserUpdates.id = parsedUserId;
+      }
+
+      if (nextUsername) {
+        authUserUpdates.username = nextUsername;
+      }
+
+      await mergeCachedAuthUser(authUserUpdates);
+
       showAlert({
         title: "Saved",
         message: "Profile updated successfully.",
         onConfirm: () => {
+          requestProfileRefresh();
           closeAlert();
           router.back();
         },
@@ -469,6 +544,8 @@ export default function EditProfileScreen() {
     trimmedBio,
     trimmedFullName,
     userId,
+    username,
+    requestProfileRefresh,
   ]);
 
   return (

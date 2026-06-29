@@ -8,14 +8,14 @@ export const gameHeaderStyles = (isDark: boolean) =>
       paddingVertical: 4,
       paddingHorizontal: 12,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-         flex: 1,
-         justifyContent: "center"
+      flex: 1,
+      justifyContent: "center",
     },
     teamsContainer: {
       flexDirection: "row",
       justifyContent: "space-around",
       alignItems: "center",
-       flex: 1,
+      flex: 1,
     },
     headlineContainer: {
       alignItems: "center",

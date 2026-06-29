@@ -31,10 +31,11 @@ export default function PlayerDetailScreen() {
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
   const team = isNFL ? getNFLTeam(teamId) : getCFBTeam(teamId);
+  const teamColor = team?.color ?? Colors.midTone;
   const teamLogo = isNFL
     ? getNFLTeamLogo(teamId, true)
     : getCFBTeamLogo(teamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
+    
 
   /* ---------------- Last game ---------------- */
   const {
@@ -94,7 +95,7 @@ export default function PlayerDetailScreen() {
       />
 
       <PlayerStatTable
-        data={seasons || []}
+        data={seasons}
         loading={seasonsLoading}
         error={seasonsError}
         position={player.position}

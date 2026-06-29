@@ -12,16 +12,6 @@ export const followersListStyles = (isDark: boolean) =>
       paddingBottom: 100,
     },
 
-    headerText: {
-      textAlign: "center",
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      fontSize: 18,
-    },
-
     itemContainer: {
       paddingVertical: 12,
       alignItems: "flex-start",
@@ -59,5 +49,5 @@ export const followersListStyles = (isDark: boolean) =>
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
     },
-    mutalIcon: { marginRight: 6 }
+    mutalIcon: { marginRight: 6 },
   });

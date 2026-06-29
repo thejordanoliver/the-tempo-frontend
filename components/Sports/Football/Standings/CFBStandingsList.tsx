@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -72,7 +72,7 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getTeamByESPNId(item.team?.id ?? "");
+    const team = getCFBTeamByESPNId(item.team?.id ?? "");
     const teamId = team?.id ?? 0;
     const teamLogo = getCFBTeamLogo(teamId, isDark);
     const teamcode = team?.code || "N/A";
@@ -167,7 +167,7 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getTeamByESPNId(item.team?.id ?? "");
+    const team = getCFBTeamByESPNId(item.team?.id ?? "");
     const favorited = team ? isFavorite("CFB", team.id) : false;
     return (
       <View
@@ -260,7 +260,7 @@ export const CFBStandingsList = () => {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {droppedOutTeams.map((item) => {
-            const team = getTeamByESPNId(item.team?.id ?? "");
+            const team = getCFBTeamByESPNId(item.team?.id ?? "");
             const teamName = team?.shortName || team?.name || "N/A";
             return (
               <Text

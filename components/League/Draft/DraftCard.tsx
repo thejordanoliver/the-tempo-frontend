@@ -2,10 +2,7 @@
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
-import {
-  getTeamByESPNId as getNFLTeamByESPNId,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
+import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";

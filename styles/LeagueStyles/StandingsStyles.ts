@@ -16,7 +16,7 @@ export const standingsStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      overflow: "hidden"
+      overflow: "hidden",
     },
     center: {
       flex: 1,
@@ -97,7 +97,7 @@ export const standingsStyles = (isDark: boolean) =>
       width: 28,
       height: 28,
       marginRight: 4,
-      resizeMode: "contain"
+      resizeMode: "contain",
     },
     teamName: {
       fontSize: 14,

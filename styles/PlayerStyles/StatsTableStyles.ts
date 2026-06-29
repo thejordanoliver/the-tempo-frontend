@@ -7,21 +7,20 @@ export const statsTableStyles = (isDark: boolean) => {
   const altRowColor = isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
+  const rowHeight = 38;
+  const statCellWidth = 80;
+  const seasonColumnWidth = 80;
+  const teamColumnWidth = 64;
 
   return StyleSheet.create({
     container: {
       paddingTop: 24,
     },
 
-    dropdownContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-
     dropdown: {
       position: "absolute",
       right: 0,
-      top: 18,
+      top: 12,
     },
 
     tableWrapper: {
@@ -32,18 +31,35 @@ export const statsTableStyles = (isDark: boolean) => {
       borderColor,
     },
 
+    fixedSection: {
+      flexDirection: "row",
+      flexShrink: 0,
+    },
+
+    scrollSection: {
+      flex: 1,
+    },
+
     headerRow: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
+    tableHeaderRow: {
+      height: rowHeight,
+    },
+
     row: {
       flexDirection: "row",
-      minHeight: 38,
+      height: rowHeight,
       alignItems: "center",
       borderBottomColor: borderColor,
       borderBottomWidth: 1,
+    },
+
+    lastRow: {
+      borderBottomWidth: 0,
     },
 
     rowAlt: {
@@ -51,19 +67,20 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     careerCell: {
-      minWidth: 80,
-      flex: 1,
+      width: statCellWidth,
       textAlign: "center",
+      alignItems: "center",
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: Colors.white,
+      includeFontPadding: false,
     },
 
     cell: {
-      minWidth: 80,
-      flex: 1,
+      width: statCellWidth,
       textAlign: "center",
+      textAlignVertical: "center",
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
@@ -71,37 +88,42 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     fixedColumn: {
-      width: 80,
+      width: seasonColumnWidth,
     },
 
     seasonColumn: {
-      width: 82,
+      width: seasonColumnWidth,
     },
 
     teamColumn: {
-      width: 64,
+      width: teamColumnWidth,
     },
 
     statScrollContent: {
       flexGrow: 0,
+      flexShrink: 0,
+      alignSelf: "flex-start",
     },
 
     fixedCell: {
-      width: 80,
+      width: seasonColumnWidth,
       textAlign: "center",
+      alignItems: "center",
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: textColor,
+      includeFontPadding: false,
     },
 
     fixedTeamCell: {
-      width: 64,
+      width: teamColumnWidth,
       textAlign: "center",
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: textColor,
+      includeFontPadding: false,
     },
 
     fixedHeaderCell: {
@@ -111,29 +133,14 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     fixedCareerCell: {
-      width: 64,
+      width: teamColumnWidth,
       textAlign: "center",
+      alignItems: "center",
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       paddingHorizontal: 4,
       color: Colors.white,
-    },
-
-    seasonHeaderCell: {
-      minWidth: 80,
-      flex: 1,
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
-      color: textColor,
-      textTransform: "uppercase",
-    },
-
-    careerHeaderCell: {
-      fontFamily: Fonts.OSBOLD,
-      color: Colors.white,
-      paddingHorizontal: 8,
-      textTransform: "uppercase",
+      includeFontPadding: false,
     },
 
     headerCell: {
@@ -143,50 +150,43 @@ export const statsTableStyles = (isDark: boolean) => {
       textTransform: "uppercase",
     },
 
-    errorText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-
-    seasonCell: {
-      minWidth: 80,
-      justifyContent: "center",
-      paddingHorizontal: 4,
-      paddingVertical: 8,
+    seasonTypeTabs: {
       flexDirection: "row",
-      alignItems: "center",
-      color: textColor,
-      borderBottomColor: borderColor,
-      borderBottomWidth: 1,
+      alignSelf: "flex-start",
+      marginTop: 4,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor,
+      borderRadius: 8,
+      overflow: "hidden",
     },
 
-    seasons: {
-      minWidth: 80,
-      flex: 1,
-      textAlign: "left",
+    seasonTypeTab: {
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRightWidth: 1,
+      borderRightColor: borderColor,
+    },
+
+    seasonTypeTabActive: {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+
+    lastSeasonTypeTab: {
+      borderRightWidth: 0,
+    },
+
+    seasonTypeTabText: {
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
-      paddingHorizontal: 4,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    seasonTypeTabTextActive: {
+      fontFamily: Fonts.OSBOLD,
       color: textColor,
-    },
-
-    legendContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 8,
-      marginTop: 12,
-      borderTopColor: borderColor,
-      borderTopWidth: 1,
-    },
-
-    legendColorBox: {
-      width: 20,
-      height: 20,
-      borderRadius: 4,
-      marginRight: 8,
     },
 
     legendText: {
@@ -200,14 +200,6 @@ export const statsTableStyles = (isDark: boolean) => {
 
     careerRow: {
       backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
-    },
-
-    seasonText: {
-      minWidth: 70,
-      paddingHorizontal: 8,
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      color: textColor,
     },
 
     glossaryContainer: {

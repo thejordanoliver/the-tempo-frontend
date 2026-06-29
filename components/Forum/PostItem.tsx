@@ -2,7 +2,7 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useRef, useState } from "react";
@@ -119,7 +119,7 @@ const PostSubmenu = ({
       ]}
     >
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onEdit}
       >
@@ -142,7 +142,7 @@ const PostSubmenu = ({
       <View style={styles.submenuSeparator} />
 
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onDelete}
       >
@@ -329,7 +329,7 @@ export const PostItem = memo(function PostItem({
               />
 
               <TouchableOpacity
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={() => setSubmenuVisible((current) => !current)}
                 style={[
                   styles.menuButton,

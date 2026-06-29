@@ -489,7 +489,7 @@ export default function CommentThreadScreen() {
             <TouchableOpacity
               onPress={handleRemoveAttachment}
               style={styles.previewCloseButton}
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               hitSlop={8}
             >
               <Ionicons name="close-circle" size={22} color={Colors.white} />
@@ -507,7 +507,7 @@ export default function CommentThreadScreen() {
             />
 
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={handleToggleAttachmentMenu}
               style={[
                 styles.attachmentButton,
@@ -548,7 +548,7 @@ export default function CommentThreadScreen() {
           />
 
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             onPress={handlePostComment}
             disabled={isSendDisabled}
             style={[

@@ -12,6 +12,14 @@ import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import type { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
+import {
+  clearExpiredUserProfileCache,
+  getCachedUserProfile,
+  setCachedUserProfile,
+  type CachedUserProfilePayload,
+  type UserProfileCacheState,
+  USER_PROFILE_CACHE_VERSION,
+} from "utils/userProfileCache";
 
 type SupportedFavoriteLeague = Extract<
   LeagueType,
@@ -28,15 +36,32 @@ type FavoriteTeamWithLeague = TeamLookupItem & {
 };
 
 type UserProfileResponse = {
+  id?: number | string | null;
   username?: string | null;
   fullName?: string | null;
+  full_name?: string | null;
   bio?: string | null;
   profileImage?: string | null;
+  profile_image?: string | null;
   bannerImage?: string | null;
+  banner_image?: string | null;
   followersCount?: number | null;
   followingCount?: number | null;
   favorites?: unknown;
   isFollowing?: boolean | null;
+  updatedAt?: string | null;
+  updated_at?: string | null;
+};
+
+type DisplayProfile = {
+  id: string;
+  username: string | null;
+  fullName: string | null;
+  bio: string | null;
+  profileImage: string | null;
+  bannerImage: string | null;
+  favorites: string[];
+  updatedAt: string | null;
 };
 
 const SUPPORTED_FAVORITE_LEAGUES = new Set<SupportedFavoriteLeague>([
@@ -83,15 +108,19 @@ const teamLookups: Record<SupportedFavoriteLeague, Map<string, TeamLookupItem>> 
     NHL: createTeamLookup(nhlTeams),
   };
 
-function parseImageUrl(url: string | null | undefined): string | null {
-  if (!url || url === "null" || url === "undefined") return null;
-  if (!url.startsWith("http")) return null;
-  return url;
+function parseString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === "null" || trimmed === "undefined") return null;
+
+  return value;
 }
 
-function parseString(value: string | null | undefined): string | null {
-  if (!value || value === "null" || value === "undefined") return null;
-  return value;
+function parseImageUrl(url: unknown): string | null {
+  const parsed = parseString(url);
+  if (!parsed?.startsWith("http")) return null;
+  return parsed;
 }
 
 function parseStoredUserId(id: string | null): number | null {
@@ -109,12 +138,86 @@ function normalizeFavorites(value: unknown): string[] {
   );
 }
 
+function parseProfileId(value: unknown, fallback: string): string {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+
+  return parseString(value) ?? fallback;
+}
+
+function parseCount(value: number | null | undefined): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function parseUpdatedAt(data: UserProfileResponse): string | null {
+  return parseString(data.updatedAt ?? data.updated_at);
+}
+
+function normalizeDisplayProfile(
+  data: UserProfileResponse,
+  fallbackUserId: string,
+): DisplayProfile {
+  return {
+    id: parseProfileId(data.id, fallbackUserId),
+    username: parseString(data.username),
+    fullName: parseString(data.fullName ?? data.full_name),
+    bio: parseString(data.bio),
+    profileImage: parseImageUrl(data.profileImage ?? data.profile_image),
+    bannerImage: parseImageUrl(data.bannerImage ?? data.banner_image),
+    favorites: normalizeFavorites(data.favorites),
+    updatedAt: parseUpdatedAt(data),
+  };
+}
+
+function buildCachedProfilePayload(
+  profile: DisplayProfile,
+): CachedUserProfilePayload {
+  return {
+    id: profile.id,
+    username: profile.username,
+    fullName: profile.fullName,
+    bio: profile.bio,
+    profileImage: profile.profileImage,
+    bannerImage: profile.bannerImage,
+    favorites: profile.favorites,
+    updatedAt: profile.updatedAt,
+    cachedAt: Date.now(),
+    version: USER_PROFILE_CACHE_VERSION,
+  };
+}
+
+function getUpdatedAtTime(value?: string | null): number | null {
+  if (!value) return null;
+
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function shouldPreferCachedDisplay(
+  cachedProfile: CachedUserProfilePayload | null,
+  freshProfile: DisplayProfile,
+) {
+  const cachedUpdatedAt = getUpdatedAtTime(cachedProfile?.updatedAt);
+  const freshUpdatedAt = getUpdatedAtTime(freshProfile.updatedAt);
+
+  return (
+    cachedUpdatedAt !== null &&
+    freshUpdatedAt !== null &&
+    cachedUpdatedAt > freshUpdatedAt
+  );
+}
+
 function getProfileKey(userId: string, currentUserId: number | null) {
   return `${userId}:${currentUserId ?? "guest"}`;
 }
 
 export function useUserProfile(userId?: string) {
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [hasCachedProfile, setHasCachedProfile] = useState(false);
+  const [cacheState, setCacheState] =
+    useState<UserProfileCacheState>("none");
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [hasLoadedCurrentUserId, setHasLoadedCurrentUserId] = useState(false);
 
@@ -134,11 +237,17 @@ export function useUserProfile(userId?: string) {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const isMountedRef = useRef(true);
   const requestIdRef = useRef(0);
+  const activeProfileKeyRef = useRef<string | null>(null);
   const lastLoadedProfileKeyRef = useRef<string | null>(null);
   const followLoadingRef = useRef(false);
 
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersStore();
+
+  activeProfileKeyRef.current =
+    userId && hasLoadedCurrentUserId
+      ? getProfileKey(userId, currentUserId)
+      : null;
 
   const resetProfileState = useCallback(() => {
     setUsername(null);
@@ -152,6 +261,18 @@ export function useUserProfile(userId?: string) {
     setIsFollowing(false);
   }, []);
 
+  const applyDisplayProfile = useCallback(
+    (profile: DisplayProfile | CachedUserProfilePayload) => {
+      setUsername(profile.username);
+      setFullName(profile.fullName);
+      setBio(profile.bio);
+      setProfileImage(profile.profileImage);
+      setBannerImage(profile.bannerImage);
+      setFavorites(profile.favorites);
+    },
+    [],
+  );
+
   useEffect(() => {
     isMountedRef.current = true;
 
@@ -159,6 +280,10 @@ export function useUserProfile(userId?: string) {
       isMountedRef.current = false;
       requestIdRef.current += 1;
     };
+  }, []);
+
+  useEffect(() => {
+    void clearExpiredUserProfileCache();
   }, []);
 
   useEffect(() => {
@@ -189,71 +314,150 @@ export function useUserProfile(userId?: string) {
     };
   }, []);
 
-  const fetchUserData = useCallback(async () => {
-    if (!userId) {
-      requestIdRef.current += 1;
-      lastLoadedProfileKeyRef.current = null;
-      resetProfileState();
-      setIsLoading(false);
-      return;
-    }
-
-    if (!hasLoadedCurrentUserId) return;
-
-    const requestId = ++requestIdRef.current;
-    const profileKey = getProfileKey(userId, currentUserId);
-    const shouldShowInitialLoading =
-      lastLoadedProfileKeyRef.current !== profileKey;
-
-    if (shouldShowInitialLoading) {
-      setIsLoading(true);
-    }
-
-    try {
-      const { data } = await apiClient.get<UserProfileResponse>(
-        `api/users/id/${userId}`,
-        {
-          params:
-            currentUserId === null
-              ? undefined
-              : {
-                  currentUserId,
-                },
-        },
-      );
-
-      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
-
-      setUsername(parseString(data.username));
-      setFullName(parseString(data.fullName));
-      setBio(parseString(data.bio));
-      setProfileImage(parseImageUrl(data.profileImage));
-      setBannerImage(parseImageUrl(data.bannerImage));
-      setFollowersCount(data.followersCount ?? 0);
-      setFollowingCount(data.followingCount ?? 0);
-      setFavorites(normalizeFavorites(data.favorites));
-      setIsFollowing(
-        typeof data.isFollowing === "boolean" ? data.isFollowing : false,
-      );
-      lastLoadedProfileKeyRef.current = profileKey;
-    } catch (error) {
-      if (!isMountedRef.current || requestId !== requestIdRef.current) return;
-
-      console.warn("Failed to load user profile", error);
-      resetProfileState();
-      lastLoadedProfileKeyRef.current = null;
-    } finally {
-      if (isMountedRef.current && requestId === requestIdRef.current) {
+  const fetchUserData = useCallback(
+    async (options?: { hydrateCache?: boolean }) => {
+      if (!userId) {
+        requestIdRef.current += 1;
+        lastLoadedProfileKeyRef.current = null;
+        resetProfileState();
+        setHasCachedProfile(false);
+        setCacheState("none");
+        setIsRefreshing(false);
         setIsLoading(false);
+        return;
       }
-    }
-  }, [currentUserId, hasLoadedCurrentUserId, resetProfileState, userId]);
+
+      if (!hasLoadedCurrentUserId) return;
+
+      const requestId = ++requestIdRef.current;
+      const profileKey = getProfileKey(userId, currentUserId);
+      const shouldShowInitialLoading =
+        lastLoadedProfileKeyRef.current !== profileKey;
+      let cachedProfile: CachedUserProfilePayload | null = null;
+      let didHydrateCache = false;
+
+      if (shouldShowInitialLoading) {
+        resetProfileState();
+        setHasCachedProfile(false);
+        setCacheState("none");
+        setIsRefreshing(false);
+        setIsLoading(true);
+      } else {
+        setIsRefreshing(true);
+      }
+
+      if (options?.hydrateCache !== false) {
+        const cachedResult = await getCachedUserProfile(userId);
+
+        if (
+          !isMountedRef.current ||
+          requestId !== requestIdRef.current ||
+          activeProfileKeyRef.current !== profileKey
+        ) {
+          return;
+        }
+
+        if (cachedResult) {
+          cachedProfile = cachedResult.profile;
+          didHydrateCache = true;
+          applyDisplayProfile(cachedResult.profile);
+          setHasCachedProfile(true);
+          setCacheState(cachedResult.cacheState);
+          setIsLoading(false);
+          setIsRefreshing(true);
+          lastLoadedProfileKeyRef.current = profileKey;
+        }
+      }
+
+      try {
+        const { data } = await apiClient.get<UserProfileResponse>(
+          `api/users/id/${userId}`,
+          {
+            params:
+              currentUserId === null
+                ? undefined
+                : {
+                    currentUserId,
+                  },
+          },
+        );
+
+        if (
+          !isMountedRef.current ||
+          requestId !== requestIdRef.current ||
+          activeProfileKeyRef.current !== profileKey
+        ) {
+          return;
+        }
+
+        const freshProfile = normalizeDisplayProfile(data, userId);
+        const displayProfile =
+          cachedProfile &&
+          shouldPreferCachedDisplay(cachedProfile, freshProfile)
+            ? cachedProfile
+            : freshProfile;
+
+        applyDisplayProfile(displayProfile);
+        setFollowersCount(parseCount(data.followersCount));
+        setFollowingCount(parseCount(data.followingCount));
+        setIsFollowing(
+          typeof data.isFollowing === "boolean" ? data.isFollowing : false,
+        );
+        setHasCachedProfile(true);
+        if (displayProfile !== cachedProfile) {
+          setCacheState("fresh");
+        }
+        lastLoadedProfileKeyRef.current = profileKey;
+
+        await setCachedUserProfile(
+          userId,
+          buildCachedProfilePayload(freshProfile),
+        );
+      } catch (error) {
+        if (
+          !isMountedRef.current ||
+          requestId !== requestIdRef.current ||
+          activeProfileKeyRef.current !== profileKey
+        ) {
+          return;
+        }
+
+        console.warn("Failed to load user profile", error);
+
+        if (shouldShowInitialLoading && !didHydrateCache) {
+          resetProfileState();
+          setHasCachedProfile(false);
+          setCacheState("none");
+          lastLoadedProfileKeyRef.current = null;
+        }
+      } finally {
+        if (
+          isMountedRef.current &&
+          requestId === requestIdRef.current &&
+          activeProfileKeyRef.current === profileKey
+        ) {
+          setIsLoading(false);
+          setIsRefreshing(false);
+        }
+      }
+    },
+    [
+      applyDisplayProfile,
+      currentUserId,
+      hasLoadedCurrentUserId,
+      resetProfileState,
+      userId,
+    ],
+  );
 
   useEffect(() => {
     if (!userId) {
       requestIdRef.current += 1;
       lastLoadedProfileKeyRef.current = null;
       resetProfileState();
+      setHasCachedProfile(false);
+      setCacheState("none");
+      setIsRefreshing(false);
       setIsLoading(false);
       return;
     }
@@ -314,6 +518,7 @@ export function useUserProfile(userId?: string) {
         followerId: currentUserId,
         followeeId: userId,
       });
+      await fetchUserData({ hydrateCache: false });
     } catch (error) {
       console.warn("Failed to toggle follow", error);
       if (isMountedRef.current) {
@@ -326,7 +531,7 @@ export function useUserProfile(userId?: string) {
         setFollowLoading(false);
       }
     }
-  }, [currentUserId, followersCount, isFollowing, userId]);
+  }, [currentUserId, fetchUserData, followersCount, isFollowing, userId]);
 
   const favoriteTeamsWithLeague = useMemo(
     () =>
@@ -346,8 +551,16 @@ export function useUserProfile(userId?: string) {
     [favorites],
   );
 
+  const refreshProfile = useCallback(
+    () => fetchUserData({ hydrateCache: false }),
+    [fetchUserData],
+  );
+
   return {
     isLoading,
+    isRefreshing,
+    hasCachedProfile,
+    cacheState,
     username,
     fullName,
     bio,
@@ -363,6 +576,7 @@ export function useUserProfile(userId?: string) {
 
     // Actions
     toggleFollow,
+    refreshProfile,
     fetchUserData,
   };
 }

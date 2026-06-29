@@ -51,13 +51,10 @@ export default function PlayerDetailScreen() {
     error: gameError,
   } = useTeamLatestGame(league, teamId);
 
-  const {
-    seasonStats,
-    seasonStatsFlattened,
-    careerStatsFlattened,
-    loading: seasonsLoading,
-    error: seasonsError,
-  } = usePlayerSeasons(playerId, isWCBB);
+  const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
+    playerId,
+    league,
+  );
 
   // -------------------------
   // Header
@@ -93,11 +90,10 @@ export default function PlayerDetailScreen() {
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader player={player} isDark={isDark} isWNBA={isWNBA} />
-
       <SeasonStatCard
-        seasonStats={seasonStats}
-        loading={loading}
-        error={error}
+        season={seasons}
+        loading={seasonsLoading}
+        error={seasonsError}
       />
 
       <LatestGame
@@ -112,12 +108,10 @@ export default function PlayerDetailScreen() {
       />
 
       <PlayerStatTable
-        seasonStatsFlattened={seasonStatsFlattened}
-        careerStatsFlattened={careerStatsFlattened}
+        seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
-        isDark={isDark}
-        isWNBA={isWNBA}
+        league={league}
       />
     </ScrollView>
   );

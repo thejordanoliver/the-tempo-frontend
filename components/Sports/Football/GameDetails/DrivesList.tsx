@@ -1,10 +1,7 @@
 import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Colors, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
-import {
-  getTeamByESPNId as getNFLTeamByESPNId,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
+import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
+import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
 import { FlatList, Image, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
@@ -72,7 +69,7 @@ export default function DrivesList({
 
             const team =
               league === "cfb"
-                ? getTeamByESPNId(teamId)
+                ? getCFBTeamByESPNId(teamId)
                 : getNFLTeamByESPNId(teamId);
             const isLast = index === drives.length - 1;
             const logo = isNFL

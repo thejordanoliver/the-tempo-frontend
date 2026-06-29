@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/styles";
+import { Colors, activeOpacity } from "@/constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
@@ -41,7 +41,7 @@ export default function NewsCard({ content, isDark }: NewsCardProps) {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={activeOpacity}>
       <View style={styles.card}>
         {thumbnail && (
           <Image source={{ uri: thumbnail }} style={styles.thumbnail} />

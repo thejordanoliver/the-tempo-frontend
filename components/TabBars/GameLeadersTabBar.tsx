@@ -1,22 +1,25 @@
-import { Fonts } from "constants/styles";
+import { Colors } from "constants/styles";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
   Pressable,
+  StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   View,
+  ViewStyle,
   useColorScheme,
 } from "react-native";
+
 export interface FixedWidthTabBarProps<T extends string> {
   tabs: readonly T[];
   selected: T;
   onTabPress: (tab: T) => void;
   renderLabel?: (tab: T, isSelected: boolean) => React.ReactNode;
-  containerStyle?: object;
+  containerStyle?: StyleProp<ViewStyle>;
   tabWidth?: number;
-  lighter?: boolean;
 }
 
 export default function GameLeadersTabBar<T extends string>({
@@ -26,39 +29,30 @@ export default function GameLeadersTabBar<T extends string>({
   renderLabel,
   tabWidth: fixedTabWidth,
   containerStyle,
-  lighter = false,
 }: FixedWidthTabBarProps<T>) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
   const underlineX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const defaultLabelStyle = (isSelected: boolean, isDark: boolean) => ({
-    fontSize: 14,
-    fontFamily: isSelected ? Fonts.OSBOLD : Fonts.OSREGULAR,
-    color: lighter
-      ? "#fff"
-      : isSelected
-        ? isDark
-          ? "#fff"
-          : "#1d1d1d"
-        : isDark
-          ? "#888"
-          : "rgba(0,0,0,0.5)",
-  });
+  const styles = gameLeadersTabBarStyles(isDark);
+
+  const safeTabCount = tabs.length || 1;
+  const tabWidth = fixedTabWidth ?? containerWidth / safeTabCount;
+  const totalWidth = tabWidth * tabs.length;
 
   const onLayout = (event: LayoutChangeEvent) => {
     const width = event.nativeEvent.layout.width;
     setContainerWidth(width);
   };
 
-  const tabWidth = fixedTabWidth ?? containerWidth / tabs.length;
-  const totalWidth = tabWidth * tabs.length;
-
   useEffect(() => {
-    const index = tabs.indexOf(selected);
+    const selectedIndex = tabs.indexOf(selected);
+    const safeIndex = selectedIndex >= 0 ? selectedIndex : 0;
+
     Animated.timing(underlineX, {
-      toValue: index * tabWidth,
+      toValue: safeIndex * tabWidth,
       duration: 200,
       useNativeDriver: false,
     }).start();
@@ -75,6 +69,7 @@ export default function GameLeadersTabBar<T extends string>({
     >
       {tabs.map((tab) => {
         const isSelected = selected === tab;
+
         return (
           <Pressable
             key={tab}
@@ -91,31 +86,54 @@ export default function GameLeadersTabBar<T extends string>({
           </Pressable>
         );
       })}
+
       <Animated.View
-        style={{
-          width: tabWidth,
-          transform: [{ translateX: underlineX }],
-          height: 2,
-          backgroundColor: lighter ? "#fff" : isDark ? "#fff" : "#1d1d1d",
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          borderRadius: 50,
-        }}
+        style={[
+          styles.underline,
+          {
+            width: tabWidth,
+            transform: [{ translateX: underlineX }],
+          },
+        ]}
       />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  tabs: {
-    flexDirection: "row",
-    position: "relative",
-    marginBottom: 10,
-    alignSelf: "center", // ✅ center the entire bar
-  },
-  tabPressable: {
-    alignItems: "center",
-    paddingVertical: 10,
-  },
+const gameLeadersTabBarStyles = (isDark: boolean) => {
+  return StyleSheet.create({
+    tabs: {
+      flexDirection: "row",
+      position: "relative",
+      marginBottom: 10,
+      alignSelf: "center",
+    },
+    tabPressable: {
+      alignItems: "center",
+      paddingVertical: 10,
+    },
+    underline: {
+      height: 2,
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      borderRadius: 50,
+    },
+  });
+};
+
+const defaultLabelStyle = (
+  isSelected: boolean,
+  isDark: boolean,
+): StyleProp<TextStyle> => ({
+  color: isSelected
+    ? isDark
+      ? Colors.white
+      : Colors.black
+    : isDark
+      ? Colors.lightGray
+      : Colors.darkGray,
+  fontSize: 13,
+  fontWeight: isSelected ? "700" : "500",
 });

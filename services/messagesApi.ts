@@ -3,8 +3,10 @@ import {
   DirectMessageItem,
   MessageAttachment,
   MessageItem,
+  MessageThemePreference,
   SendDirectMessagePayload,
 } from "types/messages";
+import { normalizeMessageThemePreference } from "utils/messageTheme";
 
 type RawRecord = Record<string, any>;
 
@@ -42,6 +44,70 @@ const getFirstObject = (payload: any, keys: string[]) => {
   return payload.data && typeof payload.data === "object"
     ? payload.data
     : payload;
+};
+
+const getRawThemePreference = (
+  raw: RawRecord = {},
+  currentUserId?: number | string | null,
+) => {
+  const directPreference =
+    raw.messageThemePreference ??
+    raw.message_theme_preference ??
+    raw.themePreference ??
+    raw.theme_preference;
+
+  if (directPreference) return directPreference;
+
+  const directMember =
+    raw.currentUserMember ??
+    raw.current_user_member ??
+    raw.member ??
+    raw.membership ??
+    raw.conversationMember ??
+    raw.conversation_member;
+
+  const getMemberPreference = (member?: RawRecord | null) =>
+    member?.messageThemePreference ??
+    member?.message_theme_preference ??
+    member?.themePreference ??
+    member?.theme_preference;
+
+  const directMemberPreference = getMemberPreference(directMember);
+
+  if (directMemberPreference) return directMemberPreference;
+
+  const rawMembers =
+    raw.members ??
+    raw.conversationMembers ??
+    raw.conversation_members ??
+    raw.participants ??
+    raw.users;
+
+  if (!Array.isArray(rawMembers)) return null;
+
+  const currentMember =
+    rawMembers.find((member) =>
+      Boolean(
+        member?.isCurrentUser ??
+          member?.is_current_user ??
+          member?.currentUser ??
+          member?.current_user,
+      ),
+    ) ??
+    rawMembers.find((member) => {
+      if (currentUserId == null) return false;
+
+      const memberUserId =
+        member?.userId ??
+        member?.user_id ??
+        member?.profileId ??
+        member?.profile_id ??
+        member?.user?.id;
+
+      return String(memberUserId) === String(currentUserId);
+    });
+
+  return getMemberPreference(currentMember);
 };
 
 const formatTimestamp = (value?: string | number | Date | null) => {
@@ -92,7 +158,10 @@ const normalizeAttachment = (
   };
 };
 
-export const normalizeConversation = (raw: RawRecord = {}): MessageItem => {
+export const normalizeConversation = (
+  raw: RawRecord = {},
+  currentUserId?: number | string | null,
+): MessageItem => {
   const participant = raw.participant ?? raw.user ?? raw.recipient ?? {};
   const lastMessage = raw.lastMessage;
 
@@ -141,6 +210,9 @@ export const normalizeConversation = (raw: RawRecord = {}): MessageItem => {
     unreadCount: Number(raw.unreadCount ?? raw.unread_count ?? 0),
     lastMessageAt: raw.lastMessageAt ?? lastMessage?.createdAt,
     updatedAt: raw.updatedAt,
+    messageThemePreference: normalizeMessageThemePreference(
+      getRawThemePreference(raw, currentUserId),
+    ),
   };
 };
 
@@ -188,6 +260,7 @@ export const getConversations = async (
 
 export const getConversation = async (
   conversationId: string,
+  currentUserId?: number | string | null,
 ): Promise<MessageItem | null> => {
   const response = await apiClient.get(
     `/api/messages/conversations/${conversationId}`,
@@ -197,7 +270,7 @@ export const getConversation = async (
 
   if (!rawConversation) return null;
 
-  return normalizeConversation(rawConversation as RawRecord);
+  return normalizeConversation(rawConversation as RawRecord, currentUserId);
 };
 
 export const createConversation = async (
@@ -254,6 +327,28 @@ export const sendMessageRest = async (
 
 export const markConversationRead = async (conversationId: string) => {
   await apiClient.patch(`/api/messages/conversations/${conversationId}/read`);
+};
+
+export const updateConversationThemePreference = async (
+  conversationId: string,
+  preference: MessageThemePreference,
+): Promise<MessageThemePreference> => {
+  const normalizedPreference = normalizeMessageThemePreference(preference);
+  const response = await apiClient.patch(
+    `/api/messages/conversations/${conversationId}/theme`,
+    { messageThemePreference: normalizedPreference },
+  );
+  const responseData = response.data?.data ?? response.data;
+
+  const rawPreference =
+    responseData?.messageThemePreference ??
+    responseData?.message_theme_preference ??
+    responseData?.themePreference ??
+    responseData?.theme_preference ??
+    getRawThemePreference(responseData) ??
+    (responseData?.mode ? responseData : null);
+
+  return normalizeMessageThemePreference(rawPreference ?? normalizedPreference);
 };
 
 export const pinConversation = async (

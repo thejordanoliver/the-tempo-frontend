@@ -226,7 +226,7 @@ export default function UFCEventSelector({
           return (
             <TouchableOpacity
               key={getUFCEventKey(event)}
-              activeOpacity={0.75}
+              activeOpacity={activeOpacity}
               onPress={() => handleSelectEvent(index)}
               style={styles.label}
             >

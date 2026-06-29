@@ -1,5 +1,6 @@
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import GamesList from "@/components/Sports/NBA/Games/GamesList";
+import RosterStats from "@/components/Sports/NBA/Team/RosterStats";
 import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
@@ -13,7 +14,6 @@ import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Sports/NBA/Team/Roster";
-import RosterStats from "components/Sports/NBA/Team/RosterStats";
 import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
@@ -106,7 +106,7 @@ export default function TeamDetailScreen() {
     loading: rosterStatsLoading,
     error: rosterStatsError,
     refetch,
-  } = useRosterStats(teamIdNum);
+  } = useRosterStats(teamIdNum, league);
 
   const {
     teamStats,
@@ -345,6 +345,7 @@ export default function TeamDetailScreen() {
             error={rosterStatsError || teamStatsError}
             refreshing={refreshingStats}
             onRefresh={refetch}
+            league={league}
           />
         </View>
 

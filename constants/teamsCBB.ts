@@ -8276,7 +8276,7 @@ export const getCBBTeam = (
 };
 
 export const getCBBTeamByESPNId = (espnId: number | string) => {
-  return cbbTeams.find((t) => String(t.espnId) === String(espnId))!;
+  return cbbTeams.find((t) => String(t.espnId) === String(espnId));
 };
 
 export const getCBBTeamLogo = (

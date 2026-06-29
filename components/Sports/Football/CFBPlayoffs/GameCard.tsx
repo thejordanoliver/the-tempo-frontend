@@ -1,7 +1,7 @@
 import { BracketGame, BracketTeam } from "@/types/football/football";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
-import { getCFBTeamLogo, getTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image, StyleSheet, Text, View } from "react-native";
 
@@ -56,7 +56,7 @@ export function GameCard({
       : null;
 
   const renderTeamRow = (team: BracketTeam, dimmed = false) => {
-    const teamId = getTeamByESPNId(team.id);
+    const teamId = getCFBTeamByESPNId(team.id);
     const teamLogo = getCFBTeamLogo(teamId.id ?? 0, isDark);
 
     const recordScore = showScore ? (

@@ -1,8 +1,8 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
-import { usePreferences } from "contexts/PreferencesContext";
 
 type Props = {
   rows?: number;

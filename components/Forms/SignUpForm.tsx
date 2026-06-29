@@ -170,7 +170,6 @@ export default function SignUpForm({
                     }
                     style={styles.inputText}
                     placeholderTextColor={Colors.midTone}
-                    
                   />
                 </View>
               </View>

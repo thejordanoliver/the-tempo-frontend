@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import { centerInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 
 type CenterInfoProps = {
   broadcast: string;
@@ -20,9 +20,9 @@ export default function CenterInfo({
   time,
   date,
 }: CenterInfoProps) {
-  const styles = CenterInfoStyles;
-
+  const styles = centerInfoStyles;
   const isScheduled = gameStatusDescription === "Scheduled";
+  const isPreFight = gameStatusDescription === "Pre-fight";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -43,22 +43,23 @@ export default function CenterInfo({
         </View>
       )}
 
-      {inWalkouts && (
-        <View>
-          <Text style={styles.date}>Walkouts</Text>
-        </View>
-      )}
-
-      {isIntros && (
-        <View>
-          <Text style={styles.date}>Intros</Text>
+      {(isPreFight ||
+        inWalkouts ||
+        isIntros ||
+        inWalkouts ||
+        isDelayed ||
+        isCanceled ||
+        isPostponed ||
+        isForfeited) && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         </View>
       )}
 
       {inProgress && (
         <View>
           <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{period}</Text>
+            <Text style={styles.period}>{period}</Text>
             <View style={styles.statusDivider} />
             <Text style={styles.clock}>{clock}</Text>
           </View>
@@ -67,7 +68,7 @@ export default function CenterInfo({
 
       {isEndOfRound && (
         <View>
-          <Text style={styles.date}>End of {period}</Text>
+          <Text style={styles.finalText}>End of {period}</Text>
         </View>
       )}
 
@@ -78,43 +79,7 @@ export default function CenterInfo({
           <Text style={styles.finalText}>{date}</Text>
         </View>
       )}
-
-      {isCanceled && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDescription}</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Delayed */}
-      {isDelayed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Forfeited */}
-      {isForfeited && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Forfeited</Text>
-        </View>
-      )}
-
-      {/* 📺 Broadcast */}
-      {(broadcast && inProgress) ||
-        (isScheduled && <Text style={styles.broadcast}>{broadcast}</Text>)}
+      {broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
     </View>
   );
 }

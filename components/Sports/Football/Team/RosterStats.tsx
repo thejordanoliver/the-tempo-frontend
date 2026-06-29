@@ -16,7 +16,7 @@ import {
   TeamStats,
 } from "@/types/football/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -704,7 +704,8 @@ export default function RosterStats({
     [roster],
   );
 
-  const route = league === "NFL" ? "/player/nfl/[id]" : "/player/cfb/[id]";
+  const route =
+    league === "NFL" ? "/player/football/[id]" : "/player/football/[id]";
   const handlePress = (player: FootballRosterStatsPlayer) => {
     const id = player.playerId || player.player_id || player.id;
 
@@ -771,7 +772,7 @@ export default function RosterStats({
   ) => (
     <View key={leader.label} style={styles.cardWrapper}>
       <TouchableOpacity
-        activeOpacity={0.75}
+        activeOpacity={activeOpacity}
         onPress={() => handlePress(leader.player)}
         style={styles.cardContainer}
       >
@@ -829,7 +830,7 @@ export default function RosterStats({
               ]}
             >
               <TouchableOpacity
-                activeOpacity={0.75}
+                activeOpacity={activeOpacity}
                 onPress={() => handlePress(player)}
                 style={[styles.tableCell, { width: 140 }]}
               >

@@ -57,37 +57,40 @@ function usePulseOnOccupy(occupied: boolean) {
 
 // ─── PulsingBase ─────────────────────────────────────────────────────────────
 
-const PulsingBase = memo(
-  function PulsingBase({
-    occupied,
-    size,
-    colorOccupied,
-    colorEmpty,
-    tx,
-    ty,
-  }: PulsingBaseProps) {
-    const scale = usePulseOnOccupy(occupied);
+const PulsingBase = memo(function PulsingBase({
+  occupied,
+  size,
+  colorOccupied,
+  colorEmpty,
+  tx,
+  ty,
+}: PulsingBaseProps) {
+  const scale = usePulseOnOccupy(occupied);
 
-    return (
-      <Animated.View
-        style={[
-          styles.baseContainer,
-          {
-            width: size,
-            height: size,
-            transform: [{ translateX: tx }, { translateY: ty }, { rotate: "45deg" }, { scale }],
-          },
-        ]}
-      >
-        <Ionicons
-          name={occupied ? "square" : "square-outline"}
-          size={size}
-          color={occupied ? colorOccupied : colorEmpty}
-        />
-      </Animated.View>
-    );
-  }
-);
+  return (
+    <Animated.View
+      style={[
+        styles.baseContainer,
+        {
+          width: size,
+          height: size,
+          transform: [
+            { translateX: tx },
+            { translateY: ty },
+            { rotate: "45deg" },
+            { scale },
+          ],
+        },
+      ]}
+    >
+      <Ionicons
+        name={occupied ? "square" : "square-outline"}
+        size={size}
+        color={occupied ? colorOccupied : colorEmpty}
+      />
+    </Animated.View>
+  );
+});
 
 // ─── BasesIndicator ──────────────────────────────────────────────────────────
 
@@ -108,7 +111,7 @@ export const BasesIndicator: React.FC<BasesIndicatorProps> = ({
   isDark,
   size = 12,
 }) => {
-  const radius = size * .7; // distance between centre of 2B and centre of 1B/3B row
+  const radius = size * 0.7; // distance between centre of 2B and centre of 1B/3B row
 
   // Container dims — tight fit around all three bases with no extra space
   const containerW = radius * 2 + size;
@@ -116,7 +119,6 @@ export const BasesIndicator: React.FC<BasesIndicatorProps> = ({
 
   const colorOccupied = isDark ? Colors.dark.limeGreen : Colors.light.green;
   const colorEmpty = isDark ? Colors.lightGray : Colors.darkGray;
-
 
   return (
     <View style={[styles.container, { width: containerW, height: containerH }]}>

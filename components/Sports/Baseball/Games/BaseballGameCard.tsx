@@ -1,6 +1,6 @@
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
@@ -219,9 +219,11 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
 
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && !isPostponed && !isCanceled && !isForfeited && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
 
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
@@ -244,7 +246,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

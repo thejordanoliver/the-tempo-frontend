@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const CenterInfoStyles = StyleSheet.create({
+export const centerInfoStyles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",

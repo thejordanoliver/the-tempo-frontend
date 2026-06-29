@@ -25,6 +25,7 @@ export function GameInfo({
   const styles = gameInfoStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
+  const isPreFight = gameStatusDescription === "Pre-fight";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -45,18 +46,18 @@ export function GameInfo({
         </View>
       )}
 
-      {inWalkouts && (
-        <View>
-          <Text style={styles.date}>Walkouts</Text>
+      {(isPreFight ||
+        inWalkouts ||
+        isIntros ||
+        inWalkouts ||
+        isDelayed ||
+        isCanceled ||
+        isPostponed ||
+        isForfeited) && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDescription}</Text>
         </View>
       )}
-
-      {isIntros && (
-        <View>
-          <Text style={styles.date}>Intros</Text>
-        </View>
-      )}
-
       {inProgress && (
         <View>
           <View style={styles.infoWrapper}>
@@ -69,7 +70,7 @@ export function GameInfo({
 
       {isEndOfRound && (
         <View>
-          <Text style={styles.date}>End of {period}</Text>
+          <Text style={styles.finalText}>End of {period}</Text>
         </View>
       )}
 
@@ -81,42 +82,7 @@ export function GameInfo({
         </View>
       )}
 
-      {isCanceled && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDescription}</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-      {/* ⏸️ Postponed */}
-      {isPostponed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Postponed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Delayed */}
-      {isDelayed && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Delayed</Text>
-        </View>
-      )}
-
-      {/* ⏸️ Forfeited */}
-      {isForfeited && (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>Forfeited</Text>
-        </View>
-      )}
-
-      {/* 📺 Broadcast */}
-      {(broadcast && inProgress) ||
-        (isScheduled && <Text style={styles.broadcasts}>{broadcast}</Text>)}
+      {broadcast && <Text style={styles.broadcasts}>{broadcast}</Text>}
     </View>
   );
 }

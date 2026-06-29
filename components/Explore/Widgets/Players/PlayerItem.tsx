@@ -29,7 +29,7 @@ export type PlayerWidgetProps = {
   height?: number;
   width?: number;
   isLast?: boolean;
-  visible?: boolean; 
+  visible?: boolean;
 };
 
 export default function PlayerItem({

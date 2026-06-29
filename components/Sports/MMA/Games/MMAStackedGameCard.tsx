@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -225,7 +225,7 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

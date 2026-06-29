@@ -5,6 +5,19 @@ export type MessageAttachment = {
   uri: string;
 };
 
+export type MessageThemePreference = {
+  mode: "default" | "favorite_team" | "manual";
+  league: string | null;
+  teamId: string | number | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+};
+
+export type MessageAccent = {
+  primary: string;
+  secondary: string;
+};
+
 export type MessageItem = {
   id: string;
   userId?: number | string;
@@ -21,6 +34,7 @@ export type MessageItem = {
   unreadCount: number;
   lastMessageAt?: string;
   updatedAt?: string;
+  messageThemePreference?: MessageThemePreference;
 };
 
 export type DirectMessageItem = {

@@ -1,7 +1,7 @@
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { getHolidayLabel } from "@/utils/dateUtils";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -199,7 +199,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

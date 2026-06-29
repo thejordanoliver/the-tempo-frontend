@@ -998,7 +998,7 @@ const ExpandToggle = memo(function ExpandToggle({
 }) {
   return (
     <TouchableOpacity
-      activeOpacity={0.85}
+      activeOpacity={activeOpacity}
       onPress={onPress}
       style={styles.showMoreLessButton}
     >

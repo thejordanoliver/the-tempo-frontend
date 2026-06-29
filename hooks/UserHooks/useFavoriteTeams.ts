@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import type { LeagueType, Team } from "types/types";
 import { apiClient } from "utils/apiClient";
+import { removeCachedUserProfile } from "utils/userProfileCache";
 
 export type TeamWithLeague = Team & { league: LeagueType };
 
@@ -171,6 +172,7 @@ export function useFavoriteTeams() {
           .then(() => {
             apiClient
               .patch(`/api/users/id/${userId}/favorites`, { favorites: next })
+              .then(() => removeCachedUserProfile(String(userId)))
               .catch((err) => console.warn("❌ Sync error on toggle:", err));
           })
           .catch((err) => console.error("Failed to persist favorites", err));
@@ -219,6 +221,7 @@ export function useFavoriteTeams() {
         getFavoritesStorageKey(userId),
         JSON.stringify(normalizedFavorites),
       );
+      await removeCachedUserProfile(String(userId));
 
       return true;
     } catch (err: any) {
@@ -248,6 +251,7 @@ export function useFavoriteTeams() {
         await apiClient.patch(`/api/users/id/${userId}/favorites`, {
           favorites: orderedIds,
         });
+        await removeCachedUserProfile(String(userId));
         console.log("✅ Favorites synced.");
       } catch (err) {
         console.warn("❌ Sync error:", err);
@@ -319,6 +323,7 @@ export function useFavoriteTeams() {
           await apiClient.patch(`/api/users/id/${userId}/favorites`, {
             favorites: updatedFavorites,
           });
+          await removeCachedUserProfile(String(userId));
           console.log("✅ Favorites synced after remove.");
         } catch (err: any) {
           console.error(

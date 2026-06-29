@@ -102,6 +102,7 @@ export default function ResultItemRow({
     const headshot = player.headshot_url ?? playerPlaceholderImage;
     const playerName = player.full_name;
     const teamId = player.team_id ?? null;
+  
     const team =
       teamId && player.isNBA
         ? getNBATeam(teamId)

@@ -1,15 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import { Post } from "components/Forum/PostItem";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated as RNAnimated,
-  Easing as RNEasing,
   Image,
   PixelRatio,
+  Animated as RNAnimated,
+  Easing as RNEasing,
   Text,
   TextInput,
   TouchableOpacity,
@@ -106,7 +106,7 @@ const CommentSubmenu = ({
       ]}
     >
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onEdit}
       >
@@ -124,7 +124,7 @@ const CommentSubmenu = ({
       <View style={styles.submenuSeparator} />
 
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={styles.submenuItem}
         onPress={onDelete}
       >
@@ -281,10 +281,7 @@ export const CommentItem = ({
 
   return (
     <View
-      style={[
-        styles.container,
-        submenuVisible && styles.containerMenuOpen,
-      ]}
+      style={[styles.container, submenuVisible && styles.containerMenuOpen]}
     >
       <View style={[styles.commentContainer, isLast && styles.lastContainer]}>
         <View style={styles.userRow}>
@@ -332,7 +329,7 @@ export const CommentItem = ({
               />
 
               <TouchableOpacity
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={toggleSubmenu}
                 style={[
                   styles.menuButton,
@@ -366,7 +363,7 @@ export const CommentItem = ({
 
             <View style={styles.editActionsContainer}>
               <TouchableOpacity
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={handleCancelEdit}
                 style={styles.editButton}
               >
@@ -379,7 +376,7 @@ export const CommentItem = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={handleSaveEdit}
                 style={styles.editButton}
               >
@@ -409,7 +406,7 @@ export const CommentItem = ({
                   </Reanimated.View>
 
                   <TouchableOpacity
-                    activeOpacity={0.75}
+                    activeOpacity={activeOpacity}
                     onPress={() => setTextExpanded((prev) => !prev)}
                     style={styles.expandButton}
                   >

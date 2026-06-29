@@ -26,100 +26,131 @@ type TeamWithLeague = {
   isDark: boolean;
 };
 
-type TeamRoute =
-  | "/team/[teamId]"
-  | "/team/wnba/[teamId]"
-  | "/team/nfl/[teamId]"
-  | "/team/cfb/[teamId]"
-  | "/team/cbb/[teamId]"
-  | "/team/wcbb/[teamId]"
-  | "/team/mlb/[teamId]"
-  | "/team/nhl/[teamId]"
-  | "/player/mma/[id]";
+const getFavoriteTeamLogo = (item: TeamWithLeague) => {
+  const teamId = Number(item.id);
 
-// -------------------------
-// Render item
-// -------------------------
+  switch (item.league) {
+    case "NFL":
+      return getNFLTeamLogo(teamId, true);
+    case "NBA":
+      return getTeamLogo(teamId, true);
+    case "WNBA":
+      return getWNBATeamLogo(teamId, true);
+    case "CFB":
+      return getCFBTeamLogo(teamId, true);
+    case "CBB":
+      return getCBBTeamLogo(teamId, true, false);
+    case "WCBB":
+      return getCBBTeamLogo(teamId, true, true);
+    case "NHL":
+      return getNHLTeamLogo(teamId, true);
+    case "MLB":
+    case "CB":
+    case "SB":
+      return getMLBTeamLogo(teamId, true);
+    default:
+      return item.logo ?? null;
+  }
+};
+
+const isCollegeLeague = (league: LeagueType) => {
+  return league === "CFB" || league === "CBB" || league === "WCBB";
+};
+
 export const TeamTab = ({
   item,
   drag,
   isActive,
 }: RenderItemParams<TeamWithLeague>) => {
-  let logo;
-
-  switch (item.league) {
-    case "NFL":
-      logo = getNFLTeamLogo(Number(item.id), true);
-      break;
-    case "NBA":
-      logo = getTeamLogo(Number(item.id), true);
-      break;
-    case "WNBA":
-      logo = getWNBATeamLogo(Number(item.id), true);
-      break;
-    case "CFB":
-      logo = getCFBTeamLogo(Number(item.id), true);
-      break;
-    case "CBB":
-      logo = getCBBTeamLogo(Number(item.id), true, false);
-      break;
-    case "WCBB":
-      logo = getCBBTeamLogo(Number(item.id), true, true);
-      break;
-    case "NHL":
-      logo = getNHLTeamLogo(Number(item.id), true);
-      break;
-    case "MLB":
-      logo = getMLBTeamLogo(Number(item.id), true);
-      break;
-    default:
-      logo = null;
-  }
-
   const router = useRouter();
-  const styles = favoritesScrollStyles(item.isDark); // ✅ use item.isDark
-  const isCollege =
-    item.league === "CFB" || item.league === "CBB" || item.league === "WCBB";
+  const styles = favoritesScrollStyles(item.isDark);
+
+  const logo = getFavoriteTeamLogo(item);
+  const isCollege = isCollegeLeague(item.league);
+  const teamId = String(item.id);
+
+  const handlePress = async () => {
+    await Haptics.selectionAsync();
+
+    switch (item.league) {
+      case "NBA":
+        router.push({
+          pathname: "/team/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "WNBA":
+        router.push({
+          pathname: "/team/wnba/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "NFL":
+        router.push({
+          pathname: "/team/nfl/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "CFB":
+        router.push({
+          pathname: "/team/cfb/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "CBB":
+        router.push({
+          pathname: "/team/cbb/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "WCBB":
+        router.push({
+          pathname: "/team/wcbb/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "MLB":
+      case "CB":
+      case "SB":
+        router.push({
+          pathname: "/team/mlb/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      case "NHL":
+        router.push({
+          pathname: "/team/nhl/[teamId]",
+          params: { teamId },
+        });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const handleLongPress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    drag();
+  };
+
   return (
     <Pressable
-      onLongPress={async () => {
-        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-        drag();
-      }}
       key={item.key}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
       style={({ pressed }) => [
         styles.teamIcon,
         pressed && { opacity: 0.6 },
         isActive && { opacity: 0.8, transform: [{ scale: 1.05 }] },
       ]}
-      onPress={async () => {
-        await Haptics.selectionAsync();
-
-        const routeMap: Partial<Record<LeagueType, TeamRoute>> = {
-          NBA: "/team/[teamId]",
-          WNBA: "/team/wnba/[teamId]",
-          NFL: "/team/nfl/[teamId]",
-          CFB: "/team/cfb/[teamId]",
-          CBB: "/team/cbb/[teamId]",
-          WCBB: "/team/wcbb/[teamId]",
-          CB: "/team/mlb/[teamId]",
-          SB: "/team/mlb/[teamId]",
-          MLB: "/team/mlb/[teamId]",
-          NHL: "/team/nhl/[teamId]",
-          MMA: "/player/mma/[id]",
-        };
-
-        const pathname = routeMap[item.league];
-
-        if (!pathname) return;
-
-        if (pathname === "/player/mma/[id]") {
-          router.push({ pathname, params: { id: String(item.id) } });
-          return;
-        }
-
-        router.push({ pathname, params: { teamId: String(item.id) } });
-      }}
     >
       <View
         style={[
@@ -131,17 +162,14 @@ export const TeamTab = ({
           },
         ]}
       >
-        <Image
-          source={logo}
-          style={styles.logo}
-          contentFit="contain"
-        />
+        <Image source={logo} style={styles.logo} contentFit="contain" />
       </View>
 
       <View style={styles.teamLabelContainer}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={styles.teamLabel}>
           {item.name}
         </Text>
+
         {isCollege && (
           <>
             <View style={styles.divider} />

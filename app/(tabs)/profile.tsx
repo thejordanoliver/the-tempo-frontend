@@ -1,5 +1,9 @@
 // profile.tsx
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation, useRouter } from "expo-router";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
@@ -17,14 +21,27 @@ import { nhlTeams } from "../../constants/teamsNHL";
 import { wnbaTeams } from "../../constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "../../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import { useNavigation, useRouter } from "expo-router";
 import { useAuth } from "../../hooks/UserHooks/useAuth";
 import { useProfile } from "../../hooks/UserHooks/useProfile";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import { useFollowersStore } from "../../store/followersStore";
+import { useProfileRefreshStore } from "../../store/profileRefreshStore";
 import { useSettingsModalStore } from "../../store/settingsModalStore";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
+
+type CachedUser = {
+  id?: number;
+  username?: string;
+  fullName?: string;
+  profileImage?: string;
+};
+
+const normalizeCachedString = (value?: string | null) => {
+  const trimmed = value?.trim() ?? "";
+
+  if (trimmed === "null" || trimmed === "undefined") return "";
+
+  return trimmed;
+};
 
 export default function ProfileScreen() {
   const { favorites, loadFavorites, clearFavorites } =
@@ -45,9 +62,11 @@ export default function ProfileScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);
-
+  const { shouldRefreshProfile, clearProfileRefresh } =
+    useProfileRefreshStore();
   const {
     isLoading,
     currentUserId,
@@ -88,8 +107,14 @@ export default function ProfileScreen() {
     try {
       hasLoadedProfileRef.current = false;
       lastLoadedUserIdRef.current = null;
+      setCachedUser(null);
       clearFavorites();
       resetProfile();
+      try {
+        await AsyncStorage.removeItem("authUser");
+      } catch (error) {
+        console.warn("Failed to clear cached auth user:", error);
+      }
       await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
@@ -98,69 +123,112 @@ export default function ProfileScreen() {
     }
   };
 
-useFocusEffect(
-  useCallback(() => {
-    let isActive = true;
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
 
-    const initialize = async () => {
-      // Always reload profile on focus so edits from EditProfileScreen
-      // immediately update banner, avatar, name, and bio after router.back().
-      const loadedUserId = await loadProfile();
+      const initialize = async () => {
+        try {
+          const storedUser = await AsyncStorage.getItem("authUser");
 
-      if (!isActive) return;
+          if (storedUser && isActive) {
+            const parsedUser = JSON.parse(storedUser) as CachedUser | null;
 
-      const activeUserId = loadedUserId ?? currentUserId;
+            setCachedUser({
+              id: parsedUser?.id,
+              username: normalizeCachedString(parsedUser?.username),
+              fullName: normalizeCachedString(parsedUser?.fullName),
+              profileImage: normalizeCachedString(parsedUser?.profileImage),
+            });
+          } else if (isActive) {
+            setCachedUser(null);
+          }
+        } catch {
+          try {
+            await AsyncStorage.removeItem("authUser");
+          } catch (error) {
+            console.warn("Failed to clear invalid cached auth user:", error);
+          }
 
-      hasLoadedProfileRef.current = Boolean(activeUserId);
+          if (isActive) {
+            setCachedUser(null);
+          }
+        }
+        let loadedUserId = currentUserId;
 
-      if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
-        await loadFavorites(activeUserId);
+        const shouldLoadProfile =
+          !hasLoadedProfileRef.current || shouldRefreshProfile;
+
+        if (shouldLoadProfile) {
+          loadedUserId = await loadProfile();
+
+          if (shouldRefreshProfile) {
+            clearProfileRefresh();
+          }
+        }
 
         if (!isActive) return;
 
-        lastLoadedUserIdRef.current = activeUserId;
-      }
+        const activeUserId = loadedUserId ?? currentUserId;
 
-      if (shouldRestore && targetUserId) {
-        clearRestore();
-        openModal(
-          type,
-          targetUserId,
-          activeUserId ? String(activeUserId) : undefined,
-        );
-      }
+        hasLoadedProfileRef.current = Boolean(activeUserId);
 
-      if (showOnReturn) {
-        setShowSettingsModal(true);
-        setShowOnReturn(false);
-      }
-    };
+        if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
+          await loadFavorites(activeUserId);
 
-    initialize();
+          if (!isActive) return;
 
-    return () => {
-      isActive = false;
-    };
-  }, [
-    currentUserId,
-    loadProfile,
-    loadFavorites,
-    shouldRestore,
-    targetUserId,
-    type,
-    openModal,
-    clearRestore,
-    showOnReturn,
-    setShowSettingsModal,
-    setShowOnReturn,
-  ]),
-);
+          lastLoadedUserIdRef.current = activeUserId;
+        }
+
+        if (shouldRestore && targetUserId) {
+          clearRestore();
+          openModal(
+            type,
+            targetUserId,
+            activeUserId ? String(activeUserId) : undefined,
+          );
+        }
+
+        if (showOnReturn) {
+          setShowSettingsModal(true);
+          setShowOnReturn(false);
+        }
+      };
+
+      initialize();
+
+      return () => {
+        isActive = false;
+      };
+    }, [
+      currentUserId,
+      loadProfile,
+      loadFavorites,
+      shouldRestore,
+      targetUserId,
+      type,
+      openModal,
+      clearRestore,
+      showOnReturn,
+      setShowSettingsModal,
+      setShowOnReturn,
+      shouldRefreshProfile,
+      clearProfileRefresh,
+    ]),
+  );
 
   useLayoutEffect(() => {
+    const safeUsername =
+      normalizeCachedString(username) ||
+      normalizeCachedString(cachedUser?.username);
+    const headerTitle = safeUsername ? `@${safeUsername}` : "Profile";
+    const messageUserId = currentUserId ?? cachedUser?.id;
+
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          title={`@${username}`}
+          title={headerTitle}
           tabName="Profile"
           onLogout={() => setShowSignOutModal(true)}
           onSettings={() => router.push("/settings")}
@@ -168,18 +236,26 @@ useFocusEffect(
             router.push({
               pathname: "/messages",
               params: {
-                userId: currentUserId ? String(currentUserId) : "",
-                username: username ?? "",
-                fullName: fullName ?? "",
-                profileImage: profileImage ?? "",
+                userId: messageUserId ? String(messageUserId) : "",
+                username: username ?? cachedUser?.username ?? "",
+                fullName: fullName ?? cachedUser?.fullName ?? "",
+                profileImage: profileImage ?? cachedUser?.profileImage ?? "",
               },
             })
           }
         />
       ),
     });
-  }, [navigation, router, username, currentUserId, fullName, profileImage]);
-  
+  }, [
+    navigation,
+    router,
+    username,
+    cachedUser,
+    currentUserId,
+    fullName,
+    profileImage,
+  ]);
+
   const favoriteTeamsWithLeague = useMemo(
     () =>
       favorites

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
@@ -236,9 +236,11 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal && !isPostponed && !isCanceled && !isForfeited && broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+        {!isFinal &&
+          !isPostponed &&
+          !isCanceled &&
+          !isForfeited &&
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
     </>
   );
@@ -247,7 +249,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

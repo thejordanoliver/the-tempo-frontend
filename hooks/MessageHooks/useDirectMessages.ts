@@ -6,6 +6,7 @@ import {
   normalizeConversation,
   normalizeMessage,
   sendMessageRest,
+  updateConversationThemePreference,
 } from "services/messagesApi";
 import {
   emitConversationRead,
@@ -17,9 +18,14 @@ import {
 import {
   DirectMessageItem,
   MessageItem,
+  MessageThemePreference,
   SendDirectMessagePayload,
 } from "types/messages";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  DEFAULT_MESSAGE_THEME_PREFERENCE,
+  resolveMessageAccent,
+} from "utils/messageTheme";
 
 const createClientId = () =>
   `dm-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -59,19 +65,29 @@ const getSocketAckMessage = (response: any) =>
   response?.message ?? response?.data?.message ?? response?.data ?? response;
 
 export const useDirectMessages = (conversationId: string) => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const [conversation, setConversation] = useState<MessageItem | null>(null);
   const [messages, setMessages] = useState<DirectMessageItem[]>([]);
+  const [messageThemePreference, setMessageThemePreference] =
+    useState<MessageThemePreference>(DEFAULT_MESSAGE_THEME_PREFERENCE);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [
+    isUpdatingMessageThemePreference,
+    setIsUpdatingMessageThemePreference,
+  ] = useState(false);
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
 
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingRef = useRef(false);
 
   const socket = useMemo(() => getMessagesSocket(token), [token]);
+  const messageAccent = useMemo(
+    () => resolveMessageAccent(messageThemePreference),
+    [messageThemePreference],
+  );
 
   const markRead = useCallback(async () => {
     if (!conversationId) return;
@@ -94,11 +110,15 @@ export const useDirectMessages = (conversationId: string) => {
     try {
       const [nextMessages, nextConversation] = await Promise.all([
         getMessages(conversationId),
-        getConversation(conversationId),
+        getConversation(conversationId, user?.id),
       ]);
 
       setMessages(nextMessages);
       setConversation(nextConversation);
+      setMessageThemePreference(
+        nextConversation?.messageThemePreference ??
+          DEFAULT_MESSAGE_THEME_PREFERENCE,
+      );
       await markRead();
     } catch (err: any) {
       setError(
@@ -109,7 +129,7 @@ export const useDirectMessages = (conversationId: string) => {
     } finally {
       setIsLoading(false);
     }
-  }, [conversationId, markRead]);
+  }, [conversationId, markRead, user?.id]);
 
   const refresh = useCallback(() => {
     loadMessages();
@@ -237,6 +257,38 @@ export const useDirectMessages = (conversationId: string) => {
     [conversationId, socket?.connected, stopTyping],
   );
 
+  const updateMessageThemePreference = useCallback(
+    async (nextPreference: MessageThemePreference) => {
+      if (!conversationId) {
+        throw new Error("Conversation is not available.");
+      }
+
+      setIsUpdatingMessageThemePreference(true);
+
+      try {
+        const savedPreference = await updateConversationThemePreference(
+          conversationId,
+          nextPreference,
+        );
+
+        setMessageThemePreference(savedPreference);
+        setConversation((current) =>
+          current
+            ? {
+                ...current,
+                messageThemePreference: savedPreference,
+              }
+            : current,
+        );
+
+        return savedPreference;
+      } finally {
+        setIsUpdatingMessageThemePreference(false);
+      }
+    },
+    [conversationId],
+  );
+
   useEffect(() => {
     loadMessages();
   }, [loadMessages]);
@@ -279,10 +331,14 @@ export const useDirectMessages = (conversationId: string) => {
 
     const handleConversationUpdate = (payload: any) => {
       const rawConversation = payload?.conversation ?? payload;
-      const nextConversation = normalizeConversation(rawConversation);
+      const nextConversation = normalizeConversation(rawConversation, user?.id);
 
       if (nextConversation.id === conversationId) {
         setConversation(nextConversation);
+        setMessageThemePreference(
+          nextConversation.messageThemePreference ??
+            DEFAULT_MESSAGE_THEME_PREFERENCE,
+        );
       }
     };
 
@@ -316,7 +372,7 @@ export const useDirectMessages = (conversationId: string) => {
       socket.off("conversation:update", handleConversationUpdate);
       socket.off("presence:update", handlePresenceUpdate);
     };
-  }, [conversation?.userId, conversationId, markRead, socket]);
+  }, [conversation?.userId, conversationId, markRead, socket, user?.id]);
 
   useEffect(() => {
     return () => {
@@ -331,6 +387,10 @@ export const useDirectMessages = (conversationId: string) => {
   return {
     conversation,
     messages,
+    messageThemePreference,
+    messageAccent,
+    updateMessageThemePreference,
+    isUpdatingMessageThemePreference,
     isLoading,
     error,
     sendError,

@@ -2,6 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { create } from "axios";
 import { router } from "expo-router";
+import { USER_PROFILE_CACHE_KEY_PREFIX } from "utils/userProfileCache";
 
 export const BASE_URL =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
@@ -54,6 +55,7 @@ const AUTH_SESSION_STORAGE_KEYS = [
 const AUTH_SESSION_STORAGE_KEY_PREFIXES = [
   "favoriteTeams:",
   "@view_mode_preference_",
+  USER_PROFILE_CACHE_KEY_PREFIX,
 ];
 
 export const clearAuthSession = async (userId?: number | string | null) => {

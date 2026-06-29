@@ -138,6 +138,13 @@ export default function BaseballGamePreviewModal({
   const injuries = details?.injuries ?? [];
   const outs = game?.situation.outs;
 
+  const homeHits = game?.home.hits;
+  const homeErrors = game?.home.errors;
+  const awayHits = game?.away.hits;
+  const awayErrors = game?.away.errors;
+  const homeRuns = game?.home.score;
+  const awayRuns = game?.away.score;
+
   const bases = {
     onFirst: score?.bases.onFirst ?? false,
     onSecond: score?.bases.onSecond ?? false,
@@ -173,6 +180,7 @@ export default function BaseballGamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -277,6 +285,12 @@ export default function BaseballGamePreviewModal({
                   homeChance={homeChance}
                   awayChance={awayChance}
                   lineScore={lineScore}
+                  homeHits={homeHits}
+                  awayHits={awayHits}
+                  homeRuns={homeRuns}
+                  awayRuns={awayRuns}
+                  awayErrors={awayErrors}
+                  homeErrors={homeErrors}
                   injuries={injuries}
                   weather={weather}
                   venueImage={venueImage}

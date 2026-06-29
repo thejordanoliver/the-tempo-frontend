@@ -1,6 +1,6 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getCBBTeamLogo, getCBBTeamByESPNId } from "constants/teamsCBB";
+import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -182,14 +182,20 @@ export const CBBConferenceStandingsList = ({
   }) => {
     const espnId = item.teamId;
     const team = getCBBTeamByESPNId(espnId ?? 0);
-    const teamId = team.id;
-    const teamLogo = espnId ? getCBBTeamLogo(Number(teamId), isDark) : null;
+    const teamId = team?.id;
+    const teamLogo =
+      espnId && teamId != null ? getCBBTeamLogo(Number(teamId), isDark) : null;
     const teamCode = item.abbreviation || "-";
-    const favorited = teamId ? isFavorite("CBB", String(teamId)) : false;
+    const favorited =
+      teamId != null ? isFavorite("CBB", String(teamId)) : false;
 
     const handleTeamPress = () => {
-      if (!espnId) return;
-      router.push(`/team/cfb/${teamId}`);
+      if (teamId == null) return;
+
+      router.push({
+        pathname: "/team/cbb/[teamId]",
+        params: { teamId: String(teamId) },
+      });
     };
 
     return (
@@ -211,7 +217,11 @@ export const CBBConferenceStandingsList = ({
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
 
-        <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
+        <TouchableOpacity
+          disabled={teamId == null}
+          onPress={handleTeamPress}
+          style={styles.teamInfo}
+        >
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
 
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
@@ -231,8 +241,9 @@ export const CBBConferenceStandingsList = ({
   }) => {
     const espnId = item.teamId;
     const team = getCBBTeamByESPNId(espnId ?? 0);
-    const teamId = team.id;
-    const favorited = teamId ? isFavorite("CBB", String(teamId)) : false;
+    const teamId = team?.id;
+    const favorited =
+      teamId != null ? isFavorite("CBB", String(teamId)) : false;
     const streakText = getStreakText(item.streak);
 
     const streakColor = streakText.startsWith("W")

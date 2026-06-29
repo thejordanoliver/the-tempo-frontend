@@ -10,7 +10,6 @@ type Props = {
   season?: PlayerSeason[];
   loading: boolean;
   error: string | null;
-  selectedSeason?: string;
 };
 
 function toNumber(value?: number | string | null) {
@@ -52,12 +51,7 @@ function StatItem({
   );
 }
 
-export default function SeasonStatCard({
-  season = [],
-  loading,
-  error,
-  selectedSeason,
-}: Props) {
+export default function SeasonStatCard({ season = [], loading, error }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);

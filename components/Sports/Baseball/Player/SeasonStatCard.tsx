@@ -56,7 +56,8 @@ export default function SeasonStatCard({ playerId, season }: Props) {
       )) ||
     seasons[0]; // most recent season
 
-  const displayYear = selectedSeason.displaySeason ?? String(selectedSeason.season);
+  const displayYear =
+    selectedSeason.displaySeason ?? String(selectedSeason.season);
 
   /* ------------------------------
      DERIVED PER-GAME STATS

@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import { centerInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 type CenterInfoProps = {
   broadcast?: string;
   period: string | number;
@@ -21,7 +21,7 @@ export function CenterInfo({
   gameStatusDescription,
   gameStatusShortDescription,
 }: CenterInfoProps) {
-  const styles = CenterInfoStyles;
+  const styles = centerInfoStyles;
 
   const isFinal = state === "post";
   const inProgress = state === "in";

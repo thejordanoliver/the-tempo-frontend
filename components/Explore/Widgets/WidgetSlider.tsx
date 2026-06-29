@@ -1,7 +1,7 @@
 import { FootballGame } from "@/types/football/football";
 import { Ionicons } from "@expo/vector-icons";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -102,7 +102,7 @@ export function WidgetEditControls({
             {availableSizeOptions.map((size) => (
               <TouchableOpacity
                 key={size}
-                activeOpacity={0.85}
+                activeOpacity={activeOpacity}
                 onPress={() => onResizeWidget(widgetId, size)}
                 style={[
                   styles.sizeButton,
@@ -127,7 +127,7 @@ export function WidgetEditControls({
 
         {onRemoveWidget && (
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             onPress={() => onRemoveWidget(widgetId)}
             style={styles.removeButton}
             hitSlop={4}

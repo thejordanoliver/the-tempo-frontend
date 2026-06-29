@@ -10,7 +10,7 @@ import {
   getWidgetSizeOptions,
   isGameWidgetType,
 } from "constants/exploreWidgets";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { useExploreWidgetGames } from "hooks/WidgetHooks/useExploreWidgetGames";
 import type { ReactNode } from "react";
 import { useMemo, useRef, useState } from "react";
@@ -32,10 +32,7 @@ import {
   ExploreWidgetSize,
   ExploreWidgetType,
 } from "types/widgets";
-import {
-  buildWidgetRows,
-  DashboardWidgetRow,
-} from "utils/exploreWidgetLayout";
+import { buildWidgetRows, DashboardWidgetRow } from "utils/exploreWidgetLayout";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
 import NewsWidget from "./Widgets/NewsWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
@@ -126,10 +123,7 @@ function DraggableWidgetFrame({
             dragOffsetRef.current = gestureState.dy;
           }
 
-          if (
-            delta >= WIDGET_FRAME_DRAG_THRESHOLD &&
-            canMoveDownRef.current
-          ) {
+          if (delta >= WIDGET_FRAME_DRAG_THRESHOLD && canMoveDownRef.current) {
             onMoveWidgetRef.current(widgetId, 1);
             dragOffsetRef.current = gestureState.dy;
           }
@@ -182,10 +176,7 @@ export default function ExploreWidgetDashboard({
     [selectedWidgets],
   );
   const selectedGameWidgetTypes = useMemo(
-    () =>
-      visibleWidgets
-        .map((widget) => widget.type)
-        .filter(isGameWidgetType),
+    () => visibleWidgets.map((widget) => widget.type).filter(isGameWidgetType),
     [visibleWidgets],
   );
   const {
@@ -310,7 +301,7 @@ export default function ExploreWidgetDashboard({
         Add game cards, team shortcuts, news, leaders, and standings.
       </Text>
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         onPress={onAddWidget}
         style={dashboardStyles.cta}
         accessibilityRole="button"
@@ -511,7 +502,7 @@ export default function ExploreWidgetDashboard({
     <>
       <View style={dashboardStyles.toolbar}>
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           onPress={onAddWidget}
           style={dashboardStyles.toolbarButton}
           accessibilityRole="button"
@@ -526,14 +517,16 @@ export default function ExploreWidgetDashboard({
         </TouchableOpacity>
 
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           onPress={() => setIsEditMode((current) => !current)}
           style={[
             dashboardStyles.toolbarButton,
             isEditMode && dashboardStyles.toolbarButtonSelected,
           ]}
           accessibilityRole="button"
-          accessibilityLabel={isEditMode ? "Finish editing widgets" : "Edit widgets"}
+          accessibilityLabel={
+            isEditMode ? "Finish editing widgets" : "Edit widgets"
+          }
         >
           <Ionicons
             name={isEditMode ? "checkmark" : "create-outline"}
@@ -561,7 +554,7 @@ export default function ExploreWidgetDashboard({
 
       {error && hasSelectedGameWidget && (
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           onPress={refresh}
           style={dashboardStyles.errorCard}
           accessibilityRole="button"

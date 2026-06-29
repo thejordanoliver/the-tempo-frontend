@@ -1,7 +1,7 @@
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
 import { globalStyles } from "constants/styles";
-import { getNFLTeamLogo, getTeamByESPNId } from "constants/teamsNFL";
+import { getNFLTeamLogo, getNFLTeamByESPNId } from "constants/teamsNFL";
 import { useEffect, useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
@@ -175,7 +175,7 @@ export default function TeamInjuries({
           isDark={isDark}
           onTabPress={setSelected}
           renderLabel={(tabId, isSelected, tabStyles) => {
-            const team = getTeamByESPNId(tabId);
+            const team = getNFLTeamByESPNId(tabId);
             const teamCode = team?.code;
             const logo = getNFLTeamLogo(Number(team?.id), isDark);
 

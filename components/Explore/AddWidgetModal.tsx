@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import {
   EXPLORE_WIDGET_OPTIONS,
   getDefaultWidgetSize,
 } from "constants/exploreWidgets";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
+import { BlurView } from "expo-blur";
 import {
   Modal,
   Pressable,
@@ -68,7 +68,7 @@ export default function AddWidgetModal({
             </View>
 
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={onClose}
               style={styles.closeButton}
               accessibilityRole="button"
@@ -116,16 +116,14 @@ export default function AddWidgetModal({
                       )}
                     </View>
 
-                    <Text style={styles.description}>
-                      {option.description}
-                    </Text>
+                    <Text style={styles.description}>{option.description}</Text>
 
                     {sizes.length > 1 && !isSelected && (
                       <View style={styles.sizeRow}>
                         {sizes.map((size) => (
                           <TouchableOpacity
                             key={size}
-                            activeOpacity={0.85}
+                            activeOpacity={activeOpacity}
                             onPress={() =>
                               onAddWidget(option.type, option.title, size)
                             }
@@ -153,7 +151,7 @@ export default function AddWidgetModal({
                       />
                     ) : (
                       <TouchableOpacity
-                        activeOpacity={0.85}
+                        activeOpacity={activeOpacity}
                         onPress={() =>
                           onAddWidget(option.type, option.title, defaultSize)
                         }

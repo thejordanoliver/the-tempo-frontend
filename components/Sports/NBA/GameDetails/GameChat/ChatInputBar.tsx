@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
@@ -108,7 +108,7 @@ function ChatInputBar({
           <TouchableOpacity
             onPress={handleRemoveGif}
             style={styles.previewCloseButton}
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             hitSlop={8}
           >
             <Ionicons name="close-circle" size={22} color={Colors.white} />
@@ -120,7 +120,7 @@ function ChatInputBar({
         <TouchableOpacity
           onPress={handleOpenGifPicker}
           style={styles.iconButton}
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           disabled={disabled || isSending}
           hitSlop={8}
         >
@@ -157,7 +157,7 @@ function ChatInputBar({
           onPress={handleSend}
           style={[styles.sendButton, sendDisabled && styles.sendButtonDisabled]}
           disabled={sendDisabled}
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           hitSlop={8}
         >
           <Ionicons

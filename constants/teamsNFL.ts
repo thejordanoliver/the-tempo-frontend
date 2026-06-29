@@ -679,6 +679,6 @@ export function getNFLTeamLogo(
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export const getTeamByESPNId = (espnId: number | string) => {
+export const getNFLTeamByESPNId = (espnId: number | string) => {
   return nflTeams.find((t) => t.espnId?.toString() === espnId?.toString());
 };

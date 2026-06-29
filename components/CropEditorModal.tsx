@@ -154,16 +154,18 @@ const calculateCropRect = (
   // centered in that viewport, scaled around its center, then translated by
   // offset. This inverts that exact visual transform back into source pixels.
   const sourceX =
-    (displayedImageSize.width / 2 -
-      (cropSize.width / 2 + offset.x) / scale) *
+    (displayedImageSize.width / 2 - (cropSize.width / 2 + offset.x) / scale) *
     imagePixelsPerScreenX;
   const sourceY =
-    (displayedImageSize.height / 2 -
-      (cropSize.height / 2 + offset.y) / scale) *
+    (displayedImageSize.height / 2 - (cropSize.height / 2 + offset.y) / scale) *
     imagePixelsPerScreenY;
 
   return {
-    originX: clamp(Math.round(sourceX), 0, Math.max(0, imageSize.width - width)),
+    originX: clamp(
+      Math.round(sourceX),
+      0,
+      Math.max(0, imageSize.width - width),
+    ),
     originY: clamp(
       Math.round(sourceY),
       0,
@@ -226,7 +228,9 @@ export default function CropEditorModal({
   );
 
   const isImageReady =
-    !!imageSize && displayedImageSize.width > 0 && displayedImageSize.height > 0;
+    !!imageSize &&
+    displayedImageSize.width > 0 &&
+    displayedImageSize.height > 0;
   const canSave = isImageReady && !isCropping;
 
   const clampOffset = useCallback(
@@ -352,13 +356,7 @@ export default function CropEditorModal({
         onPanResponderRelease: finishGesture,
         onPanResponderTerminate: finishGesture,
       }),
-    [
-      animatedOffset,
-      animatedScale,
-      clampOffset,
-      finishGesture,
-      isImageReady,
-    ],
+    [animatedOffset, animatedScale, clampOffset, finishGesture, isImageReady],
   );
 
   const handleCrop = useCallback(async () => {

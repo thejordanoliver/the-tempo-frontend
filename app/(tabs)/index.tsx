@@ -2,7 +2,6 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
 import LeagueGamesList from "../../components/League/LeagueGamesList";
@@ -17,8 +16,7 @@ export default function HomeScreen() {
   const { resolvedColorScheme, viewMode } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
-  const styles = homeStyles(isDark, insets.top);
+  const styles = homeStyles(isDark);
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
     "scores",

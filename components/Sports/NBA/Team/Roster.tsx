@@ -56,7 +56,7 @@ export default function Roster({
           return (
             <PlayerCard
               key={player.id}
-              id={league === "NBA" ? player.player_id : player.id}
+              id={player.id}
               name={player.full_name}
               position={player.position}
               headshot={player.headshot_url}

@@ -120,18 +120,20 @@ export default function Roster({
           tintColor={tintColor}
         />
       }
-      renderItem={({ item }) => (
+      renderItem={({ item }) => {
+      
+        return (
         <PlayerCard
           key={item.id}
-          id={item.player_id}
+          id={item.id}
           name={item.full_name}
           position={item.position}
           headshot={item.headshot_url}
           number={item.jersey_number}
           teamId={item.team_id}
           league={league}
-        />
-      )}
+        />)
+      }}
       renderSectionHeader={({ section: { title } }) => (
         <HeadingTwo isDark={isDark}>{title}</HeadingTwo>
       )}

@@ -25,7 +25,7 @@ export const CANVAS_HEIGHT = 840;
 
 export const nflPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
-       container: {
+    container: {
       paddingHorizontal: 12,
     },
     canvas: {

@@ -1,12 +1,13 @@
+import { activeOpacity } from "@/constants/styles";
 import {
   CBBTeamRank,
   useCBBRankings,
 } from "@/hooks/BasketballHooks/useCBBRankings";
 import { getTeamByESPNId as getNBATeamByESPNId } from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
-import { getTeamByESPNId as getCFBTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamByESPNId } from "constants/teamsCFB";
 import { getMLBTeamByEspnId } from "constants/teamsMLB";
-import { getTeamByESPNId as getNFLTeamByESPNId } from "constants/teamsNFL";
+import { getNFLTeamByESPNId } from "constants/teamsNFL";
 import { getNHLTeamByEspnId } from "constants/teamsNHL";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import {
@@ -769,7 +770,7 @@ export default function StandingsWidget({
           return (
             <TouchableOpacity
               key={league}
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={() => handleLeaguePress(league)}
               style={[styles.chip, selected && styles.selectedChip]}
               hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}

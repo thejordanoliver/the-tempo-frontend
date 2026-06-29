@@ -5444,7 +5444,7 @@ export function getCFBTeamLogo(id: number | string, isDark: boolean) {
   return isDark ? team.logoLight || team.logo : team.logo;
 }
 
-export const getTeamByESPNId = (espnId: number | string) => {
+export const getCFBTeamByESPNId = (espnId: number | string) => {
   return cfbTeams.find((t) => t.espnId.toString() === espnId.toString())!;
 };
 

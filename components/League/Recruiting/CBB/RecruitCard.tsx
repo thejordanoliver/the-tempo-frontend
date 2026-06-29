@@ -1,7 +1,7 @@
 // components/CFB/RecruitCard.tsx
 
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -268,7 +268,7 @@ export default function RecruitCard({ recruit, index }: Props) {
   return (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         onPress={() =>
           router.push({
             pathname: "/recruit/cbb/[id]",

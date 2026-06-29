@@ -225,7 +225,7 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       <View style={styles.card}>{renderCardContent()}</View>
     </TouchableOpacity>
   );

@@ -1,17 +1,17 @@
+import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LatestGame from "components/Sports/NBA/Player/LatestGame";
 import PlayerAwardList from "components/Sports/NBA/Player/PlayerAwardList";
-import PlayerStatTable from "components/Sports/NBA/Player/PlayerStatTable";
 import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { usePlayerSeasons } from "hooks/NBAHooks/usePlayerSeasons";
 import { useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
@@ -33,7 +33,10 @@ export default function PlayerDetailScreen() {
   const team = teamId ? getNBATeam(teamId) : null;
   const teamLogo = getTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
-  const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(playerId);
+  const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
+    playerId,
+    league,
+  );
 
   const {
     game,
@@ -96,7 +99,7 @@ export default function PlayerDetailScreen() {
         seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
-        
+        league={league}
       />
 
       <PlayerAwardList player={player} />

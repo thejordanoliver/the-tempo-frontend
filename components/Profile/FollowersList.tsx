@@ -5,10 +5,12 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { User } from "hooks/UserHooks/useFollowers";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
+import FollowerListSkeleton from "../Skeletons/Profile/FollowerListSkeleton";
 import FollowingButton from "./ModalFollowingButton";
 
 type Props = {
   users: User[];
+  loading: boolean;
   loadingIds: string[];
   currentUserId: string;
   onUserPress: (id: string) => void;
@@ -18,6 +20,7 @@ type Props = {
 
 export default function FollowersList({
   users,
+  loading,
   loadingIds,
   currentUserId,
   onUserPress,
@@ -29,6 +32,8 @@ export default function FollowersList({
   const styles = followersListStyles(isDark);
   const global = globalStyles(isDark);
 
+  if (loading) return <FollowerListSkeleton />;
+
   if (!users || users.length === 0) {
     return <Text style={global.emptyText}>No users found.</Text>;
   }
@@ -39,10 +44,9 @@ export default function FollowersList({
 
   const renderItem = ({ item }: { item: User }) => {
     const profilePlaceholder =
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
+      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
     const profileImage = item.profile_image;
     const isCurrentUser = item.id.toString() === currentUserId;
-   
 
     return (
       <View style={styles.itemRow}>
@@ -53,7 +57,7 @@ export default function FollowersList({
           >
             <View style={styles.avatarContainer}>
               <Image
-                source={{ uri: profileImage ?? profilePlaceholder }}
+                source={{ uri: profileImage || profilePlaceholder }}
                 style={styles.avatar}
               />
             </View>

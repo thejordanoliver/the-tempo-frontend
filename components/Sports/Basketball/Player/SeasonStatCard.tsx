@@ -1,63 +1,125 @@
-import { PlayerSeasonStat } from "@/hooks/BasketballHooks/usePlayerSeasons";
+import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import CenteredHeader from "../../../Headings/CenteredHeader";
-
-const safeFixed = (val?: number | null) =>
-  val == null || isNaN(val) ? "0.0" : Number(val).toFixed(1);
-
+import { getNBASeason } from "utils/dateUtils";
 type Props = {
-  seasonStats: PlayerSeasonStat[];
-  loading?: boolean;
-  error?: string | null;
+  season?: PlayerSeason[];
+  loading: boolean;
+  error: string | null;
 };
 
-export default function SeasonStatCard({ seasonStats, loading, error }: Props) {
+function toNumber(value?: number | string | null) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function safeFixed(value?: number | null) {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "0.0";
+  }
+
+  return value.toFixed(1);
+}
+
+function StatItem({
+  label,
+  value,
+  isDark,
+  styles,
+}: {
+  label: string;
+  value: string;
+  isDark: boolean;
+  styles: ReturnType<typeof seasonStatCardStyles>;
+}) {
+  return (
+    <View style={styles.statItem}>
+      <Text
+        style={[
+          styles.statValue,
+          { color: isDark ? Colors.white : Colors.black },
+        ]}
+      >
+        {value}
+      </Text>
+      <Text style={styles.statLabel}>{label}</Text>
+    </View>
+  );
+}
+
+export default function SeasonStatCard({ season = [], loading, error }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
+  const currentSeason = getNBASeason();
 
-  const selectedSeason =
-    seasonStats && seasonStats.length > 0
-      ? [...seasonStats].sort((a, b) => b.season - a.season)[0]
-      : null;
+  if (loading) {
+    return <SeasonStatCardSkeleton />;
+  }
 
-  const displayYear = selectedSeason?.season
-    ? `${String(selectedSeason.season)}`
-    : "N/A";
-
-  const ppg = safeFixed(Number(selectedSeason?.averages?.avgPoints ?? 0));
-  const rpg = safeFixed(Number(selectedSeason?.averages?.avgRebounds ?? 0));
-  const apg = safeFixed(Number(selectedSeason?.averages?.avgAssists ?? 0));
-  const fg = safeFixed(Number(selectedSeason?.averages?.fieldGoalPct ?? 0));
-
-  const statColor = isDark ? Colors.white : Colors.black;
-
-  function StatItem({ label, value }: { label: string; value: string }) {
+  if (error) {
     return (
-      <View style={styles.statItem}>
-        <Text style={[styles.statValue, { color: statColor }]}>{value}</Text>
-        <Text style={styles.statLabel}>{label}</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load stats</Text>
       </View>
     );
   }
 
-  if (loading) return <SeasonStatCardSkeleton />;
-  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
+  if (!season.length) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>No season stats available</Text>
+      </View>
+    );
+  }
+
+  const seasonData =
+    season.find((item) => item.season === currentSeason) ??
+    season[season.length - 1];
+
+  if (!seasonData) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>No season stats available</Text>
+      </View>
+    );
+  }
+
+  const games = toNumber(seasonData.g);
+  const points = toNumber(seasonData.pts);
+  const assists = toNumber(seasonData.ast);
+  const rebounds = toNumber(seasonData.trb);
+  const fieldGoals = toNumber(seasonData.fg);
+  const fieldGoalAttempts = toNumber(seasonData.fga);
+
+  const ppg = games > 0 ? safeFixed(points / games) : "0.0";
+  const apg = games > 0 ? safeFixed(assists / games) : "0.0";
+  const rpg = games > 0 ? safeFixed(rebounds / games) : "0.0";
+  const fgPercent =
+    fieldGoalAttempts > 0
+      ? safeFixed((fieldGoals / fieldGoalAttempts) * 100)
+      : "0.0";
 
   return (
     <View>
-      <CenteredHeader isDark={isDark}>{displayYear} Season</CenteredHeader>
+      <CenteredHeader isDark={isDark}>{currentSeason} Season</CenteredHeader>
+
       <View style={styles.card}>
         <View style={styles.statsRow}>
-          <StatItem label="PTS" value={ppg} />
-          <StatItem label="REB" value={rpg} />
-          <StatItem label="AST" value={apg} />
-          <StatItem label="FG%" value={fg} />
+          <StatItem label="PTS" value={ppg} isDark={isDark} styles={styles} />
+          <StatItem label="AST" value={apg} isDark={isDark} styles={styles} />
+          <StatItem label="REB" value={rpg} isDark={isDark} styles={styles} />
+          <StatItem
+            label="FG%"
+            value={fgPercent}
+            isDark={isDark}
+            styles={styles}
+          />
         </View>
       </View>
     </View>

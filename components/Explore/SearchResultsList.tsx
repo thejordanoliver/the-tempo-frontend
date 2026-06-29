@@ -1,6 +1,6 @@
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
-import { globalStyles } from "constants/styles";
+import { activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import {
   FlatList,
@@ -64,7 +64,7 @@ export default function SearchResultsList({
 
   const SeeAllRow = () => (
     <TouchableOpacity
-      activeOpacity={0.85}
+      activeOpacity={activeOpacity}
       onPress={onSeeAll}
       style={styles.seeAllRow}
       accessibilityRole="button"

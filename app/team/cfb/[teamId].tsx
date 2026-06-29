@@ -200,13 +200,14 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        {/* FORUM */}
+        {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <CFBConferenceStandingsList
             onlyTeamConference={true}
             teamName={team.fullName}
           />
         </View>
+
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
           <TeamForum teamId={teamId as string} league={league} />

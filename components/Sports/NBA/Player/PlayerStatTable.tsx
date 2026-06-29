@@ -1,38 +1,77 @@
+import { getTeamByESPNId } from "@/constants/teams";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { PlayerSeason } from "hooks/NBAHooks/usePlayerSeasons";
-import { useMemo, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Season, StatValue } from "hooks/NBAHooks/usePlayerSeasons";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
-  seasons: PlayerSeason[];
+  seasons: Season[];
   loading: boolean;
   error: string | null;
 }
 
 type StatView = "totals" | "pergame" | "per36";
+type SeasonType = "regularseason" | "postseason";
 
-type CareerTotals = {
-  g: number;
-  pts: number;
-  mp: number;
-  fg: number;
-  fga: number;
-  three_p: number;
-  three_pa: number;
-  ft: number;
-  fta: number;
-  trb: number;
-  ast: number;
-  stl: number;
-  blk: number;
-  tov: number;
-  pf: number;
+type SimpleStatKey = "pts" | "trb" | "ast" | "stl" | "blk" | "tov" | "pf";
+type MadeAttemptedKey = "fg" | "three_p" | "ft";
+
+type MadeAttemptedValue = {
+  display: string | null;
+  made: number | null;
+  attempted: number | null;
 };
+
+type BoxScoreStats = Record<SimpleStatKey, number | null> &
+  Record<MadeAttemptedKey, MadeAttemptedValue>;
+
+type CareerTotals = Record<SimpleStatKey, number> & {
+  g: number;
+  mp: number;
+  fg: {
+    made: number;
+    attempted: number;
+  };
+  three_p: {
+    made: number;
+    attempted: number;
+  };
+  ft: {
+    made: number;
+    attempted: number;
+  };
+};
+
+type NormalizedSeasonRow = {
+  rowKey: string;
+  seasonNumber: number;
+  seasonSortValue: number;
+  displaySeason: string;
+  team: string;
+  seasonType: SeasonType;
+  g: number | null;
+  gs: number | null;
+  mp: number | null;
+  fg_pct: StatValue;
+  three_pct: StatValue;
+  ft_pct: StatValue;
+  totals: BoxScoreStats;
+  averages: BoxScoreStats & {
+    mp: number | null;
+  };
+};
+
+type StatCell = {
+  key: string;
+  value: string;
+};
+
+const EMPTY_STAT = "-";
 
 const STAT_OPTIONS = [
   { label: "Totals", value: "totals" },
@@ -40,19 +79,20 @@ const STAT_OPTIONS = [
   { label: "Per 36 Minutes", value: "per36" },
 ];
 
+const SEASON_TYPE_OPTIONS: { label: string; value: SeasonType }[] = [
+  { label: "Regular Season", value: "regularseason" },
+  { label: "Postseason", value: "postseason" },
+];
+
 const TABLE_HEADERS = [
-  "AGE",
   "GP",
   "MIN",
   "PTS",
-  "FG",
-  "FGA",
+  "FGM-FGA",
   "FG%",
-  "3P",
-  "3PA",
+  "3PM-3PA",
   "3P%",
-  "FT",
-  "FTA",
+  "FTM-FTA",
   "FT%",
   "REB",
   "AST",
@@ -64,16 +104,13 @@ const TABLE_HEADERS = [
 
 const NBA_STAT_GLOSSARY = [
   { abbr: "GP", label: "Games Played" },
-  { abbr: "PTS", label: "Points" },
   { abbr: "MIN", label: "Minutes Played" },
-  { abbr: "FG", label: "Field Goals Made" },
-  { abbr: "FGA", label: "Field Goals Attempted" },
+  { abbr: "PTS", label: "Points" },
+  { abbr: "FGM-FGA", label: "Field Goals Made-Attempted" },
   { abbr: "FG%", label: "Field Goal Percentage" },
-  { abbr: "3P", label: "3-Point Field Goals Made" },
-  { abbr: "3PA", label: "3-Point Field Goals Attempted" },
+  { abbr: "3PM-3PA", label: "3-Point Field Goals Made-Attempted" },
   { abbr: "3P%", label: "3-Point Percentage" },
-  { abbr: "FT", label: "Free Throws Made" },
-  { abbr: "FTA", label: "Free Throws Attempted" },
+  { abbr: "FTM-FTA", label: "Free Throws Made-Attempted" },
   { abbr: "FT%", label: "Free Throw Percentage" },
   { abbr: "REB", label: "Total Rebounds" },
   { abbr: "AST", label: "Assists" },
@@ -83,23 +120,43 @@ const NBA_STAT_GLOSSARY = [
   { abbr: "PF", label: "Personal Fouls" },
 ];
 
-const EMPTY_CAREER_TOTALS: CareerTotals = {
+const SIMPLE_STAT_KEYS: SimpleStatKey[] = [
+  "pts",
+  "trb",
+  "ast",
+  "stl",
+  "blk",
+  "tov",
+  "pf",
+];
+
+const MADE_ATTEMPTED_KEYS: MadeAttemptedKey[] = ["fg", "three_p", "ft"];
+
+const COMBINED_TEAM_CODES = new Set(["TOT", "2TM", "3TM", "4TM", "5TM"]);
+
+const createEmptyCareerTotals = (): CareerTotals => ({
   g: 0,
-  pts: 0,
   mp: 0,
-  fg: 0,
-  fga: 0,
-  three_p: 0,
-  three_pa: 0,
-  ft: 0,
-  fta: 0,
+  pts: 0,
+  fg: {
+    made: 0,
+    attempted: 0,
+  },
+  three_p: {
+    made: 0,
+    attempted: 0,
+  },
+  ft: {
+    made: 0,
+    attempted: 0,
+  },
   trb: 0,
   ast: 0,
   stl: 0,
   blk: 0,
   tov: 0,
   pf: 0,
-};
+});
 
 const chunk = <T,>(arr: T[], size: number): T[][] => {
   const out: T[][] = [];
@@ -111,55 +168,748 @@ const chunk = <T,>(arr: T[], size: number): T[][] => {
   return out;
 };
 
-const toNumber = (value?: number | string | null) => {
-  const num = Number(value);
-  return Number.isFinite(num) ? num : 0;
+const isMissing = (value: StatValue) => {
+  return value === null || value === undefined || value === "";
 };
 
-const formatNumber = (value?: number | string | null) => {
-  if (value === null || value === undefined || value === "") return "—";
-  return String(value);
+const toNumberOrNull = (value: StatValue) => {
+  if (isMissing(value)) return null;
+
+  const num = Number(String(value).replace("%", ""));
+  return Number.isFinite(num) ? num : null;
 };
 
-const perGame = (stat?: number | null, games?: number | null) => {
-  const g = toNumber(games);
-  if (g <= 0) return "0.0";
+const firstNumber = (...values: StatValue[]) => {
+  for (const value of values) {
+    const parsed = toNumberOrNull(value);
 
-  return (toNumber(stat) / g).toFixed(1);
-};
-
-const per36 = (stat?: number | null, minutes?: number | null) => {
-  const mp = toNumber(minutes);
-  if (mp <= 0) return "0.0";
-
-  return ((toNumber(stat) / mp) * 36).toFixed(1);
-};
-
-const pct = (value?: number | string | null) => {
-  const num = Number(value);
-
-  if (!Number.isFinite(num)) {
-    return "—";
+    if (parsed !== null) return parsed;
   }
 
-  return `${(num * 100).toFixed(1)}%`;
+  return null;
 };
 
-const getStatValue = (
-  statView: StatView,
-  stat?: number | null,
-  games?: number | null,
-  minutes?: number | null,
+const getSeasonNumber = (value: StatValue) => {
+  const parsed = toNumberOrNull(value);
+
+  if (parsed !== null) return parsed;
+
+  const match = String(value ?? "").match(/\d{4}/);
+  return match ? Number(match[0]) : 0;
+};
+
+const formatNumber = (value: StatValue) => {
+  const parsed = toNumberOrNull(value);
+
+  if (parsed === null) return EMPTY_STAT;
+
+  return Number.isInteger(parsed) ? String(parsed) : parsed.toFixed(1);
+};
+
+const formatOneDecimal = (value: StatValue) => {
+  const parsed = toNumberOrNull(value);
+
+  if (parsed === null) return EMPTY_STAT;
+
+  return parsed.toFixed(1);
+};
+
+const formatPercent = (value: StatValue) => {
+  const num = toNumberOrNull(value);
+
+  if (num === null) return EMPTY_STAT;
+
+  const percent = Math.abs(num) <= 1 ? num * 100 : num;
+  return `${percent.toFixed(1)}%`;
+};
+
+const parseMadeAttempted = (value: StatValue): MadeAttemptedValue => {
+  if (isMissing(value)) {
+    return {
+      display: null,
+      made: null,
+      attempted: null,
+    };
+  }
+
+  const display = String(value).trim();
+  const parts = display.split(/[-/]/);
+
+  if (parts.length >= 2) {
+    return {
+      display,
+      made: toNumberOrNull(parts[0]),
+      attempted: toNumberOrNull(parts[1]),
+    };
+  }
+
+  return {
+    display,
+    made: toNumberOrNull(value),
+    attempted: null,
+  };
+};
+
+const formatMadeAttempted = (value: MadeAttemptedValue) => {
+  if (!isMissing(value.display)) return String(value.display);
+
+  if (value.made !== null && value.attempted !== null) {
+    return `${formatNumber(value.made)}-${formatNumber(value.attempted)}`;
+  }
+
+  return EMPTY_STAT;
+};
+
+const formatMadeAttemptedFromNumbers = (
+  made: number | null | undefined,
+  attempted: number | null | undefined,
 ) => {
+  if (made === null || made === undefined) return EMPTY_STAT;
+  if (attempted === null || attempted === undefined) return EMPTY_STAT;
+
+  return `${made.toFixed(1)}-${attempted.toFixed(1)}`;
+};
+
+const ratio = (made: StatValue, attempted: StatValue) => {
+  const madeValue = toNumberOrNull(made);
+  const attemptedValue = toNumberOrNull(attempted);
+
+  if (madeValue === null || attemptedValue === null || attemptedValue <= 0) {
+    return null;
+  }
+
+  return madeValue / attemptedValue;
+};
+
+const per36 = (total: StatValue, minutes: StatValue) => {
+  const totalValue = toNumberOrNull(total);
+  const minuteValue = toNumberOrNull(minutes);
+
+  if (totalValue === null || minuteValue === null || minuteValue <= 0) {
+    return null;
+  }
+
+  return (totalValue / minuteValue) * 36;
+};
+
+const getSeasonType = (season: Season): SeasonType => {
+  const seasonType = String(season.season_type ?? "")
+    .toLowerCase()
+    .replace(/[\s_-]/g, "");
+
+  if (seasonType.includes("postseason") || seasonType.includes("playoff")) {
+    return "postseason";
+  }
+
+  if (seasonType.includes("regularseason") || seasonType.includes("regular")) {
+    return "regularseason";
+  }
+
+  const seasonTypeValue = String(season.season_type_value ?? "").trim();
+
+  if (seasonTypeValue === "3") return "postseason";
+  if (seasonTypeValue === "2") return "regularseason";
+
+  return "regularseason";
+};
+
+const getSeasonTypeLabel = (seasonType: SeasonType) => {
+  return seasonType === "postseason" ? "Postseason" : "Regular Season";
+};
+
+const filterBySeasonType = (
+  rows: NormalizedSeasonRow[],
+  seasonType: SeasonType,
+) => rows.filter((row) => row.seasonType === seasonType);
+
+const sortRows = (rows: NormalizedSeasonRow[]) => {
+  return [...rows].sort((a, b) => {
+    if (b.seasonNumber !== a.seasonNumber) {
+      return b.seasonNumber - a.seasonNumber;
+    }
+
+    return a.seasonSortValue - b.seasonSortValue;
+  });
+};
+
+const getDisplaySeason = (season: Season) => {
+  if (!isMissing(season.display_season)) return String(season.display_season);
+  if (!isMissing(season.season)) return String(season.season);
+  return EMPTY_STAT;
+};
+
+const getTeamCodeFromSeason = (season: Season) => {
+  const team = getTeamByESPNId(season.team_id ?? 0);
+
+  return team?.code ?? "";
+};
+
+const getSeasonRowSortValue = (season: Season, index: number) => {
+  const rawId = toNumberOrNull(season.id);
+
+  if (rawId !== null) return rawId;
+
+  return index;
+};
+
+const getCombinedTeamCode = (rows: NormalizedSeasonRow[]) => {
+  const codes = rows
+    .map((row) => row.team)
+    .filter(Boolean)
+    .filter((code) => !COMBINED_TEAM_CODES.has(code.toUpperCase()))
+    .filter((code, index, arr) => arr.indexOf(code) === index);
+
+  return codes.join("-");
+};
+
+const normalizeStatsRow = (
+  season: Season,
+  index: number,
+): NormalizedSeasonRow => {
+  const totals = season.totals ?? {};
+  const averages = season.averages ?? {};
+
+  const fg = parseMadeAttempted(totals["fieldGoalsMade-fieldGoalsAttempted"]);
+  const threeP = parseMadeAttempted(
+    totals["threePointFieldGoalsMade-threePointFieldGoalsAttempted"],
+  );
+  const ft = parseMadeAttempted(totals["freeThrowsMade-freeThrowsAttempted"]);
+
+  const avgFg = parseMadeAttempted(
+    averages["avgFieldGoalsMade-avgFieldGoalsAttempted"],
+  );
+  const avgThreeP = parseMadeAttempted(
+    averages["avgThreePointFieldGoalsMade-avgThreePointFieldGoalsAttempted"],
+  );
+  const avgFt = parseMadeAttempted(
+    averages["avgFreeThrowsMade-avgFreeThrowsAttempted"],
+  );
+
+  const g = firstNumber(averages.gamesPlayed, totals.gamesPlayed);
+  const avgMinutes = firstNumber(averages.avgMinutes);
+
+  const mp = firstNumber(
+    totals.minutes,
+    totals.minutesPlayed,
+    avgMinutes !== null && g !== null ? avgMinutes * g : null,
+  );
+
+  const seasonType = getSeasonType(season);
+  const seasonNumber = getSeasonNumber(season.season);
+  const teamCode = getTeamCodeFromSeason(season);
+  const seasonSortValue = getSeasonRowSortValue(season, index);
+
+  return {
+    rowKey: `${seasonNumber}-${seasonType}-${teamCode}-${season.id ?? index}`,
+    seasonNumber,
+    seasonSortValue,
+    displaySeason: getDisplaySeason(season),
+    team: teamCode,
+    seasonType,
+    g,
+    gs: firstNumber(averages.gamesStarted),
+    mp,
+    fg_pct:
+      totals.fieldGoalPct ??
+      averages.fieldGoalPct ??
+      ratio(fg.made, fg.attempted),
+    three_pct:
+      totals.threePointFieldGoalPct ??
+      averages.threePointFieldGoalPct ??
+      ratio(threeP.made, threeP.attempted),
+    ft_pct:
+      totals.freeThrowPct ??
+      averages.freeThrowPct ??
+      ratio(ft.made, ft.attempted),
+    totals: {
+      pts: firstNumber(totals.points),
+      fg,
+      three_p: threeP,
+      ft,
+      trb: firstNumber(totals.totalRebounds),
+      ast: firstNumber(totals.assists),
+      stl: firstNumber(totals.steals),
+      blk: firstNumber(totals.blocks),
+      tov: firstNumber(totals.turnovers),
+      pf: firstNumber(totals.fouls),
+    },
+    averages: {
+      mp: avgMinutes,
+      pts: firstNumber(averages.avgPoints),
+      fg: avgFg,
+      three_p: avgThreeP,
+      ft: avgFt,
+      trb: firstNumber(averages.avgRebounds),
+      ast: firstNumber(averages.avgAssists),
+      stl: firstNumber(averages.avgSteals),
+      blk: firstNumber(averages.avgBlocks),
+      tov: firstNumber(averages.avgTurnovers),
+      pf: firstNumber(averages.avgFouls),
+    },
+  };
+};
+
+const getSeasonGroupKey = (row: NormalizedSeasonRow) => {
+  return `${row.seasonNumber}-${row.seasonType}`;
+};
+
+const getSeasonGroupSortValue = (rows: NormalizedSeasonRow[]) => {
+  return rows.reduce(
+    (lowest, row) => Math.min(lowest, row.seasonSortValue),
+    Number.POSITIVE_INFINITY,
+  );
+};
+
+const sumNullableNumbers = (values: (number | null | undefined)[]) => {
+  let total = 0;
+  let hasValue = false;
+
+  values.forEach((value) => {
+    if (value === null || value === undefined) return;
+
+    total += value;
+    hasValue = true;
+  });
+
+  return hasValue ? total : null;
+};
+
+const areNumbersClose = (
+  a: number | null | undefined,
+  b: number | null | undefined,
+) => {
+  if (a === null || a === undefined || b === null || b === undefined) {
+    return false;
+  }
+
+  return Math.abs(a - b) < 0.001;
+};
+
+const isCombinedTeamCode = (team: string) => {
+  return COMBINED_TEAM_CODES.has(team.toUpperCase());
+};
+
+const isExplicitCombinedRow = (row: NormalizedSeasonRow) => {
+  return !row.team || isCombinedTeamCode(row.team);
+};
+
+const findCombinedSeasonRow = (rows: NormalizedSeasonRow[]) => {
+  const explicitCombinedRow = rows
+    .filter(isExplicitCombinedRow)
+    .sort((a, b) => (b.g ?? 0) - (a.g ?? 0))[0];
+
+  if (explicitCombinedRow) return explicitCombinedRow;
+  if (rows.length < 3) return null;
+
+  return (
+    rows.find((row, index) => {
+      if (!row.team) return false;
+
+      const otherRows = rows.filter((_, otherIndex) => otherIndex !== index);
+      const hasRepeatedTeam = otherRows.some(
+        (otherRow) => otherRow.team === row.team,
+      );
+
+      if (!hasRepeatedTeam) return false;
+
+      const otherGames = sumNullableNumbers(
+        otherRows.map((otherRow) => otherRow.g),
+      );
+      const otherPoints = sumNullableNumbers(
+        otherRows.map((otherRow) => otherRow.totals.pts),
+      );
+
+      const gamesMatch = areNumbersClose(row.g, otherGames);
+      const pointsMatch =
+        row.totals.pts === null ||
+        otherPoints === null ||
+        areNumbersClose(row.totals.pts, otherPoints);
+
+      return gamesMatch && pointsMatch;
+    }) ?? null
+  );
+};
+
+const getRowWithCombinedTeam = (
+  row: NormalizedSeasonRow,
+  rows: NormalizedSeasonRow[],
+) => {
+  const combinedTeamCode = getCombinedTeamCode(rows);
+
+  return {
+    ...row,
+    rowKey: `${getSeasonGroupKey(row)}-${combinedTeamCode || row.team || "all"}`,
+    seasonSortValue: getSeasonGroupSortValue(rows),
+    team: combinedTeamCode || row.team,
+    fg_pct: !isMissing(row.fg_pct)
+      ? row.fg_pct
+      : ratio(row.totals.fg.made, row.totals.fg.attempted),
+    three_pct: !isMissing(row.three_pct)
+      ? row.three_pct
+      : ratio(row.totals.three_p.made, row.totals.three_p.attempted),
+    ft_pct: !isMissing(row.ft_pct)
+      ? row.ft_pct
+      : ratio(row.totals.ft.made, row.totals.ft.attempted),
+  };
+};
+
+const averageNumber = (
+  total: number | null | undefined,
+  games: number | null,
+) => {
+  if (total === null || total === undefined || !games || games <= 0) {
+    return null;
+  }
+
+  return total / games;
+};
+
+const averageMadeAttempted = (
+  value: MadeAttemptedValue,
+  games: number | null,
+): MadeAttemptedValue => ({
+  display: null,
+  made: averageNumber(value.made, games),
+  attempted: averageNumber(value.attempted, games),
+});
+
+const sumMadeAttempted = (
+  rows: NormalizedSeasonRow[],
+  key: MadeAttemptedKey,
+): MadeAttemptedValue => ({
+  display: null,
+  made: sumNullableNumbers(rows.map((row) => row.totals[key].made)),
+  attempted: sumNullableNumbers(rows.map((row) => row.totals[key].attempted)),
+});
+
+const sumSimpleStat = (
+  rows: NormalizedSeasonRow[],
+  key: SimpleStatKey,
+) => {
+  return sumNullableNumbers(rows.map((row) => row.totals[key]));
+};
+
+const buildAveragesFromTotals = (
+  totals: BoxScoreStats,
+  games: number | null,
+  minutes: number | null,
+) => {
+  const averages = {
+    mp: averageNumber(minutes, games),
+  } as BoxScoreStats & { mp: number | null };
+
+  SIMPLE_STAT_KEYS.forEach((key) => {
+    averages[key] = averageNumber(totals[key], games);
+  });
+
+  MADE_ATTEMPTED_KEYS.forEach((key) => {
+    averages[key] = averageMadeAttempted(totals[key], games);
+  });
+
+  return averages;
+};
+
+const aggregateSeasonRows = (
+  rows: NormalizedSeasonRow[],
+): NormalizedSeasonRow => {
+  const firstRow = rows[0];
+  const g = sumNullableNumbers(rows.map((row) => row.g));
+  const gs = sumNullableNumbers(rows.map((row) => row.gs));
+  const mp = sumNullableNumbers(rows.map((row) => row.mp));
+
+  const totals = {
+    pts: sumSimpleStat(rows, "pts"),
+    fg: sumMadeAttempted(rows, "fg"),
+    three_p: sumMadeAttempted(rows, "three_p"),
+    ft: sumMadeAttempted(rows, "ft"),
+    trb: sumSimpleStat(rows, "trb"),
+    ast: sumSimpleStat(rows, "ast"),
+    stl: sumSimpleStat(rows, "stl"),
+    blk: sumSimpleStat(rows, "blk"),
+    tov: sumSimpleStat(rows, "tov"),
+    pf: sumSimpleStat(rows, "pf"),
+  };
+  const combinedTeamCode = getCombinedTeamCode(rows);
+
+  return {
+    rowKey: `${getSeasonGroupKey(firstRow)}-${combinedTeamCode || "all"}`,
+    seasonNumber: firstRow.seasonNumber,
+    seasonSortValue: getSeasonGroupSortValue(rows),
+    displaySeason: firstRow.displaySeason,
+    team: combinedTeamCode || firstRow.team,
+    seasonType: firstRow.seasonType,
+    g,
+    gs,
+    mp,
+    fg_pct: ratio(totals.fg.made, totals.fg.attempted),
+    three_pct: ratio(totals.three_p.made, totals.three_p.attempted),
+    ft_pct: ratio(totals.ft.made, totals.ft.attempted),
+    totals,
+    averages: buildAveragesFromTotals(totals, g, mp),
+  };
+};
+
+const collapseSplitSeasonRows = (rows: NormalizedSeasonRow[]) => {
+  const groupedRows = new Map<string, NormalizedSeasonRow[]>();
+
+  rows.forEach((row) => {
+    const groupKey = getSeasonGroupKey(row);
+    const currentRows = groupedRows.get(groupKey) ?? [];
+
+    currentRows.push(row);
+    groupedRows.set(groupKey, currentRows);
+  });
+
+  return Array.from(groupedRows.values()).map((seasonRows) => {
+    if (seasonRows.length === 1) return seasonRows[0];
+
+    const combinedRow = findCombinedSeasonRow(seasonRows);
+
+    if (combinedRow) {
+      return getRowWithCombinedTeam(combinedRow, seasonRows);
+    }
+
+    return aggregateSeasonRows(seasonRows);
+  });
+};
+
+const normalizeStatsData = (seasons: Season[]) => {
+  const rows = seasons.map(normalizeStatsRow);
+  const rowsWithCollapsedSplits = collapseSplitSeasonRows(rows);
+
+  return sortRows(rowsWithCollapsedSplits);
+};
+
+const isLastRow = (index: number, totalRows: number) => {
+  return index === totalRows - 1;
+};
+
+const isBestStat = (row: NormalizedSeasonRow, bestRowKey: string | null) => {
+  return row.rowKey === bestRowKey;
+};
+
+const calculateCareerTotals = (rows: NormalizedSeasonRow[]) => {
+  return rows.reduce<CareerTotals>((acc, row) => {
+    acc.g += row.g ?? 0;
+    acc.mp += row.mp ?? 0;
+
+    acc.pts += row.totals.pts ?? 0;
+
+    acc.fg.made += row.totals.fg.made ?? 0;
+    acc.fg.attempted += row.totals.fg.attempted ?? 0;
+
+    acc.three_p.made += row.totals.three_p.made ?? 0;
+    acc.three_p.attempted += row.totals.three_p.attempted ?? 0;
+
+    acc.ft.made += row.totals.ft.made ?? 0;
+    acc.ft.attempted += row.totals.ft.attempted ?? 0;
+
+    acc.trb += row.totals.trb ?? 0;
+    acc.ast += row.totals.ast ?? 0;
+    acc.stl += row.totals.stl ?? 0;
+    acc.blk += row.totals.blk ?? 0;
+    acc.tov += row.totals.tov ?? 0;
+    acc.pf += row.totals.pf ?? 0;
+
+    return acc;
+  }, createEmptyCareerTotals());
+};
+
+const formatRowSimpleStat = (
+  row: NormalizedSeasonRow,
+  statView: StatView,
+  key: SimpleStatKey,
+) => {
+  if (statView === "totals") {
+    return formatNumber(row.totals[key]);
+  }
+
   if (statView === "pergame") {
-    return perGame(stat, games);
+    const avgValue = row.averages[key];
+
+    if (avgValue !== null && avgValue !== undefined) {
+      return formatOneDecimal(avgValue);
+    }
+
+    const total = row.totals[key];
+    const games = row.g;
+
+    return games && games > 0
+      ? formatOneDecimal((total ?? 0) / games)
+      : EMPTY_STAT;
   }
 
-  if (statView === "per36") {
-    return per36(stat, minutes);
+  return formatOneDecimal(per36(row.totals[key], row.mp));
+};
+
+const formatRowMadeAttemptedStat = (
+  row: NormalizedSeasonRow,
+  statView: StatView,
+  key: MadeAttemptedKey,
+) => {
+  if (statView === "totals") {
+    return formatMadeAttempted(row.totals[key]);
   }
 
-  return formatNumber(stat);
+  if (statView === "pergame") {
+    const averageValue = row.averages[key];
+
+    if (!isMissing(averageValue.display)) {
+      return formatMadeAttempted(averageValue);
+    }
+
+    const games = row.g;
+    const total = row.totals[key];
+
+    if (!games || games <= 0) return EMPTY_STAT;
+
+    return formatMadeAttemptedFromNumbers(
+      total.made !== null ? total.made / games : null,
+      total.attempted !== null ? total.attempted / games : null,
+    );
+  }
+
+  const total = row.totals[key];
+
+  return formatMadeAttemptedFromNumbers(
+    per36(total.made, row.mp),
+    per36(total.attempted, row.mp),
+  );
+};
+
+const formatRowMinutes = (row: NormalizedSeasonRow, statView: StatView) => {
+  if (statView === "totals") {
+    return formatNumber(row.mp);
+  }
+
+  if (statView === "pergame") {
+    if (row.averages.mp !== null && row.averages.mp !== undefined) {
+      return formatOneDecimal(row.averages.mp);
+    }
+
+    return row.g && row.g > 0
+      ? formatOneDecimal((row.mp ?? 0) / row.g)
+      : EMPTY_STAT;
+  }
+
+  return row.mp ? "36.0" : EMPTY_STAT;
+};
+
+const formatCareerSimpleStat = (
+  career: CareerTotals,
+  statView: StatView,
+  key: SimpleStatKey,
+) => {
+  if (statView === "totals") {
+    return formatNumber(career[key]);
+  }
+
+  if (statView === "pergame") {
+    return career.g > 0 ? formatOneDecimal(career[key] / career.g) : EMPTY_STAT;
+  }
+
+  return formatOneDecimal(per36(career[key], career.mp));
+};
+
+const formatCareerMadeAttemptedStat = (
+  career: CareerTotals,
+  statView: StatView,
+  key: MadeAttemptedKey,
+) => {
+  const stat = career[key];
+
+  if (statView === "totals") {
+    return `${formatNumber(stat.made)}-${formatNumber(stat.attempted)}`;
+  }
+
+  if (statView === "pergame") {
+    if (career.g <= 0) return EMPTY_STAT;
+
+    return formatMadeAttemptedFromNumbers(
+      stat.made / career.g,
+      stat.attempted / career.g,
+    );
+  }
+
+  return formatMadeAttemptedFromNumbers(
+    per36(stat.made, career.mp),
+    per36(stat.attempted, career.mp),
+  );
+};
+
+const formatCareerMinutes = (career: CareerTotals, statView: StatView) => {
+  if (statView === "totals") {
+    return formatNumber(career.mp);
+  }
+
+  if (statView === "pergame") {
+    return career.g > 0 ? formatOneDecimal(career.mp / career.g) : EMPTY_STAT;
+  }
+
+  return career.mp > 0 ? "36.0" : EMPTY_STAT;
+};
+
+const getRowStatCells = (
+  row: NormalizedSeasonRow,
+  statView: StatView,
+): StatCell[] => {
+  return [
+    { key: "g", value: formatNumber(row.g) },
+    { key: "mp", value: formatRowMinutes(row, statView) },
+    { key: "pts", value: formatRowSimpleStat(row, statView, "pts") },
+    { key: "fg", value: formatRowMadeAttemptedStat(row, statView, "fg") },
+    { key: "fg_pct", value: formatPercent(row.fg_pct) },
+    {
+      key: "three_p",
+      value: formatRowMadeAttemptedStat(row, statView, "three_p"),
+    },
+    { key: "three_pct", value: formatPercent(row.three_pct) },
+    { key: "ft", value: formatRowMadeAttemptedStat(row, statView, "ft") },
+    { key: "ft_pct", value: formatPercent(row.ft_pct) },
+    { key: "trb", value: formatRowSimpleStat(row, statView, "trb") },
+    { key: "ast", value: formatRowSimpleStat(row, statView, "ast") },
+    { key: "stl", value: formatRowSimpleStat(row, statView, "stl") },
+    { key: "blk", value: formatRowSimpleStat(row, statView, "blk") },
+    { key: "tov", value: formatRowSimpleStat(row, statView, "tov") },
+    { key: "pf", value: formatRowSimpleStat(row, statView, "pf") },
+  ];
+};
+
+const getCareerStatCells = (
+  career: CareerTotals,
+  statView: StatView,
+): StatCell[] => {
+  return [
+    { key: "g", value: formatNumber(career.g) },
+    { key: "mp", value: formatCareerMinutes(career, statView) },
+    { key: "pts", value: formatCareerSimpleStat(career, statView, "pts") },
+    { key: "fg", value: formatCareerMadeAttemptedStat(career, statView, "fg") },
+    {
+      key: "fg_pct",
+      value: formatPercent(ratio(career.fg.made, career.fg.attempted)),
+    },
+    {
+      key: "three_p",
+      value: formatCareerMadeAttemptedStat(career, statView, "three_p"),
+    },
+    {
+      key: "three_pct",
+      value: formatPercent(
+        ratio(career.three_p.made, career.three_p.attempted),
+      ),
+    },
+    { key: "ft", value: formatCareerMadeAttemptedStat(career, statView, "ft") },
+    {
+      key: "ft_pct",
+      value: formatPercent(ratio(career.ft.made, career.ft.attempted)),
+    },
+    { key: "trb", value: formatCareerSimpleStat(career, statView, "trb") },
+    { key: "ast", value: formatCareerSimpleStat(career, statView, "ast") },
+    { key: "stl", value: formatCareerSimpleStat(career, statView, "stl") },
+    { key: "blk", value: formatCareerSimpleStat(career, statView, "blk") },
+    { key: "tov", value: formatCareerSimpleStat(career, statView, "tov") },
+    { key: "pf", value: formatCareerSimpleStat(career, statView, "pf") },
+  ];
 };
 
 export default function PlayerStatTable({ seasons, loading, error }: Props) {
@@ -169,70 +919,109 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
   const global = globalStyles(isDark);
 
   const [statView, setStatView] = useState<StatView>("totals");
+  const [selectedSeasonType, setSelectedSeasonType] =
+    useState<SeasonType>("regularseason");
 
-  const bestSeason = useMemo(() => {
+  const normalizedRows = useMemo(() => normalizeStatsData(seasons), [seasons]);
+
+  const preferredSeasonType = useMemo<SeasonType>(() => {
+    const hasRegularSeason = normalizedRows.some(
+      (row) => row.seasonType === "regularseason",
+    );
+
+    if (hasRegularSeason) return "regularseason";
+
+    const hasPostseason = normalizedRows.some(
+      (row) => row.seasonType === "postseason",
+    );
+
+    return hasPostseason ? "postseason" : "regularseason";
+  }, [normalizedRows]);
+
+  useEffect(() => {
+    setSelectedSeasonType((current) => {
+      if (!normalizedRows.length) return "regularseason";
+
+      const hasCurrentRows = normalizedRows.some(
+        (row) => row.seasonType === current,
+      );
+
+      return hasCurrentRows ? current : preferredSeasonType;
+    });
+  }, [normalizedRows, preferredSeasonType]);
+
+  const filteredRows = useMemo(() => {
+    return filterBySeasonType(normalizedRows, selectedSeasonType);
+  }, [normalizedRows, selectedSeasonType]);
+
+  const bestRowKey = useMemo(() => {
     let best: string | null = null;
     let maxPpg = -1;
 
-    seasons.forEach((season) => {
-      const games = toNumber(season.g);
-      const points = toNumber(season.pts);
-      const ppg = games > 0 ? points / games : 0;
+    filteredRows.forEach((row) => {
+      const ppg =
+        row.averages.pts ??
+        (row.g && row.g > 0 ? (row.totals.pts ?? 0) / row.g : null);
 
-      if (ppg > maxPpg) {
+      if (ppg !== null && ppg > maxPpg) {
         maxPpg = ppg;
-        best = season.season;
+        best = row.rowKey;
       }
     });
 
     return best;
-  }, [seasons]);
+  }, [filteredRows]);
 
-  const career = useMemo(() => {
-    return seasons.reduce<CareerTotals>(
-      (acc, season) => {
-        acc.g += toNumber(season.g);
-        acc.pts += toNumber(season.pts);
-        acc.mp += toNumber(season.mp);
-        acc.fg += toNumber(season.fg);
-        acc.fga += toNumber(season.fga);
-        acc.three_p += toNumber(season.three_p);
-        acc.three_pa += toNumber(season.three_pa);
-        acc.ft += toNumber(season.ft);
-        acc.fta += toNumber(season.fta);
-        acc.trb += toNumber(season.trb);
-        acc.ast += toNumber(season.ast);
-        acc.stl += toNumber(season.stl);
-        acc.blk += toNumber(season.blk);
-        acc.tov += toNumber(season.tov);
-        acc.pf += toNumber(season.pf);
+  const career = useMemo(
+    () => calculateCareerTotals(filteredRows),
+    [filteredRows],
+  );
 
-        return acc;
-      },
-      { ...EMPTY_CAREER_TOTALS },
-    );
-  }, [seasons]);
+  const getDataRowStyle = (row: NormalizedSeasonRow, index: number) => {
+    const zebra =
+      index % 2 === 1
+        ? isDark
+          ? styles.rowAltDark
+          : styles.rowAltLight
+        : null;
 
-  const getRowStyle = (index: number, season?: string | null) => {
-    const isAlt = index % 2 === 1;
-
-    const zebra = isAlt
-      ? isDark
-        ? styles.rowAltDark
-        : styles.rowAltLight
-      : null;
-
-    const highlight = season === bestSeason ? styles.best : null;
+    const highlight = isBestStat(row, bestRowKey) ? styles.best : null;
 
     return [styles.row, zebra, highlight];
   };
 
-  const getCareerStatValue = (
-    stat?: number | null,
-    games?: number | null,
-    minutes?: number | null,
-  ) => {
-    return getStatValue(statView, stat, games, minutes);
+  const renderSeasonTypeSelector = () => {
+    return (
+      <View style={styles.seasonTypeTabs}>
+        {SEASON_TYPE_OPTIONS.map((option, index) => {
+          const selected = selectedSeasonType === option.value;
+
+          return (
+            <Pressable
+              key={option.value}
+              accessibilityRole="button"
+              onPress={() => setSelectedSeasonType(option.value)}
+              style={[
+                styles.seasonTypeTab,
+                selected ? styles.seasonTypeTabActive : null,
+                isLastRow(index, SEASON_TYPE_OPTIONS.length)
+                  ? styles.lastSeasonTypeTab
+                  : null,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.seasonTypeTabText,
+                  selected ? styles.seasonTypeTabTextActive : null,
+                ]}
+              >
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
   };
 
   if (loading) {
@@ -251,7 +1040,7 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
     );
   }
 
-  if (!seasons.length) {
+  if (!normalizedRows.length) {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>No stats available</Text>
@@ -271,244 +1060,168 @@ export default function PlayerStatTable({ seasons, loading, error }: Props) {
         style={styles.dropdown}
       />
 
-      <View style={styles.tableWrapper}>
-        <View style={styles.seasonColumn}>
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
-              SEASON
-            </Text>
-          </View>
+      {renderSeasonTypeSelector()}
 
-          {seasons.map((season, index) => (
-            <View
-              key={`${season.season}-${season.team ?? index}`}
-              style={getRowStyle(index, season.season)}
-            >
-              <Text style={styles.fixedCell}>
-                {formatNumber(season.season)}
-              </Text>
+      {!filteredRows.length ? (
+        <Text style={global.errorText}>
+          No {getSeasonTypeLabel(selectedSeasonType).toLowerCase()} stats
+          available
+        </Text>
+      ) : (
+        <>
+          <View style={styles.tableWrapper}>
+            <View style={styles.fixedSection}>
+              <View style={styles.seasonColumn}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
+                    SEASON
+                  </Text>
+                </View>
+
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-season`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    <Text
+                      style={styles.fixedCell}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      {row.displaySeason}
+                    </Text>
+                  </View>
+                ))}
+
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  <Text
+                    style={[
+                      styles.fixedCell,
+                      styles.fixedHeaderCell,
+                      { color: Colors.white },
+                    ]}
+                  >
+                    CAREER
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.teamColumn}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  <Text style={[styles.fixedTeamCell, styles.fixedHeaderCell]}>
+                    TEAM
+                  </Text>
+                </View>
+
+                {filteredRows.map((row, index) => {
+                  return (
+                    <View
+                      key={`${row.rowKey}-team`}
+                      style={getDataRowStyle(row, index)}
+                    >
+                      <Text
+                        style={styles.fixedTeamCell}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                      >
+                        {row.team}
+                      </Text>
+                    </View>
+                  );
+                })}
+
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  <Text style={styles.fixedCareerCell}></Text>
+                </View>
+              </View>
             </View>
-          ))}
 
-          <View style={[styles.row, styles.careerRow]}>
-            <Text
-              style={[
-                styles.fixedCell,
-                styles.fixedHeaderCell,
-                { color: Colors.white },
-              ]}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.scrollSection}
             >
-              CAREER
-            </Text>
+              <View style={styles.statScrollContent}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  {TABLE_HEADERS.map((header) => (
+                    <Text key={header} style={[styles.cell, styles.headerCell]}>
+                      {header}
+                    </Text>
+                  ))}
+                </View>
+
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-stats`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    {getRowStatCells(row, statView).map((cell) => (
+                      <Text key={cell.key} style={styles.cell}>
+                        {cell.value}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  {getCareerStatCells(career, statView).map((cell) => (
+                    <Text key={cell.key} style={styles.careerCell}>
+                      {cell.value}
+                    </Text>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
           </View>
-        </View>
 
-        <View style={styles.teamColumn}>
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.fixedTeamCell, styles.fixedHeaderCell]}>
-              TEAM
-            </Text>
-          </View>
+          <View style={styles.glossaryContainer}>
+            <Text style={styles.headerName}>Stat Glossary</Text>
 
-          {seasons.map((season, index) => (
-            <View
-              key={`${season.season}-${season.team ?? index}-team`}
-              style={getRowStyle(index, season.season)}
-            >
-              <Text style={styles.fixedTeamCell}>
-                {formatNumber(season.team)}
-              </Text>
-            </View>
-          ))}
-
-          <View style={[styles.row, styles.careerRow]}>
-            <Text style={styles.fixedCareerCell}></Text>
-          </View>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.statScrollContent}>
-            <View style={[styles.row, styles.headerRow]}>
-              {TABLE_HEADERS.map((header) => (
-                <Text key={header} style={[styles.cell, styles.headerCell]}>
-                  {header}
-                </Text>
-              ))}
-            </View>
-
-            {seasons.map((season, index) => {
-              const games = season.g;
-              const minutes = season.mp;
+            {chunk(NBA_STAT_GLOSSARY, 2).map((row, rowIndex) => {
+              const isAlt = rowIndex % 2 === 1;
 
               return (
                 <View
-                  key={`${season.season}-${season.team ?? index}-stats`}
-                  style={getRowStyle(index, season.season)}
+                  key={`glossary-row-${rowIndex}`}
+                  style={styles.glossaryRow}
                 >
-                  <Text style={styles.cell}>{formatNumber(season.age)}</Text>
-                  <Text style={styles.cell}>{formatNumber(season.g)}</Text>
-
-                  <Text style={styles.cell}>
-                    {statView === "totals"
-                      ? formatNumber(season.mp)
-                      : statView === "pergame"
-                        ? perGame(season.mp, games)
-                        : "36.0"}
-                  </Text>
-
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.pts, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.fg, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.fga, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>{pct(season.fg_pct)}</Text>
-
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.three_p, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.three_pa, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>{pct(season.three_pct)}</Text>
-
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.ft, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.fta, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>{pct(season.ft_pct)}</Text>
-
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.trb, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.ast, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.stl, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.blk, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.tov, games, minutes)}
-                  </Text>
-                  <Text style={styles.cell}>
-                    {getStatValue(statView, season.pf, games, minutes)}
-                  </Text>
+                  {row.map((item, colIndex) => (
+                    <View
+                      key={item.abbr}
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        padding: 12,
+                        backgroundColor: isAlt
+                          ? isDark
+                            ? styles.rowAltDark.backgroundColor
+                            : styles.rowAltLight.backgroundColor
+                          : "transparent",
+                        borderRightWidth: colIndex === 0 ? 1 : 0,
+                        borderRightColor: isDark
+                          ? "rgba(255,255,255,0.15)"
+                          : "rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      <Text style={styles.glossaryAbbr}>{item.abbr}</Text>
+                      <Text style={styles.glossaryDisplayName}>
+                        {item.label}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
               );
             })}
-
-            <View style={[styles.row, styles.careerRow]}>
-              <Text style={styles.careerCell}>{""}</Text>
-
-              <Text style={styles.careerCell}>{formatNumber(career.g)}</Text>
-
-              <Text style={styles.careerCell}>
-                {statView === "totals"
-                  ? formatNumber(career.mp)
-                  : statView === "pergame"
-                    ? perGame(career.mp, career.g)
-                    : "36.0"}
-              </Text>
-
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.pts, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.fg, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.fga, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {pct(career.fg / career.fga)}
-              </Text>
-
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.three_p, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.three_pa, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {pct(career.three_p / career.three_pa)}
-              </Text>
-
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.ft, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.fta, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {pct(career.ft / career.fta)}
-              </Text>
-
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.trb, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.ast, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.stl, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.blk, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.tov, career.g, career.mp)}
-              </Text>
-              <Text style={styles.careerCell}>
-                {getCareerStatValue(career.pf, career.g, career.mp)}
-              </Text>
-            </View>
           </View>
-        </ScrollView>
-      </View>
-
-      <View style={styles.glossaryContainer}>
-        <Text style={styles.headerName}>Stat Glossary</Text>
-
-        {chunk(NBA_STAT_GLOSSARY, 2).map((row, rowIndex) => {
-          const isAlt = rowIndex % 2 === 1;
-
-          return (
-            <View key={`glossary-row-${rowIndex}`} style={styles.glossaryRow}>
-              {row.map((item, colIndex) => (
-                <View
-                  key={item.abbr}
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    padding: 12,
-                    backgroundColor: isAlt
-                      ? isDark
-                        ? styles.rowAltDark.backgroundColor
-                        : styles.rowAltLight.backgroundColor
-                      : "transparent",
-                    borderRightWidth: colIndex === 0 ? 1 : 0,
-                    borderRightColor: isDark
-                      ? "rgba(255,255,255,0.15)"
-                      : "rgba(0,0,0,0.1)",
-                  }}
-                >
-                  <Text style={styles.glossaryAbbr}>{item.abbr}</Text>
-                  <Text style={styles.glossaryDisplayName}>{item.label}</Text>
-                </View>
-              ))}
-            </View>
-          );
-        })}
-      </View>
+        </>
+      )}
     </View>
   );
 }

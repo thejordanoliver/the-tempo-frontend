@@ -2,7 +2,7 @@ import { TeamAggregatedStats } from "@/hooks/BaseballHooks/useTeamStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -179,7 +179,7 @@ export default function RosterStats({
   }) => (
     <View style={styles.cardWrapper}>
       <TouchableOpacity
-        activeOpacity={0.75}
+        activeOpacity={activeOpacity}
         onPress={() =>
           router.push(`/player/${player.playerId}?teamId=${teamId}`)
         }

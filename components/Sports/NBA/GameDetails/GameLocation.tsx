@@ -1,7 +1,7 @@
 import ConfirmModal from "@/components/ConfirmModal";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { WeatherData } from "hooks/useWeather";
 import React, { useState } from "react";
 import {
@@ -86,6 +86,10 @@ const GameLocation: React.FC<Props> = ({
     !Number.isNaN(Number(venueAttendance))
       ? Intl.NumberFormat("en-US").format(Number(venueAttendance))
       : null;
+
+  const formattedCapcity = Intl.NumberFormat("en-US").format(
+    Number(venueCapacity),
+  );
 
   const surfaceLabel =
     typeof grass === "boolean"
@@ -176,7 +180,7 @@ const GameLocation: React.FC<Props> = ({
     {
       icon: "person" as const,
       label: "Capacity",
-      value: venueCapacity || "N/A",
+      value: formattedCapcity || "N/A",
     },
     formattedAttendance
       ? {
@@ -231,7 +235,7 @@ const GameLocation: React.FC<Props> = ({
           {address && (
             <TouchableOpacity
               onPress={openInMaps}
-              activeOpacity={0.75}
+              activeOpacity={activeOpacity}
               style={styles.mapCard}
             >
               <View style={styles.mapIconWrap}>

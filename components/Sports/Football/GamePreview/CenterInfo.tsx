@@ -1,7 +1,7 @@
 // ./CFB/GamePreview/CenterInfo.tsx
 import { Colors } from "constants/styles";
 import { Text, View } from "react-native";
-import { CenterInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
+import { centerInfoStyles } from "styles/ModalsStyles/GamePreviewStyles/CenterInfoStyles";
 
 export type CenterInfoProps = {
   date: string | undefined;
@@ -26,7 +26,7 @@ export function CenterInfo({
   gameStatusDescription,
   gameStatusDetail,
 }: CenterInfoProps) {
-  const styles = CenterInfoStyles;
+  const styles = centerInfoStyles;
   const renderDownAndDistance = () => {
     if (!downAndDistance) return null;
 

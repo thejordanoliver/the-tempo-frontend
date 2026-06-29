@@ -1,3 +1,4 @@
+import { globalStyles } from "@/constants/styles";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BioSection from "components/Profile/BioSection";
@@ -8,13 +9,7 @@ import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScree
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
-import {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   ScrollView,
@@ -37,24 +32,31 @@ const normalizeRouteParam = (param: RouteParam) => {
 
 export default function UserProfileScreen() {
   const { width: screenWidth } = useWindowDimensions();
+
   const itemWidth = useMemo(() => {
     const totalGap = COLUMN_GAP * (NUM_COLUMNS - 1);
     const availableWidth = screenWidth - HORIZONTAL_PADDING - totalGap;
+
     return availableWidth / NUM_COLUMNS;
   }, [screenWidth]);
+
   const params = useLocalSearchParams<{ id?: RouteParam }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
-  const [isGridView, setIsGridView] = useState(true);
-  const isAnimatingRef = useRef(false);
+
   const navigation = useNavigation();
   const router = useRouter();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
-  const scrollContentStyle = useMemo(() => ({ paddingBottom: 30 }), []);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
+
+  const [isGridView, setIsGridView] = useState(true);
+  const isAnimatingRef = useRef(false);
 
   const {
     isLoading,
+    hasCachedProfile,
     username,
     fullName,
     bio,
@@ -70,20 +72,22 @@ export default function UserProfileScreen() {
     toggleFollow,
   } = useUserProfile(userId);
 
-  const headerTitle = useMemo(
-    () => (username ? `@${username}` : "User"),
-    [username],
-  );
-
   const currentUserIdString = useMemo(
     () => (currentUserId ? String(currentUserId) : ""),
     [currentUserId],
   );
 
   const isCurrentUser = useMemo(
-    () => Boolean(currentUserIdString && userId && currentUserIdString === userId),
+    () =>
+      Boolean(currentUserIdString && userId && currentUserIdString === userId),
     [currentUserIdString, userId],
   );
+
+  const headerTitle = useMemo(() => {
+    if (username) return `@${username}`;
+
+    return isCurrentUser ? "Profile" : "User";
+  }, [isCurrentUser, username]);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -105,12 +109,14 @@ export default function UserProfileScreen() {
     if (isAnimatingRef.current) return;
 
     isAnimatingRef.current = true;
+
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
       setIsGridView((prev) => !prev);
+
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 200,
@@ -148,70 +154,71 @@ export default function UserProfileScreen() {
   }, [currentUserIdString, router, userId]);
 
   const handleToggleFollow = useCallback(() => {
-    if (isCurrentUser || !userId || !currentUserIdString) return;
+    if (isCurrentUser || !userId || !currentUserIdString || followLoading) {
+      return;
+    }
+
     toggleFollow();
-  }, [currentUserIdString, isCurrentUser, toggleFollow, userId]);
+  }, [currentUserIdString, followLoading, isCurrentUser, toggleFollow, userId]);
+
+  const handleEditPress = useCallback(() => {
+    router.push("/edit-profile");
+  }, [router]);
 
   if (!userId) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.bioText}>User not found.</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>User not found.</Text>
       </View>
     );
   }
 
-  if (isLoading) {
+  if (isLoading && !hasCachedProfile) {
     return <SkeletonProfileScreen isDark={isDark} />;
   }
 
   return (
-    <>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={scrollContentStyle}
-        contentInsetAdjustmentBehavior="never"
-        showsVerticalScrollIndicator={false}
-      >
-        <ProfileBanner
-          bannerImage={bannerImage}
-          profileImage={profileImage}
-          isDark={isDark}
-        />
+    <ScrollView style={styles.container} contentInsetAdjustmentBehavior="never">
+      <ProfileBanner
+        bannerImage={bannerImage}
+        profileImage={profileImage}
+        isDark={isDark}
+      />
 
-        <FollowStats
-          followersCount={followersCount}
-          followingCount={followingCount}
-          isDark={isDark}
-          currentUserId={currentUserIdString}
-          targetUserId={userId}
-          onFollowersPress={onFollowersPress}
-          onFollowingPress={onFollowingPress}
-        />
+      <FollowStats
+        followersCount={followersCount}
+        followingCount={followingCount}
+        isDark={isDark}
+        currentUserId={currentUserIdString}
+        targetUserId={userId}
+        onFollowersPress={onFollowersPress}
+        onFollowingPress={onFollowingPress}
+      />
 
-        <ProfileHeader
-          fullName={fullName}
-          username={username}
-          isDark={isDark}
+      <ProfileHeader
+        fullName={fullName}
+        username={username}
+        isDark={isDark}
+        isCurrentUser={isCurrentUser}
+        isFollowing={isFollowing}
+        loading={followLoading}
+        onToggleFollow={handleToggleFollow}
+        onEditPress={isCurrentUser ? handleEditPress : undefined}
+      />
+
+      <BioSection bio={bio} isDark={isDark} />
+
+      <View style={styles.favoritesContainer}>
+        <FavoriteTeamsSection
+          favorites={favoriteTeamsWithLeague}
+          isGridView={isGridView}
+          fadeAnim={fadeAnim}
+          toggleFavoriteTeamsView={toggleFavoriteTeamsView}
+          styles={styles}
+          itemWidth={itemWidth}
           isCurrentUser={isCurrentUser}
-          isFollowing={isFollowing}
-          loading={followLoading}
-          onToggleFollow={handleToggleFollow}
         />
-
-        <BioSection bio={bio} isDark={isDark} />
-
-        <View style={styles.favoritesContainer}>
-          <FavoriteTeamsSection
-            favorites={favoriteTeamsWithLeague}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
-            toggleFavoriteTeamsView={toggleFavoriteTeamsView}
-            styles={styles}
-            itemWidth={itemWidth}
-            isCurrentUser={isCurrentUser}
-          />
-        </View>
-      </ScrollView>
-    </>
+      </View>
+    </ScrollView>
   );
 }

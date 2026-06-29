@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ConversationItem from "components/Messages/ConversationItem";
 import PinnedConversations from "components/Messages/PinnedConversations";
 import SearchBar from "components/SearchBars/SearchBar";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import {
@@ -128,7 +128,7 @@ function MessageList({
           <Text style={styles.emptyText}>{error}</Text>
 
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             style={styles.retryButton}
             onPress={onRetry}
           >

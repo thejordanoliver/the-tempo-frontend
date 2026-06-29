@@ -2,7 +2,7 @@ import { cfbConferences } from "@/constants/cfbConferences";
 import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
 import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
@@ -20,6 +20,7 @@ import {
   Easing,
   Image,
   ImageSourcePropType,
+  Pressable,
   StyleSheet,
   Text,
   TextStyle,
@@ -366,7 +367,7 @@ const ProfileHeaderMenu = ({
     >
       {onSettings && (
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={activeOpacity}
           style={styles.profileSubmenuItem}
           onPress={onSettings}
         >
@@ -408,7 +409,7 @@ const ProfileHeaderMenu = ({
           )}
 
           <TouchableOpacity
-            activeOpacity={0.85}
+            activeOpacity={activeOpacity}
             style={styles.profileSubmenuItem}
             onPress={onLogout}
           >
@@ -919,6 +920,8 @@ export function CustomHeaderTitle({
         ? Colors.white
         : Colors.black;
 
+  const isMessagesListScreen = tabName === "Messages" || title === "Messages";
+
   return (
     <View
       style={{
@@ -953,7 +956,7 @@ export function CustomHeaderTitle({
         {tabName === "Profile" ? (
           onMessages ? (
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={handleProfileMessages}
               style={styles.profileHeaderActionButton}
               hitSlop={8}
@@ -1098,7 +1101,7 @@ export function CustomHeaderTitle({
             />
 
             <TouchableOpacity
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={toggleProfileMenu}
               style={[
                 styles.profileHeaderActionButton,
@@ -1140,14 +1143,24 @@ export function CustomHeaderTitle({
               color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
-        ) : title === "Messages" && onCreateMessage ? (
-          <TouchableOpacity onPress={onCreateMessage}>
+        ) : isMessagesListScreen && onCreateMessage ? (
+          <Pressable
+            onPressIn={onCreateMessage}
+            accessibilityRole="button"
+            accessibilityLabel="Create message"
+            hitSlop={{ top: 14, right: 14, bottom: 14, left: 14 }}
+            pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+            style={({ pressed }) => [
+              styles.headerActionButton,
+              pressed && styles.headerActionButtonPressed,
+            ]}
+          >
             <Ionicons
               name="create-outline"
               size={24}
               color={isDark ? Colors.white : Colors.black}
             />
-          </TouchableOpacity>
+          </Pressable>
         ) : onToggleLayout !== undefined ? (
           <TouchableOpacity onPress={onToggleLayout}>
             <Ionicons
@@ -1335,5 +1348,15 @@ export const customHeaderStyles = StyleSheet.create({
   profileSubmenuSeparator: {
     height: StyleSheet.hairlineWidth,
     marginLeft: 42,
+  },
+  headerActionButtonPressed: {
+    opacity: 0.65,
+  },
+  headerActionButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

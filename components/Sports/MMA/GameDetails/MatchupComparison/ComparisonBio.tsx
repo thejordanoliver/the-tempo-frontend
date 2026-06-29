@@ -92,7 +92,7 @@ export const comparisonBioStyles = (isDark: boolean) =>
       flex: 1,
     },
     centerColumn: {
-      flex: 0.5,
+      flex: 0.8,
       alignItems: "center",
       justifyContent: "center",
       gap: 8,
@@ -110,13 +110,15 @@ export const comparisonBioStyles = (isDark: boolean) =>
       gap: 8,
     },
     categoryTitle: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.OSBOLD,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
+      textTransform: "uppercase",
     },
     categoryText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.OSLIGHT,
       fontSize: 12,
+      textTransform: "uppercase",
     },
   });

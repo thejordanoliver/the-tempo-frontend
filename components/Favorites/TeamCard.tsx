@@ -44,8 +44,10 @@ function TeamCard({
 
   const logo = useMemo(() => {
     if (item.league === "CFB") return getCFBTeamLogo(item.id, useAltLogo);
-    if (item.league === "CBB") return getCBBTeamLogo(item.id, useAltLogo, false);
-    if (item.league === "WCBB") return getCBBTeamLogo(item.id, useAltLogo, true);
+    if (item.league === "CBB")
+      return getCBBTeamLogo(item.id, useAltLogo, false);
+    if (item.league === "WCBB")
+      return getCBBTeamLogo(item.id, useAltLogo, true);
     if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
     if (item.league === "NBA") return getTeamLogo(item.id, useAltLogo);
     if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);

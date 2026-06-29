@@ -4,7 +4,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-
 type Props = {
   title: string;
   isGridView: boolean;
@@ -22,9 +21,7 @@ const SectionHeaderWithToggle: React.FC<Props> = ({
 
   return (
     <View style={[styles.favoritesHeader, {}]}>
-      <Text style={styles.heading}>
-        {title}
-      </Text>
+      <Text style={styles.heading}>{title}</Text>
       <Pressable
         onPress={onToggleView}
         accessibilityRole="button"
@@ -56,7 +53,7 @@ const sectionHeaderWithToggleStyles = (isDark: boolean) =>
       paddingHorizontal: 4,
     },
     heading: {
-      fontSize: 24,
+      fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },

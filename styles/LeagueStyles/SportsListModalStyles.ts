@@ -33,7 +33,7 @@ export const sportsListModalStyles = (isDark: boolean) =>
     scrollContent: {
       paddingTop: 12,
       paddingBottom: 40,
-      overflow: "hidden"
+      overflow: "hidden",
     },
     searcBarContainer: {
       paddingTop: 12,

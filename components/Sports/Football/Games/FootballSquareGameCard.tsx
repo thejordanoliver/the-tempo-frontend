@@ -3,7 +3,7 @@ import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyl
 import { FootballGameCardProps } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -269,7 +269,7 @@ function FootballSquareGameCard({
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

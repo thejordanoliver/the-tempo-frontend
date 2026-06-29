@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   heading: {
-    flexShrink: 1, // allow wrapping on small screens
+    flexShrink: 1,
   },
   dropdownRow: {
     flexDirection: "row",

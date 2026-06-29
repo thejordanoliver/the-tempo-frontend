@@ -1,4 +1,4 @@
-import { Colors } from "constants/styles";
+import { Colors, activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -190,9 +190,7 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           !isPostponed &&
           !isCanceled &&
           !isForfeited &&
-          broadcast && (
-          <Text style={styles.broadcast}>{broadcast}</Text>
-        )}
+          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
       </View>
     </>
   );
@@ -201,7 +199,7 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
      RENDER
   =============================== */
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={handlePress}>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
       {isChampionship ? (
         <LinearGradient
           colors={

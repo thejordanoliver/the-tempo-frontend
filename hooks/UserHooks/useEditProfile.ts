@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useState } from "react";
 import { User } from "types/user";
 import { apiClient, BASE_URL } from "utils/apiClient";
+import { removeCachedUserProfile } from "utils/userProfileCache";
 
 const getProfileSaveErrorMessage = (err: any) => {
   const status = err?.response?.status;
@@ -85,6 +86,7 @@ export function useEditProfile() {
         }
 
         await AsyncStorage.multiSet(storageUpdates);
+        await removeCachedUserProfile(String(userId));
 
         return updatedUser;
       } catch (err: any) {

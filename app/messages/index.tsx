@@ -15,24 +15,23 @@ import { MessageItem } from "types/messages";
 export default function MessageScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => messagesStyles(isDark), [isDark]);
-
   const [search, setSearch] = useState("");
+  const [isNewMessageMounted, setIsNewMessageMounted] = useState(false);
   const [isNewMessageVisible, setIsNewMessageVisible] = useState(false);
+  const [newMessageModalKey, setNewMessageModalKey] = useState(0);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
-
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);
-
+  const isOpeningNewMessageRef = useRef(false);
   const openSwipeableRef = useRef<{
     id: string;
     close: () => void;
   } | null>(null);
 
-  const { currentUserId, username, loadProfile } = useProfile();
+  const { currentUserId, loadProfile } = useProfile();
 
   const {
     conversations,
@@ -100,14 +99,31 @@ export default function MessageScreen() {
   );
 
   const handleCreateMessage = useCallback(() => {
+    if (
+      isOpeningNewMessageRef.current ||
+      isNewMessageVisible ||
+      isCreatingConversation
+    ) {
+      return;
+    }
+
+    isOpeningNewMessageRef.current = true;
+
     closeOpenSwipeable();
+    setIsNewMessageMounted(true);
     setIsNewMessageVisible(true);
-  }, [closeOpenSwipeable]);
+  }, [closeOpenSwipeable, isCreatingConversation, isNewMessageVisible]);
 
   const handleCloseNewMessage = useCallback(() => {
     if (isCreatingConversation) return;
     setIsNewMessageVisible(false);
   }, [isCreatingConversation]);
+
+  const handleDismissNewMessage = useCallback(() => {
+    isOpeningNewMessageRef.current = false;
+    setIsNewMessageVisible(false);
+    setIsNewMessageMounted(false);
+  }, []);
 
   const handleSelectRecipient = useCallback(
     async (user: UserSearchResult) => {
@@ -127,6 +143,7 @@ export default function MessageScreen() {
 
         setSearch("");
         setIsNewMessageVisible(false);
+        setIsNewMessageMounted(false);
 
         await refresh();
 
@@ -200,13 +217,13 @@ export default function MessageScreen() {
       header: () => (
         <CustomHeaderTitle
           title="Messages"
-          tabName="User"
+          tabName="Messages"
           onBack={handleBack}
           onCreateMessage={handleCreateMessage}
         />
       ),
     });
-  }, [navigation, handleBack, handleCreateMessage, username]);
+  }, [navigation, handleBack, handleCreateMessage]);
 
   return (
     <View style={styles.container}>
@@ -228,12 +245,16 @@ export default function MessageScreen() {
         onRetry={refresh}
       />
 
-      <NewMessageModal
-        visible={isNewMessageVisible}
-        isCreating={isCreatingConversation}
-        onClose={handleCloseNewMessage}
-        onSelectUser={handleSelectRecipient}
-      />
+      {isNewMessageMounted && (
+        <NewMessageModal
+          key={newMessageModalKey}
+          visible={isNewMessageVisible}
+          isCreating={isCreatingConversation}
+          onClose={handleCloseNewMessage}
+          onDismiss={handleDismissNewMessage}
+          onSelectUser={handleSelectRecipient}
+        />
+      )}
     </View>
   );
 }

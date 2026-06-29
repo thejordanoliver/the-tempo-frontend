@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -88,7 +88,7 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction }: Props) {
           return (
             <TouchableOpacity
               key={emoji}
-              activeOpacity={0.85}
+              activeOpacity={activeOpacity}
               onPress={() => onReaction(item.id, emoji)}
               style={[
                 styles.reactionButtonWrapper,

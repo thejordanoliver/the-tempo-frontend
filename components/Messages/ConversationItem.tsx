@@ -1,10 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useCallback, useMemo, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Swipeable } from "react-native-gesture-handler";
+import { StyleSheet, Text, View } from "react-native";
+import { Swipeable, TouchableOpacity } from "react-native-gesture-handler";
 import { MessageItem } from "types/messages";
 
 type Props = {
@@ -17,7 +17,56 @@ type Props = {
 };
 
 const FALLBACK_AVATAR =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
+
+type MessageItemWithDates = MessageItem & {
+  lastMessageAt?: string | number | Date | null;
+  updatedAt?: string | number | Date | null;
+  createdAt?: string | number | Date | null;
+  timestamp?: string | number | Date | null;
+};
+
+function formatConversationTimestamp(item: MessageItem): string {
+  const dateValue =
+    (item as MessageItemWithDates).lastMessageAt ??
+    (item as MessageItemWithDates).updatedAt ??
+    (item as MessageItemWithDates).createdAt ??
+    (item as MessageItemWithDates).timestamp;
+
+  if (!dateValue) return "";
+
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+
+  if (isToday) {
+    return date.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  if (isYesterday) {
+    return "Yesterday";
+  }
+
+  const sameYear = date.getFullYear() === now.getFullYear();
+
+  return date.toLocaleDateString([], {
+    month: "short",
+    day: "numeric",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+}
 
 export default function ConversationItem({
   item,
@@ -34,13 +83,13 @@ export default function ConversationItem({
   const swipeableRef = useRef<Swipeable | null>(null);
 
   const profileImageUrl = item.profileImageUrl?.trim() || FALLBACK_AVATAR;
-  const canDelete = Boolean(onDelete) && query.length === 0;
+  const canDelete = Boolean(onDelete) && query.trim().length === 0;
   const canPin = Boolean(onTogglePin);
 
   const displayUsername = item.username || "Tempo User";
   const displayName = item.fullName || item.full_name || "Sports fan";
   const lastMessage = item.lastMessage || "Start a conversation";
-  const timestamp = item.timestamp || "";
+  const timestamp = formatConversationTimestamp(item);
 
   const closeSwipeable = useCallback(() => {
     swipeableRef.current?.close();
@@ -70,7 +119,7 @@ export default function ConversationItem({
 
     return (
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={[styles.actionContainer, styles.pinAction]}
         onPress={handleTogglePin}
       >
@@ -97,7 +146,7 @@ export default function ConversationItem({
 
     return (
       <TouchableOpacity
-        activeOpacity={0.85}
+        activeOpacity={activeOpacity}
         style={[styles.actionContainer, styles.deleteAction]}
         onPress={handleDelete}
       >
@@ -312,6 +361,8 @@ const conversationItemStyles = (isDark: boolean) =>
 
     actionContainer: {
       width: 92,
+      flex: 1,
+      height: "100%",
       alignItems: "center",
       justifyContent: "center",
     },

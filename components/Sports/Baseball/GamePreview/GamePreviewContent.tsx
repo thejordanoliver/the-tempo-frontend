@@ -28,6 +28,12 @@ type GamePreviewContentProps = {
   };
   homeLastGames: { games: any[] };
   awayLastGames: { games: any[] };
+  homeHits: number;
+  awayHits: number;
+  homeRuns: number;
+  awayRuns: number;
+  awayErrors: number;
+  homeErrors: number;
   officials: any[];
   injuries: any[];
   teamPlayersMap: Record<string, any[]>;
@@ -58,6 +64,12 @@ export default function GamePreviewContent({
   homeLastGames,
   awayLastGames,
   lineScore,
+  homeHits,
+  awayHits,
+  homeRuns,
+  awayRuns,
+  awayErrors,
+  homeErrors,
   officials,
   injuries,
   teamPlayersMap,
@@ -101,6 +113,12 @@ export default function GamePreviewContent({
           linescore={lineScore}
           homeCode={homeCode}
           awayCode={awayCode}
+          homeHits={homeHits}
+          awayHits={awayHits}
+          homeRuns={homeRuns}
+          awayRuns={awayRuns}
+          awayErrors={awayErrors}
+          homeErrors={homeErrors}
           isDark
           state={state}
           league={league}

@@ -37,7 +37,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
     },
     leagueBadgeText: {
       color: Colors.white,
-      fontSize: 11,
+      fontSize: 10,
       fontFamily: Fonts.OSBOLD,
     },
     logoGridMargin: {

@@ -21,7 +21,7 @@ type ExploreSearchResponse = {
 };
 
 function getResultKey(item: ResultItem) {
-  if (item.type === "player") return String(item.player_id);
+  if (item.type === "player") return String(item.id);
   if (item.type === "team") return String(item.id);
   if (item.type === "user") return String(item.id);
   return null;
@@ -43,7 +43,7 @@ function isValidResultItem(item: unknown): item is ResultItem {
   if (!("type" in value)) return false;
 
   if (value.type === "player") {
-    return "player_id" in value && value.player_id !== undefined;
+    return "id" in value && value.id !== undefined;
   }
 
   if (value.type === "team") {

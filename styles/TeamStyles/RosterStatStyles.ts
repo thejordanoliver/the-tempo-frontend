@@ -1,5 +1,9 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
+
+const PLAYER_NAME_WIDTH = 140;
+const STAT_CELL_WIDTH = 80;
+
 export const rosterStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
     center: { alignItems: "center", justifyContent: "center" },
@@ -40,6 +44,8 @@ export const rosterStatsStyles = (isDark: boolean) =>
       alignItems: "center",
       minHeight: 40,
     },
+    teamTableContainer: { flex: 1, gap: 20 },
+
     teamTableRow: {
       flexDirection: "row",
       borderBottomWidth: 1,
@@ -49,16 +55,31 @@ export const rosterStatsStyles = (isDark: boolean) =>
       minHeight: 40,
       paddingHorizontal: 8,
     },
-    tableCell: { paddingVertical: 8, paddingLeft: 8, fontSize: 14 },
+
+    tableCell: {
+      padding: 8,
+    },
+
+    nameColumn: {
+      backgroundColor: isDark
+        ? Colors.dark.background
+        : Colors.light.background,
+      width: PLAYER_NAME_WIDTH,
+      zIndex: 10,
+      elevation: 10,
+    },
+
     playerName: {
       fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
+
     statValue: {
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
+      width: STAT_CELL_WIDTH,
     },
     cardWrapper: { flexDirection: "row", alignItems: "flex-end" },
     cardContainer: {
@@ -122,6 +143,7 @@ export const rosterStatsStyles = (isDark: boolean) =>
     nameHeaderText: {
       fontFamily: Fonts.OSBOLD,
       color: isDark ? Colors.white : Colors.black,
+      width: PLAYER_NAME_WIDTH,
     },
     categoryTitle: {
       fontFamily: Fonts.OSSEMIBOLD,

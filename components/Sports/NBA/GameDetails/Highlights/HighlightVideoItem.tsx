@@ -58,82 +58,80 @@ const FULLSCREEN_OPTIONS = { enable: true };
 // Component
 // ---------------------------------------------------------------------------
 
-export const HighlightVideoItem = React.memo(
-  function HighlightVideoItem({
-    item,
-    isActive,
-    onPlay,
-    hasPlayed,
-    setHasPlayed,
-    styles,
-  }: HighlightVideoItemProps) {
-    const videoSource = useMemo(() => getPlayableUrl(item), [item]);
+export const HighlightVideoItem = React.memo(function HighlightVideoItem({
+  item,
+  isActive,
+  onPlay,
+  hasPlayed,
+  setHasPlayed,
+  styles,
+}: HighlightVideoItemProps) {
+  const videoSource = useMemo(() => getPlayableUrl(item), [item]);
 
-    // Hooks before early return — Rules of Hooks compliant
-    const player = useVideoPlayer(videoSource ?? "", (p) => {
-      p.loop = false;
-    });
+  // Hooks before early return — Rules of Hooks compliant
+  const player = useVideoPlayer(videoSource ?? "", (p) => {
+    p.loop = false;
+  });
 
-    const { isPlaying } = useEvent(player, "playingChange", {
-      isPlaying: player.playing,
-    });
+  const { isPlaying } = useEvent(player, "playingChange", {
+    isPlaying: player.playing,
+  });
 
-    // Pause when scrolled off screen; never auto-play
-    React.useEffect(() => {
-      if (!videoSource) return;
-      if (!isActive) player.pause();
-    }, [isActive, player, videoSource]);
+  // Pause when scrolled off screen; never auto-play
+  React.useEffect(() => {
+    if (!videoSource) return;
+    if (!isActive) player.pause();
+  }, [isActive, player, videoSource]);
 
-    const handlePress = useCallback(() => {
-      onPlay(item.id);
-      setHasPlayed((prev) => ({ ...prev, [item.id]: true }));
-      player.replay();
-      player.play();
-    }, [item.id, onPlay, player, setHasPlayed]);
+  const handlePress = useCallback(() => {
+    onPlay(item.id);
+    setHasPlayed((prev) => ({ ...prev, [item.id]: true }));
+    player.replay();
+    player.play();
+  }, [item.id, onPlay, player, setHasPlayed]);
 
-    if (!videoSource) {
-      return (
-        <View style={styles.cardWrapper}>
-          <Text style={styles.unavailable}>Video unavailable</Text>
-        </View>
-      );
-    }
-
+  if (!videoSource) {
     return (
       <View style={styles.cardWrapper}>
-        <VideoView
-          style={styles.video}
-          player={player}
-          contentFit="cover"
-          nativeControls
-          fullscreenOptions={FULLSCREEN_OPTIONS}
-          allowsPictureInPicture
-          startsPictureInPictureAutomatically={false}
-        />
-
-        {/* Thumbnail overlay — shown until first play */}
-        {!isPlaying && (
-          <Pressable style={styles.thumbnailWrapper} onPress={handlePress}>
-            <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-            <View style={styles.playButtonOverlay}>
-              <Ionicons name="play" size={60} color={Colors.white} />
-            </View>
-          </Pressable>
-        )}
-
-        {/* Headline — hidden while playing so it doesn't block native controls */}
-        {!isPlaying && (
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.7)"]}
-            style={styles.headlineContainer}
-            pointerEvents="none"
-          >
-            <Text style={styles.headline} numberOfLines={2}>
-              {item.headline}
-            </Text>
-          </LinearGradient>
-        )}
+        <Text style={styles.unavailable}>Video unavailable</Text>
       </View>
     );
-  },
-);
+  }
+
+  return (
+    <View style={styles.cardWrapper}>
+      <VideoView
+        style={styles.video}
+        player={player}
+        contentFit="cover"
+        nativeControls
+        fullscreenOptions={FULLSCREEN_OPTIONS}
+        allowsPictureInPicture
+        startsPictureInPictureAutomatically={false}
+      />
+
+      {/* Thumbnail overlay — shown until first play */}
+      {!isPlaying && (
+        <Pressable style={styles.thumbnailWrapper} onPress={handlePress}>
+          <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+          <View style={styles.playButtonOverlay}>
+            <Ionicons name="play" size={60} color={Colors.white} />
+          </View>
+        </Pressable>
+      )}
+
+      {/* Headline — hidden while playing so it doesn't block native controls */}
+      {!isPlaying && (
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.7)"]}
+          style={styles.headlineContainer}
+          pointerEvents="none"
+        >
+          <Text style={styles.headline} numberOfLines={2}>
+            {item.headline}
+          </Text>
+        </LinearGradient>
+      )}
+    </View>
+  );
+});
