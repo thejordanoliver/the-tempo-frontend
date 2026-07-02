@@ -2,15 +2,15 @@
 import { useMemo } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 
+import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { rosterStyles } from "styles/TeamStyles/RosterStyles";
 
-type SupportedRosterLeague = "MLB" | "NHL";
+type SupportedRosterLeague = "MLB" | "NHL" | "NFL" | "CFB";
 
 interface RosterProps {
   players: Player[];
@@ -28,6 +28,26 @@ const MLB_GROUP_ORDER = [
   "Outfielders",
   "Designated Hitters",
   "Two-Way Players",
+  "Other",
+];
+
+const FOOTBALL_POSITION_ORDER = [
+  "QB",
+  "RB",
+  "FB",
+  "WR",
+  "TE",
+  "G",
+  "C",
+  "OT",
+  "DT",
+  "DE",
+  "LB",
+  "CB",
+  "S",
+  "K",
+  "P",
+  "LS",
   "Other",
 ];
 
@@ -120,6 +140,67 @@ function getPositionGroup(
     return "Other";
   }
 
+  if (league === "NFL" || league ===  "CFB") {
+    if (["QB"].includes(pos)) {
+      return "QB";
+    }
+    if (["FB"].includes(pos)) {
+      return "FB";
+    }
+
+    if (["RB"].includes(pos)) {
+      return "RB";
+    }
+
+    if (["WR"].includes(pos)) {
+      return "WR";
+    }
+    if (["TE"].includes(pos)) {
+      return "TE";
+    }
+
+    if (["TE"].includes(pos)) {
+      return "TE";
+    }
+
+    if (["G"].includes(pos)) {
+      return "G";
+    }
+    if (["C"].includes(pos)) {
+      return "C";
+    }
+    if ( ["OT"].includes(pos)) {
+      return "OL";
+    }
+   
+    if (["DT"].includes(pos)) {
+      return "DT";
+    }
+    if (["DE"].includes(pos)) {
+      return "DE";
+    }
+    if (["LB"].includes(pos)) {
+      return "LB";
+    }
+    if (["CB"].includes(pos)) {
+      return "CB";
+    }
+    if (["S"].includes(pos)) {
+      return "S";
+    }
+    if (["K"].includes(pos)) {
+      return "K";
+    }
+    if (["P"].includes(pos)) {
+      return "P";
+    }
+    if (["LS"].includes(pos)) {
+      return "LS";
+    }
+
+    return "Other";
+  }
+
   if (["PG", "SG", "G", "GUARD"].includes(pos)) {
     return "Guards";
   }
@@ -156,6 +237,8 @@ function sortPlayers(players: Player[]) {
 function getGroupOrder(league?: SupportedRosterLeague) {
   if (league === "MLB") return MLB_GROUP_ORDER;
   if (league === "NHL") return NHL_GROUP_ORDER;
+  if (league === "NFL") return FOOTBALL_POSITION_ORDER;
+  if (league === "CFB") return FOOTBALL_POSITION_ORDER;
 
   return DEFAULT_GROUP_ORDER;
 }

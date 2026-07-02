@@ -1,5 +1,5 @@
+import Roster from "@/components/Sports/Baseball/Team/Roster";
 import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
-import Roster from "@/components/Sports/Football/Team/Roster";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
@@ -77,12 +77,12 @@ export default function TeamDetailScreen() {
   } = useTeamGames(teamIdNum, league, currentSeason);
 
   const {
-    rosterStats,
-    loading: statsLoading,
-    error: statsError,
+    teamRoster,
     refreshingStats,
-    onRefresh: refreshRosterStats,
-  } = useRosterStats(league, teamIdNum);
+    loading: rosterStatsLoading,
+    error: rosterStatsError,
+    refetch,
+  } = useRosterStats(teamIdNum, league);
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
     espnId,
@@ -98,7 +98,7 @@ export default function TeamDetailScreen() {
       } else if (selectedTab === "roster") {
         await refreshPlayers();
       } else if (selectedTab === "stats") {
-        await Promise.all([refreshRosterStats(), refresh?.()]);
+        await Promise.all([refetch(), refresh?.()]);
       }
     } catch (err) {
       console.error("Refresh failed:", err);
@@ -189,13 +189,13 @@ export default function TeamDetailScreen() {
         {/* STATS */}
         <View key="stats" style={styles.contentArea}>
           <RosterStats
-            rosterStats={rosterStats}
-            teamStats={teamStats}
-            loading={statsLoading || teamStatsLoading}
-            error={statsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refreshRosterStats}
+            rosterStats={teamRoster}
             teamId={teamIdNum}
+            teamStats={teamStats}
+            loading={rosterStatsLoading || teamStatsLoading}
+            error={rosterStatsError || teamStatsError}
+            refreshing={refreshingStats}
+            onRefresh={refetch}
             league={league}
           />
         </View>

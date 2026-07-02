@@ -2,26 +2,29 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
+
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import AddWidgetModal from "../../components/Explore/AddWidgetModal";
 import EmptyState from "../../components/Explore/EmptyState";
-import SearchBar from "../../components/Explore/SearchBar";
 import SearchResultsList from "../../components/Explore/SearchResultsList";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useExplore } from "../../hooks/ExploreHooks/useExplore";
 import { useExploreSearchState } from "../../hooks/ExploreHooks/useExploreSearchState";
 import { useExploreWidgets } from "../../hooks/ExploreHooks/useExploreWidgets";
 import { exploreStyles } from "../../styles/ExploreStyles/ExploreStyles";
-import { ResultItem } from "../../types/explore";
+import type { ResultItem } from "../../types/explore";
 import { getExploreRouteForResult } from "../../utils/exploreNavigation";
 
 export default function ExplorePage() {
   const [widgetModalVisible, setWidgetModalVisible] = useState(false);
+
   const navigation = useNavigation();
   const router = useRouter();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
+
   const {
     query,
     setQuery,
@@ -33,13 +36,10 @@ export default function ExplorePage() {
     saveToRecentSearches,
     deleteRecentSearch,
   } = useExplore();
-  const {
-    widgets,
-    addWidget,
-    removeWidget,
-    resizeWidget,
-    moveWidget,
-  } = useExploreWidgets();
+
+  const { widgets, addWidget, removeWidget, resizeWidget, moveWidget } =
+    useExploreWidgets();
+
   const {
     searchVisible,
     selectedTab,
@@ -85,44 +85,36 @@ export default function ExplorePage() {
     });
   }, [navigation, toggleSearch]);
 
+  if (!searchVisible)
+    return (
+      <EmptyState
+        isDark={isDark}
+        selectedWidgets={widgets}
+        onAddWidget={openWidgetModal}
+        onRemoveWidget={removeWidget}
+        onResizeWidget={resizeWidget}
+        onMoveWidget={moveWidget}
+      />
+    );
+
   return (
     <View style={styles.container}>
-      <SearchBar
-        value={query}
-        placeholder="Explore Teams, Players and Accounts..."
-        onChangeText={handleChangeText}
-        visible={searchVisible}
-        onFocus={() => {}}
-        onBlur={() => {}}
-        tabs={[...tabs]}
+      <SearchResultsList
+        data={searchResultsData}
+        loading={loading}
+        error={error}
+        onSelect={handleSelectItem}
+        onDelete={deleteRecentSearch}
+        query={query}
+        onSeeAll={handleSeeAll}
+        showAll={showAll}
+        isSearching={isSearching}
         selectedTab={selectedTab}
-        onTabPress={handleTabPress}
+        tabs={tabs}
+        handleChangeText={handleChangeText}
+        handleTabPress={handleTabPress}
+        searchVisible={searchVisible}
       />
-
-      {!searchVisible && (
-        <EmptyState
-          isDark={isDark}
-          selectedWidgets={widgets}
-          onAddWidget={openWidgetModal}
-          onRemoveWidget={removeWidget}
-          onResizeWidget={resizeWidget}
-          onMoveWidget={moveWidget}
-        />
-      )}
-
-      {searchVisible && (
-        <SearchResultsList
-          data={searchResultsData}
-          loading={loading}
-          error={error}
-          onSelect={handleSelectItem}
-          onDelete={deleteRecentSearch}
-          query={query}
-          onSeeAll={handleSeeAll}
-          showAll={showAll}
-          isSearching={isSearching}
-        />
-      )}
 
       <AddWidgetModal
         visible={widgetModalVisible}

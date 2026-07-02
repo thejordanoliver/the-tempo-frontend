@@ -634,6 +634,7 @@ export default function PlayerStatTable({
               onSelect: (val) => setStatView(val as StatView),
             },
           ]}
+          isDark={isDark}
         />
 
         <Text style={global.errorText}>No {statType} stats available.</Text>
@@ -657,6 +658,7 @@ export default function PlayerStatTable({
             onSelect: (val) => setStatView(val as StatView),
           },
         ]}
+        isDark={isDark}
       />
 
       <View style={styles.tableWrapper}>

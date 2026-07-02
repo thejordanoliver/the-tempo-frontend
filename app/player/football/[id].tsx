@@ -1,5 +1,10 @@
-import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
+import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  FootballPlayerSeason,
+  usePlayerSeasons,
+} from "@/hooks/FootballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/FootballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -10,10 +15,43 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useFootballPlayerSeasons } from "hooks/FootballHooks/useFootballPlayerSeasons";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
+
+function getSeasonNumber(season: FootballPlayerSeason) {
+  const rawSeason = season.season ?? season.year ?? season.displaySeason;
+  const parsed = Number(rawSeason);
+
+  if (Number.isFinite(parsed)) {
+    return parsed;
+  }
+
+  const match = String(rawSeason ?? "").match(/\d{4}/);
+  return match ? Number(match[0]) : 0;
+}
+
+function getLatestPlayerSeason(seasons: FootballPlayerSeason[]) {
+  if (!seasons.length) {
+    return null;
+  }
+
+  const regularSeasonRows = seasons.filter(
+    (season) => season.seasonType !== "postseason",
+  );
+
+  const rowsToUse = regularSeasonRows.length ? regularSeasonRows : seasons;
+
+  return [...rowsToUse].sort((a, b) => {
+    const seasonCompare = getSeasonNumber(b) - getSeasonNumber(a);
+
+    if (seasonCompare !== 0) {
+      return seasonCompare;
+    }
+
+    return String(a.teamId).localeCompare(String(b.teamId));
+  })[0];
+}
 
 export default function PlayerDetailScreen() {
   const { id, teamId, league } = useLocalSearchParams<{
@@ -35,7 +73,6 @@ export default function PlayerDetailScreen() {
   const teamLogo = isNFL
     ? getNFLTeamLogo(teamId, true)
     : getCFBTeamLogo(teamId, true);
-    
 
   /* ---------------- Last game ---------------- */
   const {
@@ -48,7 +85,11 @@ export default function PlayerDetailScreen() {
     data: seasons,
     loading: seasonsLoading,
     error: seasonsError,
-  } = useFootballPlayerSeasons(playerId, league);
+  } = usePlayerSeasons(playerId, league);
+
+  const latestSeason = useMemo(() => {
+    return getLatestPlayerSeason(seasons);
+  }, [seasons]);
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
@@ -84,6 +125,12 @@ export default function PlayerDetailScreen() {
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader player={player} isDark={isDark} isCFB={isCFB} />
 
+      <SeasonStatCard
+        season={latestSeason}
+        loading={seasonsLoading}
+        error={seasonsError}
+        player={player}
+      />
       <LatestGame
         game={game}
         loading={gameLoading}

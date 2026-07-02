@@ -1,5 +1,4 @@
 import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
-import Roster from "@/components/Sports/Football/Team/Roster";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -25,6 +24,7 @@ import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import Roster from "@/components/Sports/Baseball/Team/Roster";
 
 export default function TeamDetailScreen() {
   const league = "NFL";

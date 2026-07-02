@@ -1,7 +1,7 @@
+import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";

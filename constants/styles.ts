@@ -138,6 +138,7 @@ export const Fonts = {
 export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
     errorText: {
+      marginTop: 20,
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,

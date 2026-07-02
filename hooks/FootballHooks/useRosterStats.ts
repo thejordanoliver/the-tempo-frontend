@@ -1,151 +1,196 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type {
+  FootballLeague,
+  FootballRosterApiPlayer,
+  FootballRosterStatsPlayer,
+  FootballRosterStatsResponse,
+  FootballSeasonStatGroups,
+  FootballSeasonStats,
+  FootballStatGroup,
+} from "@/types/football/stats";
 import { apiClient } from "utils/apiClient";
 
-export type FootballLeague = "CFB" | "NFL";
-export type FootballStatValue = string | number | null | undefined;
-
-export type FootballStatGroup = {
-  [key: string]: FootballStatValue;
-};
-
-export interface FootballPassingStats extends FootballStatGroup {
-  completions?: FootballStatValue;
-  passingAttempts?: FootballStatValue;
-  completionPct?: FootballStatValue;
-  passingYards?: FootballStatValue;
-  passingTouchdowns?: FootballStatValue;
-  interceptions?: FootballStatValue;
-  yardsPerPassAttempt?: FootballStatValue;
-  longPassing?: FootballStatValue;
-  sacks?: FootballStatValue;
-  QBRating?: FootballStatValue;
-}
-
-export interface FootballRushingStats extends FootballStatGroup {
-  rushingAttempts?: FootballStatValue;
-  rushingYards?: FootballStatValue;
-  yardsPerRushAttempt?: FootballStatValue;
-  rushingTouchdowns?: FootballStatValue;
-  longRushing?: FootballStatValue;
-}
-
-export interface FootballReceivingStats extends FootballStatGroup {
-  receptions?: FootballStatValue;
-  receivingYards?: FootballStatValue;
-  yardsPerReception?: FootballStatValue;
-  receivingTouchdowns?: FootballStatValue;
-  longReception?: FootballStatValue;
-}
-
-export interface FootballDefensiveStats extends FootballStatGroup {
-  totalTackles?: FootballStatValue;
-  soloTackles?: FootballStatValue;
-  assistTackles?: FootballStatValue;
-  sacks?: FootballStatValue;
-  interceptions?: FootballStatValue;
-  passesDefended?: FootballStatValue;
-  fumblesForced?: FootballStatValue;
-  interceptionYards?: FootballStatValue;
-  interceptionTouchdowns?: FootballStatValue;
-}
-
-export interface FootballReturningStats extends FootballStatGroup {
-  kickReturns?: FootballStatValue;
-  kickReturnYards?: FootballStatValue;
-  longKickReturn?: FootballStatValue;
-  kickReturnTouchdowns?: FootballStatValue;
-  puntReturns?: FootballStatValue;
-  puntReturnYards?: FootballStatValue;
-  longPuntReturn?: FootballStatValue;
-  puntReturnTouchdowns?: FootballStatValue;
-}
-
-export interface FootballKickingStats extends FootballStatGroup {
-  fieldGoals?: FootballStatValue;
-  kickExtraPoints?: FootballStatValue;
-}
-
-export interface FootballPuntingStats extends FootballStatGroup {
-  punts?: FootballStatValue;
-  puntYards?: FootballStatValue;
-  longPunt?: FootballStatValue;
-}
-
-export interface FootballScoringStats extends FootballStatGroup {
-  fieldGoals?: FootballStatValue;
-  kickExtraPoints?: FootballStatValue;
-}
-
-export interface FootballSeasonStats {
-  season?: string | number | null;
-  year?: string | number | null;
-  displaySeason?: string;
-  passing?: FootballPassingStats;
-  rushing?: FootballRushingStats;
-  receiving?: FootballReceivingStats;
-  defensive?: FootballDefensiveStats;
-  returning?: FootballReturningStats;
-  kicking?: FootballKickingStats;
-  punting?: FootballPuntingStats;
-  scoring?: FootballScoringStats;
-  totals?: FootballStatGroup;
-  averages?: FootballStatGroup;
-  [key: string]: unknown;
-}
-
-type FootballRosterApiPlayer = {
-  id?: string | number | null;
-  player_id?: string | number | null;
-  playerId?: string | number | null;
-  name?: string | null;
-  full_name?: string | null;
-  short_name?: string | null;
-  shortName?: string | null;
-  first_name?: string | null;
-  firstName?: string | null;
-  last_name?: string | null;
-  lastName?: string | null;
-  jersey_number?: string | number | null;
-  jerseyNumber?: string | number | null;
-  position?: string | null;
-  headshot_url?: string | null;
-  headshotUrl?: string | null;
-  team_id?: string | number | null;
-  teamId?: string | number | null;
-  teamCode?: string | null;
-  seasonStats?: FootballSeasonStats[] | null;
-  season_stats?: FootballSeasonStats[] | null;
-  latestSeasonStats?: FootballSeasonStats | null;
-  latest_season_stats?: FootballSeasonStats | null;
-};
-
-export interface FootballRosterStatsPlayer {
-  id: string | number;
-  player_id: string | number | null;
-  playerId: string | number;
-  full_name: string;
-  short_name: string;
-  first_name: string;
-  last_name: string;
-  jersey_number: string | number;
-  position: string;
-  headshot_url: string;
-  team_id: string | number | null;
-  teamCode: string;
-  seasonStats: FootballSeasonStats[];
-  latestSeasonStats: FootballSeasonStats | null;
-}
-
+export type FootballRosterLeague = FootballLeague;
 export type Player = FootballRosterStatsPlayer;
+export type RosterStats = FootballRosterStatsResponse;
 
-const getSeasonNumber = (season: FootballSeasonStats) => {
-  const rawSeason = season.season ?? season.year;
-  const numericSeason =
-    typeof rawSeason === "string"
-      ? Number(rawSeason.replace(/,/g, ""))
-      : Number(rawSeason);
+type TeamIdInput = string | number | null | undefined;
 
-  return Number.isFinite(numericSeason) ? numericSeason : 0;
+type UseRosterStatsResult = {
+  teamRoster: RosterStats | null;
+  rosterStats: FootballRosterStatsPlayer[];
+  players: FootballRosterStatsPlayer[];
+  count: number;
+  loading: boolean;
+  refreshingStats: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+  onRefresh: () => Promise<void>;
+};
+
+const STAT_GROUP_KEYS = [
+  "passing",
+  "rushing",
+  "receiving",
+  "defensive",
+  "scoring",
+  "returning",
+  "kicking",
+  "punting",
+] as const;
+
+const EMPTY_ROSTER_STATS = (teamId: string): RosterStats => ({
+  teamId,
+  count: 0,
+  players: [],
+});
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+
+const normalizeLeague = (value: unknown): FootballRosterLeague | "" => {
+  if (typeof value !== "string") return "";
+
+  const upperLeague = value.trim().toUpperCase();
+
+  return upperLeague === "NFL" || upperLeague === "CFB" ? upperLeague : "";
+};
+
+const resolveHookArgs = (
+  first: TeamIdInput | FootballRosterLeague,
+  second: TeamIdInput | FootballRosterLeague,
+) => {
+  const firstLeague = normalizeLeague(first);
+
+  if (firstLeague) {
+    return {
+      teamId: second as TeamIdInput,
+      league: firstLeague,
+    };
+  }
+
+  return {
+    teamId: first as TeamIdInput,
+    league: normalizeLeague(second),
+  };
+};
+
+const normalizeTeamId = (teamId: TeamIdInput) => {
+  if (teamId === null || teamId === undefined) return "";
+
+  return String(teamId).trim();
+};
+
+const parseNumber = (value: unknown): number | null => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value !== "string") return null;
+
+  const parsed = Number(value.trim().replace(/,/g, ""));
+
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const toIdValue = (value: unknown): string | number | null => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+
+    return trimmed ? trimmed : null;
+  }
+
+  return null;
+};
+
+const toNullableString = (value: unknown): string | null => {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+
+  return trimmed ? trimmed : null;
+};
+
+const toDisplayString = (value: unknown) => toNullableString(value) ?? "";
+
+const isStatValue = (value: unknown): value is string | number | null =>
+  value === null || typeof value === "string" || typeof value === "number";
+
+const normalizeStatGroup = (value: unknown): FootballStatGroup | undefined => {
+  if (!isRecord(value)) return undefined;
+
+  return Object.entries(value).reduce<FootballStatGroup>(
+    (group, [key, statValue]) => {
+      if (isStatValue(statValue)) {
+        group[key] = statValue;
+      }
+
+      return group;
+    },
+    {},
+  );
+};
+
+const normalizeSeasonStatGroups = (value: unknown): FootballSeasonStatGroups => {
+  if (!isRecord(value)) return {};
+
+  const groups: FootballSeasonStatGroups = {};
+
+  STAT_GROUP_KEYS.forEach((key) => {
+    const group = normalizeStatGroup(value[key]);
+
+    if (group) {
+      groups[key] = group as FootballSeasonStatGroups[typeof key];
+    }
+  });
+
+  return groups;
+};
+
+const normalizeSeasonStats = (
+  seasonStats: unknown,
+): FootballSeasonStats | null => {
+  if (!isRecord(seasonStats)) return null;
+
+  return {
+    ...seasonStats,
+    id: parseNumber(seasonStats.id) ?? 0,
+    stats: normalizeSeasonStatGroups(seasonStats.stats),
+    season: parseNumber(seasonStats.season ?? seasonStats.year) ?? 0,
+    team_id: toIdValue(seasonStats.team_id ?? seasonStats.teamId),
+    position: toNullableString(seasonStats.position),
+    player_id: parseNumber(seasonStats.player_id ?? seasonStats.playerId) ?? 0,
+    team_slug: toNullableString(seasonStats.team_slug ?? seasonStats.teamSlug),
+    created_at: toNullableString(seasonStats.created_at),
+    updated_at: toNullableString(seasonStats.updated_at),
+    player_name: toDisplayString(
+      seasonStats.player_name ?? seasonStats.playerName,
+    ),
+    season_type: toNullableString(
+      seasonStats.season_type ?? seasonStats.seasonType,
+    ),
+    display_season: toNullableString(
+      seasonStats.display_season ?? seasonStats.displaySeason,
+    ),
+    season_type_label: toNullableString(
+      seasonStats.season_type_label ?? seasonStats.seasonTypeLabel,
+    ),
+    season_type_value: toIdValue(
+      seasonStats.season_type_value ?? seasonStats.seasonTypeValue,
+    ),
+  };
+};
+
+const normalizeSeasonStatsList = (value: unknown): FootballSeasonStats[] => {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map(normalizeSeasonStats)
+    .filter((season): season is FootballSeasonStats => Boolean(season));
 };
 
 const getLatestSeasonStats = (
@@ -154,21 +199,21 @@ const getLatestSeasonStats = (
   if (!seasonStats.length) return null;
 
   return seasonStats.reduce((latest, season) =>
-    getSeasonNumber(season) > getSeasonNumber(latest) ? season : latest,
+    season.season > latest.season ? season : latest,
   );
 };
 
 const splitName = (fullName: string) => {
-  const [first = "", ...rest] = fullName.trim().split(/\s+/);
+  const [firstName = "", ...rest] = fullName.trim().split(/\s+/);
 
   return {
-    firstName: first,
+    firstName,
     lastName: rest.join(" "),
   };
 };
 
 const formatShortName = (
-  shortName: string | null | undefined,
+  shortName: string | null,
   firstName: string,
   lastName: string,
   fullName: string,
@@ -182,95 +227,163 @@ const formatShortName = (
 const normalizePlayer = (
   player: FootballRosterApiPlayer,
 ): FootballRosterStatsPlayer => {
-  const seasonStats = Array.isArray(player.seasonStats)
-    ? player.seasonStats
-    : Array.isArray(player.season_stats)
-      ? player.season_stats
-      : [];
-  const latestSeasonStats =
-    player.latestSeasonStats ??
-    player.latest_season_stats ??
-    getLatestSeasonStats(seasonStats);
-  const fullName = player.full_name ?? player.name ?? "";
+  const fullName = toDisplayString(player.full_name ?? player.name);
   const nameParts = splitName(fullName);
-  const firstName = player.first_name ?? player.firstName ?? nameParts.firstName;
-  const lastName = player.last_name ?? player.lastName ?? nameParts.lastName;
-  const playerId = player.playerId ?? player.player_id ?? player.id ?? "";
+  const firstName = toDisplayString(player.first_name ?? player.firstName) ||
+    nameParts.firstName;
+  const lastName = toDisplayString(player.last_name ?? player.lastName) ||
+    nameParts.lastName;
+  const id = toIdValue(player.id ?? player.playerId ?? player.player_id) ?? "";
+  const playerId =
+    toIdValue(player.playerId ?? player.player_id ?? player.id) ?? id;
+  const seasonStats = normalizeSeasonStatsList(
+    player.seasonStats ?? player.season_stats,
+  );
+  const latestSeasonStats =
+    normalizeSeasonStats(
+      player.latestSeasonStats ?? player.latest_season_stats,
+    ) ?? getLatestSeasonStats(seasonStats);
+  const team = toNullableString(player.team);
+  const teamCode = toNullableString(player.teamCode);
 
   return {
-    id: player.id ?? playerId,
-    player_id: player.player_id ?? player.playerId ?? player.id ?? null,
+    id,
     playerId,
+    player_id: toIdValue(player.player_id ?? player.playerId ?? player.id),
     full_name: fullName,
+    first_name: firstName,
+    last_name: lastName,
+    team_id: toIdValue(player.team_id ?? player.teamId),
+    position: toNullableString(player.position),
+    jersey_number: toIdValue(player.jersey_number ?? player.jerseyNumber),
+    headshot_url: toNullableString(player.headshot_url ?? player.headshotUrl),
+    active: typeof player.active === "boolean" ? player.active : true,
     short_name: formatShortName(
-      player.short_name ?? player.shortName,
+      toNullableString(player.short_name ?? player.shortName),
       firstName,
       lastName,
       fullName,
     ),
-    first_name: firstName,
-    last_name: lastName,
-    jersey_number: player.jersey_number ?? player.jerseyNumber ?? "",
-    position: player.position ?? "",
-    headshot_url: player.headshot_url ?? player.headshotUrl ?? "",
-    team_id: player.team_id ?? player.teamId ?? null,
-    teamCode: player.teamCode ?? "",
+    ...(team ? { team } : {}),
+    ...(teamCode ? { teamCode } : {}),
     seasonStats,
     latestSeasonStats,
   };
 };
 
-export const useRosterStats = (league: FootballLeague, teamId: number) => {
-  const [rosterStats, setRosterStats] = useState<FootballRosterStatsPlayer[]>(
-    [],
-  );
+const normalizeCount = (value: unknown, fallback: number) =>
+  parseNumber(value) ?? fallback;
+
+const normalizeRosterStatsResponse = (
+  data: Partial<RosterStats> | null | undefined,
+  teamId: string,
+): RosterStats => {
+  const response = isRecord(data) ? data : {};
+  const players = Array.isArray(response.players)
+    ? response.players
+        .filter(isRecord)
+        .map((player) => normalizePlayer(player as FootballRosterApiPlayer))
+    : [];
+
+  return {
+    teamId: String(response.teamId ?? teamId),
+    count: normalizeCount(response.count, players.length),
+    players,
+  };
+};
+
+const getErrorObject = (err: unknown) => {
+  if (err instanceof Error) return err;
+
+  return new Error("Failed to fetch roster stats");
+};
+
+export function useRosterStats(
+  teamId: TeamIdInput,
+  league: FootballRosterLeague,
+): UseRosterStatsResult;
+export function useRosterStats(
+  league: FootballRosterLeague,
+  teamId: TeamIdInput,
+): UseRosterStatsResult;
+export function useRosterStats(
+  first: TeamIdInput | FootballRosterLeague,
+  second: TeamIdInput | FootballRosterLeague,
+): UseRosterStatsResult {
+  const { normalizedTeamId, normalizedLeague } = useMemo(() => {
+    const resolved = resolveHookArgs(first, second);
+
+    return {
+      normalizedTeamId: normalizeTeamId(resolved.teamId),
+      normalizedLeague: resolved.league,
+    };
+  }, [first, second]);
+
+  const [teamRoster, setTeamRoster] = useState<RosterStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshingStats, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchRoster = useCallback(
     async (isRefresh = false) => {
-      try {
-        if (isRefresh) {
-          setRefreshing(true);
-        } else {
-          setLoading(true);
-        }
-
-        setError(null);
-
-        const response = await apiClient.get<FootballRosterApiPlayer[]>(
-          `/api/team/stats/${league}/roster/${teamId}`,
-        );
-
-        const players = Array.isArray(response.data) ? response.data : [];
-
-        setRosterStats(players.map(normalizePlayer));
-      } catch (err) {
-        console.error(err);
-        setError(
-          err instanceof Error ? err : new Error("Failed to load roster stats"),
-        );
-      } finally {
+      if (!normalizedTeamId || !normalizedLeague) {
+        setTeamRoster(null);
         setLoading(false);
         setRefreshing(false);
+        return;
+      }
+
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      setError(null);
+
+      try {
+        const url = `/api/team/stats/${normalizedLeague.toLowerCase()}/roster/${normalizedTeamId}`;
+
+        const response = await apiClient.get<Partial<RosterStats>>(url);
+        const normalizedRoster = normalizeRosterStatsResponse(
+          response.data,
+          normalizedTeamId,
+        );
+
+        setTeamRoster(normalizedRoster);
+      } catch (err: unknown) {
+        const errorObject = getErrorObject(err);
+
+        console.error("Error fetching roster stats:", errorObject.message);
+        setError(errorObject);
+        setTeamRoster(EMPTY_ROSTER_STATS(normalizedTeamId));
+      } finally {
+        if (isRefresh) {
+          setRefreshing(false);
+        } else {
+          setLoading(false);
+        }
       }
     },
-    [league, teamId],
+    [normalizedLeague, normalizedTeamId],
   );
 
   useEffect(() => {
-    if (!league || !teamId) return;
     fetchRoster();
-  }, [fetchRoster, teamId, league]);
+  }, [fetchRoster]);
 
-  const onRefresh = () => fetchRoster(true);
+  const refresh = useCallback(() => fetchRoster(true), [fetchRoster]);
+  const players = teamRoster?.players ?? [];
 
   return {
-    rosterStats,
+    teamRoster,
+    rosterStats: players,
+    players,
+    count: teamRoster?.count ?? 0,
     loading,
     refreshingStats,
     error,
-    onRefresh,
+    refetch: refresh,
+    onRefresh: refresh,
   };
-};
+}

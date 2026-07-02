@@ -1,214 +1,377 @@
-import { AxiosError } from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-// ---------- Shared stat types ----------
+export type BaseballLeague = "MLB" | "CB" | "SB";
 
-export type MlbStatValue = string | number | null | undefined;
+export type StatValue = number | string | null | undefined;
 
-export type MlbStatMap = Record<string, MlbStatValue>;
+export type Player = {
+  team_id: string | null;
+  position: string | null;
+};
 
-export interface MlbStatMeta {
-  label?: string | null;
-  displayName?: string | null;
-  description?: string | null;
-}
+export type StatsObject = Record<string, Record<string, StatValue>>;
 
-export interface MlbStatCategory {
-  name?: string | null;
-  key?: string | null;
-  displayName?: string | null;
-  sortKey?: string | null;
-  statCategory?: string | null;
-  stats?: MlbStatMap;
-  meta?: Record<string, MlbStatMeta>;
-}
-
-export interface MlbSeasonStatsRow {
+export type ApiSeason = {
+  id: string;
+  player_id: string;
+  player_name: string;
   season: number;
-  displaySeason?: string | null;
-  seasonType?: number | null;
-  seasonTypeName?: string | null;
-
-  teamId?: string | number | null;
-  espnTeamId?: string | number | null;
-  teamSlug?: string | null;
+  display_season: string;
+  team_id: string;
+  team_slug: string | null;
   position?: string | null;
+  season_type: string;
+  season_type_value: string | null;
+  season_type_label: string;
+  stats: StatsObject;
+  created_at: string;
+  updated_at: string;
+};
 
-  totals?: MlbStatMap;
-  averages?: MlbStatMap;
+export type PlayerStatsResponse = {
+  playerId: string;
+  player: Player;
+  seasons: ApiSeason[];
+};
 
-  categories?: Record<string, MlbStatCategory>;
+export type Stat = {
+  name: string;
+  label: string;
+  value: number | null;
+  displayValue: string;
+  displayName: string;
+  description?: string;
+};
 
-  careerBatting?: MlbStatMap;
-  expandedBatting?: MlbStatMap;
-  advancedBatting?: MlbStatMap;
-  fielding?: MlbStatMap;
-  pitching?: MlbStatMap;
+export type Category = {
+  name: string;
+  displayName: string;
+  stats: Stat[];
+};
 
-  miscellaneous?: {
-    statMeta?: Record<string, Record<string, MlbStatMeta>>;
-    categoryMeta?: Record<string, Partial<MlbStatCategory>>;
+export type BaseballPlayerSeason = {
+  id: string;
+  playerId: string;
+  playerName: string;
+  year: string;
+  season: number;
+  displaySeason: string;
+  teamId: string;
+  teamSlug: string | null;
+  position: string | null;
+  seasonType: string;
+  seasonTypeValue: string | null;
+  seasonTypeLabel: string;
+  categories: Category[];
+  rawStats: StatsObject;
+  createdAt: string;
+  updatedAt: string;
+};
+
+const CATEGORY_ORDER = [
+  "batting",
+  "pitching",
+  "fielding",
+  "baserunning",
+  "hitting",
+  "defense",
+  "offense",
+  "totals",
+  "averages",
+  "splits",
+  "general",
+] as const;
+
+const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
+  batting: "Batting",
+  hitting: "Hitting",
+  pitching: "Pitching",
+  fielding: "Fielding",
+  defense: "Defense",
+  offense: "Offense",
+  baserunning: "Baserunning",
+  totals: "Totals",
+  averages: "Averages",
+  splits: "Splits",
+  general: "General",
+};
+
+const STAT_DISPLAY_NAMES: Record<string, string> = {
+  gamesPlayed: "GP",
+  gamesStarted: "GS",
+
+  atBats: "AB",
+  runs: "R",
+  hits: "H",
+  doubles: "2B",
+  triples: "3B",
+  homeRuns: "HR",
+  runsBattedIn: "RBI",
+  rbi: "RBI",
+  walks: "BB",
+  baseOnBalls: "BB",
+  strikeouts: "SO",
+  stolenBases: "SB",
+  caughtStealing: "CS",
+  battingAverage: "AVG",
+  avg: "AVG",
+  onBasePercentage: "OBP",
+  sluggingPercentage: "SLG",
+  onBasePlusSlugging: "OPS",
+  ops: "OPS",
+  totalBases: "TB",
+
+  wins: "W",
+  losses: "L",
+  saves: "SV",
+  holds: "HLD",
+  blownSaves: "BS",
+  inningsPitched: "IP",
+  earnedRunAverage: "ERA",
+  era: "ERA",
+  whip: "WHIP",
+  earnedRuns: "ER",
+  runsAllowed: "R Allowed",
+  hitsAllowed: "H Allowed",
+  homeRunsAllowed: "HR Allowed",
+  walksAllowed: "BB Allowed",
+  strikeoutsPitching: "SO",
+  battersFaced: "BF",
+  pitchesThrown: "NP",
+
+  putouts: "PO",
+  assists: "A",
+  errors: "E",
+  fieldingPercentage: "FLD%",
+  doublePlays: "DP",
+  chances: "TC",
+};
+
+const SEASON_TYPE_ORDER: Record<string, number> = {
+  regular: 0,
+  "regular season": 0,
+  reg: 0,
+  "2": 0,
+
+  postseason: 1,
+  playoffs: 1,
+  playoff: 1,
+  "3": 1,
+};
+
+function toNumber(value: StatValue): number | null {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return null;
+  }
+
+  const parsed = Number(String(value).replace(/,/g, ""));
+
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function toDisplayValue(value: StatValue): string {
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
+function formatStatLabel(statName: string): string {
+  const knownLabel = STAT_DISPLAY_NAMES[statName];
+
+  if (knownLabel) {
+    return knownLabel;
+  }
+
+  return statName
+    .replace(/_/g, " ")
+    .replace(/-/g, " - ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getOrderedCategoryNames(stats: StatsObject): string[] {
+  const availableCategoryNames = Object.keys(stats || {});
+
+  const orderedKnownCategories = CATEGORY_ORDER.filter((categoryName) =>
+    availableCategoryNames.includes(categoryName),
+  );
+
+  const unknownCategories = availableCategoryNames.filter(
+    (categoryName) =>
+      !CATEGORY_ORDER.includes(categoryName as (typeof CATEGORY_ORDER)[number]),
+  );
+
+  return [...orderedKnownCategories, ...unknownCategories];
+}
+
+function getSeasonTypeRank(season: BaseballPlayerSeason): number {
+  const seasonTypeKey = String(
+    season.seasonTypeValue || season.seasonTypeLabel || season.seasonType || "",
+  ).toLowerCase();
+
+  return SEASON_TYPE_ORDER[seasonTypeKey] ?? 99;
+}
+
+function buildCategories(season: ApiSeason): Category[] {
+  const statsObject = season.stats || {};
+
+  return getOrderedCategoryNames(statsObject)
+    .map((categoryName) => {
+      const categoryStats = statsObject[categoryName];
+
+      if (!categoryStats || Object.keys(categoryStats).length === 0) {
+        return null;
+      }
+
+      const stats: Stat[] = Object.entries(categoryStats)
+        .filter(
+          ([, value]) => value !== null && value !== undefined && value !== "",
+        )
+        .map(([statName, value]) => {
+          const label = formatStatLabel(statName);
+
+          return {
+            name: statName,
+            label,
+            value: toNumber(value),
+            displayValue: toDisplayValue(value),
+            displayName: label,
+          };
+        });
+
+      if (stats.length === 0) return null;
+
+      return {
+        name: categoryName,
+        displayName:
+          CATEGORY_DISPLAY_NAMES[categoryName] || formatStatLabel(categoryName),
+        stats,
+      };
+    })
+    .filter(Boolean) as Category[];
+}
+
+function mapSeason(season: ApiSeason): BaseballPlayerSeason {
+  return {
+    id: season.id,
+    playerId: season.player_id,
+    playerName: season.player_name,
+    year: String(season.display_season || season.season),
+    season: season.season,
+    displaySeason: String(season.display_season || season.season),
+    teamId: season.team_id,
+    teamSlug: season.team_slug,
+    position: season.position || null,
+    seasonType: season.season_type,
+    seasonTypeValue: season.season_type_value,
+    seasonTypeLabel: season.season_type_label,
+    categories: buildCategories(season),
+    rawStats: season.stats || {},
+    createdAt: season.created_at,
+    updatedAt: season.updated_at,
   };
 }
 
-export interface MlbPlayerResponse {
-  id: number;
-  team_id: number | null;
-  first_name: string | null;
-  last_name: string | null;
-  full_name: string;
-  short_name?: string | null;
-  height?: string | null;
-  weight?: number | null;
-  birth_date?: string | null;
-  debut_year?: number | null;
-  experience?: number | null;
-  birth_city?: string | null;
-  birth_country?: string | null;
-  birth_display?: string | null;
-  position: string | null;
-  jersey_number: string | null;
-  headshot_url?: string | null;
-  active?: boolean | null;
+export function useBaseballPlayerSeasons(
+  playerId: number,
+  league: BaseballLeague = "MLB",
+) {
+  const [data, setData] = useState<BaseballPlayerSeason[]>([]);
+  const [rawSeasons, setRawSeasons] = useState<ApiSeason[]>([]);
+  const [player, setPlayer] = useState<{
+    name: string;
+    position: string | null;
+    teamId?: string | null;
+  } | null>(null);
 
-  season_stats?: MlbSeasonStatsRow[];
-  seasonStats?: MlbSeasonStatsRow[];
-  careerStats?: MlbSeasonStatsRow[];
-  seasons?: MlbSeasonStatsRow[];
-}
-
-export interface CareerTotals {
-  g: number;
-  gs: number;
-
-  // Batting
-  ab: number;
-  h: number;
-  doubles: number;
-  triples: number;
-  hr: number;
-  rbi: number;
-  bb: number;
-  so: number;
-  hbp: number;
-  sf: number;
-  totalBases: number;
-
-  // Pitching
-  w: number;
-  l: number;
-  ip: number;
-  earnedRuns: number;
-  hitsAllowed: number;
-  runsAllowed: number;
-  war: number;
-  whip: number;
-
-  // Fielding
-  fullInningsPlayed: number;
-  totalChances: number;
-  pickoffs: number;
-  assists: number;
-  errors: number;
-  doublePlays: number;
-  fieldingPct: number;
-  rangeFactor: number;
-  passedBalls: number;
-  catcherStolenBasesAllowed: number;
-  catcherCaughtStealing: number;
-  catcherCaughtStealingPct: number;
-  catcherERA: number;
-  defWARBR: number;
-}
-
-// ---------- Helpers ----------
-
-function isValidSeasonRow(row: unknown): row is MlbSeasonStatsRow {
-  if (!row || typeof row !== "object") return false;
-
-  const candidate = row as MlbSeasonStatsRow;
-
-  return Number.isFinite(Number(candidate.season));
-}
-
-function normalizeSeasonRows(data: MlbPlayerResponse | null): MlbSeasonStatsRow[] {
-  if (!data) return [];
-
-  /**
-   * Your response currently has:
-   * - season_stats: []
-   * - seasonStats: []
-   * - careerStats: actual stat rows + empty objects
-   *
-   * So this picks the first array that actually contains valid season rows.
-   */
-  const possibleSources = [
-    data.seasonStats,
-    data.season_stats,
-    data.careerStats,
-    data.seasons,
-  ];
-
-  const source =
-    possibleSources.find(
-      (rows) => Array.isArray(rows) && rows.some(isValidSeasonRow),
-    ) ?? [];
-
-  return source
-    .filter(isValidSeasonRow)
-    .sort((a, b) => Number(b.season) - Number(a.season));
-}
-
-// ---------- Hook ----------
-
-export function usePlayerSeasons(playerId: number | string | null) {
-  const [data, setData] = useState<MlbPlayerResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPlayerSeasons = useCallback(async () => {
-    if (!playerId) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await apiClient.get<MlbPlayerResponse>(
-        `api/player/stats/mlb/${playerId}`,
-      );
-
-      setData(response.data);
-    } catch (err) {
-      console.error("❌ MLB hook error:", err);
-
-      const axiosError = err as AxiosError;
-
-      if (axiosError.response) {
-        setError(`Server Error: ${axiosError.response.status}`);
-      } else if (axiosError.request) {
-        setError("Network error. Check your connection.");
-      } else {
-        setError("Unexpected error occurred.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [playerId]);
-
   useEffect(() => {
-    fetchPlayerSeasons();
-  }, [fetchPlayerSeasons]);
+    if (!playerId) {
+      setData([]);
+      setRawSeasons([]);
+      setPlayer(null);
+      setLoading(false);
+      setError(null);
+      return;
+    }
 
-  const seasons = useMemo(() => normalizeSeasonRows(data), [data]);
+    let cancelled = false;
+
+    const fetchSeasons = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await apiClient.get<PlayerStatsResponse>(
+          `api/player/stats/${league}/${playerId}`,
+        );
+
+        if (cancelled) return;
+
+        const json = res.data;
+        const seasons = Array.isArray(json.seasons) ? json.seasons : [];
+        const firstSeason = seasons[0];
+
+        setPlayer({
+          name: firstSeason?.player_name || "",
+          position: json.player?.position || firstSeason?.position || null,
+          teamId: json.player?.team_id || firstSeason?.team_id || null,
+        });
+
+        setRawSeasons(seasons);
+
+        const mappedSeasons = seasons.map(mapSeason).sort((a, b) => {
+          if (b.season !== a.season) {
+            return b.season - a.season;
+          }
+
+          const seasonTypeRankDifference =
+            getSeasonTypeRank(a) - getSeasonTypeRank(b);
+
+          if (seasonTypeRankDifference !== 0) {
+            return seasonTypeRankDifference;
+          }
+
+          return String(a.seasonTypeLabel).localeCompare(
+            String(b.seasonTypeLabel),
+          );
+        });
+
+        setData(mappedSeasons);
+      } catch (err: any) {
+        if (cancelled) return;
+
+        setError(
+          err?.response?.data?.error ||
+            err?.response?.data?.message ||
+            err?.message ||
+            "Failed to fetch player seasons",
+        );
+
+        setData([]);
+        setRawSeasons([]);
+        setPlayer(null);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchSeasons();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [playerId, league]);
 
   return {
     data,
-    seasons,
-    seasonStatsFlattened: seasons,
-    careerStatsFlattened: seasons,
+    rawSeasons,
+    player,
     loading,
     error,
-    refetch: fetchPlayerSeasons,
   };
 }

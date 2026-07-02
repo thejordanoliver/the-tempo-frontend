@@ -9,6 +9,7 @@ type TeamInfoProps = {
   record?: string;
   side: "home" | "away";
   gameStatusDescription: string;
+  state: string;
   logo: any;
 };
 
@@ -19,18 +20,19 @@ export default function TeamInfo({
   opponentScore,
   record,
   gameStatusDescription,
+  state,
   side,
   logo,
 }: TeamInfoProps) {
   const styles = TeamInfoStyle;
 
-  const isFinal = gameStatusDescription === "Full Time";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const isFinal = state === "post";
+  const isScheduled = state === "pre";
+  const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeit";
-  const isSuspended = gameStatusDescription === "Suspended";
+  const isPostponed = gameStatusDescription === "Postponed";
 
   const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
 

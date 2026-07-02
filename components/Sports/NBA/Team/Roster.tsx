@@ -5,7 +5,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
 import { RefreshControl, ScrollView, Text } from "react-native";
 import PlayerCardSkeletonList from "../../../Skeletons/PlayerCardListSkeleton";
-import { PlayerCard } from "../Player/PlayerCard";
+import { PlayerCard } from "../../Basketball/Player/PlayerCard";
 
 interface RosterProps {
   players: Player[];

@@ -1,28 +1,103 @@
+import { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
+import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
-import { getNBASeason } from "utils/dateUtils";
+
+type BasketballLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+
 type Props = {
-  season?: PlayerSeason[];
+  seasons: PlayerSeason[];
   loading: boolean;
   error: string | null;
+  league: BasketballLeague | string;
 };
 
-function toNumber(value?: number | string | null) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+function normalizeLeague(league: Props["league"]) {
+  return String(league ?? "").toUpperCase();
 }
 
-function safeFixed(value?: number | null) {
-  if (value === null || value === undefined || !Number.isFinite(value)) {
-    return "0.0";
+function isProBasketballLeague(league: Props["league"]) {
+  const normalizedLeague = normalizeLeague(league);
+  return normalizedLeague === "NBA" || normalizedLeague === "WNBA";
+}
+
+function getSeasonNumber(season: PlayerSeason) {
+  const rawSeason = season.season;
+  const parsed = Number(rawSeason);
+
+  if (Number.isFinite(parsed)) {
+    return parsed;
   }
 
-  return value.toFixed(1);
+  const match = String(rawSeason ?? "").match(/\d{4}/);
+  return match ? Number(match[0]) : 0;
+}
+
+function sortLatestSeasonRows(a: PlayerSeason, b: PlayerSeason) {
+  const seasonCompare = getSeasonNumber(b) - getSeasonNumber(a);
+
+  if (seasonCompare !== 0) {
+    return seasonCompare;
+  }
+
+  return String(a.team_id).localeCompare(String(b.team_id));
+}
+
+function getLatestSeason(seasons: PlayerSeason[]) {
+  if (!seasons.length) {
+    return null;
+  }
+
+  return [...seasons].sort(sortLatestSeasonRows)[0];
+}
+
+function getLatestProPlayerSeason(seasons: PlayerSeason[]) {
+  if (!seasons.length) {
+    return null;
+  }
+
+  const regularSeasonRows = seasons.filter((season) => {
+    const seasonType = String(season.season_type ?? "").toLowerCase();
+    return seasonType !== "postseason";
+  });
+
+  const rowsToUse = regularSeasonRows.length ? regularSeasonRows : seasons;
+
+  return [...rowsToUse].sort(sortLatestSeasonRows)[0];
+}
+
+function getDisplaySeason({
+  seasons,
+  league,
+}: {
+  seasons: PlayerSeason[];
+  league: Props["league"];
+}) {
+  if (isProBasketballLeague(league)) {
+    return getLatestProPlayerSeason(seasons);
+  }
+
+  return getLatestSeason(seasons);
+}
+
+function getStatValue(
+  stats: Record<string, any>,
+  keys: string[],
+  fallback: string = "--",
+) {
+  for (const key of keys) {
+    const value = stats?.[key];
+
+    if (value !== null && value !== undefined && value !== "") {
+      return value;
+    }
+  }
+
+  return fallback;
 }
 
 function StatItem({
@@ -32,7 +107,7 @@ function StatItem({
   styles,
 }: {
   label: string;
-  value: string;
+  value: number | string | null | undefined;
   isDark: boolean;
   styles: ReturnType<typeof seasonStatCardStyles>;
 }) {
@@ -44,19 +119,31 @@ function StatItem({
           { color: isDark ? Colors.white : Colors.black },
         ]}
       >
-        {value}
+        {value ?? "--"}
       </Text>
+
       <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
 }
 
-export default function SeasonStatCard({ season = [], loading, error }: Props) {
+export default function SeasonStatCard({
+  seasons,
+  loading,
+  error,
+  league,
+}: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
-  const currentSeason = getNBASeason();
+
+  const latestSeason = useMemo(() => {
+    return getDisplaySeason({
+      seasons,
+      league,
+    });
+  }, [seasons, league]);
 
   if (loading) {
     return <SeasonStatCardSkeleton />;
@@ -70,53 +157,73 @@ export default function SeasonStatCard({ season = [], loading, error }: Props) {
     );
   }
 
-  if (!season.length) {
+  if (!latestSeason) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>No season stats available</Text>
+        <Text style={global.emptyText}>No season stats available</Text>
       </View>
     );
   }
 
-  const seasonData =
-    season.find((item) => item.season === currentSeason) ??
-    season[season.length - 1];
+  const averages = latestSeason.averages ?? {};
 
-  if (!seasonData) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>No season stats available</Text>
-      </View>
-    );
-  }
+  const points = getStatValue(averages, [
+    "avgPoints",
+    "pointsPerGame",
+    "points",
+  ]);
 
-  const games = toNumber(seasonData.g);
-  const points = toNumber(seasonData.pts);
-  const assists = toNumber(seasonData.ast);
-  const rebounds = toNumber(seasonData.trb);
-  const fieldGoals = toNumber(seasonData.fg);
-  const fieldGoalAttempts = toNumber(seasonData.fga);
+  const assists = getStatValue(averages, [
+    "avgAssists",
+    "assistsPerGame",
+    "assists",
+  ]);
 
-  const ppg = games > 0 ? safeFixed(points / games) : "0.0";
-  const apg = games > 0 ? safeFixed(assists / games) : "0.0";
-  const rpg = games > 0 ? safeFixed(rebounds / games) : "0.0";
-  const fgPercent =
-    fieldGoalAttempts > 0
-      ? safeFixed((fieldGoals / fieldGoalAttempts) * 100)
-      : "0.0";
+  const rebounds = getStatValue(averages, [
+    "avgRebounds",
+    "reboundsPerGame",
+    "rebounds",
+  ]);
+
+  const fieldGoals = getStatValue(averages, [
+    "avgFieldGoalsMade-avgFieldGoalsAttempted",
+    "fieldGoalsMade-fieldGoalsAttempted",
+    "fieldGoals",
+  ]);
+
+  const displaySeason =
+    latestSeason.display_season || latestSeason.season || "Latest";
 
   return (
     <View>
-      <CenteredHeader isDark={isDark}>{currentSeason} Season</CenteredHeader>
+      <CenteredHeader isDark={isDark}>{displaySeason} Season</CenteredHeader>
 
       <View style={styles.card}>
         <View style={styles.statsRow}>
-          <StatItem label="PTS" value={ppg} isDark={isDark} styles={styles} />
-          <StatItem label="AST" value={apg} isDark={isDark} styles={styles} />
-          <StatItem label="REB" value={rpg} isDark={isDark} styles={styles} />
           <StatItem
-            label="FG%"
-            value={fgPercent}
+            label="PTS"
+            value={points}
+            isDark={isDark}
+            styles={styles}
+          />
+
+          <StatItem
+            label="AST"
+            value={assists}
+            isDark={isDark}
+            styles={styles}
+          />
+
+          <StatItem
+            label="REB"
+            value={rebounds}
+            isDark={isDark}
+            styles={styles}
+          />
+
+          <StatItem
+            label="FG"
+            value={fieldGoals}
             isDark={isDark}
             styles={styles}
           />

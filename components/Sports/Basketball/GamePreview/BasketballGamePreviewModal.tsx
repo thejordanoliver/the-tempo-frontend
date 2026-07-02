@@ -105,8 +105,8 @@ export default function GamePreviewModal({
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
 
-  const homeName = homeTeam?.name || game.home?.name;
-  const awayName = awayTeam?.name || game.away?.name;
+  const awayName = awayTeam?.fullName ?? awayTeam?.name ?? "Away Team";
+  const homeName = homeTeam?.fullName ?? homeTeam?.name ?? "Home Team";
 
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, true)

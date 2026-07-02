@@ -1,19 +1,19 @@
+import PillTabs from "@/components/TabBars/PillTabs";
 import { getCFBTeamByESPNId } from "@/constants/teamsCFB";
 import { getNFLTeamByESPNId } from "@/constants/teamsNFL";
 import type {
   Category,
   FootballPlayerSeason,
   Stat,
-} from "@/hooks/FootballHooks/useFootballPlayerSeasons";
+} from "@/hooks/FootballHooks/usePlayerSeasons";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
-
 type StatTableProps = {
   data: FootballPlayerSeason[];
   loading?: boolean;
@@ -21,6 +21,13 @@ type StatTableProps = {
   position?: string | null;
   league: "NFL" | "CFB";
 };
+
+type SeasonTypeTab = "regular" | "postseason";
+
+const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab }[] = [
+  { label: "Regular Season", value: "regular" },
+  { label: "Postseason", value: "postseason" },
+];
 
 const chunk = <T,>(arr: T[], size: number): T[][] => {
   const out: T[][] = [];
@@ -413,6 +420,10 @@ function normalizeCategoryDisplayName(category: Category) {
   );
 }
 
+function normalizeSeasonTypeTab(seasonType?: string | null): SeasonTypeTab {
+  return seasonType === "postseason" ? "postseason" : "regular";
+}
+
 function getOrderedStatGroups(position?: string | null) {
   const base = CATEGORY_ORDER;
 
@@ -532,10 +543,13 @@ function getSeasonTypeRank(seasonType?: string | null) {
   return seasonType === "postseason" ? 1 : 0;
 }
 
-function getSeasonLabel(season: FootballPlayerSeason) {
+function getSeasonLabel(
+  season: FootballPlayerSeason,
+  showSeasonTypeSuffix = true,
+) {
   const displaySeason = season.displaySeason || season.year || season.season;
 
-  if (season.seasonType === "postseason") {
+  if (showSeasonTypeSuffix && season.seasonType === "postseason") {
     return `${displaySeason} POST`;
   }
 
@@ -633,6 +647,11 @@ export default function PlayerStatTable({
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
+  const showSeasonTypeTabs = league === "NFL";
+
+  const [selectedSeasonType, setSelectedSeasonType] =
+    useState<SeasonTypeTab>("regular");
+
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
       if (b.season !== a.season) {
@@ -650,11 +669,22 @@ export default function PlayerStatTable({
     });
   }, [data]);
 
+  const visibleData = useMemo(() => {
+    if (!showSeasonTypeTabs) {
+      return sortedData;
+    }
+
+    return sortedData.filter(
+      (season) =>
+        normalizeSeasonTypeTab(season.seasonType) === selectedSeasonType,
+    );
+  }, [selectedSeasonType, showSeasonTypeTabs, sortedData]);
+
   const availableGroups = useMemo(() => {
     const ordered = getOrderedStatGroups(position);
     const actualGroups = new Set<string>();
 
-    sortedData.forEach((season) => {
+    visibleData.forEach((season) => {
       season.categories?.forEach((category) => {
         if (category?.stats?.length > 0) {
           actualGroups.add(normalizeCategoryDisplayName(category));
@@ -668,7 +698,7 @@ export default function PlayerStatTable({
     );
 
     return orderedGroups.length ? [...orderedGroups, ...extraGroups] : ordered;
-  }, [sortedData, position]);
+  }, [visibleData, position]);
 
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
@@ -683,7 +713,7 @@ export default function PlayerStatTable({
   const activeGroup = selectedGroup || availableGroups[0];
 
   const seasonsWithGroup = useMemo(() => {
-    return sortedData.map((season, index) => {
+    return visibleData.map((season, index) => {
       const category = season.categories?.find(
         (item) => normalizeCategoryDisplayName(item) === activeGroup,
       );
@@ -691,7 +721,7 @@ export default function PlayerStatTable({
       return {
         id: getRowId(season, index),
         season,
-        year: getSeasonLabel(season),
+        year: getSeasonLabel(season, !showSeasonTypeTabs),
         seasonNumber: season.season,
         teamId: season.teamId,
         teamCode: getSeasonTeamCode(season, league),
@@ -699,7 +729,7 @@ export default function PlayerStatTable({
         stats: category?.stats || [],
       };
     });
-  }, [sortedData, activeGroup, league]);
+  }, [visibleData, activeGroup, league, showSeasonTypeTabs]);
 
   const statKeys = useMemo(() => {
     const actualKeys = new Set<string>();
@@ -760,6 +790,43 @@ export default function PlayerStatTable({
     return max > 0 ? bestId : null;
   }, [seasonsWithGroup, statKeys]);
 
+  const emptyText =
+    showSeasonTypeTabs && selectedSeasonType === "postseason"
+      ? "No postseason stats available"
+      : "No stats available";
+
+  const shouldShowCategoryDropdown =
+    visibleData.length > 0 && availableGroups.length > 0 && statKeys.length > 0;
+
+  const renderHeader = () => (
+    <>
+      <View style={styles.statsHeader}>
+        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
+
+        {shouldShowCategoryDropdown ? (
+          <Dropdown
+            options={availableGroups.map((group) => ({
+              label: group,
+              value: group,
+            }))}
+            selectedValue={activeGroup}
+            onSelect={setSelectedGroup}
+            isDark={isDark}
+            style={styles.dropdown}
+          />
+        ) : null}
+      </View>
+
+      {showSeasonTypeTabs ? (
+        <PillTabs
+          tabs={SEASON_TYPE_TABS}
+          selectedValue={selectedSeasonType}
+          onChange={setSelectedSeasonType}
+        />
+      ) : null}
+    </>
+  );
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -768,37 +835,35 @@ export default function PlayerStatTable({
     );
   }
 
-  if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+  if (!sortedData.length) {
+    return <Text style={global.emptyText}>No stats available</Text>;
   }
 
-  if (!sortedData.length) {
-    return <Text style={global.errorText}>No stats available</Text>;
+  if (!visibleData.length) {
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return <Text style={global.errorText}>{error}</Text>;
   }
 
   if (!activeGroup || statKeys.length === 0) {
     return (
       <View style={styles.container}>
-        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
-        <Text style={global.errorText}>No stats available</Text>
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
-
-      <Dropdown
-        options={availableGroups.map((group) => ({
-          label: group,
-          value: group,
-        }))}
-        selectedValue={activeGroup}
-        onSelect={setSelectedGroup}
-        isDark={isDark}
-        style={{ position: "absolute", right: 0, top: 12 }}
-      />
+      {renderHeader()}
 
       <View style={styles.tableWrapper}>
         <View style={styles.seasonColumn}>
@@ -830,7 +895,7 @@ export default function PlayerStatTable({
               style={[
                 styles.fixedCell,
                 styles.fixedHeaderCell,
-                { color: Colors.white },
+                styles.fixedCareerHeaderCell,
               ]}
             >
               CAREER
@@ -934,7 +999,7 @@ export default function PlayerStatTable({
         <Text style={styles.headerName}>Stat Glossary</Text>
 
         {chunk(statKeys, 2).map((row, rowIdx) => (
-          <View key={rowIdx} style={{ flexDirection: "row", marginTop: 6 }}>
+          <View key={rowIdx} style={styles.glossaryRow}>
             {row.map((key, colIdx) => {
               const isAlt = rowIdx % 2 === 1;
               const stat = allStats.find((item) => item.name === key);
@@ -942,28 +1007,17 @@ export default function PlayerStatTable({
               return (
                 <View
                   key={key}
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    backgroundColor: isAlt
-                      ? isDark
-                        ? styles.rowAltDark.backgroundColor
-                        : styles.rowAltLight.backgroundColor
-                      : "transparent",
-                    borderRightWidth: colIdx === 0 ? 1 : 0,
-                    borderRightColor: isDark
-                      ? "rgba(255,255,255,0.15)"
-                      : "rgba(0,0,0,0.1)",
-                  }}
+                  style={[
+                    styles.glossaryCell,
+                    isAlt && styles.glossaryCellAlt,
+                    colIdx === 0 && styles.glossaryCellWithRightBorder,
+                  ]}
                 >
                   <Text style={styles.glossaryAbbr}>
-                    {getStatLabel(stat, key)}
-                  </Text>
-
-                  <Text style={styles.glossaryDisplayName}>
-                    {getStatDisplayName(stat, key)}
+                    {getStatLabel(stat, key)}{" "}
+                    <Text style={styles.glossaryDisplayName}>
+                      {getStatDisplayName(stat, key)}
+                    </Text>
                   </Text>
                 </View>
               );

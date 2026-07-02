@@ -305,7 +305,7 @@ export default function GameDetailsScreen(
     );
   }
 
-  if (!game || !homeTeam || !awayTeam) return <View />;
+  if (!game) return <View />;
   return (
     <>
       <ScrollView

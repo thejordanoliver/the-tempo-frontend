@@ -1,3 +1,7 @@
+import type {
+  FootballPlayerSeason,
+  Stat,
+} from "@/hooks/FootballHooks/usePlayerSeasons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
@@ -8,17 +12,195 @@ import { getFootballSeason } from "utils/dateUtils";
 
 type Props = {
   player: any;
-  teamColor?: string;
-  teamColorDark?: string;
-  season?: string;
-  aggregatedStats?: Record<string, number> | null;
+  season?: FootballPlayerSeason | null;
   loading?: boolean;
   error?: string | null;
 };
 
+type StatMatch = {
+  displayValue: string;
+  numericValue: number | null;
+};
+
+const EMPTY_STAT = "0";
+
+const DEFENSIVE_POSITIONS = new Set([
+  "DE",
+  "EDGE",
+  "DT",
+  "DL",
+  "LB",
+  "OLB",
+  "ILB",
+  "MLB",
+  "CB",
+  "DB",
+  "S",
+  "FS",
+  "SS",
+]);
+
+function normalizeText(value?: string | number | null) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]/g, "");
+}
+
+function getPosition(player: any) {
+  const rawPosition =
+    player?.position?.abbreviation ??
+    player?.position?.name ??
+    player?.position ??
+    "";
+
+  return String(rawPosition).trim().toUpperCase();
+}
+
+function getSeasonDisplayYear(season?: FootballPlayerSeason | null) {
+  return String(
+    season?.displaySeason ??
+      season?.year ??
+      season?.season ??
+      getFootballSeason(),
+  );
+}
+
+function getAllStats(season?: FootballPlayerSeason | null) {
+  if (!season?.categories?.length) {
+    return [];
+  }
+
+  return season.categories.flatMap((category) => category.stats ?? []);
+}
+
+function getStatIdentity(stat: Stat) {
+  return [stat.name, stat.displayName, stat.description, stat.label]
+    .filter(Boolean)
+    .map((value) => normalizeText(value));
+}
+
+function parseNumber(value?: string | number | null) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return null;
+  }
+
+  const parsed = Number(String(value).replace(/,/g, "").replace("%", ""));
+
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatValue(value: string | number | null | undefined) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return EMPTY_STAT;
+  }
+
+  const num = parseNumber(value);
+
+  if (num === null) {
+    return String(value);
+  }
+
+  if (Number.isInteger(num)) {
+    return num >= 1000 ? num.toLocaleString("en-US") : String(num);
+  }
+
+  return num.toFixed(1);
+}
+
+function formatPercent(value: string | number | null | undefined) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return EMPTY_STAT;
+  }
+
+  const rawValue = String(value);
+
+  if (rawValue.includes("%")) {
+    return rawValue;
+  }
+
+  const num = parseNumber(value);
+
+  if (num === null) {
+    return rawValue;
+  }
+
+  const percent = Math.abs(num) <= 1 ? num * 100 : num;
+
+  return `${percent.toFixed(1)}%`;
+}
+
+function findStat(stats: Stat[], aliases: string[]): StatMatch {
+  const normalizedAliases = aliases.map(normalizeText);
+
+  const stat = stats.find((item) => {
+    const identities = getStatIdentity(item);
+
+    return identities.some((identity) => normalizedAliases.includes(identity));
+  });
+
+  if (!stat) {
+    return {
+      displayValue: EMPTY_STAT,
+      numericValue: null,
+    };
+  }
+
+  const displayValue =
+    stat.displayValue !== null &&
+    stat.displayValue !== undefined &&
+    stat.displayValue !== ""
+      ? String(stat.displayValue)
+      : formatValue(stat.value);
+
+  return {
+    displayValue,
+    numericValue:
+      typeof stat.value === "number" && Number.isFinite(stat.value)
+        ? stat.value
+        : parseNumber(displayValue),
+  };
+}
+
+function getStatDisplay(stats: Stat[], aliases: string[]) {
+  return findStat(stats, aliases).displayValue;
+}
+
+function getStatNumber(stats: Stat[], aliases: string[]) {
+  return findStat(stats, aliases).numericValue;
+}
+
+function getMadeAttemptedDisplay(
+  stats: Stat[],
+  combinedAliases: string[],
+  madeAliases: string[],
+  attemptedAliases: string[],
+  separator = "/",
+) {
+  const combined = findStat(stats, combinedAliases);
+
+  if (combined.displayValue !== EMPTY_STAT && combined.displayValue !== "0") {
+    return combined.displayValue;
+  }
+
+  const made = getStatDisplay(stats, madeAliases);
+  const attempted = getStatDisplay(stats, attemptedAliases);
+
+  return `${made}${separator}${attempted}`;
+}
+
+function hasAnyStats(stats: Stat[]) {
+  return stats.some((stat) => {
+    const value = stat.displayValue ?? stat.value;
+    return (
+      value !== null && value !== undefined && value !== "" && value !== "-"
+    );
+  });
+}
+
 export default function SeasonStatCard({
   player,
-  aggregatedStats,
+  season,
   loading,
   error,
 }: Props) {
@@ -28,16 +210,25 @@ export default function SeasonStatCard({
   const global = globalStyles(isDark);
 
   if (loading) return <SeasonStatCardSkeleton />;
-  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
+  const stats = getAllStats(season);
 
-  const displayYear = getFootballSeason().toString();
-  const position = player?.position || "";
+  if (!season || !hasAnyStats(stats)) {
+    return (
+      <View>
+        <CenteredHeader isDark={isDark}>
+          {getFootballSeason()} Season
+        </CenteredHeader>
+        <Text style={global.emptyText}>No season stats available</Text>
+      </View>
+    );
+  }
 
-  const formatValue = (val: number | string) => {
-    const num = Number(val);
-    if (isNaN(num)) return val;
-    return num >= 1000 ? num.toLocaleString("en-US") : num.toString();
-  };
+  if (error) {
+    return <Text style={global.errorText}>Failed to load stats</Text>;
+  }
+
+  const displayYear = getSeasonDisplayYear(season);
+  const position = getPosition(player);
 
   function StatItem({
     label,
@@ -54,59 +245,135 @@ export default function SeasonStatCard({
     );
   }
 
-  const findStat = (statName: string) => aggregatedStats?.[statName] || 0;
-
-  // --- POSITION FLAGS ---
   const showPassing = position === "QB";
   const showRushing = position === "RB";
   const showReceiving = ["WR", "TE"].includes(position);
-  const showDefense = ["DE", "CB", "LB", "S"].includes(position);
+  const showDefense = DEFENSIVE_POSITIONS.has(position);
   const showKicking = position === "K";
   const showPunting = position === "P";
 
-  // --- PASSING ---
-  const completions = findStat("completions");
-  const attempts = findStat("passing attempts");
-  const cmpAtt = `${completions}/${attempts}`;
-  const passingYards = findStat("yards");
-  const passingTDs = findStat("passing touchdowns");
-  const interceptions = findStat("interceptions");
+  const shouldShowFallback =
+    !showPassing &&
+    !showRushing &&
+    !showReceiving &&
+    !showDefense &&
+    !showKicking &&
+    !showPunting;
 
-  // --- RUSHING ---
-  const rushingAttempts = findStat("rushing attempts");
-  const rushingYards = findStat("yards");
-  const avgYds = findStat("yards per rush avg");
-  const rushingTDs = findStat("rushing touchdowns");
+  const cmpAtt = getMadeAttemptedDisplay(
+    stats,
+    ["completions-passingAttempts", "completionsPassingAttempts"],
+    ["completions"],
+    ["passingAttempts", "passing attempts"],
+  );
 
-  // --- RECEIVING ---
-  const receptions = findStat("receptions");
-  const receivingTargets = findStat("targets");
-  const receptionTargets = `${receptions}/${receivingTargets}`;
-  const receivingYards = findStat("receiving yards");
-  const receivingYardsPer = findStat("yards per reception");
-  const receivingTDs = findStat("receiving touchdowns");
+  const passingYards = getStatDisplay(stats, ["passingYards", "passing yards"]);
+  const passingTDs = getStatDisplay(stats, [
+    "passingTouchdowns",
+    "passing touchdowns",
+  ]);
+  const interceptions = getStatDisplay(stats, ["interceptions"]);
 
-  // --- DEFENSE ---
-  const totalTackles = findStat("total tackles");
-  const defenseInterceptions = findStat("interceptions");
-  const tackleForLoss = findStat("tackles for loss");
-  const sacks = findStat("sacks");
+  const rushingAttempts = getStatDisplay(stats, [
+    "rushingAttempts",
+    "rushing attempts",
+  ]);
+  const rushingYards = getStatDisplay(stats, ["rushingYards", "rushing yards"]);
+  const rushingAvg = getStatDisplay(stats, [
+    "yardsPerRushAttempt",
+    "yards per rush attempt",
+    "yards per rush avg",
+  ]);
+  const rushingTDs = getStatDisplay(stats, [
+    "rushingTouchdowns",
+    "rushing touchdowns",
+  ]);
 
-  // --- KICKING ---
-  const fgm = findStat("field goals made");
-  const fga = findStat("field goals attempts");
-  const fgmFGA = `${fgm}/${fga}`;
-  const xpm = findStat("extra points made");
-  const xpa = findStat("extra points attempts");
-  const xpmXPA = `${xpm}/${xpa}`;
-  const long = findStat("longest field goal");
-  const fgmPCT = findStat("field goal pct");
+  const receptionTargets = getMadeAttemptedDisplay(
+    stats,
+    ["receptions-receivingTargets", "receptionsReceivingTargets"],
+    ["receptions"],
+    ["receivingTargets", "targets"],
+  );
 
-  // --- PUNTING ---
-  const punts = findStat("punts");
-  const gpYds = findStat("gross punt yards");
-  const longestPunt = findStat("longest punt");
-  const touchbacks = findStat("touchbacks");
+  const receivingYards = getStatDisplay(stats, [
+    "receivingYards",
+    "receiving yards",
+  ]);
+  const receivingYardsPer = getStatDisplay(stats, [
+    "yardsPerReception",
+    "yards per reception",
+  ]);
+  const receivingTDs = getStatDisplay(stats, [
+    "receivingTouchdowns",
+    "receiving touchdowns",
+  ]);
+
+  const totalTackles = getStatDisplay(stats, ["totalTackles", "total tackles"]);
+  const defenseInterceptions = getStatDisplay(stats, ["interceptions"]);
+  const tacklesForLoss = getStatDisplay(stats, [
+    "stuffs",
+    "tacklesForLoss",
+    "tackles for loss",
+  ]);
+  const sacks = getStatDisplay(stats, ["sacks"]);
+
+  const fgmFga = getMadeAttemptedDisplay(
+    stats,
+    [
+      "fieldGoalsMade-fieldGoalAttempts",
+      "fieldGoalsMade-fieldGoalsAttempted",
+      "field goals made-field goals attempted",
+    ],
+    ["fieldGoalsMade", "field goals made"],
+    ["fieldGoalAttempts", "field goals attempts", "field goals attempted"],
+  );
+
+  const xpmXpa = getMadeAttemptedDisplay(
+    stats,
+    ["extraPointsMade-extraPointAttempts"],
+    ["extraPointsMade", "extra points made"],
+    ["extraPointAttempts", "extra points attempts", "extra points attempted"],
+  );
+
+  const longFieldGoal = getStatDisplay(stats, [
+    "longFieldGoalMade",
+    "longest field goal",
+  ]);
+
+  const fieldGoalPctValue =
+    getStatNumber(stats, ["fieldGoalPct", "field goal pct"]) ??
+    getStatDisplay(stats, ["fieldGoalPct", "field goal pct"]);
+
+  const fieldGoalPct = formatPercent(fieldGoalPctValue);
+
+  const punts = getStatDisplay(stats, ["punts"]);
+  const puntYards = getStatDisplay(stats, [
+    "puntYards",
+    "grossPuntYards",
+    "gross punt yards",
+  ]);
+  const longestPunt = getStatDisplay(stats, ["longPunt", "longest punt"]);
+  const touchbacks = getStatDisplay(stats, ["puntTouchbacks", "touchbacks"]);
+
+  const fallbackGamesPlayed = getStatDisplay(stats, [
+    "gamesPlayed",
+    "games played",
+  ]);
+  const fallbackPoints = getStatDisplay(stats, ["totalPoints", "points"]);
+  const fallbackTouchdowns = getStatDisplay(stats, [
+    "totalTouchdowns",
+    "total touchdowns",
+  ]);
+  const fallbackYards =
+    getStatDisplay(stats, ["passingYards", "passing yards"]) !== EMPTY_STAT
+      ? getStatDisplay(stats, ["passingYards", "passing yards"])
+      : getStatDisplay(stats, [
+          "rushingYards",
+          "rushing yards",
+          "receivingYards",
+          "receiving yards",
+        ]);
 
   return (
     <View>
@@ -127,7 +394,7 @@ export default function SeasonStatCard({
             <>
               <StatItem label="RUSH ATT" value={rushingAttempts} />
               <StatItem label="RUSH YDS" value={rushingYards} />
-              <StatItem label="AVG/YDS" value={avgYds} />
+              <StatItem label="AVG/YDS" value={rushingAvg} />
               <StatItem label="RUSH TD" value={rushingTDs} />
             </>
           )}
@@ -145,26 +412,35 @@ export default function SeasonStatCard({
             <>
               <StatItem label="TOT" value={totalTackles} />
               <StatItem label="INT" value={defenseInterceptions} />
-              <StatItem label="TFL" value={tackleForLoss} />
+              <StatItem label="TFL" value={tacklesForLoss} />
               <StatItem label="SACK" value={sacks} />
             </>
           )}
 
           {showKicking && (
             <>
-              <StatItem label="FGM/FGA" value={fgmFGA} />
-              <StatItem label="FG%" value={fgmPCT} />
-              <StatItem label="XPM/XPA" value={xpmXPA} />
-              <StatItem label="LONG" value={long} />
+              <StatItem label="FGM/FGA" value={fgmFga} />
+              <StatItem label="FG%" value={fieldGoalPct} />
+              <StatItem label="XPM/XPA" value={xpmXpa} />
+              <StatItem label="LONG" value={longFieldGoal} />
             </>
           )}
 
           {showPunting && (
             <>
               <StatItem label="PUNTS" value={punts} />
-              <StatItem label="GP/YDS" value={gpYds} />
+              <StatItem label="PUNT YDS" value={puntYards} />
               <StatItem label="LONG" value={longestPunt} />
               <StatItem label="TB" value={touchbacks} />
+            </>
+          )}
+
+          {shouldShowFallback && (
+            <>
+              <StatItem label="GP" value={fallbackGamesPlayed} />
+              <StatItem label="YDS" value={fallbackYards} />
+              <StatItem label="TD" value={fallbackTouchdowns} />
+              <StatItem label="PTS" value={fallbackPoints} />
             </>
           )}
         </View>

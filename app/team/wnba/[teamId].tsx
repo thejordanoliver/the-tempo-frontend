@@ -321,18 +321,18 @@ export default function TeamDetailScreen() {
           />
         </View>
 
-        <View key="stats" style={styles.contentArea}>
-          <RosterStats
-            rosterStats={teamRoster}
-            teamId={teamIdStr}
-            teamStats={teamStats}
-            loading={rosterStatsLoading || teamStatsLoading}
-            error={rosterStatsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refetch}
-            league={league}
-          />
-        </View>
+      <View key="stats" style={styles.contentArea}>
+              <RosterStats
+                rosterStats={teamRoster}
+                teamId={teamIdStr}
+                teamStats={teamStats}
+                loading={rosterStatsLoading || teamStatsLoading}
+                error={rosterStatsError || teamStatsError}
+                refreshing={refreshingStats}
+                onRefresh={refetch}
+                league={league}
+              />
+            </View>
 
         {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>

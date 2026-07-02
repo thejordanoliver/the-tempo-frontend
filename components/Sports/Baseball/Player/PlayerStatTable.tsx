@@ -1,491 +1,954 @@
-import {
-  CareerTotals,
-  MlbSeasonStatsRow,
-  MlbStatMap,
-  MlbStatValue,
+import PillTabs from "@/components/TabBars/PillTabs";
+import { getCBTeam } from "@/constants/teamsCB";
+import { getMLBTeamByEspnId } from "@/constants/teamsMLB";
+import type {
+  BaseballPlayerSeason,
+  Category,
+  Stat,
 } from "@/hooks/BaseballHooks/usePlayerSeasons";
-import HeadingWithDropdowns from "components/Headings/HeadingWithDropdowns";
+import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { Colors, globalStyles } from "constants/styles";
-import { getMLBTeamByEspnId } from "constants/teamsMLB";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
-interface Props {
-  seasonStatsFlattened: MlbSeasonStatsRow[];
-  careerStatsFlattened: MlbSeasonStatsRow[];
-  loading: boolean;
-  error: string | null;
-}
-
-type StatView = "totals" | "pergame";
-type StatType = "batting" | "pitching" | "fielding";
-
-type TableRow = MlbSeasonStatsRow & {
-  rowKey: string;
-  team: number | null;
-  stats: MlbStatMap;
+type StatTableProps = {
+  data: BaseballPlayerSeason[];
+  loading?: boolean;
+  error?: string | null;
+  position?: string | null;
+  league: "MLB" | "CB" | "SB";
 };
 
-const STAT_OPTIONS = [
-  { label: "Totals", value: "totals" },
-  { label: "Per Game", value: "pergame" },
+type SeasonTypeTab = "regular" | "postseason";
+
+const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab }[] = [
+  { label: "Regular Season", value: "regular" },
+  { label: "Postseason", value: "postseason" },
 ];
 
-const STAT_TYPE_OPTIONS = [
-  { label: "Batting", value: "batting" },
-  { label: "Pitching", value: "pitching" },
-  { label: "Fielding", value: "fielding" },
+const GROUP_ORDER = [
+  "batting",
+  "pitching",
+  "fielding",
+  "postseason-batting",
+  "postseason-pitching",
+  "postseason-fielding",
+  "career-batting",
+  "career-pitching",
+  "career-fielding",
+  "advanced-batting",
+  "expanded-batting",
+  "advanced-pitching",
+  "expanded-pitching",
+  "expanded-fielding",
+  "baserunning",
 ];
 
-const isMissing = (value: MlbStatValue) =>
-  value === undefined ||
-  value === null ||
-  value === "" ||
-  value === "--" ||
-  value === "-";
+const GROUP_DISPLAY_NAMES: Record<string, string> = {
+  "career-batting": "Batting",
+  "postseason-batting": "Postseason Batting",
+  "advanced-batting": "Advanced Batting",
+  "expanded-batting": "Expanded Batting",
 
-const toNumber = (value: MlbStatValue) => {
-  if (isMissing(value)) return 0;
+  "career-pitching": "Pitching",
+  "postseason-pitching": "Postseason Pitching",
+  "advanced-pitching": "Advanced Pitching",
+  "expanded-pitching": "Expanded Pitching",
+
+  "career-fielding": "Fielding",
+  "postseason-fielding": "Postseason Fielding",
+  fielding: "Fielding",
+  "expanded-fielding": "Expanded Fielding",
+
+  batting: "Batting",
+  pitching: "Pitching",
+  baserunning: "Baserunning",
+};
+
+const STAT_LABELS: Record<string, string> = {
+  gamesPlayed: "GP",
+  gamesStarted: "GS",
+
+  OPS: "OPS",
+  ops: "OPS",
+  avg: "AVG",
+  battingAverage: "AVG",
+  RBIs: "RBI",
+  rbi: "RBI",
+  runsBattedIn: "RBI",
+  hits: "H",
+  runs: "R",
+  WARBR: "WAR",
+  offWARBR: "oWAR",
+  walks: "BB",
+  baseOnBalls: "BB",
+  atBats: "AB",
+  doubles: "2B",
+  triples: "3B",
+  homeRuns: "HR",
+  slugAvg: "SLG",
+  sluggingPercentage: "SLG",
+  onBasePct: "OBP",
+  onBasePercentage: "OBP",
+  onBasePlusSlugging: "OPS",
+  hitByPitch: "HBP",
+  strikeouts: "SO",
+  stolenBases: "SB",
+  caughtStealing: "CS",
+
+  wildPitches: "WP",
+  avgGame: "WP",
+  avgGameScore: "GSC",
+  completeGames: "CG",
+  qualityStarts: "QS",
+  pitchesPerStart: "P/S",
+  pitchesPerInning: "P/I",
+  inheritedRunners: "IR",
+  inheritedRunnersScored: "IRS",
+  strikeoutsPerNineInnings: "K/9",
+  flyBalls: "FB",
+  shutouts: "SHO",
+  runSupport: "RSUP",
+
+  groundBalls: "GB",
+  runsCreated: "RC",
+  secondaryAvg: "SecA",
+  isolatedPower: "ISO",
+  atBatsPerHomeRun: "AB/HR",
+  groundToFlyRatio: "GB/FB",
+  runsCreatedPer27Outs: "RC/27",
+  walkToStrikeoutRatio: "BB/K",
+  walksPerPlateAppearance: "BB/PA",
+
+  GIDPs: "GIDP",
+  pitches: "P",
+  sacHits: "SH",
+  sacFlies: "SF",
+  totalBases: "TB",
+  extraBaseHits: "XBH",
+  stolenBasePct: "SB%",
+  intentionalWalks: "IBB",
+  plateAppearances: "PA",
+  pitchesPerPlateAppearance: "P/PA",
+
+  ERA: "ERA",
+  era: "ERA",
+  earnedRunAverage: "ERA",
+  WHIP: "WHIP",
+  whip: "WHIP",
+  wins: "W",
+  losses: "L",
+  winPct: "WIN%",
+  holds: "HLD",
+  saves: "SV",
+  innings: "IP",
+  inningsPitched: "IP",
+  blownSaves: "BS",
+  earnedRuns: "ER",
+  runsAllowed: "R Allowed",
+  hitsAllowed: "H Allowed",
+  homeRunsAllowed: "HR Allowed",
+  walksAllowed: "BB Allowed",
+  strikeoutsPitching: "SO",
+  battersFaced: "BF",
+  pitchesThrown: "NP",
+  strikeoutToWalkRatio: "K/BB",
+
+  putouts: "PO",
+  assists: "A",
+  errors: "E",
+  fieldingPercentage: "FLD%",
+  doublePlays: "DP",
+  chances: "TC",
+};
+
+const STAT_DISPLAY_NAMES: Record<string, string> = {
+  gamesPlayed: "Games Played",
+  gamesStarted: "Games Started",
+
+  OPS: "On-base Plus Slugging",
+  ops: "On-base Plus Slugging",
+  avg: "Batting Average",
+  battingAverage: "Batting Average",
+  RBIs: "Runs Batted In",
+  rbi: "Runs Batted In",
+  runsBattedIn: "Runs Batted In",
+  hits: "Hits",
+  runs: "Runs",
+  WARBR: "Wins Above Replacement",
+  offWARBR: "Offensive Wins Above Replacement",
+  walks: "Walks",
+  baseOnBalls: "Walks",
+  atBats: "At Bats",
+  doubles: "Doubles",
+  triples: "Triples",
+  homeRuns: "Home Runs",
+  slugAvg: "Slugging Percentage",
+  sluggingPercentage: "Slugging Percentage",
+  onBasePct: "On-base Percentage",
+  onBasePercentage: "On-base Percentage",
+  onBasePlusSlugging: "On-base Plus Slugging",
+  hitByPitch: "Hit By Pitch",
+  strikeouts: "Strikeouts",
+  stolenBases: "Stolen Bases",
+  caughtStealing: "Caught Stealing",
+
+  flyBalls: "Fly Balls",
+  groundBalls: "Ground Balls",
+  runsCreated: "Runs Created",
+  secondaryAvg: "Secondary Average",
+  isolatedPower: "Isolated Power",
+  atBatsPerHomeRun: "At Bats Per Home Run",
+  groundToFlyRatio: "Ground Ball To Fly Ball Ratio",
+  runsCreatedPer27Outs: "Runs Created Per 27 Outs",
+  walkToStrikeoutRatio: "Walk To Strikeout Ratio",
+  walksPerPlateAppearance: "Walks Per Plate Appearance",
+
+  GIDPs: "Grounded Into Double Plays",
+  pitches: "Pitches",
+  sacHits: "Sacrifice Hits",
+  sacFlies: "Sacrifice Flies",
+  totalBases: "Total Bases",
+  extraBaseHits: "Extra Base Hits",
+  stolenBasePct: "Stolen Base Percentage",
+  intentionalWalks: "Intentional Walks",
+  plateAppearances: "Plate Appearances",
+  pitchesPerPlateAppearance: "Pitches Per Plate Appearance",
+
+  ERA: "Earned Run Average",
+  era: "Earned Run Average",
+  earnedRunAverage: "Earned Run Average",
+  WHIP: "Walks And Hits Per Inning Pitched",
+  whip: "Walks And Hits Per Inning Pitched",
+  wins: "Wins",
+  losses: "Losses",
+  winPct: "Win Percentage",
+  holds: "Holds",
+  saves: "Saves",
+  innings: "Innings Pitched",
+  inningsPitched: "Innings Pitched",
+  blownSaves: "Blown Saves",
+  earnedRuns: "Earned Runs",
+  runsAllowed: "Runs Allowed",
+  hitsAllowed: "Hits Allowed",
+  homeRunsAllowed: "Home Runs Allowed",
+  walksAllowed: "Walks Allowed",
+  strikeoutsPitching: "Pitching Strikeouts",
+  battersFaced: "Batters Faced",
+  pitchesThrown: "Pitches Thrown",
+  strikeoutToWalkRatio: "Strikeout To Walk Ratio",
+
+  putouts: "Putouts",
+  assists: "Assists",
+  errors: "Errors",
+  fieldingPercentage: "Fielding Percentage",
+  doublePlays: "Double Plays",
+  chances: "Total Chances",
+};
+
+const defaultStatKeys: Record<string, string[]> = {
+  "career-batting": [
+    "OPS",
+    "avg",
+    "RBIs",
+    "hits",
+    "runs",
+    "WARBR",
+    "walks",
+    "atBats",
+    "doubles",
+    "slugAvg",
+    "triples",
+    "homeRuns",
+    "onBasePct",
+    "hitByPitch",
+    "strikeouts",
+    "gamesPlayed",
+    "stolenBases",
+    "caughtStealing",
+  ],
+  "postseason-batting": [
+    "OPS",
+    "avg",
+    "RBIs",
+    "hits",
+    "runs",
+    "walks",
+    "atBats",
+    "doubles",
+    "slugAvg",
+    "triples",
+    "homeRuns",
+    "onBasePct",
+    "hitByPitch",
+    "strikeouts",
+    "gamesPlayed",
+    "stolenBases",
+    "caughtStealing",
+  ],
+  "advanced-batting": [
+    "WARBR",
+    "offWARBR",
+    "runsCreated",
+    "secondaryAvg",
+    "isolatedPower",
+    "atBatsPerHomeRun",
+    "groundToFlyRatio",
+    "runsCreatedPer27Outs",
+    "walkToStrikeoutRatio",
+    "walksPerPlateAppearance",
+    "flyBalls",
+    "groundBalls",
+  ],
+  "expanded-batting": [
+    "plateAppearances",
+    "totalBases",
+    "extraBaseHits",
+    "GIDPs",
+    "sacHits",
+    "sacFlies",
+    "hitByPitch",
+    "stolenBases",
+    "stolenBasePct",
+    "caughtStealing",
+    "intentionalWalks",
+    "pitches",
+    "pitchesPerPlateAppearance",
+  ],
+  "career-pitching": [
+    "ERA",
+    "WHIP",
+    "wins",
+    "losses",
+    "winPct",
+    "holds",
+    "saves",
+    "innings",
+    "hits",
+    "runs",
+    "earnedRuns",
+    "walks",
+    "strikeouts",
+    "gamesPlayed",
+    "gamesStarted",
+    "blownSaves",
+    "strikeoutToWalkRatio",
+    "WARBR",
+  ],
+  "postseason-pitching": [
+    "ERA",
+    "WHIP",
+    "wins",
+    "losses",
+    "holds",
+    "saves",
+    "innings",
+    "hits",
+    "runs",
+    "earnedRuns",
+    "walks",
+    "strikeouts",
+    "gamesPlayed",
+    "gamesStarted",
+    "blownSaves",
+    "strikeoutToWalkRatio",
+  ],
+};
+
+const RATE_STAT_KEYS = new Set([
+  "OPS",
+  "ops",
+  "avg",
+  "battingAverage",
+  "slugAvg",
+  "sluggingPercentage",
+  "onBasePct",
+  "onBasePercentage",
+  "onBasePlusSlugging",
+  "stolenBasePct",
+  "ERA",
+  "era",
+  "earnedRunAverage",
+  "WHIP",
+  "whip",
+  "winPct",
+  "fieldingPercentage",
+  "secondaryAvg",
+  "isolatedPower",
+  "groundToFlyRatio",
+  "runsCreatedPer27Outs",
+  "walkToStrikeoutRatio",
+  "walksPerPlateAppearance",
+  "atBatsPerHomeRun",
+  "pitchesPerPlateAppearance",
+  "strikeoutToWalkRatio",
+]);
+
+const LOWER_IS_BETTER_STAT_KEYS = new Set([
+  "ERA",
+  "era",
+  "earnedRunAverage",
+  "WHIP",
+  "whip",
+]);
+
+const chunk = <T,>(arr: T[], size: number): T[][] => {
+  const out: T[][] = [];
+
+  for (let i = 0; i < arr.length; i += size) {
+    out.push(arr.slice(i, i + size));
+  }
+
+  return out;
+};
+
+function parseNumber(value?: string | number | null) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return null;
+  }
 
   const parsed = Number(String(value).replace(/,/g, ""));
 
-  return Number.isFinite(parsed) ? parsed : 0;
-};
+  return Number.isFinite(parsed) ? parsed : null;
+}
 
-const displayStat = (value: MlbStatValue) => {
-  if (isMissing(value)) return "—";
-  return String(value);
-};
+function parseMadeAttemptValue(value?: string | null) {
+  if (!value) return null;
 
-const perGame = (stat?: MlbStatValue, g?: MlbStatValue) => {
-  const games = toNumber(g);
-  if (!games) return "0.00";
-  return (toNumber(stat) / games).toFixed(2);
-};
+  const match = String(value)
+    .trim()
+    .match(/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/);
 
-const formatRate3 = (value: number) => {
-  if (!Number.isFinite(value)) return "—";
+  if (!match) return null;
 
-  const fixed = value.toFixed(3);
+  const made = Number(match[1]);
+  const attempted = Number(match[2]);
 
-  return fixed.startsWith("0") ? fixed.slice(1) : fixed;
-};
+  if (!Number.isFinite(made) || !Number.isFinite(attempted)) {
+    return null;
+  }
 
-const getCategoryStats = (
-  row: MlbSeasonStatsRow,
-  key: string,
-): MlbStatMap | null => {
-  return row.categories?.[key]?.stats ?? null;
-};
+  return {
+    made,
+    attempted,
+  };
+}
 
-const mergeStats = (...sources: (MlbStatMap | null | undefined)[]) => {
-  const merged: MlbStatMap = {};
+function parseInningsOuts(value?: string | number | null) {
+  if (value === null || value === undefined || value === "" || value === "-") {
+    return null;
+  }
 
-  sources.forEach((source) => {
-    if (!source) return;
+  const [wholePart, decimalPart = "0"] = String(value).split(".");
+  const whole = Number(wholePart);
+  const outs = Number(decimalPart.charAt(0) || 0);
 
-    Object.entries(source).forEach(([key, value]) => {
-      if (!isMissing(value)) {
-        merged[key] = value;
-      }
-    });
-  });
+  if (!Number.isFinite(whole) || !Number.isFinite(outs) || outs > 2) {
+    return null;
+  }
 
-  return merged;
-};
+  return whole * 3 + outs;
+}
 
-const getPitchingStats = (row: MlbSeasonStatsRow) => {
-  const pitchingCategories = Object.values(row.categories ?? {}).filter(
+function formatInningsOuts(totalOuts: number) {
+  const innings = Math.floor(totalOuts / 3);
+  const outs = totalOuts % 3;
+
+  return outs === 0 ? String(innings) : `${innings}.${outs}`;
+}
+
+function formatNumber(value: number) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
+function formatStatName(statName: string) {
+  return statName
+    .replace(/_/g, " ")
+    .replace(/-/g, " - ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function getStatLabel(stat?: Stat, key?: string) {
+  if (!key) return "";
+
+  return STAT_LABELS[key] || stat?.label || formatStatName(key);
+}
+
+function getStatDisplayName(stat?: Stat, key?: string) {
+  if (!key) return "";
+
+  return (
+    STAT_DISPLAY_NAMES[key] ||
+    stat?.description ||
+    stat?.displayName ||
+    formatStatName(key)
+  );
+}
+
+function getGroupDisplayName(category?: Category | null, key?: string) {
+  if (!key) return "";
+
+  return (
+    GROUP_DISPLAY_NAMES[key] ||
+    category?.displayName ||
+    formatStatName(key)
+  ).replace(/^Career\s+-?\s*/i, "");
+}
+
+function normalizeSeasonTypeTab(seasonType?: string | number | null) {
+  const normalized = String(seasonType || "")
+    .replace(/[\s_-]/g, "")
+    .toLowerCase();
+
+  if (
+    normalized === "postseason" ||
+    normalized === "playoffs" ||
+    normalized === "playoff" ||
+    normalized === "3"
+  ) {
+    return "postseason";
+  }
+
+  return "regular";
+}
+
+function getNormalizedSeasonType(season: BaseballPlayerSeason) {
+  return normalizeSeasonTypeTab(
+    season.seasonTypeValue || season.seasonTypeLabel || season.seasonType,
+  );
+}
+
+function getSeasonTypeRank(season: BaseballPlayerSeason) {
+  return getNormalizedSeasonType(season) === "postseason" ? 1 : 0;
+}
+
+function getSeasonTeamCode(
+  season: BaseballPlayerSeason,
+  league: "MLB" | "CB" | "SB",
+) {
+  const teamId = Number(season.teamId);
+
+  if (!Number.isFinite(teamId)) {
+    return "—";
+  }
+
+  if (league === "MLB") {
+    const team = getMLBTeamByEspnId(teamId);
+    return team?.code || "—";
+  }
+
+  if (league === "CB") {
+    const team = getCBTeam(teamId);
+    return team?.code || "—";
+  }
+
+  return season.teamSlug
+    ? season.teamSlug
+        .split("-")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 4)
+        .toUpperCase()
+    : String(teamId);
+}
+
+function getSeasonLabel(
+  season: BaseballPlayerSeason,
+  showSeasonTypeSuffix = true,
+) {
+  const displaySeason = season.displaySeason || season.year || season.season;
+
+  if (
+    showSeasonTypeSuffix &&
+    getNormalizedSeasonType(season) === "postseason"
+  ) {
+    return `${displaySeason} POST`;
+  }
+
+  return String(displaySeason);
+}
+
+function getRowId(season: BaseballPlayerSeason, index: number) {
+  return [
+    season.id,
+    season.season,
+    season.teamId,
+    season.seasonType,
+    index,
+  ].join("-");
+}
+
+function getDisplayValue(stat?: Stat) {
+  if (!stat || stat.displayValue === null || stat.displayValue === undefined) {
+    return "—";
+  }
+
+  if (stat.displayValue === "") {
+    return "—";
+  }
+
+  return stat.displayValue;
+}
+
+function getNumericValue(stat?: Stat) {
+  if (!stat) return null;
+
+  if (typeof stat.value === "number" && Number.isFinite(stat.value)) {
+    return stat.value;
+  }
+
+  return parseNumber(stat.displayValue);
+}
+
+function isRateStat(key: string) {
+  return (
+    RATE_STAT_KEYS.has(key) ||
+    /pct|percentage|avg|average|rating|ratio|per|qbr|era|whip/i.test(key)
+  );
+}
+
+function isMaxStat(key: string) {
+  return /long/i.test(key);
+}
+
+function isInningsStat(key: string) {
+  return key === "innings" || key === "inningsPitched";
+}
+
+function isLowerBetterStat(key: string) {
+  return LOWER_IS_BETTER_STAT_KEYS.has(key);
+}
+
+function isPostseasonCategory(categoryName: string) {
+  return categoryName.startsWith("postseason-");
+}
+
+function hasPostseasonStats(season: BaseballPlayerSeason) {
+  return (season.categories || []).some(
     (category) =>
-      category.statCategory === "pitching" ||
-      String(category.key ?? "")
-        .toLowerCase()
-        .includes("pitching") ||
-      String(category.name ?? "")
-        .toLowerCase()
-        .includes("pitching"),
+      isPostseasonCategory(category.name) && category.stats.length > 0,
+  );
+}
+
+function shouldSkipCategoryForSeasonType(
+  category: Category,
+  selectedSeasonType: SeasonTypeTab | null,
+) {
+  if (selectedSeasonType === "regular") {
+    return isPostseasonCategory(category.name);
+  }
+
+  if (selectedSeasonType === "postseason") {
+    return !isPostseasonCategory(category.name);
+  }
+
+  return false;
+}
+
+function getFilteredCategories(
+  season: BaseballPlayerSeason,
+  selectedSeasonType: SeasonTypeTab | null,
+) {
+  const categories = season.categories || [];
+
+  return categories.filter((category) => {
+    if (!category?.stats?.length) {
+      return false;
+    }
+
+    return !shouldSkipCategoryForSeasonType(category, selectedSeasonType);
+  });
+}
+
+function getGroupRank(groupName: string) {
+  const index = GROUP_ORDER.indexOf(groupName);
+
+  return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+}
+
+function sortGroupNames(a: string, b: string) {
+  const rankDiff = getGroupRank(a) - getGroupRank(b);
+
+  if (rankDiff !== 0) {
+    return rankDiff;
+  }
+
+  return a.localeCompare(b);
+}
+
+function formatCareerValue(key: string, displayValues: string[]) {
+  const cleanedValues = displayValues.filter(
+    (value) =>
+      value !== null && value !== undefined && value !== "" && value !== "—",
   );
 
-  return mergeStats(
-    row.pitching,
-    ...pitchingCategories.map((category) => category.stats),
-  );
-};
+  if (cleanedValues.length === 0) {
+    return "—";
+  }
 
-const getStatsForType = (row: MlbSeasonStatsRow, statType: StatType) => {
-  if (statType === "batting") {
-    return mergeStats(
-      getCategoryStats(row, "careerBatting"),
-      row.careerBatting,
-      getCategoryStats(row, "expandedBatting"),
-      row.expandedBatting,
-      getCategoryStats(row, "advancedBatting"),
-      row.advancedBatting,
+  const madeAttemptValues = cleanedValues
+    .map(parseMadeAttemptValue)
+    .filter(Boolean) as { made: number; attempted: number }[];
+
+  if (madeAttemptValues.length === cleanedValues.length) {
+    const made = madeAttemptValues.reduce((sum, value) => sum + value.made, 0);
+    const attempted = madeAttemptValues.reduce(
+      (sum, value) => sum + value.attempted,
+      0,
     );
+
+    return `${formatNumber(made)}-${formatNumber(attempted)}`;
   }
 
-  if (statType === "fielding") {
-    return mergeStats(getCategoryStats(row, "fielding"), row.fielding);
+  if (isInningsStat(key)) {
+    const totalOuts = cleanedValues
+      .map(parseInningsOuts)
+      .filter((value): value is number => value !== null)
+      .reduce((sum, value) => sum + value, 0);
+
+    return totalOuts > 0 ? formatInningsOuts(totalOuts) : "—";
   }
 
-  return getPitchingStats(row);
-};
+  if (isRateStat(key)) {
+    return "—";
+  }
 
-const getRows = (
-  seasonStatsFlattened: MlbSeasonStatsRow[],
-  careerStatsFlattened: MlbSeasonStatsRow[],
-) => {
-  const source =
-    seasonStatsFlattened?.length > 0
-      ? seasonStatsFlattened
-      : careerStatsFlattened;
+  const numericValues = cleanedValues
+    .map(parseNumber)
+    .filter((value): value is number => value !== null);
 
-  return (source ?? [])
-    .filter((row) => row && Number.isFinite(Number(row.season)))
-    .sort((a, b) => Number(b.season) - Number(a.season));
-};
+  if (numericValues.length === 0) {
+    return "—";
+  }
 
-const getWar = (stats: MlbStatMap) =>
-  stats.WAR ?? stats.WARBR ?? stats.defWARBR;
+  if (isMaxStat(key)) {
+    return formatNumber(Math.max(...numericValues));
+  }
 
-const getInnings = (value: MlbStatValue) => {
-  const raw = String(value ?? "").trim();
+  const total = numericValues.reduce((sum, value) => sum + value, 0);
 
-  if (!raw) return 0;
-
-  const [wholeRaw, outsRaw] = raw.split(".");
-  const whole = Number(wholeRaw || 0);
-  const outs = Number(outsRaw || 0);
-
-  if (!Number.isFinite(whole)) return 0;
-
-  if (!outsRaw) return whole;
-
-  return whole + Math.min(outs, 2) / 3;
-};
-
-const renderInnings = (innings: number) => {
-  if (!Number.isFinite(innings) || innings <= 0) return "0.0";
-
-  const whole = Math.floor(innings);
-  const outs = Math.round((innings - whole) * 3);
-
-  return `${whole}.${outs}`;
-};
+  return formatNumber(total);
+}
 
 export default function PlayerStatTable({
-  seasonStatsFlattened,
-  careerStatsFlattened,
-  loading,
-  error,
-}: Props) {
+  data,
+  loading = false,
+  error = null,
+  league,
+}: StatTableProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [statView, setStatView] = useState<StatView>("totals");
-  const [statType, setStatType] = useState<StatType>("batting");
+  const showSeasonTypeTabs = league === "MLB";
 
-  const rows = useMemo(
-    () => getRows(seasonStatsFlattened, careerStatsFlattened),
-    [seasonStatsFlattened, careerStatsFlattened],
-  );
+  const [selectedSeasonType, setSelectedSeasonType] =
+    useState<SeasonTypeTab>("regular");
 
-  const filteredSeasons = useMemo<TableRow[]>(() => {
-    return rows
-      .map((row) => {
-        const stats = getStatsForType(row, statType);
-        const team = Number(row.espnTeamId ?? row.teamId ?? 0) || null;
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => {
+      if (b.season !== a.season) {
+        return b.season - a.season;
+      }
 
-        return {
-          ...row,
-          rowKey: `${row.season}-${row.espnTeamId ?? row.teamId ?? "team"}`,
-          team,
-          stats,
-        };
-      })
-      .filter((row) => Object.keys(row.stats).length > 0);
-  }, [rows, statType]);
+      const seasonTypeCompare = getSeasonTypeRank(a) - getSeasonTypeRank(b);
 
-  const bestRowKey = useMemo(() => {
-    let best: string | null = null;
-    let compareValue = statType === "pitching" ? Infinity : -Infinity;
+      if (seasonTypeCompare !== 0) {
+        return seasonTypeCompare;
+      }
 
-    filteredSeasons.forEach((row) => {
-      const stats = row.stats;
+      return String(a.teamId).localeCompare(String(b.teamId));
+    });
+  }, [data]);
 
-      let value = 0;
+  const visibleData = useMemo(() => {
+    if (!showSeasonTypeTabs) {
+      return sortedData;
+    }
 
-      if (statType === "batting") value = toNumber(stats.OPS);
-      if (statType === "pitching") value = toNumber(stats.ERA);
-      if (statType === "fielding") value = toNumber(stats.fieldingPct);
+    if (selectedSeasonType === "postseason") {
+      return sortedData.filter(
+        (season) =>
+          getNormalizedSeasonType(season) === "postseason" &&
+          hasPostseasonStats(season),
+      );
+    }
 
-      if (!Number.isFinite(value)) return;
+    return sortedData.filter(
+      (season) => getNormalizedSeasonType(season) === "regular",
+    );
+  }, [selectedSeasonType, showSeasonTypeTabs, sortedData]);
 
-      if (
-        (statType === "pitching" && value > 0 && value < compareValue) ||
-        (statType !== "pitching" && value > compareValue)
-      ) {
-        compareValue = value;
-        best = row.rowKey;
+  const seasonTypeContext = showSeasonTypeTabs ? selectedSeasonType : null;
+
+  const availableGroups = useMemo(() => {
+    const groupsByName = new Map<string, Category>();
+
+    visibleData.forEach((season) => {
+      getFilteredCategories(season, seasonTypeContext).forEach((category) => {
+        if (!groupsByName.has(category.name)) {
+          groupsByName.set(category.name, category);
+        }
+      });
+    });
+
+    return Array.from(groupsByName.values()).sort((a, b) =>
+      sortGroupNames(a.name, b.name),
+    );
+  }, [seasonTypeContext, visibleData]);
+
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
+
+  useEffect(() => {
+    if (!availableGroups.length) {
+      setSelectedGroup("");
+      return;
+    }
+
+    const availableGroupNames = availableGroups.map((group) => group.name);
+
+    if (!selectedGroup || !availableGroupNames.includes(selectedGroup)) {
+      setSelectedGroup(availableGroups[0].name);
+    }
+  }, [availableGroups, selectedGroup]);
+
+  const activeGroup = selectedGroup || availableGroups[0]?.name;
+
+  const seasonsWithGroup = useMemo(() => {
+    return visibleData.map((season, index) => {
+      const category = getFilteredCategories(season, seasonTypeContext).find(
+        (item) => item.name === activeGroup,
+      );
+
+      return {
+        id: getRowId(season, index),
+        season,
+        year: getSeasonLabel(season, !showSeasonTypeTabs),
+        seasonNumber: season.season,
+        teamId: season.teamId,
+        teamCode: getSeasonTeamCode(season, league),
+        seasonType: season.seasonType,
+        stats: category?.stats || [],
+      };
+    });
+  }, [activeGroup, league, seasonTypeContext, showSeasonTypeTabs, visibleData]);
+
+  const statKeys = useMemo(() => {
+    const actualKeys = new Set<string>();
+
+    seasonsWithGroup.forEach((season) => {
+      season.stats.forEach((stat) => {
+        if (stat?.name) {
+          actualKeys.add(stat.name);
+        }
+      });
+    });
+
+    const preferredKeys = activeGroup ? defaultStatKeys[activeGroup] || [] : [];
+    const orderedKeys = preferredKeys.filter((key) => actualKeys.has(key));
+
+    const extraKeys = Array.from(actualKeys).filter(
+      (key) => !orderedKeys.includes(key),
+    );
+
+    return [...orderedKeys, ...extraKeys];
+  }, [activeGroup, seasonsWithGroup]);
+
+  const allStats = useMemo(() => {
+    return seasonsWithGroup.flatMap((season) => season.stats);
+  }, [seasonsWithGroup]);
+
+  const careerDisplayValues = useMemo(() => {
+    const values: Record<string, string[]> = {};
+
+    statKeys.forEach((key) => {
+      values[key] = seasonsWithGroup
+        .map((season) => season.stats.find((stat) => stat.name === key))
+        .filter(Boolean)
+        .map((stat) => getDisplayValue(stat));
+    });
+
+    return values;
+  }, [seasonsWithGroup, statKeys]);
+
+  const bestRowId = useMemo(() => {
+    const primaryKey = statKeys[0];
+
+    if (!primaryKey) return null;
+
+    let bestId: string | null = null;
+    let bestValue = isLowerBetterStat(primaryKey)
+      ? Number.POSITIVE_INFINITY
+      : Number.NEGATIVE_INFINITY;
+
+    seasonsWithGroup.forEach((season) => {
+      const stat = season.stats.find((item) => item.name === primaryKey);
+      const value = getNumericValue(stat);
+
+      if (value === null) return;
+
+      const isBetter = isLowerBetterStat(primaryKey)
+        ? value < bestValue
+        : value > bestValue;
+
+      if (isBetter) {
+        bestValue = value;
+        bestId = season.id;
       }
     });
 
-    return best;
-  }, [filteredSeasons, statType]);
-
-  const careerTotals = useMemo(() => {
-    return filteredSeasons.reduce<CareerTotals>(
-      (acc, row) => {
-        const stats = row.stats;
-
-        acc.g += toNumber(stats.gamesPlayed);
-        acc.gs += toNumber(stats.gamesStarted);
-
-        if (statType === "batting") {
-          const doubles = toNumber(stats.doubles);
-          const triples = toNumber(stats.triples);
-          const homeRuns = toNumber(stats.homeRuns);
-          const hits = toNumber(stats.hits);
-          const singles = Math.max(hits - doubles - triples - homeRuns, 0);
-          const computedTotalBases =
-            singles + doubles * 2 + triples * 3 + homeRuns * 4;
-
-          acc.ab += toNumber(stats.atBats);
-          acc.h += hits;
-          acc.doubles += doubles;
-          acc.triples += triples;
-          acc.hr += homeRuns;
-          acc.rbi += toNumber(stats.RBIs);
-          acc.bb += toNumber(stats.walks);
-          acc.so += toNumber(stats.strikeouts);
-          acc.hbp += toNumber(stats.hitByPitch);
-          acc.sf += toNumber(stats.sacFlies);
-          acc.totalBases += toNumber(stats.totalBases) || computedTotalBases;
-        }
-
-        if (statType === "pitching") {
-          acc.w += toNumber(stats.wins);
-          acc.l += toNumber(stats.losses);
-          acc.so += toNumber(stats.strikeouts);
-          acc.bb += toNumber(stats.walks);
-          acc.war += toNumber(getWar(stats));
-
-          const ip = getInnings(stats.inningsPitched);
-          const era = toNumber(stats.ERA);
-
-          acc.ip += ip;
-          acc.hitsAllowed += toNumber(stats.hits);
-          acc.runsAllowed += toNumber(stats.runs);
-          acc.earnedRuns += toNumber(stats.earnedRuns);
-
-          if (ip > 0 && era > 0 && !stats.earnedRuns) {
-            acc.earnedRuns += (era * ip) / 9;
-          }
-        }
-
-        if (statType === "fielding") {
-          acc.fullInningsPlayed += toNumber(stats.fullInningsPlayed);
-          acc.totalChances += toNumber(stats.totalChances);
-          acc.pickoffs += toNumber(stats.pickoffs);
-          acc.assists += toNumber(stats.assists);
-          acc.errors += toNumber(stats.errors);
-          acc.doublePlays += toNumber(stats.doublePlays);
-          acc.passedBalls += toNumber(stats.passedBalls);
-          acc.catcherStolenBasesAllowed += toNumber(
-            stats.catcherStolenBasesAllowed,
-          );
-          acc.catcherCaughtStealing += toNumber(stats.catcherCaughtStealing);
-          acc.defWARBR += toNumber(stats.defWARBR);
-        }
-
-        return acc;
-      },
-      {
-        g: 0,
-        gs: 0,
-        ab: 0,
-        h: 0,
-        doubles: 0,
-        triples: 0,
-        hr: 0,
-        rbi: 0,
-        bb: 0,
-        so: 0,
-        hbp: 0,
-        sf: 0,
-        totalBases: 0,
-        w: 0,
-        l: 0,
-        earnedRuns: 0,
-        ip: 0,
-        war: 0,
-        whip: 0,
-        hitsAllowed: 0,
-        runsAllowed: 0,
-        fullInningsPlayed: 0,
-        totalChances: 0,
-        pickoffs: 0,
-        assists: 0,
-        errors: 0,
-        doublePlays: 0,
-        fieldingPct: 0,
-        rangeFactor: 0,
-        passedBalls: 0,
-        catcherStolenBasesAllowed: 0,
-        catcherCaughtStealing: 0,
-        catcherCaughtStealingPct: 0,
-        catcherERA: 0,
-        defWARBR: 0,
-      },
-    );
-  }, [filteredSeasons, statType]);
-
-  const careerAVG =
-    careerTotals.ab > 0 ? formatRate3(careerTotals.h / careerTotals.ab) : "—";
-
-  const careerOBP =
-    careerTotals.ab + careerTotals.bb + careerTotals.hbp + careerTotals.sf > 0
-      ? formatRate3(
-          (careerTotals.h + careerTotals.bb + careerTotals.hbp) /
-            (careerTotals.ab +
-              careerTotals.bb +
-              careerTotals.hbp +
-              careerTotals.sf),
-        )
-      : "—";
-
-  const careerSLG =
-    careerTotals.ab > 0
-      ? formatRate3(careerTotals.totalBases / careerTotals.ab)
-      : "—";
-
-  const careerOPS =
-    careerOBP !== "—" && careerSLG !== "—"
-      ? formatRate3(Number(careerOBP) + Number(careerSLG))
-      : "—";
-
-  const careerERA =
-    careerTotals.ip > 0
-      ? ((careerTotals.earnedRuns * 9) / careerTotals.ip).toFixed(2)
-      : "—";
-
-  const careerFieldingPct =
-    careerTotals.totalChances > 0
-      ? formatRate3(
-          (careerTotals.totalChances - careerTotals.errors) /
-            careerTotals.totalChances,
-        )
-      : "—";
-
-  const careerCaughtStealingPct =
-    careerTotals.catcherStolenBasesAllowed +
-      careerTotals.catcherCaughtStealing >
-    0
-      ? formatRate3(
-          careerTotals.catcherCaughtStealing /
-            (careerTotals.catcherStolenBasesAllowed +
-              careerTotals.catcherCaughtStealing),
-        )
-      : "—";
-
-  const careerWinPct =
-    careerTotals.w + careerTotals.l > 0
-      ? formatRate3(careerTotals.w / (careerTotals.w + careerTotals.l))
-      : "—";
-
-  const careerKBB =
-    careerTotals.bb > 0 ? (careerTotals.so / careerTotals.bb).toFixed(2) : "—";
-
-  const careerWHIP =
-    careerTotals.ip > 0
-      ? (
-          (careerTotals.hitsAllowed + careerTotals.bb) /
-          careerTotals.ip
-        ).toFixed(2)
-      : "—";
-
-  const careerRF =
-    careerTotals.g > 0
-      ? (
-          (careerTotals.pickoffs + careerTotals.assists) /
-          careerTotals.g
-        ).toFixed(2)
-      : "—";
-
-  const renderCount = (value: MlbStatValue, games: MlbStatValue) =>
-    statView === "totals" ? displayStat(value) : perGame(value, games);
-
-  const renderCareerCount = (value: number) =>
-    statView === "totals"
-      ? String(value)
-      : careerTotals.g > 0
-        ? (value / careerTotals.g).toFixed(2)
-        : "0.00";
-
-  const headers = useMemo(() => {
-    if (statType === "batting") {
-      return [
-        "GP",
-        "AB",
-        "H",
-        "HR",
-        "RBI",
-        "BB",
-        "SO",
-        "AVG",
-        "OBP",
-        "SLG",
-        "OPS",
-        "2B",
-        "3B",
-        "HBP",
-      ];
+    if (isLowerBetterStat(primaryKey)) {
+      return Number.isFinite(bestValue) ? bestId : null;
     }
 
-    if (statType === "pitching") {
-      return [
-        "GP",
-        "GS",
-        "W",
-        "L",
-        "W%",
-        "WAR",
-        "ERA",
-        "WHIP",
-        "IP",
-        "K",
-        "BB",
-        "K/BB",
-        "H",
-        "R",
-        "ER",
-      ];
-    }
+    return bestValue > 0 ? bestId : null;
+  }, [seasonsWithGroup, statKeys]);
 
-    return [
-      "GP",
-      "GS",
-      "FIP",
-      "TC",
-      "PO",
-      "A",
-      "E",
-      "DP",
-      "FP",
-      "RF",
-      "PB",
-      "SBA",
-      "CS",
-      "CS%",
-      "ERA",
-      "DWAR",
-    ];
-  }, [statType]);
+  const emptyText =
+    showSeasonTypeTabs && selectedSeasonType === "postseason"
+      ? "Stats not available"
+      : "No stats available";
+
+  const shouldShowCategoryDropdown =
+    visibleData.length > 0 && availableGroups.length > 0 && statKeys.length > 0;
+
+  const renderHeader = () => (
+    <>
+      <View style={styles.statsHeader}>
+        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
+
+        {shouldShowCategoryDropdown ? (
+          <Dropdown
+            options={availableGroups.map((group) => ({
+              label: getGroupDisplayName(group, group.name).replace(
+                /^Postseason\s+/i,
+                selectedSeasonType === "postseason" ? "" : "Postseason ",
+              ),
+              value: group.name,
+            }))}
+            selectedValue={activeGroup}
+            onSelect={setSelectedGroup}
+            isDark={isDark}
+            style={styles.dropdown}
+          />
+        ) : null}
+      </View>
+
+      {showSeasonTypeTabs ? (
+        <PillTabs
+          tabs={SEASON_TYPE_TABS}
+          selectedValue={selectedSeasonType}
+          onChange={setSelectedSeasonType}
+        />
+      ) : null}
+    </>
+  );
 
   if (loading) {
     return (
@@ -495,49 +958,35 @@ export default function PlayerStatTable({
     );
   }
 
-  if (error) return <Text style={global.errorText}>Failed to load stats</Text>;
+  if (error) {
+    return <Text style={global.errorText}>{error}</Text>;
+  }
 
-  if (!filteredSeasons.length) {
+  if (!sortedData.length) {
+    return <Text style={global.emptyText}>No stats available</Text>;
+  }
+
+  if (!visibleData.length) {
     return (
       <View style={styles.container}>
-        <HeadingWithDropdowns
-          title={statType.charAt(0).toUpperCase() + statType.slice(1)}
-          dropdowns={[
-            {
-              options: STAT_TYPE_OPTIONS,
-              selectedValue: statType,
-              onSelect: (val) => setStatType(val as StatType),
-            },
-            {
-              options: STAT_OPTIONS,
-              selectedValue: statView,
-              onSelect: (val) => setStatView(val as StatView),
-            },
-          ]}
-        />
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
+      </View>
+    );
+  }
 
-        <Text style={global.emptyText}>No {statType} stats available.</Text>
+  if (!activeGroup || statKeys.length === 0) {
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.emptyText}>{emptyText}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <HeadingWithDropdowns
-        title={statType.charAt(0).toUpperCase() + statType.slice(1)}
-        dropdowns={[
-          {
-            options: STAT_TYPE_OPTIONS,
-            selectedValue: statType,
-            onSelect: (val) => setStatType(val as StatType),
-          },
-          {
-            options: STAT_OPTIONS,
-            selectedValue: statView,
-            onSelect: (val) => setStatView(val as StatView),
-          },
-        ]}
-      />
+      {renderHeader()}
 
       <View style={styles.tableWrapper}>
         <View style={styles.seasonColumn}>
@@ -547,7 +996,7 @@ export default function PlayerStatTable({
             </Text>
           </View>
 
-          {filteredSeasons.map((row, index) => {
+          {seasonsWithGroup.map((season, index) => {
             const zebra =
               index % 2 === 1
                 ? isDark
@@ -555,13 +1004,11 @@ export default function PlayerStatTable({
                   : styles.rowAltLight
                 : null;
 
-            const highlight = row.rowKey === bestRowKey ? styles.best : null;
+            const highlight = season.id === bestRowId ? styles.best : null;
 
             return (
-              <View key={row.rowKey} style={[styles.row, zebra, highlight]}>
-                <Text style={styles.fixedCell}>
-                  {row.displaySeason ?? row.season}
-                </Text>
+              <View key={season.id} style={[styles.row, zebra, highlight]}>
+                <Text style={styles.fixedCell}>{season.year}</Text>
               </View>
             );
           })}
@@ -571,7 +1018,7 @@ export default function PlayerStatTable({
               style={[
                 styles.fixedCell,
                 styles.fixedHeaderCell,
-                { color: Colors.white },
+                styles.fixedCareerHeaderCell,
               ]}
             >
               CAREER
@@ -586,7 +1033,7 @@ export default function PlayerStatTable({
             </Text>
           </View>
 
-          {filteredSeasons.map((row, index) => {
+          {seasonsWithGroup.map((season, index) => {
             const zebra =
               index % 2 === 1
                 ? isDark
@@ -594,17 +1041,14 @@ export default function PlayerStatTable({
                   : styles.rowAltLight
                 : null;
 
-            const highlight = row.rowKey === bestRowKey ? styles.best : null;
-            const team = getMLBTeamByEspnId(row.team ?? 0);
+            const highlight = season.id === bestRowId ? styles.best : null;
 
             return (
               <View
-                key={`${row.rowKey}-team`}
+                key={`${season.id}-team`}
                 style={[styles.row, zebra, highlight]}
               >
-                <Text style={styles.fixedTeamCell}>
-                  {team?.code ?? row.teamSlug ?? "—"}
-                </Text>
+                <Text style={styles.fixedTeamCell}>{season.teamCode}</Text>
               </View>
             );
           })}
@@ -617,16 +1061,18 @@ export default function PlayerStatTable({
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.statScrollContent}>
             <View style={[styles.row, styles.headerRow]}>
-              {headers.map((header) => (
-                <Text key={header} style={[styles.cell, styles.headerCell]}>
-                  {header}
-                </Text>
-              ))}
+              {statKeys.map((key) => {
+                const stat = allStats.find((item) => item.name === key);
+
+                return (
+                  <Text key={key} style={[styles.cell, styles.headerCell]}>
+                    {getStatLabel(stat, key)}
+                  </Text>
+                );
+              })}
             </View>
 
-            {filteredSeasons.map((row, index) => {
-              const stats = row.stats;
-              const games = stats.gamesPlayed;
+            {seasonsWithGroup.map((season, index) => {
               const zebra =
                 index % 2 === 1
                   ? isDark
@@ -634,270 +1080,73 @@ export default function PlayerStatTable({
                     : styles.rowAltLight
                   : null;
 
-              const highlight = row.rowKey === bestRowKey ? styles.best : null;
+              const highlight = season.id === bestRowId ? styles.best : null;
 
               return (
                 <View
-                  key={`${row.rowKey}-stats`}
+                  key={`${season.id}-stats`}
                   style={[styles.row, zebra, highlight]}
                 >
-                  {statType === "batting" && (
-                    <>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.gamesPlayed)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.atBats, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.hits, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.homeRuns, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.RBIs, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.walks, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.strikeouts, games)}
-                      </Text>
-                      <Text style={styles.cell}>{displayStat(stats.avg)}</Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.onBasePct)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.slugAvg)}
-                      </Text>
-                      <Text style={styles.cell}>{displayStat(stats.OPS)}</Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.doubles, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.triples, games)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(stats.hitByPitch, games)}
-                      </Text>
-                    </>
-                  )}
+                  {statKeys.map((key) => {
+                    const stat = season.stats.find((item) => item.name === key);
 
-                  {statType === "pitching" && (
-                    <>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.gamesPlayed)}
+                    return (
+                      <Text key={key} style={styles.cell}>
+                        {getDisplayValue(stat)}
                       </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.gamesStarted)}
-                      </Text>
-                      <Text style={styles.cell}>{displayStat(stats.wins)}</Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.losses)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {toNumber(stats.wins) + toNumber(stats.losses) > 0
-                          ? formatRate3(
-                              toNumber(stats.wins) /
-                                (toNumber(stats.wins) + toNumber(stats.losses)),
-                            )
-                          : "—"}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getWar(stats))}
-                      </Text>
-                      <Text style={styles.cell}>{displayStat(stats.ERA)}</Text>
-                      <Text style={styles.cell}>{displayStat(stats.WHIP)}</Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.inningsPitched)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.strikeouts)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.walks)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {toNumber(stats.walks) > 0
-                          ? (
-                              toNumber(stats.strikeouts) / toNumber(stats.walks)
-                            ).toFixed(2)
-                          : "—"}
-                      </Text>
-                      <Text style={styles.cell}>{displayStat(stats.hits)}</Text>
-                      <Text style={styles.cell}>{displayStat(stats.runs)}</Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.earnedRuns)}
-                      </Text>
-                    </>
-                  )}
-
-                  {statType === "fielding" && (
-                    <>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.gamesPlayed)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.gamesStarted)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.fullInningsPlayed)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.totalChances)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.pickoffs)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.assists)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.errors)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.doublePlays)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.fieldingPct)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.rangeFactor)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.passedBalls)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.catcherStolenBasesAllowed)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.catcherCaughtStealing)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.catcherCaughtStealingPct)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.catcherERA)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(stats.defWARBR)}
-                      </Text>
-                    </>
-                  )}
+                    );
+                  })}
                 </View>
               );
             })}
 
             <View style={[styles.row, styles.careerRow]}>
-              {statType === "batting" && (
-                <>
-                  <Text style={styles.careerCell}>{careerTotals.g}</Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.ab)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.h)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.hr)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.rbi)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.bb)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.so)}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerAVG}</Text>
-                  <Text style={styles.careerCell}>{careerOBP}</Text>
-                  <Text style={styles.careerCell}>{careerSLG}</Text>
-                  <Text style={styles.careerCell}>{careerOPS}</Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.doubles)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.triples)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(careerTotals.hbp)}
-                  </Text>
-                </>
-              )}
+              {statKeys.map((key) => {
+                const display = formatCareerValue(
+                  key,
+                  careerDisplayValues[key] || [],
+                );
 
-              {statType === "pitching" && (
-                <>
-                  <Text style={styles.careerCell}>{careerTotals.g}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.gs}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.w}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.l}</Text>
-                  <Text style={styles.careerCell}>{careerWinPct}</Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.war.toFixed(1)}
+                return (
+                  <Text key={key} style={styles.careerCell}>
+                    {display}
                   </Text>
-                  <Text style={styles.careerCell}>{careerERA}</Text>
-                  <Text style={styles.careerCell}>{careerWHIP}</Text>
-                  <Text style={styles.careerCell}>
-                    {renderInnings(careerTotals.ip)}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerTotals.so}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.bb}</Text>
-                  <Text style={styles.careerCell}>{careerKBB}</Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.hitsAllowed}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.runsAllowed}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.earnedRuns.toFixed(0)}
-                  </Text>
-                </>
-              )}
-
-              {statType === "fielding" && (
-                <>
-                  <Text style={styles.careerCell}>{careerTotals.g}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.gs}</Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.fullInningsPlayed.toFixed(1)}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.totalChances}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerTotals.pickoffs}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.assists}</Text>
-                  <Text style={styles.careerCell}>{careerTotals.errors}</Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.doublePlays}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerFieldingPct}</Text>
-                  <Text style={styles.careerCell}>{careerRF}</Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.passedBalls}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.catcherStolenBasesAllowed}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.catcherCaughtStealing}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerCaughtStealingPct}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.catcherERA}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {careerTotals.defWARBR.toFixed(1)}
-                  </Text>
-                </>
-              )}
+                );
+              })}
             </View>
           </View>
         </ScrollView>
+      </View>
+
+      <View style={styles.glossaryContainer}>
+        <Text style={styles.headerName}>Stat Glossary</Text>
+
+        {chunk(statKeys, 2).map((row, rowIdx) => (
+          <View key={rowIdx} style={styles.glossaryRow}>
+            {row.map((key, colIdx) => {
+              const isAlt = rowIdx % 2 === 1;
+              const stat = allStats.find((item) => item.name === key);
+
+              return (
+                <View
+                  key={key}
+                  style={[
+                    styles.glossaryCell,
+                    isAlt && styles.glossaryCellAlt,
+                    colIdx === 0 && styles.glossaryCellWithRightBorder,
+                  ]}
+                >
+                  <Text style={styles.glossaryAbbr}>
+                    {getStatLabel(stat, key)}{" "}
+                    <Text style={styles.glossaryDisplayName}>
+                      {getStatDisplayName(stat, key)}
+                    </Text>
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        ))}
       </View>
     </View>
   );

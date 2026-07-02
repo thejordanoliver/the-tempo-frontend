@@ -5,8 +5,8 @@ import { StyleSheet, Text, TextStyle } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  isDark: boolean; // optional lighter color scheme
-  style?: TextStyle | TextStyle[]; // ✅ new prop
+  isDark: boolean;
+  style?: TextStyle | TextStyle[];
 };
 
 const CenteredHeader: React.FC<Props> = ({ children, isDark, style }) => {
@@ -18,13 +18,13 @@ const CenteredHeader: React.FC<Props> = ({ children, isDark, style }) => {
 const headerStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
-      fontSize: 24,
+      fontSize: 20,
       fontFamily: Fonts.OSMEDIUM,
+      textAlign: "center",
+      color: isDark ? Colors.dark.white : Colors.light.black,
       paddingBottom: 4,
       marginBottom: 12,
       borderBottomWidth: 1,
-      textAlign: "center",
-      color: isDark ? Colors.dark.white : Colors.light.black,
       borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
     },
   });

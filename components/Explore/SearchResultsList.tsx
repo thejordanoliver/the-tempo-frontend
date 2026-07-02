@@ -2,17 +2,11 @@ import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import {
-  FlatList,
-  Keyboard,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/explore";
 import ResultItemRow from "./ResultItemRow";
+import SearchBar from "./SearchBar";
 
 type Props = {
   data: ResultItem[];
@@ -20,11 +14,59 @@ type Props = {
   error: string | null;
   onSelect: (item: ResultItem) => void;
   onDelete?: (item: ResultItem) => void;
-  query: string;
+  handleChangeText: (text: string) => void;
+  handleTabPress: (tab: string) => void;
   onSeeAll?: () => void;
+  query: string;
+  searchVisible: boolean;
+  selectedTab: string;
+  tabs: readonly string[];
   showAll?: boolean;
   isSearching?: boolean;
 };
+
+function getTeamLeagueKey(item: any) {
+  if (item.isNFL) return "nfl";
+  if (item.isWNBA) return "wnba";
+  if (item.isMLB) return "mlb";
+  if (item.isNHL) return "nhl";
+  if (item.isCFB) return "cfb";
+  if (item.isCBB) return "cbb";
+  if (item.isWCBB) return "wcbb";
+  if (item.isNBA) return "nba";
+
+  return item.leagueKey ?? item.league ?? null;
+}
+
+function getResultKey(item: ResultItem, index: number) {
+  const result = item as any;
+
+  if (result.type === "team") {
+    const league = getTeamLeagueKey(result) ?? "unknown";
+
+    const teamKey =
+      result.id != null
+        ? String(result.id)
+        : result.wid != null
+          ? String(result.wid)
+          : result.slug != null
+            ? String(result.slug)
+            : `idx-${index}`;
+
+    return `team-${league}-${teamKey}`;
+  }
+
+  const id =
+    result.id != null
+      ? String(result.id)
+      : result.uid != null
+        ? String(result.uid)
+        : result.slug != null
+          ? String(result.slug)
+          : `idx-${index}`;
+
+  return `${result.type ?? "result"}-${id}-${index}`;
+}
 
 export default function SearchResultsList({
   data,
@@ -34,83 +76,71 @@ export default function SearchResultsList({
   onDelete,
   query,
   onSeeAll,
+  handleChangeText,
+  searchVisible,
+  selectedTab,
+  tabs,
+  handleTabPress,
   showAll = false,
-  isSearching,
+  isSearching = false,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
   const global = globalStyles(isDark);
 
-  function getTeamLeagueKey(item: any) {
-    if (item.isNFL) return "nfl";
-    if (item.isWNBA) return "wnba";
-    if (item.isMLB) return "mlb";
-    if (item.isNHL) return "nhl";
-    if (item.isCFB) return "cfb";
-    if (item.isCBB) return "cbb";
-    if (item.isWCBB) return "wcbb";
-    if (item.isNBA) return "nba";
-    return null;
-  }
-
   const trimmedQuery = query.trim();
   const visibleData = showAll ? data : data.slice(0, 5);
+  const showLoadingState = loading || isSearching;
+  const showRecentsTitle = trimmedQuery.length === 0 && data.length > 0;
+  const showEmptyState =
+    !showLoadingState && !error && data.length === 0 && trimmedQuery.length > 0;
 
   const handleSelect = (item: ResultItem) => {
     Keyboard.dismiss();
     onSelect(item);
   };
 
-  const SeeAllRow = () => (
-    <TouchableOpacity
-      activeOpacity={activeOpacity}
-      onPress={onSeeAll}
-      style={styles.seeAllRow}
-      accessibilityRole="button"
-      accessibilityLabel={`See all ${data.length} search results`}
-    >
-      <Text style={styles.seeAllText}>See all results ({data.length})</Text>
-    </TouchableOpacity>
-  );
+  const renderFooter = () => {
+    if (showAll || data.length <= 5) return null;
 
-  if (isSearching)
     return (
-      <View>
-        {Array.from({ length: 4 }).map((_, idx) => (
-          <ResultItemSkeleton key={idx} />
-        ))}
-      </View>
+      <TouchableOpacity
+        activeOpacity={activeOpacity}
+        onPress={onSeeAll}
+        style={styles.seeAllRow}
+        accessibilityRole="button"
+        accessibilityLabel={`See all ${data.length} search results`}
+      >
+        <Text style={styles.seeAllText}>See all results ({data.length})</Text>
+      </TouchableOpacity>
     );
+  };
 
-  if (error) return <Text style={global.errorText}>{error}</Text>;
+  const renderContent = () => {
+    if (showLoadingState) {
+      return (
+        <View>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <ResultItemSkeleton key={`search-skeleton-${index}`} />
+          ))}
+        </View>
+      );
+    }
 
-  if (!loading && data.length === 0 && trimmedQuery.length > 0)
-    return <Text style={global.emptyText}>No results found.</Text>;
+    if (error) {
+      return <Text style={global.errorText}>{error}</Text>;
+    }
 
-  return (
-    <>
-      {trimmedQuery.length === 0 && data.length > 0 && (
-        <HeadingThree>Recents</HeadingThree>
-      )}
+    if (showEmptyState) {
+      return <Text style={global.emptyText}>No results found.</Text>;
+    }
 
+    return (
       <FlatList
         data={visibleData}
-        keyExtractor={(item, index) => {
-          if (item.type === "team") {
-            const league = getTeamLeagueKey(item);
-            const teamKey =
-              item.id != null
-                ? String(item.id)
-                : item.wid != null
-                  ? String(item.wid)
-                  : `idx-${index}`;
-
-            return `team-${league}-${teamKey}`;
-          }
-
-          return `${item.type}-${item.id}-${index}`;
-        }}
+        keyExtractor={getResultKey}
         renderItem={({ item }) => (
           <ResultItemRow
             item={item}
@@ -119,16 +149,32 @@ export default function SearchResultsList({
             query={query}
           />
         )}
-        ListFooterComponent={!showAll && data.length > 5 ? <SeeAllRow /> : null}
-        contentContainerStyle={searchResultsListStyles.content}
-        keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={
+          showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : null
+        }
+        ListFooterComponent={renderFooter}
+        contentContainerStyle={styles.resultListContainer}
+        keyboardShouldPersistTaps="always"
+        showsVerticalScrollIndicator={false}
       />
-    </>
+    );
+  };
+
+  return (
+    <View style={styles.wrapper}>
+      <SearchBar
+        value={query}
+        placeholder="Explore Teams, Players and Accounts..."
+        onChangeText={handleChangeText}
+        visible={searchVisible}
+        onFocus={() => {}}
+        onBlur={() => {}}
+        tabs={[...tabs]}
+        selectedTab={selectedTab}
+        onTabPress={handleTabPress}
+      />
+
+      {renderContent()}
+    </View>
   );
 }
-
-const searchResultsListStyles = StyleSheet.create({
-  content: {
-    paddingBottom: 100,
-  },
-});

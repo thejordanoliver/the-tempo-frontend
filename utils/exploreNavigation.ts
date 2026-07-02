@@ -30,10 +30,10 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
 ];
 
 const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
-  { flag: "isNFL", pathname: "/player/nfl/[id]", league: "NFL" },
-  { flag: "isCFB", pathname: "/player/cfb/[id]", league: "CFB" },
+  { flag: "isNFL", pathname: "/player/football/[id]", league: "NFL" },
+  { flag: "isCFB", pathname: "/player/football/[id]", league: "CFB" },
   { flag: "isMMA", pathname: "/player/mma/[id]", league: "MMA" },
-  { flag: "isMLB", pathname: "/player/mlb/[id]", league: "MLB" },
+  { flag: "isMLB", pathname: "/player/baseball/[id]", league: "MLB" },
   { flag: "isNHL", pathname: "/player/nhl/[id]", league: "NHL" },
   { flag: "isWNBA", pathname: "/player/basketball/[id]", league: "WNBA" },
 ];

@@ -1,7 +1,7 @@
 import { Dropdown } from "components/Dropdown";
 import { Colors } from "constants/styles";
 import React from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import HeadingTwo from "./Heading";
 
 type DropdownOption = {
@@ -16,20 +16,17 @@ type HeadingWithDropdownsProps = {
     selectedValue: string;
     onSelect: (value: string) => void;
   }[];
-  lighter?: boolean;
+  isDark: boolean;
 };
 
 const HeadingWithDropdowns: React.FC<HeadingWithDropdownsProps> = ({
   title,
   dropdowns = [],
-  lighter = false,
+  isDark,
 }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
   return (
     <View style={styles.container}>
-      <HeadingTwo style={styles.heading} lighter={lighter}>
+      <HeadingTwo style={styles.heading} isDark={isDark}>
         {title}
       </HeadingTwo>
 
@@ -43,7 +40,7 @@ const HeadingWithDropdowns: React.FC<HeadingWithDropdownsProps> = ({
               onSelect={d.onSelect}
               isDark={isDark}
               style={i === 1 ? { marginLeft: 8 } : undefined}
-              absolute={false} // ⚡ normal flow for alignment
+              absolute={false}
             />
           ))}
         </View>

@@ -1,4 +1,4 @@
-import { CFBRecruit } from "@/types/football/football";
+import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
@@ -227,7 +227,7 @@ export default function RecruitsList({
     const uniqueTeams = Array.from(
       new Set(
         playerData
-          .map((r: CFBRecruit) => r.projected_school || r.predicted_school)
+          .map((r: Recruit) => r.projected_school || r.predicted_school)
           .filter((t): t is string => Boolean(t)),
       ),
     ).sort((a, b) => a.localeCompare(b));
@@ -250,7 +250,7 @@ export default function RecruitsList({
     let list = playerData;
 
     if (team !== "all") {
-      list = list.filter((r: CFBRecruit) => {
+      list = list.filter((r: Recruit) => {
         return r.projected_school === team || r.predicted_school === team;
       });
     }
@@ -258,7 +258,7 @@ export default function RecruitsList({
     const query = search.trim().toLowerCase();
 
     if (query.length > 0) {
-      list = list.filter((p: CFBRecruit) => {
+      list = list.filter((p: Recruit) => {
         const predictionMatches = p.predicted_schools?.some((prediction) =>
           prediction.team_name?.toLowerCase().includes(query),
         );

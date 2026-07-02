@@ -15,7 +15,7 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
-import { PlayerStats } from "types/types";
+import { PlayerStats } from "types/stats";
 
 export type RosterStatsProps = {
   rosterStats: PlayerStats[];

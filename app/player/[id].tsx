@@ -1,13 +1,13 @@
+import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
-import PlayerHeader from "@/components/Sports/NBA/Player/PlayerHeader";
+import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import LatestGame from "components/Sports/NBA/Player/LatestGame";
-import PlayerAwardList from "components/Sports/NBA/Player/PlayerAwardList";
-import SeasonStatCard from "components/Sports/NBA/Player/SeasonStatCard";
+import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -22,17 +22,23 @@ export default function PlayerDetailScreen() {
     teamId: string;
     league: any;
   }>();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = playerScreenStyles;
   const global = globalStyles(isDark);
   const navigation = useNavigation();
+
   const playerId = Number(id);
+
   const { player, loading, error } = usePlayerById(playerId, league);
+
   const isActive = player?.active;
+
   const team = teamId ? getNBATeam(teamId) : null;
   const teamLogo = getTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
+
   const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
     playerId,
     league,
@@ -44,9 +50,6 @@ export default function PlayerDetailScreen() {
     error: gameError,
   } = useTeamLatestGame("nba", teamId);
 
-  // -------------------------
-  // Header
-  // -------------------------
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -61,39 +64,42 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamLogo, teamColor]);
 
-  if (loading)
+  if (loading) {
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
+  }
 
-  if (error || !player)
+  if (error || !player) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>{error ?? "Player not found"}</Text>
       </View>
     );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader player={player} isDark={isDark} />
+      <PlayerHeader player={player} isDark={isDark} league={league} />
 
-      {isActive && (
-        <SeasonStatCard
-          season={seasons}
-          loading={seasonsLoading}
-          error={seasonsError}
-        />
-      )}
-
-      <LatestGame
-        game={game}
-        loading={gameLoading}
-        error={gameError}
-        isDark={isDark}
+      <SeasonStatCard
+        seasons={seasons}
+        loading={seasonsLoading}
+        error={seasonsError}
         league={league}
       />
+
+      {isActive && (
+        <LatestGame
+          game={game}
+          loading={gameLoading}
+          error={gameError}
+          isDark={isDark}
+          league={league}
+        />
+      )}
 
       <PlayerStatTable
         seasons={seasons}

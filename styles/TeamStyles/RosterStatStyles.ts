@@ -81,6 +81,12 @@ export const rosterStatsStyles = (isDark: boolean) =>
       textAlign: "center",
       width: STAT_CELL_WIDTH,
     },
+    teamStatValue: {
+      fontFamily: Fonts.OSMEDIUM,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
+      
+    },
     cardWrapper: { flexDirection: "row", alignItems: "flex-end" },
     cardContainer: {
       justifyContent: "center",

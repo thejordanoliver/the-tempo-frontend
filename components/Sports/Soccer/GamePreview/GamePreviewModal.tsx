@@ -214,6 +214,7 @@ export default function SoccerGamePreviewModal({
                   opponentScore={homeScore}
                   record={awayRecord}
                   gameStatusDescription={gameStatusDescription}
+                  state={state}
                 />
 
                 <CenterInfo
@@ -236,6 +237,7 @@ export default function SoccerGamePreviewModal({
                   opponentScore={awayScore}
                   record={homeRecord}
                   gameStatusDescription={gameStatusDescription}
+                  state={state}
                 />
               </View>
 

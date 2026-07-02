@@ -1,16 +1,8 @@
+import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { PlayerCard } from "components/Sports/NBA/Player/PlayerCard";
-import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getNBATeam } from "constants/teams"; // import your teams list
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { PlayerLeader } from "types/stats";
 import HeadingTwo from "../Headings/HeadingTwo";
@@ -30,7 +22,6 @@ interface SeasonLeadersListProps {
 }
 
 const STAT_DISPLAY_NAMES: Record<string, string> = {
-  // Counting Stats
   PTS: "Points",
   AST: "Assists",
   REB: "Total Rebounds",
@@ -45,13 +36,9 @@ const STAT_DISPLAY_NAMES: Record<string, string> = {
   FG3A: "Three Pointers Attempted",
   FTM: "Free Throws Made",
   FTA: "Free Throws Attempted",
-
-  // Calculated Percentages (to be computed manually)
   FG_PCT: "Field Goal %",
   FG3_PCT: "Three Point %",
   FT_PCT: "Free Throw %",
-
-  // Efficiency & Ratios (calculated manually)
   EFF: "Efficiency",
   AST_TOV: "AST/TOV Ratio",
   STL_TOV: "STL/TOV Ratio",
@@ -65,7 +52,6 @@ export default function SeasonLeadersList({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = seasonLeadersListStyles(isDark);
-  const router = useRouter();
   const global = globalStyles(isDark);
   if (loading) {
     return (
@@ -96,48 +82,37 @@ export default function SeasonLeadersList({
       showsVerticalScrollIndicator={false}
       scrollEnabled={false}
       keyExtractor={([stat]) => stat}
-      renderItem={({ item: [stat, players] }) => (
-        <View>
-          <HeadingTwo isDark={isDark}>
-            {STAT_DISPLAY_NAMES[stat] || stat} Leaders
-          </HeadingTwo>
+      renderItem={({ item: [stat, players] }) => {
+        const statName = STAT_DISPLAY_NAMES[stat] || stat;
+        return (
+          <View>
+            <HeadingTwo isDark={isDark}>{statName} Leaders</HeadingTwo>
 
-          <View style={styles.playersList}>
-            {players!.map((player) => {
-              const statValue = player.value ?? "0";
-              const name = player.player.short_name;
+            <View style={styles.playersList}>
+              {players!.map((item) => {
+                const statValue = item.value ?? "0";
+                const name = item.player.short_name;
+                const headshot = item.player.headshot_url;
+                const playerId = item.player.id;
+                const teamId = item.player.team_id;
+                const rank = item.rank;
 
-              const headshotUrl = player.player.headshot_url;
-
-              const team = getNBATeam(player.player.team_id);
-              return (
-                <TouchableOpacity
-                  key={player.player.player_id}
-                  onPress={() => {
-                    if (!team) return;
-                    router.push({
-                      pathname: "/player/[id]",
-                      params: {
-                        id: player.player.id.toString(),
-                        teamId: team.id.toString(),
-                      },
-                    });
-                  }}
-                >
+                return (
                   <PlayerCard
-                    id={player.player.player_id}
-                    teamId={player.player.team_id}
-                    headshot={headshotUrl}
-                    rank={player.rank}
+                    id={playerId}
+                    key={playerId}
+                    teamId={teamId}
+                    headshot={headshot}
+                    rank={rank}
                     name={name}
                     statNumber={statValue}
                   />
-                </TouchableOpacity>
-              );
-            })}
+                );
+              })}
+            </View>
           </View>
-        </View>
-      )}
+        );
+      }}
     />
   );
 }
@@ -161,12 +136,5 @@ const seasonLeadersListStyles = (isDark: boolean) =>
     skeletonList: {
       justifyContent: "center",
       paddingBottom: 100,
-    },
-    infoText: {
-      fontFamily: Fonts.OSLIGHT,
-      fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

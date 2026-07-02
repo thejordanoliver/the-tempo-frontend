@@ -1,9 +1,9 @@
-import { CFBRecruit } from "@/types/football/football";
+import { Recruit } from "@/types/recruiting/players";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export function useCFBRecruit(id?: number) {
-  const [data, setData] = useState<CFBRecruit | null>(null);
+  const [data, setData] = useState<Recruit | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +22,7 @@ export function useCFBRecruit(id?: number) {
         setLoading(true);
         setError(null);
 
-        const res = await apiClient.get<CFBRecruit>(
+        const res = await apiClient.get<Recruit>(
           `api/recruits/football/player/${id}`,
           {
             signal: controller.signal,

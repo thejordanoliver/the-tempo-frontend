@@ -1,12 +1,13 @@
+import { Team } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BasketballTeam } from "types/basketball";
+
 import { apiClient } from "utils/apiClient";
 /* =====================================================
    TYPES
 ===================================================== */
 
-export type CBBTeamWithGroups = BasketballTeam & {
+export type TeamWithGroups = Team & {
   groups?: {
     id: string;
     shortName: string;
@@ -19,23 +20,23 @@ export type CBBTeamWithGroups = BasketballTeam & {
   };
 };
 
-export type CBBTeamRank = {
+export type TeamRank = {
   current: number;
   previous: number;
   points: number;
   firstPlaceVotes: number;
   trend: string;
   recordSummary: string;
-  team: CBBTeamWithGroups | null;
+  team: TeamWithGroups | null;
   date: string;
   lastUpdated: string;
 };
 
-export type CBBRankPoll = {
+export type RankPoll = {
   type: "ap" | "coaches";
   shortName: string;
-  ranks: CBBTeamRank[];
-  droppedOut: CBBTeamRank[];
+  ranks: TeamRank[];
+  droppedOut: TeamRank[];
 };
 
 /* =====================================================
@@ -52,7 +53,7 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
   const CACHE_KEY = `cbb_rankings_cache_${league}`;
   const LAST_REFRESH_KEY = `cbb_rankings_last_refresh_${league}`;
 
-  const [rankings, setRankings] = useState<CBBRankPoll[]>([]);
+  const [rankings, setRankings] = useState<RankPoll[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,18 +61,21 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
      CACHE HELPERS
   -------------------------------------------------- */
 
-  const saveCache = useCallback(async (data: CBBRankPoll[]) => {
-    try {
-      await AsyncStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({ timestamp: Date.now(), data }),
-      );
-    } catch (err) {
-      console.warn("⚠️ Failed to cache CBB rankings:", err);
-    }
-  }, [CACHE_KEY]);
+  const saveCache = useCallback(
+    async (data: RankPoll[]) => {
+      try {
+        await AsyncStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ timestamp: Date.now(), data }),
+        );
+      } catch (err) {
+        console.warn("⚠️ Failed to cache CBB rankings:", err);
+      }
+    },
+    [CACHE_KEY],
+  );
 
-  const loadCache = useCallback(async (): Promise<CBBRankPoll[] | null> => {
+  const loadCache = useCallback(async (): Promise<RankPoll[] | null> => {
     try {
       const cached = await AsyncStorage.getItem(CACHE_KEY);
       if (!cached) return null;
@@ -98,14 +102,14 @@ export const useCBBRankings = (league: "CBB" | "WCBB") => {
         params: { league },
       });
 
-      const polls: CBBRankPoll[] = res.data.rankings || [];
+      const polls: RankPoll[] = res.data.rankings || [];
 
       setRankings(polls);
 
       await saveCache(polls);
       await AsyncStorage.setItem(LAST_REFRESH_KEY, Date.now().toString());
     } catch (err: any) {
-      console.error("❌ Fetch CBB rankings failed:", err);
+      console.error(`❌ Fetch ${league} rankings failed:`, err);
 
       // Axios-specific error handling
       const message =

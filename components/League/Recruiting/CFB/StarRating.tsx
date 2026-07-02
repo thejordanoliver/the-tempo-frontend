@@ -1,11 +1,11 @@
-import { CFBRecruit } from "@/types/football/football";
+import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
-  recruit: CFBRecruit;
+  recruit: Recruit;
   isDark: boolean;
 };
 

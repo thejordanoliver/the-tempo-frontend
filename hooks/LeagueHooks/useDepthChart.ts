@@ -39,7 +39,6 @@ export type DepthChartAthleteSource = "players" | "nfl_players" | "espn" | strin
 
 export type DepthChartAthlete = {
   id: number | null;
-  espnId?: number | null;
   dbId?: number | null;
   playerId?: number | null;
   source?: DepthChartAthleteSource | null;

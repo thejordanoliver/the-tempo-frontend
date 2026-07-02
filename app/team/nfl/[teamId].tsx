@@ -1,6 +1,5 @@
 import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
-import Roster from "@/components/Sports/Football/Team/Roster";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -26,6 +25,7 @@ import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import Roster from "@/components/Sports/Baseball/Team/Roster";
 
 export default function TeamDetailScreen() {
   const league = "NFL";
@@ -78,12 +78,12 @@ export default function TeamDetailScreen() {
   } = useTeamGames(teamIdNum, league, currentSeason);
 
   const {
-    rosterStats,
-    loading: statsLoading,
-    error: statsError,
+    teamRoster,
     refreshingStats,
-    onRefresh: refreshRosterStats,
-  } = useRosterStats(league, teamIdNum);
+    loading: rosterStatsLoading,
+    error: rosterStatsError,
+    refetch,
+  } = useRosterStats(teamIdNum, league);
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
     espnId,
@@ -98,7 +98,7 @@ export default function TeamDetailScreen() {
       } else if (selectedTab === "roster") {
         await refreshPlayers();
       } else if (selectedTab === "stats") {
-        await Promise.all([refreshRosterStats(), refresh?.()]);
+        await Promise.all([refetch(), refresh?.()]);
       }
     } catch (err) {
       console.error("Refresh failed:", err);
@@ -208,13 +208,13 @@ export default function TeamDetailScreen() {
         {/* STATS */}
         <View key="stats" style={styles.contentArea}>
           <RosterStats
-            rosterStats={rosterStats}
-            teamStats={teamStats}
-            loading={statsLoading || teamStatsLoading}
-            error={statsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refreshRosterStats}
+            rosterStats={teamRoster}
             teamId={teamIdNum}
+            teamStats={teamStats}
+            loading={rosterStatsLoading || teamStatsLoading}
+            error={rosterStatsError || teamStatsError}
+            refreshing={refreshingStats}
+            onRefresh={refetch}
             league={league}
           />
         </View>

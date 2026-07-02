@@ -7,6 +7,7 @@ export const statsTableStyles = (isDark: boolean) => {
   const altRowColor = isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
+
   const rowHeight = 38;
   const statCellWidth = 80;
   const seasonColumnWidth = 80;
@@ -17,10 +18,14 @@ export const statsTableStyles = (isDark: boolean) => {
       paddingTop: 24,
     },
 
+    statsHeader: {
+      minHeight: 44,
+    },
+
     dropdown: {
       position: "absolute",
       right: 0,
-      top: 12,
+      top: -12,
     },
 
     tableWrapper: {
@@ -64,6 +69,22 @@ export const statsTableStyles = (isDark: boolean) => {
 
     rowAlt: {
       backgroundColor: altRowColor,
+    },
+
+    rowAltLight: {
+      backgroundColor: Colors.light.itemBackground,
+    },
+
+    rowAltDark: {
+      backgroundColor: Colors.dark.itemBackground,
+    },
+
+    best: {
+      backgroundColor: isDark ? "#5c4300" : "#ffd700",
+    },
+
+    careerRow: {
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
 
     careerCell: {
@@ -132,6 +153,10 @@ export const statsTableStyles = (isDark: boolean) => {
       textTransform: "uppercase",
     },
 
+    fixedCareerHeaderCell: {
+      color: Colors.white,
+    },
+
     fixedCareerCell: {
       width: teamColumnWidth,
       textAlign: "center",
@@ -150,43 +175,37 @@ export const statsTableStyles = (isDark: boolean) => {
       textTransform: "uppercase",
     },
 
-    seasonTypeTabs: {
+    seasonTabsPill: {
       flexDirection: "row",
-      alignSelf: "flex-start",
       marginTop: 4,
-      marginBottom: 12,
+      marginBottom: 16,
+      borderRadius: 999,
       borderWidth: 1,
-      borderColor,
-      borderRadius: 8,
-      overflow: "hidden",
+      borderColor: isDark ? Colors.transparentDarkGray : Colors.transparentLightGray ,
+      backgroundColor: isDark ?  Colors.dark.itemBackground: Colors.light.itemBackground ,
     },
 
-    seasonTypeTab: {
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      borderRightWidth: 1,
-      borderRightColor: borderColor,
+    tabContainer: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 10,
+      borderRadius: 999,
+      backgroundColor: "transparent",
     },
 
-    seasonTypeTabActive: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+    tabContainerActive: {
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 999,
     },
 
-    lastSeasonTypeTab: {
-      borderRightWidth: 0,
-    },
-
-    seasonTypeTabText: {
-      fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    seasonTypeTabTextActive: {
+    tabLabel: {
       fontFamily: Fonts.OSBOLD,
-      color: textColor,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    tabLabelActive: {
+      color: isDark ? Colors.black : Colors.white,
     },
 
     legendText: {
@@ -194,19 +213,12 @@ export const statsTableStyles = (isDark: boolean) => {
       fontFamily: Fonts.OSREGULAR,
     },
 
-    best: {
-      backgroundColor: isDark ? "#5c4300" : "#ffd700",
-    },
-
-    careerRow: {
-      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
-    },
-
     glossaryContainer: {
       marginTop: 12,
       borderRadius: 8,
       borderWidth: 1,
       borderColor,
+      overflow: "hidden",
     },
 
     headerName: {
@@ -218,29 +230,36 @@ export const statsTableStyles = (isDark: boolean) => {
       borderColor,
     },
 
-    glossaryAbbr: {
-      width: 48,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
-      textTransform: "uppercase",
-    },
-
-    glossaryDisplayName: {
-      flex: 1,
-      fontSize: 12,
-      color: textColor,
-      fontFamily: Fonts.OSREGULAR,
-    },
     glossaryRow: {
       flexDirection: "row",
     },
-    rowAltLight: {
-      backgroundColor: Colors.light.itemBackground,
+
+    glossaryCell: {
+      flex: 1,
+      flexDirection: "row",
+      padding: 12,
+      backgroundColor: "transparent",
     },
 
-    rowAltDark: {
-      backgroundColor: Colors.dark.itemBackground,
+    glossaryCellAlt: {
+      backgroundColor: altRowColor,
+    },
+
+    glossaryCellWithRightBorder: {
+      borderRightWidth: 1,
+      borderRightColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
+    },
+
+    glossaryAbbr: {
+      fontSize: 10,
+      color: textColor,
+      fontFamily: Fonts.OSBOLD,
+    },
+
+    glossaryDisplayName: {
+      fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.OSREGULAR,
     },
   });
 };

@@ -1,6 +1,6 @@
 import { Athlete } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { getNBATeam} from "constants/teams";
+import { getNBATeam } from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { router } from "expo-router";
@@ -306,14 +306,9 @@ export default function BoxScore({
     ) => {
       if (!playerId || !teamId) return;
 
-      const leagueRoute = isCollege ? "cbb" : undefined;
-
       router.push({
-        pathname: isNBA
-          ? "/player/[id]"
-          : leagueRoute
-            ? "/player/basketball/[id]"
-            : "/player/[id]",
+        pathname: isNBA ? "/player/[id]" : "/player/basketball/[id]",
+
         params: {
           id: String(playerId),
           teamId: String(teamId),
@@ -321,7 +316,7 @@ export default function BoxScore({
         },
       });
     },
-    [isCollege, isNBA, league],
+    [isNBA, league],
   );
 
   const renderTeamBox = ({

@@ -4,7 +4,13 @@ export const exploreStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 12,
+      paddingHorizontal: 12,
+    },
+    wrapper: {
+      flex: 1,
+    },
+    resultListContainer: {
+      paddingBottom: 100,
     },
     itemContainer: {
       paddingVertical: 12,

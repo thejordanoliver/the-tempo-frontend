@@ -88,6 +88,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
+  
 
   const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
 

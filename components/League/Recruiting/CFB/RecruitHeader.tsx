@@ -1,10 +1,10 @@
-import { CFBRecruit } from "@/types/football/football";
+import { Recruit } from "@/types/recruiting/players";
 import { Colors } from "constants/styles";
 import { Image, Text, View } from "react-native";
 import { recruitHeaderStyles } from "styles/PlayerStyles/RecruitHeaderStyles";
 
 type Props = {
-  player: CFBRecruit;
+  player: Recruit;
   isDark: boolean;
   teamColor?: string;
   team_name?: string;

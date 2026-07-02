@@ -7,6 +7,7 @@ import {
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -22,7 +23,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -339,7 +339,7 @@ export default function TeamDetailScreen() {
         <View key="stats" style={styles.contentArea}>
           <RosterStats
             rosterStats={teamRoster}
-            teamId={teamIdStr}
+            teamId={teamIdNum}
             teamStats={teamStats}
             loading={rosterStatsLoading || teamStatsLoading}
             error={rosterStatsError || teamStatsError}

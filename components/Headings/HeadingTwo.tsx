@@ -5,8 +5,8 @@ import { StyleSheet, Text, TextStyle } from "react-native";
 
 type Props = {
   children: React.ReactNode;
-  isDark: boolean; // optional lighter color scheme
-  style?: TextStyle | TextStyle[]; // ✅ new prop
+  isDark: boolean;
+  style?: TextStyle | TextStyle[];
 };
 
 const HeadingTwo: React.FC<Props> = ({ children, isDark, style }) => {

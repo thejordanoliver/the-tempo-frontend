@@ -91,14 +91,11 @@ const STAT_HEADERS = [
   "GP",
   "MIN",
   "PTS",
-  "FGM",
-  "FGA",
+  "FGM-A",
   "FG%",
-  "3PM",
-  "3PA",
+  "3PM-A",
   "3P%",
-  "FTM",
-  "FTA",
+  "FTM-A",
   "FT%",
   "OREB",
   "DREB",
@@ -180,30 +177,13 @@ const getGamesPlayed = (player: RosterPlayer) => {
   return getNumericStatValue(getAverages(player).gamesPlayed);
 };
 
-const parseMadeAttempted = (value: StatValue): [string, string] => {
-  if (value === null || value === undefined || value === "") {
-    return ["—", "—"];
-  }
-
-  const parts = String(value).split(/[-/]/);
-
-  if (parts.length < 2) {
-    return [formatStatValue(value), "—"];
-  }
-
-  return [formatStatValue(parts[0]), formatStatValue(parts[1])];
-};
-
-const getMadeAttemptedPair = (
+const getMadeAttemptedStat = (
   averages: StatMap,
   totals: StatMap,
   averageKey: string,
   totalKey: string,
 ) => {
-  const averageValue = averages[averageKey];
-  const totalValue = totals[totalKey];
-
-  return parseMadeAttempted(averageValue ?? totalValue);
+  return averages[averageKey] ?? totals[totalKey] ?? null;
 };
 
 export default function RosterStats({
@@ -365,21 +345,21 @@ export default function RosterStats({
     const averages = getAverages(player);
     const totals = getTotals(player);
 
-    const [fgm, fga] = getMadeAttemptedPair(
+    const fieldGoalsMadeAttempted = getMadeAttemptedStat(
       averages,
       totals,
       "avgFieldGoalsMade-avgFieldGoalsAttempted",
       "fieldGoalsMade-fieldGoalsAttempted",
     );
 
-    const [threePm, threePa] = getMadeAttemptedPair(
+    const threePointMadeAttempted = getMadeAttemptedStat(
       averages,
       totals,
       "avgThreePointFieldGoalsMade-avgThreePointFieldGoalsAttempted",
       "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
     );
 
-    const [ftm, fta] = getMadeAttemptedPair(
+    const freeThrowsMadeAttempted = getMadeAttemptedStat(
       averages,
       totals,
       "avgFreeThrowsMade-avgFreeThrowsAttempted",
@@ -390,14 +370,11 @@ export default function RosterStats({
       averages.gamesPlayed,
       averages.avgMinutes,
       averages.avgPoints,
-      fgm,
-      fga,
+      fieldGoalsMadeAttempted,
       averages.fieldGoalPct ?? totals.fieldGoalPct,
-      threePm,
-      threePa,
+      threePointMadeAttempted,
       averages.threePointFieldGoalPct ?? totals.threePointFieldGoalPct,
-      ftm,
-      fta,
+      freeThrowsMadeAttempted,
       averages.freeThrowPct ?? totals.freeThrowPct,
       averages.avgOffensiveRebounds,
       averages.avgDefensiveRebounds,
@@ -608,7 +585,7 @@ export default function RosterStats({
               {item.label}
             </Text>
 
-            <Text style={[styles.tableCell, styles.statValue]}>
+            <Text style={[styles.tableCell, styles.teamStatValue]}>
               {item.value}
             </Text>
           </View>

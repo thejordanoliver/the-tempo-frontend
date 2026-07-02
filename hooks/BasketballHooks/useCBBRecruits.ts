@@ -1,6 +1,6 @@
 // hooks/CFB/useCBBRecruits.ts
 
-import { CFBRecruit } from "@/types/football/football";
+import { Recruit } from "@/types/recruiting/players";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -24,16 +24,13 @@ export interface RecruitPredictedSchool {
   image_url?: string | null;
 }
 
-interface RawCFBRecruit extends Omit<
-  CFBRecruit,
-  "predicted_schools" | "offers"
-> {
+interface RawCFBRecruit extends Omit<Recruit, "predicted_schools" | "offers"> {
   predicted_schools?: RecruitPredictedSchool[] | string | null;
   offers?: RecruitOffer[] | string | null;
 }
 
 interface useCBBRecruitsResult {
-  data: CFBRecruit[];
+  data: Recruit[];
   loading: boolean;
   refreshing: boolean;
   error: string | null;
@@ -93,7 +90,7 @@ function normalizePredictedSchool(
   };
 }
 
-function normalizeRecruit(recruit: RawCFBRecruit): CFBRecruit {
+function normalizeRecruit(recruit: RawCFBRecruit): Recruit {
   const predictedSchools = parseJsonArray<RecruitPredictedSchool>(
     recruit.predicted_schools,
   )
@@ -116,7 +113,7 @@ function normalizeRecruit(recruit: RawCFBRecruit): CFBRecruit {
 }
 
 export function useCBBRecruits(year: number): useCBBRecruitsResult {
-  const [data, setData] = useState<CFBRecruit[]>([]);
+  const [data, setData] = useState<Recruit[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);

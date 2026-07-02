@@ -1,5 +1,5 @@
+import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerStatTable from "@/components/Sports/Hockey/Player/PlayerStatTable";
-import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
 import { usePlayerSeasons } from "@/hooks/HockeyHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/HockeyHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";

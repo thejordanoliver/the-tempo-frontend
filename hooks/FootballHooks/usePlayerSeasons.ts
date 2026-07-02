@@ -98,12 +98,7 @@ const CATEGORY_DISPLAY_NAMES: Record<string, string> = {
 };
 
 function toNumber(value: StatValue): number | null {
-  if (
-    value === null ||
-    value === undefined ||
-    value === "" ||
-    value === "-"
-  ) {
+  if (value === null || value === undefined || value === "" || value === "-") {
     return null;
   }
 
@@ -167,7 +162,8 @@ function buildCategories(season: ApiSeason): Category[] {
 
       return {
         name: categoryName,
-        displayName: CATEGORY_DISPLAY_NAMES[categoryName] || formatStatLabel(categoryName),
+        displayName:
+          CATEGORY_DISPLAY_NAMES[categoryName] || formatStatLabel(categoryName),
         stats,
       };
     })
@@ -195,7 +191,7 @@ function mapSeason(season: ApiSeason): FootballPlayerSeason {
   };
 }
 
-export function useFootballPlayerSeasons(
+export function usePlayerSeasons(
   playerId: number,
   league: "CFB" | "NFL" = "CFB",
 ) {
@@ -228,7 +224,7 @@ export function useFootballPlayerSeasons(
         setError(null);
 
         const res = await apiClient.get<PlayerStatsResponse>(
-          `api/player/stats/cfb/${playerId}`,
+          `api/player/stats/${league}/${playerId}`,
         );
 
         if (cancelled) return;
@@ -245,17 +241,15 @@ export function useFootballPlayerSeasons(
 
         setRawSeasons(seasons);
 
-        const mappedSeasons = seasons
-          .map(mapSeason)
-          .sort((a, b) => {
-            if (b.season !== a.season) {
-              return b.season - a.season;
-            }
+        const mappedSeasons = seasons.map(mapSeason).sort((a, b) => {
+          if (b.season !== a.season) {
+            return b.season - a.season;
+          }
 
-            return String(a.seasonTypeLabel).localeCompare(
-              String(b.seasonTypeLabel),
-            );
-          });
+          return String(a.seasonTypeLabel).localeCompare(
+            String(b.seasonTypeLabel),
+          );
+        });
 
         setData(mappedSeasons);
       } catch (err: any) {

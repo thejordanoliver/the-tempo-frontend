@@ -438,37 +438,38 @@ export interface FootballScoringStats extends FootballStatGroup {
   kickExtraPoints?: FootballStatValue;
 }
 
+export type FootballSeasonStatGroups = {
+  passing?: FootballPassingStats | null;
+  rushing?: FootballRushingStats | null;
+  receiving?: FootballReceivingStats | null;
+  defensive?: FootballDefensiveStats | null;
+  scoring?: FootballScoringStats | null;
+  returning?: FootballReturningStats | null;
+  kicking?: FootballKickingStats | null;
+  punting?: FootballPuntingStats | null;
+};
+
 /**
- * One season of normalized player stats.
+ * One season of roster player stats from the football roster stats endpoint.
  *
- * Each category is optional because players only receive stats for categories
- * that apply to their position or role.
+ * The current backend nests football stat groups under `stats`. The index
+ * signature keeps older top-level group payloads readable as a fallback.
  */
 export interface FootballSeasonStats {
-  season?: string | number | null;
-  year?: string | number | null;
-  displaySeason?: string;
-
-  passing?: FootballPassingStats;
-  rushing?: FootballRushingStats;
-  receiving?: FootballReceivingStats;
-  defensive?: FootballDefensiveStats;
-  returning?: FootballReturningStats;
-  kicking?: FootballKickingStats;
-  punting?: FootballPuntingStats;
-  scoring?: FootballScoringStats;
-
-  /**
-   * Useful for APIs that return already-computed totals or averages instead
-   * of category-specific values.
-   */
-  totals?: FootballStatGroup;
-  averages?: FootballStatGroup;
-
-  /**
-   * Allows additional backend fields without forcing a type update every time
-   * a new stat group is added.
-   */
+  id: number;
+  stats: FootballSeasonStatGroups;
+  season: number;
+  team_id: string | number | null;
+  position: string | null;
+  player_id: number;
+  team_slug: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  player_name: string;
+  season_type: string | null;
+  display_season: string | null;
+  season_type_label: string | null;
+  season_type_value: string | number | null;
   [key: string]: unknown;
 }
 
@@ -502,9 +503,11 @@ export type FootballRosterApiPlayer = {
 
   headshot_url?: string | null;
   headshotUrl?: string | null;
+  active?: boolean | null;
 
   team_id?: string | number | null;
   teamId?: string | number | null;
+  team?: string | null;
   teamCode?: string | null;
 
   seasonStats?: FootballSeasonStats[] | null;
@@ -518,24 +521,32 @@ export type FootballRosterApiPlayer = {
  */
 export interface FootballRosterStatsPlayer {
   id: string | number;
-  player_id: string | number | null;
   playerId: string | number;
+  player_id?: string | number | null;
 
   full_name: string;
   short_name: string;
   first_name: string;
   last_name: string;
 
-  jersey_number: string | number;
-  position: string;
-  headshot_url: string;
-
   team_id: string | number | null;
-  teamCode: string;
+  position: string | null;
+  jersey_number: string | number | null;
+  headshot_url: string | null;
+  active: boolean;
+
+  team?: string;
+  teamCode?: string;
 
   seasonStats: FootballSeasonStats[];
   latestSeasonStats: FootballSeasonStats | null;
 }
+
+export type FootballRosterStatsResponse = {
+  teamId: string;
+  count: number;
+  players: FootballRosterStatsPlayer[];
+};
 
 /* ============================================================================
  * Football stats UI config
@@ -640,13 +651,18 @@ export type FootballLeaderConfig = {
  * ========================================================================== */
 
 export interface FootballRosterStatsProps {
-  rosterStats: FootballRosterStatsPlayer[];
+  rosterStats:
+    | FootballRosterStatsResponse
+    | FootballRosterStatsPlayer[]
+    | null
+    | undefined;
   teamStats: TeamStats | null;
 
   loading: boolean;
   error: Error | string | null;
 
   teamId: number;
+  teamID?: number;
   category?: FootballStatCategory;
   league: string;
 

@@ -1,4 +1,5 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import PillTabs from "@/components/TabBars/PillTabs";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import {
   DepthChartAthleteEntry,
@@ -7,12 +8,11 @@ import {
   useDepthCharts,
 } from "@/hooks/LeagueHooks/useDepthChart";
 import { Ionicons } from "@expo/vector-icons";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   Image,
   type ListRenderItemInfo,
-  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -33,7 +33,13 @@ type ChartOption = {
   key: string;
 };
 
+type ChartTabOption = {
+  label: string;
+  value: string;
+};
+
 type DepthChartStyles = ReturnType<typeof depthChartStyles>;
+type GlobalStyles = ReturnType<typeof globalStyles>;
 
 function hasTeamId(teamId: Props["teamId"]) {
   return (
@@ -165,7 +171,9 @@ function getPlayerRowKey(
     entry.athlete?.athleteRef ??
     "unknown-player";
 
-  return `${position.key || "unknown-position"}-${athleteKey}-${entry.slot ?? "no-slot"}-${entry.rank ?? "no-rank"}-${index}`;
+  return `${position.key || "unknown-position"}-${athleteKey}-${
+    entry.slot ?? "no-slot"
+  }-${entry.rank ?? "no-rank"}-${index}`;
 }
 
 function getPositionKey(
@@ -189,19 +197,30 @@ function hasMultipleSlots(athletes: DepthChartAthleteEntry[]) {
   return slots.size > 1;
 }
 
-function PlayerRow({
-  entry,
-  showSlot,
-  styles,
-}: {
+type PlayerRowProps = {
   entry: DepthChartAthleteEntry;
   showSlot: boolean;
   styles: DepthChartStyles;
-}) {
-  const name = getAthleteName(entry);
-  const headshotUri = getRemoteHeadshotUri(entry.athlete?.headshot);
-  const playerMeta = getPlayerMeta(entry);
+};
+
+const PlayerRow = memo(function PlayerRow({
+  entry,
+  showSlot,
+  styles,
+}: PlayerRowProps) {
+  const name = useMemo(() => getAthleteName(entry), [entry]);
+  const headshotUri = useMemo(
+    () => getRemoteHeadshotUri(entry.athlete?.headshot),
+    [entry.athlete?.headshot],
+  );
+  const playerMeta = useMemo(() => getPlayerMeta(entry), [entry]);
+  const initials = useMemo(() => getInitials(name), [name]);
+
   const [headshotFailed, setHeadshotFailed] = useState(false);
+
+  const handleHeadshotError = useCallback(() => {
+    setHeadshotFailed(true);
+  }, []);
 
   useEffect(() => {
     setHeadshotFailed(false);
@@ -216,13 +235,13 @@ function PlayerRow({
       {headshotUri && !headshotFailed ? (
         <Image
           accessibilityLabel={`${name} headshot`}
-          onError={() => setHeadshotFailed(true)}
+          onError={handleHeadshotError}
           source={{ uri: headshotUri }}
           style={styles.headshot}
         />
       ) : (
         <View style={styles.fallbackHeadshot}>
-          <Text style={styles.fallbackInitials}>{getInitials(name)}</Text>
+          <Text style={styles.fallbackInitials}>{initials}</Text>
         </View>
       )}
 
@@ -245,24 +264,35 @@ function PlayerRow({
       </View>
     </View>
   );
-}
+});
 
-function PositionCard({
-  position,
-  styles,
-}: {
+type PositionCardProps = {
   position: DepthChartPosition;
   styles: DepthChartStyles;
-}) {
-  const athletes = position.athletes ?? [];
-  const showSlot = hasMultipleSlots(athletes);
-  const abbreviation =
-    position.position?.abbreviation || position.key?.toUpperCase() || "--";
-  const displayName =
-    position.position?.displayName ||
-    position.position?.name ||
-    position.key?.toUpperCase() ||
-    "Position";
+};
+
+const PositionCard = memo(function PositionCard({
+  position,
+  styles,
+}: PositionCardProps) {
+  const athletes = useMemo(() => position.athletes ?? [], [position.athletes]);
+
+  const showSlot = useMemo(() => hasMultipleSlots(athletes), [athletes]);
+
+  const abbreviation = useMemo(
+    () =>
+      position.position?.abbreviation || position.key?.toUpperCase() || "--",
+    [position.key, position.position?.abbreviation],
+  );
+
+  const displayName = useMemo(
+    () =>
+      position.position?.displayName ||
+      position.position?.name ||
+      position.key?.toUpperCase() ||
+      "Position",
+    [position.key, position.position?.displayName, position.position?.name],
+  );
 
   return (
     <View style={styles.positionCard}>
@@ -298,50 +328,74 @@ function PositionCard({
       </View>
     </View>
   );
-}
+});
 
-function ChartTab({
-  chart,
-  selected,
-  onPress,
-  styles,
-}: {
-  chart: DepthChartInfo;
-  selected: boolean;
-  onPress: () => void;
+type DepthChartListHeaderProps = {
+  chartTabs: readonly ChartTabOption[];
+  selectedChartKey: string | null;
+  onChartChange: (value: string) => void;
   styles: DepthChartStyles;
-}) {
+};
+
+const DepthChartListHeader = memo(function DepthChartListHeader({
+  chartTabs,
+  selectedChartKey,
+  onChartChange,
+  styles,
+}: DepthChartListHeaderProps) {
   return (
-    <Pressable
-      accessibilityRole="tab"
-      accessibilityState={{ selected }}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.chartTab,
-        selected && styles.chartTabSelected,
-        pressed && styles.pressed,
-      ]}
-    >
-      <Text
-        style={[styles.chartTabText, selected && styles.chartTabTextSelected]}
-      >
-        {getChartLabel(chart)}
-      </Text>
-    </Pressable>
+    <View style={styles.listHeader}>
+      {chartTabs.length > 1 && selectedChartKey ? (
+        <PillTabs
+          tabs={chartTabs}
+          selectedValue={selectedChartKey}
+          onChange={onChartChange}
+        />
+      ) : null}
+    </View>
   );
-}
+});
+
+type EmptyPositionsProps = {
+  global: GlobalStyles;
+  isDark: boolean;
+  styles: DepthChartStyles;
+};
+
+const EmptyPositions = memo(function EmptyPositions({
+  global,
+  isDark,
+  styles,
+}: EmptyPositionsProps) {
+  const iconColor = useMemo(
+    () => (isDark ? Colors.dark.icon : Colors.light.icon),
+    [isDark],
+  );
+
+  return (
+    <View style={styles.emptyChartCardWrap}>
+      <View style={global.emptyContainer}>
+        <Ionicons name="people-outline" size={20} color={iconColor} />
+        <Text style={global.emptyText}>
+          No positions listed for this depth chart.
+        </Text>
+      </View>
+    </View>
+  );
+});
 
 export default function DepthChart({
   league,
   teamId,
   season,
   isDark = false,
-  showHeader = true,
   resolveAthletes = true,
 }: Props) {
   const styles = useMemo(() => depthChartStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const teamIdIsPresent = hasTeamId(teamId);
+
+  const teamIdIsPresent = useMemo(() => hasTeamId(teamId), [teamId]);
+
   const {
     depthCharts,
     loading,
@@ -368,9 +422,19 @@ export default function DepthChart({
       ),
     [defensiveChart, depthCharts, league, offensiveChart, specialTeamsChart],
   );
+
   const chartOptions = useMemo(
     () => createChartOptions(orderedCharts),
     [orderedCharts],
+  );
+
+  const chartTabs = useMemo(
+    () =>
+      chartOptions.map((option) => ({
+        label: getChartLabel(option.chart),
+        value: option.key,
+      })),
+    [chartOptions],
   );
 
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
@@ -394,8 +458,25 @@ export default function DepthChart({
       null,
     [activeChartKey, chartOptions],
   );
-  const activeChart = activeChartOption?.chart ?? null;
-  const activePositions = activeChart?.positions ?? [];
+
+  const selectedChartKey = useMemo(
+    () => activeChartOption?.key ?? null,
+    [activeChartOption?.key],
+  );
+
+  const activeChart = useMemo(
+    () => activeChartOption?.chart ?? null,
+    [activeChartOption],
+  );
+
+  const activePositions = useMemo(
+    () => activeChart?.positions ?? [],
+    [activeChart?.positions],
+  );
+
+  const handleChartChange = useCallback((value: string) => {
+    setActiveChartKey(value);
+  }, []);
 
   const refreshControl = useMemo(
     () => (
@@ -408,67 +489,30 @@ export default function DepthChart({
     [isDark, loading, refetch],
   );
 
-  const renderChartTab = useCallback(
-    ({ item }: ListRenderItemInfo<ChartOption>) => (
-      <ChartTab
-        chart={item.chart}
-        selected={item.key === activeChartOption?.key}
-        onPress={() => setActiveChartKey(item.key)}
-        styles={styles}
-      />
-    ),
-    [activeChartOption?.key, styles],
-  );
-
   const renderPosition = useCallback(
     ({ item }: ListRenderItemInfo<DepthChartPosition>) => (
-      <View style={styles.positionItemWrap}>
+      <View>
         <PositionCard position={item} styles={styles} />
       </View>
     ),
     [styles],
   );
 
-  const renderPositionsHeader = useCallback(
+  const listHeaderComponent = useMemo(
     () => (
-      <View style={styles.listHeader}>
-        {chartOptions.length > 1 ? (
-          <FlatList
-            horizontal
-            data={chartOptions}
-            keyExtractor={(option) => option.key}
-            renderItem={renderChartTab}
-            contentContainerStyle={styles.tabsContent}
-            showsHorizontalScrollIndicator={false}
-            style={styles.tabsList}
-          />
-        ) : null}
-      </View>
+      <DepthChartListHeader
+        chartTabs={chartTabs}
+        selectedChartKey={selectedChartKey}
+        onChartChange={handleChartChange}
+        styles={styles}
+      />
     ),
-    [chartOptions, renderChartTab, styles],
+    [chartTabs, handleChartChange, selectedChartKey, styles],
   );
 
-  const renderEmptyPositions = useCallback(
-    () => (
-      <View style={styles.emptyChartCardWrap}>
-        <View style={global.emptyContainer}>
-          <Ionicons
-            name="people-outline"
-            size={20}
-            color={isDark ? Colors.dark.icon : Colors.light.icon}
-          />
-          <Text style={global.emptyText}>
-            No positions listed for this depth chart.
-          </Text>
-        </View>
-      </View>
-    ),
-    [
-      global.emptyContainer,
-      global.emptyText,
-      isDark,
-      styles.emptyChartCardWrap,
-    ],
+  const listEmptyComponent = useMemo(
+    () => <EmptyPositions global={global} isDark={isDark} styles={styles} />,
+    [global, isDark, styles],
   );
 
   const renderPositionSeparator = useCallback(
@@ -526,10 +570,11 @@ export default function DepthChart({
   return (
     <FlatList
       data={activePositions}
+      extraData={activeChartKey}
       keyExtractor={getActivePositionKey}
       renderItem={renderPosition}
-      ListHeaderComponent={renderPositionsHeader}
-      ListEmptyComponent={renderEmptyPositions}
+      ListHeaderComponent={listHeaderComponent}
+      ListEmptyComponent={listEmptyComponent}
       ItemSeparatorComponent={renderPositionSeparator}
       contentContainerStyle={styles.listContent}
       refreshControl={refreshControl}
@@ -546,60 +591,33 @@ function depthChartStyles(isDark: boolean) {
     listContent: {
       flexGrow: 1,
       paddingBottom: 100,
+      paddingHorizontal: 12,
     },
-    stateListContent: {
-      flexGrow: 1,
-      justifyContent: "center",
-      paddingBottom: 100,
-    },
+
     listHeader: {
       gap: 12,
       paddingBottom: 12,
     },
+
     header: {
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "space-between",
       paddingHorizontal: 16,
     },
+
     title: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
       fontSize: 24,
     },
-    tabsList: {
-      flexGrow: 0,
-    },
-    tabsContent: {
-      gap: 8,
-      paddingHorizontal: 16,
-    },
-    chartTab: {
-      backgroundColor: theme.itemBackground,
-      borderColor,
-      borderRadius: 18,
-      borderWidth: StyleSheet.hairlineWidth,
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-    },
-    chartTabSelected: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      borderColor: theme.yellow,
-    },
-    chartTabText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: 13,
-    },
-    chartTabTextSelected: {
-      color: isDark ? Colors.black : Colors.white,
-    },
-    positionItemWrap: {
-      paddingHorizontal: 16,
-    },
+
+    positionItemWrap: {},
+
     positionSeparator: {
       height: 10,
     },
+
     positionCard: {
       backgroundColor: isDark
         ? Colors.dark.itemBackground
@@ -609,6 +627,7 @@ function depthChartStyles(isDark: boolean) {
       borderWidth: StyleSheet.hairlineWidth,
       overflow: "hidden",
     },
+
     positionHeader: {
       alignItems: "center",
       borderBottomColor: borderColor,
@@ -617,6 +636,7 @@ function depthChartStyles(isDark: boolean) {
       gap: 10,
       padding: 12,
     },
+
     positionAbbrBox: {
       alignItems: "center",
       backgroundColor: isDark
@@ -627,35 +647,43 @@ function depthChartStyles(isDark: boolean) {
       justifyContent: "center",
       width: 50,
     },
+
     positionAbbr: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
       fontSize: 15,
     },
+
     positionTitleWrap: {
       flex: 1,
     },
+
     positionName: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
       fontSize: 15,
     },
+
     positionCount: {
       color: theme.icon,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 12,
       marginTop: 2,
     },
+
     playersList: {
       paddingLeft: 12,
     },
+
     playerRowWrap: {
       borderBottomColor: borderColor,
       borderBottomWidth: StyleSheet.hairlineWidth,
     },
+
     lastPlayerRow: {
       borderBottomWidth: 0,
     },
+
     playerRow: {
       alignItems: "center",
       flexDirection: "row",
@@ -664,6 +692,7 @@ function depthChartStyles(isDark: boolean) {
       paddingRight: 12,
       paddingVertical: 10,
     },
+
     rankBadge: {
       alignItems: "center",
       backgroundColor: isDark
@@ -674,50 +703,62 @@ function depthChartStyles(isDark: boolean) {
       justifyContent: "center",
       width: 28,
     },
+
     rankText: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
       fontSize: 12,
     },
+
     headshot: {
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.itemBackground,
+      borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 21,
+      borderWidth: StyleSheet.hairlineWidth,
       height: 42,
       width: 42,
     },
+
     fallbackHeadshot: {
       alignItems: "center",
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.itemBackground,
+      borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 21,
+      borderWidth: StyleSheet.hairlineWidth,
       height: 42,
       justifyContent: "center",
       width: 42,
     },
+
     fallbackInitials: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
       fontSize: 12,
     },
+
     playerInfo: {
       flex: 1,
       gap: 2,
     },
+
     playerNameRow: {
       alignItems: "center",
       flexDirection: "row",
       gap: 8,
       justifyContent: "space-between",
     },
+
     playerName: {
       color: theme.text,
       flexShrink: 1,
       fontFamily: Fonts.OSBOLD,
       fontSize: 14,
     },
+
     slotChip: {
       backgroundColor: isDark
         ? Colors.dark.background
@@ -726,25 +767,30 @@ function depthChartStyles(isDark: boolean) {
       paddingHorizontal: 7,
       paddingVertical: 3,
     },
+
     slotChipText: {
       color: theme.icon,
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 10,
     },
+
     playerMeta: {
       color: theme.icon,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 12,
     },
+
     emptyText: {
       color: theme.icon,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 13,
       padding: 14,
     },
+
     emptyChartCardWrap: {
-      paddingHorizontal: 16,
+      paddingHorizontal: 12,
     },
+
     stateCard: {
       alignItems: "center",
       backgroundColor: isDark
@@ -759,21 +805,25 @@ function depthChartStyles(isDark: boolean) {
       minHeight: 132,
       padding: 18,
     },
+
     errorStateCard: {
       backgroundColor: theme.errorBackground,
     },
+
     stateText: {
       color: theme.text,
       fontFamily: Fonts.OSMEDIUM,
       fontSize: 14,
       textAlign: "center",
     },
+
     stateHint: {
       color: theme.icon,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 13,
       textAlign: "center",
     },
+
     pressed: {
       opacity: 0.72,
     },

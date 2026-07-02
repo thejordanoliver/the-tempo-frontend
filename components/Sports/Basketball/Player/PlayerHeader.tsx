@@ -3,24 +3,30 @@ import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import { calculateAge, formatBirth } from "utils/dateUtils";
 
+type BasketballLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+
 type Props = {
   player: Player;
   isDark: boolean;
-  isWNBA?: boolean;
+  league: BasketballLeague;
 };
 
 export default function PlayerHeader({
   player,
   isDark,
-  isWNBA = false,
+  league = "NBA",
 }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
+
+  const isNBA = league === "NBA"
+  const isWNBA = league === "WNBA"
+
   const experience =
     player.experience === 0
       ? "R"
-      : isWNBA
+      : (isNBA || isWNBA)
         ? player.experience
         : player.experience_abbr;
   const birthDate = formatBirth(player.birth_date);
@@ -72,7 +78,7 @@ export default function PlayerHeader({
           <Text style={styles.statLabel}>LBS</Text>
         </View>
 
-        {age != null && isWNBA && (
+        { (isNBA || isWNBA) && age != null && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
@@ -96,7 +102,7 @@ export default function PlayerHeader({
       </View>
 
       <View style={styles.infoGrid}>
-        {!isWNBA && (
+        {!(isNBA || isWNBA) && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>HOMETOWN</Text>
             <Text
@@ -109,7 +115,7 @@ export default function PlayerHeader({
           </View>
         )}
 
-        {isWNBA && (
+        {(isNBA || isWNBA) && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>COLLEGE</Text>
             <Text
@@ -122,14 +128,14 @@ export default function PlayerHeader({
           </View>
         )}
 
-        {isWNBA && (
+        {(isNBA || isWNBA) && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>BORN</Text>
             <Text style={styles.infoValue}>{birthDate}</Text>
           </View>
         )}
 
-        {isWNBA && (
+        {(isNBA || isWNBA) && (
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>DRAFT</Text>
             <Text style={styles.infoValue}>{draftInfo}</Text>

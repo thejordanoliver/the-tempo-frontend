@@ -4,6 +4,7 @@ import {
   FootballPlayerStatTable,
   FootballRosterStatsPlayer,
   FootballRosterStatsProps,
+  FootballRosterStatsResponse,
   FootballSeasonStats,
   FootballStatGroup,
   FootballStatPath,
@@ -94,13 +95,34 @@ const formatPlayerStatValue = (value: FootballStatValue) => {
 const isStatGroup = (value: unknown): value is FootballStatGroup =>
   !!value && typeof value === "object" && !Array.isArray(value);
 
+const hasStatValue = (value: FootballStatValue) =>
+  value !== null && value !== undefined && value !== "";
+
+const getPlayersFromRosterStats = (
+  rosterStats:
+    | FootballRosterStatsResponse
+    | FootballRosterStatsPlayer[]
+    | null
+    | undefined,
+) => {
+  if (Array.isArray(rosterStats)) return rosterStats;
+
+  return rosterStats?.players ?? [];
+};
+
 const getStatByPath = (
   stats: FootballSeasonStats | null | undefined,
   path: FootballStatPath,
 ): FootballStatValue => {
-  const group = stats?.[path.group];
+  const nestedGroup = stats?.stats?.[path.group];
 
-  return isStatGroup(group) ? group[path.key] : undefined;
+  if (isStatGroup(nestedGroup)) {
+    return nestedGroup[path.key];
+  }
+
+  const legacyGroup = stats?.[path.group];
+
+  return isStatGroup(legacyGroup) ? legacyGroup[path.key] : undefined;
 };
 
 const getPlayerStatValue = (
@@ -112,7 +134,7 @@ const getPlayerStatValue = (
   for (const path of paths) {
     const value = getStatByPath(player.latestSeasonStats, path);
 
-    if (value !== null && value !== undefined && value !== "") {
+    if (hasStatValue(value)) {
       return value;
     }
   }
@@ -124,7 +146,7 @@ const hasAnyStatForTable = (
   player: FootballRosterStatsPlayer,
   columns: FootballTableColumn[],
 ) =>
-  columns.some((column) => parseStatNumber(getPlayerStatValue(player, column)));
+  columns.some((column) => hasStatValue(getPlayerStatValue(player, column)));
 
 const getPlayerName = (player: FootballRosterStatsPlayer) =>
   player.short_name ||
@@ -623,7 +645,10 @@ export default function RosterStats({
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
-  const roster = useMemo(() => rosterStats ?? [], [rosterStats]);
+  const roster = useMemo(
+    () => getPlayersFromRosterStats(rosterStats),
+    [rosterStats],
+  );
 
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
   const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({

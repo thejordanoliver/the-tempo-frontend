@@ -160,8 +160,8 @@ export default function GameDetailsScreen(
   const awayCode = awayTeam?.code ?? "";
   const homeEspnId = homeTeam?.espnId ?? 0;
   const awayEspnId = awayTeam?.espnId ?? 0;
-  const awayName = awayTeam?.fullName ?? "";
-  const homeName = homeTeam?.fullName ?? "";
+  const awayName = awayTeam?.fullName ?? awayTeam?.name ?? "Away Team";
+  const homeName = homeTeam?.fullName ?? homeTeam?.name ?? "Home Team";
   const awayColor = awayTeam?.color ?? Colors.midTone;
   const homeColor = homeTeam?.color ?? Colors.midTone;
 

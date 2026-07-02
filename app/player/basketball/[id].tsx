@@ -1,7 +1,7 @@
+import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
-import LatestGame from "@/components/Sports/NBA/Player/LatestGame";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
@@ -89,11 +89,13 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader player={player} isDark={isDark} isWNBA={isWNBA} />
+      <PlayerHeader player={player} isDark={isDark} league={league} />
+
       <SeasonStatCard
-        season={seasons}
+        seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
+        league={league}
       />
 
       <LatestGame

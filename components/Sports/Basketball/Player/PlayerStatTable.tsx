@@ -1,14 +1,15 @@
+import PillTabs from "@/components/TabBars/PillTabs";
 import { getTeamByESPNId } from "@/constants/teams";
 import { getCBBTeamByESPNId } from "@/constants/teamsCBB";
 import { getWNBATeamByESPNId } from "@/constants/teamsWNBA";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Season, StatValue } from "hooks/NBAHooks/usePlayerSeasons";
-import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
@@ -87,6 +88,8 @@ const SEASON_TYPE_OPTIONS: { label: string; value: SeasonType }[] = [
   { label: "Regular Season", value: "regularseason" },
   { label: "Postseason", value: "postseason" },
 ];
+
+const PRO_LEAGUES_WITH_POSTSEASON_TABS = new Set<LeagueType>(["NBA", "WNBA"]);
 
 const TABLE_HEADERS = [
   "GP",
@@ -328,21 +331,8 @@ const getSeasonType = (season: Season): SeasonType => {
     return "postseason";
   }
 
-  if (seasonType.includes("regularseason") || seasonType.includes("regular")) {
-    return "regularseason";
-  }
-
   return "regularseason";
 };
-
-const getSeasonTypeLabel = (seasonType: SeasonType) => {
-  return seasonType === "postseason" ? "Postseason" : "Regular Season";
-};
-
-const filterBySeasonType = (
-  rows: NormalizedSeasonRow[],
-  seasonType: SeasonType,
-) => rows.filter((row) => row.seasonType === seasonType);
 
 const sortRows = (rows: NormalizedSeasonRow[]) => {
   return [...rows].sort((a, b) => {
@@ -358,6 +348,17 @@ const getDisplaySeason = (season: Season) => {
   if (!isMissing(season.display_season)) return String(season.display_season);
   if (!isMissing(season.season)) return String(season.season);
   return EMPTY_STAT;
+};
+
+const getRowDisplaySeason = (
+  row: NormalizedSeasonRow,
+  showSeasonTypeTabs: boolean,
+) => {
+  if (!showSeasonTypeTabs && row.seasonType === "postseason") {
+    return `${row.displaySeason} POST`;
+  }
+
+  return row.displaySeason;
 };
 
 const getTeamCodeFromSeason = (season: Season, league: LeagueType) => {
@@ -386,16 +387,6 @@ const getSeasonRowSortValue = (season: Season, index: number) => {
   if (rawId !== null) return rawId;
 
   return index;
-};
-
-const getCombinedTeamCode = (rows: NormalizedSeasonRow[]) => {
-  const codes = rows
-    .map((row) => row.team)
-    .filter(Boolean)
-    .filter((code) => !COMBINED_TEAM_CODES.has(code.toUpperCase()))
-    .filter((code, index, arr) => arr.indexOf(code) === index);
-
-  return codes.join("-");
 };
 
 const normalizeStatsRow = (
@@ -528,6 +519,16 @@ const isCombinedTeamCode = (team: string) => {
 
 const isExplicitCombinedRow = (row: NormalizedSeasonRow) => {
   return !row.team || isCombinedTeamCode(row.team);
+};
+
+const getCombinedTeamCode = (rows: NormalizedSeasonRow[]) => {
+  const codes = rows
+    .map((row) => row.team)
+    .filter(Boolean)
+    .filter((code) => !COMBINED_TEAM_CODES.has(code.toUpperCase()))
+    .filter((code, index, arr) => arr.indexOf(code) === index);
+
+  return codes.join("-");
 };
 
 const findCombinedSeasonRow = (rows: NormalizedSeasonRow[]) => {
@@ -708,6 +709,50 @@ const collapseSplitSeasonRows = (rows: NormalizedSeasonRow[]) => {
   });
 };
 
+const hasPositiveNumber = (value: StatValue) => {
+  const parsed = toNumberOrNull(value);
+  return parsed !== null && parsed > 0;
+};
+
+const hasMadeAttemptedStats = (value: MadeAttemptedValue) => {
+  return hasPositiveNumber(value.made) || hasPositiveNumber(value.attempted);
+};
+
+const hasUsableRowStats = (row: NormalizedSeasonRow) => {
+  if (hasPositiveNumber(row.g)) return true;
+  if (hasPositiveNumber(row.mp)) return true;
+
+  if (hasPositiveNumber(row.fg_pct)) return true;
+  if (hasPositiveNumber(row.three_pct)) return true;
+  if (hasPositiveNumber(row.ft_pct)) return true;
+
+  const hasSimpleTotals = SIMPLE_STAT_KEYS.some((key) =>
+    hasPositiveNumber(row.totals[key]),
+  );
+
+  if (hasSimpleTotals) return true;
+
+  const hasMadeAttemptedTotals = MADE_ATTEMPTED_KEYS.some((key) =>
+    hasMadeAttemptedStats(row.totals[key]),
+  );
+
+  if (hasMadeAttemptedTotals) return true;
+
+  const hasSimpleAverages = SIMPLE_STAT_KEYS.some((key) =>
+    hasPositiveNumber(row.averages[key]),
+  );
+
+  if (hasSimpleAverages) return true;
+
+  const hasMadeAttemptedAverages = MADE_ATTEMPTED_KEYS.some((key) =>
+    hasMadeAttemptedStats(row.averages[key]),
+  );
+
+  if (hasMadeAttemptedAverages) return true;
+
+  return hasPositiveNumber(row.averages.mp);
+};
+
 const normalizeStatsData = (seasons: Season[], league: LeagueType) => {
   const rows = seasons.map((season, index) =>
     normalizeStatsRow(season, index, league),
@@ -716,10 +761,6 @@ const normalizeStatsData = (seasons: Season[], league: LeagueType) => {
   const rowsWithCollapsedSplits = collapseSplitSeasonRows(rows);
 
   return sortRows(rowsWithCollapsedSplits);
-};
-
-const isLastRow = (index: number, totalRows: number) => {
-  return index === totalRows - 1;
 };
 
 const isBestStat = (row: NormalizedSeasonRow, bestRowKey: string | null) => {
@@ -961,6 +1002,8 @@ export default function PlayerStatTable({
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
+  const showSeasonTypeTabs = PRO_LEAGUES_WITH_POSTSEASON_TABS.has(league);
+
   const [statView, setStatView] = useState<StatView>("totals");
   const [selectedSeasonType, setSelectedSeasonType] =
     useState<SeasonType>("regularseason");
@@ -970,41 +1013,21 @@ export default function PlayerStatTable({
     [seasons, league],
   );
 
-  const availableSeasonTypeOptions = useMemo(() => {
-    return SEASON_TYPE_OPTIONS.filter((option) =>
-      normalizedRows.some((row) => row.seasonType === option.value),
-    );
-  }, [normalizedRows]);
-
-  const preferredSeasonType = useMemo<SeasonType>(() => {
-    const hasRegularSeason = normalizedRows.some(
-      (row) => row.seasonType === "regularseason",
-    );
-
-    if (hasRegularSeason) return "regularseason";
-
-    const hasPostseason = normalizedRows.some(
-      (row) => row.seasonType === "postseason",
-    );
-
-    return hasPostseason ? "postseason" : "regularseason";
-  }, [normalizedRows]);
-
-  useEffect(() => {
-    setSelectedSeasonType((current) => {
-      if (!normalizedRows.length) return "regularseason";
-
-      const hasCurrentRows = normalizedRows.some(
-        (row) => row.seasonType === current,
-      );
-
-      return hasCurrentRows ? current : preferredSeasonType;
-    });
-  }, [normalizedRows, preferredSeasonType]);
-
   const filteredRows = useMemo(() => {
-    return filterBySeasonType(normalizedRows, selectedSeasonType);
-  }, [normalizedRows, selectedSeasonType]);
+    if (!showSeasonTypeTabs) {
+      return normalizedRows;
+    }
+
+    const rowsForSeasonType = normalizedRows.filter(
+      (row) => row.seasonType === selectedSeasonType,
+    );
+
+    if (selectedSeasonType === "postseason") {
+      return rowsForSeasonType.filter(hasUsableRowStats);
+    }
+
+    return rowsForSeasonType;
+  }, [normalizedRows, selectedSeasonType, showSeasonTypeTabs]);
 
   const bestRowKey = useMemo(() => {
     let best: string | null = null;
@@ -1029,6 +1052,13 @@ export default function PlayerStatTable({
     [filteredRows],
   );
 
+  const isPostseasonSelected =
+    showSeasonTypeTabs && selectedSeasonType === "postseason";
+
+  const emptyText = isPostseasonSelected
+    ? "Stats not available"
+    : "No stats available";
+
   const getDataRowStyle = (row: NormalizedSeasonRow, index: number) => {
     const zebra =
       index % 2 === 1
@@ -1042,43 +1072,35 @@ export default function PlayerStatTable({
     return [styles.row, zebra, highlight];
   };
 
-  const renderSeasonTypeSelector = () => {
-    return (
-      <View style={styles.seasonTypeTabs}>
-        {availableSeasonTypeOptions.map((option, index) => {
-          const selected = selectedSeasonType === option.value;
+  const renderHeader = () => (
+    <>
+      <View style={styles.statsHeader}>
+        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
-          return (
-            <Pressable
-              key={option.value}
-              accessibilityRole="button"
-              onPress={() => setSelectedSeasonType(option.value)}
-              style={[
-                styles.seasonTypeTab,
-                selected ? styles.seasonTypeTabActive : null,
-                isLastRow(index, availableSeasonTypeOptions.length)
-                  ? styles.lastSeasonTypeTab
-                  : null,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.seasonTypeTabText,
-                  selected ? styles.seasonTypeTabTextActive : null,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </Pressable>
-          );
-        })}
+        {filteredRows.length > 0 ? (
+          <Dropdown
+            isDark={isDark}
+            options={STAT_OPTIONS}
+            selectedValue={statView}
+            onSelect={(value) => setStatView(value as StatView)}
+            style={styles.dropdown}
+          />
+        ) : null}
       </View>
-    );
-  };
+
+      {showSeasonTypeTabs ? (
+        <PillTabs
+          tabs={SEASON_TYPE_OPTIONS}
+          selectedValue={selectedSeasonType}
+          onChange={setSelectedSeasonType}
+        />
+      ) : null}
+    </>
+  );
 
   if (loading) {
     return (
-      <View>
+      <View style={styles.container}>
         <PlayerStatTableSkeleton />
       </View>
     );
@@ -1093,32 +1115,28 @@ export default function PlayerStatTable({
   }
 
   if (!normalizedRows.length) {
+    if (isPostseasonSelected) {
+      return (
+        <View style={styles.container}>
+          {renderHeader()}
+          <Text style={global.emptyText}>{emptyText}</Text>
+        </View>
+      );
+    }
+
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>No stats available</Text>
+        <Text style={global.emptyText}>{emptyText}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
-
-      <Dropdown
-        isDark={isDark}
-        options={STAT_OPTIONS}
-        selectedValue={statView}
-        onSelect={(value) => setStatView(value as StatView)}
-        style={styles.dropdown}
-      />
-
-      {renderSeasonTypeSelector()}
+      {renderHeader()}
 
       {!filteredRows.length ? (
-        <Text style={global.errorText}>
-          No {getSeasonTypeLabel(selectedSeasonType).toLowerCase()} stats
-          available
-        </Text>
+        <Text style={global.emptyText}>{emptyText}</Text>
       ) : (
         <>
           <View style={styles.tableWrapper}>
@@ -1142,7 +1160,7 @@ export default function PlayerStatTable({
                       numberOfLines={1}
                       adjustsFontSizeToFit
                     >
-                      {row.displaySeason}
+                      {getRowDisplaySeason(row, showSeasonTypeTabs)}
                     </Text>
                   </View>
                 ))}
@@ -1152,7 +1170,7 @@ export default function PlayerStatTable({
                     style={[
                       styles.fixedCell,
                       styles.fixedHeaderCell,
-                      { color: Colors.white },
+                      styles.fixedCareerHeaderCell,
                     ]}
                   >
                     CAREER
@@ -1169,22 +1187,20 @@ export default function PlayerStatTable({
                   </Text>
                 </View>
 
-                {filteredRows.map((row, index) => {
-                  return (
-                    <View
-                      key={`${row.rowKey}-team`}
-                      style={getDataRowStyle(row, index)}
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-team`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    <Text
+                      style={styles.fixedTeamCell}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
                     >
-                      <Text
-                        style={styles.fixedTeamCell}
-                        numberOfLines={1}
-                        adjustsFontSizeToFit
-                      >
-                        {row.team}
-                      </Text>
-                    </View>
-                  );
-                })}
+                      {row.team}
+                    </Text>
+                  </View>
+                ))}
 
                 <View style={[styles.row, styles.careerRow, styles.lastRow]}>
                   <Text style={styles.fixedCareerCell}></Text>
@@ -1246,25 +1262,17 @@ export default function PlayerStatTable({
                   {row.map((item, colIndex) => (
                     <View
                       key={item.abbr}
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        padding: 12,
-                        backgroundColor: isAlt
-                          ? isDark
-                            ? styles.rowAltDark.backgroundColor
-                            : styles.rowAltLight.backgroundColor
-                          : "transparent",
-                        borderRightWidth: colIndex === 0 ? 1 : 0,
-                        borderRightColor: isDark
-                          ? "rgba(255,255,255,0.15)"
-                          : "rgba(0,0,0,0.1)",
-                      }}
+                      style={[
+                        styles.glossaryCell,
+                        isAlt && styles.glossaryCellAlt,
+                        colIndex === 0 && styles.glossaryCellWithRightBorder,
+                      ]}
                     >
-                      <Text style={styles.glossaryAbbr}>{item.abbr}</Text>
-                      <Text style={styles.glossaryDisplayName}>
-                        {item.label}
+                      <Text style={styles.glossaryAbbr}>
+                        {item.abbr}{" "}
+                        <Text style={styles.glossaryDisplayName}>
+                          {item.label}
+                        </Text>
                       </Text>
                     </View>
                   ))}
