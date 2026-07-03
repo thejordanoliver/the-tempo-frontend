@@ -9,40 +9,80 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCFBRecruit } from "hooks/FootballHooks/useCFBRecruit";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 
 export default function RecruitDetailScreen() {
   const navigation = useNavigation();
   const router = useRouter();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
-  /* ---------------- Route params ---------------- */
+
   const { id } = useLocalSearchParams<{ id: string }>();
-  const playerId = Number(id);
+  const recruitId = Number(id);
 
-  /** FETCH DATA */
-  const { data: player, loading, error } = useCFBRecruit(playerId);
-  const teamId = player?.committed_team_id ?? 0;
-  const predictionPercentage = Number(
-    player?.prediction_percentage?.replace("%", ""),
+  const {
+    data: player,
+    loading,
+    error,
+  } = useCFBRecruit(recruitId);
+
+  const displayTeamId = useMemo(() => {
+    if (!player) {
+      return null;
+    }
+
+    return (
+      player.committed_team_id ??
+      player.predicted_team_id ??
+      null
+    );
+  }, [player]);
+
+  const team = useMemo(
+    () => (displayTeamId ? getCFBTeam(displayTeamId) : undefined),
+    [displayTeamId],
   );
-  const team = getCFBTeam(teamId);
-  const teamLogo = getCFBTeamLogo(teamId, true);
 
-  /* ---------------- Header ---------------- */
+  const teamLogo = useMemo(
+    () =>
+      displayTeamId
+        ? getCFBTeamLogo(displayTeamId, isDark)
+        : undefined,
+    [displayTeamId, isDark],
+  );
+
+  const predictionPercentage = useMemo(() => {
+    const rawPercentage = player?.prediction_percentage;
+
+    if (!rawPercentage) {
+      return 0;
+    }
+
+    const parsedPercentage = Number(
+      rawPercentage.replaceAll("%", "").trim(),
+    );
+
+    return Number.isFinite(parsedPercentage)
+      ? parsedPercentage
+      : 0;
+  }, [player?.prediction_percentage]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => {
-        if (loading) return null;
+        if (loading || !player) {
+          return null;
+        }
 
         return (
           <CustomHeaderTitle
             logo={teamLogo}
             teamColor={team?.color ?? "#1D428A"}
             onBack={() => router.back()}
-            isTeamScreen={!!team}
+            isTeamScreen={Boolean(team)}
             teamCode={team?.code}
             isPlayerScreen
             league="CFB"
@@ -50,34 +90,70 @@ export default function RecruitDetailScreen() {
         );
       },
     });
-  }, [navigation, router, team, teamLogo, isDark, loading]);
+  }, [
+    loading,
+    navigation,
+    player,
+    router,
+    team,
+    teamLogo,
+  ]);
 
-  if (loading)
+  if (loading) {
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
-  if (error || !player)
+  }
+
+  if (error || !player) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
+        <Text style={global.errorText}>
+          {error ?? "Recruit not found"}
+        </Text>
       </View>
     );
+  }
+
+  const predictionTeamName =
+    player.predicted_team_name ??
+    player.predicted_schools?.[0]?.team_name ??
+    null;
+
+  const predictionTeamId =
+    player.predicted_team_id ??
+    player.predicted_schools?.[0]?.team_id ??
+    player.committed_team_id ??
+    null;
+
+  const shouldShowPrediction =
+    player.has_prediction &&
+    Boolean(predictionTeamName) &&
+    Boolean(predictionTeamId);
 
   return (
-    <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-      <RecruitHeader player={player} isDark={isDark} />
-      <StarRating recruit={player} isDark={isDark} />
-      {player.predicted_school && (
+    <ScrollView
+      contentContainerStyle={{
+        paddingBottom: 100,
+      }}
+    >
+      <RecruitHeader
+        player={player}
+        isDark={isDark}
+      />
+
+      <StarRating
+        recruit={player}
+        isDark={isDark}
+      />
+
+      {shouldShowPrediction && predictionTeamId && (
         <PredictionRing
-          prediction={player.predicted_school}
+          prediction={predictionTeamName}
           predictedSchools={player.predicted_schools}
-          teamId={
-            player.committed_team_id ||
-            player.predicted_team_id ||
-            player.projected_team_id
-          }
+          teamId={predictionTeamId}
           percentage={predictionPercentage}
           delay={500}
           duration={1400}
@@ -85,7 +161,11 @@ export default function RecruitDetailScreen() {
           isDark={isDark}
         />
       )}
-      <OfferList recruit={player} isDark={isDark} />
+
+      <OfferList
+        recruit={player}
+        isDark={isDark}
+      />
     </ScrollView>
   );
 }

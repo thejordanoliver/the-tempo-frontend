@@ -1,4 +1,4 @@
-import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
+import PillTabs, { PillTabOption } from "@/components/TabBars/PillTabs";
 import {
   FootballLeaderConfig,
   FootballPlayerStatTable,
@@ -30,6 +30,14 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
+
+const STAT_TAB_OPTIONS = STAT_TABS.map(
+  (tab): PillTabOption<StatTab> => ({
+    label: tab,
+    value: tab,
+  }),
+);
+
 const formatValue = (value: number | undefined | null, suffix = "") => {
   const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
 
@@ -145,8 +153,7 @@ const getPlayerStatValue = (
 const hasAnyStatForTable = (
   player: FootballRosterStatsPlayer,
   columns: FootballTableColumn[],
-) =>
-  columns.some((column) => hasStatValue(getPlayerStatValue(player, column)));
+) => columns.some((column) => hasStatValue(getPlayerStatValue(player, column)));
 
 const getPlayerName = (player: FootballRosterStatsPlayer) =>
   player.short_name ||
@@ -1034,11 +1041,10 @@ export default function RosterStats({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <MainScrollTabBar
-        tabs={STAT_TABS}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
+      <PillTabs<StatTab>
+        tabs={STAT_TAB_OPTIONS}
+        selectedValue={selectedTab}
+        onChange={handleTabPress}
       />
 
       {mountedTabs["Player Stats"] && (

@@ -44,7 +44,7 @@ export default function PlayerDetailScreen() {
     ? getWNBATeamLogo(teamId, true)
     : getCBBTeamLogo(teamId, true, isWCBB);
   const teamColor = team?.color ?? Colors.midTone;
-
+  const isActive = player?.active;
   const {
     game,
     loading: gameLoading,
@@ -98,17 +98,18 @@ export default function PlayerDetailScreen() {
         league={league}
       />
 
-      <LatestGame
-        game={game}
-        error={gameError}
-        loading={gameLoading}
-        league={league}
-        isDark={isDark}
-        isCBB={isCBB}
-        isWCBB={isWCBB}
-        isWNBA={isWNBA}
-      />
-
+      {isActive && (
+        <LatestGame
+          game={game}
+          loading={gameLoading}
+          error={gameError}
+          isDark={isDark}
+          league={league}
+          isCBB={isCBB}
+          isWCBB={isWCBB}
+          isWNBA={isWNBA}
+        />
+      )}
       <PlayerStatTable
         seasons={seasons}
         loading={seasonsLoading}

@@ -1,4 +1,5 @@
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
@@ -7,7 +8,6 @@ import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -28,27 +28,22 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const global = globalStyles(isDark);
   const navigation = useNavigation();
-
   const playerId = Number(id);
-
   const { player, loading, error } = usePlayerById(playerId, league);
-
-  const isActive = player?.active;
-
-  const team = teamId ? getNBATeam(teamId) : null;
-  const teamLogo = getTeamLogo(teamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
-
   const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
     playerId,
     league,
   );
-
   const {
     game,
     loading: gameLoading,
     error: gameError,
   } = useTeamLatestGame("nba", teamId);
+  
+  const isActive = player?.active;
+  const team = teamId ? getNBATeam(teamId) : null;
+  const teamLogo = getTeamLogo(teamId, true);
+  const teamColor = team?.color ?? Colors.midTone;
 
   useLayoutEffect(() => {
     navigation.setOptions({

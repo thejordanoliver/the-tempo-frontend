@@ -20,37 +20,40 @@ export interface RecruitPredictedSchool {
 
 export interface Recruit {
   id: number;
-  year?: number;
+  year: number;
   name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  profile_url: string;
-  high_school: string;
-  hometown: string;
-  position: string;
-  height: string | null;
-  weight: string | null;
-  score: string;
-  stars: number;
-  national_rank: string;
-  position_rank: string;
-  state_rank: string;
-  committed: boolean;
-  signed: boolean;
-  predicted: boolean;
 
-  projected_school: string | null;
-  predicted_school: string | null;
-  prediction_percentage: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  short_name: string | null;
 
-  predicted_schools: RecruitPredictedSchool[];
-
+  profile_url: string | null;
   image_url: string | null;
 
-  committed_team_id: number | null;
-  predicted_team_id: number | null;
-  projected_team_id: number | null;
+  high_school: string | null;
+  hometown: string | null;
+  position: string | null;
+  height: string | null;
+  weight: string | null;
 
-  offers: RecruitOffer[];
+  score: string | null;
+  stars: number;
+  national_rank: number | null;
+  position_rank: number | null;
+  state_rank: number | null;
+
+  is_committed: boolean;
+  is_signed: boolean;
+  has_prediction: boolean;
+
+  committed_team_id: number | null;
+  committed_team_name: string | null;
+
+  projected_team_id: number | null;
+  projected_team_name: string | null;
+
+  predicted_team_id: number | null;
+  predicted_team_name: string | null;
+  prediction_percentage: string | null;
+  predicted_schools: RecruitPredictedSchool[];
 }

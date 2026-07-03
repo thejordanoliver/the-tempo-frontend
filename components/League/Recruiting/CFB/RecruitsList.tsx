@@ -227,7 +227,7 @@ export default function RecruitsList({
     const uniqueTeams = Array.from(
       new Set(
         playerData
-          .map((r: Recruit) => r.projected_school || r.predicted_school)
+          .map((r: Recruit) => r.predicted_team_name)
           .filter((t): t is string => Boolean(t)),
       ),
     ).sort((a, b) => a.localeCompare(b));
@@ -251,7 +251,7 @@ export default function RecruitsList({
 
     if (team !== "all") {
       list = list.filter((r: Recruit) => {
-        return r.projected_school === team || r.predicted_school === team;
+        return r.predicted_team_name === team;
       });
     }
 
@@ -266,8 +266,7 @@ export default function RecruitsList({
         return (
           p.name?.toLowerCase().includes(query) ||
           p.position?.toLowerCase().includes(query) ||
-          p.projected_school?.toLowerCase().includes(query) ||
-          p.predicted_school?.toLowerCase().includes(query) ||
+          p.predicted_team_name?.toLowerCase().includes(query) ||
           p.high_school?.toLowerCase().includes(query) ||
           p.hometown?.toLowerCase().includes(query) ||
           predictionMatches

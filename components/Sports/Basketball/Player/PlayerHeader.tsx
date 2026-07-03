@@ -94,7 +94,7 @@ export default function PlayerHeader({
             <View style={styles.statChip}>
               <Text style={styles.statValue}>{experience}</Text>
               <Text style={styles.statLabel}>
-                {isWNBA ? `YRS EXP` : `CLASS`}
+                {isNBA || isWNBA ? `YRS EXP` : `CLASS`}
               </Text>
             </View>
           </>

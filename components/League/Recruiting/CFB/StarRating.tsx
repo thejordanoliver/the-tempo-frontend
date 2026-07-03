@@ -21,7 +21,7 @@ export default function StarRating({ recruit, isDark }: Props) {
         </View>
         <View style={styles.starRow}>
           {[...Array(5)].map((_, i) => {
-            const filled = i < recruit.stars;
+            const filled = i < recruit?.stars;
 
             return (
               <Ionicons

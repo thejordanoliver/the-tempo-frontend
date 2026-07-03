@@ -8,7 +8,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { RecruitPredictedSchool } from "hooks/FootballHooks/useCFBRecruits";
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   Animated,
   Easing,
@@ -30,22 +30,6 @@ type LogoDisplayItem = {
   teamName: string;
   logo: ImageSourcePropType;
 };
-
-function formatPercentage(value: number | string | null | undefined) {
-  if (value === null || value === undefined || value === "") {
-    return null;
-  }
-
-  const numericValue = Number(String(value).replace("%", "").trim());
-
-  if (!Number.isFinite(numericValue)) {
-    return null;
-  }
-
-  return Number.isInteger(numericValue)
-    ? `${numericValue}%`
-    : `${numericValue.toFixed(1)}%`;
-}
 
 function getSortedPredictions(
   predictions: RecruitPredictedSchool[] | undefined,
@@ -71,7 +55,9 @@ function getSortedPredictions(
     });
 }
 
-function getTopTiedPredictions(predictions: RecruitPredictedSchool[]) {
+function getTopTiedPredictions(
+  predictions: RecruitPredictedSchool[],
+): RecruitPredictedSchool[] {
   if (!predictions.length) {
     return [];
   }
@@ -90,7 +76,7 @@ function getTopTiedPredictions(predictions: RecruitPredictedSchool[]) {
 export default function RecruitCard({ recruit, index }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => getStyles(isDark), [isDark]);
+  const styles = useMemo(() => recruitCardStyles(isDark), [isDark]);
   const router = useRouter();
 
   const sortedPredictions = useMemo(
@@ -102,20 +88,19 @@ export default function RecruitCard({ recruit, index }: Props) {
     () => getTopTiedPredictions(sortedPredictions),
     [sortedPredictions],
   );
-  const isCommittedOrSigned = recruit.signed || recruit.committed;
+
+  const isCommittedOrSigned = recruit.is_signed || recruit.is_committed;
 
   const isPredictionTie =
-    !isCommittedOrSigned && recruit.predicted && topTiedPredictions.length > 1;
+    !isCommittedOrSigned &&
+    recruit.has_prediction &&
+    topTiedPredictions.length > 1;
 
   const logoItems = useMemo<LogoDisplayItem[]>(() => {
     const primaryPrediction = sortedPredictions[0];
 
     if (isCommittedOrSigned) {
-      const committedTeamId =
-        recruit.committed_team_id ||
-        recruit.projected_team_id ||
-        recruit.predicted_team_id ||
-        primaryPrediction?.team_id;
+      const committedTeamId = recruit.committed_team_id;
 
       if (!committedTeamId) {
         return [];
@@ -130,11 +115,7 @@ export default function RecruitCard({ recruit, index }: Props) {
       return [
         {
           teamId: committedTeamId,
-          teamName:
-            recruit.projected_school ||
-            recruit.predicted_school ||
-            primaryPrediction?.team_name ||
-            "Team",
+          teamName: recruit.committed_team_name || "Team",
           logo,
         },
       ];
@@ -164,9 +145,7 @@ export default function RecruitCard({ recruit, index }: Props) {
     }
 
     const fallbackTeamId =
-      recruit.projected_team_id ||
-      primaryPrediction?.team_id ||
-      recruit.predicted_team_id;
+      primaryPrediction?.team_id || recruit.predicted_team_id;
 
     if (!fallbackTeamId) {
       return [];
@@ -182,10 +161,7 @@ export default function RecruitCard({ recruit, index }: Props) {
       {
         teamId: fallbackTeamId,
         teamName:
-          recruit.projected_school ||
-          recruit.predicted_school ||
-          primaryPrediction?.team_name ||
-          "Team",
+          recruit.predicted_team_name || primaryPrediction?.team_name || "Team",
         logo,
       },
     ];
@@ -194,14 +170,13 @@ export default function RecruitCard({ recruit, index }: Props) {
     isCommittedOrSigned,
     isPredictionTie,
     recruit.committed_team_id,
-    recruit.predicted_school,
+    recruit.committed_team_name,
     recruit.predicted_team_id,
-    recruit.projected_school,
-    recruit.projected_team_id,
+    recruit.predicted_team_name,
     sortedPredictions,
     topTiedPredictions,
   ]);
-  /** Animations */
+
   const slideX = useRef(new Animated.Value(70)).current;
   const fade = useRef(new Animated.Value(0)).current;
 
@@ -224,77 +199,20 @@ export default function RecruitCard({ recruit, index }: Props) {
     ]).start();
   }, [fade, index, slideX]);
 
-  const isFiveStar = recruit.stars === 5;
+  const starCount = recruit.stars ?? 0;
+  const isFiveStar = starCount === 5;
   const avatar = recruit.image_url;
 
-  const statusLabel = recruit.signed
-    ? "Signed"
-    : recruit.committed
-      ? "Committed"
-      : recruit.predicted
-        ? "Prediction"
-        : "Uncommitted";
+  const nationalRankLabel =
+    recruit.national_rank === null ? "NR" : `#${recruit.national_rank}`;
 
-  const statusDisplay = useMemo(() => {
-    if (recruit.signed || recruit.committed) {
-      const school =
-        recruit.projected_school ||
-        recruit.predicted_school ||
-        sortedPredictions[0]?.team_name ||
-        null;
-
-      return {
-        school,
-        percentage: null,
-      };
-    }
-
-    if (isPredictionTie) {
-      const school = topTiedPredictions
-        .map((prediction) => prediction.team_name)
-        .join(" / ");
-
-      const percentage = formatPercentage(topTiedPredictions[0]?.percentage);
-
-      return {
-        school,
-        percentage: percentage ? `${percentage}` : null,
-      };
-    }
-
-    if (recruit.predicted) {
-      const topPrediction = sortedPredictions[0];
-
-      const school =
-        topPrediction?.team_name || recruit.predicted_school || null;
-
-      const percentage =
-        formatPercentage(topPrediction?.percentage) ||
-        formatPercentage(recruit.prediction_percentage);
-
-      return {
-        school,
-        percentage,
-      };
-    }
-
-    return {
-      school: null,
-      percentage: null,
-    };
-  }, [
-    isPredictionTie,
-    recruit.committed,
-    recruit.predicted,
-    recruit.predicted_school,
-    recruit.prediction_percentage,
-    recruit.projected_school,
-    recruit.signed,
-    sortedPredictions,
-    topTiedPredictions,
-  ]);
-
-  const recruitId = recruit.id;
+  const nationalRankValue = recruit.national_rank ?? "—";
+  const positionRankValue = recruit.position_rank ?? "—";
+  const stateRankValue = recruit.state_rank ?? "—";
+  const scoreValue = recruit.score ?? "—";
+  const highSchoolValue = recruit.high_school ?? "High school unavailable";
+  const heightValue = recruit.height ?? "—";
+  const weightValue = recruit.weight ? `${recruit.weight} lbs` : "—";
 
   return (
     <View style={styles.cardWrapper}>
@@ -303,11 +221,12 @@ export default function RecruitCard({ recruit, index }: Props) {
         onPress={() =>
           router.push({
             pathname: "/recruit/cfb/[id]",
-            params: { id: recruitId },
+            params: {
+              id: recruit.id,
+            },
           })
         }
       >
-        {/* Animated Team Logo */}
         {logoItems.length > 0 && (
           <Animated.View
             style={[
@@ -323,7 +242,7 @@ export default function RecruitCard({ recruit, index }: Props) {
                 {logoItems.map((item, logoIndex) => (
                   <View
                     key={`${item.teamId}-${logoIndex}`}
-                    style={[styles.splitLogoPane]}
+                    style={styles.splitLogoPane}
                   >
                     <Image
                       source={item.logo}
@@ -346,7 +265,6 @@ export default function RecruitCard({ recruit, index }: Props) {
           </Animated.View>
         )}
 
-        {/* Gradient Overlay */}
         <LinearGradient
           colors={
             isDark
@@ -373,7 +291,6 @@ export default function RecruitCard({ recruit, index }: Props) {
           style={styles.cardGradient}
         />
 
-        {/* Content */}
         <View style={styles.cardContent}>
           <View style={styles.row}>
             <View style={styles.playerHeader}>
@@ -399,36 +316,46 @@ export default function RecruitCard({ recruit, index }: Props) {
                 <Text style={styles.name} numberOfLines={1}>
                   {recruit.name}
                 </Text>
-                <Text style={styles.positionText}>{recruit.position}</Text>
+
+                <Text style={styles.positionText}>
+                  {recruit.position ?? "—"}
+                </Text>
               </View>
             </View>
 
-            {/* National Rank */}
             <View style={styles.rankingBadge}>
               <Text
-                style={[styles.rankingText, isFiveStar && { color: "#FFD700" }]}
+                style={[
+                  styles.rankingText,
+                  isFiveStar && {
+                    color: "#FFD700",
+                  },
+                ]}
               >
-                #{recruit.national_rank}
+                {nationalRankLabel}
               </Text>
             </View>
           </View>
 
           <View style={styles.contentRow}>
-            <Text style={styles.subText}>Nat {recruit.national_rank}</Text>
+            <Text style={styles.subText}>Nat {nationalRankValue}</Text>
+
             <View style={styles.divider} />
-            <Text style={styles.subText}>Pos {recruit.position_rank}</Text>
+
+            <Text style={styles.subText}>Pos {positionRankValue}</Text>
+
             <View style={styles.divider} />
-            <Text style={styles.subText}>St {recruit.state_rank}</Text>
+
+            <Text style={styles.subText}>St {stateRankValue}</Text>
           </View>
 
-          {/* Stars / Meta */}
           <View style={styles.contentRow}>
-            {[...Array(5)].map((_, i) => {
-              const filled = i < recruit.stars;
+            {[...Array(5)].map((_, starIndex) => {
+              const filled = starIndex < starCount;
 
               return (
                 <Ionicons
-                  key={i}
+                  key={starIndex}
                   name={filled ? "star" : "star-outline"}
                   size={16}
                   color={
@@ -440,39 +367,46 @@ export default function RecruitCard({ recruit, index }: Props) {
                         ? Colors.lightGray
                         : Colors.darkGray
                   }
-                  style={{ marginRight: 2 }}
+                  style={styles.star}
                 />
               );
             })}
 
             <View style={styles.divider} />
 
-            <Text style={styles.subText}>{recruit.score}</Text>
+            <Text style={styles.subText}>{scoreValue}</Text>
           </View>
 
           <View style={styles.contentRow}>
-            <Text style={styles.subText} numberOfLines={1}>
-              {recruit.high_school}
+            <Text
+              style={[styles.subText, styles.highSchoolText]}
+              numberOfLines={1}
+            >
+              {highSchoolValue}
             </Text>
+
             <View style={styles.divider} />
-            <Text style={styles.subText}>{recruit.height} ft</Text>
+
+            <Text style={styles.subText}>{heightValue}</Text>
+
             <View style={styles.divider} />
-            <Text style={styles.subText}>{recruit.weight} lbs</Text>
+
+            <Text style={styles.subText}>{weightValue}</Text>
           </View>
 
-          {/* Status */}
-          {statusDisplay.school ? (
-            <Text
-              style={[
-                styles.commitText,
-                isPredictionTie && styles.predictionTieText,
-              ]}
-              numberOfLines={2}
-            >
-              {statusLabel}: {statusDisplay.school}
-              {statusDisplay.percentage ? ` (${statusDisplay.percentage})` : ""}
+          {recruit.is_signed && (
+            <Text style={styles.commitText}>
+              Signed: {recruit.committed_team_name ?? "Unknown team"}
             </Text>
-          ) : (
+          )}
+
+          {recruit.is_committed && !recruit.is_signed && (
+            <Text style={styles.commitText}>
+              Committed: {recruit.committed_team_name ?? "Unknown team"}
+            </Text>
+          )}
+
+          {!isCommittedOrSigned && (
             <Text style={styles.uncommittedText}>Uncommitted</Text>
           )}
         </View>
@@ -481,22 +415,22 @@ export default function RecruitCard({ recruit, index }: Props) {
   );
 }
 
-const getStyles = (isDark: boolean) =>
+const recruitCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     cardWrapper: {
+      position: "relative",
       overflow: "hidden",
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      position: "relative",
     },
 
     logoContainer: {
-      overflow: "hidden",
       position: "absolute",
-      right: 0,
       top: 0,
+      right: 0,
       bottom: 0,
       width: "45%",
+      overflow: "hidden",
       justifyContent: "center",
       alignItems: "flex-end",
     },
@@ -529,9 +463,9 @@ const getStyles = (isDark: boolean) =>
 
     cardGradient: {
       position: "absolute",
-      left: 0,
       top: 0,
       bottom: 0,
+      left: 0,
       width: "120%",
     },
 
@@ -565,9 +499,9 @@ const getStyles = (isDark: boolean) =>
       height: 50,
       borderRadius: 25,
       marginRight: 8,
+      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      overflow: "hidden",
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -589,13 +523,23 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
 
+    positionText: {
+      marginLeft: 6,
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
     rankingBadge: {
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 8,
       backgroundColor: Colors.darkGray,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
       shadowOpacity: 0.25,
       shadowRadius: 3,
       elevation: 4,
@@ -613,11 +557,12 @@ const getStyles = (isDark: boolean) =>
       marginBottom: 4,
     },
 
-    positionText: {
-      marginLeft: 6,
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+    highSchoolText: {
+      flexShrink: 1,
+    },
+
+    star: {
+      marginRight: 2,
     },
 
     divider: {
@@ -637,10 +582,6 @@ const getStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSBOLD,
       fontSize: 16,
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
-    },
-
-    predictionTieText: {
-      color: isDark ? Colors.dark.yellow : Colors.light.yellow,
     },
 
     uncommittedText: {
