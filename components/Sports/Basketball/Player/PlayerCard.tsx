@@ -35,7 +35,7 @@ type PlayerRoutePathname =
   | "/player/basketball/[id]";
 
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
-  NBA: "/player/[id]",
+  NBA: "/player/basketball/[id]",
   WNBA: "/player/basketball/[id]",
   CBB: "/player/basketball/[id]",
   WCBB: "/player/basketball/[id]",

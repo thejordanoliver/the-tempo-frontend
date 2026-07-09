@@ -21,7 +21,7 @@ type PlayByPlayFieldProps = {
   league?: LeagueType;
   isDark?: boolean;
   firstDownYardLine?: number;
-  gameStatusDescription: string;
+  state?: string;
 };
 
 const normalizeYardLine = (yard: number, isHomeOffense: boolean) => {
@@ -35,7 +35,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
   awayTeamId,
   league = "NFL",
   firstDownYardLine,
-  gameStatusDescription,
+  state,
 }) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -252,11 +252,7 @@ const PlayByPlayField: React.FC<PlayByPlayFieldProps> = ({
 
   const yardNumbers = [0, 10, 20, 30, 40, 50, 40, 30, 20, 10, 0];
 
-  if (
-    gameStatusDescription === "Final" ||
-    gameStatusDescription === "Scheduled"
-  )
-    return null;
+  if (state !== "in") return null;
 
   return (
     <View>

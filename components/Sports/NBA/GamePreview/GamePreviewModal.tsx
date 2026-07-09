@@ -8,7 +8,7 @@ import { BasketballGame } from "@/types/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -29,8 +29,6 @@ type Props = {
   game: BasketballGame;
   onClose: () => void;
 };
-
-const LEAGUE = "NBA";
 
 export default function GamePreviewModal({ visible, game, onClose }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
@@ -66,14 +64,23 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
       : "TBD";
 
   const gameId = game.id;
+  const LEAGUE = game?.league?.code ?? "NBA";
+  const isSummerLeague =
+    LEAGUE === "summercalifornia" ||
+    LEAGUE === "summervegas" ||
+    LEAGUE === "summerutah";
 
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
   const homeEspnId = game.home.espnId;
   const awayEspnId = game.away.espnId;
 
-  const homeTeam = getNBATeam(homeId);
-  const awayTeam = getNBATeam(awayId);
+  const homeTeam = isSummerLeague
+    ? getTeamBySummerId(homeId)
+    : getNBATeam(homeId);
+  const awayTeam = isSummerLeague
+    ? getTeamBySummerId(awayId)
+    : getNBATeam(awayId);
 
   const homeCode = homeTeam?.code || game.home?.shortName;
   const awayCode = awayTeam?.code || game.away?.shortName;
@@ -94,10 +101,8 @@ export default function GamePreviewModal({ visible, game, onClose }: Props) {
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
-  const { details, score } = useBasketballGameDetails("nba", gameId);
-
+  const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
   const isGameLoading = !score || !details || !homeTeam || !awayTeam;
-
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period });
   const clock = game.status.clock;

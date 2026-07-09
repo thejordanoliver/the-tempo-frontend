@@ -1,6 +1,5 @@
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useEffect, useMemo, useState } from "react";
@@ -317,21 +316,33 @@ export default function GameLeaders({
         return null;
     }
   };
-
   if (error) {
-    return <Text style={global.errorText}>Failed to load leaders</Text>;
+    return (
+      <View>
+        <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
+        <View style={styles.wrapper}>
+          <MainScrollTabBar
+            tabs={GAME_CATEGORIES}
+            selected={selectedCategory}
+            onTabPress={setSelectedCategory}
+            isDark={isDark}
+          />
+          <View style={global.emptyContainer}>
+            <Text style={global.errorText}>Failed to load leaders</Text>
+          </View>
+        </View>
+      </View>
+    );
   }
 
-  if (loading) {
-    return <GameLeadersSkeleton />;
-  }
 
-  if (!topPlayers.length) {
+
+  if (!Object.keys(leaders ?? {}).length) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo isDark={isDark}>
         {isScheduled ? "Season Leaders" : "Game Leaders"}
       </HeadingTwo>

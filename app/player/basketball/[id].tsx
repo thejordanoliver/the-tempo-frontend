@@ -2,6 +2,7 @@ import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
+import { getNBATeam, getTeamLogo } from "@/constants/teams";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
@@ -29,10 +30,13 @@ export default function PlayerDetailScreen() {
   const navigation = useNavigation();
   const playerId = Number(id);
   const isWCBB = league === "WCBB";
+    const isNBA = league === "NBA";
   const isCBB = league === "CBB";
   const isWNBA = league === "WNBA";
   const { player, loading, error } = usePlayerById(playerId, league);
   const team =
+     teamId && isNBA
+      ? getNBATeam(teamId):
     teamId && isWNBA
       ? getWNBATeam(teamId)
       : teamId && isCBB
@@ -40,11 +44,13 @@ export default function PlayerDetailScreen() {
         : teamId && isWCBB
           ? getCBBTeam(teamId, true)
           : null;
-  const teamLogo = isWNBA
+  const teamLogo = isNBA
+    ? getTeamLogo(teamId, true): isWNBA
     ? getWNBATeamLogo(teamId, true)
     : getCBBTeamLogo(teamId, true, isWCBB);
   const teamColor = team?.color ?? Colors.midTone;
   const isActive = player?.active;
+
   const {
     game,
     loading: gameLoading,

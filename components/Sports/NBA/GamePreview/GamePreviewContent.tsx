@@ -2,7 +2,6 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   BoxScore,
   GameLocation,
-  HeadToHeadGames,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
@@ -10,7 +9,6 @@ import {
   TeamInjuries,
 } from "components/Sports/NBA/GameDetails";
 import React from "react";
-import { LeagueType } from "types/types";
 import GameLeaders from "../../Basketball/GameDetails/GameLeaders";
 import GameTeamStats from "../GameDetails/GameTeamStats";
 
@@ -51,7 +49,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   state: string;
-  league: LeagueType;
+  league: string;
 };
 
 export default function GamePreviewContent({
@@ -151,14 +149,6 @@ export default function GamePreviewContent({
         homeLogo={homeLogo}
         homeColor={homeColor}
         state={state}
-        isDark
-      />
-
-      <HeadToHeadGames
-        awayTeamId={awayTeamId}
-        homeTeamId={homeTeamId}
-        homeTeamColor={homeColor}
-        awayTeamColor={awayColor}
         isDark
       />
 

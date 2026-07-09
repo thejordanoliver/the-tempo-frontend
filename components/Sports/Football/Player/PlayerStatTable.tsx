@@ -836,7 +836,12 @@ export default function PlayerStatTable({
   }
 
   if (!sortedData.length) {
-    return <Text style={global.emptyText}>No stats available</Text>;
+    return (
+      <View style={styles.container}>
+        {renderHeader()}
+        <Text style={global.emptyText}>No stats available</Text>
+      </View>
+    );
   }
 
   if (!visibleData.length) {

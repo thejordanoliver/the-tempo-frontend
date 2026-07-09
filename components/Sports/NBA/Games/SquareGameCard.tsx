@@ -2,7 +2,7 @@ import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyl
 import { BasketballGameCardProps } from "@/types/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,7 +10,7 @@ import { useRouter } from "expo-router";
 import { Text, TextStyle, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
-export default function SquareGameCard({ game }: BasketballGameCardProps) {
+export default function SquareGameCard({ game, isSL }: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -51,11 +51,11 @@ export default function SquareGameCard({ game }: BasketballGameCardProps) {
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
 
-  const home = getNBATeam(homeId);
-  const away = getNBATeam(awayId);
+  const home = isSL ? getTeamBySummerId(homeId) : getNBATeam(homeId);
+  const away = isSL ? getTeamBySummerId(awayId) : getNBATeam(awayId);
 
-  const homeName = home?.code || game.home?.shortName;
-  const awayName = away?.code || game.away?.shortName;
+  const homeName = home?.name || game.home?.shortName;
+  const awayName = away?.name || game.away?.shortName;
 
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);

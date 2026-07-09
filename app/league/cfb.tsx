@@ -1,3 +1,4 @@
+import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
 import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
 import { cfbConferences } from "@/constants/cfbConferences";
 import { useNavigation } from "@react-navigation/native";
@@ -13,7 +14,7 @@ import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import RecruitsList from "../../components/League/Recruiting/CFB/RecruitsList";
+import RecruitsList from "../../components/League/Recruiting/RecruitsList";
 import WeekSelector, {
   FootballWeekGroup,
 } from "../../components/League/WeekSelector";
@@ -21,10 +22,9 @@ import NewsList from "../../components/News/NewsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "../../components/Sports/Football/ConferenceListModal";
-import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { CFBConferenceStandingsList } from "../../components/Sports/Football/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "../../components/Sports/Football/Standings/CFBStandingsList";
-import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useCFPBracket } from "../../hooks/FootballHooks/useCFPBracket";
@@ -342,6 +342,7 @@ export default function CFBLeagueScreen() {
               onYearChange={setRecruitYear}
               onTeamChange={setRecruitTeam}
               onViewChange={setRecruitView}
+              league={league}
             />
           </View>
 

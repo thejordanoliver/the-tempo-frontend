@@ -8,15 +8,13 @@ type Props = {
   isCFB?: boolean;
 };
 
-export default function PlayerHeader({
-  player,
-  isDark,
-  isCFB,
-}: Props) {
+export default function PlayerHeader({ player, isDark, isCFB }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
   const experience = player.experience === 0 ? "R" : player.experience;
+  const experienceAbbr = player.experience_abbr ?? "-";
+
   const birthDate = formatBirth(player.birth_date);
   const draftInfo =
     player.draft_round && player.draft_number && player.draft_year
@@ -80,7 +78,7 @@ export default function PlayerHeader({
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>
-              <Text style={styles.statValue}>{player.experience_abbr}</Text>
+              <Text style={styles.statValue}>{experienceAbbr}</Text>
               <Text style={styles.statLabel}>CLASS</Text>
             </View>
           </>

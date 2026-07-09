@@ -25,7 +25,7 @@ import {
 } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -107,6 +107,7 @@ export default function GameDetailsScreen(
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = game?.league?.code ?? "NBA";
+  const isSummerLeague = LEAGUE === "summercalifornia"  || LEAGUE === "summervegas" || LEAGUE === "summerutah" 
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -120,8 +121,8 @@ export default function GameDetailsScreen(
 
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
-  const homeTeam = getNBATeam(homeId);
-  const awayTeam = getNBATeam(awayId);
+  const homeTeam = isSummerLeague ? getTeamBySummerId(homeId): getNBATeam(homeId);
+  const awayTeam = isSummerLeague ? getTeamBySummerId(awayId): getNBATeam(awayId);
 
   const homeCode = homeTeam?.code ?? "";
   const awayCode = awayTeam?.code ?? "";
@@ -163,7 +164,6 @@ export default function GameDetailsScreen(
   };
 
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
-
   const isLoading = !score || !details;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
@@ -258,7 +258,7 @@ export default function GameDetailsScreen(
     : undefined;
 
   useLayoutEffect(() => {
-    if (isLoading || !home || !away) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });

@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { router } from "expo-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ImageSourcePropType } from "react-native";

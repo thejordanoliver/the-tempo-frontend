@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+    "test:bracket": "node ./scripts/test-tournament-bracket-utils.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

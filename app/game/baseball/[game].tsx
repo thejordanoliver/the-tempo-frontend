@@ -200,7 +200,7 @@ export default function GameDetailsScreen(
 
   const broadcasts = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const state = game?.status.state ?? "";
+  const state = game?.status.state;
   const gameStatusDetail = score?.gameStatusDetail ?? "";
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
@@ -215,7 +215,7 @@ export default function GameDetailsScreen(
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
 
-  const homeChance = Number(details?.predictor) || 0;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
 
   const lineScore = score?.periodScores?.length

@@ -4,15 +4,12 @@ import { getNBATeam } from "constants/teams";
 import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { router } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  Animated,
   Image,
-  Platform,
   ScrollView,
   Text,
   TouchableOpacity,
-  UIManager,
   View,
 } from "react-native";
 import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
@@ -24,15 +21,41 @@ import {
 import BoxScoreSkeleton from "../../../Skeletons/GameDetails/BoxScoreSkeleton";
 
 const COLUMN_WIDTH = 50;
-const PLAYER_ROW_HEIGHT = 36;
 const COLLAPSED_ROWS = 5;
 
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+const DEFAULT_LABELS = [
+  "MIN",
+  "PTS",
+  "FG",
+  "3PT",
+  "FT",
+  "REB",
+  "AST",
+  "TO",
+  "STL",
+  "BLK",
+  "OREB",
+  "DREB",
+  "PF",
+  "+/-",
+];
+
+const DEFAULT_KEYS = [
+  "minutes",
+  "points",
+  "fieldGoalsMade-fieldGoalsAttempted",
+  "threePointFieldGoalsMade-threePointFieldGoalsAttempted",
+  "freeThrowsMade-freeThrowsAttempted",
+  "rebounds",
+  "assists",
+  "turnovers",
+  "steals",
+  "blocks",
+  "offensiveRebounds",
+  "defensiveRebounds",
+  "fouls",
+  "plusMinus",
+];
 
 type TeamInfo = {
   id?: number | string | null;
@@ -52,8 +75,11 @@ type TeamInfo = {
 };
 
 type TeamBlock = {
-  team: TeamInfo;
-  athletes: Athlete[];
+  team?: TeamInfo | null;
+  names?: string[];
+  keys?: string[];
+  labels?: string[];
+  athletes?: Athlete[];
 };
 
 type Props = {
@@ -63,13 +89,15 @@ type Props = {
   awayName: string;
   homeLogo: any;
   awayLogo: any;
-  playerStats: TeamBlock[];
+  playerStats?: TeamBlock[];
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
   league: string;
   state: string | undefined;
 };
+
+type AthleteRecord = Athlete["athlete"] & Record<string, any>;
 
 const normalizeIdentifier = (value: unknown) => {
   if (value === null || value === undefined) return null;
@@ -79,33 +107,33 @@ const normalizeIdentifier = (value: unknown) => {
 };
 
 const collectTeamIdentifiers = (team?: TeamInfo | null) => {
-  const values = [
-    team?.id,
-    team?.teamId,
-    team?.team_id,
-    team?.espnId,
-    team?.espn_id,
-    team?.wid,
-    team?.code,
-    team?.abbreviation,
-    team?.name,
-    team?.fullName,
-    team?.displayName,
-    team?.shortName,
-    team?.short_name,
-    team?.shortDisplayName,
-  ];
+  if (!team) return [];
 
-  return values
+  return [
+    team.id,
+    team.teamId,
+    team.team_id,
+    team.espnId,
+    team.espn_id,
+    team.wid,
+    team.code,
+    team.abbreviation,
+    team.name,
+    team.fullName,
+    team.displayName,
+    team.shortName,
+    team.short_name,
+    team.shortDisplayName,
+  ]
     .map(normalizeIdentifier)
     .filter((value): value is string => Boolean(value));
 };
 
-const getAthleteId = (athlete: Athlete["athlete"] & Record<string, any>) =>
+const getAthleteId = (athlete?: AthleteRecord | null) =>
   athlete?.playerId ?? athlete?.id ?? athlete?.espnId ?? athlete?.espn_id;
 
 const getAthleteTeamId = (
-  athlete: Athlete["athlete"] & Record<string, any>,
+  athlete?: AthleteRecord | null,
   fallbackTeamId?: number | string,
 ) =>
   athlete?.teamId ??
@@ -114,13 +142,68 @@ const getAthleteTeamId = (
   athlete?.team?.teamId ??
   fallbackTeamId;
 
-const getAthleteName = (athlete: Athlete["athlete"] & Record<string, any>) =>
+const getAthleteName = (athlete?: AthleteRecord | null) =>
   athlete?.shortName ??
   athlete?.short_name ??
   athlete?.displayName ??
   athlete?.fullName ??
   athlete?.name ??
   "Player";
+
+const getPlayers = (teamBlock?: TeamBlock | null) =>
+  Array.isArray(teamBlock?.athletes) ? teamBlock.athletes : [];
+
+const getStatLabels = (teamBlock?: TeamBlock | null) => {
+  if (Array.isArray(teamBlock?.labels) && teamBlock.labels.length > 0) {
+    return teamBlock.labels;
+  }
+
+  if (Array.isArray(teamBlock?.names) && teamBlock.names.length > 0) {
+    return teamBlock.names;
+  }
+
+  return DEFAULT_LABELS;
+};
+
+const getStatKeys = (teamBlock?: TeamBlock | null) => {
+  if (Array.isArray(teamBlock?.keys) && teamBlock.keys.length > 0) {
+    return teamBlock.keys;
+  }
+
+  return DEFAULT_KEYS;
+};
+
+const getStatValue = (
+  player: Athlete,
+  statKey: string | undefined,
+  statIndex: number,
+) => {
+  const playerRecord = player as Athlete & Record<string, any>;
+
+  if (Array.isArray(playerRecord.stats)) {
+    const value = playerRecord.stats[statIndex];
+    return value === null || value === undefined || value === "" ? "—" : value;
+  }
+
+  const value =
+    playerRecord[statKey ?? ""] ??
+    playerRecord.statistics?.[statKey ?? ""] ??
+    playerRecord.stats?.[statKey ?? ""];
+
+  return value === null || value === undefined || value === "" ? "—" : value;
+};
+
+const getDidNotPlayText = (player: Athlete) => {
+  const playerRecord = player as Athlete & Record<string, any>;
+
+  const reason =
+    playerRecord.reason ??
+    playerRecord.didNotPlayReason ??
+    playerRecord.status ??
+    playerRecord.comment;
+
+  return reason ? `DID NOT PLAY: ${String(reason).toUpperCase()}` : "DID NOT PLAY";
+};
 
 export default function BoxScore({
   homeTeamId,
@@ -129,7 +212,7 @@ export default function BoxScore({
   awayName,
   homeLogo,
   awayLogo,
-  playerStats,
+  playerStats = [],
   isLoading = false,
   isError = false,
   league,
@@ -139,48 +222,23 @@ export default function BoxScore({
   const styles = boxScoreStyles(isDark);
   const global = globalStyles(isDark);
 
-  const heightAnimMap = useRef<Record<string, Animated.Value>>({});
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {},
   );
 
   const isNBA = league === "NBA" || league === "SL";
-  const isCollege = league === "CBB" || league === "WCBB";
   const isWNBA = league === "WNBA";
 
-  const labels =
-    isCollege || isWNBA
-      ? [
-          "MIN",
-          "PTS",
-          "FG",
-          "3PT",
-          "FT",
-          "REB",
-          "AST",
-          "TO",
-          "STL",
-          "BLK",
-          "OREB",
-          "DREB",
-          "PF",
-        ]
-      : [
-          "MIN",
-          "PTS",
-          "FG",
-          "3PT",
-          "FT",
-          "REB",
-          "AST",
-          "TO",
-          "STL",
-          "BLK",
-          "OREB",
-          "DREB",
-          "PF",
-          "+/-",
-        ];
+  const normalizedPlayerStats = useMemo(
+    () =>
+      Array.isArray(playerStats)
+        ? playerStats.filter(
+            (block): block is TeamBlock =>
+              Boolean(block) && typeof block === "object",
+          )
+        : [],
+    [playerStats],
+  );
 
   const homeTeam = useMemo(
     () =>
@@ -212,85 +270,58 @@ export default function BoxScore({
     [isDark],
   );
 
-  const getHeightAnim = useCallback((sectionKey: string) => {
-    if (!heightAnimMap.current[sectionKey]) {
-      heightAnimMap.current[sectionKey] = new Animated.Value(
-        PLAYER_ROW_HEIGHT * COLLAPSED_ROWS,
-      );
-    }
-
-    return heightAnimMap.current[sectionKey];
-  }, []);
-
   const findTeamBlock = useCallback(
-    (
-      targetTeamId: number | string,
-      targetTeam?: TeamInfo | null,
-      fallbackIndex?: number,
-    ) => {
+    ({
+      targetTeamId,
+      targetName,
+      targetTeam,
+      fallbackIndex,
+    }: {
+      targetTeamId: number | string;
+      targetName: string;
+      targetTeam?: TeamInfo | null;
+      fallbackIndex: number;
+    }) => {
       const targetIdentifiers = new Set([
         normalizeIdentifier(targetTeamId),
+        normalizeIdentifier(targetName),
         ...collectTeamIdentifiers(targetTeam),
       ]);
 
-      const matchedBlock = playerStats.find((block) => {
+      const matchedBlock = normalizedPlayerStats.find((block) => {
         const blockIdentifiers = collectTeamIdentifiers(block.team);
         return blockIdentifiers.some((id) => targetIdentifiers.has(id));
       });
 
-      if (matchedBlock) return matchedBlock;
-
-      // ESPN box score arrays usually come in away/home order.
-      // This fallback fixes WNBA cases where the team block id shape differs.
-      if (
-        typeof fallbackIndex === "number" &&
-        playerStats.length > fallbackIndex
-      ) {
-        return playerStats[fallbackIndex];
-      }
-
-      return null;
+      return matchedBlock ?? normalizedPlayerStats[fallbackIndex] ?? null;
     },
-    [playerStats],
+    [normalizedPlayerStats],
   );
 
   const awayTeamBlock = useMemo(
-    () => findTeamBlock(awayTeamId, awayTeam, 0),
-    [awayTeamId, awayTeam, findTeamBlock],
+    () =>
+      findTeamBlock({
+        targetTeamId: awayTeamId,
+        targetName: awayName,
+        targetTeam: awayTeam,
+        fallbackIndex: 0,
+      }),
+    [awayName, awayTeam, awayTeamId, findTeamBlock],
   );
 
   const homeTeamBlock = useMemo(
-    () => findTeamBlock(homeTeamId, homeTeam, 1),
-    [homeTeamId, homeTeam, findTeamBlock],
+    () =>
+      findTeamBlock({
+        targetTeamId: homeTeamId,
+        targetName: homeName,
+        targetTeam: homeTeam,
+        fallbackIndex: 1,
+      }),
+    [homeName, homeTeam, homeTeamId, findTeamBlock],
   );
 
-  useEffect(() => {
-    const sections = [
-      {
-        key: "away",
-        teamBlock: awayTeamBlock,
-      },
-      {
-        key: "home",
-        teamBlock: homeTeamBlock,
-      },
-    ];
-
-    sections.forEach(({ key, teamBlock }) => {
-      const isExpanded = expandedTeams[key] ?? false;
-      const playerCount = teamBlock?.athletes?.length ?? 0;
-
-      const targetHeight = isExpanded
-        ? playerCount * PLAYER_ROW_HEIGHT
-        : Math.min(playerCount, COLLAPSED_ROWS) * PLAYER_ROW_HEIGHT;
-
-      Animated.timing(getHeightAnim(key), {
-        toValue: targetHeight,
-        duration: 300,
-        useNativeDriver: false,
-      }).start();
-    });
-  }, [awayTeamBlock, expandedTeams, getHeightAnim, homeTeamBlock]);
+  const hasPlayerStats =
+    getPlayers(awayTeamBlock).length > 0 || getPlayers(homeTeamBlock).length > 0;
 
   const toggleExpand = useCallback((sectionKey: string) => {
     setExpandedTeams((prev) => ({
@@ -308,7 +339,6 @@ export default function BoxScore({
 
       router.push({
         pathname: isNBA ? "/player/[id]" : "/player/basketball/[id]",
-
         params: {
           id: String(playerId),
           teamId: String(teamId),
@@ -332,9 +362,11 @@ export default function BoxScore({
     teamLogo: any;
     teamBlock: TeamBlock | null;
   }) => {
-    if (!teamBlock) return null;
+    const players = getPlayers(teamBlock);
+    if (players.length === 0) return null;
 
-    const players = Array.isArray(teamBlock.athletes) ? teamBlock.athletes : [];
+    const labels = getStatLabels(teamBlock);
+    const statKeys = getStatKeys(teamBlock);
     const isExpanded = expandedTeams[sectionKey] ?? false;
     const visiblePlayers = isExpanded
       ? players
@@ -360,40 +392,31 @@ export default function BoxScore({
               <Text style={styles.cellName}>Player</Text>
             </View>
 
-            <Animated.View
-              style={{
-                maxHeight: getHeightAnim(sectionKey),
-                overflow: "hidden",
-              }}
-            >
-              {visiblePlayers.map((p: Athlete, index) => {
-                const athlete = p.athlete as Athlete["athlete"] &
-                  Record<string, any>;
+            {visiblePlayers.map((player, index) => {
+              const athlete = player.athlete as AthleteRecord;
+              const playerId = getAthleteId(athlete);
+              const playerTeamId = getAthleteTeamId(athlete, teamId);
+              const playerName = getAthleteName(athlete);
 
-                const playerId = getAthleteId(athlete);
-                const playerTeamId = getAthleteTeamId(athlete, teamId);
-                const playerName = getAthleteName(athlete);
-
-                return (
-                  <View
-                    key={`${sectionKey}-name-${playerId ?? index}`}
-                    style={[
-                      styles.tableRow,
-                      { backgroundColor: getRowBackground(index) },
-                    ]}
+              return (
+                <View
+                  key={`${sectionKey}-name-${playerId ?? index}`}
+                  style={[
+                    styles.tableRow,
+                    { backgroundColor: getRowBackground(index) },
+                  ]}
+                >
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => handlePlayerPress(playerId, playerTeamId)}
                   >
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => handlePlayerPress(playerId, playerTeamId)}
-                    >
-                      <Text style={styles.cellName} numberOfLines={1}>
-                        {playerName}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </Animated.View>
+                    <Text style={styles.cellName} numberOfLines={1}>
+                      {playerName}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
           </View>
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -411,54 +434,49 @@ export default function BoxScore({
                 ))}
               </View>
 
-              <Animated.View
-                style={{
-                  maxHeight: getHeightAnim(sectionKey),
-                  overflow: "hidden",
-                }}
-              >
-                {visiblePlayers.map((p: Athlete, index) => {
-                  const athlete = p.athlete as Athlete["athlete"] &
-                    Record<string, any>;
+              {visiblePlayers.map((player, index) => {
+                const athlete = player.athlete as AthleteRecord;
+                const playerId = getAthleteId(athlete);
+                const playerRecord = player as Athlete & Record<string, any>;
 
-                  const playerId = getAthleteId(athlete);
-                  const stats = Array.isArray(p.stats) ? p.stats : [];
-
-                  return (
-                    <View
-                      key={`${sectionKey}-stats-${playerId ?? index}`}
-                      style={[
-                        styles.tableRow,
-                        { backgroundColor: getRowBackground(index) },
-                      ]}
-                    >
-                      {p.didNotPlay ? (
+                return (
+                  <View
+                    key={`${sectionKey}-stats-${playerId ?? index}`}
+                    style={[
+                      styles.tableRow,
+                      { backgroundColor: getRowBackground(index) },
+                    ]}
+                  >
+                    {playerRecord.didNotPlay ? (
+                      <View
+                        style={[
+                          styles.didNotPlayerRow,
+                          { minWidth: labels.length * COLUMN_WIDTH },
+                        ]}
+                      >
+                        <Text style={styles.didNotPlayCell}>
+                          {getDidNotPlayText(player)}
+                        </Text>
+                      </View>
+                    ) : (
+                      labels.map((label, statIndex) => (
                         <View
-                          style={[
-                            styles.didNotPlayerRow,
-                            {
-                              minWidth: labels.length * COLUMN_WIDTH,
-                            },
-                          ]}
+                          key={`${sectionKey}-${playerId ?? index}-${label}`}
+                          style={styles.cellContainer}
                         >
-                          <Text style={styles.didNotPlayCell}>
-                            DID NOT PLAY: COACH DECISION
+                          <Text style={styles.cell}>
+                            {getStatValue(
+                              player,
+                              statKeys[statIndex],
+                              statIndex,
+                            )}
                           </Text>
                         </View>
-                      ) : (
-                        labels.map((_, i) => (
-                          <View
-                            key={`${sectionKey}-${playerId ?? index}-${i}`}
-                            style={styles.cellContainer}
-                          >
-                            <Text style={styles.cell}>{stats[i] ?? 0}</Text>
-                          </View>
-                        ))
-                      )}
-                    </View>
-                  );
-                })}
-              </Animated.View>
+                      ))
+                    )}
+                  </View>
+                );
+              })}
             </View>
           </ScrollView>
         </View>
@@ -504,23 +522,39 @@ export default function BoxScore({
     <ScrollView>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
-      <View style={{ marginBottom: 24 }}>
-        {renderTeamBox({
-          sectionKey: "away",
-          teamId: awayTeamId,
-          teamName: awayName ?? "Away Team",
-          teamLogo: awayLogo,
-          teamBlock: awayTeamBlock,
-        })}
-      </View>
+      {!hasPlayerStats ? (
+        <Text
+          style={[
+            styles.cellName,
+            {
+              paddingVertical: 12,
+              opacity: 0.7,
+            },
+          ]}
+        >
+          No box score available.
+        </Text>
+      ) : (
+        <>
+          <View style={{ marginBottom: 24 }}>
+            {renderTeamBox({
+              sectionKey: "away",
+              teamId: awayTeamId,
+              teamName: awayName ?? "Away Team",
+              teamLogo: awayLogo,
+              teamBlock: awayTeamBlock,
+            })}
+          </View>
 
-      {renderTeamBox({
-        sectionKey: "home",
-        teamId: homeTeamId,
-        teamName: homeName ?? "Home Team",
-        teamLogo: homeLogo,
-        teamBlock: homeTeamBlock,
-      })}
+          {renderTeamBox({
+            sectionKey: "home",
+            teamId: homeTeamId,
+            teamName: homeName ?? "Home Team",
+            teamLogo: homeLogo,
+            teamBlock: homeTeamBlock,
+          })}
+        </>
+      )}
     </ScrollView>
   );
 }

@@ -50,11 +50,30 @@ export default function useRoster(teamId: number, league: string) {
 
     try {
       const res = await apiClient.get(url);
-      setPlayers(Array.isArray(res.data.players) ? res.data.players : []);
+
+      const roster = Array.isArray(res.data?.players)
+        ? res.data.players
+        : Array.isArray(res.data)
+          ? res.data
+          : [];
+
+      setPlayers(roster);
+      setError(null);
     } catch (err: any) {
+      const status = err?.response?.status;
+
+      // Treat "not found" roster responses as an empty roster,
+      // not a real frontend error.
+      if (status === 404) {
+        setPlayers([]);
+        setError(null);
+        return;
+      }
+
       console.error("Could not load team roster:", err?.message || err);
-      setError("Could not load team roster.");
+
       setPlayers([]);
+      setError("Could not load team roster.");
     } finally {
       setLoading(false);
     }

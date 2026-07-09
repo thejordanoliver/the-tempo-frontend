@@ -219,8 +219,8 @@ const MatchupPredictor: React.FC<Props> = ({
   const dividerTop = svgCenter - dividerHeight / 2;
   const dividerBottom = svgCenter + dividerHeight / 2;
 
+  if (state !== "pre") return null;
   if (!homeChance || !awayChance) return null;
-  if (state === "In Progress") return null;
 
   return (
     <View style={styles.outerContainer}>

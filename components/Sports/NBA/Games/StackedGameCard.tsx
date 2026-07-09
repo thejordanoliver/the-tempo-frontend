@@ -1,7 +1,7 @@
 import { BasketballGameCardProps } from "@/types/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,9 +12,7 @@ import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function StackedGameCard({
   game,
-  isCBB,
-  isWCBB,
-  isWNBA,
+  isSL,
 }: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -55,11 +53,11 @@ export default function StackedGameCard({
   const homeId = Number(game.home?.id);
   const awayId = Number(game.away?.id);
 
-  const home = getNBATeam(homeId);
-  const away = getNBATeam(awayId);
+  const home = isSL ? getTeamBySummerId(homeId) : getNBATeam(homeId);
+  const away = isSL ? getTeamBySummerId(awayId) : getNBATeam(awayId);
 
-  const homeName = home?.fullName || game.home?.name;
-  const awayName = away?.fullName || game.away?.name;
+  const homeName = home?.name || game.home?.shortName;
+  const awayName = away?.name || game.away?.shortName;
 
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);

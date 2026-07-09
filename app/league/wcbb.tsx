@@ -1,4 +1,4 @@
-// app/league/cbb.tsx
+// app/league/wcbb.tsx
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/Sports/Basketball/ConferenceListModal";
@@ -23,10 +23,15 @@ import AwardSeasons from "../../components/League/Awards/AwardSeasons";
 import NewsList from "../../components/News/NewsList";
 import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
+import TournamentBracket from "../../components/Sports/Basketball/TournamentBracket";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
+import {
+  getCurrentMarchMadnessSeason,
+  useTournamentBracket,
+} from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
@@ -50,6 +55,8 @@ export default function WCBBLeagueScreen() {
     useState<SelectedConference>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const pagerRef = useRef<PagerView>(null);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
 
   const { calendar } = useLeagueCalendar(league);
 
@@ -67,8 +74,18 @@ export default function WCBBLeagueScreen() {
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
-  const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+
+  const {
+    tournament,
+    loading: bracketLoading,
+    error: bracketError,
+    refreshing: bracketRefreshing,
+    refresh: refreshBracket,
+  } = useTournamentBracket({
+    competition: league,
+    season: getCurrentMarchMadnessSeason(),
+    enabled: selectedTab === "bracket",
+  });
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -162,9 +179,13 @@ export default function WCBBLeagueScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
+          scrollEnabled={selectedTab !== "bracket"}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
-            setSelectedTab(tabs[index]);
+            const nextTab = tabs[index];
+            if (nextTab) {
+              setSelectedTab(nextTab);
+            }
           }}
         >
           {/* SCORES */}
@@ -224,7 +245,15 @@ export default function WCBBLeagueScreen() {
           </View>
 
           {/* Bracket */}
-          <View key="bracket"/>
+          <View key="bracket" style={styles.contentArea}>
+            <TournamentBracket
+              tournament={tournament}
+              loading={bracketLoading}
+              error={bracketError}
+              refreshing={bracketRefreshing}
+              onRefresh={refreshBracket}
+            />
+          </View>
 
           {/* AWARDS */}
           <View key="awards">

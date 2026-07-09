@@ -1,16 +1,16 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const gameLeadersStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { overflow: "hidden" },
-    center: { alignItems: "center", justifyContent: "center", padding: 16 },
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
     },
-
+    pressed: {
+      opacity: activeOpacity,
+    },
     card: {
       flexDirection: "row",
       alignItems: "center",

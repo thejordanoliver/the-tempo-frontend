@@ -60,6 +60,10 @@ export default function GamesList({
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const isSLGame = (game: any) =>
+    String(game?.league?.id) === "23170" ||
+    String(game?.league?.id) === "64" ||
+    String(game?.league?.id) === "63";
   const isCBBGame = (game: any) => String(game?.league?.id) === "10";
   const isWCBBGame = (game: any) => String(game?.league?.id) === "54";
   const isWNBAGame = (game: any) => String(game?.league?.id) === "59";
@@ -105,6 +109,7 @@ export default function GamesList({
         <Wrapper>
           <GameCard
             game={game}
+            isSL={isSLGame(game)}
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
@@ -118,6 +123,7 @@ export default function GamesList({
         <Wrapper>
           <SquareGameCard
             game={game}
+            isSL={isSLGame(game)}
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
@@ -130,6 +136,7 @@ export default function GamesList({
       <Wrapper>
         <StackedGameCard
           game={game}
+          isSL={isSLGame(game)}
           isCBB={isCBBGame(game)}
           isWNBA={isWNBAGame(game)}
           isWCBB={isWCBBGame(game)}

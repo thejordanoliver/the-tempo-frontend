@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BaseballGame } from "types/baseball";
 import { apiClient } from "utils/apiClient";
 
-type League = "nba" | "cbb" | "wcbb" | "wnba" | "summervegas" | "summerutah";
+type League = "nba" | "cbb" | "wcbb" | "wnba" | "summervegas" | "summerutah" | "summercalifornia";
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
@@ -38,6 +38,8 @@ function getBasketballEndpoint(league: League) {
       return "api/games/basketball/summervegas";
     case "summerutah":
       return "api/games/basketball/summerutah";
+    case "summercalifornia":
+      return "api/games/basketball/summercalifornia";
     default:
       return "api/games/basketball/nba";
   }

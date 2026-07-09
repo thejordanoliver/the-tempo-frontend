@@ -1,7 +1,7 @@
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
-import TeamDrives from "@/components/Sports/Football/GameDetails/InjuryReport/TeamDrives";
 import TeamInjuries from "@/components/Sports/Football/GameDetails/InjuryReport/TeamInjuries";
 import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
+import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import {
   FanPredictionVote,
@@ -15,6 +15,7 @@ import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/Ga
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
+import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
@@ -140,8 +141,8 @@ export default function GameDetailsScreen(
       ? getCFBTeam(awayId)
       : getNFLTeam(awayId);
 
-  const homeEspnId = homeTeam?.espnId;
-  const awayEspnId = awayTeam?.espnId;
+  const homeEspnId = homeTeam?.espnId ?? 0;
+  const awayEspnId = awayTeam?.espnId ?? 0;
 
   const homeLogo = isUFL
     ? getUFLTeamLogo(homeId, isDark)
@@ -180,6 +181,7 @@ export default function GameDetailsScreen(
   );
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+
   const gameStatusDescription = score?.gameStatusDescription ?? "";
   const state = game?.status.state;
   const gameStatusDetail = score?.gameStatusDetail ?? "";
@@ -223,6 +225,13 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay ?? "";
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+  const injuries = details?.injuries ?? [];
+  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
+  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
 
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
@@ -317,20 +326,20 @@ export default function GameDetailsScreen(
           awayName={awayCode}
           homeRank={homeRank}
           awayRank={awayRank}
-          homePossesion={homeHasPossesion}
-          awayPossesion={awayHasPossesion}
           awayScore={awayScore}
           homeScore={homeScore}
           homeWins={homeWins}
           awayWins={awayWins}
+          homeRecord={homeRecord}
+          awayRecord={awayRecord}
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
+          homePossesion={homeHasPossesion}
+          awayPossesion={awayHasPossesion}
           clock={clock}
           period={period}
           downDistance={downDistance}
           isDark={isDark}
-          homeRecord={homeRecord}
-          awayRecord={awayRecord}
           broadcast={broadcast}
           date={formattedDate}
           time={formattedTime}
@@ -368,47 +377,48 @@ export default function GameDetailsScreen(
               lastPlay={lastPlay}
               firstDownYardLine={undefined}
               possessionTeamId={possessionTeamId}
-              homeTeamId={Number(homeTeam.id)}
-              awayTeamId={Number(awayTeam.id)}
-              gameStatusDescription={gameStatusDescription}
+              homeTeamId={homeId}
+              awayTeamId={awayId}
+              state={state}
             />
 
             <GameLeaders
               playersByCategory={playersByCategory}
+              awayId={awayId}
+              homeId={homeId}
               awayLogo={awayLogo}
               homeLogo={homeLogo}
               awayCode={awayCode}
               homeCode={homeCode}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
+              league={LEAGUE}
             />
 
             <TeamDrives
               previousDrives={previousDrives ?? []}
               currentDrives={currentDrives ?? []}
-              awayTeamId={awayId}
-              homeTeamId={homeId}
-              awayTeamEspnId={awayEspnId}
-              homeTeamEspnId={homeEspnId}
+              awayId={awayEspnId}
+              homeId={homeEspnId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
               league={LEAGUE}
               isDark={isDark}
-              gameStatusDescription={score?.gameStatusDescription ?? ""}
+              state={state}
             />
 
             <TeamScoringSummary
-              scoringPlays={scoringPlays ?? []}
-              homeTeamId={Number(homeTeam?.espnId)}
-              awayTeamId={Number(awayTeam?.espnId)}
+              scoringPlays={scoringPlays}
+              homeId={homeEspnId}
+              awayId={awayEspnId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
+              state={state}
               league={LEAGUE}
             />
 
@@ -424,23 +434,24 @@ export default function GameDetailsScreen(
                 games: awayLastGames.games,
               }}
               isDark={isDark}
-              league={LEAGUE}
               state={state}
+              league={LEAGUE}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
 
             <TeamInjuries
-              injuries={details?.injuries}
-              loading={false}
-              error={null}
-              awayTeamId={awayTeam.espnId}
-              homeTeamId={homeTeam.espnId}
-              awayTeamAbbr={awayTeam.code}
-              homeTeamAbbr={homeTeam.code}
+              injuries={injuries}
+              teamPlayersMap={teamPlayersMap}
+              homeId={homeEspnId}
+              awayId={awayEspnId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              league={LEAGUE}
               isDark={isDark}
             />
-
             <Officials officials={officials} isDark={isDark} state={state} />
 
             <GameLocation

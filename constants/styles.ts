@@ -138,7 +138,6 @@ export const Fonts = {
 export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
     errorText: {
-      marginTop: 20,
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,
@@ -148,10 +147,9 @@ export const globalStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      paddingHorizontal: 24,
+      padding: 12,
     },
     emptyText: {
-      marginTop: 20,
       textAlign: "center",
       fontSize: 20,
       fontFamily: Fonts.OSREGULAR,

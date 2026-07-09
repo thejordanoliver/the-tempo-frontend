@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 import { SendDirectMessagePayload } from "types/messages";
 
 const SOCKET_URL =
-  process.env.EXPO_PUBLIC_SOCKET_URL?.replace(/\/$/, "") ??
+  process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ??
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ??
   "";
 

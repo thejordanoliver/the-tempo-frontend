@@ -15,7 +15,7 @@ import {
   normalizeProfileImage,
 } from "utils/chatUtils";
 
-const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL;
+const SOCKET_URL = process.env.EXPO_PUBLIC_API_URL;
 const DUPLICATE_SEND_BLOCK_MS = 800;
 
 export function useLiveGameChat(gameId: string | number) {

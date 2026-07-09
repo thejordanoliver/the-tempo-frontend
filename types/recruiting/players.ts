@@ -56,4 +56,5 @@ export interface Recruit {
   predicted_team_name: string | null;
   prediction_percentage: string | null;
   predicted_schools: RecruitPredictedSchool[];
+  offers: RecruitOffer[];
 }

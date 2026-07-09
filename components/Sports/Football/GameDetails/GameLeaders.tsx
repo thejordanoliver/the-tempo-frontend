@@ -4,8 +4,15 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
+import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const GAME_CATEGORIES = [
@@ -67,12 +74,15 @@ type FootballPlayersByCategory = Record<
 
 type Props = {
   playersByCategory: FootballPlayersByCategory;
-  awayLogo: ImageSourcePropType | string | null;
-  homeLogo: ImageSourcePropType | string | null;
+  awayLogo: ImageSourcePropType | null;
+  homeLogo: ImageSourcePropType | null;
   awayCode: string;
   homeCode: string;
+  homeId: number;
+  awayId: number;
   isDark: boolean;
-  gameStatusDescription: string;
+  league: string;
+  state?: string;
   loading?: boolean;
   error?: boolean;
 };
@@ -99,18 +109,6 @@ const CATEGORY_TO_BOX_SCORE_NAME: Record<Category, string> = {
 
 const DEFENSIVE_FALLBACKS = ["defensive", "totalTackles", "interceptions"];
 
-function normalizeImageSource(
-  source: ImageSourcePropType | string | null | undefined,
-): ImageSourcePropType {
-  if (!source) return Placeholder;
-
-  if (typeof source === "string") {
-    return { uri: source };
-  }
-
-  return source;
-}
-
 function getHeadshotSource(
   headshot?:
     | string
@@ -128,35 +126,10 @@ function getHeadshotSource(
   return headshot.href ?? Placeholder;
 }
 
-function getFirstName(player?: FootballPlayerStatRow | null) {
-  if (player?.firstName) return player.firstName;
-
-  const name =
-    player?.displayName ||
-    player?.fullName ||
-    player?.shortName ||
-    "Unknown Player";
-
-  return name.split(" ")[0] || "Unknown";
-}
-
-function getLastName(player?: FootballPlayerStatRow | null) {
-  if (player?.lastName) return player.lastName;
-
-  const name =
-    player?.displayName ||
-    player?.fullName ||
-    player?.shortName ||
-    "Unknown Player";
-
-  return name.split(" ").slice(1).join(" ") || "Player";
-}
-
-function isHiddenGameState(status: string) {
-  return ["Scheduled", "Canceled", "Delayed", "Postponed"].includes(status);
-}
-
-function makePlaceholder(category: Category, side: "away" | "home"): DisplayPlayer {
+function makePlaceholder(
+  category: Category,
+  side: "away" | "home",
+): DisplayPlayer {
   return {
     category,
     side,
@@ -229,12 +202,69 @@ function renderCategoryStats(
   isDark: boolean,
 ) {
   if (!player) {
-    return (
-      <>
-        <Stat label="YDS" value="–" isDark={isDark} />
-        <Stat label="STAT" value="–" isDark={isDark} />
-      </>
-    );
+    switch (category) {
+      case "Passing":
+        return (
+          <>
+            <Stat label="CMP/ATT" value={"-"} isDark={isDark} />
+            <Stat label="YDS" value={"-"} isDark={isDark} />
+            <Stat label="TD" value={"-"} isDark={isDark} />
+            <Stat label="INT" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      case "Rushing":
+        return (
+          <>
+            <Stat label="CAR" value={"-"} isDark={isDark} />
+            <Stat label="YDS" value={"-"} isDark={isDark} />
+            <Stat label="AVG" value={"-"} isDark={isDark} />
+            <Stat label="TD" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      case "Receiving":
+        return (
+          <>
+            <Stat label="REC" value={"-"} isDark={isDark} />
+            <Stat label="YDS" value={"-"} isDark={isDark} />
+            <Stat label="AVG" value={"-"} isDark={isDark} />
+            <Stat label="TD" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      case "Defensive":
+        return (
+          <>
+            <Stat label="INT" value={"-"} isDark={isDark} />
+            <Stat label="YDS" value={"-"} isDark={isDark} />
+            <Stat label="TD" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      case "Kicking":
+        return (
+          <>
+            <Stat label="FG" value={"-"} isDark={isDark} />
+            <Stat label="PCT" value={"-"} isDark={isDark} />
+            <Stat label="LONG" value={"-"} isDark={isDark} />
+            <Stat label="XP" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      case "Punting":
+        return (
+          <>
+            <Stat label="NO" value={"-"} isDark={isDark} />
+            <Stat label="YDS" value={"-"} isDark={isDark} />
+            <Stat label="AVG" value={"-"} isDark={isDark} />
+            <Stat label="LONG" value={"-"} isDark={isDark} />
+          </>
+        );
+
+      default:
+        return null;
+    }
   }
 
   switch (category) {
@@ -242,7 +272,7 @@ function renderCategoryStats(
       return (
         <>
           <Stat
-            label="C/ATT"
+            label="CMP/ATT"
             value={getStatValue(player, "completions/passingAttempts")}
             isDark={isDark}
           />
@@ -319,7 +349,11 @@ function renderCategoryStats(
     case "Defensive":
       return (
         <>
-          <Stat label="INT" value={getStatValue(player, "interceptions")} isDark={isDark} />
+          <Stat
+            label="INT"
+            value={getStatValue(player, "interceptions")}
+            isDark={isDark}
+          />
           <Stat
             label="YDS"
             value={getStatValue(player, "interceptionYards")}
@@ -362,7 +396,11 @@ function renderCategoryStats(
     case "Punting":
       return (
         <>
-          <Stat label="NO" value={getStatValue(player, "punts")} isDark={isDark} />
+          <Stat
+            label="NO"
+            value={getStatValue(player, "punts")}
+            isDark={isDark}
+          />
           <Stat
             label="YDS"
             value={getStatValue(player, "puntYards")}
@@ -396,19 +434,22 @@ export default function GameLeaders({
   homeLogo,
   awayCode,
   homeCode,
+  homeId,
+  awayId,
   isDark,
-  gameStatusDescription,
+  state,
+  league,
   loading = false,
   error = false,
 }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
-
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
+  const route = "/player/football/[id]";
 
   useEffect(() => {
     setSelectedCategory("Passing");
-  }, [gameStatusDescription]);
+  }, [state]);
 
   const topPlayers = useMemo(() => {
     const data = getCategoryData(playersByCategory, selectedCategory);
@@ -436,26 +477,37 @@ export default function GameLeaders({
     ];
   }, [playersByCategory, selectedCategory]);
 
-  const getLabel = (tab: Category) => tab.toUpperCase();
-
   if (error) {
-    return <Text style={global.errorText}>Failed to load leaders</Text>;
+    return (
+      <View>
+        <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
+        <View style={styles.wrapper}>
+          <MainScrollTabBar
+            tabs={GAME_CATEGORIES}
+            selected={selectedCategory}
+            onTabPress={setSelectedCategory}
+            isDark={isDark}
+          />
+          <View style={global.emptyContainer}>
+            <Text style={global.errorText}>Failed to load leaders</Text>
+          </View>
+        </View>
+      </View>
+    );
   }
 
   if (loading) {
     return <GameLeadersSkeleton />;
   }
 
-  if (isHiddenGameState(gameStatusDescription)) {
-    return null;
-  }
+  if (state !== "in" && state !== "post") return null;
 
   if (!Object.keys(playersByCategory ?? {}).length) {
     return null;
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
 
       <View style={styles.wrapper}>
@@ -464,21 +516,6 @@ export default function GameLeaders({
           selected={selectedCategory}
           onTabPress={setSelectedCategory}
           isDark={isDark}
-          renderLabel={(tab, isSelected) => (
-            <Text
-              style={{
-                fontSize: 18,
-                color: isSelected
-                  ? isDark
-                    ? Colors.white
-                    : Colors.black
-                  : Colors.midTone,
-                fontFamily: Fonts.OSREGULAR,
-              }}
-            >
-              {getLabel(tab)}
-            </Text>
-          )}
         />
 
         {topPlayers.map((item) => {
@@ -487,47 +524,66 @@ export default function GameLeaders({
           const teamCode = isAwayRow ? awayCode : homeCode;
           const sideLabel = isAwayRow ? "AWAY" : "HOME";
           const player = item.player;
-
-          const firstName = item.isPlaceholder ? "Unknown" : getFirstName(player);
-          const lastName = item.isPlaceholder ? "Player" : getLastName(player);
-          const jersey = item.isPlaceholder ? "–" : (player?.jersey ?? "–");
+          const playerId = item.player?.id;
+          const playerName = player?.displayName || "N/A";
+          const jersey = player?.jersey ?? "#";
           const headshot = item.isPlaceholder
             ? Placeholder
             : getHeadshotSource(player?.headshot);
+          const teamId = isAwayRow ? awayId : homeId;
+
+          const handlePress = () => {
+            if (!route) {
+              console.warn(`No player route configured for ${league}`);
+              return;
+            }
+
+            if (!teamId) {
+              console.warn(` No team found for "${homeCode}" in ${league}`);
+              return;
+            }
+
+            router.push({
+              pathname: route,
+              params: {
+                id: String(playerId),
+                teamId: String(teamId),
+                league,
+              },
+            });
+          };
 
           return (
-            <View
+            <Pressable
               key={`${sideLabel}-${teamCode}-${selectedCategory}`}
-              style={styles.card}
+              onPress={handlePress}
+              style={({ pressed }) => [pressed && styles.pressed]}
             >
-              <View style={styles.avatarWrapper}>
-                <Image
-                  source={normalizeImageSource(headshot)}
-                  style={styles.avatar}
-                />
-              </View>
-
-              <View style={styles.infoSection}>
-                <View style={styles.nameRow}>
-                  <Text style={styles.playerName}>
-                    {firstName} {lastName}
-                  </Text>
-                  <Text style={styles.jersey}>#{jersey}</Text>
+              <View style={styles.card}>
+                <View style={styles.avatarWrapper}>
+                  <Image source={{ uri: headshot }} style={styles.avatar} />
                 </View>
 
-                <View style={styles.statRow}>
-                  {renderCategoryStats(selectedCategory, player, isDark)}
-                </View>
-              </View>
+                <View style={styles.infoSection}>
+                  <View style={styles.nameRow}>
+                    <Text style={styles.playerName}>{playerName}</Text>
+                    <Text style={styles.jersey}>{jersey}</Text>
+                  </View>
 
-              {teamLogo && (
-                <Image
-                  source={normalizeImageSource(teamLogo)}
-                  style={styles.teamLogo}
-                  resizeMode="contain"
-                />
-              )}
-            </View>
+                  <View style={styles.statRow}>
+                    {renderCategoryStats(selectedCategory, player, isDark)}
+                  </View>
+                </View>
+
+                {teamLogo && (
+                  <Image
+                    source={teamLogo}
+                    style={styles.teamLogo}
+                    resizeMode="contain"
+                  />
+                )}
+              </View>
+            </Pressable>
           );
         })}
       </View>

@@ -1,208 +1,119 @@
-import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
-import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import { globalStyles } from "constants/styles";
-import { getNFLTeamLogo, getNFLTeamByESPNId } from "constants/teamsNFL";
-import { useEffect, useMemo, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
-import HeadingTwo from "../../../../Headings/HeadingTwo";
-import FixedWidthTabBar from "../../../../TabBars/FixedWidthTabBar";
+// TeamInjuries.tsx
 
-export type Injury = {
-  espnId: number | null;
-  name: string;
-  position?: string | null;
-  jerseyNumber?: number | null;
-  image?: string | null;
-  status?: string | null;
-  detail?: string | null;
-  returnDate?: string | null;
-  teamId?: number | null;
-  location: string;
+import TeamInjuriesList from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuriesList";
+import HomeAwayTabBar, {
+  HomeAwayTabValue,
+} from "@/components/TabBars/HomeAwayTabBar";
+import { Player } from "@/hooks/LeagueHooks/useRoster";
+import HeadingTwo from "components/Headings/HeadingTwo";
+import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
+import { useMemo, useState } from "react";
+import { View } from "react-native";
+import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
+
+export type TeamInjury = {
+  team: {
+    id: string | number;
+    displayName: string;
+    abbreviation: string;
+  };
+  injuries: {
+    athlete: {
+      id: string | number;
+      fullName: string;
+      headshot?: {
+        alt: string;
+        href: string;
+      };
+      position?: string;
+      jersey?: string;
+    };
+    status: string;
+    details?: {
+      detail?: string;
+      returnDate?: string;
+    };
+  }[];
 };
 
 type Props = {
-  injuries?: Injury[]; // ✅ optional now
-  loading: boolean;
-  error: any;
-  awayTeamId?: string | number;
-  homeTeamId?: string | number;
-  awayTeamAbbr?: string;
-  homeTeamAbbr?: string;
+  injuries: TeamInjury[];
+  loading?: boolean;
+  league: string;
   isDark: boolean;
+  teamPlayersMap?: Record<string, Player[]>;
+  homeLogo: any;
+  awayLogo: any;
+  homeCode: string;
+  awayCode: string;
+  homeId: string | number;
+  awayId: string | number;
 };
 
-const DEFAULT_HEADSHOT = playerPlaceholder;
-
 export default function TeamInjuries({
-  injuries = [], // ✅ DEFAULT FIX
-  loading,
-  error,
-  awayTeamId,
-  homeTeamId,
-  awayTeamAbbr,
-  homeTeamAbbr,
+  injuries,
+  loading = false,
+  league,
   isDark,
+  teamPlayersMap = {},
+  homeLogo,
+  awayLogo,
+  homeCode,
+  awayCode,
+  homeId,
+  awayId,
 }: Props) {
   const styles = teamInjuryStyles(isDark);
-  const global = globalStyles(isDark);
 
-  /* -------------------------------------------------- */
-  /* Group injuries by teamId                           */
-  /* -------------------------------------------------- */
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
-  const grouped = useMemo(() => {
-    const list = Array.isArray(injuries) ? injuries : [];
+  const normalizedAwayId = awayId;
+  const normalizedHomeId = homeId;
 
-    const away = list.filter((i) => String(i.teamId) === String(awayTeamId));
+  const normalizedInjuries = useMemo(() => {
+    return Array.isArray(injuries) ? injuries : [];
+  }, [injuries]);
 
-    const home = list.filter((i) => String(i.teamId) === String(homeTeamId));
+  const selectedTeamId =
+    selectedTab === "away" ? normalizedAwayId : normalizedHomeId;
 
-    // 🔥 fallback: if teamIds are missing, split evenly
-    if (!away.length && !home.length && list.length) {
-      return {
-        away: list.slice(0, Math.ceil(list.length / 2)),
-        home: list.slice(Math.ceil(list.length / 2)),
-      };
-    }
-
-    return { away, home };
-  }, [injuries, awayTeamId, homeTeamId]);
-
-  const tabs = useMemo(() => {
-    return [
-      awayTeamAbbr?.toUpperCase() ?? "AWAY",
-      homeTeamAbbr?.toUpperCase() ?? "HOME",
-    ];
-  }, [awayTeamAbbr, homeTeamAbbr]);
-
-  const [selected, setSelected] = useState(tabs[0]);
-
-  useEffect(() => {
-    if (tabs[0] !== selected) {
-      setSelected(tabs[0]);
-    }
-  }, [selected, tabs]);
-
-  const selectedInjuries = useMemo(() => {
-    return selected === tabs[0] ? grouped.away : grouped.home;
-  }, [grouped, selected, tabs]);
-
-  /* -------------------------------------------------- */
-  /* States                                             */
-  /* -------------------------------------------------- */
+  const currentInjuries = useMemo(() => {
+    return normalizedInjuries.find((teamInjury) => {
+      return teamInjury.team.id === selectedTeamId;
+    });
+  }, [normalizedInjuries, selectedTeamId]);
 
   if (loading) {
     return <TeamInjuriesSkeleton />;
   }
 
-  if (error) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Failed to load injuries</Text>
-      </View>
-    );
-  }
-
-  if (!injuries.length) return null;
-
-  /* -------------------------------------------------- */
-  /* Render                                             */
-  /* -------------------------------------------------- */
-
-  const renderInjury = ({ item, index }: { item: Injury; index: number }) => {
-    const avatar = item.image || DEFAULT_HEADSHOT;
-
-    return (
-      <View
-        style={[
-          styles.injuryItem,
-          {
-            borderBottomWidth:
-              index === selectedInjuries.length - 1
-                ? 0
-                : StyleSheet.hairlineWidth,
-          },
-        ]}
-      >
-        <View style={styles.avatarWrapper}>
-          <Image
-            source={{ uri: avatar }}
-            style={styles.avatar}
-            resizeMode="cover"
-          />
-        </View>
-
-        <View style={{ flex: 1 }}>
-          <View style={styles.infoSection}>
-            <View style={styles.playerHeader}>
-              <Text style={styles.name}>{item.name ?? "Unknown Player"}</Text>
-              <Text style={styles.jersey}>
-                {item.position ?? "—"}{" "}
-                {item.jerseyNumber ? `#${item.jerseyNumber}` : ""}
-              </Text>
-            </View>
-
-            {item.detail && (
-              <>
-                <Text style={styles.status}>{item.status}</Text>
-                <Text style={styles.details}>
-                  {item.detail} — {item.location ?? "N/A"}
-                </Text>
-              </>
-            )}
-          </View>
-        </View>
-
-        {item.returnDate && (
-          <View style={styles.bottom}>
-            <Text style={styles.status}>
-              Return: {new Date(item.returnDate).toLocaleDateString()}
-            </Text>
-          </View>
-        )}
-      </View>
-    );
-  };
+  if (league !== "nfl") return null;
+  if (!currentInjuries) return null;
 
   return (
     <View>
       <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
       <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabs}
-          selected={selected}
-          isDark={isDark}
-          onTabPress={setSelected}
-          renderLabel={(tabId, isSelected, tabStyles) => {
-            const team = getNFLTeamByESPNId(tabId);
-            const teamCode = team?.code;
-            const logo = getNFLTeamLogo(Number(team?.id), isDark);
-
-            return (
-              <View style={styles.tabLabel}>
-                {logo && (
-                  <Image
-                    source={logo}
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                )}
-
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  {teamCode}
-                </Text>
-              </View>
-            );
+        <HomeAwayTabBar
+          awayTeam={{
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: awayLogo,
           }}
+          homeTeam={{
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: homeLogo,
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
+          isDark={isDark}
         />
 
-        <FlatList
-          data={selectedInjuries}
-          renderItem={renderInjury}
-          keyExtractor={(i, idx) => `${i.espnId ?? idx}`}
-          scrollEnabled={false}
+        <TeamInjuriesList
+          injuries={[currentInjuries]}
+          teamPlayersMap={teamPlayersMap}
+          isDark={isDark}
         />
       </View>
     </View>

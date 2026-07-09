@@ -40,10 +40,13 @@ const FOOTBALL_POSITION_ORDER = [
   "G",
   "C",
   "OT",
+  "OL",
   "DT",
   "DE",
+  "EDGE",
   "LB",
   "CB",
+  "DB",
   "S",
   "K",
   "P",
@@ -140,7 +143,7 @@ function getPositionGroup(
     return "Other";
   }
 
-  if (league === "NFL" || league ===  "CFB") {
+  if (league === "NFL" || league === "CFB") {
     if (["QB"].includes(pos)) {
       return "QB";
     }
@@ -169,12 +172,11 @@ function getPositionGroup(
     if (["C"].includes(pos)) {
       return "C";
     }
-    if ( ["OT"].includes(pos)) {
+    if (["OT", "OL"].includes(pos)) {
       return "OL";
     }
-   
-    if (["DT"].includes(pos)) {
-      return "DT";
+    if (["DT", "DL"].includes(pos)) {
+      return "DL";
     }
     if (["DE"].includes(pos)) {
       return "DE";
@@ -182,13 +184,17 @@ function getPositionGroup(
     if (["LB"].includes(pos)) {
       return "LB";
     }
-    if (["CB"].includes(pos)) {
+    if (["CB", "DB"].includes(pos)) {
       return "CB";
+    }
+
+    if (["EDGE"].includes(pos)) {
+      return "EDGE";
     }
     if (["S"].includes(pos)) {
       return "S";
     }
-    if (["K"].includes(pos)) {
+    if (["K", "PK"].includes(pos)) {
       return "K";
     }
     if (["P"].includes(pos)) {

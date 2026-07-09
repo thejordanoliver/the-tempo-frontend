@@ -14,7 +14,6 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     container: {
       alignItems: "center",
       justifyContent: "center",
-      padding: 12,
     },
 
     // ── Avatar ──────────────────────────────────────────────

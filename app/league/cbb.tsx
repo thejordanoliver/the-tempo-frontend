@@ -1,4 +1,5 @@
 // app/league/cbb.tsx
+import RecruitsList from "@/components/League/Recruiting/RecruitsList";
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/Sports/Basketball/ConferenceListModal";
@@ -20,14 +21,18 @@ import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import RecruitsList from "../../components/League/Recruiting/CBB/RecruitsList";
 import NewsList from "../../components/News/NewsList";
 import BasketballGamesList from "../../components/Sports/Basketball/Games/GamesList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
+import TournamentBracket from "../../components/Sports/Basketball/TournamentBracket";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
+import {
+  getCurrentMarchMadnessSeason,
+  useMarchMadness,
+} from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
@@ -52,7 +57,6 @@ export default function CBBLeagueScreen() {
     useState<SelectedConference>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-
   const pagerRef = useRef<PagerView>(null);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
@@ -60,7 +64,6 @@ export default function CBBLeagueScreen() {
   const [recruitYear, setRecruitYear] = useState(() =>
     String(getRecruitYear()),
   );
-
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
     "players",
   );
@@ -104,6 +107,18 @@ export default function CBBLeagueScreen() {
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
+
+  const {
+    bracket,
+    loading: bracketLoading,
+    error: bracketError,
+    refreshing: bracketRefreshing,
+    refresh: refreshBracket,
+  } = useMarchMadness({
+    league: "cbb",
+    season: getCurrentMarchMadnessSeason(),
+    enabled: selectedTab === "bracket",
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -172,9 +187,13 @@ export default function CBBLeagueScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
+          scrollEnabled={selectedTab !== "bracket"}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
-            setSelectedTab(tabs[index]);
+            const nextTab = tabs[index];
+            if (nextTab) {
+              setSelectedTab(nextTab);
+            }
           }}
         >
           {/* SCORES */}
@@ -234,7 +253,15 @@ export default function CBBLeagueScreen() {
           </View>
 
           {/* Bracket */}
-          <View key="bracket"></View>
+          <View key="bracket" style={styles.contentArea}>
+            <TournamentBracket
+              tournament={bracket}
+              loading={bracketLoading}
+              error={bracketError}
+              refreshing={bracketRefreshing}
+              onRefresh={refreshBracket}
+            />
+          </View>
 
           <View key="recruits" style={styles.contentArea}>
             <RecruitsList
@@ -244,6 +271,7 @@ export default function CBBLeagueScreen() {
               onYearChange={setRecruitYear}
               onTeamChange={setRecruitTeam}
               onViewChange={setRecruitView}
+              league={league}
             />
           </View>
 

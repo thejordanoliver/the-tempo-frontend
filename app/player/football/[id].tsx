@@ -73,6 +73,7 @@ export default function PlayerDetailScreen() {
   const teamLogo = isNFL
     ? getNFLTeamLogo(teamId, true)
     : getCFBTeamLogo(teamId, true);
+  const isActive = player?.active;
 
   /* ---------------- Last game ---------------- */
   const {
@@ -131,16 +132,18 @@ export default function PlayerDetailScreen() {
         error={seasonsError}
         player={player}
       />
-      <LatestGame
-        game={game}
-        loading={gameLoading}
-        error={gameError}
-        isDark={isDark}
-        league={league}
-        isNFL={isNFL}
-        isCFB={isCFB}
-      />
 
+      {isActive && (
+        <LatestGame
+          game={game}
+          loading={gameLoading}
+          error={gameError}
+          isDark={isDark}
+          league={league}
+          isNFL={isNFL}
+          isCFB={isCFB}
+        />
+      )}
       <PlayerStatTable
         data={seasons}
         loading={seasonsLoading}
