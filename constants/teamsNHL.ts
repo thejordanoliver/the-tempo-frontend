@@ -1,4 +1,4 @@
-import { NHLTeam } from "types/hockey";
+import { NHLTeam } from "@/types/hockey/hockey";
 
 import AvalancheLogo from "../assets/Hockey/NHL_Logos/Avalanche.png";
 import AvalancheLogoLight from "../assets/Hockey/NHL_Logos/AvalancheLight.png";
@@ -806,7 +806,7 @@ export const nhlTeams: NHLTeam[] = [
 ];
 
 export const getNHLTeam = (id: number | string) =>
-  nhlTeams.find((t) => String(t.id) === String(id)) || null;
+  nhlTeams.find((t) => String(t.id) === String(id)) || undefined;
 
 export const getNHLTeamLogo = (
   id: number | string | undefined,

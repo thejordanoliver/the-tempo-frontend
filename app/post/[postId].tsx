@@ -8,7 +8,7 @@ import { CommentItem } from "components/Forum/CommentItem";
 import { Post, PostItem } from "components/Forum/PostItem";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { GiphySearchModal } from "components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
-import { Colors, Fonts, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -63,6 +63,7 @@ function mapCommentToPost(comment: Comment): Post {
     full_name: null,
     profile_image: comment.profile_image,
     likes: 0,
+    shares: 0,
     comments_count: 0,
     liked_by_current_user: false,
     images: comment.images ?? [],

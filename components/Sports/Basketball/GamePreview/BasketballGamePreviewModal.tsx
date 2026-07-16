@@ -5,7 +5,7 @@ import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballG
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { BasketballGame } from "@/types/basketball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";

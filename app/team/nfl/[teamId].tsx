@@ -1,4 +1,5 @@
-import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import Roster from "@/components/Sports/Baseball/Team/Roster";
+import GamesList from "@/components/Sports/Football/Games/GamesList";
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
@@ -19,13 +20,13 @@ import { useRosterStats } from "hooks/FootballHooks/useRosterStats";
 import { useTeamStats } from "hooks/FootballHooks/useTeamStats";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLayoutEffect, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
+import { getFirstSeasonGame } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import Roster from "@/components/Sports/Baseball/Team/Roster";
 
 export default function TeamDetailScreen() {
   const league = "NFL";
@@ -90,6 +91,11 @@ export default function TeamDetailScreen() {
     league,
   );
 
+  const firstSeasonGame = useMemo(
+    () => getFirstSeasonGame(teamGames),
+    [teamGames],
+  );
+
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
@@ -150,37 +156,29 @@ export default function TeamDetailScreen() {
       >
         {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
-          <FootballGamesList
+          <GamesList
             games={teamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             error={gamesError}
             showHeaders={true}
+            showCountdown={true}
+            countdownGame={firstSeasonGame}
             isNFL={true}
           />
         </View>
 
-        {/* News */}
+        {/* NEWS */}
         <View key="news" style={styles.contentArea}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          >
-            <NewsList
-              items={articles}
-              isDark={isDark}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
+          <NewsList
+            items={articles}
+            loading={newsLoading}
+            error={newsError}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            isDark={isDark}
+          />
         </View>
 
         {/* ROSTER */}

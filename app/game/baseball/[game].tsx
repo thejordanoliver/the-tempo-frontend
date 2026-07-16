@@ -30,7 +30,7 @@ import { useLastFiveGames } from "../../../hooks/BaseballHooks/useLastFiveGames"
 import { useScrollFade } from "../../../hooks/useScrollFade";
 import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
-import { BaseballGameCardProps } from "../../../types/baseball";
+import { BaseballGameCardProps } from "../../../types/baseball/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
 
 type RouteParams = {

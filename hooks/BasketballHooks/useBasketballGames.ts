@@ -1,9 +1,16 @@
+import { BasketballGame } from "@/types/basketball/basketball";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BaseballGame } from "types/baseball";
 import { apiClient } from "utils/apiClient";
 
-type League = "nba" | "cbb" | "wcbb" | "wnba" | "summervegas" | "summerutah" | "summercalifornia";
+type League =
+  | "nba"
+  | "cbb"
+  | "wcbb"
+  | "wnba"
+  | "summervegas"
+  | "summerutah"
+  | "summercalifornia";
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
@@ -46,7 +53,7 @@ function getBasketballEndpoint(league: League) {
 }
 
 export function useBasketballGames(date?: Date, league: League = "nba") {
-  const [games, setGames] = useState<BaseballGame[]>([]);
+  const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 

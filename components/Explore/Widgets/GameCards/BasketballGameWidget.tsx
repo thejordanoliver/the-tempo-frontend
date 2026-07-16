@@ -1,3 +1,4 @@
+import { BasketballGame } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
@@ -8,7 +9,6 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { BasketballGame } from "types/basketball";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";

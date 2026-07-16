@@ -9,7 +9,7 @@ export type FootballCalendarWeek = {
   endDate: string;
 };
 
-export type UFCCalendarEvent = {
+export type CalendarEvent = {
   label: string;
   stage: string;
   eventNumber: number;
@@ -19,7 +19,7 @@ export type UFCCalendarEvent = {
   eventId: string | null;
 };
 
-type CalendarFormat = "raw" | "football" | "soccer" | "ufc";
+type CalendarFormat = "raw" | "football" | "soccer" | "ufc" | "racing";
 
 type UseLeagueCalendarResult<T> = {
   calendar: T[];
@@ -44,11 +44,15 @@ export function useLeagueCalendar(
   format: "soccer",
 ): UseLeagueCalendarResult<FootballCalendarWeek>;
 
-
 export function useLeagueCalendar(
   league: string,
   format: "ufc",
-): UseLeagueCalendarResult<UFCCalendarEvent>;
+): UseLeagueCalendarResult<CalendarEvent>;
+
+export function useLeagueCalendar(
+  league: string,
+  format: "racing",
+): UseLeagueCalendarResult<CalendarEvent>;
 
 export function useLeagueCalendar(
   league: string,
@@ -58,9 +62,9 @@ export function useLeagueCalendar(
 export function useLeagueCalendar(
   league: string,
   format: CalendarFormat = "raw",
-): UseLeagueCalendarResult<string | FootballCalendarWeek | UFCCalendarEvent> {
+): UseLeagueCalendarResult<string | FootballCalendarWeek | CalendarEvent> {
   const [calendar, setCalendar] = useState<
-    (string | FootballCalendarWeek | UFCCalendarEvent)[]
+    (string | FootballCalendarWeek | CalendarEvent)[]
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -95,7 +99,7 @@ export function useLeagueCalendar(
           return;
         }
 
-         if (format === "soccer") {
+        if (format === "soccer") {
           const flattened: FootballCalendarWeek[] =
             data.calendar?.flatMap((phase: any) =>
               (phase.entries ?? []).map((entry: any) => ({
@@ -111,8 +115,8 @@ export function useLeagueCalendar(
           return;
         }
 
-        if (format === "ufc") {
-          const flattened: UFCCalendarEvent[] =
+        if (format === "ufc" || "nascarpremier" || "nascarsecondary") {
+          const flattened: CalendarEvent[] =
             data.calendar?.map((event: any, index: number) => {
               const eventRef = event.event?.$ref ?? null;
 

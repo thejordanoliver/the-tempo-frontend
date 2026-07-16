@@ -1,4 +1,4 @@
-import { BasketballGame } from "@/types/basketball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { Colors } from "constants/styles";
 import { Image } from "expo-image";
 

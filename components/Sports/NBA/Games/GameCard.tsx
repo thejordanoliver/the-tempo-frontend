@@ -1,4 +1,4 @@
-import { BasketballGameCardProps } from "@/types/basketball";
+import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
@@ -55,8 +55,8 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
   const home = isSL ? getTeamBySummerId(homeId) : getNBATeam(homeId);
   const away = isSL ? getTeamBySummerId(awayId) : getNBATeam(awayId);
 
-  const homeName = home?.name || game.home?.shortName;
-  const awayName = away?.name || game.away?.shortName;
+  const homeName = home?.name ?? game.home?.shortName ?? "TBD";
+  const awayName = away?.name ?? game.away?.shortName ?? "TBD";
 
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);

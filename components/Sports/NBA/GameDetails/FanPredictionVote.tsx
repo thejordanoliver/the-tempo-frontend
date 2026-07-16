@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import { castVoteApi, fetchVoteResults, PollResult } from "hooks/useGameVotes";
 import { useLiveVotes } from "hooks/useLiveVotes";
@@ -12,7 +13,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  useColorScheme,
   View,
 } from "react-native";
 
@@ -43,8 +43,8 @@ export default function FanPredictionVote({
   onVoteCast,
   state,
 }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = fanPredictionVoteStyles(isDark);
   const global = globalStyles(isDark);
 

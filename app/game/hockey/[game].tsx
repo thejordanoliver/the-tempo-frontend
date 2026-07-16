@@ -5,7 +5,7 @@ import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
-import { HockeyGameCardProps } from "@/types/hockey";
+import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";

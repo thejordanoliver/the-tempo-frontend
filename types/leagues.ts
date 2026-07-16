@@ -1,9 +1,9 @@
-import { BaseballGame } from "./baseball";
-import { BasketballGame } from "./basketball";
+import { BaseballGame } from "./baseball/baseball";
+import { BasketballGame } from "./basketball/basketball";
 import { FootballGame } from "./football/football";
-import { HockeyGame } from "./hockey";
+import { HockeyGame } from "./hockey/hockey";
 import { MMAFight } from "./mma";
-import { SoccerGame } from "./soccer";
+import { SoccerGame } from "./soccer/soccer";
 
 export type LeagueCategory =
   | "NBA"

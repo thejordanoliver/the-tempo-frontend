@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-import { TeamStats } from "@/types/types";
+import type { TeamStats } from "@/utils/stats";
 
 type StatItem = {
   name: string;

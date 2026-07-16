@@ -1,3 +1,5 @@
+import CountdownClock from "@/components/CountdownClock";
+import { BasketballGame } from "@/types/basketball/basketball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
@@ -21,7 +23,7 @@ import SquareGameCard from "./SquareGameCard";
 import StackedGameCard from "./StackedGameCard";
 
 type Props = {
-  games: any[];
+  games: BasketballGame[];
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
@@ -33,12 +35,21 @@ type Props = {
   isCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
+  showCountdown?: boolean;
+  countdownGame?: BasketballGame | null;
 };
 
 type GameSection = {
   title: string;
-  data: any[];
+  data: BasketballGame[];
 };
+
+type PlaceholderGame = { _isPlaceholder: true; id: string };
+type GameListItem = BasketballGame | PlaceholderGame;
+
+function isPlaceholderGame(game: GameListItem): game is PlaceholderGame {
+  return "_isPlaceholder" in game;
+}
 
 export default function GamesList({
   games,
@@ -50,6 +61,8 @@ export default function GamesList({
   day,
   showHeaders,
   scrollEnabled = true,
+  showCountdown = false,
+  countdownGame = null,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -57,16 +70,18 @@ export default function GamesList({
   const styles = gameListStyles;
   const global = globalStyles(isDark);
 
-  const [previewGame, setPreviewGame] = useState<any | null>(null);
+  const [previewGame, setPreviewGame] = useState<BasketballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const isSLGame = (game: any) =>
+  const isSLGame = (game: BasketballGame) =>
     String(game?.league?.id) === "23170" ||
     String(game?.league?.id) === "64" ||
     String(game?.league?.id) === "63";
-  const isCBBGame = (game: any) => String(game?.league?.id) === "10";
-  const isWCBBGame = (game: any) => String(game?.league?.id) === "54";
-  const isWNBAGame = (game: any) => String(game?.league?.id) === "59";
+  const isCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
+  const isWCBBGame = (game: BasketballGame) =>
+    String(game?.league?.id) === "54";
+  const isWNBAGame = (game: BasketballGame) =>
+    String(game?.league?.id) === "59";
 
   /* ----------------------------- Sections ----------------------------- */
 
@@ -75,9 +90,17 @@ export default function GamesList({
     return [{ title: "Regular Season", data: games }];
   }, [games, showHeaders]);
 
+  const gridData = useMemo<GameListItem[]>(
+    () =>
+      games.length % 2 === 1
+        ? [...games, { _isPlaceholder: true, id: "placeholder" }]
+        : games,
+    [games],
+  );
+
   /* --------------------------- Interactions ---------------------------- */
 
-  const handleLongPress = (game: any) => {
+  const handleLongPress = (game: BasketballGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
@@ -85,14 +108,14 @@ export default function GamesList({
 
   /* -------------------------- Game Renderer ---------------------------- */
 
-  const renderGameCard = (game: any) => {
-    if ((game as any)?._isPlaceholder) {
+  const renderGameCard = (game: GameListItem) => {
+    if (isPlaceholderGame(game)) {
       return <View style={styles.gridItem} />;
     }
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
       <LongPressGestureHandler
-        key={game?.game?.id ?? game?.id}
+        key={game.id}
         minDurationMs={300}
         onHandlerStateChange={({ nativeEvent }) => {
           if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
@@ -233,15 +256,11 @@ export default function GamesList({
     <>
       {viewMode === "grid" ? (
         <FlatList
-          data={
-            games.length % 2 === 1
-              ? [...games, { _isPlaceholder: true } as any]
-              : games
-          }
+          data={gridData}
           keyExtractor={(item, index) =>
-            (item as any)?._isPlaceholder
+            isPlaceholderGame(item)
               ? `placeholder-${index}`
-              : `game-${item?.game?.id ?? index}`
+              : `game-${item.id ?? index}`
           }
           numColumns={2}
           columnWrapperStyle={styles.gridRow}
@@ -249,6 +268,11 @@ export default function GamesList({
           refreshing={refreshing}
           onRefresh={onRefresh}
           scrollEnabled={scrollEnabled}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock game={countdownGame} loading={loading} />
+            ) : null
+          }
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
             <Text style={global.emptyText}>
@@ -260,12 +284,17 @@ export default function GamesList({
         />
       ) : (
         <SectionList
-          sections={sections as SectionListData<any, GameSection>[]}
-          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+          sections={sections as SectionListData<BasketballGame, GameSection>[]}
+          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
           stickySectionHeadersEnabled={false}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock game={countdownGame} loading={loading} />
+            ) : null
+          }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}

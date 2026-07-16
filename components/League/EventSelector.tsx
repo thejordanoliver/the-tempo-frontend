@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, activeOpacity } from "@/constants/styles";
 import dayjs from "dayjs";
 import React, {
   useCallback,

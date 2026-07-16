@@ -62,6 +62,10 @@ export const LEAGUE_TABS = {
   CHAMPIONS: ["scores", "news", "standings", "forum"],
   BUNDESLIGA: ["scores", "news", "standings", "forum"],
   FIFA: ["scores", "news", "standings", "forum"],
+  F1: ["scores", "news", "standings", "forum"],
+  NASCARPREMIER: ["scores", "news", "standings", "forum"],
+  NASCARSECONDARY: ["scores", "news", "standings", "forum"],
+  NASCARTRUCK: ["scores", "news", "standings", "forum"],
   FIFAF: ["scores", "news", "standings", "forum"],
   FIFAW: ["scores", "news", "standings", "forum"],
 } as const;

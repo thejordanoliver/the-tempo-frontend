@@ -1,7 +1,7 @@
 import { Animated } from "react-native";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
-import SectionHeaderWithToggle from "../SectionHeaderWithToggle";
+import HeaderWithToggle from "../Headings/HeaderWithToggle";
 
 type Props = {
   favorites: any[];
@@ -24,7 +24,7 @@ export default function FavoriteTeamsSection({
 }: Props) {
   return (
     <>
-      <SectionHeaderWithToggle
+      <HeaderWithToggle
         title="Favorite Teams"
         isGridView={isGridView}
         onToggleView={toggleFavoriteTeamsView}

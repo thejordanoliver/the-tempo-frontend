@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "@/constants/styles";
+import { activeOpacity, Colors, Fonts } from "@/constants/styles";
 import WeekSelectorSkeleton from "components/Skeletons/WeekSelectorSkeleton";
 import React, {
   useCallback,

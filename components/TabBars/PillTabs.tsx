@@ -57,7 +57,6 @@ export default function PillTabs<T extends string = string>({
 }: Props<T>) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const styles = useMemo(() => pillTabsStyles(isDark), [isDark]);
 
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -112,25 +111,23 @@ export default function PillTabs<T extends string = string>({
     });
   }, [containerWidth, selectedTabLayout, shouldScroll]);
 
-  const handleTabLayout =
-    (value: T) =>
-    (event: LayoutChangeEvent) => {
-      const { x, width } = event.nativeEvent.layout;
-      const key = String(value);
+  const handleTabLayout = (value: T) => (event: LayoutChangeEvent) => {
+    const { x, width } = event.nativeEvent.layout;
+    const key = String(value);
 
-      setTabLayouts((prev) => {
-        const current = prev[key];
+    setTabLayouts((prev) => {
+      const current = prev[key];
 
-        if (current?.x === x && current?.width === width) {
-          return prev;
-        }
+      if (current?.x === x && current?.width === width) {
+        return prev;
+      }
 
-        return {
-          ...prev,
-          [key]: { x, width },
-        };
-      });
-    };
+      return {
+        ...prev,
+        [key]: { x, width },
+      };
+    });
+  };
 
   return (
     <View

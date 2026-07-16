@@ -1,9 +1,11 @@
 import { teams } from "constants/teams";
+import { cbTeams } from "constants/teamsCB";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import { LeagueTeam, LeagueType } from "types/types";
 
@@ -55,9 +57,13 @@ export function getTeamRoute(league: LeagueType): string {
       return "/team/wcbb/[teamId]";
     case "MLB":
       return "/team/mlb/[teamId]";
+    case "CB":
+      return "/team/cb/[teamId]";
+    case "SB":
+      return "/team/sb/[teamId]";
     case "NHL":
       return "/team/nhl/[teamId]";
-    case "MMA":
+    case "UFC":
       return "/player/mma/[id]";
     default:
       throw new Error(`Invalid league: ${league}`);
@@ -87,6 +93,18 @@ export const favoriteTeamsList = [
     teams: mlbTeams,
     league: "MLB",
     sportTerms: "MLB baseball",
+  }),
+
+  ...buildLeagueTeams({
+    teams: cbTeams,
+    league: "CB",
+    sportTerms: "college baseball NCAA",
+  }),
+
+  ...buildLeagueTeams({
+    teams: sbTeams,
+    league: "SB",
+    sportTerms: "college softball NCAA",
   }),
 
   ...buildLeagueTeams({

@@ -32,17 +32,20 @@ export type MediaItem = {
 
 type Props = {
   media: MediaItem[];
+  currentUserId: string | number | null;
   item: {
     id: string;
     text?: string;
     likes: number;
     comments_count?: number;
+    liked_by_current_user?: boolean;
     username?: string;
     profile_image: string | null;
+    user_id: string | number;
   };
 };
 
-export default function PostImages({ media, item }: Props) {
+export default function PostImages({ media, currentUserId, item }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
@@ -108,8 +111,11 @@ export default function PostImages({ media, item }: Props) {
         postText={item.text}
         likesCount={item.likes}
         commentsCount={item.comments_count}
+        likedByCurrentUser={item.liked_by_current_user}
         profileImage={item.profile_image}
         username={item.username}
+        postAuthorUserId={item.user_id}
+        currentUserId={currentUserId}
       />
     </View>
   );

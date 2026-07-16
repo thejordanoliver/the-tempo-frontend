@@ -51,7 +51,6 @@ export default function SoccerLeagueScreen() {
     league?: string | string[];
     leagueLabel?: string;
   }>();
-
   const normalizedParamLeague = normalizeLeagueParam(params.league);
 
   const { resolvedColorScheme } = usePreferences();
@@ -63,7 +62,6 @@ export default function SoccerLeagueScreen() {
     : "EPL";
 
   const leagueLabel = params.leagueLabel;
-
 
   const { calendar } = useLeagueCalendar(league);
 

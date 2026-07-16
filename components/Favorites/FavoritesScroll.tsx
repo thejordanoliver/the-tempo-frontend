@@ -1,9 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import { Colors } from "constants/styles";
-import { mlbTeams } from "constants/teamsMLB";
-import { nhlTeams } from "constants/teamsNHL";
-import { wnbaTeams } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -11,25 +8,10 @@ import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
-import { LeagueType } from "types/types";
-import { teams } from "../../constants/teams";
-import { cbbTeams } from "../../constants/teamsCBB";
-import { cfbTeams } from "../../constants/teamsCFB";
-import { nflTeams } from "../../constants/teamsNFL";
+import type { FavoriteTeamItem } from "types/favorites";
+import { isFavoriteLeague } from "types/favorites";
+import { getFavoriteBaseTeam } from "utils/favoriteTeams";
 import { TeamTab } from "./TeamTab";
-
-type TeamWithLeague = {
-  id: string | number;
-  name: string;
-  code: string;
-  logo?: any;
-  logoLight?: any;
-  color?: string;
-  league: LeagueType;
-  key: string;
-  wid?: number;
-  isDark: boolean;
-};
 
 type Props = {
   favoriteTeamIds: string[];
@@ -52,74 +34,42 @@ export default function FavoritesScroll({
   const styles = favoritesScrollStyles(isDark);
   const { syncFavorites } = useFavoriteTeamsContext();
 
-  // -------------------------
-  // Prepare teams from favoriteTeamIds
-  // -------------------------
-  const data: TeamWithLeague[] = useMemo(() => {
-    return favoriteTeamIds
-      .map((fav) => {
-        const [league, id] = fav.split(":");
+  const data = useMemo<FavoriteTeamItem[]>(() => {
+    return favoriteTeamIds.reduce<FavoriteTeamItem[]>(
+      (teams, favorite) => {
+        const [leagueValue, favoriteId] = favorite.split(":");
 
-        let baseTeam:
-          | {
-              id: number | null;
-              name: string;
-              logo?: any;
-              color?: string | null;
-              wid?: number | null;
-            }
-          | undefined;
-
-        switch (league) {
-          case "NBA":
-            baseTeam = teams.find((t) => String(t.id) === id);
-            break;
-          case "WNBA":
-            baseTeam = wnbaTeams.find((t) => String(t.id) === id);
-            break;
-          case "NFL":
-            baseTeam = nflTeams.find((t) => String(t.id) === id);
-            break;
-          case "CFB":
-            baseTeam = cfbTeams.find((t) => String(t.id) === id);
-            break;
-          case "CBB":
-            baseTeam = cbbTeams.find((t) => String(t.id) === id);
-            break;
-          case "WCBB":
-            baseTeam = cbbTeams.find((t) => String(t.wid) === id);
-            if (!baseTeam?.wid) return null;
-            break;
-          case "MLB":
-            baseTeam = mlbTeams.find((t) => String(t.id) === id);
-            break;
-          case "NHL":
-            baseTeam = nhlTeams.find((t) => String(t.id) === id);
-            break;
-          default:
-            return null;
+        if (!isFavoriteLeague(leagueValue) || !favoriteId) {
+          return teams;
         }
 
-        if (!baseTeam || (league !== "WCBB" && baseTeam.id == null))
-          return null;
+        const league = leagueValue;
+        const baseTeam = getFavoriteBaseTeam(league, favoriteId);
 
-        return {
+        if (!baseTeam) {
+          return teams;
+        }
+
+        teams.push({
           ...baseTeam,
-          id: league === "WCBB" ? String(baseTeam.wid) : String(baseTeam.id),
+          id: favoriteId,
+          code: baseTeam.code ?? "",
+          league,
+          key: favorite,
           color: baseTeam.color ?? undefined,
-          league: league as LeagueType,
-          key: `${league}-${id}`,
-          wid: baseTeam.wid,
-          isDark, // ✅ now correctly set on every item
-        } as TeamWithLeague;
-      })
-      .filter((t): t is TeamWithLeague => t !== null);
-  }, [favoriteTeamIds, isDark]);
-  if (loading) return <FavoritesScrollSkeleton isDark={isDark} />;
+          isDark,
+        });
 
-  // -------------------------
-  // Render
-  // -------------------------
+        return teams;
+      },
+      [],
+    );
+  }, [favoriteTeamIds, isDark]);
+
+  if (loading) {
+    return <FavoritesScrollSkeleton isDark={isDark} />;
+  }
+
   return (
     <View style={styles.favoritesWrapper}>
       <DraggableFlatList
@@ -131,7 +81,10 @@ export default function FavoritesScroll({
         activationDistance={30}
         renderItem={TeamTab}
         onDragBegin={async () => {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          await Haptics.impactAsync(
+            Haptics.ImpactFeedbackStyle.Medium,
+          );
+
           onDragStart?.();
         }}
         onPlaceholderIndexChange={async () => {
@@ -142,12 +95,12 @@ export default function FavoritesScroll({
             Haptics.NotificationFeedbackType.Success,
           );
 
-          const orderedIds = reordered.map((t) =>
-            t.league === "WCBB" ? `WCBB:${t.wid}` : `${t.league}:${t.id}`,
+          const orderedFavorites = reordered.map(
+            (team) => `${team.league}:${team.id}`,
           );
 
-          await syncFavorites(orderedIds); // ✅ hook handles storage + API
-          onFavoritesChange?.(orderedIds);
+          await syncFavorites(orderedFavorites);
+          onFavoritesChange?.(orderedFavorites);
           onDragEnd?.();
         }}
         ListFooterComponent={() => (
@@ -163,10 +116,13 @@ export default function FavoritesScroll({
                 name={data.length === 0 ? "add" : "create"}
                 size={32}
                 color={
-                  isDark ? Colors.dark.background : Colors.light.background
+                  isDark
+                    ? Colors.dark.background
+                    : Colors.light.background
                 }
               />
             </View>
+
             <Text style={styles.teamLabel}>
               {data.length === 0 ? "Add teams" : "Edit"}
             </Text>

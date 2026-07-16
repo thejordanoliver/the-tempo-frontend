@@ -1,5 +1,5 @@
 import Roster from "@/components/Sports/Baseball/Team/Roster";
-import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
@@ -20,10 +20,11 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamStats } from "hooks/FootballHooks/useTeamStats";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { getFirstSeasonGame } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 
 export default function TeamDetailScreen() {
@@ -89,6 +90,11 @@ export default function TeamDetailScreen() {
     league,
   );
 
+  const firstSeasonGame = useMemo(
+    () => getFirstSeasonGame(teamGames),
+    [teamGames],
+  );
+
   const handleRefresh = async () => {
     setRefreshing(true);
 
@@ -151,13 +157,15 @@ export default function TeamDetailScreen() {
       >
         {/* SCHEDULE */}
         <View key="schedule" style={styles.contentArea}>
-          <FootballGamesList
+          <GamesList
             games={teamGames}
             loading={gamesLoading}
             refreshing={refreshing}
             onRefresh={handleRefresh}
             error={gamesError}
             showHeaders={true}
+            showCountdown={true}
+            countdownGame={firstSeasonGame}
             isCFB={true}
           />
         </View>

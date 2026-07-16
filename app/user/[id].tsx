@@ -1,6 +1,7 @@
 import { globalStyles } from "@/constants/styles";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
+import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
 import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
 import ProfileBanner from "components/Profile/ProfileBanner";
@@ -8,6 +9,7 @@ import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useBadges } from "hooks/useBadges";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
@@ -71,6 +73,17 @@ export default function UserProfileScreen() {
     currentUserId,
     toggleFollow,
   } = useUserProfile(userId);
+
+  const {
+    featuredBadges,
+    summary,
+    loading: badgesLoading,
+    error: badgesError,
+    refresh: refreshBadges,
+  } = useBadges({
+    userId,
+    enabled: Boolean(userId),
+  });
 
   const currentUserIdString = useMemo(
     () => (currentUserId ? String(currentUserId) : ""),
@@ -217,6 +230,25 @@ export default function UserProfileScreen() {
           styles={styles}
           itemWidth={itemWidth}
           isCurrentUser={isCurrentUser}
+        />
+      </View>
+
+      <View style={styles.favoritesContainer}>
+        <BadgePreviewSection
+          badges={featuredBadges}
+          earnedCount={summary.earnedCount}
+          totalCount={summary.totalCount}
+          isDark={isDark}
+          itemWidth={itemWidth}
+          loading={badgesLoading}
+          error={badgesError}
+          onRetry={refreshBadges}
+          onPressSeeAll={() => {
+            router.push({
+              pathname: "/badges",
+              params: { userId },
+            });
+          }}
         />
       </View>
     </ScrollView>

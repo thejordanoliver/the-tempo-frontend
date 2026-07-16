@@ -1,6 +1,6 @@
+import { BasketballGame } from "@/types/basketball/basketball";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { BasketballGame } from "types/basketball";
 import { getCBBSeason, getWNBASeason } from "utils/dateUtils";
 
 import { apiClient } from "utils/apiClient";

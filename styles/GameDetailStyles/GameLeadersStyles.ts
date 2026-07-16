@@ -3,6 +3,9 @@ import { StyleSheet } from "react-native";
 
 export const gameLeadersStyles = (isDark: boolean) =>
   StyleSheet.create({
+    container: {
+      gap: 10,
+    },
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,

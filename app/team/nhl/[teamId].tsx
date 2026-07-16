@@ -22,6 +22,11 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getNHLSeason } from "utils/dateUtils";
+import {
+  filterGamesBySeasonYear,
+  getFirstSeasonGame,
+  isSameCalendarMonth,
+} from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
@@ -81,6 +86,7 @@ export default function TeamDetailScreen() {
     refreshing: gamesRefreshing,
     error: gamesError,
     refresh: refreshTeamGames,
+    season: scheduleSeason,
   } = useTeamGames("nhl", teamIdNum);
 
   const monthGroups = useMemo(() => {
@@ -131,6 +137,21 @@ export default function TeamDetailScreen() {
         ?.games ?? []
     );
   }, [games, monthGroups, selectedMonthKey]);
+
+  const seasonGames = useMemo(
+    () => filterGamesBySeasonYear(games, scheduleSeason?.year),
+    [games, scheduleSeason?.year],
+  );
+
+  const firstSeasonGame = useMemo(
+    () => getFirstSeasonGame(seasonGames),
+    [seasonGames],
+  );
+
+  const isSeasonOpeningMonth = useMemo(
+    () => isSameCalendarMonth(firstSeasonGame?.date, selectedDate),
+    [firstSeasonGame?.date, selectedDate],
+  );
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -225,11 +246,14 @@ export default function TeamDetailScreen() {
           </View>
 
           <GamesList
-            games={selectedMonthGames as any}
+            games={selectedMonthGames}
             error={gamesError}
             loading={gamesLoading}
             refreshing={gamesRefreshing || refreshing}
             onRefresh={handleRefresh}
+            showHeaders={true}
+            showCountdown={isSeasonOpeningMonth}
+            countdownGame={firstSeasonGame}
             scrollEnabled
           />
         </View>

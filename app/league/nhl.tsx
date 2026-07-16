@@ -163,6 +163,7 @@ export default function NHLLeagueScreen() {
               loading={loadingGames}
               refreshing={gamesRefreshing}
               onRefresh={handleScoresRefresh}
+              showHeaders={false}
               scrollEnabled={true}
             />
           </View>

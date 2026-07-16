@@ -1,3 +1,4 @@
+import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -6,7 +7,6 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
-import { HockeyGameCardProps } from "types/hockey";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {

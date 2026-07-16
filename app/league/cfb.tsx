@@ -1,5 +1,5 @@
 import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
-import FootballGamesList from "@/components/Sports/Football/Games/FootballGamesList";
+import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { cfbConferences } from "@/constants/cfbConferences";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
@@ -280,11 +280,12 @@ export default function CFBLeagueScreen() {
               isDark={isDark}
             />
 
-            <FootballGamesList
+            <GamesList
               games={filteredWeekGames}
               loading={gamesLoading}
               refreshing={screenRefreshing || gamesRefreshing}
               onRefresh={handleRefresh}
+              showHeaders={false}
               isCFB={true}
             />
           </View>

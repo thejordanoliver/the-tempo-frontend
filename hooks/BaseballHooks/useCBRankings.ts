@@ -1,6 +1,6 @@
+import { BaseballTeam } from "@/types/baseball/baseball";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BaseballTeam } from "types/baseball";
 import { apiClient } from "utils/apiClient";
 
 /* =====================================================

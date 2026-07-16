@@ -1,4 +1,7 @@
+import { BaseballGame } from "@/types/baseball/baseball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
+import { HockeyGame } from "@/types/hockey/hockey";
 import { Ionicons } from "@expo/vector-icons";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors, activeOpacity } from "constants/styles";
@@ -18,9 +21,6 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { BaseballGame } from "types/baseball";
-import { BasketballGame } from "types/basketball";
-import { HockeyGame } from "types/hockey";
 import { ExploreWidgetSize } from "types/widgets";
 import BaseballGameWidget from "./GameCards/BaseballGameWidget";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";

@@ -1,7 +1,8 @@
 import { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
-import { StyleSheet, useColorScheme } from "react-native";
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
@@ -11,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 export default function BlurBackdrop({ animatedPosition, style }: BottomSheetBackdropProps) {
-  const theme = useColorScheme(); // 'light' | 'dark' | null
+  const { resolvedColorScheme } = usePreferences();
   const [intensity, setIntensity] = useState(0);
 
   const minPosition = 576; // 40% snap point
@@ -44,7 +45,7 @@ export default function BlurBackdrop({ animatedPosition, style }: BottomSheetBac
   return (
     <Animated.View style={[StyleSheet.absoluteFill, style, animatedStyle]}>
       <BlurView
-        tint={theme === "dark" ? "dark" : "light"}
+        tint={resolvedColorScheme === "dark" ? "dark" : "light"}
         intensity={intensity}
         style={StyleSheet.absoluteFill}
       />

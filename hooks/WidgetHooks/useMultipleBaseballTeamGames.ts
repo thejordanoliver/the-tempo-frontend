@@ -1,4 +1,4 @@
-import { BaseballGame } from "@/types/baseball";
+import { BaseballGame } from "@/types/baseball/baseball";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -154,7 +154,10 @@ export function useMultipleBaseballTeamGames({
 
         setLastGames(Object.fromEntries(results));
       } catch (err: any) {
-        console.error(`Error fetching ${league.toUpperCase()} team games:`, err);
+        console.error(
+          `Error fetching ${league.toUpperCase()} team games:`,
+          err,
+        );
         setError(err?.message || "Failed to fetch last games");
       } finally {
         setLoading(false);

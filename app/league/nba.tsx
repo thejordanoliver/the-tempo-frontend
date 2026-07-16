@@ -288,6 +288,7 @@ export default function NBALeagueScreen() {
               loading={combinedGamesLoading}
               refreshing={refreshing}
               onRefresh={handleRefresh}
+              showHeaders={false}
               scrollEnabled
             />
           </View>

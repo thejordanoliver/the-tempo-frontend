@@ -10,14 +10,14 @@ type Props = {
   onToggleView: () => void;
 };
 
-const SectionHeaderWithToggle: React.FC<Props> = ({
+const HeaderWithToggle: React.FC<Props> = ({
   title,
   isGridView,
   onToggleView,
 }) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = sectionHeaderWithToggleStyles(isDark);
+  const styles = HeaderWithToggleStyles(isDark);
 
   return (
     <View style={[styles.favoritesHeader, {}]}>
@@ -38,7 +38,7 @@ const SectionHeaderWithToggle: React.FC<Props> = ({
   );
 };
 
-const sectionHeaderWithToggleStyles = (isDark: boolean) =>
+const HeaderWithToggleStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesHeader: {
       flexDirection: "row",
@@ -59,4 +59,4 @@ const sectionHeaderWithToggleStyles = (isDark: boolean) =>
     },
   });
 
-export default SectionHeaderWithToggle;
+export default HeaderWithToggle;

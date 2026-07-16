@@ -30,6 +30,11 @@ import { ScrollView } from "react-native-gesture-handler";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { scrollToMonth } from "utils/dateUtils";
+import {
+  filterGamesBySeasonYear,
+  getFirstSeasonGame,
+  isSameCalendarMonth,
+} from "utils/seasonGames";
 
 type MonthSelectorItem = {
   key: string;
@@ -127,6 +132,7 @@ export default function TeamDetailScreen() {
     refreshing: gamesRefreshing,
     error: gamesError,
     refresh: refreshTeamGames,
+    season: scheduleSeason,
   } = useBasketballTeamGames("cbb", teamIdNum);
 
   const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
@@ -179,6 +185,21 @@ export default function TeamDetailScreen() {
       []
     );
   }, [games, months, selectedMonthKey]);
+
+  const seasonGames = useMemo(
+    () => filterGamesBySeasonYear(games, scheduleSeason?.year),
+    [games, scheduleSeason?.year],
+  );
+
+  const firstSeasonGame = useMemo(
+    () => getFirstSeasonGame(seasonGames),
+    [seasonGames],
+  );
+
+  const isSeasonOpeningMonth = useMemo(
+    () => isSameCalendarMonth(firstSeasonGame?.date, selectedDate),
+    [firstSeasonGame?.date, selectedDate],
+  );
 
   useEffect(() => {
     if (selectedDate || monthsToShow.length === 0) return;
@@ -290,12 +311,15 @@ export default function TeamDetailScreen() {
           />
 
           <BasketballGamesList
-            games={selectedMonthGames as any}
+            games={selectedMonthGames}
             error={gamesError}
             loading={gamesLoading}
             refreshing={gamesRefreshing || refreshing}
             onRefresh={handleRefresh}
             scrollEnabled={true}
+            showHeaders={true}
+            showCountdown={isSeasonOpeningMonth}
+            countdownGame={firstSeasonGame}
           />
         </View>
 

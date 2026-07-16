@@ -1,4 +1,4 @@
-import { NBATeam } from "./basketball";
+import { NBATeam } from "./basketball/basketball";
 
 export type Team = {
   id: number | null;
@@ -45,7 +45,9 @@ export type LeagueType =
   | "WCBB"
   | "MLB"
   | "NHL"
-  | "UFC";
+  | "UFC"
+  | "F1"
+  | "NASCAR";
 
 export type LeagueTeam = Team & { league: LeagueType };
 

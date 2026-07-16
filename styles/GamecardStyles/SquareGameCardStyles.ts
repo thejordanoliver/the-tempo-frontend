@@ -71,6 +71,7 @@ export const squareGameCardStyles = (
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
       color: textColor,
+      width: 40,
     },
     rank: {
       fontSize: 8,
@@ -180,10 +181,7 @@ export const squareGameCardStyles = (
       height: 30,
       resizeMode: "contain",
     },
-    expoFighter: {
-      width: 30,
-      height: 30,
-    },
+
 
     fighterContainer: {
       width: 25,

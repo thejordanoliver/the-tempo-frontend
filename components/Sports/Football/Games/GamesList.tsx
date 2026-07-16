@@ -1,3 +1,4 @@
+import CountdownClock from "@/components/CountdownClock";
 import FootballGamePreviewModal from "@/components/Sports/Football/GamePreview/FootballGamePreviewModal";
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
 import FootballSquareGameCard from "@/components/Sports/Football/Games/FootballSquareGameCard";
@@ -34,6 +35,8 @@ type Props = {
   scrollEnabled?: boolean; // ✅ new prop
   isNFL?: boolean;
   isCFB?: boolean;
+  showCountdown?: boolean;
+  countdownGame?: FootballGame | null;
 };
 
 type FootballGameSection = {
@@ -41,7 +44,7 @@ type FootballGameSection = {
   data: FootballGame[];
 };
 
-export default function FootballGamesList({
+export default function GamesList({
   games,
   loading,
   refreshing,
@@ -53,13 +56,15 @@ export default function FootballGamesList({
   scrollEnabled,
   isNFL = false,
   isCFB = false,
+  showCountdown = false,
+  countdownGame = null,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = footballGamesListStyle;
   const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
-  const [previewGame, setPreviewGame] = useState<any | null>(null);
+  const [previewGame, setPreviewGame] = useState<FootballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
@@ -161,19 +166,13 @@ export default function FootballGamesList({
     setPage((prev) => prev + 1);
   };
 
-  const handleLongPress = (game: any) => {
+  const handleLongPress = (game: FootballGame) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPreviewGame(game);
     setModalVisible(true);
   };
 
-  const renderGameCard = (game: any, index?: number) => {
-    if ((game as any)?._isPlaceholder) {
-      return (
-        <View style={[styles.gridItem, { backgroundColor: "transparent" }]} />
-      );
-    }
-
+  const renderGameCard = (game: FootballGame, index?: number) => {
     const wrapper = (child: React.ReactNode, indexInRow?: number) => {
       let wrapperStyle: ViewStyle = {};
 
@@ -332,6 +331,11 @@ export default function FootballGamesList({
           sections={gridSections}
           keyExtractor={(item, index) => `row-${index}`}
           renderItem={renderGridRow}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock game={countdownGame} loading={loading} />
+            ) : null
+          }
           renderSectionHeader={({ section }) =>
             showHeaders ? (
               <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
@@ -356,9 +360,16 @@ export default function FootballGamesList({
         />
       ) : (
         <SectionList
-          sections={sections as SectionListData<any, FootballGameSection>[]}
-          keyExtractor={(item, index) => `${item?.game?.id ?? "game"}-${index}`}
+          sections={
+            sections as SectionListData<FootballGame, FootballGameSection>[]
+          }
+          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
           renderItem={({ item, index }) => renderGameCard(item, index)}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock game={countdownGame} loading={loading} />
+            ) : null
+          }
           renderSectionHeader={({ section }) => {
             if (!showHeaders) return null;
 

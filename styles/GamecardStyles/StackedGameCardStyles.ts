@@ -218,10 +218,6 @@ export const stackedGameCardStyles = (
       height: 30,
       resizeMode: "contain",
     },
-    expoFighter: {
-      width: 30,
-      height: 30,
-    },
 
     fighterContainer: {
       width: 25,

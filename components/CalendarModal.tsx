@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "../constants/styles";
-import { usePreferences } from "../contexts/PreferencesContext";
 import dayjs from "dayjs";
 import { BlurView } from "expo-blur";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Modal from "react-native-modal";
+import { Colors, Fonts } from "../constants/styles";
+import { usePreferences } from "../contexts/PreferencesContext";
 
 LocaleConfig.locales["custom"] = {
   monthNames: [

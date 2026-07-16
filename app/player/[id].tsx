@@ -39,7 +39,7 @@ export default function PlayerDetailScreen() {
     loading: gameLoading,
     error: gameError,
   } = useTeamLatestGame("nba", teamId);
-  
+
   const isActive = player?.active;
   const team = teamId ? getNBATeam(teamId) : null;
   const teamLogo = getTeamLogo(teamId, true);

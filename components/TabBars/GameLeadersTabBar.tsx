@@ -1,4 +1,5 @@
 import { Colors } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -10,7 +11,6 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  useColorScheme,
 } from "react-native";
 
 export interface FixedWidthTabBarProps<T extends string> {
@@ -30,8 +30,8 @@ export default function GameLeadersTabBar<T extends string>({
   tabWidth: fixedTabWidth,
   containerStyle,
 }: FixedWidthTabBarProps<T>) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const underlineX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);

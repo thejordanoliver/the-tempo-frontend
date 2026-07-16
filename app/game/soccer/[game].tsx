@@ -5,7 +5,7 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useVenue } from "@/hooks/useVenue";
-import { SoccerGameCardProps } from "@/types/soccer";
+import { SoccerGameCardProps } from "@/types/soccer/soccer";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";

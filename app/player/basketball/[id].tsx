@@ -30,24 +30,25 @@ export default function PlayerDetailScreen() {
   const navigation = useNavigation();
   const playerId = Number(id);
   const isWCBB = league === "WCBB";
-    const isNBA = league === "NBA";
+  const isNBA = league === "NBA";
   const isCBB = league === "CBB";
   const isWNBA = league === "WNBA";
   const { player, loading, error } = usePlayerById(playerId, league);
   const team =
-     teamId && isNBA
-      ? getNBATeam(teamId):
-    teamId && isWNBA
-      ? getWNBATeam(teamId)
-      : teamId && isCBB
-        ? getCBBTeam(teamId, false)
-        : teamId && isWCBB
-          ? getCBBTeam(teamId, true)
-          : null;
+    teamId && isNBA
+      ? getNBATeam(teamId)
+      : teamId && isWNBA
+        ? getWNBATeam(teamId)
+        : teamId && isCBB
+          ? getCBBTeam(teamId, false)
+          : teamId && isWCBB
+            ? getCBBTeam(teamId, true)
+            : null;
   const teamLogo = isNBA
-    ? getTeamLogo(teamId, true): isWNBA
-    ? getWNBATeamLogo(teamId, true)
-    : getCBBTeamLogo(teamId, true, isWCBB);
+    ? getTeamLogo(teamId, true)
+    : isWNBA
+      ? getWNBATeamLogo(teamId, true)
+      : getCBBTeamLogo(teamId, true, isWCBB);
   const teamColor = team?.color ?? Colors.midTone;
   const isActive = player?.active;
 

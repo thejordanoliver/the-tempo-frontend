@@ -1,9 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PollData } from "components/Forum/PollEditorModal";
+import type { Post } from "components/Forum/PostItem";
+import { isAxiosError } from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -12,7 +13,9 @@ import {
   UIManager,
 } from "react-native";
 import { AlertConfig } from "types/alert";
+import type { ForumPostCreateResponse } from "types/badges";
 import { LeagueType } from "types/types";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { apiClient } from "utils/apiClient";
 
 export type MediaItem = {
@@ -58,18 +61,19 @@ const getMimeType = (item: MediaItem) => {
 
 export function useCreatePost(teamId?: string, league?: LeagueType) {
   const [newPostText, setNewPostText] = useState("");
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [mediaAnims, setMediaAnims] = useState<
     Record<string, { opacity: Animated.Value }>
   >({});
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [poll, setPoll] = useState<PollData | null>(null);
 
   const router = useRouter();
   const removingRef = useRef(new Set<string>());
+  const { handleBadgeAwards, requestBadgeDataRefresh } =
+    useBadgeNotifications();
 
   const showAlert = useCallback((config: AlertConfig) => {
     setAlertConfig(config);
@@ -79,21 +83,7 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
     setAlertConfig(null);
   }, []);
 
-  useEffect(() => {
-    AsyncStorage.getItem("accessToken").then((t) => {
-      setToken(t);
-
-      if (!t) {
-        showAlert({
-          title: "Not Logged In",
-          message: "You must be logged in to create a post.",
-          confirmText: "OK",
-        });
-      }
-    });
-  }, [showAlert]);
-
-  const prependPost = useCallback((post: any) => {
+  const prependPost = useCallback((post: Post) => {
     setPosts((prev) => [post, ...prev]);
   }, []);
 
@@ -244,15 +234,6 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
   );
 
   const createPost = useCallback(async () => {
-    if (!token) {
-      showAlert({
-        title: "Not Logged In",
-        message: "You must be logged in to create a post.",
-        confirmText: "OK",
-      });
-      return null;
-    }
-
     if (!league) {
       showAlert({
         title: "Error",
@@ -315,7 +296,7 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
         uri: item.uri,
         name: filename,
         type: getMimeType(item),
-      } as any);
+      } as unknown as Blob);
 
       if (item.type === "video") {
         if (item.thumbnailUri) {
@@ -326,7 +307,7 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
             uri: item.thumbnailUri,
             name: thumbName,
             type: "image/jpeg",
-          } as any);
+          } as unknown as Blob);
         }
 
         formData.append(
@@ -342,17 +323,30 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
 
     try {
       const endpoint = teamId
-        ? `api/forum/team/${teamId}`
-        : `api/forum/league/${league}`;
+        ? `/api/forum/team/${teamId}`
+        : `/api/forum/league/${league}`;
 
-      const res = await apiClient.post(endpoint, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+      const res = await apiClient.post<ForumPostCreateResponse<Post, unknown>>(
+        endpoint,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
-      });
+      );
 
-      const newPost = res.data.post;
+      const { post: newPost, newlyAwardedBadges } = res.data;
+
+      if (!newPost) {
+        throw new Error("The post response was missing the created post.");
+      }
+
+      handleBadgeAwards(newlyAwardedBadges);
+
+      if (!newlyAwardedBadges?.length) {
+        requestBadgeDataRefresh();
+      }
 
       prependPost(newPost);
       setPoll(null);
@@ -368,16 +362,22 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
       });
 
       return newPost;
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = "Please try again later.";
 
-      if (err.response?.status === 413) {
-        errorMessage = "Media files are too large. Please reduce file size.";
-      } else if (err.response?.status === 400) {
-        errorMessage = err.response.data?.error || "Invalid post data.";
-      } else if (err.response?.data?.error) {
-        errorMessage = err.response.data.error;
-      } else if (err.message) {
+      if (isAxiosError<{ error?: string }>(err)) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          errorMessage = "You must be logged in to create a post.";
+        } else if (err.response?.status === 413) {
+          errorMessage = "Media files are too large. Please reduce file size.";
+        } else if (err.response?.status === 400) {
+          errorMessage = err.response.data?.error || "Invalid post data.";
+        } else if (err.response?.data?.error) {
+          errorMessage = err.response.data.error;
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+      } else if (err instanceof Error) {
         errorMessage = err.message;
       }
 
@@ -394,11 +394,12 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
   }, [
     media,
     newPostText,
-    token,
     teamId,
     league,
     poll,
+    handleBadgeAwards,
     prependPost,
+    requestBadgeDataRefresh,
     router,
     showAlert,
   ]);

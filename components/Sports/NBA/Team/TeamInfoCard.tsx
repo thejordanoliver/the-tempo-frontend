@@ -1,4 +1,7 @@
+import { BaseballTeam } from "@/types/baseball/baseball";
+import { BasketballTeam, NBATeam } from "@/types/basketball/basketball";
 import { Team } from "@/types/football/football";
+import { NHLTeam } from "@/types/hockey/hockey";
 import InfoCard from "components/Sports/NBA/Team/InfoCard";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -9,9 +12,6 @@ import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
-import { BaseballTeam } from "types/baseball";
-import { BasketballTeam, NBATeam } from "types/basketball";
-import { NHLTeam } from "types/hockey";
 import { LeagueType } from "types/types";
 
 type Props = {

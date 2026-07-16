@@ -436,7 +436,11 @@ export const CommentItem = ({
                   !hasText && styles.mediaOnlyWrapper,
                 ]}
               >
-                <PostImages media={media} item={comment} />
+                <PostImages
+                  media={media}
+                  item={comment}
+                  currentUserId={currentUserId}
+                />
               </View>
             )}
           </View>

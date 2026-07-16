@@ -1,3 +1,4 @@
+import { HockeyGame } from "@/types/hockey/hockey";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { getNHLTeamLogo } from "constants/teamsNHL";
@@ -6,7 +7,6 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { HockeyGame } from "types/hockey";
 import { getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";

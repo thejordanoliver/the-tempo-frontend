@@ -1,6 +1,6 @@
+import { NHLTeam } from "@/types/hockey/hockey";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
-import { NHLTeam } from "types/hockey";
 type TeamInfoProps = {
   team?: NHLTeam;
   logo: any;

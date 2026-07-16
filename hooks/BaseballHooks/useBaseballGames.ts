@@ -1,6 +1,6 @@
+import { BaseballGame } from "@/types/baseball/baseball";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BaseballGame } from "types/baseball";
 import { apiClient } from "utils/apiClient";
 
 type League = "mlb" | "cb" | "sb";

@@ -1,6 +1,7 @@
 // hooks/useTeamForumPosts.ts
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust path if needed
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { LeagueType } from "types/types";
 
 import { apiClient } from "utils/apiClient";
@@ -11,6 +12,7 @@ interface UseTeamForumPostsParams {
 
 export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
   const { token, user, loading: authLoading } = useAuth();
+  const { requestBadgeDataRefresh } = useBadgeNotifications();
 
   const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -42,9 +44,9 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       setError(null);
 
       try {
-      const res = await apiClient.get(`/api/forum/team/${league}/${teamId}`, {
-        params: { page: pageNumber, limit: 10 },
-      });
+        const res = await apiClient.get(`/api/forum/team/${league}/${teamId}`, {
+          params: { page: pageNumber, limit: 10 },
+        });
 
         const { posts: newPosts, pagination } = res.data;
 
@@ -97,8 +99,9 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
       await apiClient.delete(`/api/forum/post/${postId}`);
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
+      requestBadgeDataRefresh();
     },
-    [token],
+    [requestBadgeDataRefresh, token],
   );
 
   // ✏️ Edit post
@@ -106,7 +109,7 @@ export function useTeamForumPosts({ teamId, league }: UseTeamForumPostsParams) {
     async (postId: string, text: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      const res = await apiClient.put(`/api/forum/posts/${postId}`, { text });
+      const res = await apiClient.patch(`/api/forum/post/${postId}`, { text });
 
       setPosts((prev) =>
         prev.map((p) => (p.id === postId ? res.data.post : p)),

@@ -211,6 +211,7 @@ export default function CBBLeagueScreen() {
               loading={loadingGames}
               refreshing={gamesRefreshing}
               onRefresh={handleScoresRefresh}
+              showHeaders={false}
               isCBB={true}
             />
           </View>

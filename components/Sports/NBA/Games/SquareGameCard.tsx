@@ -1,5 +1,5 @@
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
-import { BasketballGameCardProps } from "@/types/basketball";
+import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
@@ -10,7 +10,10 @@ import { useRouter } from "expo-router";
 import { Text, TextStyle, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
-export default function SquareGameCard({ game, isSL }: BasketballGameCardProps) {
+export default function SquareGameCard({
+  game,
+  isSL,
+}: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -54,8 +57,8 @@ export default function SquareGameCard({ game, isSL }: BasketballGameCardProps) 
   const home = isSL ? getTeamBySummerId(homeId) : getNBATeam(homeId);
   const away = isSL ? getTeamBySummerId(awayId) : getNBATeam(awayId);
 
-  const homeName = home?.name || game.home?.shortName;
-  const awayName = away?.name || game.away?.shortName;
+  const homeName = home?.code ?? "TBD";
+  const awayName = away?.code ?? "TBD";
 
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);

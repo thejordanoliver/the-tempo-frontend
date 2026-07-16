@@ -2,7 +2,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { apiClient, clearAuthSession, saveTokens } from "utils/apiClient";
+import { disconnectNotificationSocket } from "services/notificationSocket";
+import { useBadgeNotificationStore } from "store/badgeNotificationStore";
+import {
+  apiClient,
+  clearAuthSession,
+  saveTokens,
+  subscribeAuthSession,
+} from "utils/apiClient";
 
 interface User {
   id: number;
@@ -49,6 +56,52 @@ const parseFavorites = (value: string | null): string[] => {
   }
 };
 
+const loadStoredAuthSnapshot = async (): Promise<{
+  accessToken: string;
+  user: User;
+} | null> => {
+  const values = await AsyncStorage.multiGet([
+    "accessToken",
+    "userId",
+    "username",
+    "fullName",
+    "bio",
+    "profileImage",
+    "bannerImage",
+  ]);
+
+  const stored: Record<string, string | null> = Object.fromEntries(values);
+  const parsedUserId = stored.userId
+    ? Number.parseInt(stored.userId, 10)
+    : NaN;
+
+  if (
+    !stored.accessToken ||
+    !stored.userId ||
+    !stored.username ||
+    Number.isNaN(parsedUserId)
+  ) {
+    return null;
+  }
+
+  const storedFavorites = await AsyncStorage.getItem(
+    getFavoritesStorageKey(stored.userId),
+  );
+
+  return {
+    accessToken: stored.accessToken,
+    user: {
+      id: parsedUserId,
+      username: stored.username,
+      full_name: stored.fullName ?? "",
+      bio: stored.bio ?? "",
+      profile_image: normalizeImage(stored.profileImage),
+      banner_image: normalizeImage(stored.bannerImage),
+      favorites: parseFavorites(storedFavorites),
+    },
+  };
+};
+
 export function useAuth() {
   const router = useRouter();
 
@@ -58,50 +111,50 @@ export function useAuth() {
   const [loadingAction, setLoadingAction] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const unsubscribe = subscribeAuthSession(({ accessToken }) => {
+      if (!isMounted) return;
+
+      setToken(accessToken);
+
+      if (!accessToken) {
+        setUser(null);
+        return;
+      }
+
+      void loadStoredAuthSnapshot()
+        .then((snapshot) => {
+          if (!isMounted || !snapshot) return;
+          setUser(snapshot.user);
+        })
+        .catch((err) => {
+          if (__DEV__) {
+            console.warn("Failed to refresh auth user from storage:", err);
+          }
+        });
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     const loadUser = async () => {
       try {
-        const values = await AsyncStorage.multiGet([
-          "accessToken",
-          "userId",
-          "username",
-          "fullName",
-          "bio",
-          "profileImage",
-          "bannerImage",
-        ]);
+        const snapshot = await loadStoredAuthSnapshot();
 
-        const stored: Record<string, string | null> =
-          Object.fromEntries(values);
-
-        const storedFavorites = stored.userId
-          ? await AsyncStorage.getItem(getFavoritesStorageKey(stored.userId))
-          : null;
-        const parsedUserId = stored.userId
-          ? Number.parseInt(stored.userId, 10)
-          : NaN;
-
-        if (
-          !stored.accessToken ||
-          !stored.userId ||
-          !stored.username ||
-          Number.isNaN(parsedUserId)
-        ) {
-          await clearAuthSession(stored.userId);
+        if (!snapshot) {
+          await clearAuthSession();
           setToken(null);
           setUser(null);
           return;
         }
 
-        setToken(stored.accessToken);
-        setUser({
-          id: parsedUserId,
-          username: stored.username,
-          full_name: stored.fullName ?? "",
-          bio: stored.bio ?? "",
-          profile_image: normalizeImage(stored.profileImage),
-          banner_image: normalizeImage(stored.bannerImage),
-          favorites: parseFavorites(storedFavorites),
-        });
+        setToken(snapshot.accessToken);
+        setUser(snapshot.user);
       } catch (err) {
         console.error("Failed to load user from storage:", err);
       } finally {
@@ -120,8 +173,6 @@ export function useAuth() {
     setToken(accessToken);
     setUser(user);
 
-    await saveTokens(accessToken, refreshToken);
-
     await AsyncStorage.multiSet([
       ["userId", user.id.toString()],
       ["username", normalizeString(user.username)],
@@ -137,6 +188,8 @@ export function useAuth() {
     ]);
 
     await AsyncStorage.removeItem(LEGACY_FAVORITES_KEY);
+
+    await saveTokens(accessToken, refreshToken);
   };
 
   const login = async (username: string, password: string) => {
@@ -234,6 +287,8 @@ export function useAuth() {
       }
 
       await clearAuthSession(currentUserId);
+      disconnectNotificationSocket();
+      useBadgeNotificationStore.getState().clearBadgeNotifications();
       setUser(null);
       setToken(null);
 
@@ -244,6 +299,8 @@ export function useAuth() {
       }
     } catch (err) {
       console.error("Logout error:", err);
+      disconnectNotificationSocket();
+      useBadgeNotificationStore.getState().clearBadgeNotifications();
       setUser(null);
       setToken(null);
       router.replace("/login");
@@ -265,6 +322,8 @@ export function useAuth() {
       });
 
       await clearAuthSession(user?.id);
+      disconnectNotificationSocket();
+      useBadgeNotificationStore.getState().clearBadgeNotifications();
       setUser(null);
       setToken(null);
       router.replace("/login");

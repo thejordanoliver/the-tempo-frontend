@@ -1,10 +1,10 @@
+import { BaseballGame } from "@/types/baseball/baseball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
-import { HockeyGame } from "@/types/hockey";
+import { HockeyGame } from "@/types/hockey/hockey";
 import type { ExploreGameWidgetType } from "constants/exploreWidgets";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useCallback, useMemo } from "react";
-import { BaseballGame } from "types/baseball";
-import { BasketballGame } from "types/basketball";
 import type { LeagueType } from "types/types";
 import { useMultipleBaseballTeamGames } from "./useMultipleBaseballTeamGames";
 import { useMultipleBasketballTeamGames } from "./useMultipleBasketballTeamGames";

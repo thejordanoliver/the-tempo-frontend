@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
-import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";

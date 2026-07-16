@@ -1,4 +1,5 @@
 import { BasesIndicator } from "@/components/Sports/Baseball/GameDetails/BasesIndicator";
+import { BaseballGame } from "@/types/baseball/baseball";
 import { getBroadcastDisplay } from "@/utils/games";
 import displayeValue from "@/utils/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,7 +11,6 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { BaseballGame } from "types/baseball";
 import { getHolidayLabel } from "utils/dateUtils";
 
 type BaseballGameWidgetProps = {

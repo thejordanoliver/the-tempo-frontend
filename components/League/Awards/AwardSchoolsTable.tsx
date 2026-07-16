@@ -1,5 +1,5 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
-import { Colors, Fonts, globalStyles } from "constants/styles";
+import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";

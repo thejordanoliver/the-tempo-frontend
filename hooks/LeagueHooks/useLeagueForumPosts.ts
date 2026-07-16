@@ -1,6 +1,7 @@
 // hooks/useLeagueForumPosts.ts
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { LeagueType } from "types/types";
 
 import { apiClient } from "utils/apiClient";
@@ -11,6 +12,7 @@ interface useLeagueForumPostsParams {
 
 export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
   const { token, user } = useAuth();
+  const { requestBadgeDataRefresh } = useBadgeNotifications();
 
   const [posts, setPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
@@ -94,8 +96,9 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
       await apiClient.delete(`/api/forum/post/${postId}`);
 
       setPosts((prev) => prev.filter((p) => p.id !== postId));
+      requestBadgeDataRefresh();
     },
-    [token],
+    [requestBadgeDataRefresh, token],
   );
 
   // ✏️ Edit post
@@ -103,7 +106,7 @@ export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
     async (postId: string, text: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      const res = await apiClient.put(`/api/forum/posts/${postId}`, { text });
+      const res = await apiClient.patch(`/api/forum/post/${postId}`, { text });
 
       setPosts((prev) =>
         prev.map((p) => (p.id === postId ? res.data.post : p)),

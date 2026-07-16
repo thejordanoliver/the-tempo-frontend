@@ -1,3 +1,5 @@
+import CountdownClock from "@/components/CountdownClock";
+import { BaseballGame } from "@/types/baseball/baseball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
@@ -8,7 +10,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import { BaseballGame } from "types/baseball";
 import BaseballGamePreviewModal from "../GamePreview/BaseballGamePreviewModal";
 import BaseballGameCard from "./BaseballGameCard";
 import BaseballSquareGameCard from "./BaseballSquareGameCard";
@@ -22,15 +23,23 @@ type GamesListProps = {
   expectedCount?: number;
   day?: "todayTomorrow";
   scrollEnabled?: boolean;
+  showHeaders?: boolean;
   error: Error | null;
   isMLB?: boolean;
   isCB?: boolean;
   isSB?: boolean;
+  showCountdown?: boolean;
+  countdownGame?: BaseballGame | null;
 };
 
-type GameWithPlaceholder = BaseballGame & { _isPlaceholder?: boolean };
+type PlaceholderGame = { _isPlaceholder: true; id: string };
+type GameListItem = BaseballGame | PlaceholderGame;
 
 const ItemSeparator = () => <View style={{ height: 12 }} />;
+
+function isPlaceholderGame(game: GameListItem): game is PlaceholderGame {
+  return "_isPlaceholder" in game;
+}
 
 export default function GamesList({
   games,
@@ -40,9 +49,12 @@ export default function GamesList({
   expectedCount,
   day,
   scrollEnabled = true,
+  showHeaders = false,
   isMLB = false,
   isSB = false,
   isCB = false,
+  showCountdown = false,
+  countdownGame = null,
 }: GamesListProps) {
   const { viewMode } = usePreferences();
   const { resolvedColorScheme } = usePreferences();
@@ -62,8 +74,8 @@ export default function GamesList({
   const handleCloseModal = useCallback(() => setModalVisible(false), []);
 
   const renderGameCard = useCallback(
-    (game: GameWithPlaceholder) => {
-      if (game._isPlaceholder) {
+    (game: GameListItem) => {
+      if (isPlaceholderGame(game)) {
         return <View style={{ flex: 1 }} />;
       }
 
@@ -103,7 +115,7 @@ export default function GamesList({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: GameWithPlaceholder }) => renderGameCard(item),
+    ({ item }: { item: GameListItem }) => renderGameCard(item),
     [renderGameCard],
   );
 
@@ -152,10 +164,10 @@ export default function GamesList({
     [viewMode, styles],
   );
 
-  const gridData = useMemo<GameWithPlaceholder[]>(
+  const gridData = useMemo<GameListItem[]>(
     () =>
       viewMode === "grid" && games.length % 2 === 1
-        ? [...games, { _isPlaceholder: true } as any]
+        ? [...games, { _isPlaceholder: true, id: "placeholder" }]
         : games,
     [games, viewMode],
   );
@@ -182,15 +194,18 @@ export default function GamesList({
       <FlatList
         data={viewMode === "grid" ? gridData : games}
         keyExtractor={(item, index) =>
-          (item as any)?._isPlaceholder
-            ? `placeholder-${index}`
-            : `game-${item.id}`
+          isPlaceholderGame(item) ? `placeholder-${index}` : `game-${item.id}`
         }
         renderItem={renderItem}
         numColumns={viewMode === "grid" ? 2 : 1}
         key={viewMode}
         columnWrapperStyle={viewMode === "grid" ? styles.gridRow : undefined}
         ItemSeparatorComponent={viewMode !== "grid" ? ItemSeparator : undefined}
+        ListHeaderComponent={
+          showHeaders && showCountdown && countdownGame ? (
+            <CountdownClock game={countdownGame} loading={loading} />
+          ) : null
+        }
         contentContainerStyle={
           viewMode === "grid"
             ? styles.gridListContainer

@@ -22,6 +22,7 @@ import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
 import CustomTabBar from "../components/CustomTabBar";
+import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
@@ -30,10 +31,11 @@ import {
   usePreferences,
 } from "../contexts/PreferencesContext";
 import { useAuth } from "../hooks/UserHooks/useAuth";
+import { useBadgeRealtimeNotifications } from "../hooks/useBadgeRealtimeNotifications";
+import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
 import { clearAuthSession } from "../utils/apiClient";
 
-SplashScreen.preventAutoHideAsync().catch(() => {
-});
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 SplashScreen.setOptions({
   duration: 500,
@@ -75,24 +77,35 @@ const hiddenRoutes = [
 
 const publicRoutes = ["/login", "/forgot-password"];
 
+function BadgeRealtimeBridge({
+  token,
+  userId,
+}: {
+  token?: string | null;
+  userId?: number | string | null;
+}) {
+  useBadgeRealtimeNotifications({ token, userId });
+
+  return null;
+}
+
 function AppLayout() {
   const pathname = usePathname();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
-  const { user, loadingUser } = useAuth();
+  const { user, token, loadingUser } = useAuth();
   const opacity = useRef(new Animated.Value(1)).current;
   const [visibleTabBar, setVisibleTabBar] = useState(true);
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
 
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
+  const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
 
   useEffect(() => {
     let isMounted = true;
 
     const redirectIfUnauthenticated = async () => {
-      const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
-
       if (loadingUser) {
         return;
       }
@@ -132,6 +145,7 @@ function AppLayout() {
           return;
         }
 
+        useBadgeNotificationStore.getState().clearBadgeNotifications();
         await clearAuthSession(stored.userId);
 
         if (isMounted) {
@@ -139,6 +153,8 @@ function AppLayout() {
           router.replace("/login");
         }
       } catch {
+        useBadgeNotificationStore.getState().clearBadgeNotifications();
+
         if (isMounted) {
           setCheckingStoredSession(false);
           router.replace("/login");
@@ -151,7 +167,7 @@ function AppLayout() {
     return () => {
       isMounted = false;
     };
-  }, [user, loadingUser, pathname, router]);
+  }, [isPublicRoute, loadingUser, pathname, router, user]);
 
   useEffect(() => {
     if (!pathname) return;
@@ -222,6 +238,13 @@ function AppLayout() {
         >
           <CustomTabBar isDark={isDark} />
         </Animated.View>
+      )}
+
+      {!isPublicRoute && (
+        <>
+          <BadgeRealtimeBridge token={token} userId={user?.id} />
+          <BadgeUnlockedModal />
+        </>
       )}
     </ThemeProvider>
   );

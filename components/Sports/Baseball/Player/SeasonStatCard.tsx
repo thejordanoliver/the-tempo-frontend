@@ -219,9 +219,7 @@ export default function SeasonStatCard({
     "DH",
     "SS",
   ].includes(position);
-  const showPitching = [
-    "SP",
-  ].includes(position);
+  const showPitching = ["SP"].includes(position);
 
   const hits = getStatDisplay(stats, ["hits"]);
   const rbi = getStatDisplay(stats, ["RBIs"]);

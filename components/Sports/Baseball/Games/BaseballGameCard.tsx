@@ -1,3 +1,4 @@
+import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import { getHolidayLabel } from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
@@ -10,7 +11,6 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { BaseballGameCardProps } from "types/baseball";
 import { getBroadcastDisplay } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 

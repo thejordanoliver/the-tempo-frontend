@@ -1,3 +1,4 @@
+import { BasketballTeam, NBATeam } from "@/types/basketball/basketball";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -18,7 +19,6 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { BasketballTeam, NBATeam } from "types/basketball";
 
 type AnyTeam = NBATeam | BasketballTeam;
 

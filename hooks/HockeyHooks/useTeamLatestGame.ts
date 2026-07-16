@@ -1,4 +1,4 @@
-import { HockeyGame } from "@/types/hockey";
+import { HockeyGame } from "@/types/hockey/hockey";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 

@@ -6,7 +6,7 @@ import {
   NormalizedRoundKey,
   RoundDefinition,
   UseNBAPlayoffGamesOptions,
-} from "@/types/basketball";
+} from "@/types/basketball/basketball";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 

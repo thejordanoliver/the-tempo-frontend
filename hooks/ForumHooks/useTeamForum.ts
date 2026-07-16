@@ -2,6 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { apiClient } from "utils/apiClient";
 
 export function useTeamForum(teamId: string, league?: string) {
@@ -12,6 +13,7 @@ export function useTeamForum(teamId: string, league?: string) {
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { requestBadgeDataRefresh } = useBadgeNotifications();
 
   // Read userId from AsyncStorage — written by useAuth on login
   useEffect(() => {
@@ -38,7 +40,7 @@ export function useTeamForum(teamId: string, league?: string) {
       setError(null);
 
       try {
-        const res = await apiClient.get(`api/forum/team/${league}/${teamId}`, {
+        const res = await apiClient.get(`/api/forum/team/${league}/${teamId}`, {
           params: { page: pageNumber, limit: 10 },
         });
 
@@ -100,15 +102,16 @@ export function useTeamForum(teamId: string, league?: string) {
   */
   const deletePost = useCallback(async (postId: string) => {
     try {
-      await apiClient.delete(`api/forum/post/${postId}`);
+      await apiClient.delete(`/api/forum/post/${postId}`);
       setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
+      requestBadgeDataRefresh();
     } catch (err: any) {
       const message =
         err.response?.data?.error ?? err.message ?? "Failed to delete post";
       console.error("Delete post error:", message);
       throw new Error(message);
     }
-  }, []);
+  }, [requestBadgeDataRefresh]);
 
   /*
   -----------------------------
@@ -117,7 +120,7 @@ export function useTeamForum(teamId: string, league?: string) {
   */
   const editPost = useCallback(async (postId: string, newText: string) => {
     try {
-      const res = await apiClient.patch(`api/forum/post/${postId}`, {
+      const res = await apiClient.patch(`/api/forum/post/${postId}`, {
         text: newText,
       });
       setPosts((prev) =>

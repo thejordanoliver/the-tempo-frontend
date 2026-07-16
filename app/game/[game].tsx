@@ -3,7 +3,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
-import { BasketballGameCardProps } from "@/types/basketball";
+import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import {
@@ -107,7 +107,10 @@ export default function GameDetailsScreen(
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = game?.league?.code ?? "NBA";
-  const isSummerLeague = LEAGUE === "summercalifornia"  || LEAGUE === "summervegas" || LEAGUE === "summerutah" 
+  const isSummerLeague =
+    LEAGUE === "summercalifornia" ||
+    LEAGUE === "summervegas" ||
+    LEAGUE === "summerutah";
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -121,8 +124,12 @@ export default function GameDetailsScreen(
 
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
-  const homeTeam = isSummerLeague ? getTeamBySummerId(homeId): getNBATeam(homeId);
-  const awayTeam = isSummerLeague ? getTeamBySummerId(awayId): getNBATeam(awayId);
+  const homeTeam = isSummerLeague
+    ? getTeamBySummerId(homeId)
+    : getNBATeam(homeId);
+  const awayTeam = isSummerLeague
+    ? getTeamBySummerId(awayId)
+    : getNBATeam(awayId);
 
   const homeCode = homeTeam?.code ?? "";
   const awayCode = awayTeam?.code ?? "";

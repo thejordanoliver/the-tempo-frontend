@@ -1,9 +1,13 @@
 // profile.tsx
+import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
+import TabBar from "@/components/TabBars/TabBar";
+import { useBadges } from "@/hooks/useBadges";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
+
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
@@ -27,6 +31,7 @@ import { useFollowersStore } from "../../store/followersStore";
 import { useProfileRefreshStore } from "../../store/profileRefreshStore";
 import { useSettingsModalStore } from "../../store/settingsModalStore";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
+import type { LeagueType } from "../../types/types";
 
 type CachedUser = {
   id?: number;
@@ -35,38 +40,51 @@ type CachedUser = {
   profileImage?: string;
 };
 
+type ProfileTab = "favorite teams" | "badges";
+
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
 
-  if (trimmed === "null" || trimmed === "undefined") return "";
+  if (trimmed === "null" || trimmed === "undefined") {
+    return "";
+  }
 
   return trimmed;
 };
 
 export default function ProfileScreen() {
-  const { favorites, loadFavorites, clearFavorites } =
-    useFavoriteTeamsContext();
-  const { width: screenWidth } = useWindowDimensions();
-  const numColumns = 3;
-  const horizontalPadding = 40;
-  const columnGap = 12;
-  const totalGap = columnGap * (numColumns - 1);
-  const availableWidth = screenWidth - horizontalPadding - totalGap;
-  const itemWidth = availableWidth / numColumns;
-  const { logout } = useAuth();
-  const navigation = useNavigation();
-  const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = profileStyles(isDark);
+
+  const { favorites, loadFavorites, clearFavorites } =
+    useFavoriteTeamsContext();
+
+  const { width: screenWidth } = useWindowDimensions();
+
+  const numColumns = 3;
+  const horizontalPadding = 24;
+  const columnGap = 8;
+  const totalGap = columnGap * (numColumns - 1);
+  const availableWidth = screenWidth - horizontalPadding - totalGap;
+  const itemWidth = availableWidth / numColumns;
+
+  const { logout } = useAuth();
+  const navigation = useNavigation();
+  const router = useRouter();
+
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const hasLoadedProfileRef = useRef(false);
+  const lastLoadedUserIdRef = useRef<number | null>(null);
+
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);
-  const hasLoadedProfileRef = useRef(false);
-  const lastLoadedUserIdRef = useRef<number | null>(null);
+  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorite teams");
+
   const { shouldRefreshProfile, clearProfileRefresh } =
     useProfileRefreshStore();
+
   const {
     isLoading,
     currentUserId,
@@ -80,7 +98,6 @@ export default function ProfileScreen() {
     loadProfile,
     resetProfile,
   } = useProfile();
-  const viewedUserId = currentUserId;
 
   const { type, targetUserId, openModal, shouldRestore, clearRestore } =
     useFollowersStore();
@@ -88,40 +105,61 @@ export default function ProfileScreen() {
   const { showOnReturn, setShowOnReturn, setShowSettingsModal } =
     useSettingsModalStore();
 
-  const toggleFavoriteTeamsView = () => {
+  const viewedUserId = currentUserId;
+
+  const {
+    featuredBadges,
+    summary,
+    loading: badgesLoading,
+    error: badgesError,
+    refresh: refreshBadges,
+  } = useBadges({
+    enabled: Boolean(currentUserId),
+  });
+
+  const handleTabPress = useCallback((tab: ProfileTab) => {
+    setSelectedTab(tab);
+  }, []);
+
+  const toggleFavoriteTeamsView = useCallback(() => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
-      setIsGridView((prev) => !prev);
+      setIsGridView((previousValue) => !previousValue);
+
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
     });
-  };
+  }, [fadeAnim]);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       hasLoadedProfileRef.current = false;
       lastLoadedUserIdRef.current = null;
+
       setCachedUser(null);
+
       clearFavorites();
       resetProfile();
+
       try {
         await AsyncStorage.removeItem("authUser");
       } catch (error) {
         console.warn("Failed to clear cached auth user:", error);
       }
+
       await logout();
     } catch (error) {
       console.warn("Failed to sign out:", error);
     } finally {
       setShowSignOutModal(false);
     }
-  };
+  }, [clearFavorites, logout, resetProfile]);
 
   useFocusEffect(
     useCallback(() => {
@@ -143,17 +181,23 @@ export default function ProfileScreen() {
           } else if (isActive) {
             setCachedUser(null);
           }
-        } catch {
+        } catch (error) {
+          console.warn("Failed to read cached authentication user:", error);
+
           try {
             await AsyncStorage.removeItem("authUser");
-          } catch (error) {
-            console.warn("Failed to clear invalid cached auth user:", error);
+          } catch (removeError) {
+            console.warn(
+              "Failed to clear invalid cached auth user:",
+              removeError,
+            );
           }
 
           if (isActive) {
             setCachedUser(null);
           }
         }
+
         let loadedUserId = currentUserId;
 
         const shouldLoadProfile =
@@ -167,7 +211,9 @@ export default function ProfileScreen() {
           }
         }
 
-        if (!isActive) return;
+        if (!isActive) {
+          return;
+        }
 
         const activeUserId = loadedUserId ?? currentUserId;
 
@@ -176,13 +222,16 @@ export default function ProfileScreen() {
         if (activeUserId && activeUserId !== lastLoadedUserIdRef.current) {
           await loadFavorites(activeUserId);
 
-          if (!isActive) return;
+          if (!isActive) {
+            return;
+          }
 
           lastLoadedUserIdRef.current = activeUserId;
         }
 
         if (shouldRestore && targetUserId) {
           clearRestore();
+
           openModal(
             type,
             targetUserId,
@@ -222,7 +271,9 @@ export default function ProfileScreen() {
     const safeUsername =
       normalizeCachedString(username) ||
       normalizeCachedString(cachedUser?.username);
+
     const headerTitle = safeUsername ? `@${safeUsername}` : "Profile";
+
     const messageUserId = currentUserId ?? cachedUser?.id;
 
     navigation.setOptions({
@@ -230,9 +281,13 @@ export default function ProfileScreen() {
         <CustomHeaderTitle
           title={headerTitle}
           tabName="Profile"
-          onLogout={() => setShowSignOutModal(true)}
-          onSettings={() => router.push("/settings")}
-          onMessages={() =>
+          onLogout={() => {
+            setShowSignOutModal(true);
+          }}
+          onSettings={() => {
+            router.push("/settings");
+          }}
+          onMessages={() => {
             router.push({
               pathname: "/messages",
               params: {
@@ -241,8 +296,8 @@ export default function ProfileScreen() {
                 fullName: fullName ?? cachedUser?.fullName ?? "",
                 profileImage: profileImage ?? cachedUser?.profileImage ?? "",
               },
-            })
-          }
+            });
+          }}
         />
       ),
     });
@@ -256,38 +311,62 @@ export default function ProfileScreen() {
     profileImage,
   ]);
 
-  const favoriteTeamsWithLeague = useMemo(
-    () =>
-      favorites
-        .map((fav) => {
-          const [league, id] = fav.split(":");
-          let team;
-          if (league === "NBA") team = teams.find((t) => String(t.id) === id);
-          if (league === "WNBA")
-            team = wnbaTeams.find((t) => String(t.id) === id);
-          if (league === "NFL")
-            team = nflTeams.find((t) => String(t.id) === id);
-          if (league === "CFB")
-            team = cfbTeams.find((t) => String(t.id) === id);
-          if (league === "CBB")
-            team = cbbTeams.find((t) => String(t.id) === id);
-          if (league === "WCBB")
-            team = cbbTeams.find((t) => String(t.wid) === id);
-          if (league === "MLB")
-            team = mlbTeams.find((t) => String(t.id) === id);
-          if (league === "NHL")
-            team = nhlTeams.find((t) => String(t.id) === id);
-          if (!team) return null;
-          return { ...team, league: league as any };
-        })
-        .filter(Boolean),
-    [favorites],
-  );
+  const favoriteTeamsWithLeague = useMemo(() => {
+    return favorites
+      .map((favorite) => {
+        const [league, id] = favorite.split(":");
 
-  if (isLoading) return <SkeletonProfileScreen isDark={isDark} />;
+        let team;
 
-  const onFollowersPress = () => {
-    if (!currentUserId) return;
+        if (league === "NBA") {
+          team = teams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "WNBA") {
+          team = wnbaTeams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "NFL") {
+          team = nflTeams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "CFB") {
+          team = cfbTeams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "CBB") {
+          team = cbbTeams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "WCBB") {
+          team = cbbTeams.find((item) => String(item.wid) === id);
+        }
+
+        if (league === "MLB") {
+          team = mlbTeams.find((item) => String(item.id) === id);
+        }
+
+        if (league === "NHL") {
+          team = nhlTeams.find((item) => String(item.id) === id);
+        }
+
+        if (!team) {
+          return null;
+        }
+
+        return {
+          ...team,
+          league: league as LeagueType,
+        };
+      })
+      .filter((team): team is NonNullable<typeof team> => team !== null);
+  }, [favorites]);
+
+  const onFollowersPress = useCallback(() => {
+    if (!currentUserId) {
+      return;
+    }
+
     router.push({
       pathname: "/user/followers",
       params: {
@@ -296,10 +375,13 @@ export default function ProfileScreen() {
         targetUserId: String(currentUserId),
       },
     });
-  };
+  }, [currentUserId, router]);
 
-  const onFollowingPress = () => {
-    if (!currentUserId) return;
+  const onFollowingPress = useCallback(() => {
+    if (!currentUserId) {
+      return;
+    }
+
     router.push({
       pathname: "/user/followers",
       params: {
@@ -308,13 +390,19 @@ export default function ProfileScreen() {
         targetUserId: String(currentUserId),
       },
     });
-  };
+  }, [currentUserId, router]);
+
+  if (isLoading) {
+    return <SkeletonProfileScreen isDark={isDark} />;
+  }
 
   return (
     <>
       <ScrollView
         style={styles.container}
         contentInsetAdjustmentBehavior="never"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <ProfileBanner
           bannerImage={bannerImage}
@@ -337,22 +425,51 @@ export default function ProfileScreen() {
           username={username}
           isDark={isDark}
           isCurrentUser
-          onEditPress={() => router.push("/edit-profile")}
+          onEditPress={() => {
+            router.push("/edit-profile");
+          }}
         />
 
         <BioSection bio={bio} isDark={isDark} />
 
-        <View style={styles.favoritesContainer}>
-          <FavoriteTeamsSection
-            favorites={favoriteTeamsWithLeague}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
-            toggleFavoriteTeamsView={toggleFavoriteTeamsView}
-            styles={styles}
-            itemWidth={itemWidth}
-            isCurrentUser={currentUserId === viewedUserId}
-          />
-        </View>
+        <TabBar
+          tabs={["favorite teams", "badges"]}
+          selected={selectedTab}
+          onTabPress={handleTabPress}
+          isDark={isDark}
+        />
+
+        {selectedTab === "favorite teams" && (
+          <View style={styles.favoritesContainer}>
+            <FavoriteTeamsSection
+              favorites={favoriteTeamsWithLeague}
+              isGridView={isGridView}
+              fadeAnim={fadeAnim}
+              toggleFavoriteTeamsView={toggleFavoriteTeamsView}
+              styles={styles}
+              itemWidth={itemWidth}
+              isCurrentUser={currentUserId === viewedUserId}
+            />
+          </View>
+        )}
+
+        {selectedTab === "badges" && (
+          <View style={styles.favoritesContainer}>
+            <BadgePreviewSection
+              badges={featuredBadges}
+              earnedCount={summary.earnedCount}
+              totalCount={summary.totalCount}
+              isDark={isDark}
+              itemWidth={itemWidth}
+              loading={badgesLoading}
+              error={badgesError}
+              onRetry={refreshBadges}
+              onPressSeeAll={() => {
+                router.push("/badges");
+              }}
+            />
+          </View>
+        )}
       </ScrollView>
 
       <ConfirmModal
@@ -363,7 +480,9 @@ export default function ProfileScreen() {
         cancelText="Cancel"
         variant="danger"
         onConfirm={signOut}
-        onCancel={() => setShowSignOutModal(false)}
+        onCancel={() => {
+          setShowSignOutModal(false);
+        }}
       />
     </>
   );

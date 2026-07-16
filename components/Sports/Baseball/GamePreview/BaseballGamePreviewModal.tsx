@@ -3,6 +3,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
+import { BaseballGame } from "@/types/baseball/baseball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import TeamInfo from "components/Sports/Baseball/GamePreview/TeamInfo";
 import { Colors } from "constants/styles";
@@ -15,7 +16,6 @@ import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetai
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { BaseballGame } from "types/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "./CenterInfo";

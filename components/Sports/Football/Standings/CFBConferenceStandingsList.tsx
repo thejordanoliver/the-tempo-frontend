@@ -1,6 +1,6 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";

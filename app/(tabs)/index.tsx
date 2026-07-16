@@ -81,7 +81,7 @@ export default function HomeScreen() {
           }}
         >
           {/* SCORES PAGE */}
-          <View key="scores" style={{ flex: 1 }}>
+          <View key="scores" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}
@@ -106,7 +106,7 @@ export default function HomeScreen() {
           </View>
 
           {/* NEWS */}
-          <View key="news" style={{ flex: 1 }}>
+          <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}

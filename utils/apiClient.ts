@@ -27,11 +27,31 @@ export const resetPassword = (email: string, code: string, password: string) =>
 export const getAccessToken = () => AsyncStorage.getItem("accessToken");
 export const getRefreshToken = () => AsyncStorage.getItem("refreshToken");
 
+type AuthSessionListener = (session: { accessToken: string | null }) => void;
+
+const authSessionListeners = new Set<AuthSessionListener>();
+
+const notifyAuthSessionListeners = (accessToken: string | null) => {
+  authSessionListeners.forEach((listener) => {
+    listener({ accessToken });
+  });
+};
+
+export const subscribeAuthSession = (listener: AuthSessionListener) => {
+  authSessionListeners.add(listener);
+
+  return () => {
+    authSessionListeners.delete(listener);
+  };
+};
+
 export const saveTokens = async (accessToken: string, refreshToken: string) => {
   await AsyncStorage.multiSet([
     ["accessToken", accessToken],
     ["refreshToken", refreshToken],
   ]);
+
+  notifyAuthSessionListeners(accessToken);
 };
 
 const AUTH_SESSION_STORAGE_KEYS = [
@@ -87,6 +107,7 @@ export const clearAuthSession = async (userId?: number | string | null) => {
   } finally {
     delete apiClient.defaults.headers.common.Authorization;
     delete apiClient.defaults.headers.common.authorization;
+    notifyAuthSessionListeners(null);
   }
 };
 

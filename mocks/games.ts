@@ -1,5 +1,5 @@
+import { MLBGame } from "@/types/baseball/baseball";
 import { getMLBTeam } from "constants/teamsMLB";
-import { MLBGame } from "types/baseball";
 
 const requireMLBTeam = (id: number) => {
   const team = getMLBTeam(id);
@@ -35,7 +35,7 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: requireMLBTeam(17),  // Yankees
+      home: requireMLBTeam(17), // Yankees
       away: requireMLBTeam(21), // Red Sox
     },
     scores: {
@@ -79,7 +79,7 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: requireMLBTeam(17),  // Yankees
+      home: requireMLBTeam(17), // Yankees
       away: requireMLBTeam(21), // Red Sox
     },
     scores: {
@@ -97,7 +97,6 @@ export const mockMLBGames: MLBGame[] = [
       },
     },
   },
-
 
   // --- Final Game ---
   {
@@ -124,7 +123,7 @@ export const mockMLBGames: MLBGame[] = [
       clock: null,
     },
     teams: {
-      home: requireMLBTeam(17),  // Yankees
+      home: requireMLBTeam(17), // Yankees
       away: requireMLBTeam(21), // Red Sox
     },
     scores: {
@@ -142,5 +141,4 @@ export const mockMLBGames: MLBGame[] = [
       },
     },
   },
-
 ];

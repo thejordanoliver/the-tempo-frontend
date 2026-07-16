@@ -1,4 +1,4 @@
-import { NBATeam } from "types/basketball";
+import { NBATeam } from "@/types/basketball/basketball";
 
 // Logos
 import AcesLogo from "../assets/Logos/WNBA/Aces.png";
@@ -271,7 +271,7 @@ export const wnbaTeams: NBATeam[] = [
     code: "TOY",
     color: "#000000",
     secondaryColor: "#FFC0CB",
-    logo: PlaceholderLogo, 
+    logo: PlaceholderLogo,
     logoLight: PlaceholderLogo,
     location: "Nagoya, Japan",
     established: 1961,

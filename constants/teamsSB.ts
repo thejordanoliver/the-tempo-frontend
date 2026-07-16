@@ -1,4 +1,4 @@
-import { BaseballTeam } from "types/baseball";
+import { BaseballTeam } from "@/types/baseball/baseball";
 
 //Logos
 import AirForceLogo from "assets/College_Logos/AirForce.png";

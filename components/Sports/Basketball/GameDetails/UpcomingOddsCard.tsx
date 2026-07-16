@@ -1,8 +1,9 @@
 import { Colors, Fonts } from "constants/styles";
 import { cbbTeams } from "constants/teamsCBB";
+import { usePreferences } from "contexts/PreferencesContext";
 import type { GameOdds as UpcomingGameOdds } from "hooks/OddsHooks/useUpcomingOdds";
 import React from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 interface Props {
@@ -11,8 +12,8 @@ interface Props {
 }
 
 const UpcomingOddsCard: React.FC<Props> = ({ game, lighter }) => {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   // ------------------------------------------------------
   // TEAM LOOKUP

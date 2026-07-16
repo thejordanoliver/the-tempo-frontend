@@ -1,4 +1,4 @@
-import { BaseballTeam } from "types/baseball";
+import { BaseballTeam } from "@/types/baseball/baseball";
 
 //Logos
 import AirForceLogo from "assets/College_Logos/AirForce.png";
@@ -2277,7 +2277,7 @@ export const cbTeams: BaseballTeam[] = [
     fullName: "Texas Longhorns",
     shortName: "Texas",
     code: "TEX",
-   color: "#c15d26",
+    color: "#c15d26",
     secondaryColor: "#ffffff",
     logo: TexasLogo,
     logoLight: TexasLogoLight,

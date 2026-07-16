@@ -1,4 +1,4 @@
-import { NBABracketMatchup } from "@/types/basketball";
+import { NBABracketMatchup } from "@/types/basketball/basketball";
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";

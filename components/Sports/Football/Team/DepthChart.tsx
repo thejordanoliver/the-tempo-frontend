@@ -623,7 +623,7 @@ function depthChartStyles(isDark: boolean) {
         ? Colors.dark.itemBackground
         : Colors.light.background,
       borderColor,
-      borderRadius: 16,
+      borderRadius: 8,
       borderWidth: StyleSheet.hairlineWidth,
       overflow: "hidden",
     },

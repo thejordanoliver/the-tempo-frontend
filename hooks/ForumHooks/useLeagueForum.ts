@@ -2,6 +2,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { apiClient } from "utils/apiClient";
 
 export function useLeagueForum(league: string) {
@@ -11,6 +12,7 @@ export function useLeagueForum(league: string) {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const { requestBadgeDataRefresh } = useBadgeNotifications();
 
   useEffect(() => {
     AsyncStorage.getItem("userId")
@@ -103,6 +105,7 @@ export function useLeagueForum(league: string) {
     try {
       await apiClient.delete(`/api/forum/post/${postId}`);
       setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
+      requestBadgeDataRefresh();
     } catch (err: any) {
       const message =
         err.response?.data?.error ?? err.message ?? "Failed to delete post";

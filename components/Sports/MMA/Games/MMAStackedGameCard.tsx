@@ -165,9 +165,9 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
             <View style={styles.fighterContainer}>
               <Image
                 source={{ uri: secondFighterPhoto }}
-                style={styles.expoFighter}
+                style={styles.fighter}
                 contentFit="contain"
-                accessibilityLabel={`${secondFighterName} headshot`}
+                accessibilityLabel={secondFighterName}
               />
             </View>
 
@@ -191,9 +191,9 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
             <View style={styles.fighterContainer}>
               <Image
                 source={{ uri: firstFighterPhoto }}
-                style={styles.expoFighter}
+                style={styles.fighter}
                 contentFit="contain"
-                accessibilityLabel={`${firstFighterName} flag`}
+                accessibilityLabel={firstFighterName}
               />
             </View>
             <Text style={styles.teamName}>{firstFighterName}</Text>

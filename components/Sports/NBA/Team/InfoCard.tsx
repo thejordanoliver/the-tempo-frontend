@@ -1,6 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
+import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode } from "react";
-import { Image, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
@@ -77,8 +78,8 @@ export default function InfoCard({
     color: Colors.midTone,
   };
 
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
 
   const styles = infoCardStyles(isDark, teamObj);
 

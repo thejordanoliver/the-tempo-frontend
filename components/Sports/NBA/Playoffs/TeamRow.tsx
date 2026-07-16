@@ -1,4 +1,4 @@
-import { NBAPlayoffTeam } from "@/types/basketball";
+import { NBAPlayoffTeam } from "@/types/basketball/basketball";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { Image, Text, View } from "react-native";

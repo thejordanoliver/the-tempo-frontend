@@ -1,4 +1,4 @@
-import { SoccerTeam } from "@/types/soccer";
+import { SoccerTeam } from "@/types/soccer/soccer";
 const placeholderLogo =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
 

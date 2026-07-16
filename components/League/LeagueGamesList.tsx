@@ -14,13 +14,16 @@ import {
 import { default as FootballGameCard } from "@/components/Sports/Football/Games/FootballGameCard";
 import { default as FootballStackedGameCard } from "@/components/Sports/Football/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
+import { BaseballGame } from "@/types/baseball/baseball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
+import { HockeyGame } from "@/types/hockey/hockey";
 import {
   CombinedGame,
   CombinedGamesSection,
   LeagueCategory,
 } from "@/types/leagues";
-import { SoccerGame } from "@/types/soccer";
+import { SoccerGame } from "@/types/soccer/soccer";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
@@ -42,9 +45,6 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
-import { BaseballGame } from "types/baseball";
-import { BasketballGame } from "types/basketball";
-import { HockeyGame } from "types/hockey";
 import { MMAFight } from "types/mma";
 import HeadingTwo from "../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../Skeletons/GameCards/SquareGameCardSkeleton";

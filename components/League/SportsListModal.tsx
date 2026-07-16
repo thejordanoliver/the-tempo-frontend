@@ -63,7 +63,14 @@ const leagues: LeagueType[] = [
   "NBA",
   "WNBA",
   "NFL",
+  "MLB",
+  "NHL",
   "CFB",
+  "CB",
+  "SB",
+  "CBB",
+  "WCBB",
+  "UFC",
   "UFL",
   "EPL",
   "MLS",
@@ -71,13 +78,8 @@ const leagues: LeagueType[] = [
   "EUROPA",
   "BUNDESLIGA",
   "FIFA",
-  "CB",
-  "SB",
-  "CBB",
-  "WCBB",
-  "MLB",
-  "NHL",
-  "UFC",
+  "F1",
+  "NASCAR",
 ];
 
 const leagueConfig: Record<
@@ -89,20 +91,55 @@ const leagueConfig: Record<
     logo: NBALogo,
     logoLight: NBALogo,
   },
-  WNBA: {
-    label: "WNBA",
-    logo: WNBALogo,
-    logoLight: WNBALogo,
-  },
   NFL: {
     label: "NFL",
     logo: NFLLogo,
     logoLight: NFLLogo,
   },
+  MLB: {
+    label: "MLB",
+    logo: MLBLogo,
+    logoLight: MLBLogo,
+  },
+  NHL: {
+    label: "NHL",
+    logo: NHLLogo,
+    logoLight: NHLLogo,
+  },
+  WNBA: {
+    label: "WNBA",
+    logo: WNBALogo,
+    logoLight: WNBALogo,
+  },
   CFB: {
     label: "College Football",
     logo: CFBLogo,
     logoLight: CFBLogo,
+  },
+  CB: {
+    label: "College Baseball",
+    logo: CBLogo,
+    logoLight: CBLogo,
+  },
+  SB: {
+    label: "College Softball",
+    logo: SBLogo,
+    logoLight: SBLogo,
+  },
+  CBB: {
+    label: "Men's College Basketball",
+    logo: CBBLogo,
+    logoLight: CBBLogo,
+  },
+  WCBB: {
+    label: "Women's College Basketball",
+    logo: WCBBLogo,
+    logoLight: WCBBLogo,
+  },
+  UFC: {
+    label: "UFC",
+    logo: UFCLogo,
+    logoLight: UFCLogo,
   },
   UFL: {
     label: "UFL",
@@ -144,40 +181,15 @@ const leagueConfig: Record<
     logo: BundesligaLogo,
     logoLight: BundesligaLogoLight,
   },
-  CB: {
-    label: "College Baseball",
-    logo: CBLogo,
-    logoLight: CBLogo,
+  F1: {
+    label: "F1",
+    logo: BundesligaLogo,
+    logoLight: BundesligaLogoLight,
   },
-  SB: {
-    label: "College Softball",
-    logo: SBLogo,
-    logoLight: SBLogo,
-  },
-  CBB: {
-    label: "Men's College Basketball",
-    logo: CBBLogo,
-    logoLight: CBBLogo,
-  },
-  WCBB: {
-    label: "Women's College Basketball",
-    logo: WCBBLogo,
-    logoLight: WCBBLogo,
-  },
-  MLB: {
-    label: "MLB",
-    logo: MLBLogo,
-    logoLight: MLBLogo,
-  },
-  NHL: {
-    label: "NHL",
-    logo: NHLLogo,
-    logoLight: NHLLogo,
-  },
-  UFC: {
-    label: "UFC",
-    logo: UFCLogo,
-    logoLight: UFCLogo,
+  NASCAR: {
+    label: "NASCAR",
+    logo: BundesligaLogo,
+    logoLight: BundesligaLogoLight,
   },
 };
 
@@ -194,6 +206,7 @@ type LeagueRoute =
   | "/league/mlb"
   | "/league/nhl"
   | "/league/ufc"
+  | "/league/racing"
   | "/league/socc";
 
 const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
@@ -209,6 +222,8 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   MLB: "/league/mlb",
   NHL: "/league/nhl",
   UFC: "/league/ufc",
+  F1: "/league/racing",
+  NASCAR: "/league/racing",
   EPL: "/league/socc",
   MLS: "/league/socc",
   CHAMPIONS: "/league/socc",

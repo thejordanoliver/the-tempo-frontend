@@ -1,6 +1,6 @@
+import { BasketballGame } from "@/types/basketball/basketball";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BasketballGame } from "types/basketball";
 import { apiClient } from "utils/apiClient";
 import { getCBBSeason, getWNBASeason } from "utils/dateUtils";
 

@@ -1,6 +1,7 @@
 // components/Forum/PostItem.tsx
 
 import { Ionicons } from "@expo/vector-icons";
+import { isAxiosError } from "axios";
 import ConfirmModal from "components/ConfirmModal";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
@@ -16,7 +17,12 @@ import {
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import type {
+  ForumLikeMutationResponse,
+  ForumShareMutationResponse,
+} from "types/badges";
 import { apiClient } from "utils/apiClient";
 import PollBlock from "./PollBlock";
 import PostImages, { MediaItem } from "./PostImages";
@@ -28,6 +34,7 @@ export interface Post {
   profile_image: string | null;
   text: string;
   likes: number;
+  shares: number;
   comments_count: number;
   created_at: string;
   user_id: string | number;
@@ -53,6 +60,14 @@ type PostSubmenuProps = {
   onEdit: () => void;
   onDelete: () => void;
 };
+
+const isSameUser = (
+  firstUserId: string | number | null | undefined,
+  secondUserId: string | number | null | undefined,
+) =>
+  firstUserId != null &&
+  secondUserId != null &&
+  String(firstUserId) === String(secondUserId);
 
 const PostSubmenu = ({
   visible,
@@ -175,12 +190,20 @@ export const PostItem = memo(function PostItem({
   editPost,
   disableCommentNavigation,
 }: PostItemProps) {
-  const { likes, setLike, toggleLike } = useLikesStore();
+  const { likes, setLike } = useLikesStore();
+  const { handleBadgeAwards } = useBadgeNotifications();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
+  const [likePending, setLikePending] = useState(false);
+  const [sharePending, setSharePending] = useState(false);
+  const [shareCount, setShareCount] = useState(item.shares ?? 0);
 
   const router = useRouter();
   const styles = postItemStyles(isDark);
@@ -217,6 +240,10 @@ export const PostItem = memo(function PostItem({
     }
   }, [isEditing]);
 
+  useEffect(() => {
+    setShareCount(item.shares ?? 0);
+  }, [item.shares]);
+
   const likeState = useLikesStore((state) => state.likes[item.id]);
   const liked = likeState?.liked ?? item.liked_by_current_user;
   const likeCount = likeState?.count ?? item.likes;
@@ -228,18 +255,107 @@ export const PostItem = memo(function PostItem({
     addSuffix: true,
   }).replace(/^about /, "");
 
+  const handleMutationAwards = (
+    newlyAwardedBadges:
+      | ForumLikeMutationResponse["newlyAwardedBadges"]
+      | ForumShareMutationResponse["newlyAwardedBadges"],
+  ) => {
+    const awardBelongsToCurrentUser = isSameUser(currentUserId, item.user_id);
+
+    if (awardBelongsToCurrentUser) {
+      handleBadgeAwards(newlyAwardedBadges);
+      return;
+    }
+
+    if (__DEV__ && newlyAwardedBadges?.length) {
+      console.warn(
+        "Ignoring badge awards returned for a post author on another user's device.",
+      );
+    }
+  };
+
   const toggleLikePress = async () => {
-    toggleLike(item.id);
+    if (likePending) return;
+
+    const nextLiked = !liked;
+    const optimisticCount = Math.max(likeCount + (liked ? -1 : 1), 0);
+
+    setLike(item.id, nextLiked, optimisticCount);
+    setLikePending(true);
 
     try {
-      await apiClient.patch(`/api/forum/post/${item.id}/like`, {
-        like: !liked,
+      const response = await apiClient.patch<
+        ForumLikeMutationResponse<Partial<Post>>
+      >(`/api/forum/post/${item.id}/like`, {
+        like: nextLiked,
       });
-    } catch (err: any) {
-      toggleLike(item.id);
-      alert(
-        err.response?.data?.error ?? err.message ?? "Failed to toggle like",
+
+      const serverPost = response.data.post;
+
+      setLike(
+        item.id,
+        typeof serverPost?.liked_by_current_user === "boolean"
+          ? serverPost.liked_by_current_user
+          : nextLiked,
+        typeof serverPost?.likes === "number"
+          ? serverPost.likes
+          : optimisticCount,
       );
+
+      if (typeof serverPost?.shares === "number") {
+        setShareCount(serverPost.shares);
+      }
+
+      handleMutationAwards(response.data.newlyAwardedBadges);
+    } catch (err: unknown) {
+      setLike(item.id, liked, likeCount);
+      const message = isAxiosError<{ error?: string }>(err)
+        ? err.response?.data?.error || err.message || "Failed to toggle like"
+        : err instanceof Error
+          ? err.message
+          : "Failed to toggle like";
+
+      setFeedbackModal({
+        title: "Like failed",
+        message,
+      });
+    } finally {
+      setLikePending(false);
+    }
+  };
+
+  const handleSharePress = async () => {
+    if (sharePending) return;
+
+    setSharePending(true);
+
+    try {
+      const response = await apiClient.post<
+        ForumShareMutationResponse<Partial<Post>>
+      >(`/api/forum/post/${item.id}/share`);
+
+      const serverPost = response.data.post;
+
+      if (typeof serverPost?.shares === "number") {
+        setShareCount(serverPost.shares);
+      } else if (response.data.didCreateShare) {
+        setShareCount((current) => current + 1);
+      }
+
+      handleMutationAwards(response.data.newlyAwardedBadges);
+    } catch (err: unknown) {
+      const message = isAxiosError<{ error?: string }>(err)
+        ? err.response?.data?.error || err.message || "Failed to share post"
+        : err instanceof Error
+          ? err.message
+          : "Failed to share post";
+
+      setFeedbackModal({
+        title: "Share failed",
+        message,
+      });
+    } finally {
+      setSharePending(false);
     }
   };
 
@@ -368,7 +484,13 @@ export const PostItem = memo(function PostItem({
           <View style={styles.postTextWrapper}>
             {!!item.text && <Text style={styles.postText}>{item.text}</Text>}
 
-            {media.length > 0 && <PostImages media={media} item={item} />}
+            {media.length > 0 && (
+              <PostImages
+                media={media}
+                item={item}
+                currentUserId={currentUserId}
+              />
+            )}
 
             <PollBlock postId={item.id} isDark={isDark} />
           </View>
@@ -401,7 +523,11 @@ export const PostItem = memo(function PostItem({
                 <View style={styles.leftSide}>
                   <TouchableOpacity
                     onPress={toggleLikePress}
-                    style={styles.likeButtonContainer}
+                    disabled={likePending}
+                    style={[
+                      styles.likeButtonContainer,
+                      likePending && { opacity: 0.6 },
+                    ]}
                   >
                     <Ionicons
                       name={liked ? "heart" : "heart-outline"}
@@ -444,8 +570,15 @@ export const PostItem = memo(function PostItem({
                     />
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.likeButtonContainer}>
-                    <Text style={styles.count}>0</Text>
+                  <TouchableOpacity
+                    onPress={handleSharePress}
+                    disabled={sharePending}
+                    style={[
+                      styles.likeButtonContainer,
+                      sharePending && { opacity: 0.6 },
+                    ]}
+                  >
+                    <Text style={styles.count}>{shareCount}</Text>
 
                     <Ionicons
                       name="share-social-outline"
@@ -472,6 +605,16 @@ export const PostItem = memo(function PostItem({
         confirmText="Delete"
         cancelText="Cancel"
         variant="danger"
+      />
+
+      <ConfirmModal
+        title={feedbackModal?.title}
+        message={feedbackModal?.message}
+        visible={Boolean(feedbackModal)}
+        onCancel={() => setFeedbackModal(null)}
+        onConfirm={() => setFeedbackModal(null)}
+        confirmText="OK"
+        showCancel={false}
       />
     </View>
   );

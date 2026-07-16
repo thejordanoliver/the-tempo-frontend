@@ -99,6 +99,10 @@ export default function LastFiveGames({
         return getTeamLogo(teamId, isDark);
       case "summercalifornia":
         return getTeamLogo(teamId, isDark);
+      case "summervegas":
+        return getTeamLogo(teamId, isDark);
+      case "summerutah":
+        return getTeamLogo(teamId, isDark);
       case "wnba":
         return getWNBATeamLogo(teamId, isDark);
       case "nfl":

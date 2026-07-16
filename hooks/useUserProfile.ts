@@ -1,16 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { teams } from "constants/teams";
+import { cbTeams } from "constants/teamsCB";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-import type { LeagueType } from "types/types";
+import type { FavoriteLeague } from "types/favorites";
+import { isFavoriteLeague } from "types/favorites";
 import { apiClient } from "utils/apiClient";
 import {
   clearExpiredUserProfileCache,
@@ -21,18 +24,13 @@ import {
   USER_PROFILE_CACHE_VERSION,
 } from "utils/userProfileCache";
 
-type SupportedFavoriteLeague = Extract<
-  LeagueType,
-  "NBA" | "WNBA" | "NFL" | "CFB" | "CBB" | "WCBB" | "MLB" | "NHL"
->;
-
 type TeamLookupItem = {
   id: number | string | null;
   wid?: number | string | null;
 };
 
 type FavoriteTeamWithLeague = TeamLookupItem & {
-  league: SupportedFavoriteLeague;
+  league: FavoriteLeague;
 };
 
 type UserProfileResponse = {
@@ -64,22 +62,6 @@ type DisplayProfile = {
   updatedAt: string | null;
 };
 
-const SUPPORTED_FAVORITE_LEAGUES = new Set<SupportedFavoriteLeague>([
-  "NBA",
-  "WNBA",
-  "NFL",
-  "CFB",
-  "CBB",
-  "WCBB",
-  "MLB",
-  "NHL",
-]);
-
-const isSupportedFavoriteLeague = (
-  league: string,
-): league is SupportedFavoriteLeague =>
-  SUPPORTED_FAVORITE_LEAGUES.has(league as SupportedFavoriteLeague);
-
 const createTeamLookup = <T extends TeamLookupItem>(
   teamList: readonly T[],
   idKey: "id" | "wid" = "id",
@@ -96,17 +78,18 @@ const createTeamLookup = <T extends TeamLookupItem>(
   return lookup;
 };
 
-const teamLookups: Record<SupportedFavoriteLeague, Map<string, TeamLookupItem>> =
-  {
-    NBA: createTeamLookup(teams),
-    WNBA: createTeamLookup(wnbaTeams),
-    NFL: createTeamLookup(nflTeams),
-    CFB: createTeamLookup(cfbTeams),
-    CBB: createTeamLookup(cbbTeams),
-    WCBB: createTeamLookup(cbbTeams, "wid"),
-    MLB: createTeamLookup(mlbTeams),
-    NHL: createTeamLookup(nhlTeams),
-  };
+const teamLookups: Record<FavoriteLeague, Map<string, TeamLookupItem>> = {
+  NBA: createTeamLookup(teams),
+  WNBA: createTeamLookup(wnbaTeams),
+  NFL: createTeamLookup(nflTeams),
+  CFB: createTeamLookup(cfbTeams),
+  CBB: createTeamLookup(cbbTeams),
+  WCBB: createTeamLookup(cbbTeams, "wid"),
+  MLB: createTeamLookup(mlbTeams),
+  CB: createTeamLookup(cbTeams),
+  SB: createTeamLookup(sbTeams),
+  NHL: createTeamLookup(nhlTeams),
+};
 
 function parseString(value: unknown): string | null {
   if (typeof value !== "string") return null;
@@ -538,7 +521,7 @@ export function useUserProfile(userId?: string) {
       favorites
         .map((favorite): FavoriteTeamWithLeague | null => {
           const [league, id] = favorite.split(":");
-          if (!league || !id || !isSupportedFavoriteLeague(league)) {
+          if (!league || !id || !isFavoriteLeague(league)) {
             return null;
           }
 

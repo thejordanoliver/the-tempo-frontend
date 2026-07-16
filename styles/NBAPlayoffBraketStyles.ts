@@ -1,6 +1,6 @@
+import { CardLayout } from "@/types/basketball/basketball";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { CardLayout } from "types/basketball";
 export const CARD_WIDTH = 176;
 export const CANVAS_HEIGHT = 840;
 export const COL_WIDTH = 220;

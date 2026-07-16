@@ -1,4 +1,4 @@
-import { BasketballGame } from "@/types/basketball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -151,7 +151,10 @@ export function useBasketballTeamGames(
   const [error, setError] = useState<Error | null>(null);
 
   const fetchSchedule = useCallback(
-    async ({ isRefresh = false, silent = false }: FetchScheduleOptions = {}) => {
+    async ({
+      isRefresh = false,
+      silent = false,
+    }: FetchScheduleOptions = {}) => {
       if (!league || !teamId) {
         setData(null);
         setLoading(false);

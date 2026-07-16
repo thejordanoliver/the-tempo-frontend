@@ -8,7 +8,7 @@ import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
-import { SoccerGameCardProps } from "../../../../types/soccer";
+import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const router = useRouter();
@@ -88,7 +88,6 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const isForfeited = gameStatusDescription === "Forfeit";
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  
 
   const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
 

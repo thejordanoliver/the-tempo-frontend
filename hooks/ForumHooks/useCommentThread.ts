@@ -1,9 +1,14 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
-import { jwtDecode } from "jwt-decode";
+import { isAxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { AlertConfig } from "types/alert";
+import type {
+  ForumCommentCreateResponse,
+  ForumDeleteMutationResponse,
+} from "types/badges";
 import { apiClient } from "utils/apiClient";
-import { getRefreshToken } from "utils/authStorage";
 
 export type CommentAttachment = {
   type: "image" | "video" | "gif";
@@ -28,18 +33,29 @@ interface ExtendedPost extends Post {
   author?: { id: number; username: string };
 }
 
-interface JwtPayload {
-  id: number;
+function getPostAuthorId(post: ExtendedPost | null) {
+  return post?.user_id ?? post?.author?.id ?? null;
+}
+
+function isSameUser(
+  firstUserId: string | number | null | undefined,
+  secondUserId: string | number | null | undefined,
+) {
+  return (
+    firstUserId != null &&
+    secondUserId != null &&
+    String(firstUserId) === String(secondUserId)
+  );
 }
 
 function getErrorMessage(error: unknown, fallback: string) {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "response" in error &&
-    typeof (error as any).response?.data?.error === "string"
-  ) {
-    return (error as any).response.data.error;
+  if (isAxiosError<{ error?: string; message?: string }>(error)) {
+    return (
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      fallback
+    );
   }
 
   if (error instanceof Error) {
@@ -72,7 +88,6 @@ function getMimeType(attachment: CommentAttachment) {
 }
 
 export function useCommentThread(postId: string | null) {
-  const [token, setToken] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const [post, setPost] = useState<ExtendedPost | null>(null);
@@ -80,24 +95,16 @@ export function useCommentThread(postId: string | null) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const { handleBadgeAwards, requestBadgeDataRefresh } =
+    useBadgeNotifications();
 
   useEffect(() => {
-    const loadToken = async () => {
-      const stored = await getRefreshToken();
-
-      if (!stored) return;
-
-      setToken(stored);
-
-      try {
-        const decoded = jwtDecode<JwtPayload>(stored);
-        setCurrentUserId(decoded.id);
-      } catch (error) {
-        console.error("JWT decode failed", error);
-      }
-    };
-
-    loadToken();
+    AsyncStorage.getItem("userId")
+      .then((id) => {
+        const parsed = id ? Number.parseInt(id, 10) : NaN;
+        setCurrentUserId(Number.isNaN(parsed) ? null : parsed);
+      })
+      .catch(() => setCurrentUserId(null));
   }, []);
 
   const fetchThread = useCallback(async () => {
@@ -109,11 +116,9 @@ export function useCommentThread(postId: string | null) {
     setLoading(true);
 
     try {
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
       const [postRes, commentRes] = await Promise.all([
-        apiClient.get(`api/forum/post/${postId}`, { headers }),
-        apiClient.get(`api/forum/post/${postId}/comments`, { headers }),
+        apiClient.get(`/api/forum/post/${postId}`),
+        apiClient.get(`/api/forum/post/${postId}/comments`),
       ]);
 
       setPost(postRes.data.post);
@@ -129,7 +134,7 @@ export function useCommentThread(postId: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [postId, token]);
+  }, [postId]);
 
   useEffect(() => {
     fetchThread();
@@ -139,12 +144,12 @@ export function useCommentThread(postId: string | null) {
     async (text: string, attachment?: CommentAttachment | null) => {
       const trimmedText = text.trim();
 
-      if (!token || !postId || (!trimmedText && !attachment)) return;
+      if (!postId || (!trimmedText && !attachment)) return;
 
       setSubmitting(true);
 
       try {
-        let createdComment: Comment;
+        let responseData: ForumCommentCreateResponse<Comment>;
 
         if (attachment) {
           const formData = new FormData();
@@ -155,35 +160,51 @@ export function useCommentThread(postId: string | null) {
             formData.append("gif_url", attachment.uri);
           } else {
             const fallbackName =
-              attachment.type === "video" ? "comment-video.mp4" : "comment-image.jpg";
+              attachment.type === "video"
+                ? "comment-video.mp4"
+                : "comment-image.jpg";
 
             formData.append("media", {
               uri: attachment.uri,
-              name: attachment.fileName || getFileNameFromUri(attachment.uri, fallbackName),
+              name:
+                attachment.fileName ||
+                getFileNameFromUri(attachment.uri, fallbackName),
               type: getMimeType(attachment),
-            } as any);
+            } as unknown as Blob);
           }
 
-          const res = await apiClient.post(
-            `api/forum/post/${postId}/comments`,
+          const res = await apiClient.post<ForumCommentCreateResponse<Comment>>(
+            `/api/forum/post/${postId}/comments`,
             formData,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
                 "Content-Type": "multipart/form-data",
               },
             },
           );
 
-          createdComment = res.data.comment;
+          responseData = res.data;
         } else {
-          const res = await apiClient.post(
-            `api/forum/post/${postId}/comments`,
+          const res = await apiClient.post<ForumCommentCreateResponse<Comment>>(
+            `/api/forum/post/${postId}/comments`,
             { text: trimmedText },
-            { headers: { Authorization: `Bearer ${token}` } },
           );
 
-          createdComment = res.data.comment;
+          responseData = res.data;
+        }
+
+        const { comment: createdComment, newlyAwardedBadges } = responseData;
+        const awardBelongsToCurrentUser = isSameUser(
+          currentUserId,
+          getPostAuthorId(post),
+        );
+
+        if (awardBelongsToCurrentUser) {
+          handleBadgeAwards(newlyAwardedBadges);
+        } else if (__DEV__ && newlyAwardedBadges?.length) {
+          console.warn(
+            "Ignoring badge awards returned for a post author on another user's device.",
+          );
         }
 
         setComments((prev) => [...prev, createdComment]);
@@ -208,20 +229,19 @@ export function useCommentThread(postId: string | null) {
         setSubmitting(false);
       }
     },
-    [postId, token],
+    [currentUserId, handleBadgeAwards, post, postId],
   );
 
   const editComment = useCallback(
     async (commentId: string, newText: string) => {
       const trimmedText = newText.trim();
 
-      if (!token || !postId || !commentId || !trimmedText) return;
+      if (!postId || !commentId || !trimmedText) return;
 
       try {
         const res = await apiClient.put(
-          `api/forum/post/${postId}/comments/${commentId}`,
+          `/api/forum/post/${postId}/comments/${commentId}`,
           { text: trimmedText },
-          { headers: { Authorization: `Bearer ${token}` } },
         );
 
         const updatedComment = res.data.comment;
@@ -247,20 +267,19 @@ export function useCommentThread(postId: string | null) {
         });
       }
     },
-    [postId, token],
+    [postId],
   );
 
   const deleteComment = useCallback(
     async (targetPostId: string, commentId: string) => {
-      if (!token || !targetPostId || !commentId) return;
+      if (!targetPostId || !commentId) return;
 
       try {
-        await apiClient.delete(
-          `api/forum/post/${targetPostId}/comments/${commentId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+        await apiClient.delete<ForumDeleteMutationResponse<Comment>>(
+          `/api/forum/post/${targetPostId}/comments/${commentId}`,
         );
+
+        requestBadgeDataRefresh();
 
         setComments((prev) =>
           prev.filter((comment) => String(comment.id) !== String(commentId)),
@@ -284,40 +303,41 @@ export function useCommentThread(postId: string | null) {
         });
       }
     },
-    [token],
+    [requestBadgeDataRefresh],
   );
 
-const deletePost = useCallback(
-  async (postIdToDelete: string) => {
-    if (!token || !postIdToDelete) return false;
+  const deletePost = useCallback(
+    async (postIdToDelete: string) => {
+      if (!postIdToDelete) return false;
 
-    try {
-      await apiClient.delete(`api/forum/post/${postIdToDelete}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      try {
+        await apiClient.delete<ForumDeleteMutationResponse>(
+          `/api/forum/post/${postIdToDelete}`,
+        );
 
-      setPost((prev) =>
-        prev && String(prev.id) === String(postIdToDelete) ? null : prev,
-      );
+        requestBadgeDataRefresh();
 
-      return true;
-    } catch (error) {
-      console.error("Failed to delete post", error);
+        setPost((prev) =>
+          prev && String(prev.id) === String(postIdToDelete) ? null : prev,
+        );
 
-      setAlertConfig({
-        title: "Error",
-        message: getErrorMessage(error, "Failed to delete post"),
-        confirmText: "OK",
-      });
+        return true;
+      } catch (error) {
+        console.error("Failed to delete post", error);
 
-      return false;
-    }
-  },
-  [token],
-);
+        setAlertConfig({
+          title: "Error",
+          message: getErrorMessage(error, "Failed to delete post"),
+          confirmText: "OK",
+        });
+
+        return false;
+      }
+    },
+    [requestBadgeDataRefresh],
+  );
 
   return {
-    token,
     currentUserId,
     post,
     comments,

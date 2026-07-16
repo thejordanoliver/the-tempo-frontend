@@ -14,8 +14,8 @@ const PreferencesScreen = () => {
     viewMode,
     setViewMode,
     colorScheme,
-    setColorScheme,
     resolvedColorScheme,
+    setColorScheme,
   } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = settingsStyles(isDark);

@@ -1,5 +1,5 @@
+import { Game } from "@/types/basketball/basketball";
 import { useEffect, useState } from "react";
-import { Game } from "types/basketball";
 
 import { apiClient } from "utils/apiClient";
 import { getNBASeason } from "utils/dateUtils";

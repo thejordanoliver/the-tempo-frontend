@@ -9,6 +9,7 @@ import {
   HighlightVideoList,
   LastFiveGames,
   LineScore,
+  MatchupPredictor,
   Officials,
 } from "@/components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
@@ -170,9 +171,8 @@ export default function GameDetailsScreen(
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const awayColor = useMemo(() => awayTeam?.color, [awayTeam?.color]);
-  const homeColor = useMemo(() => homeTeam?.color, [homeTeam?.color]);
-
+  const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
+  const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
   const { score, playersByCategory, details } = useFootballGameDetails(
@@ -210,6 +210,8 @@ export default function GameDetailsScreen(
   const awayTimeouts = score?.possession.awayTimeouts;
   const homeRecord = details?.records?.home?.overall;
   const awayRecord = details?.records?.away?.overall;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
   const homeWins = homeScore > awayScore;
@@ -351,19 +353,6 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <FanPredictionVote
-              gameId={String(gameId)}
-              awayId={awayId}
-              awayCode={awayCode}
-              awayLogo={awayHeaderLogo}
-              awayColor={awayColor}
-              homeId={homeId}
-              homeCode={homeCode}
-              homeLogo={homeHeaderLogo}
-              homeColor={homeColor}
-              state={state}
-            />
-
             <LineScore
               linescore={lineScore}
               homeCode={homeCode}
@@ -379,6 +368,33 @@ export default function GameDetailsScreen(
               possessionTeamId={possessionTeamId}
               homeTeamId={homeId}
               awayTeamId={awayId}
+              state={state}
+            />
+
+            <FanPredictionVote
+              gameId={String(gameId)}
+              awayId={awayId}
+              awayCode={awayCode}
+              awayLogo={awayHeaderLogo}
+              awayColor={awayColor}
+              homeId={homeId}
+              homeCode={homeCode}
+              homeLogo={homeHeaderLogo}
+              homeColor={homeColor}
+              state={state}
+            />
+
+            <MatchupPredictor
+              homeCode={homeCode}
+              homeLogo={homeLogo}
+              homeChance={homeChance}
+              homeColor={homeColor}
+              awayCode={awayCode}
+              awayLogo={awayLogo}
+              awayChance={awayChance}
+              awayColor={awayColor}
+              size={180}
+              isDark={isDark}
               state={state}
             />
 

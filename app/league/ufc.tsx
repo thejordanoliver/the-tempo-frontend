@@ -1,16 +1,11 @@
+import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -26,7 +21,6 @@ import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useMMAGames } from "../../hooks/MMAHooks/useMMAGames";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 
 export default function UFCLeagueScreen() {
   const league = "UFC";
@@ -173,8 +167,8 @@ export default function UFCLeagueScreen() {
           </View>
 
           <View key="champions" style={styles.contentArea}>
-            <MMAChampionsList/>
-            </View>
+            <MMAChampionsList />
+          </View>
 
           <View key="forum" style={styles.contentArea}>
             <LeagueForum league={league} />

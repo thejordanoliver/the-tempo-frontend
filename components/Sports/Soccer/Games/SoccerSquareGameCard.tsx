@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
-import { SoccerGameCardProps } from "../../../../types/soccer";
+import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();

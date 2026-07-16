@@ -7,7 +7,7 @@ import { BracketData } from "@/types/football/football";
 import ChampionTape from "assets/Placeholders/ChampionTape.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
+import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";

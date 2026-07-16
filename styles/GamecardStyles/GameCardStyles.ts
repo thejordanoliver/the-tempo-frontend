@@ -112,11 +112,6 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       resizeMode: "contain",
     },
 
-    expoFighter: {
-      width: 48,
-      height: 48,
-    },
-
     leftFighterFlag: {
       position: "absolute",
       width: 20,

@@ -32,6 +32,8 @@ export type TeamRank = {
   lastUpdated: string;
 };
 
+export type CBBTeamRank = TeamRank;
+
 export type RankPoll = {
   type: "ap" | "coaches";
   shortName: string;

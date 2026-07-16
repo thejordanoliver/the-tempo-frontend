@@ -5,11 +5,13 @@ import Button from "components/Button";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
+import { getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -17,8 +19,9 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { favoriteTeamsListStyles } from "styles/FavorieTeamsListStyles";
+import { isFavoriteLeague } from "types/favorites";
 import type { LeagueType, Team } from "types/types";
-import { getTeamRoute } from "utils/teams";
+import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 type TeamWithLeague = Team & { league: LeagueType };
 
 type Props = {
@@ -43,6 +46,10 @@ const getLeagueBadgeColor = (league: LeagueType) => {
       return "#1E90FF";
     case "WCBB":
       return "#C2185B";
+    case "CB":
+      return "#0F766E";
+    case "SB":
+      return "#B45309";
     default:
       return "transparent";
   }
@@ -115,16 +122,27 @@ const FavoriteTeamsList = ({
             case "MLB":
               logo = getMLBTeamLogo(Number(team.id), true);
               break;
+            case "CB":
+              logo = getCBTeamLogo(Number(team.id), true);
+              break;
+            case "SB":
+              logo = getSBTeamLogo(Number(team.id), true);
+              break;
             default:
               logo = null;
           }
           const isCollege =
             team.league === "CFB" ||
             team.league === "CBB" ||
-            team.league === "WCBB";
+            team.league === "WCBB" ||
+            team.league === "CB" ||
+            team.league === "SB";
           const showLeagueBadge = isCollege;
 
           const teamName = team.name;
+          const favoriteLeague = isFavoriteLeague(team.league)
+            ? team.league
+            : null;
 
           return (
             <LongPressGestureHandler
@@ -139,12 +157,14 @@ const FavoriteTeamsList = ({
                   pressed && styles.pressed,
                   isGridView ? styles.gridItem : styles.listItem,
                 ]}
-                onPress={() =>
+                onPress={() => {
+                  if (!favoriteLeague) return;
+
                   router.push({
-                    pathname: getTeamRoute(team.league) as any,
-                    params: { teamId: String(id) },
-                  })
-                }
+                    pathname: getFavoriteTeamRoute(favoriteLeague),
+                    params: { teamId: String(id), league: favoriteLeague },
+                  });
+                }}
               >
                 <View
                   style={[

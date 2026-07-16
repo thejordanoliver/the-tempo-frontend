@@ -1,10 +1,12 @@
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
+import { getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useCallback, useMemo } from "react";
@@ -49,6 +51,8 @@ function TeamCard({
     if (item.league === "WCBB")
       return getCBBTeamLogo(item.id, useAltLogo, true);
     if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
+    if (item.league === "CB") return getCBTeamLogo(item.id, useAltLogo);
+    if (item.league === "SB") return getSBTeamLogo(item.id, useAltLogo);
     if (item.league === "NBA") return getTeamLogo(item.id, useAltLogo);
     if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
     if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
@@ -97,7 +101,9 @@ function TeamCard({
       >
         {(item.league === "CFB" ||
           item.league === "CBB" ||
-          item.league === "WCBB") && (
+          item.league === "WCBB" ||
+          item.league === "CB" ||
+          item.league === "SB") && (
           <View
             style={[
               styles.sportTag,
@@ -107,7 +113,11 @@ function TeamCard({
                     ? "#228B22"
                     : item.league === "WCBB"
                       ? "#C2185B"
-                      : "#1E90FF",
+                      : item.league === "CB"
+                        ? "#0F766E"
+                        : item.league === "SB"
+                          ? "#B45309"
+                          : "#1E90FF",
               },
             ]}
           >

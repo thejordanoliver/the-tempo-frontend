@@ -282,19 +282,23 @@ export function useFavoriteTeams() {
           ? "/team/[teamId]"
           : previewTeam.league === "WNBA"
             ? "/team/wnba/[teamId]"
-          : previewTeam.league === "CFB"
-            ? "/team/cfb/[teamId]"
-            : previewTeam.league === "CBB"
-              ? "/team/cbb/[teamId]"
-              : previewTeam.league === "WCBB"
-                ? "/team/wcbb/[teamId]"
-                : previewTeam.league === "MLB"
-                  ? "/team/mlb/[teamId]"
-                  : "/team/nhl/[teamId]";
+            : previewTeam.league === "CFB"
+              ? "/team/cfb/[teamId]"
+              : previewTeam.league === "CBB"
+                ? "/team/cbb/[teamId]"
+                : previewTeam.league === "WCBB"
+                  ? "/team/wcbb/[teamId]"
+                  : previewTeam.league === "MLB"
+                    ? "/team/mlb/[teamId]"
+                    : previewTeam.league === "CB"
+                      ? "/team/cb/[teamId]"
+                      : previewTeam.league === "SB"
+                        ? "/team/sb/[teamId]"
+                        : "/team/nhl/[teamId]";
 
     router.push({
       pathname: route,
-      params: { teamId: id.toString() },
+      params: { teamId: id.toString(), league: previewTeam.league },
     });
 
     setModalVisible(false);

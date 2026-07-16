@@ -1,8 +1,8 @@
 import { globalStyles } from "@/constants/styles";
-import { BaseballGame } from "@/types/baseball";
-import { BasketballGame } from "@/types/basketball";
+import { BaseballGame } from "@/types/baseball/baseball";
+import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
-import { HockeyGame } from "@/types/hockey";
+import { HockeyGame } from "@/types/hockey/hockey";
 import { LeagueType } from "@/types/types";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";

@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
-import axios from "axios";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
+import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -21,10 +21,11 @@ import {
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
-import { BASE_URL } from "utils/apiClient";
-import { getAccessToken } from "utils/authStorage";
+import type { ForumLikeMutationResponse } from "types/badges";
+import { apiClient, BASE_URL } from "utils/apiClient";
 import AppVideo from "../AppVideo";
 import { MediaItem } from "./PostImages";
+import type { Post } from "./PostItem";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -47,6 +48,8 @@ type PostImagesModalProps = {
   likedByCurrentUser?: boolean;
   profileImage?: string | null;
   username?: string;
+  postAuthorUserId: string | number;
+  currentUserId: string | number | null;
 };
 
 export default function PostImagesModal({
@@ -61,6 +64,8 @@ export default function PostImagesModal({
   likedByCurrentUser = false,
   profileImage,
   username,
+  postAuthorUserId,
+  currentUserId,
 }: PostImagesModalProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -78,9 +83,11 @@ export default function PostImagesModal({
   const [captionVisible, setCaptionVisible] = useState(true);
   const captionOpacity = useRef(new Animated.Value(1)).current;
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const [likePending, setLikePending] = useState(false);
 
-  const { likes, setLike, toggleLike } = useLikesStore();
+  const { likes, setLike } = useLikesStore();
   const likeState = likes[postId];
+  const { handleBadgeAwards } = useBadgeNotifications();
 
   const fullProfileImageUri =
     profileImage && !profileImage.startsWith("http")
@@ -99,19 +106,47 @@ export default function PostImagesModal({
   const likeCount = likeState?.count ?? likesCount;
 
   const toggleLikePress = async () => {
-    const token = await getAccessToken();
-    if (!token) return;
+    if (!postId || likePending) return;
 
-    toggleLike(postId);
+    const nextLiked = !liked;
+    const optimisticCount = Math.max(likeCount + (liked ? -1 : 1), 0);
+
+    setLike(postId, nextLiked, optimisticCount);
+    setLikePending(true);
 
     try {
-      await axios.patch(
-        `${BASE_URL}/api/forum/post/${postId}/like`,
-        { like: !liked },
-        { headers: { Authorization: `Bearer ${token}` } },
+      const response = await apiClient.patch<
+        ForumLikeMutationResponse<Partial<Post>>
+      >(`/api/forum/post/${postId}/like`, {
+        like: nextLiked,
+      });
+
+      const serverPost = response.data.post;
+
+      setLike(
+        postId,
+        typeof serverPost?.liked_by_current_user === "boolean"
+          ? serverPost.liked_by_current_user
+          : nextLiked,
+        typeof serverPost?.likes === "number"
+          ? serverPost.likes
+          : optimisticCount,
       );
+
+      if (
+        currentUserId != null &&
+        String(currentUserId) === String(postAuthorUserId)
+      ) {
+        handleBadgeAwards(response.data.newlyAwardedBadges);
+      } else if (__DEV__ && response.data.newlyAwardedBadges?.length) {
+        console.warn(
+          "Ignoring badge awards returned for a post author on another user's device.",
+        );
+      }
     } catch {
-      toggleLike(postId);
+      setLike(postId, liked, likeCount);
+    } finally {
+      setLikePending(false);
     }
   };
 
@@ -352,6 +387,7 @@ export default function PostImagesModal({
             <View style={styles.engagementRow}>
               <TouchableOpacity
                 onPress={toggleLikePress}
+                disabled={likePending}
                 style={styles.iconWithText}
               >
                 <Ionicons

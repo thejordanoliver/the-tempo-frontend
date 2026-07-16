@@ -1,5 +1,4 @@
-import { Colors } from "@/constants/styles";
-import { Ionicons } from "@expo/vector-icons";
+import { activeOpacity } from "@/constants/styles";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -51,8 +50,6 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
   const secondFighterName = secondFighter?.lastName ?? "TBD";
   const firstFighterPhoto = firstFighter?.headshot ?? placeholderImage;
   const secondFighterPhoto = secondFighter?.headshot ?? placeholderImage;
-  const firstFighterFlag = firstFighter?.flag ?? "";
-  const secondFighterFlag = secondFighter?.flag ?? "";
   const firstFighterRecord = firstFighter?.record ?? "0-0";
   const secondFighterRecord = secondFighter?.record ?? "0-0";
   const firstFighterWinner = firstFighter.winner === true;
@@ -107,13 +104,6 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
       return (
         <View style={styles.winnerContainer}>
           <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>
-
-          <Ionicons
-            size={20}
-            name="caret-up"
-            color={isDark ? Colors.white : Colors.black}
-            style={{ position: "absolute", bottom: -20 }}
-          />
         </View>
       );
     }
@@ -163,19 +153,24 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
           <View style={styles.teamWrapper}>
             <View style={styles.fighterContainer}>
               <Image
-                source={{ uri: secondFighterPhoto }}
-                style={styles.expoFighter}
+                source={
+                  typeof secondFighterPhoto === "string"
+                    ? { uri: secondFighterPhoto }
+                    : secondFighterPhoto
+                }
+                style={styles.fighter}
                 contentFit="contain"
                 accessibilityLabel={`${secondFighterName} headshot`}
               />
-              <Image
-                source={{ uri: secondFighterFlag }}
-                style={styles.fighterFlag}
-                accessibilityLabel={`${secondFighterName} flag`}
-              />
             </View>
 
-            <Text style={styles.teamName}>{secondFighterName}</Text>
+            <Text
+              style={styles.teamName}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {secondFighterName}
+            </Text>
           </View>
           {/* Second Fighter Score / Record */}
           <ScoreText
@@ -189,18 +184,23 @@ export default function MMASquareGameCard({ game }: MMAFightCardProps) {
           <View style={styles.teamWrapper}>
             <View style={styles.fighterContainer}>
               <Image
-                source={{ uri: firstFighterPhoto }}
-                style={styles.expoFighter}
+                source={
+                  typeof firstFighterPhoto === "string"
+                    ? { uri: firstFighterPhoto }
+                    : firstFighterPhoto
+                }
+                style={styles.fighter}
                 contentFit="contain"
-                accessibilityLabel={`${firstFighterName} headshot`}
-              />
-              <Image
-                source={{ uri: firstFighterFlag }}
-                style={styles.fighterFlag}
-                accessibilityLabel={`${firstFighterName} flag`}
+                accessibilityLabel={`${secondFighterName} headshot`}
               />
             </View>
-            <Text style={styles.teamName}>{firstFighterName}</Text>
+            <Text
+              style={styles.teamName}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {firstFighterName}
+            </Text>
           </View>
 
           {/* First Fighter Score / Record */}

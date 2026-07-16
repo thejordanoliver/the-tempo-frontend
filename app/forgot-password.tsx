@@ -1,7 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import Button from "../components/Button";
-import { Colors, Fonts } from "../constants/styles";
-import { usePreferences } from "../contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -16,6 +13,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../components/Button";
+import { Colors, Fonts } from "../constants/styles";
+import { usePreferences } from "../contexts/PreferencesContext";
 import {
   forgotPassword,
   resetPassword,
