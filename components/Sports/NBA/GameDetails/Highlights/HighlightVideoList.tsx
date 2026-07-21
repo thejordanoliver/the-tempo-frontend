@@ -15,7 +15,7 @@ import {
 import { Highlight } from "types/types";
 
 type HighlightVideoProps = {
-  highlights: Highlight[];
+  highlights: Highlight[] | undefined;
   isDark: boolean;
 };
 

@@ -38,7 +38,7 @@ import { clearAuthSession } from "../utils/apiClient";
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 SplashScreen.setOptions({
-  duration: 500,
+  duration: 1000,
   fade: true,
 });
 

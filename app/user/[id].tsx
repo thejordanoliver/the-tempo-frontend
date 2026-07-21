@@ -1,3 +1,4 @@
+import TabBar from "@/components/TabBars/TabBar";
 import { globalStyles } from "@/constants/styles";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
@@ -20,6 +21,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
+import { ProfileTab } from "../(tabs)/profile";
 
 const NUM_COLUMNS = 3;
 const HORIZONTAL_PADDING = 40;
@@ -33,8 +35,11 @@ const normalizeRouteParam = (param: RouteParam) => {
 };
 
 export default function UserProfileScreen() {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const navigation = useNavigation();
+  const router = useRouter();
   const { width: screenWidth } = useWindowDimensions();
-
   const itemWidth = useMemo(() => {
     const totalGap = COLUMN_GAP * (NUM_COLUMNS - 1);
     const availableWidth = screenWidth - HORIZONTAL_PADDING - totalGap;
@@ -44,15 +49,9 @@ export default function UserProfileScreen() {
 
   const params = useLocalSearchParams<{ id?: RouteParam }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
-
-  const navigation = useNavigation();
-  const router = useRouter();
-
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-
+  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorite teams");
   const [isGridView, setIsGridView] = useState(true);
   const isAnimatingRef = useRef(false);
 
@@ -95,6 +94,10 @@ export default function UserProfileScreen() {
       Boolean(currentUserIdString && userId && currentUserIdString === userId),
     [currentUserIdString, userId],
   );
+
+  const handleTabPress = useCallback((tab: ProfileTab) => {
+    setSelectedTab(tab);
+  }, []);
 
   const headerTitle = useMemo(() => {
     if (username) return `@${username}`;
@@ -221,36 +224,44 @@ export default function UserProfileScreen() {
 
       <BioSection bio={bio} isDark={isDark} />
 
-      <View style={styles.favoritesContainer}>
-        <FavoriteTeamsSection
-          favorites={favoriteTeamsWithLeague}
-          isGridView={isGridView}
-          fadeAnim={fadeAnim}
-          toggleFavoriteTeamsView={toggleFavoriteTeamsView}
-          styles={styles}
-          itemWidth={itemWidth}
-          isCurrentUser={isCurrentUser}
-        />
-      </View>
+      <TabBar
+        tabs={["favorite teams", "badges"]}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+      />
 
-      <View style={styles.favoritesContainer}>
-        <BadgePreviewSection
-          badges={featuredBadges}
-          earnedCount={summary.earnedCount}
-          totalCount={summary.totalCount}
-          isDark={isDark}
-          itemWidth={itemWidth}
-          loading={badgesLoading}
-          error={badgesError}
-          onRetry={refreshBadges}
-          onPressSeeAll={() => {
-            router.push({
-              pathname: "/badges",
-              params: { userId },
-            });
-          }}
-        />
-      </View>
+      {selectedTab === "favorite teams" && (
+        <View style={styles.favoritesContainer}>
+          <FavoriteTeamsSection
+            favorites={favoriteTeamsWithLeague}
+            isGridView={isGridView}
+            fadeAnim={fadeAnim}
+            toggleFavoriteTeamsView={toggleFavoriteTeamsView}
+            styles={styles}
+            itemWidth={itemWidth}
+            isCurrentUser={isCurrentUser}
+          />
+        </View>
+      )}
+
+      {selectedTab === "badges" && (
+        <View style={styles.favoritesContainer}>
+          <BadgePreviewSection
+            badges={featuredBadges}
+            earnedCount={summary.earnedCount}
+            totalCount={summary.totalCount}
+            isDark={isDark}
+            itemWidth={itemWidth}
+            loading={badgesLoading}
+            error={badgesError}
+            onRetry={refreshBadges}
+            onPressSeeAll={() => {
+              router.push("/badges");
+            }}
+          />
+        </View>
+      )}
     </ScrollView>
   );
 }

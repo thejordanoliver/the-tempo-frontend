@@ -2,9 +2,9 @@ import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
 import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors } from "constants/styles";
 import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import DrivesList from "./DrivesList";
 
@@ -50,8 +50,6 @@ export default function TeamDrives({
   state,
 }: Props) {
   const styles = TeamDrivesStyles(isDark);
-  const global = globalStyles(isDark);
-
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
   const previous = useMemo(() => {
@@ -115,34 +113,7 @@ export default function TeamDrives({
   }
 
   if (!loading && allDrives.length === 0) {
-    return (
-      <View>
-        <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
-        <View style={styles.wrapper}>
-          <HomeAwayTabBar
-            awayTeam={{
-              id: awayId,
-              name: awayCode?.trim() || "Away",
-
-              logo: awayLogo,
-            }}
-            homeTeam={{
-              id: homeId,
-              name: homeCode?.trim() || "Home",
-
-              logo: homeLogo,
-            }}
-            selected={selectedTab}
-            onTabPress={setSelectedTab}
-            isDark={isDark}
-          />
-
-          <View style={global.emptyContainer}>
-            <Text style={global.emptyText}>No drives found for this team.</Text>
-          </View>
-        </View>
-      </View>
-    );
+    return null;
   }
 
   return (

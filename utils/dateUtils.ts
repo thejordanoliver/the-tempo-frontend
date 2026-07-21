@@ -8,6 +8,44 @@ import { Dimensions, ScrollView } from "react-native";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+function padDatePart(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+export function formatDateToUTCYYYYMMDD(
+  value: Date | string | number | null | undefined,
+) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  if (typeof value === "string") {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return null;
+    }
+
+    if (/^\d{8}$/.test(trimmedValue)) {
+      return trimmedValue;
+    }
+
+    value = trimmedValue;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return [
+    date.getUTCFullYear(),
+    padDatePart(date.getUTCMonth() + 1),
+    padDatePart(date.getUTCDate()),
+  ].join("");
+}
+
 export const isTodayOrTomorrow = (dateString: string) => {
   const gameDate = new Date(dateString);
   const now = new Date();

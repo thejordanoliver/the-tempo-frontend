@@ -32,6 +32,77 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
+export type RacingLeague =
+  | "f1"
+  | "nascarpremier"
+  | "nascarsecondary"
+  | "nascartruck";
+
+type RacingLeagueDisplayConfig = {
+  label: string;
+  shortLabel: string;
+  eventLabel: string;
+  accentColor: string;
+};
+
+const RACING_LEAGUE_CONFIG: Record<RacingLeague, RacingLeagueDisplayConfig> = {
+  f1: {
+    label: "FORMULA 1",
+    shortLabel: "F1",
+    eventLabel: "GRAND PRIX",
+    accentColor: "#E10600",
+  },
+
+  nascarpremier: {
+    label: "NASCAR CUP SERIES",
+    shortLabel: "CUP",
+    eventLabel: "RACE DAY",
+    accentColor: "#F5C400",
+  },
+
+  nascarsecondary: {
+    label: "NASCAR XFINITY SERIES",
+    shortLabel: "XFINITY",
+    eventLabel: "RACE DAY",
+    accentColor: "#7B2CBF",
+  },
+
+  nascartruck: {
+    label: "NASCAR TRUCK SERIES",
+    shortLabel: "TRUCK",
+    eventLabel: "RACE DAY",
+    accentColor: "#1E88E5",
+  },
+};
+
+const resolveRacingLeague = (
+  ...values: (string | null | undefined)[]
+): RacingLeague | null => {
+  for (const value of values) {
+    const normalized = String(value ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+    switch (normalized) {
+      case "f1":
+        return "f1";
+
+      case "nascar":
+      case "nascarpremier":
+        return "nascarpremier";
+
+      case "nascarsecondary":
+        return "nascarsecondary";
+
+      case "nascartruck":
+        return "nascartruck";
+    }
+  }
+
+  return null;
+};
+
 const FALLBACK_MESSAGE_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
 
@@ -39,6 +110,7 @@ type CustomHeaderTitleProps = {
   title?: string;
   playerName?: string;
   tabName?: string;
+
   onLogout?: () => void;
   onSettings?: () => void;
   onMessages?: () => void;
@@ -46,39 +118,56 @@ type CustomHeaderTitleProps = {
   onBack?: () => void;
   onCalendarPress?: () => void;
   onOpenLeagueModal?: () => void;
+
   modalVisible?: boolean;
-  setModalVisible?: (v: boolean) => void;
+  setModalVisible?: (value: boolean) => void;
+
   onToggleLayout?: () => void;
   isGrid?: boolean;
+
   logo?: any;
   homeLogo?: any;
   awayLogo?: any;
+
   homeColor?: string | null;
   awayColor?: string | null;
   teamColor?: string;
+
   isTeamScreen?: boolean;
+  isPlayerScreen?: boolean;
+
   onSearchToggle?: () => void;
   onAddWidget?: () => void;
+
   teamCode?: string;
   teamId?: number;
+
   homeTeamCode?: string;
   awayTeamCode?: string;
+
   homeTeamId?: string | number;
   awayTeamId?: string | number;
+
   teamCoach?: string;
   teamHistory?: string;
+
   selectedConferenceName?: string;
-  isPlayerScreen?: boolean;
+
   showBackButton?: boolean;
+
   league?: string | "Leagues";
+  racingLeague?: RacingLeague;
+
+  isEvent?: boolean;
   isNeutralSite?: boolean;
+
   isFavorite?: boolean;
   isNotified?: boolean;
+
   onOpenInfo?: () => void;
   onToggleFavorite?: () => void;
   onToggleNotifications?: () => void;
 
-  // Message thread header props
   messageAvatar?: string;
   messageUsername?: string;
   messageFullName?: string;
@@ -87,18 +176,53 @@ type CustomHeaderTitleProps = {
 };
 
 function resolveImage(source: any): ImageSourcePropType | undefined {
-  if (!source) return undefined;
+  if (!source) {
+    return undefined;
+  }
 
-  if (typeof source === "number") return source;
+  if (typeof source === "number") {
+    return source;
+  }
 
-  if (typeof source === "object" && source.uri) return source;
+  if (typeof source === "string") {
+    return {
+      uri: source,
+    };
+  }
 
-  if (typeof source === "string") return { uri: source };
+  if (Array.isArray(source)) {
+    return resolveImage(source[0]);
+  }
+
+  if (typeof source === "object") {
+    if (source.uri) {
+      return source;
+    }
+
+    if (typeof source.href === "string") {
+      return {
+        uri: source.href,
+      };
+    }
+
+    if (typeof source.url === "string") {
+      return {
+        uri: source.url,
+      };
+    }
+
+    if (typeof source.src === "string") {
+      return {
+        uri: source.src,
+      };
+    }
+  }
 
   return undefined;
 }
 
-// ---------- SUBCOMPONENTS ----------
+// ---------- TEAM BACKGROUND ----------
+
 const TeamBackground = ({
   insets,
   isDark,
@@ -108,7 +232,9 @@ const TeamBackground = ({
   isTeamScreen,
   isPlayerScreen,
 }: {
-  insets: { top: number };
+  insets: {
+    top: number;
+  };
   isDark: boolean;
   selectedTeam?: any;
   teamId?: number;
@@ -117,7 +243,7 @@ const TeamBackground = ({
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
 }) => {
-  const defaultBgColor = isDark ? Colors.black : Colors.white;
+  const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
   const styles = customHeaderStyles;
 
   if (!(isTeamScreen || isPlayerScreen)) {
@@ -125,12 +251,16 @@ const TeamBackground = ({
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: defaultBgColor,
+          backgroundColor: defaultBackgroundColor,
           zIndex: -1,
         }}
       />
     );
   }
+
+  const selectedTeamLogo = resolveImage(
+    selectedTeam?.logoLight ?? selectedTeam?.logo ?? logo,
+  );
 
   return (
     <View
@@ -146,17 +276,19 @@ const TeamBackground = ({
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: teamColor || defaultBgColor,
+          backgroundColor: teamColor || defaultBackgroundColor,
           zIndex: -1,
         }}
       />
 
-      {(selectedTeam?.logo || logo) && (
-        <Image source={resolveImage(logo)} style={styles.bgImage} />
-      )}
+      {selectedTeamLogo ? (
+        <Image source={selectedTeamLogo} style={styles.bgImage} />
+      ) : null}
     </View>
   );
 };
+
+// ---------- CONFERENCE BACKGROUND ----------
 
 const ConferenceBackground = ({
   insets,
@@ -166,14 +298,16 @@ const ConferenceBackground = ({
   conferenceColor,
   isConferenceScreen,
 }: {
-  insets: { top: number };
+  insets: {
+    top: number;
+  };
   isDark: boolean;
   selectedTeam?: any;
   logo?: ImageSourcePropType | string | null;
   conferenceColor?: string;
   isConferenceScreen: boolean;
 }) => {
-  const defaultBgColor = isDark ? Colors.black : Colors.white;
+  const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
   const styles = customHeaderStyles;
 
   if (!isConferenceScreen) {
@@ -181,12 +315,16 @@ const ConferenceBackground = ({
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: defaultBgColor,
+          backgroundColor: defaultBackgroundColor,
           zIndex: -1,
         }}
       />
     );
   }
+
+  const conferenceLogoSource = resolveImage(
+    selectedTeam?.logoLight ?? selectedTeam?.logo ?? logo,
+  );
 
   return (
     <View
@@ -202,24 +340,19 @@ const ConferenceBackground = ({
       <View
         style={{
           ...StyleSheet.absoluteFillObject,
-          backgroundColor: conferenceColor || defaultBgColor,
+          backgroundColor: conferenceColor || defaultBackgroundColor,
           zIndex: -1,
         }}
       />
 
-      {(selectedTeam?.logo || logo) && (
-        <Image
-          source={
-            selectedTeam?.logoLight
-              ? selectedTeam.logoLight
-              : (selectedTeam?.logo ?? logo)
-          }
-          style={styles.bgImage}
-        />
-      )}
+      {conferenceLogoSource ? (
+        <Image source={conferenceLogoSource} style={styles.bgImage} />
+      ) : null}
     </View>
   );
 };
+
+// ---------- MESSAGE THREAD HEADER ----------
 
 const MessageThreadHeader = ({
   avatar,
@@ -237,8 +370,13 @@ const MessageThreadHeader = ({
   isDark: boolean;
 }) => {
   const styles = customHeaderStyles;
-  const avatarSource = resolveImage(avatar) ?? { uri: FALLBACK_MESSAGE_AVATAR };
+
+  const avatarSource = resolveImage(avatar) ?? {
+    uri: FALLBACK_MESSAGE_AVATAR,
+  };
+
   const displayUsername = username || fullName || "New Message";
+
   const displayFullName =
     fullName && fullName !== displayUsername ? fullName : "";
 
@@ -247,7 +385,7 @@ const MessageThreadHeader = ({
       <View style={styles.messageAvatarWrap}>
         <Image source={avatarSource} style={styles.messageAvatar} />
 
-        {isOnline && (
+        {isOnline ? (
           <View
             style={[
               styles.messageOnlineDot,
@@ -256,7 +394,7 @@ const MessageThreadHeader = ({
               },
             ]}
           />
-        )}
+        ) : null}
       </View>
 
       <View style={styles.messageHeaderTextWrap}>
@@ -265,36 +403,42 @@ const MessageThreadHeader = ({
             numberOfLines={1}
             style={[
               styles.messageUsername,
-              { color: isDark ? Colors.white : Colors.black },
+              {
+                color: isDark ? Colors.white : Colors.black,
+              },
             ]}
           >
             {displayUsername}
           </Text>
 
-          {isVerified && (
+          {isVerified ? (
             <Ionicons
               name="checkmark-circle"
               size={14}
               color={Colors.dark.blue}
             />
-          )}
+          ) : null}
         </View>
 
-        {!!displayFullName && (
+        {displayFullName ? (
           <Text
             numberOfLines={1}
             style={[
               styles.messageFullName,
-              { color: isDark ? Colors.lightGray : Colors.darkGray },
+              {
+                color: isDark ? Colors.lightGray : Colors.darkGray,
+              },
             ]}
           >
             {displayFullName}
           </Text>
-        )}
+        ) : null}
       </View>
     </View>
   );
 };
+
+// ---------- PROFILE MENU ----------
 
 const ProfileHeaderMenu = ({
   visible,
@@ -309,7 +453,9 @@ const ProfileHeaderMenu = ({
 }) => {
   const progress = useRef(new Animated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
+
   const styles = customHeaderStyles;
+
   useEffect(() => {
     if (visible) {
       setShouldRender(true);
@@ -331,11 +477,15 @@ const ProfileHeaderMenu = ({
       easing: Easing.in(Easing.quad),
       useNativeDriver: true,
     }).start(({ finished }) => {
-      if (finished) setShouldRender(false);
+      if (finished) {
+        setShouldRender(false);
+      }
     });
   }, [progress, visible]);
 
-  if (!shouldRender) return null;
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <Animated.View
@@ -365,7 +515,7 @@ const ProfileHeaderMenu = ({
         },
       ]}
     >
-      {onSettings && (
+      {onSettings ? (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           style={styles.profileSubmenuItem}
@@ -374,7 +524,9 @@ const ProfileHeaderMenu = ({
           <View
             style={[
               styles.profileSubmenuIconWrap,
-              { backgroundColor: isDark ? Colors.black : Colors.white },
+              {
+                backgroundColor: isDark ? Colors.black : Colors.white,
+              },
             ]}
           >
             <Ionicons
@@ -387,17 +539,19 @@ const ProfileHeaderMenu = ({
           <Text
             style={[
               styles.profileSubmenuText,
-              { color: isDark ? Colors.dark.text : Colors.light.text },
+              {
+                color: isDark ? Colors.dark.text : Colors.light.text,
+              },
             ]}
           >
             Settings
           </Text>
         </TouchableOpacity>
-      )}
+      ) : null}
 
-      {onLogout && (
+      {onLogout ? (
         <>
-          {onSettings && (
+          {onSettings ? (
             <View
               style={[
                 styles.profileSubmenuSeparator,
@@ -406,7 +560,7 @@ const ProfileHeaderMenu = ({
                 },
               ]}
             />
-          )}
+          ) : null}
 
           <TouchableOpacity
             activeOpacity={activeOpacity}
@@ -416,7 +570,9 @@ const ProfileHeaderMenu = ({
             <View
               style={[
                 styles.profileSubmenuIconWrap,
-                { backgroundColor: isDark ? Colors.black : Colors.white },
+                {
+                  backgroundColor: isDark ? Colors.black : Colors.white,
+                },
               ]}
             >
               <Ionicons
@@ -429,17 +585,21 @@ const ProfileHeaderMenu = ({
             <Text
               style={[
                 styles.profileSubmenuText,
-                { color: isDark ? Colors.dark.lightRed : Colors.light.red },
+                {
+                  color: isDark ? Colors.dark.lightRed : Colors.light.red,
+                },
               ]}
             >
               Logout
             </Text>
           </TouchableOpacity>
         </>
-      )}
+      ) : null}
     </Animated.View>
   );
 };
+
+// ---------- GAME AND RACING HEADER ----------
 
 const GameHeader = ({
   tabName,
@@ -452,17 +612,25 @@ const GameHeader = ({
   homeColor,
   awayColor,
   isNeutralSite,
+  isEvent,
+  racingLeague,
+  eventTitle,
+  eventLogo,
 }: {
   tabName?: string;
-  homeTeam: any;
-  awayTeam: any;
-  homeCode: string | undefined;
-  awayCode: string | undefined;
-  homeLogo: any;
-  awayLogo: any;
-  homeColor: any;
-  awayColor: any;
+  homeTeam?: any;
+  awayTeam?: any;
+  homeCode?: string;
+  awayCode?: string;
+  homeLogo?: any;
+  awayLogo?: any;
+  homeColor?: string | null;
+  awayColor?: string | null;
+  isEvent: boolean;
   isNeutralSite: boolean;
+  racingLeague?: RacingLeague | null;
+  eventTitle?: string;
+  eventLogo?: any;
 }) => {
   const styles = customHeaderStyles;
   const dividerText = isNeutralSite ? "vs" : "@";
@@ -472,46 +640,133 @@ const GameHeader = ({
   const opacity = useRef(new Animated.Value(0)).current;
   const dividerScale = useRef(new Animated.Value(0.8)).current;
 
-  const getTeamCodeLetters = (value: any, fallback: string) => {
-    const code =
-      typeof value === "string"
-        ? value
-        : value?.code ||
-          value?.abbreviation ||
-          value?.shortDisplayName ||
-          value?.name ||
-          fallback;
+  const getTeamCodeLetters = useCallback(
+    (value: any, fallback: string): string[] => {
+      const code =
+        typeof value === "string"
+          ? value
+          : value?.code ||
+            value?.abbreviation ||
+            value?.shortDisplayName ||
+            value?.name ||
+            fallback;
 
-    return String(code || fallback)
-      .toUpperCase()
-      .slice(0, 4)
-      .split("");
-  };
+      return String(code || fallback)
+        .toUpperCase()
+        .slice(0, 4)
+        .split("");
+    },
+    [],
+  );
+
+  const resolvedRacingLeague = useMemo(
+    () => resolveRacingLeague(racingLeague, tabName),
+    [racingLeague, tabName],
+  );
+
+  const racingConfig = resolvedRacingLeague
+    ? RACING_LEAGUE_CONFIG[resolvedRacingLeague]
+    : null;
+
+  const isRacingHeader = Boolean(isEvent && racingConfig);
+
+  const isTeamGameHeader = Boolean(
+    tabName === "Game" && homeTeam && awayTeam && !isRacingHeader,
+  );
 
   const awayLetters = useMemo(
     () => getTeamCodeLetters(awayCode, "AWY"),
-    [awayCode],
+    [awayCode, getTeamCodeLetters],
   );
 
   const homeLetters = useMemo(
     () => getTeamCodeLetters(homeCode, "HOM"),
-    [homeCode],
+    [getTeamCodeLetters, homeCode],
   );
 
-  const awayLetterAnims: Animated.Value[] = useMemo(
+  const eventLetters = useMemo(
+    () =>
+      String(racingConfig?.shortLabel ?? "RACE")
+        .toUpperCase()
+        .split(""),
+    [racingConfig?.shortLabel],
+  );
+
+  const awayLetterAnims = useMemo(
     () => awayLetters.map(() => new Animated.Value(0)),
     [awayLetters],
   );
 
-  const homeLetterAnims: Animated.Value[] = useMemo(
+  const homeLetterAnims = useMemo(
     () => homeLetters.map(() => new Animated.Value(0)),
     [homeLetters],
   );
 
-  useEffect(() => {
-    if (tabName !== "Game" || !homeTeam || !awayTeam) return;
+  const eventLetterAnims = useMemo(
+    () => eventLetters.map(() => new Animated.Value(0)),
+    [eventLetters],
+  );
 
-    Animated.sequence([
+  useEffect(() => {
+    opacity.setValue(0);
+    dividerScale.setValue(0.8);
+    scaleHome.setValue(0.6);
+    scaleAway.setValue(0.6);
+
+    awayLetterAnims.forEach((animation) => {
+      animation.setValue(0);
+    });
+
+    homeLetterAnims.forEach((animation) => {
+      animation.setValue(0);
+    });
+
+    eventLetterAnims.forEach((animation) => {
+      animation.setValue(0);
+    });
+
+    if (isRacingHeader) {
+      const racingAnimation = Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 650,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+
+        Animated.spring(scaleHome, {
+          toValue: 1,
+          damping: 14,
+          stiffness: 130,
+          mass: 0.8,
+          useNativeDriver: true,
+        }),
+
+        Animated.stagger(
+          70,
+          eventLetterAnims.map((animation) =>
+            Animated.timing(animation, {
+              toValue: 1,
+              duration: 450,
+              easing: Easing.out(Easing.cubic),
+              useNativeDriver: true,
+            }),
+          ),
+        ),
+      ]);
+
+      racingAnimation.start();
+
+      return () => {
+        racingAnimation.stop();
+      };
+    }
+
+    if (!isTeamGameHeader) {
+      return;
+    }
+
+    const gameAnimation = Animated.sequence([
       Animated.parallel([
         Animated.timing(opacity, {
           toValue: 1,
@@ -519,6 +774,7 @@ const GameHeader = ({
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
+
         Animated.timing(dividerScale, {
           toValue: 1,
           duration: 800,
@@ -526,6 +782,7 @@ const GameHeader = ({
           useNativeDriver: true,
         }),
       ]),
+
       Animated.parallel([
         Animated.parallel([
           Animated.timing(scaleAway, {
@@ -534,6 +791,7 @@ const GameHeader = ({
             easing: Easing.out(Easing.exp),
             useNativeDriver: true,
           }),
+
           Animated.timing(scaleHome, {
             toValue: 1,
             duration: 1000,
@@ -541,11 +799,12 @@ const GameHeader = ({
             useNativeDriver: true,
           }),
         ]),
+
         Animated.parallel([
           Animated.stagger(
             100,
-            awayLetterAnims.map((a) =>
-              Animated.timing(a, {
+            awayLetterAnims.map((animation) =>
+              Animated.timing(animation, {
                 toValue: 1,
                 duration: 600,
                 easing: Easing.out(Easing.cubic),
@@ -553,10 +812,11 @@ const GameHeader = ({
               }),
             ),
           ),
+
           Animated.stagger(
             100,
-            homeLetterAnims.map((a) =>
-              Animated.timing(a, {
+            homeLetterAnims.map((animation) =>
+              Animated.timing(animation, {
                 toValue: 1,
                 duration: 600,
                 easing: Easing.out(Easing.cubic),
@@ -566,36 +826,171 @@ const GameHeader = ({
           ),
         ]),
       ]),
-    ]).start();
+    ]);
+
+    gameAnimation.start();
+
+    return () => {
+      gameAnimation.stop();
+    };
   }, [
-    awayTeam?.code,
-    homeTeam?.code,
     awayLetterAnims,
-    awayTeam,
     dividerScale,
-    homeLetters,
+    eventLetterAnims,
     homeLetterAnims,
-    homeTeam,
+    isRacingHeader,
+    isTeamGameHeader,
     opacity,
     scaleAway,
     scaleHome,
-    tabName,
   ]);
 
-  if (tabName !== "Game" || !homeTeam || !awayTeam) return null;
+  if (!isRacingHeader && !isTeamGameHeader) {
+    return null;
+  }
+
+  // ---------- RACING HEADER ----------
+
+  if (isRacingHeader && racingConfig) {
+    const eventColor = racingConfig.accentColor;
+    const eventLogoSource = resolveImage(eventLogo ?? homeLogo);
+
+    return (
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          StyleSheet.absoluteFillObject,
+          styles.racingHeader,
+          {
+            opacity,
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={[eventColor, "#171717", Colors.black]}
+          locations={[0, 0.48, 1]}
+          start={{
+            x: 0,
+            y: 0,
+          }}
+          end={{
+            x: 1,
+            y: 0.8,
+          }}
+          style={StyleSheet.absoluteFillObject}
+        />
+
+        <View
+          style={[
+            styles.racingAccent,
+            {
+              backgroundColor: eventColor,
+            },
+          ]}
+        />
+
+        <View style={styles.racingCheckeredPattern}>
+          {Array.from({
+            length: 24,
+          }).map((_, index) => {
+            const columns = 6;
+            const row = Math.floor(index / columns);
+            const column = index % columns;
+            const isFilled = (row + column) % 2 === 0;
+
+            return (
+              <View
+                key={`checkered-cell-${index}`}
+                style={[
+                  styles.racingCheckeredCell,
+                  isFilled
+                    ? styles.racingCheckeredCellFilled
+                    : styles.racingCheckeredCellEmpty,
+                ]}
+              />
+            );
+          })}
+        </View>
+
+        {eventLogoSource ? (
+          <Animated.View
+            style={[
+              styles.racingLogoWrapper,
+              {
+                transform: [
+                  {
+                    scale: scaleHome,
+                  },
+                ],
+              },
+            ]}
+          >
+            <Image
+              source={eventLogoSource}
+              style={styles.racingLogo}
+              resizeMode="contain"
+            />
+          </Animated.View>
+        ) : null}
+
+        <View style={styles.racingHeaderContent}>
+          <Animated.Text
+            numberOfLines={1}
+            style={[
+              styles.racingEventTitle,
+              {
+                opacity,
+                transform: [
+                  {
+                    scale: scaleHome,
+                  },
+                ],
+              },
+            ]}
+          >
+            {eventTitle}
+          </Animated.Text>
+        </View>
+      </Animated.View>
+    );
+  }
+
+  // ---------- NORMAL TEAM GAME HEADER ----------
+
+  const resolvedAwayColor = awayColor || Colors.midTone;
+  const resolvedHomeColor = homeColor || Colors.darkGray;
+
+  const awayLogoSource = resolveImage(awayLogo);
+  const homeLogoSource = resolveImage(homeLogo);
 
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         StyleSheet.absoluteFillObject,
-        { flexDirection: "row", zIndex: -10, opacity },
+        {
+          flexDirection: "row",
+          zIndex: -10,
+          opacity,
+        },
       ]}
     >
       <LinearGradient
-        colors={[awayColor, awayColor, homeColor, homeColor]}
+        colors={[
+          resolvedAwayColor,
+          resolvedAwayColor,
+          resolvedHomeColor,
+          resolvedHomeColor,
+        ]}
         locations={[0, 0.5, 0.5, 1]}
-        start={{ x: 0, y: -2 }}
-        end={{ x: 1.08, y: 1.2 }}
+        start={{
+          x: 0,
+          y: -2,
+        }}
+        end={{
+          x: 1.08,
+          y: 1.2,
+        }}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -603,43 +998,55 @@ const GameHeader = ({
         <Animated.View
           style={[
             styles.teamHalfContent,
-            { transform: [{ scale: scaleAway }] },
+            {
+              transform: [
+                {
+                  scale: scaleAway,
+                },
+              ],
+            },
           ]}
         >
-          <Image
-            source={typeof awayLogo === "string" ? { uri: awayLogo } : awayLogo}
-            style={styles.bgLogo}
-            resizeMode="contain"
-          />
+          {awayLogoSource ? (
+            <Image
+              source={awayLogoSource}
+              style={styles.bgLogo}
+              resizeMode="contain"
+            />
+          ) : null}
 
-          <View style={{ flexDirection: "row" }}>
-            {awayLetters.map((char: string, i: number) => (
-              <Animated.Text
-                key={i}
-                style={[
-                  styles.teamCode,
-                  {
-                    opacity: awayLetterAnims[i],
-                    transform: [
-                      {
-                        scale: awayLetterAnims[i].interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.7, 1],
-                        }),
-                      },
-                      {
-                        translateY: awayLetterAnims[i].interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [10, 0],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              >
-                {char}
-              </Animated.Text>
-            ))}
+          <View style={styles.teamCodeRow}>
+            {awayLetters.map((character, index) => {
+              const animation = awayLetterAnims[index];
+
+              return (
+                <Animated.Text
+                  key={`away-${character}-${index}`}
+                  style={[
+                    styles.teamCode,
+                    {
+                      opacity: animation,
+                      transform: [
+                        {
+                          scale: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.7, 1],
+                          }),
+                        },
+                        {
+                          translateY: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  {character}
+                </Animated.Text>
+              );
+            })}
           </View>
         </Animated.View>
       </View>
@@ -647,7 +1054,14 @@ const GameHeader = ({
       <Animated.View
         style={[
           styles.dividerWrapper,
-          { opacity, transform: [{ scale: dividerScale }] },
+          {
+            opacity,
+            transform: [
+              {
+                scale: dividerScale,
+              },
+            ],
+          },
         ]}
       >
         <Text style={styles.dividerText}>{dividerText}</Text>
@@ -657,43 +1071,55 @@ const GameHeader = ({
         <Animated.View
           style={[
             styles.teamHalfContent,
-            { transform: [{ scale: scaleHome }] },
+            {
+              transform: [
+                {
+                  scale: scaleHome,
+                },
+              ],
+            },
           ]}
         >
-          <Image
-            source={typeof homeLogo === "string" ? { uri: homeLogo } : homeLogo}
-            style={styles.bgLogo}
-            resizeMode="contain"
-          />
+          {homeLogoSource ? (
+            <Image
+              source={homeLogoSource}
+              style={styles.bgLogo}
+              resizeMode="contain"
+            />
+          ) : null}
 
-          <View style={{ flexDirection: "row" }}>
-            {homeLetters.map((char: string, i: number) => (
-              <Animated.Text
-                key={i}
-                style={[
-                  styles.teamCode,
-                  {
-                    opacity: homeLetterAnims[i],
-                    transform: [
-                      {
-                        scale: homeLetterAnims[i].interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [0.7, 1],
-                        }),
-                      },
-                      {
-                        translateY: homeLetterAnims[i].interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [10, 0],
-                        }),
-                      },
-                    ],
-                  },
-                ]}
-              >
-                {char}
-              </Animated.Text>
-            ))}
+          <View style={styles.teamCodeRow}>
+            {homeLetters.map((character, index) => {
+              const animation = homeLetterAnims[index];
+
+              return (
+                <Animated.Text
+                  key={`home-${character}-${index}`}
+                  style={[
+                    styles.teamCode,
+                    {
+                      opacity: animation,
+                      transform: [
+                        {
+                          scale: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.7, 1],
+                          }),
+                        },
+                        {
+                          translateY: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  {character}
+                </Animated.Text>
+              );
+            })}
           </View>
         </Animated.View>
       </View>
@@ -702,6 +1128,7 @@ const GameHeader = ({
 };
 
 // ---------- MAIN COMPONENT ----------
+
 export function CustomHeaderTitle({
   title,
   tabName,
@@ -735,10 +1162,12 @@ export function CustomHeaderTitle({
   onToggleNotifications,
   isPlayerScreen,
   showBackButton = true,
+  isEvent = false,
   isNeutralSite = false,
   modalVisible = false,
   onOpenInfo,
   league = "Leagues",
+  racingLeague,
   logo,
   messageAvatar,
   messageUsername,
@@ -747,9 +1176,11 @@ export function CustomHeaderTitle({
   messageIsVerified,
 }: CustomHeaderTitleProps) {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
   const styles = customHeaderStyles;
+
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
 
   const toggleProfileMenu = useCallback(() => {
@@ -782,14 +1213,16 @@ export function CustomHeaderTitle({
   }, [tabName]);
 
   const selectedConference = useMemo(() => {
-    if (!selectedConferenceName) return null;
+    if (!selectedConferenceName) {
+      return null;
+    }
 
     return (
       cfbConferences.find(
-        (conf) =>
-          conf.shortName === selectedConferenceName ||
-          conf.name === selectedConferenceName ||
-          String(conf.groupId) === String(selectedConferenceName),
+        (conference) =>
+          conference.shortName === selectedConferenceName ||
+          conference.name === selectedConferenceName ||
+          String(conference.groupId) === String(selectedConferenceName),
       ) ?? null
     );
   }, [selectedConferenceName]);
@@ -818,53 +1251,81 @@ export function CustomHeaderTitle({
   });
 
   const selectedTeam = useMemo(() => {
-    if (!teamCode) return null;
+    if (!teamCode) {
+      return null;
+    }
 
     switch (league) {
       case "WNBA":
         return getWNBATeam(teamId ?? 0);
+
       case "NFL":
         return getNFLTeam(teamId ?? 0);
+
       case "CFB":
         return getCFBTeam(teamId ?? 0);
+
       case "CBB":
         return getCBBTeam(teamId ?? 0, false);
+
       case "WCBB":
         return getCBBTeam(teamId ?? 0, true);
+
       case "MLB":
         return getMLBTeam(teamId ?? 0);
+
       case "NHL":
         return getNHLTeam(teamId ?? 0);
+
       case "NBA":
       default:
         return getNBATeam(teamId ?? 0);
     }
-  }, [teamCode, league, teamId]);
+  }, [league, teamCode, teamId]);
 
-  const teamsForLeague =
-    league === "NFL"
-      ? nflTeams
-      : league === "CFB"
-        ? cfbTeams
-        : league === "CBB" || league === "WCBB"
-          ? cbbTeams
-          : league === "MLB"
-            ? mlbTeams
-            : league === "CB"
-              ? cbTeams
-              : league === "SB"
-                ? sbTeams
-                : league === "NHL"
-                  ? nhlTeams
-                  : league === "WNBA"
-                    ? wnbaTeams
-                    : nbaTeams;
+  const teamsForLeague = useMemo(() => {
+    switch (league) {
+      case "NFL":
+        return nflTeams;
+
+      case "CFB":
+        return cfbTeams;
+
+      case "CBB":
+      case "WCBB":
+        return cbbTeams;
+
+      case "MLB":
+        return mlbTeams;
+
+      case "CB":
+        return cbTeams;
+
+      case "SB":
+        return sbTeams;
+
+      case "NHL":
+        return nhlTeams;
+
+      case "WNBA":
+        return wnbaTeams;
+
+      case "NBA":
+      default:
+        return nbaTeams;
+    }
+  }, [league]);
 
   const homeTeam = useMemo(() => {
     const team =
       league === "WCBB"
-        ? teamsForLeague.find((t: any) => t.wid === homeTeamId)
-        : teamsForLeague.find((t: any) => t.id === homeTeamId);
+        ? teamsForLeague.find(
+            (currentTeam: any) =>
+              String(currentTeam.wid) === String(homeTeamId),
+          )
+        : teamsForLeague.find(
+            (currentTeam: any) => String(currentTeam.id) === String(homeTeamId),
+          );
 
     return (
       team ?? {
@@ -873,13 +1334,18 @@ export function CustomHeaderTitle({
         color: Colors.lightGray,
       }
     );
-  }, [homeTeamId, homeTeamCode, league, teamsForLeague]);
+  }, [homeTeamCode, homeTeamId, league, teamsForLeague]);
 
   const awayTeam = useMemo(() => {
     const team =
       league === "WCBB"
-        ? teamsForLeague.find((t: any) => t.wid === awayTeamId)
-        : teamsForLeague.find((t: any) => t.id === awayTeamId);
+        ? teamsForLeague.find(
+            (currentTeam: any) =>
+              String(currentTeam.wid) === String(awayTeamId),
+          )
+        : teamsForLeague.find(
+            (currentTeam: any) => String(currentTeam.id) === String(awayTeamId),
+          );
 
     return (
       team ?? {
@@ -888,7 +1354,14 @@ export function CustomHeaderTitle({
         color: Colors.midTone,
       }
     );
-  }, [awayTeamId, awayTeamCode, league, teamsForLeague]);
+  }, [awayTeamCode, awayTeamId, league, teamsForLeague]);
+
+  const resolvedRacingLeague = useMemo(
+    () => resolveRacingLeague(racingLeague, tabName, league),
+    [league, racingLeague, tabName],
+  );
+
+  const isRacingHeader = Boolean(isEvent && resolvedRacingLeague);
 
   const textStyle: TextStyle = {
     fontFamily: Fonts.OSREGULAR,
@@ -914,13 +1387,19 @@ export function CustomHeaderTitle({
   };
 
   const headerIconColor =
-    tabName === "Game" || selectedConference || isTeamScreen || isPlayerScreen
+    tabName === "Game" ||
+    isRacingHeader ||
+    selectedConference ||
+    isTeamScreen ||
+    isPlayerScreen
       ? Colors.white
       : isDark
         ? Colors.white
         : Colors.black;
 
   const isMessagesListScreen = tabName === "Messages" || title === "Messages";
+
+  const shouldRenderGameHeader = tabName === "Game" || isRacingHeader;
 
   return (
     <View
@@ -938,7 +1417,7 @@ export function CustomHeaderTitle({
           selectedTeam={selectedConference}
           logo={conferenceLogo}
           conferenceColor={primaryColor}
-          isConferenceScreen={true}
+          isConferenceScreen
         />
       ) : (
         <TeamBackground
@@ -952,7 +1431,17 @@ export function CustomHeaderTitle({
         />
       )}
 
-      <View style={[containerStyle, { zIndex: 2, overflow: "visible" }]}>
+      <View
+        style={[
+          containerStyle,
+          {
+            zIndex: 2,
+            overflow: "visible",
+          },
+        ]}
+      >
+        {/* LEFT HEADER ACTION */}
+
         {tabName === "Profile" ? (
           onMessages ? (
             <TouchableOpacity
@@ -968,14 +1457,22 @@ export function CustomHeaderTitle({
               />
             </TouchableOpacity>
           ) : (
-            <View style={{ width: 32 }} />
+            <View style={styles.profileHeaderPlaceholder} />
           )
         ) : showBackButton && onBack ? (
-          <TouchableOpacity onPress={onBack}>
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onBack}
+            hitSlop={8}
+          >
             <Ionicons name="arrow-back" size={24} color={headerIconColor} />
           </TouchableOpacity>
         ) : tabName === "Explore" && onAddWidget ? (
-          <TouchableOpacity onPress={onAddWidget}>
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onAddWidget}
+            hitSlop={8}
+          >
             <Ionicons
               name="add"
               size={24}
@@ -983,10 +1480,12 @@ export function CustomHeaderTitle({
             />
           </TouchableOpacity>
         ) : (
-          <View style={{ width: 24 }} />
+          <View style={styles.headerSidePlaceholder} />
         )}
 
-        {tabName === "Game" ? (
+        {/* CENTER HEADER CONTENT */}
+
+        {shouldRenderGameHeader ? (
           <GameHeader
             tabName={tabName}
             homeTeam={homeTeam}
@@ -997,21 +1496,18 @@ export function CustomHeaderTitle({
             awayLogo={awayLogo}
             homeColor={homeColor}
             awayColor={awayColor}
+            isEvent={isEvent}
             isNeutralSite={isNeutralSite}
+            racingLeague={resolvedRacingLeague}
+            eventTitle={title}
+            eventLogo={logo ?? homeLogo}
           />
         ) : tabName === "League" ? (
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              height: 56,
-              overflow: "hidden",
-            }}
-          >
+          <View style={styles.leagueHeaderContainer}>
             <TouchableOpacity
-              onPress={() => onOpenLeagueModal?.()}
-              style={{ flexDirection: "row", alignItems: "center", zIndex: 2 }}
+              activeOpacity={activeOpacity}
+              onPress={onOpenLeagueModal}
+              style={styles.leagueHeaderButton}
             >
               <HeaderTitle
                 style={selectedConference ? constantTextStyle : textStyle}
@@ -1019,7 +1515,15 @@ export function CustomHeaderTitle({
                 {selectedConferenceName || league}
               </HeaderTitle>
 
-              <Animated.View style={{ transform: [{ rotate }] }}>
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate,
+                    },
+                  ],
+                }}
+              >
                 <Ionicons
                   name="chevron-down"
                   size={20}
@@ -1044,21 +1548,22 @@ export function CustomHeaderTitle({
             isDark={isDark}
           />
         ) : (
-          <View
-            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-          >
+          <View style={styles.defaultHeaderTitleContainer}>
             <HeaderTitle style={textStyle}>
               {title || tabName || ""}
             </HeaderTitle>
           </View>
         )}
 
+        {/* RIGHT HEADER ACTION */}
+
         {isTeamScreen ? (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            {onToggleFavorite && (
+          <View style={styles.teamHeaderActions}>
+            {onToggleFavorite ? (
               <TouchableOpacity
+                activeOpacity={activeOpacity}
                 onPress={onToggleFavorite}
-                style={{ padding: 8, marginRight: 8 }}
+                style={styles.teamHeaderActionButton}
               >
                 <Ionicons
                   name={isFavorite ? "star" : "star-outline"}
@@ -1066,12 +1571,13 @@ export function CustomHeaderTitle({
                   color={Colors.white}
                 />
               </TouchableOpacity>
-            )}
+            ) : null}
 
-            {onToggleNotifications && (
+            {onToggleNotifications ? (
               <TouchableOpacity
+                activeOpacity={activeOpacity}
                 onPress={onToggleNotifications}
-                style={{ padding: 8, marginRight: 8 }}
+                style={styles.teamHeaderActionButton}
               >
                 <Ionicons
                   name={isNotified ? "notifications" : "notifications-outline"}
@@ -1079,17 +1585,21 @@ export function CustomHeaderTitle({
                   color={Colors.white}
                 />
               </TouchableOpacity>
-            )}
+            ) : null}
 
-            {!isPlayerScreen && onOpenInfo && (
-              <TouchableOpacity onPress={onOpenInfo} style={{ padding: 8 }}>
+            {!isPlayerScreen && onOpenInfo ? (
+              <TouchableOpacity
+                activeOpacity={activeOpacity}
+                onPress={onOpenInfo}
+                style={styles.teamHeaderActionButton}
+              >
                 <Ionicons
                   name="information-circle-outline"
                   size={24}
                   color={Colors.white}
                 />
               </TouchableOpacity>
-            )}
+            ) : null}
           </View>
         ) : tabName === "Profile" ? (
           <View style={styles.profileMenuAnchor}>
@@ -1128,7 +1638,11 @@ export function CustomHeaderTitle({
             </TouchableOpacity>
           </View>
         ) : tabName === "League" && onCalendarPress ? (
-          <TouchableOpacity onPress={onCalendarPress}>
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onCalendarPress}
+            hitSlop={8}
+          >
             <Ionicons
               name="calendar-outline"
               size={24}
@@ -1136,7 +1650,11 @@ export function CustomHeaderTitle({
             />
           </TouchableOpacity>
         ) : tabName === "Explore" && onSearchToggle ? (
-          <TouchableOpacity onPress={onSearchToggle}>
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onSearchToggle}
+            hitSlop={8}
+          >
             <Ionicons
               name="search"
               size={24}
@@ -1148,8 +1666,18 @@ export function CustomHeaderTitle({
             onPressIn={onCreateMessage}
             accessibilityRole="button"
             accessibilityLabel="Create message"
-            hitSlop={{ top: 14, right: 14, bottom: 14, left: 14 }}
-            pressRetentionOffset={{ top: 16, right: 16, bottom: 16, left: 16 }}
+            hitSlop={{
+              top: 14,
+              right: 14,
+              bottom: 14,
+              left: 14,
+            }}
+            pressRetentionOffset={{
+              top: 16,
+              right: 16,
+              bottom: 16,
+              left: 16,
+            }}
             style={({ pressed }) => [
               styles.headerActionButton,
               pressed && styles.headerActionButtonPressed,
@@ -1161,8 +1689,12 @@ export function CustomHeaderTitle({
               color={isDark ? Colors.white : Colors.black}
             />
           </Pressable>
-        ) : onToggleLayout !== undefined ? (
-          <TouchableOpacity onPress={onToggleLayout}>
+        ) : onToggleLayout ? (
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onToggleLayout}
+            hitSlop={8}
+          >
             <Ionicons
               name={isGrid ? "list" : "grid"}
               size={22}
@@ -1170,7 +1702,7 @@ export function CustomHeaderTitle({
             />
           </TouchableOpacity>
         ) : (
-          <View style={{ width: 24 }} />
+          <View style={styles.headerSidePlaceholder} />
         )}
       </View>
     </View>
@@ -1178,6 +1710,7 @@ export function CustomHeaderTitle({
 }
 
 // ---------- STYLES ----------
+
 export const customHeaderStyles = StyleSheet.create({
   bgImage: {
     height: 200,
@@ -1187,6 +1720,43 @@ export const customHeaderStyles = StyleSheet.create({
     position: "absolute",
     top: -70,
     zIndex: 0,
+  },
+
+  headerSidePlaceholder: {
+    width: 24,
+  },
+
+  profileHeaderPlaceholder: {
+    width: 32,
+  },
+
+  defaultHeaderTitleContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  leagueHeaderContainer: {
+    flex: 1,
+    height: 56,
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+
+  leagueHeaderButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 2,
+  },
+
+  teamHeaderActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  teamHeaderActionButton: {
+    padding: 8,
   },
 
   teamHalfWrapper: {
@@ -1220,6 +1790,10 @@ export const customHeaderStyles = StyleSheet.create({
     zIndex: 2,
   },
 
+  teamCodeRow: {
+    flexDirection: "row",
+  },
+
   dividerWrapper: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
@@ -1231,6 +1805,117 @@ export const customHeaderStyles = StyleSheet.create({
     color: Colors.white,
     fontFamily: Fonts.OSBOLD,
     fontSize: 24,
+  },
+
+  racingHeader: {
+    zIndex: -10,
+    overflow: "hidden",
+    backgroundColor: Colors.black,
+  },
+
+  racingAccent: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    width: 5,
+    zIndex: 3,
+  },
+
+  racingHeaderContent: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 54,
+  },
+
+  racingCodeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 10,
+  },
+
+  racingCode: {
+    color: Colors.white,
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 12,
+  },
+
+  racingTextWrapper: {
+    flexShrink: 1,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+
+  racingSeriesLabel: {
+    color: "rgba(255,255,255,0.72)",
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 8,
+    letterSpacing: 1.1,
+  },
+
+  racingEventTitle: {
+    color: Colors.white,
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 14,
+    maxWidth: width * 0.48,
+  },
+
+  racingLogoWrapper: {
+    position: "absolute",
+    right: 34,
+    top: -26,
+    width: 116,
+    height: 116,
+    opacity: 0.18,
+    zIndex: 1,
+  },
+
+  racingLogo: {
+    width: "100%",
+    height: "100%",
+  },
+
+  racingLargeText: {
+    position: "absolute",
+    right: -4,
+    bottom: -22,
+    fontFamily: Fonts.OSBOLD,
+    fontSize: 70,
+    lineHeight: 78,
+    letterSpacing: -3,
+    opacity: 0.09,
+    zIndex: 1,
+  },
+
+  racingCheckeredPattern: {
+    position: "absolute",
+    top: -14,
+    right: -12,
+    width: 108,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    opacity: 0.08,
+    transform: [
+      {
+        rotate: "12deg",
+      },
+    ],
+  },
+
+  racingCheckeredCell: {
+    width: 18,
+    height: 18,
+  },
+
+  racingCheckeredCellFilled: {
+    backgroundColor: Colors.white,
+  },
+
+  racingCheckeredCellEmpty: {
+    backgroundColor: "transparent",
   },
 
   messageHeaderContainer: {
@@ -1318,7 +2003,10 @@ export const customHeaderStyles = StyleSheet.create({
     shadowColor: Colors.black,
     shadowOpacity: 0.18,
     shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
     elevation: 18,
     overflow: "hidden",
   },
@@ -1349,14 +2037,16 @@ export const customHeaderStyles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     marginLeft: 42,
   },
-  headerActionButtonPressed: {
-    opacity: 0.65,
-  },
+
   headerActionButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  headerActionButtonPressed: {
+    opacity: 0.65,
   },
 });

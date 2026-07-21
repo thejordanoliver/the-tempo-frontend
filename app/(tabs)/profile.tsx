@@ -40,7 +40,7 @@ type CachedUser = {
   profileImage?: string;
 };
 
-type ProfileTab = "favorite teams" | "badges";
+export type ProfileTab = "favorite teams" | "badges";
 
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
@@ -56,27 +56,21 @@ export default function ProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = profileStyles(isDark);
-
   const { favorites, loadFavorites, clearFavorites } =
     useFavoriteTeamsContext();
-
   const { width: screenWidth } = useWindowDimensions();
-
   const numColumns = 3;
   const horizontalPadding = 24;
   const columnGap = 8;
   const totalGap = columnGap * (numColumns - 1);
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
-
   const { logout } = useAuth();
   const navigation = useNavigation();
   const router = useRouter();
-
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);
-
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);

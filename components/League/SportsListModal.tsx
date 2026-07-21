@@ -16,10 +16,13 @@ import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
 import UFLLogolight from "assets/Football/UFL_Logos/UFLLight.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
-import NBALogo from "assets/Logos/NBA.png";
-import WNBALogo from "assets/Logos/WNBA/WNBA.png";
+import NBALogo from "assets/NBA/Logos/NBA.png";
+import WNBALogo from "assets/WNBA/Logos/WNBA.png";
 import UFCLogo from "assets/MMA/MMA_Logos/UFC.png";
 import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
+import F1Logo from "assets/Racing/Logos/f1.png";
+import NascarLogo from "assets/Racing/Logos/Nascar.png";
+import NascarLogoLight from "assets/Racing/Logos/NascarLight.png";
 import BundesligaLogoLight from "assets/Soccer/Logos/BundesligaLight.png";
 import EPLLogo from "assets/Soccer/Logos/EPL.png";
 import MLSLogo from "assets/Soccer/Logos/MLS.png";
@@ -79,7 +82,7 @@ const leagues: LeagueType[] = [
   "BUNDESLIGA",
   "FIFA",
   "F1",
-  "NASCAR",
+  "NASCARPREMIER",
 ];
 
 const leagueConfig: Record<
@@ -183,13 +186,13 @@ const leagueConfig: Record<
   },
   F1: {
     label: "F1",
-    logo: BundesligaLogo,
-    logoLight: BundesligaLogoLight,
+    logo: F1Logo,
+    logoLight: F1Logo,
   },
-  NASCAR: {
-    label: "NASCAR",
-    logo: BundesligaLogo,
-    logoLight: BundesligaLogoLight,
+  NASCARPREMIER: {
+    label: "NASCAR Premier",
+    logo: NascarLogo,
+    logoLight: NascarLogoLight,
   },
 };
 
@@ -223,7 +226,7 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   NHL: "/league/nhl",
   UFC: "/league/ufc",
   F1: "/league/racing",
-  NASCAR: "/league/racing",
+  NASCARPREMIER: "/league/racing",
   EPL: "/league/socc",
   MLS: "/league/socc",
   CHAMPIONS: "/league/socc",

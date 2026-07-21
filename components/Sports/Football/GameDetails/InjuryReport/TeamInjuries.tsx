@@ -1,47 +1,22 @@
-// TeamInjuries.tsx
-
-import TeamInjuriesList from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuriesList";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
-import { Player } from "@/hooks/LeagueHooks/useRoster";
+import {
+  FootballTeamInjury,
+  Team,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
-
-export type TeamInjury = {
-  team: {
-    id: string | number;
-    displayName: string;
-    abbreviation: string;
-  };
-  injuries: {
-    athlete: {
-      id: string | number;
-      fullName: string;
-      headshot?: {
-        alt: string;
-        href: string;
-      };
-      position?: string;
-      jersey?: string;
-    };
-    status: string;
-    details?: {
-      detail?: string;
-      returnDate?: string;
-    };
-  }[];
-};
+import TeamInjuriesList from "./TeamInjuriesList";
 
 type Props = {
-  injuries: TeamInjury[];
+  injuries?: FootballTeamInjury[];
   loading?: boolean;
   league: string;
   isDark: boolean;
-  teamPlayersMap?: Record<string, Player[]>;
   homeLogo: any;
   awayLogo: any;
   homeCode: string;
@@ -50,12 +25,25 @@ type Props = {
   awayId: string | number;
 };
 
+const matchesTeam = (
+  team: Team | undefined,
+  selectedTeamId: string | number,
+) => {
+  if (!team) return false;
+
+  return [team.id, team.espnId].some(
+    (id) =>
+      id !== null &&
+      id !== undefined &&
+      String(id) === String(selectedTeamId),
+  );
+};
+
 export default function TeamInjuries({
-  injuries,
+  injuries = [],
   loading = false,
   league,
   isDark,
-  teamPlayersMap = {},
   homeLogo,
   awayLogo,
   homeCode,
@@ -64,35 +52,39 @@ export default function TeamInjuries({
   awayId,
 }: Props) {
   const styles = teamInjuryStyles(isDark);
-
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
-
-  const normalizedAwayId = awayId;
-  const normalizedHomeId = homeId;
-
-  const normalizedInjuries = useMemo(() => {
-    return Array.isArray(injuries) ? injuries : [];
-  }, [injuries]);
-
-  const selectedTeamId =
-    selectedTab === "away" ? normalizedAwayId : normalizedHomeId;
-
-  const currentInjuries = useMemo(() => {
-    return normalizedInjuries.find((teamInjury) => {
-      return teamInjury.team.id === selectedTeamId;
-    });
-  }, [normalizedInjuries, selectedTeamId]);
+  const [selectedTab, setSelectedTab] =
+    useState<HomeAwayTabValue>("away");
 
   if (loading) {
     return <TeamInjuriesSkeleton />;
   }
 
-  if (league !== "nfl") return null;
-  if (!currentInjuries) return null;
+  if (league.toLowerCase() !== "nfl") {
+    return null;
+  }
+
+  const hasInjuries = injuries.some(
+    (team) => team.injuries?.length > 0,
+  );
+
+  if (!hasInjuries) {
+    return null;
+  }
+
+  const selectedTeamId =
+    selectedTab === "away" ? awayId : homeId;
+
+  const selectedInjuries =
+    injuries.find((teamInjury) =>
+      matchesTeam(teamInjury.team, selectedTeamId),
+    )?.injuries ?? [];
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
+      <HeadingTwo isDark={isDark}>
+        Injury Report
+      </HeadingTwo>
+
       <View style={styles.wrapper}>
         <HomeAwayTabBar
           awayTeam={{
@@ -111,8 +103,7 @@ export default function TeamInjuries({
         />
 
         <TeamInjuriesList
-          injuries={[currentInjuries]}
-          teamPlayersMap={teamPlayersMap}
+          injuries={selectedInjuries}
           isDark={isDark}
         />
       </View>

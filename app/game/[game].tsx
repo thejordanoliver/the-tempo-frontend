@@ -218,7 +218,7 @@ export default function GameDetailsScreen(
         name: p.shortName,
         jersey: p.jersey,
         fouls: p.fouls,
-        avatarUrl: p.avatar ?? "",
+        headshot: p.avatar ?? "",
       })) ?? [];
 
   const awayFoulPlayers =
@@ -230,7 +230,7 @@ export default function GameDetailsScreen(
         name: p.shortName,
         jersey: p.jersey,
         fouls: p.fouls,
-        avatarUrl: p.avatar ?? "",
+        headshot: p.avatar ?? "",
       })) ?? [];
 
   const neutralSite = details?.neutralSite;

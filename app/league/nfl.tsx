@@ -35,7 +35,7 @@ import { NFLPlayoffBracket } from "../../components/Sports/Football/NFLPlayoffs/
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import { useNFLBracket } from "../../hooks/FootballHooks/usePlayoffGames";
+import { useNFLPlayoffs } from "../../hooks/FootballHooks/useNFLPlayoffs";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
@@ -147,7 +147,7 @@ export default function NFLLeagueScreen() {
     playoffError,
     onRefresh,
     playoffRefreshing,
-  } = useNFLBracket(currentSeason);
+  } = useNFLPlayoffs(2025);
 
   const {
     categories,

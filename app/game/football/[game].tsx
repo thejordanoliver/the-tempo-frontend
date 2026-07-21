@@ -16,7 +16,6 @@ import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/Ga
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
-import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
@@ -175,10 +174,7 @@ export default function GameDetailsScreen(
   const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
-  const { score, playersByCategory, details } = useFootballGameDetails(
-    LEAGUE,
-    gameId,
-  );
+  const { score, details } = useFootballGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
 
@@ -226,15 +222,9 @@ export default function GameDetailsScreen(
   const awayRank = away?.rank;
   const lastPlay = score?.lastPlay ?? "";
   const officials = details?.officials ?? [];
-  const highlights = details?.highlights ?? [];
+  const highlights = details?.highlights;
   const injuries = details?.injuries ?? [];
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
-
+  const leaders = score?.leaders;
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "football", id: venueId });
@@ -246,14 +236,17 @@ export default function GameDetailsScreen(
   });
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-  const venueName = venue?.name ?? baseVenue?.fullName;
+
+  const venueName = venue?.name ?? baseVenue?.fullName ?? null;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
-  const venueAttendance = game?.attendance || null;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
+
+  const venueAttendance = game?.attendance ?? null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -399,7 +392,7 @@ export default function GameDetailsScreen(
             />
 
             <GameLeaders
-              playersByCategory={playersByCategory}
+              leaders={leaders}
               awayId={awayId}
               homeId={homeId}
               awayLogo={awayLogo}
@@ -458,7 +451,6 @@ export default function GameDetailsScreen(
 
             <TeamInjuries
               injuries={injuries}
-              teamPlayersMap={teamPlayersMap}
               homeId={homeEspnId}
               awayId={awayEspnId}
               homeCode={homeCode}
@@ -468,6 +460,7 @@ export default function GameDetailsScreen(
               league={LEAGUE}
               isDark={isDark}
             />
+
             <Officials officials={officials} isDark={isDark} state={state} />
 
             <GameLocation

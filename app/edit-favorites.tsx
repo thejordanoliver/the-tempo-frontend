@@ -63,6 +63,7 @@ export default function EditFavoritesScreen() {
   const handleSave = useCallback(async () => {
     const success = await saveFavorites();
     if (success) router.back();
+  
   }, [router, saveFavorites]);
 
   return (

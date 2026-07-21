@@ -47,7 +47,7 @@ export type LeagueType =
   | "NHL"
   | "UFC"
   | "F1"
-  | "NASCAR";
+  | "NASCARPREMIER";
 
 export type LeagueTeam = Team & { league: LeagueType };
 

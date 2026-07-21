@@ -80,6 +80,20 @@ export type MMAProps = {
   gameStatusDescription?: string;
 };
 
+export type RacingProps = {
+  id?: number;
+  name: string;
+  headshot: string | null | undefined;
+  flag: string | null | undefined;
+  laps: string | null | undefined;
+  time: string | null | undefined;
+  size?: SizeType;
+  rank?: string;
+  isDark: boolean;
+  isWinner: boolean | null | undefined;
+  gameStatusDescription: string | null | undefined;
+};
+
 export type BaseballProps = {
   id: number;
   name: string;
@@ -233,5 +247,68 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       letterSpacing: 0.5,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
+    },
+  });
+
+// Main static styles
+export const DriverRowStyles = (isDark: boolean, isTie?: boolean) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      width: 200,
+      padding: 12,
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    driverInfoContainer: {
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      flex: 1,
+    },
+    rank: {
+      position: "absolute",
+      top: 4,
+      left: 12,
+      fontSize: 24,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSBOLD,
+      textAlign: "center",
+    },
+    teamInfo: {
+      justifyContent: "center",
+    },
+    headshotContainer: {
+      borderWidth: 1,
+      borderRadius: 100,
+      overflow: "hidden",
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    logo: { width: 50, height: 50 },
+    headshot: {
+      width: 50,
+      height: 50,
+      paddingTop: 4,
+    },
+    nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    name: {
+      fontSize: 16,
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
+    },
+    subText: {
+      fontFamily: Fonts.OSREGULAR,
+      textAlign: "center",
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 12,
     },
   });

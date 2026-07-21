@@ -1,5 +1,5 @@
-import NBAPlayoffsDark from "assets/Logos/NBAPlayoffs.png";
-import NBAPlayoffsLight from "assets/Logos/NBAPlayoffsLight.png";
+import NBAPlayoffsDark from "assets/NBA/Logos/NBAPlayoffs.png";
+import NBAPlayoffsLight from "assets/NBA/Logos/NBAPlayoffsLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";

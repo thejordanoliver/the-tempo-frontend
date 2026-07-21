@@ -1,16 +1,7 @@
 // components/Games/LeagueGamesList.tsx
-import {
-  default as BasketballGameCard,
-  default as SummerGameCard,
-} from "@/components/Sports/Basketball/Games/BasketballGameCard";
-import {
-  default as BasketballSquareGameCard,
-  default as SummerSquareGameCard,
-} from "@/components/Sports/Basketball/Games/BasketballSquareGameCard";
-import {
-  default as BasketballStackedGameCard,
-  default as SummerStackedGameCard,
-} from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
+import { default as BasketballGameCard } from "@/components/Sports/Basketball/Games/BasketballGameCard";
+import { default as BasketballSquareGameCard } from "@/components/Sports/Basketball/Games/BasketballSquareGameCard";
+import { default as BasketballStackedGameCard } from "@/components/Sports/Basketball/Games/BasketballStackedGameCard";
 import { default as FootballGameCard } from "@/components/Sports/Football/Games/FootballGameCard";
 import { default as FootballStackedGameCard } from "@/components/Sports/Football/Games/FootballStackedGameCard";
 import NHLStackedGameCard from "@/components/Sports/Hockey/Games/HockeyStackedGameCard";
@@ -45,7 +36,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { combinedGameListStyles } from "styles/GamecardStyles/CombinedGamesListStyles";
-import { MMAFight } from "types/mma";
+import { MMAFight } from "types/mma/mma";
 import HeadingTwo from "../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../Skeletons/GameCards/SquareGameCardSkeleton";
 import HeaderSkeleton from "../Skeletons/HeaderSkeleton";
@@ -359,11 +350,11 @@ export default function LeagueGamesList({
       const slGame = item as BasketballGame;
       if (viewMode === "list")
         return wrapper(
-          <SummerGameCard game={slGame} isCBB={false} isWCBB={false} />,
+          <BasketballGameCard game={slGame} isCBB={false} isWCBB={false} />,
         );
       if (viewMode === "grid")
-        return wrapper(<SummerSquareGameCard game={slGame} />, index);
-      return wrapper(<SummerStackedGameCard game={slGame} />);
+        return wrapper(<BasketballSquareGameCard game={slGame} />, index);
+      return wrapper(<BasketballStackedGameCard game={slGame} />);
     }
 
     // ✅ NFL

@@ -1,5 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
+
 export const gameHeaderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
@@ -49,5 +50,16 @@ export const gameHeaderStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.OSREGULAR,
       textAlign: "center",
+    },
+  });
+
+export const DriverHeaderStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    container: {
+      padding: 12,
+    },
+    driverContainer: {
+      flexDirection: "row",
+      gap: 12,
     },
   });

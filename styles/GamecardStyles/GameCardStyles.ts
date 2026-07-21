@@ -267,3 +267,302 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
   });
 };
+
+export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+  const borderColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const goldColor = isDark ? Colors.dark.gold : Colors.light.gold;
+
+  const headlineColor = isChampionship
+    ? isDark
+      ? Colors.white
+      : Colors.black
+    : subTextColor;
+
+  return StyleSheet.create({
+    /* =========================
+       🧱 LAYOUT
+    ========================= */
+    card: {
+      flexDirection: "column",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderRadius: 8,
+      padding: 8,
+    },
+
+    cardHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 6,
+    },
+
+    eventInfo: {
+      flexDirection: "column",
+    },
+
+    infoWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    metaRow: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 8,
+    },
+
+    metaText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 11,
+      color: subTextColor,
+      textAlign: "center",
+    },
+
+    driverList: {
+      flexDirection: "column",
+    },
+
+    driverRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 6,
+      paddingHorizontal: 4,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: borderColor,
+    },
+
+    leaderRow: {
+      borderRadius: 6,
+    },
+
+    lastDriverRow: {
+      borderBottomWidth: 0,
+    },
+
+    /* =========================
+       🏁 EVENT / TRACK
+    ========================= */
+    eventName: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 14,
+      color: textColor,
+    },
+
+    trackName: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: subTextColor,
+    },
+
+    date: {
+      fontFamily: Fonts.OSREGULAR,
+      color: textColor,
+      fontSize: 12,
+    },
+
+    lapInfo: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    /* =========================
+       🏎️ DRIVER
+    ========================= */
+    positionContainer: {
+      width: 24,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    position: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 14,
+      color: subTextColor,
+    },
+
+    leaderPosition: {
+      color: goldColor,
+    },
+
+    driverImageContainer: {
+      width: 40,
+      height: 40,
+      borderWidth: 1,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor,
+      overflow: "hidden",
+      marginRight: 8,
+    },
+
+    leaderImageContainer: {
+      borderColor: goldColor,
+      borderWidth: 1.5,
+    },
+
+    driverImage: {
+      width: 40,
+      height: 40,
+      resizeMode: "contain",
+    },
+
+    driverInfoWrapper: {
+      flex: 1,
+      flexDirection: "column",
+    },
+
+    driverName: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 13,
+      color: textColor,
+    },
+
+    teamName: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 11,
+      color: subTextColor,
+    },
+
+    carNumberBadge: {
+      width: 22,
+      height: 22,
+      borderRadius: 4,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderWidth: 1,
+      borderColor,
+      marginRight: 8,
+    },
+
+    carNumberText: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 10,
+      color: textColor,
+    },
+
+    countryFlag: {
+      width: 16,
+      height: 16,
+      marginLeft: 4,
+      resizeMode: "contain",
+    },
+
+    /* =========================
+       ⏱️ TIMING / GAP
+    ========================= */
+    timeGap: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 13,
+      color: textColor,
+      textAlign: "right",
+      width: 64,
+    },
+
+    interval: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 11,
+      color: subTextColor,
+      textAlign: "right",
+      width: 64,
+    },
+
+    statusIcon: {
+      color: accentRed,
+    },
+
+    /* =========================
+       🏆 STATUS
+    ========================= */
+    finalText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    liveText: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 12,
+      color: accentRed,
+      textAlign: "center",
+    },
+
+    scheduledText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: subTextColor,
+      textAlign: "center",
+    },
+
+    dnfText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 11,
+      color: subTextColor,
+      fontStyle: "italic",
+    },
+
+    statusDivider: {
+      height: 12,
+      width: 1,
+      backgroundColor: textColor,
+      marginHorizontal: 4,
+    },
+
+    finalStatusDivider: {
+      height: 12,
+      width: 1,
+      backgroundColor: accentRed,
+      marginHorizontal: 4,
+    },
+
+    /* =========================
+       📰 HEADLINES
+    ========================= */
+    headlineContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 4,
+    },
+
+    headlineText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 8,
+      color: headlineColor,
+      textAlign: "center",
+    },
+
+    /* =========================
+       📡 BROADCAST / EXTRAS
+    ========================= */
+    broadcast: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 10,
+      textAlign: "center",
+      color: subTextColor,
+    },
+
+    showMoreButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 6,
+    },
+
+    showMoreText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: accentRed,
+    },
+  });
+};

@@ -15,7 +15,7 @@ import { LeagueType } from "types/types";
 
 type PlayByPlayFieldProps = {
   lastPlay?: string | PlayObject;
-  possessionTeamId?: number | null;
+  possessionTeamId?: number | string | null;
   homeTeamId: number;
   awayTeamId: number;
   league?: LeagueType;

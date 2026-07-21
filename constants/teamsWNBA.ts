@@ -1,23 +1,23 @@
 import { NBATeam } from "@/types/basketball/basketball";
 
 // Logos
-import AcesLogo from "../assets/Logos/WNBA/Aces.png";
-import DreamLogo from "../assets/Logos/WNBA/Dream.png";
-import FeverLogo from "../assets/Logos/WNBA/Fever.png";
-import FireLogo from "../assets/Logos/WNBA/Fire.png";
-import FireLogoLight from "../assets/Logos/WNBA/FireLight.png";
-import LibertyLogo from "../assets/Logos/WNBA/Liberty.png";
-import LynxLogo from "../assets/Logos/WNBA/Lynx.png";
-import MercuryLogo from "../assets/Logos/WNBA/Mercury.png";
-import MysticsLogo from "../assets/Logos/WNBA/Mystics.png";
-import SkyLogo from "../assets/Logos/WNBA/Sky.png";
-import SparksLogo from "../assets/Logos/WNBA/Sparks.png";
-import StormLogo from "../assets/Logos/WNBA/Storm.png";
-import SunLogo from "../assets/Logos/WNBA/Sun.png";
-import TempoLogo from "../assets/Logos/WNBA/Tempo.png";
-import TempoLogoLight from "../assets/Logos/WNBA/TempoLight.png";
-import ValkyrieLogo from "../assets/Logos/WNBA/Valkyrie.png";
-import WingsLogo from "../assets/Logos/WNBA/Wings.png";
+import AcesLogo from "../assets/WNBA/Logos/Aces.png";
+import DreamLogo from "../assets/WNBA/Logos/Dream.png";
+import FeverLogo from "../assets/WNBA/Logos/Fever.png";
+import FireLogo from "../assets/WNBA/Logos/Fire.png";
+import FireLogoLight from "../assets/WNBA/Logos/FireLight.png";
+import LibertyLogo from "../assets/WNBA/Logos/Liberty.png";
+import LynxLogo from "../assets/WNBA/Logos/Lynx.png";
+import MercuryLogo from "../assets/WNBA/Logos/Mercury.png";
+import MysticsLogo from "../assets/WNBA/Logos/Mystics.png";
+import SkyLogo from "../assets/WNBA/Logos/Sky.png";
+import SparksLogo from "../assets/WNBA/Logos/Sparks.png";
+import StormLogo from "../assets/WNBA/Logos/Storm.png";
+import SunLogo from "../assets/WNBA/Logos/Sun.png";
+import TempoLogo from "../assets/WNBA/Logos/Tempo.png";
+import TempoLogoLight from "../assets/WNBA/Logos/TempoLight.png";
+import ValkyrieLogo from "../assets/WNBA/Logos/Valkyrie.png";
+import WingsLogo from "../assets/WNBA/Logos/Wings.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
 export const wnbaTeams: NBATeam[] = [

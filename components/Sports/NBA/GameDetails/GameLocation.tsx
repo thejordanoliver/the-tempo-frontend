@@ -15,16 +15,19 @@ import {
 } from "react-native";
 
 type Props = {
-  weather?: WeatherData | null;
-  venueImage?: any;
-  venueName?: string;
-  location?: string;
-  address?: string;
+  weather: WeatherData | null | undefined;
+  venueImage: string | null | undefined;
+  venueName: string | null | undefined;
+  location: string | null | undefined;
+  address: string | null | undefined;
   venueCapacity: number | null | undefined;
-  venueAttendance?: number | string | null;
+  venueAttendance: number | string | null | undefined;
   isDark: boolean;
+  circuitLength?: number | string | undefined;
+  circuitLaps?: number | string | undefined;
+  circuitEstablished?: number | string | undefined;
   surface?: "football" | "default";
-  grass?: boolean;
+  grass?: boolean | undefined;
 };
 
 type DetailRowProps = {

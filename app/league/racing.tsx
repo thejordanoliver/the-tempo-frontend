@@ -1,12 +1,19 @@
-import MMAChampionsList from "@/components/Sports/MMA/Champions/MMAChampionsList";
 import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
+import GamesList from "@/components/Sports/Racing/Games/RacingGamesList";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useRacingEvents } from "@/hooks/RacingHooks/useRacingEvents";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
@@ -21,6 +28,7 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { formatDateToUTCYYYYMMDD } from "../../utils/dateUtils";
 
 function isLeague(value: unknown): value is League {
   return (
@@ -43,24 +51,33 @@ export default function RacingLeagueScreen() {
     league?: string | string[];
     leagueLabel?: string;
   }>();
+
   const normalizedParamLeague = normalizeLeagueParam(params.league);
   const leagueLabel = params.leagueLabel;
+
   const league: League = isLeague(normalizedParamLeague)
     ? normalizedParamLeague
     : "F1";
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getScoresStyles(isDark);
+
   const navigation = useNavigation();
   const sportsModalRef = useRef<SportsListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
+
   const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
     null,
   );
 
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-  const { calendar } = useLeagueCalendar(normalizedParamLeague, "racing");
+
+  const { calendar, loading: calendarLoading } = useLeagueCalendar(
+    normalizedParamLeague,
+    "racing",
+  );
 
   const sortedCalendar = useMemo(() => {
     return [...(calendar ?? [])].sort((a, b) => {
@@ -72,29 +89,63 @@ export default function RacingLeagueScreen() {
   }, [calendar]);
 
   const defaultEventIndex = useMemo(() => {
+    if (!sortedCalendar.length) {
+      return 0;
+    }
+
     return getDefaultUFCEventIndex(sortedCalendar);
   }, [sortedCalendar]);
 
+  /*
+   * Set the initial event once the calendar becomes available.
+   *
+   * This avoids relying on a computed fallback index indefinitely.
+   */
+  useEffect(() => {
+    if (!sortedCalendar.length) {
+      return;
+    }
+
+    setSelectedEventIndex((currentIndex) => {
+      if (
+        currentIndex !== null &&
+        currentIndex >= 0 &&
+        currentIndex < sortedCalendar.length
+      ) {
+        return currentIndex;
+      }
+
+      return defaultEventIndex;
+    });
+  }, [defaultEventIndex, sortedCalendar.length]);
+
   const safeSelectedEventIndex = useMemo(() => {
-    if (!sortedCalendar.length) return 0;
+    if (!sortedCalendar.length) {
+      return 0;
+    }
 
-    const rawIndex = selectedEventIndex ?? defaultEventIndex;
+    const index = selectedEventIndex ?? defaultEventIndex;
 
-    return Math.min(Math.max(rawIndex, 0), sortedCalendar.length - 1);
-  }, [selectedEventIndex, defaultEventIndex, sortedCalendar.length]);
+    return Math.min(Math.max(index, 0), sortedCalendar.length - 1);
+  }, [defaultEventIndex, selectedEventIndex, sortedCalendar.length]);
 
-  const selectedEvent = sortedCalendar[safeSelectedEventIndex] ?? null;
-  const selectedEventDate = selectedEvent?.startDate ?? null;
+  const selectedEvent = useMemo(() => {
+    return sortedCalendar[safeSelectedEventIndex] ?? null;
+  }, [safeSelectedEventIndex, sortedCalendar]);
+
+  const selectedEventDate = useMemo(() => {
+    return formatDateToUTCYYYYMMDD(selectedEvent?.startDate);
+  }, [selectedEvent?.startDate]);
 
   const {
-    data,
-    loading,
-    refreshing: refreshingGames,
-    refreshGames,
-    error,
+    games,
+    loading: loadingGames,
+    refreshing: gamesRefreshing,
+    refreshGames: handleScoresRefresh,
+    error: gamesError,
   } = useRacingEvents({
     date: selectedEventDate,
-    league: league,
+    league,
     enabled: Boolean(selectedEventDate),
   });
 
@@ -105,6 +156,23 @@ export default function RacingLeagueScreen() {
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(normalizedParamLeague, 10);
+
+  const handleSelectEvent = useCallback(
+    (index: number) => {
+      if (!Number.isInteger(index)) {
+        console.warn("EventSelector returned an invalid index:", index);
+        return;
+      }
+
+      if (index < 0 || index >= sortedCalendar.length) {
+        console.warn("EventSelector index is outside the calendar:", index);
+        return;
+      }
+
+      setSelectedEventIndex(index);
+    },
+    [sortedCalendar.length],
+  );
 
   const openLeagueModal = useCallback(() => {
     setLeagueModalVisible(true);
@@ -124,7 +192,12 @@ export default function RacingLeagueScreen() {
         />
       ),
     });
-  }, [navigation, leagueModalVisible, leagueLabel, openLeagueModal]);
+  }, [
+    navigation,
+    leagueModalVisible,
+    leagueLabel,
+    openLeagueModal,
+  ]);
 
   return (
     <>
@@ -148,8 +221,8 @@ export default function RacingLeagueScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
+          onPageSelected={(event) => {
+            const index = event.nativeEvent.position;
             const nextTab = tabs[index];
 
             if (nextTab) {
@@ -157,13 +230,22 @@ export default function RacingLeagueScreen() {
             }
           }}
         >
-          <View key="fights" style={styles.contentArea}>
+          <View key="scores" style={styles.contentArea}>
             <EventSelector
               events={sortedCalendar}
-              loading={!sortedCalendar.length}
+              loading={calendarLoading}
               selectedEventIndex={safeSelectedEventIndex}
-              onSelectEvent={setSelectedEventIndex}
+              onSelectEvent={handleSelectEvent}
               isDark={isDark}
+            />
+
+            <GamesList
+              games={games ?? []}
+              error={gamesError}
+              loading={loadingGames}
+              refreshing={gamesRefreshing}
+              onRefresh={handleScoresRefresh}
+              scrollEnabled
             />
           </View>
 
@@ -176,10 +258,6 @@ export default function RacingLeagueScreen() {
               onRefresh={refreshNews}
               isDark={isDark}
             />
-          </View>
-
-          <View key="champions" style={styles.contentArea}>
-            <MMAChampionsList />
           </View>
 
           <View key="forum" style={styles.contentArea}>

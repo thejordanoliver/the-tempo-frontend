@@ -1,15 +1,9 @@
+import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import refereePlaceholder from "assets/Placeholders/refereePlaceholder.png";
 import refereePlaceholderLight from "assets/Placeholders/refereePlaceholderLight.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { FlatList, Image, Text, View } from "react-native";
 import { officialsStyles } from "styles/GameDetailStyles/OfficialsStyles";
-
-type Official = {
-  displayName: string;
-  position?: {
-    displayName: string;
-  };
-};
 
 type Props = {
   officials: Official[];

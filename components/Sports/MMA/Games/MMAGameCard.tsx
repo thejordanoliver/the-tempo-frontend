@@ -1,3 +1,4 @@
+import { MMAFightCardProps } from "@/types/mma/mma";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity } from "constants/styles";
@@ -6,7 +7,6 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { MMAFightCardProps } from "types/mma";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function MMAGameCard({ game }: MMAFightCardProps) {
@@ -45,8 +45,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
       hour12: true,
     }) || "";
 
-  const firstFighter = game.competitors[0];
-  const secondFighter = game.competitors[1];
+  const firstFighter = game.competitors?.[0];
+  const secondFighter = game.competitors?.[1];
   const firstFighterName = firstFighter?.shortName ?? "TBD";
   const secondFighterName = secondFighter?.shortName ?? "TBD";
   const firstFighterPhoto = firstFighter?.headshot ?? placeholderImage;
@@ -55,11 +55,10 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const secondFighterFlag = secondFighter?.flag ?? "";
   const firstFighterRecord = firstFighter?.record ?? "0-0";
   const secondFighterRecord = secondFighter?.record ?? "0-0";
-  const firstFighterWinner = firstFighter.winner === true;
-  const secondFighterWinner = secondFighter.winner === true;
-
+  const firstFighterWinner = firstFighter?.winner === true;
+  const secondFighterWinner = secondFighter?.winner === true;
   const styles = gameCardStyles(isDark);
-  const gameStatusDescription = game.status.description;
+  const gameStatusDescription = game?.status?.description;
   const headline = game.headline;
   const isScheduled = gameStatusDescription === "Scheduled";
   const isPreFight = gameStatusDescription === "Pre-fight";
@@ -75,8 +74,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const broadcasts = game.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
 
-  const period = formatPeriod({ period: game.status.period, isMMA: true });
-  const clock = game.status.displayClock;
+  const period = formatPeriod({ period: game?.status?.period, isMMA: true });
+  const clock = game?.status?.displayClock;
   const resultText = game.method;
   const results =
     resultText?.toLowerCase() === "submission"
@@ -181,12 +180,13 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
             accessibilityLabel={`${secondFighterName} headshot`}
           />
         </View>
-        <Image
-          source={{ uri: secondFighterFlag }}
-          style={styles.leftFighterFlag}
-          accessibilityLabel={`${secondFighterName} headshot`}
-        />
-
+        {secondFighterFlag ? (
+          <Image
+            source={{ uri: secondFighterFlag }}
+            style={styles.leftFighterFlag}
+            accessibilityLabel={`${secondFighterName} country flag`}
+          />
+        ) : null}
         <Text style={styles.teamName}>{secondFighterName}</Text>
       </View>
 
@@ -224,18 +224,22 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
             source={
               typeof firstFighterPhoto === "string"
                 ? { uri: firstFighterPhoto }
-                : secondFighterPhoto
+                : firstFighterPhoto
             }
             style={styles.fighter}
             contentFit="contain"
-            accessibilityLabel={`${secondFighterName} headshot`}
+            accessibilityLabel={`${firstFighterName} headshot`}
           />
         </View>
-        <Image
-          source={{ uri: firstFighterFlag }}
-          style={styles.rightFighterFlag}
-          accessibilityLabel={`${secondFighterName} headshot`}
-        />
+
+        {firstFighterFlag ? (
+          <Image
+            source={{ uri: firstFighterFlag }}
+            style={styles.rightFighterFlag}
+            accessibilityLabel={`${firstFighterName} country flag`}
+          />
+        ) : null}
+
         <Text style={styles.teamName}>{firstFighterName}</Text>
       </View>
     </>

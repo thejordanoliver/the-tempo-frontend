@@ -10,7 +10,7 @@ type Player = {
   name: string;
   jersey: string;
   fouls: number;
-  avatarUrl?: string;
+  headshot: string;
 };
 
 type Props = {
@@ -75,13 +75,14 @@ export default function PlayersInFoulTrouble({
     const isLast = index === filteredPlayers.length - 1;
     const foulLimit = league === "NBA" ? 6 : 5;
     const isFouledOut = item.fouls >= foulLimit;
+    
 
     return (
       <View style={[styles.playerRow, isLast && styles.lastPlayerRow]}>
         <View style={styles.left}>
           <View style={styles.avatarWrapper}>
-            {item.avatarUrl ? (
-              <Image source={{ uri: item.avatarUrl }} style={styles.avatar} />
+            {item.headshot ? (
+              <Image source={{ uri: item.headshot }} style={styles.avatar} />
             ) : null}
           </View>
 
