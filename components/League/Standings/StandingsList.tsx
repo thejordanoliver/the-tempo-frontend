@@ -248,8 +248,7 @@ export const StandingsList = ({
 
           if (existingDivision) {
             const teamAlreadyExists = existingDivision.teams.some(
-              (existingTeam) =>
-                String(existingTeam.teamId) === String(team.teamId),
+              (existingTeam) => String(existingTeam.id) === String(team.id),
             );
 
             if (!teamAlreadyExists) {
@@ -324,26 +323,26 @@ export const StandingsList = ({
 
   const getTeam = (item: StandingsTeam) => {
     if (league === "NBA") {
-      return getTeamByESPNId(Number(item.teamId));
+      return getTeamByESPNId(Number(item.id));
     }
 
     if (league === "WNBA") {
-      return getWNBATeamByESPNId(Number(item.teamId));
+      return getWNBATeamByESPNId(Number(item.id));
     }
 
     if (league === "NFL") {
-      return getNFLTeamByESPNId(Number(item.teamId));
+      return getNFLTeamByESPNId(Number(item.id));
     }
 
     if (league === "UFL") {
-      return getUFLTeam(Number(item.teamId));
+      return getUFLTeam(Number(item.id));
     }
 
     if (league === "MLB") {
-      return getMLBTeamByEspnId(item.teamId);
+      return getMLBTeamByEspnId(item.id);
     }
 
-    return getNHLTeamByESPNId(Number(item.teamId));
+    return getNHLTeamByESPNId(Number(item.id));
   };
 
   const getTeamRoute = () => {
@@ -394,7 +393,7 @@ export const StandingsList = ({
               : league === "NHL"
                 ? getNHLTeamLogo(team?.id, isDark)
                 : null;
-    const teamId = team?.id ?? item.teamId;
+    const id = team?.id ?? item.id;
     const teamCode = team?.code;
 
     const favorited = team ? isFavorite(league, team.id) : false;
@@ -426,7 +425,7 @@ export const StandingsList = ({
             router.push({
               pathname: route,
               params: {
-                teamId: String(teamId),
+                teamId: String(id),
               },
             })
           }
@@ -462,14 +461,19 @@ export const StandingsList = ({
       const isLastRow = index === data.length - 1;
 
       const winStreak = item.streak?.startsWith("W");
+      const lossStreak = item.streak?.startsWith("L");
 
       const streakColor = winStreak
         ? isDark
           ? Colors.dark.limeGreen
           : Colors.light.green
-        : isDark
-          ? Colors.dark.lightRed
-          : Colors.light.red;
+        : lossStreak
+          ? isDark
+            ? Colors.dark.lightRed
+            : Colors.light.red
+          : isDark
+            ? Colors.dark.text
+            : Colors.light.text;
 
       return (
         <View
@@ -583,7 +587,7 @@ export const StandingsList = ({
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}
-            keyExtractor={(item) => String(item.teamId)}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
             renderItem={(props) =>
               renderLeftItem({
                 ...props,
@@ -602,7 +606,7 @@ export const StandingsList = ({
           >
             <FlatList
               data={data}
-              keyExtractor={(item) => String(item.teamId)}
+              keyExtractor={(item, index) => `${item.id}-${index}`}
               renderItem={(props) =>
                 renderRightItem(activeColumns)({
                   ...props,

@@ -3,8 +3,7 @@ import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
-  id?: string;
-  teamId: string;
+  id: string;
   name: string;
   shortName: string | null;
   code: string;
