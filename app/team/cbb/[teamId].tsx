@@ -61,7 +61,7 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getCBBTeam(teamIdNum);
-  const teamColor = team?.color;
+  const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -212,7 +212,7 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={teamColor ?? Colors.midTone}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}

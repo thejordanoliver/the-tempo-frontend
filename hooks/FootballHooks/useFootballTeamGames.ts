@@ -9,7 +9,7 @@ interface UseTeamGamesReturn {
   refreshGames: () => Promise<void>;
 }
 
-export function useTeamGames(
+export function useFootballTeamGames(
   teamId: string | number | null,
   league: string = "nfl",
   season?: number | string,

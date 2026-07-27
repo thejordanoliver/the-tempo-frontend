@@ -1,8 +1,8 @@
 import Roster from "@/components/Sports/Baseball/Team/Roster";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
+import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
-import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { getFootballSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
@@ -26,6 +26,7 @@ import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getFirstSeasonGame } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { Colors } from "@/constants/styles";
 
 export default function TeamDetailScreen() {
   const league = "CFB";
@@ -38,6 +39,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamId);
   const team = getCFBTeam(teamIdNum);
   const espnId = team?.espnId ?? 0;
+  const teamColor = team?.color ?? Colors.midTone;
   const teamLogo = getCFBTeamLogo(teamIdNum, true);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const favorited = team ? isFavorite(league, teamIdNum) : false;
@@ -75,7 +77,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum, league, currentSeason);
+  } = useFootballTeamGames(teamIdNum, league, currentSeason);
 
   const {
     teamRoster,
@@ -120,7 +122,7 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={team?.id}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -130,7 +132,7 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [navigation, team, teamLogo, toggleFavorite, favorited]);
+  }, [navigation, team, teamColor, teamLogo, toggleFavorite, favorited]);
 
   if (!team) {
     return (

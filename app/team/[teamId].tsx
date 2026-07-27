@@ -1,6 +1,7 @@
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import GamesList from "@/components/Sports/NBA/Games/GamesList";
 import RosterStats from "@/components/Sports/NBA/Team/RosterStats";
+import { Colors } from "@/constants/styles";
 import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
@@ -59,13 +60,12 @@ export default function TeamDetailScreen() {
   const navigation = useNavigation();
 
   const { teamId } = useLocalSearchParams();
-  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
+  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
 
   const team = getNBATeam(teamIdNum);
-  const teamColor = team?.color;
+  const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);

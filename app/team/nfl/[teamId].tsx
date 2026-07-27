@@ -2,7 +2,8 @@ import Roster from "@/components/Sports/Baseball/Team/Roster";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
-import { useTeamGames } from "@/hooks/FootballHooks/useTeamGames";
+import { Colors } from "@/constants/styles";
+import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -41,6 +42,7 @@ export default function TeamDetailScreen() {
   const team = getNFLTeam(teamIdNum);
   const espnId = team?.espnId ?? 0;
   const teamLogo = getNFLTeamLogo(teamIdNum, true);
+  const teamColor = team?.color ?? Colors.midTone;
   const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -76,7 +78,7 @@ export default function TeamDetailScreen() {
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useTeamGames(teamIdNum, league, currentSeason);
+  } = useFootballTeamGames(teamIdNum, league, currentSeason);
 
   const {
     teamRoster,
@@ -117,19 +119,28 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={team?.color}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, isDark, team, teamLogo, toggleFavorite, favorited]);
+  }, [
+    navigation,
+    isDark,
+    team,
+    teamIdNum,
+    teamColor,
+    teamLogo,
+    toggleFavorite,
+    favorited,
+  ]);
 
   if (!team) {
     return (

@@ -29,6 +29,7 @@ import {
 } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import { Colors } from "@/constants/styles";
 
 function getMonthKeyFromDate(date: Date | null) {
   if (!date) return null;
@@ -55,7 +56,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number(teamIdStr);
   const team = getNHLTeam(teamIdNum);
   const teamLogo = getNHLTeamLogo(teamIdNum, true);
-  const teamColor = team?.color;
+  const teamColor = team?.color ?? Colors.midTone;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [standingsYear, setStandingsYear] = useState(getNHLSeason());
   const [refreshing, setRefreshing] = useState(false);

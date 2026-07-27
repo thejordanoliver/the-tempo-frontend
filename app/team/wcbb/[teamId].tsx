@@ -60,24 +60,21 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const team = getCBBTeam(teamIdNum, true);
-  const teamColor = team?.color;
+  const team = getCBBTeam(teamIdNum);
+  const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
-  const teamLogo = getCBBTeamLogo(teamIdNum, true, true);
+  const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
-
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
-
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tabToIndex(tab));
   };
-
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
@@ -123,7 +120,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("cbb", teamIdNum);
+  } = useBasketballTeamGames("wcbb", teamIdNum);
 
   const monthGroups = useMemo(() => {
     return months
@@ -215,7 +212,7 @@ export default function TeamDetailScreen() {
         <CustomHeaderTitle
           teamId={teamIdNum}
           logo={teamLogo}
-          teamColor={teamColor ?? Colors.midTone}
+          teamColor={teamColor}
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
