@@ -217,9 +217,6 @@ export function getMonthsToShow<T>(
 
 export const scrollToMonth = (
   scrollRef: React.RefObject<ScrollView | null>,
-  months: { month: number; year: number }[],
-  month: number,
-  year: number,
   index: number,
 ) => {
   if (!scrollRef.current) return; // ✅ null check
@@ -256,6 +253,29 @@ export const formatBirth = (birthDate: string | null) => {
     month: "short",
     day: "numeric",
   });
+};
+
+export const safeDate = (date?: string | null) => {
+  if (!date) return new Date();
+  const d = new Date(date);
+  return isNaN(d.getTime()) ? new Date() : d;
+};
+
+export const formatDate = (date: Date) => {
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const formatTime = (date: Date) => {
+  return (
+    date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    }) || ""
+  );
 };
 
 export function filterByDate(games: any[], date: Date) {

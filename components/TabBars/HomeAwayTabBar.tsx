@@ -1,5 +1,5 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 
-export type HomeAwayTabValue = "away" | "home";
+export type HomeAwayTabValue = "all" | "away" | "home";
 
 export type HomeAwayTeam = {
   id: string | number;
@@ -26,12 +26,13 @@ export interface HomeAwayTabBarProps {
   isDark: boolean;
   showTeamName?: boolean;
   showHomeAwayLabel?: boolean;
+  showAllTab?: boolean;
 }
 
 type TeamTab = {
   value: HomeAwayTabValue;
-  label: "HOME" | "AWAY";
-  team: HomeAwayTeam;
+  label: "ALL" | "HOME" | "AWAY";
+  team?: HomeAwayTeam;
 };
 
 function HomeAwayTabBar({
@@ -42,40 +43,59 @@ function HomeAwayTabBar({
   isDark,
   showTeamName = true,
   showHomeAwayLabel = false,
+  showAllTab = true,
 }: HomeAwayTabBarProps) {
   const styles = homeAwayTabBarStyles(isDark);
 
   const underlineX = useRef(new Animated.Value(0)).current;
   const [containerWidth, setContainerWidth] = useState(0);
 
-  const tabs: readonly TeamTab[] = [
-    {
-      value: "away",
-      label: "AWAY",
-      team: awayTeam,
-    },
-    {
-      value: "home",
-      label: "HOME",
-      team: homeTeam,
-    },
-  ];
+  const tabs = useMemo<readonly TeamTab[]>(() => {
+    const teamTabs: TeamTab[] = [
+      {
+        value: "away",
+        label: "AWAY",
+        team: awayTeam,
+      },
+      {
+        value: "home",
+        label: "HOME",
+        team: homeTeam,
+      },
+    ];
 
-  const tabWidth = containerWidth / tabs.length;
+    if (showAllTab) {
+      return [
+        {
+          value: "all",
+          label: "ALL",
+        },
+        ...teamTabs,
+      ];
+    }
+
+    return teamTabs;
+  }, [awayTeam, homeTeam, showAllTab]);
+
+  const tabWidth = tabs.length > 0 ? containerWidth / tabs.length : 0;
 
   useEffect(() => {
     if (tabWidth <= 0) {
       return;
     }
 
-    const selectedIndex = selected === "home" ? 1 : 0;
+    const selectedIndex = tabs.findIndex((tab) => tab.value === selected);
+
+    if (selectedIndex < 0) {
+      return;
+    }
 
     Animated.timing(underlineX, {
       toValue: selectedIndex * tabWidth,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [selected, tabWidth, underlineX]);
+  }, [selected, tabWidth, tabs, underlineX]);
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => {
     const nextWidth = event.nativeEvent.layout.width;
@@ -85,30 +105,36 @@ function HomeAwayTabBar({
     );
   }, []);
 
-  const handleAwayPress = useCallback(() => {
-    onTabPress("away");
-  }, [onTabPress]);
-
-  const handleHomePress = useCallback(() => {
-    onTabPress("home");
-  }, [onTabPress]);
+  const handleTabPress = useCallback(
+    (value: HomeAwayTabValue) => {
+      onTabPress(value);
+    },
+    [onTabPress],
+  );
 
   return (
     <View onLayout={handleLayout} style={styles.tabContainer}>
-      <View style={styles.tabs}>
+      <View
+        accessibilityRole="tablist"
+        style={styles.tabs}
+      >
         {tabs.map(({ value, label, team }) => {
           const isSelected = selected === value;
-          const logoSource = team.logo;
+          const isAllTab = value === "all";
+
+          const accessibilityLabel = isAllTab
+            ? "All drives"
+            : `${label}: ${team?.name ?? ""}`;
 
           return (
             <Pressable
               key={value}
               accessibilityRole="tab"
-              accessibilityLabel={`${label}: ${team.name}`}
+              accessibilityLabel={accessibilityLabel}
               accessibilityState={{
                 selected: isSelected,
               }}
-              onPress={value === "away" ? handleAwayPress : handleHomePress}
+              onPress={() => handleTabPress(value)}
               style={({ pressed }) => [
                 styles.tabPressable,
                 {
@@ -117,40 +143,56 @@ function HomeAwayTabBar({
                 },
               ]}
             >
-              <View style={styles.tabContent}>
-                <Image
-                  source={logoSource}
-                  resizeMode="contain"
-                  style={[styles.logo, !isSelected && styles.unselectedLogo]}
-                />
+              {isAllTab ? (
+                <View style={styles.allTabContent}>
+                  <Text
+                    style={[
+                      styles.allTabText,
+                      isSelected && styles.allTabTextSelected,
+                    ]}
+                  >
+                    ALL
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.tabContent}>
+                  <Image
+                    source={team?.logo}
+                    resizeMode="contain"
+                    style={[
+                      styles.logo,
+                      !isSelected && styles.unselectedLogo,
+                    ]}
+                  />
 
-                {(showHomeAwayLabel || showTeamName) && (
-                  <View style={styles.labelContainer}>
-                    {showHomeAwayLabel && (
-                      <Text
-                        style={[
-                          styles.homeAwayLabel,
-                          isSelected && styles.homeAwayLabelSelected,
-                        ]}
-                      >
-                        {label}
-                      </Text>
-                    )}
+                  {(showHomeAwayLabel || showTeamName) && (
+                    <View style={styles.labelContainer}>
+                      {showHomeAwayLabel && (
+                        <Text
+                          style={[
+                            styles.homeAwayLabel,
+                            isSelected && styles.homeAwayLabelSelected,
+                          ]}
+                        >
+                          {label}
+                        </Text>
+                      )}
 
-                    {showTeamName && (
-                      <Text
-                        numberOfLines={1}
-                        style={[
-                          styles.teamName,
-                          isSelected && styles.teamNameSelected,
-                        ]}
-                      >
-                        {team.name}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              </View>
+                      {showTeamName && (
+                        <Text
+                          numberOfLines={1}
+                          style={[
+                            styles.teamName,
+                            isSelected && styles.teamNameSelected,
+                          ]}
+                        >
+                          {team?.name}
+                        </Text>
+                      )}
+                    </View>
+                  )}
+                </View>
+              )}
             </Pressable>
           );
         })}
@@ -192,7 +234,24 @@ export const homeAwayTabBarStyles = (isDark: boolean) =>
       minHeight: 60,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: 10,
+      paddingHorizontal: 8,
+    },
+
+    allTabContent: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    allTabText: {
+      fontSize: 14,
+      fontFamily: Fonts.OSMEDIUM,
+      color: Colors.midTone,
+      opacity: 0.5,
+    },
+
+    allTabTextSelected: {
+      color: isDark ? Colors.white : Colors.black,
+      opacity: 1,
     },
 
     tabContent: {
@@ -200,12 +259,12 @@ export const homeAwayTabBarStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 10,
+      gap: 8,
     },
 
     logo: {
-      width: 36,
-      height: 36,
+      width: 32,
+      height: 32,
     },
 
     unselectedLogo: {
@@ -230,7 +289,7 @@ export const homeAwayTabBarStyles = (isDark: boolean) =>
 
     teamName: {
       marginTop: 2,
-      fontSize: 15,
+      fontSize: 14,
       fontFamily: Fonts.OSMEDIUM,
       color: Colors.midTone,
       opacity: 0.5,

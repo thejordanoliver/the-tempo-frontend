@@ -1,12 +1,17 @@
-import { Ionicons } from "@expo/vector-icons";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { MMAFightCardProps } from "types/mma";
+import { MMAFightCardProps } from "types/mma/mma";
 import { formatPeriod, formatRound, getBroadcastDisplay } from "utils/games";
 
 export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
@@ -23,27 +28,14 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
     });
   };
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
-
   const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
-
-  const firstFighter = game.competitors[0];
-  const secondFighter = game.competitors[1];
+  const headline = game?.headline ?? holidayLabel;
+  const firstFighter = game.competitors?.[0];
+  const secondFighter = game.competitors?.[1];
   const firstFighterName = firstFighter?.shortName ?? "TBD";
   const secondFighterName = secondFighter?.shortName ?? "TBD";
   const firstFighterPhoto = firstFighter?.headshot ?? placeholderImage;
@@ -52,11 +44,9 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const secondFighterFlag = secondFighter?.flag ?? "";
   const firstFighterRecord = firstFighter?.record ?? "0-0";
   const secondFighterRecord = secondFighter?.record ?? "0-0";
-  const firstFighterWinner = firstFighter.winner === true;
-  const secondFighterWinner = secondFighter.winner === true;
-
-  const gameStatusDescription = game.status.description;
-  const headline = game.headline;
+  const firstFighterWinner = firstFighter?.winner === true;
+  const secondFighterWinner = secondFighter?.winner === true;
+  const gameStatusDescription = game?.status?.description;
   const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
@@ -69,8 +59,8 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
   const isIntros = gameStatusDescription === "Intros";
   const broadcasts = game.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
-  const period = formatPeriod({ period: game.status.period, isMMA: true });
-  const clock = game.status.displayClock;
+  const period = formatPeriod({ period: game?.status?.period, isMMA: true });
+  const clock = game?.status?.displayClock;
   const styles = stackedGameCardStyles(isDark);
   const resultText = game.method;
   const results =
@@ -104,13 +94,6 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
       return (
         <View style={styles.winnerContainer}>
           <Text style={[styles.teamRecord, { opacity }]}>{record}</Text>
-
-          <Ionicons
-            size={20}
-            name="caret-up"
-            color={isDark ? Colors.white : Colors.black}
-            style={{ position: "absolute", bottom: -20 }}
-          />
         </View>
       );
     }

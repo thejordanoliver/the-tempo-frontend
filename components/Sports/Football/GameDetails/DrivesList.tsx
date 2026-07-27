@@ -21,7 +21,7 @@ export default function DrivesList({
   loading,
   error,
   isDark,
-  league = "nfl",
+  league = "NFL",
 }: Props) {
   const styles = getStyles(isDark);
   const global = globalStyles(isDark);
@@ -64,11 +64,11 @@ export default function DrivesList({
           contentContainerStyle={styles.listContainer}
           scrollEnabled={false}
           renderItem={({ item, index }) => {
-            const isNFL = league === "nfl";
+            const isNFL = league === "NFL";
             const teamId = item.team?.id ?? "ALL";
 
             const team =
-              league === "cfb"
+              league === "CFB"
                 ? getCFBTeamByESPNId(teamId)
                 : getNFLTeamByESPNId(teamId);
             const isLast = index === drives.length - 1;

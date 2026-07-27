@@ -1,37 +1,3 @@
-export type BasketballTeam = {
-  id: number;
-  wid: number;
-  espnId: number | null;
-  name: string;
-  shortName?: string;
-  fullName?: string;
-  code?: string;
-  abbreviation?: string;
-  city?: string;
-  location?: string;
-  address?: string;
-  coach?: string;
-  coachImage?: string;
-  established?: number;
-  country?: {
-    name: string;
-    code: string;
-    flag: string;
-  };
-  latitude?: number;
-  longitude?: number;
-  venueImage?: any;
-  venueCapacity?: string;
-  wLogo?: any;
-  logo: any;
-  logoLight?: any;
-  color?: string;
-  secondaryColor?: string;
-  venueName?: string; // ✅ Add this
-  isAllStar: boolean;
-  isActive: boolean;
-};
-
 export type NBATeam = {
   id: number;
   espnId: number;

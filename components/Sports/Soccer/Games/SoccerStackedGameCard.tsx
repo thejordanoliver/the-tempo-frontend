@@ -1,6 +1,11 @@
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
-import { getHolidayLabel } from "@/utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -23,25 +28,10 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
     });
   };
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
-
   const gameDate = safeDate(game.date);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
   const home = game.home;
@@ -59,9 +49,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const homeWins = Boolean(game?.home?.winner);
   const awayWins = Boolean(game?.away?.winner);
 
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headlineText = game?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
   const styles = stackedGameCardStyles(isDark, isChampionship);
 
@@ -113,7 +101,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   };
 
   const renderStatus = () => {
-    if (inProgress && !isDelayed)
+    if (inProgress && !endOfPeriod && !isDelayed && !isHalftime) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
@@ -121,7 +109,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );
-
+    }
     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 

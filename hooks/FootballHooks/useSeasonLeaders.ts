@@ -62,7 +62,7 @@ export function useSeasonLeaders(
         const leaguePath = league.toLowerCase();
 
         const res = await apiClient.get(
-          `api/season-leaders/${leaguePath}/leaders`,
+          `api/leaders/${leaguePath}/leaders`,
           { params: { season } },
         );
 

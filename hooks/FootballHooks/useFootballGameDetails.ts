@@ -1,26 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Highlight } from "types/types";
+import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { Predictor } from "../BasketballHooks/useBasketballGameDetails";
-/* ---------------------------------- */
-/* TYPES                              */
-/* ---------------------------------- */
-
-export type Venue = {
-  id: string;
-  fullName: string;
-  address?: {
-    city?: string;
-    state?: string;
-    zipCode?: string;
-    country?: string;
-  };
-  grass?: boolean;
-  images?: {
-    href: string;
-    rel?: string[];
-  }[];
-};
 
 export type Athlete = {
   id: string | number;
@@ -31,34 +12,44 @@ export type Athlete = {
   fullName?: string | null;
   displayName?: string | null;
   shortName?: string | null;
-  headshot?:
-    | string
-    | {
-        href?: string;
-        alt?: string;
-      }
-    | null;
+  headshot?: string | null;
   jersey?: string | null;
   position?: string | null;
   links?: unknown[];
 };
 
 export type Team = {
-  id: number | string | null;
-  espnId?: number | string | null;
-  uid?: string;
-  slug?: string;
-  location?: string;
-  name?: string;
-  abbreviation?: string;
-  displayName?: string;
-  shortDisplayName?: string;
-  color?: string;
-  alternateColor?: string;
-  logo?: string;
+  id: string;
+  espnId: string;
+  guid: string;
+  uid: string;
+  location: string;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  homeAway: string;
+  score: number;
+  winner: boolean;
+  record: string;
+  records: [
+    {
+      type: "total";
+      summary: string;
+      displayValue: string;
+    },
+    {
+      type: "points";
+      summary: string;
+      displayValue: string;
+    },
+  ];
+  possession: boolean;
+  rank: number | null;
+  timeouts: number | null;
 };
 
-export type FootballInjury = {
+export type Injury = {
   status: string;
   date?: string;
   athlete: Athlete;
@@ -82,37 +73,37 @@ export type FootballInjury = {
   };
 };
 
-export type FootballTeamInjury = {
+export type TeamInjury = {
   team: Team;
-  injuries: FootballInjury[];
+  injuries: Injury[];
 };
 
 /* ---------------------------------- */
 /* LEADER TYPES                       */
 /* ---------------------------------- */
 
-export type FootballLeaderMainStat = {
+export type LeaderMainStat = {
   value?: string | number | null;
   label?: string | null;
 };
 
-export type FootballLeaderEntry = {
+export type LeaderEntry = {
   displayValue?: string;
   value?: string | number | null;
   athlete: Athlete;
-  mainStat?: FootballLeaderMainStat;
+  mainStat?: LeaderMainStat;
   summary?: string;
 };
 
-export type FootballLeaderCategory = {
+export type LeaderCategory = {
   name: string;
   displayName?: string;
-  leaders: FootballLeaderEntry[];
+  leaders: LeaderEntry[];
 };
 
-export type FootballTeamLeaders = {
+export type TeamLeaders = {
   team?: Team;
-  leaders: FootballLeaderCategory[];
+  leaders: LeaderCategory[];
 };
 
 export type PlayObject = {
@@ -238,39 +229,28 @@ export type BoxScore = {
 
 export type Score = {
   gameId: string;
-  lastUpdated: number;
-
-  home: {
-    total: number;
+  uid: string;
+  date: string;
+  lastUpdated?: number;
+  status: {
+    id: string;
+    name: "STATUS_SCHEDULED" | "STATUS_FINAL";
+    state: "pre" | "in" | "post";
+    completed: boolean;
+    gameStatusDescription: string;
+    gameStatusDetail: string;
+    shortDetail: string;
+    clock: number | null;
+    displayClock: string | null;
+    period: number | null;
   };
-
-  away: {
-    total: number;
-  };
-
+  home: Team;
+  away: Team;
   periodScores?: {
     period: number;
     home: number;
     away: number;
   }[];
-
-  homeTeam: string;
-  awayTeam: string;
-
-  homeTeamId?: number | string | null;
-  awayTeamId?: number | string | null;
-
-  homeTeamEspnId?: number | string | null;
-  awayTeamEspnId?: number | string | null;
-
-  status: "canceled" | "scheduled" | "in_play" | "final";
-
-  gameStatusDescription: string;
-  gameStatusDetail: string;
-  statusText: string;
-
-  displayClock: string | null;
-  period: number | null;
 
   scoringPlays: ScoringPlays;
 
@@ -296,8 +276,6 @@ export type Score = {
     current: PlayObject[];
   };
 
-  boxScore?: BoxScore | null;
-
   teamStats?: {
     team: Team;
     stats: TeamBoxScoreStat[];
@@ -311,7 +289,7 @@ export type Score = {
     athletes: BoxScoreAthleteStat[];
   }[];
 
-  leaders?: FootballTeamLeaders[];
+  leaders?: TeamLeaders[];
 
   timeouts?: {
     home: number | null;
@@ -339,7 +317,7 @@ export type Official = {
   order: number;
 };
 
-export type GameDetails = {
+export type Details = {
   homeRank: number | null;
   awayRank: number | null;
 
@@ -347,7 +325,7 @@ export type GameDetails = {
   broadcasts?: string[];
 
   officials: Official[];
-  injuries: FootballTeamInjury[];
+  injuries: TeamInjury[];
   highlights: Highlight[];
 
   neutralSite: boolean;
@@ -373,7 +351,7 @@ export const useFootballGameDetails = (
 ) => {
   const [score, setScore] = useState<Score | null>(null);
 
-  const [details, setDetails] = useState<GameDetails | null>(null);
+  const [details, setDetails] = useState<Details | null>(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -416,7 +394,7 @@ export const useFootballGameDetails = (
 
         const { data } = await apiClient.get<{
           score: Score;
-          details: GameDetails;
+          details: Details;
         }>("api/football/details", {
           params: {
             league,
@@ -440,7 +418,7 @@ export const useFootballGameDetails = (
           return;
         }
 
-        console.warn(`[${league}] football details fetch failed`, error);
+        console.warn(`[${league}] details fetch failed`, error);
 
         setScore(null);
         setDetails(null);
@@ -479,7 +457,7 @@ export const useFootballGameDetails = (
   useEffect(() => {
     clearPolling();
 
-    if (skipFetch || score?.status !== "in_play") {
+    if (skipFetch || score?.status.state !== "in") {
       return;
     }
 
@@ -509,7 +487,7 @@ export const useFootballGameDetails = (
     loading,
     warning,
     refresh,
-    isLive: score?.status === "in_play",
+    isLive: score?.status.state === "in",
     lastRefresh,
     hasData: Boolean(score),
   };

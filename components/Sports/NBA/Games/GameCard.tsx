@@ -1,5 +1,5 @@
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
-import { getHolidayLabel } from "@/utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel, safeDate } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -27,25 +27,12 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
     });
   };
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
+  
 
   const gameDate = safeDate(game.date);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -61,10 +48,8 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
   const homeLogo = getTeamLogo(homeId, isDark);
   const awayLogo = getTeamLogo(awayId, isDark);
 
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headlineText = game?.headline;
-  const headline = headlineText || holidayLabel;
-  const isChampionship = headline?.includes("NBA Finals");
+  const headline = game?.headline || holidayLabel;
+  const isChampionship =  headline?.includes("NBA Summer League - Final") || headline?.includes("NBA Finals");
   const styles = gameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period });

@@ -4,6 +4,12 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { BaseballGame } from "@/types/baseball/baseball";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import TeamInfo from "components/Sports/Baseball/GamePreview/TeamInfo";
 import { Colors } from "constants/styles";
@@ -49,14 +55,13 @@ export default function BaseballGamePreviewModal({
   }, [visible]);
 
   const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game.headline || holidayLabel;
+  const isChampionship = game?.season.slug === "championship-series";
+  const styles = gamePreviewModalStyle(isChampionship);
 
   const LEAGUE = game?.league?.code ?? "mlb";
   const gameId = game?.id;
@@ -83,6 +88,8 @@ export default function BaseballGamePreviewModal({
   const awayEspnId = awayTeam?.espnId ?? 0;
   const homeCode = homeTeam?.code ?? homeTeam?.shortName ?? "";
   const awayCode = awayTeam?.code ?? awayTeam?.shortName ?? "";
+  const homeName = homeTeam?.fullName ?? homeTeam?.shortName ?? "";
+  const awayName = awayTeam?.fullName ?? awayTeam?.shortName ?? "";
 
   const homeLogo = isSB
     ? getSBTeamLogo(homeId, true)
@@ -99,57 +106,32 @@ export default function BaseballGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
-  const { details, score } = useBaseballGameDetails(
-    LEAGUE.toLowerCase(),
-    gameId,
-  );
+  const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
-  const isLoading = !!details;
-  const isChampionship = game?.season.slug === "championship-series";
-  const styles = gamePreviewModalStyle(isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const state = game?.status?.state;
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
-  const homeScore = score?.home.total ?? game?.home?.score ?? 0;
-  const awayScore = score?.away.total ?? game?.away?.score ?? 0;
-  const homeRecord = game.home.record ?? "0-0";
-  const awayRecord = game.away.record ?? "0-0";
-  const homeRank = game.home.homeRank;
-  const awayRank = game.away.awayRank;
+  const state = score?.status.state ?? "";
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.shortDetail ?? "";
   const isTopInning = gameStatusDetail.includes("Top");
+
+  const homeScore = score?.home.score ?? 0;
+  const awayScore = score?.away.score ?? 0;
+  const homeWins = score?.home?.winner ?? false;
+  const awayWins = score?.away?.winner ?? false;
+
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-  const headline = game.headline;
-  const officials = details?.officials ?? [];
-  const injuries = details?.injuries ?? [];
-  const outs = game?.situation.outs;
-
-  const homeHits = game?.home.hits;
-  const homeErrors = game?.home.errors;
-  const awayHits = game?.away.hits;
-  const awayErrors = game?.away.errors;
-  const homeRuns = game?.home.score;
-  const awayRuns = game?.away.score;
-
-  const bases = {
-    onFirst: score?.bases.onFirst ?? false,
-    onSecond: score?.bases.onSecond ?? false,
-    onThird: score?.bases?.onThird ?? false,
-  };
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -157,6 +139,30 @@ export default function BaseballGamePreviewModal({
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
+  const outs = score?.outs ?? 0;
+
+  const bases = {
+    onFirst: score?.bases.onFirst ?? false,
+    onSecond: score?.bases.onSecond ?? false,
+    onThird: score?.bases?.onThird ?? false,
+  };
+
+  const homeHits = score?.home.hits ?? 0;
+  const homeErrors = score?.home.errors ?? 0;
+  const awayHits = score?.away.hits ?? 0;
+  const awayErrors = score?.away.errors ?? 0;
+  const homeRuns = score?.home.score ?? 0;
+  const awayRuns = score?.away.score ?? 0;
+  const homeRecord = home?.record ?? "0—0";
+  const awayRecord = away?.record ?? "0—0";
+  const homeRank = home?.homeRank;
+  const awayRank = away?.awayRank;
+  const teamStats = score?.teamStats ?? [];
+  const playerStats = score?.playerStats ?? [];
+  const officials = details?.officials ?? [];
+  const highlights = details?.highlights ?? [];
+  const injuries = details?.injuries ?? [];
 
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "baseball", id: venueId });
@@ -166,6 +172,7 @@ export default function BaseballGamePreviewModal({
     location: venue?.city,
     date: gameDateObj,
   });
+
   const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
@@ -180,6 +187,13 @@ export default function BaseballGamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
+
+  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
+  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
+  const teamPlayersMap = {
+    [String(homeEspnId)]: homeTeamPlayersData.players,
+    [String(awayEspnId)]: awayTeamPlayersData.players,
+  };
 
   return (
     <BottomSheetModal
@@ -224,7 +238,7 @@ export default function BaseballGamePreviewModal({
           tint="systemUltraThinMaterialDark"
           style={styles.blurViewContainer}
         >
-          {!isLoading ? (
+          {isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
             </View>
@@ -240,10 +254,11 @@ export default function BaseballGamePreviewModal({
                   logo={awayLogo}
                   name={awayCode}
                   score={awayScore}
-                  opponentScore={homeScore}
+                  winner={awayWins}
                   record={awayRecord}
                   rank={awayRank}
                   gameStatusDescription={gameStatusDescription}
+                  state={state}
                 />
 
                 <CenterInfo
@@ -262,12 +277,14 @@ export default function BaseballGamePreviewModal({
                   logo={homeLogo}
                   name={homeCode}
                   score={homeScore}
-                  opponentScore={awayScore}
+                  winner={homeWins}
                   record={homeRecord}
                   rank={homeRank}
                   gameStatusDescription={gameStatusDescription}
+                  state={state}
                 />
               </View>
+
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
@@ -276,10 +293,12 @@ export default function BaseballGamePreviewModal({
                   teamPlayersMap={teamPlayersMap}
                   homeLogo={homeLogo}
                   homeCode={homeCode}
+                  homeName={homeName}
                   homeColor={homeColor}
                   homeLastGames={homeLastGames}
                   awayLogo={awayLogo}
                   awayCode={awayCode}
+                  awayName={awayName}
                   awayColor={awayColor}
                   awayLastGames={awayLastGames}
                   homeChance={homeChance}
@@ -291,6 +310,9 @@ export default function BaseballGamePreviewModal({
                   awayRuns={awayRuns}
                   awayErrors={awayErrors}
                   homeErrors={homeErrors}
+                  teamStats={teamStats}
+                  playerStats={playerStats}
+                  highlights={highlights}
                   injuries={injuries}
                   weather={weather}
                   venueImage={venueImage}

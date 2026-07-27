@@ -8,7 +8,7 @@ import { StyleSheet, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import DrivesList from "./DrivesList";
 
-type League = "nfl" | "cfb" | string;
+type League = "NFL" | "CFB" | string;
 
 type Props = {
   previousDrives?: PlayObject[] | null;
@@ -46,11 +46,12 @@ export default function TeamDrives({
   awayCode,
   homeCode,
   isDark,
-  league = "nfl",
+  league = "NFL",
   state,
 }: Props) {
   const styles = TeamDrivesStyles(isDark);
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
+
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("all");
 
   const previous = useMemo(() => {
     return Array.isArray(previousDrives) ? previousDrives : [];
@@ -67,24 +68,26 @@ export default function TeamDrives({
   const teams = useMemo(
     () => ({
       away: {
-        key: "away" as const,
         id: normalizeId(awayId),
-        label: awayCode?.trim() || "Away",
+        label: awayCode || "Away",
         logo: awayLogo,
       },
       home: {
-        key: "home" as const,
         id: normalizeId(homeId),
-        label: homeCode?.trim() || "Home",
+        label: homeCode || "Home",
         logo: homeLogo,
       },
     }),
     [awayCode, awayId, awayLogo, homeCode, homeId, homeLogo],
   );
 
-  const selectedTeam = teams[selectedTab];
-
   const selectedCurrentDrives = useMemo(() => {
+    if (selectedTab === "all") {
+      return current;
+    }
+
+    const selectedTeam = teams[selectedTab];
+
     if (!selectedTeam.id) {
       return [];
     }
@@ -94,9 +97,15 @@ export default function TeamDrives({
 
       return driveTeamId === selectedTeam.id;
     });
-  }, [current, selectedTeam.id]);
+  }, [current, selectedTab, teams]);
 
   const selectedPreviousDrives = useMemo(() => {
+    if (selectedTab === "all") {
+      return previous;
+    }
+
+    const selectedTeam = teams[selectedTab];
+
     if (!selectedTeam.id) {
       return [];
     }
@@ -106,7 +115,7 @@ export default function TeamDrives({
 
       return driveTeamId === selectedTeam.id;
     });
-  }, [previous, selectedTeam.id]);
+  }, [previous, selectedTab, teams]);
 
   if (state !== "post" && state !== "in") {
     return null;
@@ -135,6 +144,7 @@ export default function TeamDrives({
           selected={selectedTab}
           onTabPress={setSelectedTab}
           isDark={isDark}
+          showAllTab
         />
 
         <DrivesList

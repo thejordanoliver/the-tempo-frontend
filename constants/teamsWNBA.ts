@@ -1,4 +1,4 @@
-import { NBATeam } from "@/types/basketball/basketball";
+import { Team } from "@/types/football/football";
 
 // Logos
 import AcesLogo from "../assets/WNBA/Logos/Aces.png";
@@ -18,9 +18,11 @@ import TempoLogo from "../assets/WNBA/Logos/Tempo.png";
 import TempoLogoLight from "../assets/WNBA/Logos/TempoLight.png";
 import ValkyrieLogo from "../assets/WNBA/Logos/Valkyrie.png";
 import WingsLogo from "../assets/WNBA/Logos/Wings.png";
+import CoopLogo from "../assets/WNBA/Logos/Coop.png";
+import SpoonLogo from "../assets/WNBA/Logos/Spoon.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
-export const wnbaTeams: NBATeam[] = [
+export const wnbaTeams: Team[] = [
   {
     id: 162,
     espnId: 20,
@@ -33,6 +35,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: DreamLogo,
     logoLight: DreamLogo,
     location: "College Park, GA",
+    city: "Atlanta",
     established: 2008,
     isAllStar: false,
     isActive: true,
@@ -49,6 +52,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: SkyLogo,
     logoLight: SkyLogo,
     location: "Chicago, IL",
+    city: "Chicago",
     established: 2006,
     isAllStar: false,
     isActive: true,
@@ -65,6 +69,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: SunLogo,
     logoLight: SunLogo,
     location: "Uncasville, CT",
+    city: "Uncasville",
     established: 1999,
     isAllStar: false,
     isActive: true,
@@ -81,7 +86,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: WingsLogo,
     logoLight: WingsLogo,
     location: "Arlington, TX",
-
+    city: "Arlington",
     established: 1998,
     isAllStar: false,
     isActive: true,
@@ -98,6 +103,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: ValkyrieLogo,
     logoLight: ValkyrieLogo,
     location: "San Francisco, CA",
+    city: "San Francisco",
     established: 2023,
     isAllStar: false,
     isActive: true,
@@ -114,6 +120,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: FeverLogo,
     logoLight: FeverLogo,
     location: "Indianapolis, IN",
+    city: "Indianapolis",
     established: 2000,
     isAllStar: false,
     isActive: true,
@@ -130,6 +137,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: AcesLogo,
     logoLight: AcesLogo,
     location: "Las Vegas, NV",
+    city: "Las Vegas",
     established: 1997,
     isAllStar: false,
     isActive: true,
@@ -146,6 +154,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: SparksLogo,
     logoLight: SparksLogo,
     location: "Los Angeles, CA",
+    city: "Los Angeles",
     established: 1997,
     isAllStar: false,
     isActive: true,
@@ -162,6 +171,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: LynxLogo,
     logoLight: LynxLogo,
     location: "Minneapolis, MN",
+    city: "Minneapolis",
     established: 1999,
     isAllStar: false,
     isActive: true,
@@ -178,6 +188,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: LibertyLogo,
     logoLight: LibertyLogo,
     location: "Brooklyn, NY",
+    city: "New York",
     established: 1997,
     isAllStar: false,
     isActive: true,
@@ -194,6 +205,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: MercuryLogo,
     logoLight: MercuryLogo,
     location: "Phoenix, AZ",
+    city: "Phoenix",
     established: 1997,
     isAllStar: false,
     isActive: true,
@@ -210,6 +222,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: FireLogo,
     logoLight: FireLogoLight,
     location: "Portland, OR",
+    city: "Portland",
     established: 2000,
     isAllStar: false,
     isActive: true,
@@ -226,6 +239,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: StormLogo,
     logoLight: StormLogo,
     location: "Seattle, WA",
+    city: "Seattle",
     established: 2000,
     isAllStar: false,
     isActive: true,
@@ -242,6 +256,7 @@ export const wnbaTeams: NBATeam[] = [
     logo: TempoLogo,
     logoLight: TempoLogoLight,
     location: "Toronto, ON",
+    city: "Toronto",
     established: 2023,
     isAllStar: false,
     isActive: true,
@@ -257,7 +272,8 @@ export const wnbaTeams: NBATeam[] = [
     secondaryColor: "#002b5c",
     logo: MysticsLogo,
     logoLight: MysticsLogo,
-    location: "Washington, DC",
+    location: "Washington, D.C",
+    city: "Washington, D.C",
     established: 1998,
     isAllStar: false,
     isActive: true,
@@ -274,8 +290,43 @@ export const wnbaTeams: NBATeam[] = [
     logo: PlaceholderLogo,
     logoLight: PlaceholderLogo,
     location: "Nagoya, Japan",
+    city: "",
     established: 1961,
     isAllStar: false,
+    isActive: false,
+  },
+  {
+    id: 133384,
+    espnId: 133384,
+    name: "Team Coop",
+    shortName: "Coop",
+    fullName: "Team Coop",
+    code: "COOP",
+    color: "#000000",
+    secondaryColor: "#FFC0CB",
+    logo: CoopLogo,
+    logoLight: CoopLogo,
+    location: null,
+    city: null,
+    established: 1961,
+    isAllStar: true,
+    isActive: false,
+  },
+  {
+    id: 133383,
+    espnId: 133383,
+    name: "Team Spoon",
+    shortName: "Spoon",
+    fullName: "Team Spoon",
+    code: "SPOON",
+    color: "#000000",
+    secondaryColor: "#FFC0CB",
+    logo: SpoonLogo,
+    logoLight: SpoonLogo,
+    location: null,
+    city: null,
+    established: 1961,
+    isAllStar: true,
     isActive: false,
   },
 ];

@@ -1,14 +1,14 @@
-import { NullableString } from "@/types/mma";
 import { Image, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 
 type FighterInfoProps = {
   headshot: string;
-  record: NullableString | string;
+  record: string | null;
   flag: string;
   side: "home" | "away";
   name: string;
-  gameStatusDescription: string;
+  state: string | null;
+  gameStatusDescription: string | null;
   isWinner?: boolean;
 };
 
@@ -57,14 +57,7 @@ export default function FighterInfo({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          justifyContent: side === "home" ? "flex-end" : "flex-start",
-        },
-      ]}
-    >
+    <View style={styles.container}>
       {/* HOME SCORE */}
       {side === "home" && (
         <ScoreText

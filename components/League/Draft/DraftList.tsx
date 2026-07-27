@@ -296,7 +296,7 @@ export default function DraftList({
                 selectedValue={safeYear}
                 onSelect={onYearChange}
                 isDark={isDark}
-                width={120}
+                width={100}
               />
 
               <Dropdown
@@ -304,7 +304,7 @@ export default function DraftList({
                 selectedValue={round}
                 onSelect={onRoundChange}
                 isDark={isDark}
-                width={120}
+                width={100}
               />
 
               <Dropdown
@@ -312,7 +312,7 @@ export default function DraftList({
                 selectedValue={team}
                 onSelect={onTeamChange}
                 isDark={isDark}
-                width={150}
+                width={100}
               />
             </View>
           </View>
@@ -353,7 +353,7 @@ export default function DraftList({
                 selectedValue={safeYear}
                 onSelect={onYearChange}
                 isDark={isDark}
-                width={120}
+                width={100}
               />
 
               <Dropdown
@@ -361,7 +361,7 @@ export default function DraftList({
                 selectedValue={round}
                 onSelect={onRoundChange}
                 isDark={isDark}
-                width={120}
+                width={100}
               />
 
               <Dropdown
@@ -369,7 +369,7 @@ export default function DraftList({
                 selectedValue={team}
                 onSelect={onTeamChange}
                 isDark={isDark}
-                width={150}
+                width={100}
               />
             </View>
           </View>
@@ -405,7 +405,7 @@ export default function DraftList({
               selectedValue={safeYear}
               onSelect={onYearChange}
               isDark={isDark}
-              width={120}
+              width={100}
             />
 
             <Dropdown
@@ -421,7 +421,7 @@ export default function DraftList({
               selectedValue={team}
               onSelect={onTeamChange}
               isDark={isDark}
-              width={150}
+              width={120}
             />
           </View>
         </View>
@@ -489,11 +489,12 @@ export const draftListStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       marginBottom: 8,
+      gap: 12,
     },
     dropdownRow: {
       flexDirection: "row",
       justifyContent: "flex-end",
-      gap: 8,
+      gap: 4,
     },
     center: {
       flex: 1,

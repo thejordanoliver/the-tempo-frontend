@@ -2,7 +2,7 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
 //Logos
-import { Team } from "@/types/types";
+import { Team } from "@/types/football/football";
 import AirForceLogo from "assets/College_Logos/AirForce.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
 import AkronLogo from "assets/College_Logos/Akron.png";
@@ -567,6 +567,7 @@ export const cbbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -585,6 +586,7 @@ export const cbbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1823,
@@ -601,6 +603,7 @@ export const cbbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2182,
@@ -618,6 +621,7 @@ export const cbbTeams: Team[] = [
     established: 1838,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2053,
@@ -634,6 +638,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2045,
@@ -651,6 +656,7 @@ export const cbbTeams: Team[] = [
     established: 1898,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1904,
@@ -668,6 +674,7 @@ export const cbbTeams: Team[] = [
     established: 1854,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 195,
@@ -685,6 +692,7 @@ export const cbbTeams: Team[] = [
     established: 1869,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2171,
@@ -702,6 +710,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1943,
@@ -718,6 +727,7 @@ export const cbbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2074,
@@ -735,6 +745,7 @@ export const cbbTeams: Team[] = [
     established: 1937,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2180,
@@ -752,6 +763,7 @@ export const cbbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2179,
@@ -768,6 +780,7 @@ export const cbbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1944,
@@ -784,6 +797,7 @@ export const cbbTeams: Team[] = [
     established: 1867,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1506,
@@ -801,6 +815,7 @@ export const cbbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1914,
@@ -817,6 +832,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1891,
@@ -834,6 +850,7 @@ export const cbbTeams: Team[] = [
     established: 1878,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 230,
@@ -851,6 +868,7 @@ export const cbbTeams: Team[] = [
     established: 1961,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3429,
@@ -868,6 +886,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 190,
@@ -885,6 +904,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1830,
@@ -902,6 +922,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7597,
@@ -919,6 +940,7 @@ export const cbbTeams: Team[] = [
     established: 1829,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2505,
@@ -936,6 +958,7 @@ export const cbbTeams: Team[] = [
     established: 1830,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1842,
@@ -953,6 +976,7 @@ export const cbbTeams: Team[] = [
     established: 1930,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2093,
@@ -970,6 +994,7 @@ export const cbbTeams: Team[] = [
     established: 1865,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2375,
@@ -987,6 +1012,7 @@ export const cbbTeams: Team[] = [
     established: 1945,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6201,
@@ -1004,6 +1030,7 @@ export const cbbTeams: Team[] = [
     established: 1976,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1878,
@@ -1021,6 +1048,7 @@ export const cbbTeams: Team[] = [
     established: 1900,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2039,
@@ -1037,6 +1065,7 @@ export const cbbTeams: Team[] = [
     established: 1789,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2028,
@@ -1055,6 +1084,7 @@ export const cbbTeams: Team[] = [
     established: 1976,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1910,
@@ -1071,6 +1101,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2035,
@@ -1088,6 +1119,7 @@ export const cbbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2032,
@@ -1105,6 +1137,7 @@ export const cbbTeams: Team[] = [
     established: 1874,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2177,
@@ -1122,6 +1155,7 @@ export const cbbTeams: Team[] = [
     established: 1914,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1496,
@@ -1138,6 +1172,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1933,
@@ -1154,6 +1189,7 @@ export const cbbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2185,
@@ -1170,6 +1206,7 @@ export const cbbTeams: Team[] = [
     established: 1873,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2060,
@@ -1186,6 +1223,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 211,
@@ -1203,6 +1241,7 @@ export const cbbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2079,
@@ -1220,6 +1259,7 @@ export const cbbTeams: Team[] = [
     established: 1787,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 223,
@@ -1237,6 +1277,7 @@ export const cbbTeams: Team[] = [
     established: 1867,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2036,
@@ -1254,6 +1295,7 @@ export const cbbTeams: Team[] = [
     established: 1856,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2192,
@@ -1271,6 +1313,7 @@ export const cbbTeams: Team[] = [
     established: 1834,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -1288,6 +1331,7 @@ export const cbbTeams: Team[] = [
     established: 1839,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1805,
@@ -1304,6 +1348,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 201,
@@ -1321,6 +1366,7 @@ export const cbbTeams: Team[] = [
     established: 1847,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1917,
@@ -1338,6 +1384,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2141,
@@ -1356,6 +1403,7 @@ export const cbbTeams: Team[] = [
     established: 1794,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1824,
@@ -1373,6 +1421,7 @@ export const cbbTeams: Team[] = [
     established: 1918,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2165,
@@ -1389,6 +1438,7 @@ export const cbbTeams: Team[] = [
     established: 1963,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2117,
@@ -1405,6 +1455,7 @@ export const cbbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5782,
@@ -1422,6 +1473,7 @@ export const cbbTeams: Team[] = [
     established: 1906,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2117,
@@ -1439,6 +1491,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7588,
@@ -1456,6 +1509,7 @@ export const cbbTeams: Team[] = [
     established: 1920,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2187,
@@ -1473,6 +1527,7 @@ export const cbbTeams: Team[] = [
     established: 1791,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6685,
@@ -1490,6 +1545,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6684,
@@ -1507,6 +1563,7 @@ export const cbbTeams: Team[] = [
     established: 1828,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2069,
@@ -1524,6 +1581,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5628,
@@ -1541,6 +1599,7 @@ export const cbbTeams: Team[] = [
     established: 1965,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1860,
@@ -1555,6 +1614,10 @@ export const cbbTeams: Team[] = [
     logo: ChampionChristianLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2486,
@@ -1569,6 +1632,10 @@ export const cbbTeams: Team[] = [
     logo: KansasChristianLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 7590,
@@ -1584,6 +1651,10 @@ export const cbbTeams: Team[] = [
     logoLight: OlivetLogoLight,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2374,
@@ -1598,6 +1669,10 @@ export const cbbTeams: Team[] = [
     logo: BrewtonParkerLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1859,
@@ -1611,6 +1686,10 @@ export const cbbTeams: Team[] = [
     logo: ChaminadeLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1843,
@@ -1627,6 +1706,7 @@ export const cbbTeams: Team[] = [
     established: 1863,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 204,
@@ -1644,6 +1724,7 @@ export const cbbTeams: Team[] = [
     established: 1872,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1966,
@@ -1661,6 +1742,7 @@ export const cbbTeams: Team[] = [
     established: 1926,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1974,
@@ -1679,6 +1761,7 @@ export const cbbTeams: Team[] = [
     established: 1949,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2358,
@@ -1696,6 +1779,7 @@ export const cbbTeams: Team[] = [
     established: 1950,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2233,
@@ -1713,6 +1797,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2418,
@@ -1730,6 +1815,7 @@ export const cbbTeams: Team[] = [
     established: 1961,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2085,
@@ -1746,6 +1832,7 @@ export const cbbTeams: Team[] = [
     established: 1869,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2073,
@@ -1762,6 +1849,7 @@ export const cbbTeams: Team[] = [
     established: 1855,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2048,
@@ -1778,6 +1866,7 @@ export const cbbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1894,
@@ -1794,6 +1883,7 @@ export const cbbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 221,
@@ -1810,6 +1900,7 @@ export const cbbTeams: Team[] = [
     established: 1969,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2160,
@@ -1828,6 +1919,7 @@ export const cbbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -1846,6 +1938,7 @@ export const cbbTeams: Team[] = [
     established: 1875,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2006,
@@ -1858,9 +1951,11 @@ export const cbbTeams: Team[] = [
     secondaryColor: "#000000",
     logo: MissouriLogo,
     city: "Columbia",
+    location: "Columbus, MO",
     established: 1839,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1976,
@@ -1878,6 +1973,7 @@ export const cbbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2003,
@@ -1895,6 +1991,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1816,
@@ -1911,6 +2008,7 @@ export const cbbTeams: Team[] = [
     established: 1885,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2046,
@@ -1928,6 +2026,7 @@ export const cbbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1919,
@@ -1944,6 +2043,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1847,
@@ -1960,6 +2060,7 @@ export const cbbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2110,
@@ -1976,6 +2077,7 @@ export const cbbTeams: Team[] = [
     established: 1857,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1995,
@@ -1994,6 +2096,7 @@ export const cbbTeams: Team[] = [
     established: 1855,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2202,
@@ -2010,6 +2113,7 @@ export const cbbTeams: Team[] = [
     established: 1903,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1896,
@@ -2027,6 +2131,7 @@ export const cbbTeams: Team[] = [
     established: 1849,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1895,
@@ -2044,6 +2149,7 @@ export const cbbTeams: Team[] = [
     established: 1906,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2061,
@@ -2060,6 +2166,7 @@ export const cbbTeams: Team[] = [
     established: 1930,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2190,
@@ -2077,6 +2184,7 @@ export const cbbTeams: Team[] = [
     established: 1872,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1983,
@@ -2094,6 +2202,7 @@ export const cbbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2213,
@@ -2111,6 +2220,7 @@ export const cbbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 214,
@@ -2129,6 +2239,7 @@ export const cbbTeams: Team[] = [
     established: 1949,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 191,
@@ -2146,6 +2257,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -2162,7 +2274,8 @@ export const cbbTeams: Team[] = [
     established: 1866,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 1503,
@@ -2180,6 +2293,7 @@ export const cbbTeams: Team[] = [
     established: 1852,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3382,
@@ -2197,6 +2311,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1489,
@@ -2214,6 +2329,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1499,
@@ -2231,6 +2347,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1890,
@@ -2248,6 +2365,7 @@ export const cbbTeams: Team[] = [
     established: 1838,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -2267,6 +2385,7 @@ export const cbbTeams: Team[] = [
     established: 1863,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2140,
@@ -2284,6 +2403,7 @@ export const cbbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1959,
@@ -2300,6 +2420,7 @@ export const cbbTeams: Team[] = [
     established: 1865,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2143,
@@ -2316,6 +2437,7 @@ export const cbbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 189,
@@ -2333,6 +2455,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5566,
@@ -2350,6 +2473,7 @@ export const cbbTeams: Team[] = [
     established: 1965,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1570,
@@ -2367,6 +2491,7 @@ export const cbbTeams: Team[] = [
     established: 1937,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 233,
@@ -2384,6 +2509,7 @@ export const cbbTeams: Team[] = [
     established: 1868,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 181,
@@ -2400,6 +2526,7 @@ export const cbbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 202,
@@ -2417,6 +2544,7 @@ export const cbbTeams: Team[] = [
     established: 1873,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 176,
@@ -2434,6 +2562,7 @@ export const cbbTeams: Team[] = [
     established: 1831,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2058,
@@ -2451,6 +2580,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2055,
@@ -2468,6 +2598,7 @@ export const cbbTeams: Team[] = [
     established: 1842,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1924,
@@ -2484,6 +2615,7 @@ export const cbbTeams: Team[] = [
     established: 1785,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2065,
@@ -2501,6 +2633,7 @@ export const cbbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2144,
@@ -2518,6 +2651,7 @@ export const cbbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2145,
@@ -2535,6 +2669,7 @@ export const cbbTeams: Team[] = [
     established: 1947,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1909,
@@ -2551,6 +2686,7 @@ export const cbbTeams: Team[] = [
     established: 1853,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2181,
@@ -2568,6 +2704,7 @@ export const cbbTeams: Team[] = [
     established: 1850,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1981,
@@ -2586,6 +2723,7 @@ export const cbbTeams: Team[] = [
     established: 1853,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1994,
@@ -2602,6 +2740,7 @@ export const cbbTeams: Team[] = [
     established: 1817,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1870,
@@ -2618,6 +2757,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2059,
@@ -2635,6 +2775,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1825,
@@ -2652,6 +2793,7 @@ export const cbbTeams: Team[] = [
     established: 1845,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1892,
@@ -2668,6 +2810,7 @@ export const cbbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 194,
@@ -2684,6 +2827,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2173,
@@ -2702,6 +2846,7 @@ export const cbbTeams: Team[] = [
     established: 1967,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2172,
@@ -2719,6 +2864,7 @@ export const cbbTeams: Team[] = [
     established: 1880,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1993,
@@ -2735,6 +2881,7 @@ export const cbbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -2753,6 +2900,7 @@ export const cbbTeams: Team[] = [
     established: 1904,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1991,
@@ -2770,6 +2918,7 @@ export const cbbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3248,
@@ -2787,6 +2936,7 @@ export const cbbTeams: Team[] = [
     established: 1903,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2214,
@@ -2803,6 +2953,7 @@ export const cbbTeams: Team[] = [
     established: 1848,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1945,
@@ -2819,6 +2970,7 @@ export const cbbTeams: Team[] = [
     established: 1857,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 177,
@@ -2836,6 +2988,7 @@ export const cbbTeams: Team[] = [
     established: 1871,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3347,
@@ -2850,6 +3003,10 @@ export const cbbTeams: Team[] = [
     logo: ArkansasBaptistLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 0,
@@ -2864,6 +3021,10 @@ export const cbbTeams: Team[] = [
     logo: PlaceholderLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 6646,
@@ -2881,6 +3042,7 @@ export const cbbTeams: Team[] = [
     established: 1934,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1865,
@@ -2898,6 +3060,7 @@ export const cbbTeams: Team[] = [
     established: 1819,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1964,
@@ -2915,6 +3078,7 @@ export const cbbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1495,
@@ -2931,6 +3095,7 @@ export const cbbTeams: Team[] = [
     established: 1809,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2062,
@@ -2948,6 +3113,7 @@ export const cbbTeams: Team[] = [
     established: 1848,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2157,
@@ -2961,6 +3127,10 @@ export const cbbTeams: Team[] = [
     logo: TroyLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 238,
@@ -2975,6 +3145,10 @@ export const cbbTeams: Team[] = [
     logo: NJITLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2178,
@@ -2988,6 +3162,10 @@ export const cbbTeams: Team[] = [
     logo: UTSALogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1938,
@@ -3001,6 +3179,10 @@ export const cbbTeams: Team[] = [
     logo: HoustonLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 218,
@@ -3014,6 +3196,10 @@ export const cbbTeams: Team[] = [
     logo: USFLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1841,
@@ -3028,6 +3214,10 @@ export const cbbTeams: Team[] = [
     logoLight: BYULogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1856,
@@ -3042,6 +3232,10 @@ export const cbbTeams: Team[] = [
     logo: CentralConnecticutLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1950,
@@ -3058,6 +3252,8 @@ export const cbbTeams: Team[] = [
     city: "Iowa City",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 200,
@@ -3072,6 +3268,10 @@ export const cbbTeams: Team[] = [
     logo: SouthDakotaStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1985,
@@ -3087,6 +3287,8 @@ export const cbbTeams: Team[] = [
     city: "College Park",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1845,
@@ -3100,6 +3302,10 @@ export const cbbTeams: Team[] = [
     logo: BuffaloLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1836,
@@ -3114,6 +3320,10 @@ export const cbbTeams: Team[] = [
     logoLight: BostonCollegeLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1837,
@@ -3129,6 +3339,10 @@ export const cbbTeams: Team[] = [
     logoLight: BostonUniversityLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2096,
@@ -3144,6 +3358,8 @@ export const cbbTeams: Team[] = [
     city: "Piscataway",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1813,
@@ -3157,6 +3373,10 @@ export const cbbTeams: Team[] = [
     logo: AppalachianStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2029,
@@ -3170,6 +3390,10 @@ export const cbbTeams: Team[] = [
     logo: NavyLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1884,
@@ -3183,6 +3407,10 @@ export const cbbTeams: Team[] = [
     logo: DelawareLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2189,
@@ -3197,6 +3425,10 @@ export const cbbTeams: Team[] = [
     logoLight: VirginiaLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 243,
@@ -3211,6 +3443,10 @@ export const cbbTeams: Team[] = [
     logo: SeattleLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2092,
@@ -3225,6 +3461,10 @@ export const cbbTeams: Team[] = [
     logoLight: RichmondLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1804,
@@ -3238,7 +3478,11 @@ export const cbbTeams: Team[] = [
     logoLight: AirForceLogoLight,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2049,
@@ -3252,6 +3496,10 @@ export const cbbTeams: Team[] = [
     logo: NorthernIowaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 209,
@@ -3265,7 +3513,11 @@ export const cbbTeams: Team[] = [
     logo: CalStateNorthridgeLogo,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2090,
@@ -3280,6 +3532,10 @@ export const cbbTeams: Team[] = [
     logo: ReinhardtLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1951,
@@ -3293,6 +3549,10 @@ export const cbbTeams: Team[] = [
     logo: IowaStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2118,
@@ -3307,6 +3567,10 @@ export const cbbTeams: Team[] = [
     logo: SoutheastMissouriStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2166,
@@ -3322,6 +3586,9 @@ export const cbbTeams: Team[] = [
     established: 1919,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    isNational: false
   },
   {
     id: 1838,
@@ -3335,6 +3602,10 @@ export const cbbTeams: Team[] = [
     logo: BowlingGreenLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2108,
@@ -3348,6 +3619,10 @@ export const cbbTeams: Team[] = [
     logo: SanDiegoStLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1815,
@@ -3361,6 +3636,10 @@ export const cbbTeams: Team[] = [
     logo: ArizonaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2041,
@@ -3374,6 +3653,10 @@ export const cbbTeams: Team[] = [
     logo: NorthDakotaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2043,
@@ -3387,6 +3670,10 @@ export const cbbTeams: Team[] = [
     logo: NorthFloridaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1912,
@@ -3401,6 +3688,10 @@ export const cbbTeams: Team[] = [
     logo: FGCULogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2423,
@@ -3415,6 +3706,10 @@ export const cbbTeams: Team[] = [
     logo: FtLauderdaleLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 3351,
@@ -3430,6 +3725,10 @@ export const cbbTeams: Team[] = [
     logoLight: MiamiHamiltonLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2507,
@@ -3444,6 +3743,10 @@ export const cbbTeams: Team[] = [
     logo: StMarysMDLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 237,
@@ -3457,6 +3760,10 @@ export const cbbTeams: Team[] = [
     logo: MarshallLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 196,
@@ -3470,6 +3777,10 @@ export const cbbTeams: Team[] = [
     logo: NorfolkStLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2159,
@@ -3484,6 +3795,10 @@ export const cbbTeams: Team[] = [
     logoLight: TulsaLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1850,
@@ -3498,6 +3813,10 @@ export const cbbTeams: Team[] = [
     logoLight: CaliforniaLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2163,
@@ -3511,7 +3830,11 @@ export const cbbTeams: Team[] = [
     logo: UCRiversideLogo,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2164,
@@ -3526,6 +3849,10 @@ export const cbbTeams: Team[] = [
     logo: UCSantaBarbaraLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2111,
@@ -3540,6 +3867,10 @@ export const cbbTeams: Team[] = [
     logo: SantaClaraLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2363,
@@ -3554,6 +3885,10 @@ export const cbbTeams: Team[] = [
     logo: UCSanDiegoLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2161,
@@ -3568,6 +3903,10 @@ export const cbbTeams: Team[] = [
     logoLight: UCDavisLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1828,
@@ -3581,6 +3920,10 @@ export const cbbTeams: Team[] = [
     logo: BethesdaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2115,
@@ -3594,6 +3937,10 @@ export const cbbTeams: Team[] = [
     logo: SouthAlabamaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 188,
@@ -3609,6 +3956,10 @@ export const cbbTeams: Team[] = [
     logoLight: HofstraLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2037,
@@ -3622,6 +3973,10 @@ export const cbbTeams: Team[] = [
     logo: NichollsLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 247,
@@ -3635,6 +3990,10 @@ export const cbbTeams: Team[] = [
     logo: TexasStLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1501,
@@ -3648,6 +4007,10 @@ export const cbbTeams: Team[] = [
     logo: GeorgiaSouthernLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2018,
@@ -3661,6 +4024,10 @@ export const cbbTeams: Team[] = [
     logo: MorganStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2057,
@@ -3674,6 +4041,10 @@ export const cbbTeams: Team[] = [
     logo: OhioLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1954,
@@ -3687,6 +4058,10 @@ export const cbbTeams: Team[] = [
     logo: JamesMadisonLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1999,
@@ -3701,6 +4076,10 @@ export const cbbTeams: Team[] = [
     logo: MiddleTennesseeLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1822,
@@ -3717,6 +4096,8 @@ export const cbbTeams: Team[] = [
     city: "Auburn",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1494,
@@ -3730,6 +4111,10 @@ export const cbbTeams: Team[] = [
     logo: MercerLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1901,
@@ -3743,6 +4128,10 @@ export const cbbTeams: Team[] = [
     logo: ElonLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1960,
@@ -3757,6 +4146,10 @@ export const cbbTeams: Team[] = [
     logoLight: KansasStLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1498,
@@ -3770,6 +4163,10 @@ export const cbbTeams: Team[] = [
     logo: SouthDakotaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 212,
@@ -3783,6 +4180,10 @@ export const cbbTeams: Team[] = [
     logo: CoastalCarolinaLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1820,
@@ -3799,6 +4200,7 @@ export const cbbTeams: Team[] = [
     established: 1802,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7566,
@@ -3812,6 +4214,10 @@ export const cbbTeams: Team[] = [
     logo: PlaceholderLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 219,
@@ -3828,6 +4234,7 @@ export const cbbTeams: Team[] = [
     established: 1910,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1972,
@@ -3844,6 +4251,7 @@ export const cbbTeams: Team[] = [
     established: 1971,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2158,
@@ -3860,6 +4268,7 @@ export const cbbTeams: Team[] = [
     established: 1834,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2168,
@@ -3876,6 +4285,7 @@ export const cbbTeams: Team[] = [
     established: 1863,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2112,
@@ -3893,6 +4303,7 @@ export const cbbTeams: Team[] = [
     established: 1856,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1906,
@@ -3910,6 +4321,7 @@ export const cbbTeams: Team[] = [
     established: 1942,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1949,
@@ -3927,6 +4339,7 @@ export const cbbTeams: Team[] = [
     established: 1940,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 240,
@@ -3944,6 +4357,7 @@ export const cbbTeams: Team[] = [
     established: 1880,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5737,
@@ -3958,6 +4372,10 @@ export const cbbTeams: Team[] = [
     logo: ClintonLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1505,
@@ -3975,6 +4393,7 @@ export const cbbTeams: Team[] = [
     established: 1933,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2169,
@@ -3992,6 +4411,7 @@ export const cbbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3245,
@@ -4009,6 +4429,7 @@ export const cbbTeams: Team[] = [
     established: 1880,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2103,
@@ -4026,6 +4447,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1932,
@@ -4043,6 +4465,7 @@ export const cbbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2131,
@@ -4060,6 +4483,7 @@ export const cbbTeams: Team[] = [
     established: 1872,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5730,
@@ -4074,6 +4498,10 @@ export const cbbTeams: Team[] = [
     logo: CentenaryNJLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2128,
@@ -4091,6 +4519,7 @@ export const cbbTeams: Team[] = [
     established: 1818,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2162,
@@ -4108,6 +4537,7 @@ export const cbbTeams: Team[] = [
     established: 1965,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1968,
@@ -4125,6 +4555,7 @@ export const cbbTeams: Team[] = [
     established: 1863,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2167,
@@ -4142,6 +4573,7 @@ export const cbbTeams: Team[] = [
     established: 1966,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1975,
@@ -4158,6 +4590,7 @@ export const cbbTeams: Team[] = [
     established: 1900,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2098,
@@ -4174,6 +4607,7 @@ export const cbbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1817,
@@ -4190,6 +4624,7 @@ export const cbbTeams: Team[] = [
     established: 1909,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 232,
@@ -4206,6 +4641,7 @@ export const cbbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2005,
@@ -4222,6 +4658,8 @@ export const cbbTeams: Team[] = [
     city: "Starkville",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 192,
@@ -4238,6 +4676,7 @@ export const cbbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2116,
@@ -4254,6 +4693,8 @@ export const cbbTeams: Team[] = [
     city: "Columbia",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1925,
@@ -4270,6 +4711,7 @@ export const cbbTeams: Team[] = [
     established: 1913,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7578,
@@ -4288,6 +4730,7 @@ export const cbbTeams: Team[] = [
     established: 1908,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2099,
@@ -4304,6 +4747,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2133,
@@ -4320,6 +4764,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1491,
@@ -4337,6 +4782,7 @@ export const cbbTeams: Team[] = [
     established: 1819,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2146,
@@ -4353,6 +4799,7 @@ export const cbbTeams: Team[] = [
     established: 1923,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2024,
@@ -4369,6 +4816,7 @@ export const cbbTeams: Team[] = [
     established: 1922,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2030,
@@ -4386,6 +4834,7 @@ export const cbbTeams: Team[] = [
     established: 1908,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 203,
@@ -4403,6 +4852,7 @@ export const cbbTeams: Team[] = [
     established: 1883,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 236,
@@ -4419,6 +4869,7 @@ export const cbbTeams: Team[] = [
     established: 1931,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2137,
@@ -4436,6 +4887,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1840,
@@ -4449,6 +4901,10 @@ export const cbbTeams: Team[] = [
     logo: BrevardCollegeLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 6210,
@@ -4462,6 +4918,10 @@ export const cbbTeams: Team[] = [
     logo: DakotaWesleyanLogo,
     isActive: false,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2210,
@@ -4475,6 +4935,10 @@ export const cbbTeams: Team[] = [
     logo: WilliamPeaceLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1977,
@@ -4491,6 +4955,7 @@ export const cbbTeams: Team[] = [
     established: 1798,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2034,
@@ -4507,6 +4972,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1979,
@@ -4523,6 +4989,7 @@ export const cbbTeams: Team[] = [
     established: 1865,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2195,
@@ -4541,6 +5008,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1942,
@@ -4557,6 +5025,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2066,
@@ -4573,6 +5042,7 @@ export const cbbTeams: Team[] = [
     established: 1868,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3312,
@@ -4590,6 +5060,7 @@ export const cbbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2150,
@@ -4607,6 +5078,7 @@ export const cbbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1835,
@@ -4623,6 +5095,7 @@ export const cbbTeams: Team[] = [
     established: 1932,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2193,
@@ -4640,6 +5113,7 @@ export const cbbTeams: Team[] = [
     established: 1861,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 235,
@@ -4656,6 +5130,7 @@ export const cbbTeams: Team[] = [
     established: 1910,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1967,
@@ -4673,6 +5148,7 @@ export const cbbTeams: Team[] = [
     established: 1860,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1926,
@@ -4690,6 +5166,7 @@ export const cbbTeams: Team[] = [
     established: 1885,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 180,
@@ -4707,6 +5184,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2106,
@@ -4723,6 +5201,7 @@ export const cbbTeams: Team[] = [
     established: 1841,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 185,
@@ -4739,6 +5218,7 @@ export const cbbTeams: Team[] = [
     established: 1826,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1834,
@@ -4755,6 +5235,7 @@ export const cbbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1872,
@@ -4772,6 +5253,7 @@ export const cbbTeams: Team[] = [
     established: 1923,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 244,
@@ -4788,6 +5270,7 @@ export const cbbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 226,
@@ -4805,6 +5288,7 @@ export const cbbTeams: Team[] = [
     established: 1964,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1861,
@@ -4822,6 +5306,7 @@ export const cbbTeams: Team[] = [
     established: 1770,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1490,
@@ -4839,6 +5324,7 @@ export const cbbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2446,
@@ -4856,6 +5342,7 @@ export const cbbTeams: Team[] = [
     established: 1922,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6220,
@@ -4873,6 +5360,7 @@ export const cbbTeams: Team[] = [
     established: 1867,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2200,
@@ -4889,6 +5377,7 @@ export const cbbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1969,
@@ -4905,6 +5394,7 @@ export const cbbTeams: Team[] = [
     established: 1826,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 205,
@@ -4921,6 +5411,7 @@ export const cbbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1963,
@@ -4938,6 +5429,7 @@ export const cbbTeams: Team[] = [
     established: 1963,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1948,
@@ -4953,6 +5445,8 @@ export const cbbTeams: Team[] = [
     city: "Terre Haute",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2191,
@@ -4968,6 +5462,8 @@ export const cbbTeams: Team[] = [
     city: "Staten Island",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2047,
@@ -4984,6 +5480,8 @@ export const cbbTeams: Team[] = [
     city: "Greeley",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1807,
@@ -4999,6 +5497,8 @@ export const cbbTeams: Team[] = [
     city: "Montgomery",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1946,
@@ -5014,6 +5514,8 @@ export const cbbTeams: Team[] = [
     city: "San Antonio",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1936,
@@ -5029,6 +5531,8 @@ export const cbbTeams: Team[] = [
     city: "Worcester",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 242,
@@ -5044,6 +5548,8 @@ export const cbbTeams: Team[] = [
     city: "Moon Township",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2064,
@@ -5061,6 +5567,8 @@ export const cbbTeams: Team[] = [
     city: "Tulsa",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1922,
@@ -5076,6 +5584,8 @@ export const cbbTeams: Team[] = [
     city: "Boiling Springs",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2199,
@@ -5091,6 +5601,8 @@ export const cbbTeams: Team[] = [
     city: "Cullowhee",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2196,
@@ -5106,6 +5618,8 @@ export const cbbTeams: Team[] = [
     city: "Ogden",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1809,
@@ -5121,6 +5635,8 @@ export const cbbTeams: Team[] = [
     city: "Lorman",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1970,
@@ -5137,6 +5653,8 @@ export const cbbTeams: Team[] = [
     city: "Beaumont",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 6714,
@@ -5153,6 +5671,8 @@ export const cbbTeams: Team[] = [
     city: "San Antonio",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 215,
@@ -5168,6 +5688,8 @@ export const cbbTeams: Team[] = [
     city: "Washington",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2134,
@@ -5184,6 +5706,8 @@ export const cbbTeams: Team[] = [
     city: "Nacogdoches",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2121,
@@ -5199,6 +5723,8 @@ export const cbbTeams: Team[] = [
     city: "Baton Rouge",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2373,
@@ -5214,6 +5740,8 @@ export const cbbTeams: Team[] = [
     city: "Bowie",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 222,
@@ -5230,6 +5758,8 @@ export const cbbTeams: Team[] = [
     city: "Orem",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1898,
@@ -5245,6 +5775,8 @@ export const cbbTeams: Team[] = [
     city: "Springdale",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 246,
@@ -5260,6 +5792,8 @@ export const cbbTeams: Team[] = [
     city: "Houston",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1990,
@@ -5273,6 +5807,10 @@ export const cbbTeams: Team[] = [
     logo: McNeeseLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1492,
@@ -5288,6 +5826,10 @@ export const cbbTeams: Team[] = [
     logoLight: EasternWashingtonLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 3299,
@@ -5301,6 +5843,10 @@ export const cbbTeams: Team[] = [
     logo: NorthwoodLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 3291,
@@ -5315,6 +5861,10 @@ export const cbbTeams: Team[] = [
     logo: MorrisCollegeLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 3274,
@@ -5328,6 +5878,10 @@ export const cbbTeams: Team[] = [
     logo: LeMoyneLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1818,
@@ -5342,6 +5896,10 @@ export const cbbTeams: Team[] = [
     logo: ArkansasPineBluffLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 6664,
@@ -5355,6 +5913,10 @@ export const cbbTeams: Team[] = [
     logo: NobelLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2218,
@@ -5369,6 +5931,10 @@ export const cbbTeams: Team[] = [
     logo: YoungstownStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 216,
@@ -5383,6 +5949,10 @@ export const cbbTeams: Team[] = [
     logo: LongwoodLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2008,
@@ -5397,6 +5967,10 @@ export const cbbTeams: Team[] = [
     logo: MissouriStateLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2215,
@@ -5410,6 +5984,10 @@ export const cbbTeams: Team[] = [
     logo: WoffordLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 1803,
@@ -5423,6 +6001,10 @@ export const cbbTeams: Team[] = [
     logo: AbileneChristianLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 3003,
@@ -5438,6 +6020,10 @@ export const cbbTeams: Team[] = [
     logoLight: SouthwesternAdventistLogoLight,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 6645,
@@ -5451,7 +6037,11 @@ export const cbbTeams: Team[] = [
     logo: IUColumbusLogo,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 6712,
@@ -5466,6 +6056,10 @@ export const cbbTeams: Team[] = [
     logo: IUIndianapolisLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2170,
@@ -5480,6 +6074,10 @@ export const cbbTeams: Team[] = [
     logo: UNCAshevilleLogo,
     isActive: true,
     isAllStar: false,
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 2188,
@@ -5495,6 +6093,8 @@ export const cbbTeams: Team[] = [
     city: "Villanova",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 2120,
@@ -5511,6 +6111,7 @@ export const cbbTeams: Team[] = [
     established: 1869,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2152,
@@ -5527,6 +6128,7 @@ export const cbbTeams: Team[] = [
     established: 1866,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6228,
@@ -5542,6 +6144,8 @@ export const cbbTeams: Team[] = [
     city: "Baltimore",
     isActive: true,
     isAllStar: false,
+    established: 0,
+    isNational: false
   },
   {
     id: 1844,
@@ -5558,6 +6162,7 @@ export const cbbTeams: Team[] = [
     established: 1846,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2209,
@@ -5575,6 +6180,7 @@ export const cbbTeams: Team[] = [
     established: 1693,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2087,
@@ -5591,6 +6197,7 @@ export const cbbTeams: Team[] = [
     established: 1910,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 220,
@@ -5607,6 +6214,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 208,
@@ -5624,6 +6232,7 @@ export const cbbTeams: Team[] = [
     established: 1764,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2176,
@@ -5640,6 +6249,7 @@ export const cbbTeams: Team[] = [
     established: 1900,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 248,
@@ -5657,6 +6267,7 @@ export const cbbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2174,
@@ -5674,6 +6285,7 @@ export const cbbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7562,
@@ -5691,6 +6303,7 @@ export const cbbTeams: Team[] = [
     established: 1977,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1965,
@@ -5707,7 +6320,8 @@ export const cbbTeams: Team[] = [
     established: 1919,
     isActive: false,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 2025,
@@ -5725,6 +6339,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 179,
@@ -5741,6 +6356,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1826,
@@ -5758,6 +6374,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1493,
@@ -5774,6 +6391,7 @@ export const cbbTeams: Team[] = [
     established: 1883,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2054,
@@ -5791,6 +6409,7 @@ export const cbbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2142,
@@ -5808,6 +6427,7 @@ export const cbbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2013,
@@ -5824,6 +6444,7 @@ export const cbbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2042,
@@ -5840,6 +6461,7 @@ export const cbbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2359,
@@ -5856,6 +6478,7 @@ export const cbbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 224,
@@ -5873,6 +6496,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 225,
@@ -5890,6 +6514,7 @@ export const cbbTeams: Team[] = [
     established: 1965,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2091,
@@ -5906,6 +6531,7 @@ export const cbbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -5922,6 +6548,7 @@ export const cbbTeams: Team[] = [
     established: 1848,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -5938,6 +6565,7 @@ export const cbbTeams: Team[] = [
     established: 1906,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6654,
@@ -5955,6 +6583,7 @@ export const cbbTeams: Team[] = [
     established: 1966,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2076,
@@ -5972,6 +6601,7 @@ export const cbbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1916,
@@ -5989,6 +6619,7 @@ export const cbbTeams: Team[] = [
     established: 1841,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 257,
@@ -6006,6 +6637,7 @@ export const cbbTeams: Team[] = [
     established: 1964,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2101,
@@ -6023,6 +6655,7 @@ export const cbbTeams: Team[] = [
     established: 1947,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1939,
@@ -6039,7 +6672,8 @@ export const cbbTeams: Team[] = [
     established: 1960,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 1866,
@@ -6058,6 +6692,7 @@ export const cbbTeams: Team[] = [
     established: 1842,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6663,
@@ -6075,6 +6710,7 @@ export const cbbTeams: Team[] = [
     established: 1866,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 239,
@@ -6092,6 +6728,7 @@ export const cbbTeams: Team[] = [
     established: 1958,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 206,
@@ -6109,6 +6746,7 @@ export const cbbTeams: Team[] = [
     established: 1964,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3352,
@@ -6126,6 +6764,7 @@ export const cbbTeams: Team[] = [
     established: 1842,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 229,
@@ -6143,6 +6782,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2038,
@@ -6160,6 +6800,7 @@ export const cbbTeams: Team[] = [
     established: 1830,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2379,
@@ -6177,6 +6818,7 @@ export const cbbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2016,
@@ -6194,6 +6836,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5801,
@@ -6211,6 +6854,7 @@ export const cbbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 266,
@@ -6228,6 +6872,7 @@ export const cbbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2011,
@@ -6245,6 +6890,7 @@ export const cbbTeams: Team[] = [
     established: 1933,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2004,
@@ -6262,6 +6908,7 @@ export const cbbTeams: Team[] = [
     established: 1950,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1819,
@@ -6279,6 +6926,7 @@ export const cbbTeams: Team[] = [
     established: 1980,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6669,
@@ -6296,6 +6944,7 @@ export const cbbTeams: Team[] = [
     established: 1964,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7599,
@@ -6313,6 +6962,7 @@ export const cbbTeams: Team[] = [
     established: 1851,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 274,
@@ -6330,6 +6980,7 @@ export const cbbTeams: Team[] = [
     established: 1856,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1992,
@@ -6347,6 +6998,7 @@ export const cbbTeams: Team[] = [
     established: 1947,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 184,
@@ -6365,6 +7017,7 @@ export const cbbTeams: Team[] = [
     established: 1850,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2125,
@@ -6383,6 +7036,7 @@ export const cbbTeams: Team[] = [
     established: 1858,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1502,
@@ -6400,6 +7054,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1839,
@@ -6417,6 +7072,7 @@ export const cbbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1982,
@@ -6434,6 +7090,7 @@ export const cbbTeams: Team[] = [
     established: 1929,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 186,
@@ -6451,6 +7108,7 @@ export const cbbTeams: Team[] = [
     established: 1789,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2102,
@@ -6468,6 +7126,7 @@ export const cbbTeams: Team[] = [
     established: 1963,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 178,
@@ -6485,6 +7144,7 @@ export const cbbTeams: Team[] = [
     established: 1855,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 183,
@@ -6502,6 +7162,7 @@ export const cbbTeams: Team[] = [
     established: 1837,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1885,
@@ -6519,6 +7180,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2212,
@@ -6536,6 +7198,7 @@ export const cbbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5866,
@@ -6553,6 +7216,7 @@ export const cbbTeams: Team[] = [
     established: 1948,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2012,
@@ -6571,6 +7235,7 @@ export const cbbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1889,
@@ -6588,6 +7253,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 228,
@@ -6605,6 +7271,7 @@ export const cbbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2135,
@@ -6622,6 +7289,7 @@ export const cbbTeams: Team[] = [
     established: 1883,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1811,
@@ -6639,6 +7307,7 @@ export const cbbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1934,
@@ -6657,6 +7326,7 @@ export const cbbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2114,
@@ -6675,6 +7345,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 193,
@@ -6692,6 +7363,7 @@ export const cbbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2080,
@@ -6709,6 +7381,7 @@ export const cbbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2082,
@@ -6726,6 +7399,7 @@ export const cbbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3325,
@@ -6743,6 +7417,7 @@ export const cbbTeams: Team[] = [
     established: 1885,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 197,
@@ -6760,6 +7435,7 @@ export const cbbTeams: Team[] = [
     established: 1917,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3371,
@@ -6777,6 +7453,7 @@ export const cbbTeams: Team[] = [
     established: 1939,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2056,
@@ -6794,6 +7471,7 @@ export const cbbTeams: Team[] = [
     established: 1957,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1886,
@@ -6812,6 +7490,7 @@ export const cbbTeams: Team[] = [
     established: 1864,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -6828,6 +7507,7 @@ export const cbbTeams: Team[] = [
     established: 1859,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2083,
@@ -6845,6 +7525,7 @@ export const cbbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1882,
@@ -6862,6 +7543,7 @@ export const cbbTeams: Team[] = [
     established: 1956,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3239,
@@ -6880,6 +7562,7 @@ export const cbbTeams: Team[] = [
     established: 1980,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 299,
@@ -6891,7 +7574,12 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     code: "",
     color: "",
-    secondaryColor: ""
+    secondaryColor: "",
+    fullName: "",
+    city: "",
+    location: "",
+    established: 0,
+    isNational: false
   },
   {
     id: 199,
@@ -6908,22 +7596,9 @@ export const cbbTeams: Team[] = [
     established: 1949,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
-  {
-    id: 3271,
-    wid: 0,
-    name: "La Verne",
-    logo: "https://media.api-sports.io/american-football/teams/301.png",
-    location: "La Verne, CA",
-    city: "La Verne",
-    established: 1891,
-    isActive: true,
-    isAllStar: false,
-    espnId: null,
-    code: "",
-    color: "",
-    secondaryColor: ""
-  },
+
   {
     id: 2026,
     wid: 7035,
@@ -6940,6 +7615,7 @@ export const cbbTeams: Team[] = [
     established: 1910,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1955,
@@ -6957,6 +7633,7 @@ export const cbbTeams: Team[] = [
     established: 1914,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6661,
@@ -6974,6 +7651,7 @@ export const cbbTeams: Team[] = [
     established: 1938,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6678,
@@ -6991,6 +7669,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5867,
@@ -7008,6 +7687,7 @@ export const cbbTeams: Team[] = [
     established: 1874,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 210,
@@ -7025,6 +7705,7 @@ export const cbbTeams: Team[] = [
     established: 1950,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1497,
@@ -7043,6 +7724,7 @@ export const cbbTeams: Team[] = [
     established: 1855,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1952,
@@ -7060,6 +7742,7 @@ export const cbbTeams: Team[] = [
     established: 1877,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3332,
@@ -7077,6 +7760,7 @@ export const cbbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1973,
@@ -7094,6 +7778,7 @@ export const cbbTeams: Team[] = [
     established: 1827,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2430,
@@ -7110,7 +7795,8 @@ export const cbbTeams: Team[] = [
     established: 1857,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     wid: 0,
@@ -7127,13 +7813,15 @@ export const cbbTeams: Team[] = [
     established: 1903,
     isActive: false,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 317,
     wid: 0,
     espnId: null,
     name: "Barton College",
+    fullName: "Barton College",
     logo: "",
     location: "Wilson, NC",
     city: "Wilson",
@@ -7142,7 +7830,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     code: "",
     color: "",
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 187,
@@ -7159,6 +7848,7 @@ export const cbbTeams: Team[] = [
     established: 1636,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2084,
@@ -7175,6 +7865,7 @@ export const cbbTeams: Team[] = [
     established: 1746,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2072,
@@ -7191,6 +7882,7 @@ export const cbbTeams: Team[] = [
     established: 1740,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 227,
@@ -7207,6 +7899,7 @@ export const cbbTeams: Team[] = [
     established: 1865,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1883,
@@ -7224,6 +7917,7 @@ export const cbbTeams: Team[] = [
     established: 1769,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2217,
@@ -7241,6 +7935,7 @@ export const cbbTeams: Team[] = [
     established: 1701,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1907,
@@ -7258,6 +7953,7 @@ export const cbbTeams: Team[] = [
     established: 1942,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1971,
@@ -7275,6 +7971,7 @@ export const cbbTeams: Team[] = [
     established: 1865,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 249,
@@ -7293,11 +7990,13 @@ export const cbbTeams: Team[] = [
     established: 1965,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2017,
     wid: 0,
     name: "Morehouse College",
+    fullName: "Morehouse College",
     logo: MorehouseCollegeLogo,
     logoLight: MorehouseCollegeLogoLight,
     location: "Atlanta, GA",
@@ -7308,7 +8007,8 @@ export const cbbTeams: Team[] = [
     espnId: null,
     code: "",
     color: "",
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 1871,
@@ -7326,6 +8026,7 @@ export const cbbTeams: Team[] = [
     established: 1754,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2362,
@@ -7343,6 +8044,7 @@ export const cbbTeams: Team[] = [
     established: 1899,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 241,
@@ -7358,7 +8060,8 @@ export const cbbTeams: Team[] = [
     established: 1929,
     isActive: true,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     wid: 0,
@@ -7375,7 +8078,8 @@ export const cbbTeams: Team[] = [
     established: 1969,
     isActive: false,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 373,
@@ -7393,6 +8097,7 @@ export const cbbTeams: Team[] = [
     established: 1837,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -7409,6 +8114,7 @@ export const cbbTeams: Team[] = [
     established: 1850,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -7425,6 +8131,7 @@ export const cbbTeams: Team[] = [
     established: 1837,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 213,
@@ -7442,6 +8149,7 @@ export const cbbTeams: Team[] = [
     established: 1898,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1887,
@@ -7459,6 +8167,7 @@ export const cbbTeams: Team[] = [
     established: 1877,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -7477,6 +8186,7 @@ export const cbbTeams: Team[] = [
     established: 1950,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2050,
@@ -7494,6 +8204,7 @@ export const cbbTeams: Team[] = [
     established: 1948,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
 
   {
@@ -7512,6 +8223,7 @@ export const cbbTeams: Team[] = [
     established: 1956,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3224,
@@ -7529,6 +8241,7 @@ export const cbbTeams: Team[] = [
     established: 1880,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7635,
@@ -7546,6 +8259,7 @@ export const cbbTeams: Team[] = [
     established: 1840,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -7562,6 +8276,7 @@ export const cbbTeams: Team[] = [
     established: 1815,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 609,
@@ -7579,6 +8294,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     espnId: null,
+    isNational: false
   },
   {
     id: 6686,
@@ -7595,6 +8311,7 @@ export const cbbTeams: Team[] = [
     established: 1906,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1827,
@@ -7610,7 +8327,8 @@ export const cbbTeams: Team[] = [
     established: 1840,
     isActive: false,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 6632,
@@ -7628,6 +8346,7 @@ export const cbbTeams: Team[] = [
     established: 1844,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5846,
@@ -7645,6 +8364,7 @@ export const cbbTeams: Team[] = [
     established: 1913,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 198,
@@ -7662,6 +8382,7 @@ export const cbbTeams: Team[] = [
     established: 1879,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 207,
@@ -7680,6 +8401,7 @@ export const cbbTeams: Team[] = [
     established: 1831,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 814,
@@ -7697,6 +8419,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     espnId: null,
+    isNational: false
   },
   {
     id: 7564,
@@ -7715,6 +8438,7 @@ export const cbbTeams: Team[] = [
     established: 1815,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2155,
@@ -7731,7 +8455,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     color: "",
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 7806,
@@ -7749,6 +8474,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1927,
@@ -7766,6 +8492,7 @@ export const cbbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1500,
@@ -7783,6 +8510,7 @@ export const cbbTeams: Team[] = [
     established: 1821,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2020,
@@ -7800,6 +8528,7 @@ export const cbbTeams: Team[] = [
     established: 1808,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 182,
@@ -7817,6 +8546,7 @@ export const cbbTeams: Team[] = [
     established: 1878,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2127,
@@ -7835,6 +8565,7 @@ export const cbbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false
   },
   {
     wid: 0,
@@ -7851,7 +8582,8 @@ export const cbbTeams: Team[] = [
     established: 1867,
     isActive: false,
     isAllStar: false,
-    secondaryColor: ""
+    secondaryColor: "",
+    isNational: false
   },
   {
     id: 3289,
@@ -7869,6 +8601,7 @@ export const cbbTeams: Team[] = [
     established: 1955,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1867,
@@ -7886,6 +8619,7 @@ export const cbbTeams: Team[] = [
     established: 1964,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1940,
@@ -7903,6 +8637,7 @@ export const cbbTeams: Team[] = [
     established: 1889,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 6655,
@@ -7920,6 +8655,7 @@ export const cbbTeams: Team[] = [
     established: 1947,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 3336,
@@ -7937,6 +8673,7 @@ export const cbbTeams: Team[] = [
     established: 1894,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7565,
@@ -7954,6 +8691,7 @@ export const cbbTeams: Team[] = [
     established: 1867,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 0,
@@ -7971,6 +8709,7 @@ export const cbbTeams: Team[] = [
     established: 1948,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 2472,
@@ -7988,6 +8727,7 @@ export const cbbTeams: Team[] = [
     established: 1926,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 7569,
@@ -8005,6 +8745,7 @@ export const cbbTeams: Team[] = [
     established: 1847,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 5837,
@@ -8023,6 +8764,7 @@ export const cbbTeams: Team[] = [
     established: 1963,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
   {
     id: 1923,
@@ -8040,6 +8782,7 @@ export const cbbTeams: Team[] = [
     established: 1848,
     isActive: false,
     isAllStar: false,
+    isNational: false
   },
 ];
 

@@ -56,7 +56,9 @@ type StatProps = {
 function normalizeImageSource(
   source: ImageSourcePropType | string | null | undefined,
 ): ImageSourcePropType {
-  if (!source) return Placeholder;
+  if (!source) {
+    return Placeholder;
+  }
 
   if (typeof source === "string") {
     return { uri: source };
@@ -79,6 +81,7 @@ function Stat({ label, value, isDark }: StatProps) {
       >
         {label}
       </Text>
+
       <Text style={styles.statText}>{value}</Text>
     </View>
   );
@@ -98,20 +101,32 @@ export default function GameLeaders({
   state,
 }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
+
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
 
   const isScheduled = state === "pre";
-  const inProgress = state === "in";
 
   useEffect(() => {
     setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
   }, [isScheduled]);
 
   const getLabel = (key: Category) =>
-    STAT_KEYS.find((s) => s.key === key)?.label.toUpperCase() ?? key;
+    STAT_KEYS.find((stat) => stat.key === key)?.label.toUpperCase() ?? key;
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
+  
+  const hasAnyLeaders = useMemo(
+    () =>
+      Array.isArray(leaders) &&
+      leaders.some((teamGroup) =>
+        teamGroup?.leaders?.some(
+          (statGroup: any) =>
+            Array.isArray(statGroup?.leaders) && statGroup.leaders.length > 0,
+        ),
+      ),
+    [leaders],
+  );
 
   const topPlayers = useMemo(() => {
     const makePlaceholder = (teamId: number) => ({
@@ -120,10 +135,8 @@ export default function GameLeaders({
       isPlaceholder: true,
     });
 
-    if (!leaders?.length && !inProgress) return [];
-
-    if (inProgress && leaders?.length === 0) {
-      return [makePlaceholder(awayTeamId), makePlaceholder(homeTeamId)];
+    if (!hasAnyLeaders) {
+      return [];
     }
 
     const flat: any[] = [];
@@ -132,7 +145,9 @@ export default function GameLeaders({
       const teamId = Number(group.team?.id);
 
       (group.leaders ?? []).forEach((statGroup: any) => {
-        if (!statGroup?.name) return;
+        if (!statGroup?.name) {
+          return;
+        }
 
         const category = statGroup.name as Category;
 
@@ -140,7 +155,9 @@ export default function GameLeaders({
           ? SEASON_CATEGORIES
           : GAME_CATEGORIES;
 
-        if (!validCategories.includes(category)) return;
+        if (!validCategories.includes(category)) {
+          return;
+        }
 
         (statGroup.leaders ?? []).forEach((entry: any) => {
           const athlete = entry?.athlete;
@@ -159,20 +176,23 @@ export default function GameLeaders({
           const stats = entry.statistics ?? [];
 
           const getStat = (name: string) =>
-            stats.find((s: any) => s.name === name)?.value ?? "–";
+            stats.find((stat: any) => stat.name === name)?.value ?? "–";
 
           const getStatDisplay = (name: string) =>
-            stats.find((s: any) => s.name === name)?.displayValue ?? "–";
+            stats.find((stat: any) => stat.name === name)?.displayValue ?? "–";
+
+          const nameParts = athleteSafe.fullName.split(" ");
 
           flat.push({
             category,
-            team: { id: teamId },
+            team: {
+              id: teamId,
+            },
             isPlaceholder: false,
             localPlayer: {
               id: athleteSafe.id,
-              first_name: athleteSafe.fullName.split(" ")[0] ?? "Unknown",
-              last_name:
-                athleteSafe.fullName.split(" ").slice(1).join(" ") ?? "Player",
+              first_name: nameParts[0] ?? "Unknown",
+              last_name: nameParts.slice(1).join(" ") || "Player",
               headshot_url:
                 typeof athleteSafe.headshot === "string"
                   ? athleteSafe.headshot
@@ -203,14 +223,16 @@ export default function GameLeaders({
       });
     });
 
-    const filtered = flat.filter((p) => p.category === selectedCategory);
+    const filtered = flat.filter(
+      (player) => player.category === selectedCategory,
+    );
 
     const awayPlayer = filtered.find(
-      (p) => String(p.team?.id) === String(awayTeamId),
+      (player) => String(player.team?.id) === String(awayTeamId),
     );
 
     const homePlayer = filtered.find(
-      (p) => String(p.team?.id) === String(homeTeamId),
+      (player) => String(player.team?.id) === String(homeTeamId),
     );
 
     return [
@@ -221,9 +243,9 @@ export default function GameLeaders({
     leaders,
     selectedCategory,
     isScheduled,
-    inProgress,
     awayTeamId,
     homeTeamId,
+    hasAnyLeaders,
   ]);
 
   const renderStats = (player: any) => {
@@ -316,10 +338,12 @@ export default function GameLeaders({
         return null;
     }
   };
+
   if (error) {
     return (
       <View>
         <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
+
         <View style={styles.wrapper}>
           <MainScrollTabBar
             tabs={GAME_CATEGORIES}
@@ -327,6 +351,7 @@ export default function GameLeaders({
             onTabPress={setSelectedCategory}
             isDark={isDark}
           />
+
           <View style={global.emptyContainer}>
             <Text style={global.errorText}>Failed to load leaders</Text>
           </View>
@@ -335,9 +360,7 @@ export default function GameLeaders({
     );
   }
 
-
-
-  if (!Object.keys(leaders ?? {}).length) {
+  if (!hasAnyLeaders) {
     return null;
   }
 
@@ -370,13 +393,13 @@ export default function GameLeaders({
           )}
         />
 
-        {topPlayers.map((player, idx) => {
-          const isAwayRow = idx === 0;
+        {topPlayers.map((player, index) => {
+          const isAwayRow = index === 0;
           const teamLogo = isAwayRow ? awayLogo : homeLogo;
           const teamCode = isAwayRow ? awayCode : homeCode;
           const sideLabel = isAwayRow ? "AWAY" : "HOME";
 
-          const p = player.localPlayer || {
+          const playerInfo = player.localPlayer ?? {
             first_name: "Unknown",
             last_name: "Player",
             headshot_url: Placeholder,
@@ -387,7 +410,7 @@ export default function GameLeaders({
             <View key={`${sideLabel}-${teamCode}`} style={styles.card}>
               <View style={styles.avatarWrapper}>
                 <Image
-                  source={normalizeImageSource(p.headshot_url)}
+                  source={normalizeImageSource(playerInfo.headshot_url)}
                   style={styles.avatar}
                 />
               </View>
@@ -395,9 +418,10 @@ export default function GameLeaders({
               <View style={styles.infoSection}>
                 <View style={styles.nameRow}>
                   <Text style={styles.playerName}>
-                    {p.first_name} {p.last_name}
+                    {playerInfo.first_name} {playerInfo.last_name}
                   </Text>
-                  <Text style={styles.jersey}>#{p.jersey_number}</Text>
+
+                  <Text style={styles.jersey}>#{playerInfo.jersey_number}</Text>
                 </View>
 
                 <View style={styles.statRow}>{renderStats(player)}</View>

@@ -4,11 +4,14 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getTeamByESPNId, nbaDivisionsById } from "constants/teams";
-import { getMLBTeamByEspnId } from "constants/teamsMLB";
-import { getNFLTeamByESPNId } from "constants/teamsNFL";
-import { getNHLTeamByEspnId as getNHLTeamByESPNId } from "constants/teamsNHL";
-import { getWNBATeamByESPNId } from "constants/teamsWNBA";
+import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
+import {
+  getNHLTeamByEspnId as getNHLTeamByESPNId,
+  getNHLTeamLogo,
+} from "constants/teamsNHL";
+import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -33,14 +36,11 @@ import { PlayoffLeague, StatusLegend } from "./StatusLegend";
 type SectionType = {
   title: string;
   data: StandingsTeam[];
-  isFirst?: boolean;
-  isDivision?: boolean;
-  isLast?: boolean; // new
 };
 
 type Props = {
   year?: string;
-  onYearChange?: (y: string) => void;
+  onYearChange?: (year: string) => void;
   league: PlayoffLeague;
   isGameDetailScreen?: boolean;
 };
@@ -81,6 +81,7 @@ const getActiveColumns = (data: StandingsTeam[]) => {
   return standingLabels.filter((label) =>
     data.some((team) => {
       const key = columnKeyMap[label];
+
       return team[key] !== null && team[key] !== undefined;
     }),
   );
@@ -88,7 +89,7 @@ const getActiveColumns = (data: StandingsTeam[]) => {
 
 type ConferenceInfo = {
   name: string;
-  abbreviation: string;
+  code: string;
 };
 
 type LeagueConferenceConfig = {
@@ -102,19 +103,19 @@ export const leagueConferences: LeagueConferenceConfig = {
     conferences: {
       conferenceA: {
         name: "American League",
-        abbreviation: "AL",
+        code: "AL",
       },
       conferenceB: {
         name: "National League",
-        abbreviation: "NL",
+        code: "NL",
       },
       conferenceC: {
         name: "Cactus League",
-        abbreviation: "Cactus",
+        code: "Cactus",
       },
       conferenceD: {
         name: "Grapefruit League",
-        abbreviation: "Grapefruit",
+        code: "Grapefruit",
       },
     },
   },
@@ -123,11 +124,11 @@ export const leagueConferences: LeagueConferenceConfig = {
     conferences: {
       conferenceA: {
         name: "American Football Conference",
-        abbreviation: "AFC",
+        code: "AFC",
       },
       conferenceB: {
         name: "National Football Conference",
-        abbreviation: "NFC",
+        code: "NFC",
       },
     },
   },
@@ -136,7 +137,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     conferences: {
       conferenceA: {
         name: "United Football League",
-        abbreviation: "UFL",
+        code: "UFL",
       },
     },
   },
@@ -145,35 +146,37 @@ export const leagueConferences: LeagueConferenceConfig = {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
-        abbreviation: "East",
+        code: "East",
       },
       conferenceB: {
         name: "Western Conference",
-        abbreviation: "West",
+        code: "West",
       },
     },
   },
+
   WNBA: {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
-        abbreviation: "East",
+        code: "East",
       },
       conferenceB: {
         name: "Western Conference",
-        abbreviation: "West",
+        code: "West",
       },
     },
   },
+
   NHL: {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
-        abbreviation: "East",
+        code: "East",
       },
       conferenceB: {
         name: "Western Conference",
-        abbreviation: "West",
+        code: "West",
       },
     },
   },
@@ -193,6 +196,8 @@ export const StandingsList = ({
   } = useLeagueStandings(league, year);
 
   const { resolvedColorScheme } = usePreferences();
+  const { isFavorite } = useFavoriteTeamsContext();
+
   const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
@@ -202,57 +207,168 @@ export const StandingsList = ({
     "conference",
   );
 
-  const { isFavorite } = useFavoriteTeamsContext();
-
   const yearOptions = regularSeasonOptions;
 
   const safeYear = useMemo(() => {
-    if (!yearOptions.length) return year ?? "";
+    if (!yearOptions.length) {
+      return year ?? "";
+    }
 
     const selectedExists = yearOptions.some((option) => option.value === year);
 
     return selectedExists ? year : yearOptions[0].value;
   }, [year, yearOptions]);
 
-  if (loading)
+  /**
+   * Build division sections directly from the division information
+   * returned by the standings API.
+   *
+   * This replaces the old nbaDivisionsById constant.
+   */
+  const divisionStandings = useMemo<SectionType[]>(() => {
+    const groupedDivisions = new Map<
+      string,
+      {
+        conferenceIndex: number;
+        conferenceName: string;
+        teams: StandingsTeam[];
+      }
+    >();
+
+    conferences?.forEach(
+      (conference: ConferenceStandings, conferenceIndex: number) => {
+        conference.standings.forEach((team: StandingsTeam) => {
+          const divisionName = team.division?.trim();
+
+          if (!divisionName || divisionName.toLowerCase() === "unknown") {
+            return;
+          }
+
+          const existingDivision = groupedDivisions.get(divisionName);
+
+          if (existingDivision) {
+            const teamAlreadyExists = existingDivision.teams.some(
+              (existingTeam) =>
+                String(existingTeam.teamId) === String(team.teamId),
+            );
+
+            if (!teamAlreadyExists) {
+              existingDivision.teams.push(team);
+            }
+
+            return;
+          }
+
+          groupedDivisions.set(divisionName, {
+            conferenceIndex,
+            conferenceName: conference.name,
+            teams: [team],
+          });
+        });
+      },
+    );
+
+    return Array.from(groupedDivisions.entries())
+      .sort(([, divisionA], [, divisionB]) => {
+        if (divisionA.conferenceIndex !== divisionB.conferenceIndex) {
+          return divisionA.conferenceIndex - divisionB.conferenceIndex;
+        }
+
+        const conferenceCompare = divisionA.conferenceName.localeCompare(
+          divisionB.conferenceName,
+        );
+
+        if (conferenceCompare !== 0) {
+          return conferenceCompare;
+        }
+
+        return 0;
+      })
+      .map(([divisionName, division]) => ({
+        title: divisionName.toLowerCase().endsWith("division")
+          ? divisionName
+          : `${divisionName} Division`,
+        data: division.teams,
+      }));
+  }, [conferences]);
+
+  const viewOptions = useMemo(
+    () => [
+      {
+        label: "Conference",
+        value: "conference",
+      },
+      {
+        label: "Division",
+        value: "division",
+      },
+    ],
+    [],
+  );
+
+  if (loading) {
     return (
       <View style={styles.center}>
         <StandingsSkeleton />
       </View>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <View style={styles.center}>
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
+  }
 
-  // --- Group by division ---
-  const divisions: Record<string, StandingsTeam[]> = {};
-  conferences?.forEach((conf) => {
-    conf.standings.forEach((team) => {
-      if (!divisions[team.division]) divisions[team.division] = [];
-      divisions[team.division].push(team);
-    });
-  });
+  const getTeam = (item: StandingsTeam) => {
+    if (league === "NBA") {
+      return getTeamByESPNId(Number(item.teamId));
+    }
 
-  // --- Group by division using mapped list ---
-  const divisionStandings: SectionType[] = Object.entries(nbaDivisionsById).map(
-    ([divisionName, idList]) => {
-      const teamsInDivision =
-        conferences
-          ?.flatMap((conf: ConferenceStandings) => conf.standings)
-          .filter((team: StandingsTeam) =>
-            idList.includes(Number(team.teamId)),
-          ) || [];
+    if (league === "WNBA") {
+      return getWNBATeamByESPNId(Number(item.teamId));
+    }
 
-      return {
-        title: `${divisionName} Division`,
-        data: teamsInDivision,
-      };
-    },
-  );
+    if (league === "NFL") {
+      return getNFLTeamByESPNId(Number(item.teamId));
+    }
+
+    if (league === "UFL") {
+      return getUFLTeam(Number(item.teamId));
+    }
+
+    if (league === "MLB") {
+      return getMLBTeamByEspnId(item.teamId);
+    }
+
+    return getNHLTeamByESPNId(Number(item.teamId));
+  };
+
+  const getTeamRoute = () => {
+    if (league === "NBA") {
+      return "/team/[teamId]" as const;
+    }
+
+    if (league === "NFL") {
+      return "/team/nfl/[teamId]" as const;
+    }
+
+    if (league === "UFL") {
+      return "/team/ufl/[teamId]" as const;
+    }
+
+    if (league === "WNBA") {
+      return "/team/wnba/[teamId]" as const;
+    }
+
+    if (league === "MLB") {
+      return "/team/mlb/[teamId]" as const;
+    }
+
+    return "/team/nhl/[teamId]" as const;
+  };
 
   const renderLeftItem = ({
     item,
@@ -263,35 +379,26 @@ export const StandingsList = ({
     index: number;
     data: StandingsTeam[];
   }) => {
-    const team =
+    const team = getTeam(item);
+    const route = getTeamRoute();
+
+    const teamLogo =
       league === "NBA"
-        ? getTeamByESPNId(Number(item.teamId))
+        ? getTeamLogo(team?.id, isDark)
         : league === "WNBA"
-          ? getWNBATeamByESPNId(Number(item.teamId))
+          ? getWNBATeamLogo(team?.id, isDark)
           : league === "NFL"
-            ? getNFLTeamByESPNId(Number(item.teamId))
-            : league === "UFL"
-              ? getUFLTeam(Number(item.teamId))
-              : league === "MLB"
-                ? getMLBTeamByEspnId(item.teamId)
-                : getNHLTeamByESPNId(Number(item.teamId));
-
-    const route =
-      league === "NBA"
-        ? "/team/[teamId]"
-        : league === "NFL"
-          ? "/team/nfl/[teamId]"
-          : league === "UFL"
-            ? "/team/ufl/[teamId]"
-            : league === "WNBA"
-              ? "/team/wnba/[teamId]"
-              : league === "MLB"
-                ? "/team/mlb/[teamId]"
-                : "/team/nhl/[teamId]";
-
-    const teamLogo = isDark ? team?.logoLight || team?.logo : team?.logo;
+            ? getNFLTeamLogo(team?.id, isDark)
+            : league === "MLB"
+              ? getMLBTeamLogo(team?.id, isDark)
+              : league === "NHL"
+                ? getNHLTeamLogo(team?.id, isDark)
+                : null;
+    const teamId = team?.id ?? item.teamId;
     const teamCode = team?.code;
+
     const favorited = team ? isFavorite(league, team.id) : false;
+
     const isLastRow = index === data.length - 1;
 
     return (
@@ -318,12 +425,20 @@ export const StandingsList = ({
           onPress={() =>
             router.push({
               pathname: route,
-              params: { teamId: String(team?.id) },
+              params: {
+                teamId: String(teamId),
+              },
             })
           }
         >
-          <Image source={teamLogo} style={styles.logo} />
+          {teamLogo ? (
+            <Image source={teamLogo} style={styles.logo} />
+          ) : (
+            <View style={styles.logo} />
+          )}
+
           <Text style={styles.teamName}>{teamCode}</Text>
+
           <StatusBadge code={item.clincher} league={league} />
         </TouchableOpacity>
       </View>
@@ -340,23 +455,14 @@ export const StandingsList = ({
       index: number;
       data: StandingsTeam[];
     }) {
-      const team =
-        league === "NBA"
-          ? getTeamByESPNId(Number(item.teamId))
-          : league === "WNBA"
-            ? getWNBATeamByESPNId(Number(item.teamId))
-            : league === "NFL"
-              ? getNFLTeamByESPNId(Number(item.teamId))
-              : league === "UFL"
-                ? getUFLTeam(Number(item.teamId))
-                : league === "MLB"
-                  ? getMLBTeamByEspnId(item.teamId)
-                  : getNHLTeamByESPNId(Number(item.teamId));
+      const team = getTeam(item);
 
       const favorited = team ? isFavorite(league, team.id) : false;
+
       const isLastRow = index === data.length - 1;
 
       const winStreak = item.streak?.startsWith("W");
+
       const streakColor = winStreak
         ? isDark
           ? Colors.dark.limeGreen
@@ -384,26 +490,42 @@ export const StandingsList = ({
             const key = columnKeyMap[label];
             let value = item[key];
 
-            if (label === "W-L")
+            if (label === "W-L") {
               value = `${item.wins ?? 0}-${item.losses ?? 0}`;
-            if (key === "winPercent" && value != null)
+            }
+
+            if (key === "winPercent" && value != null) {
               value = `${(Number(value) * 100).toFixed(1)}%`;
-            if ((label === "PPG" || label === "OPP PPG") && value != null)
-              value = `${Number(value).toFixed(1)}`;
+            }
+
+            if ((label === "PPG" || label === "OPP PPG") && value != null) {
+              value = Number(value).toFixed(1);
+            }
 
             const numericValue = Number(value);
-            if (!isNaN(numericValue) && numericValue >= 1000)
+
+            if (
+              value !== null &&
+              value !== undefined &&
+              !Number.isNaN(numericValue) &&
+              numericValue >= 1000
+            ) {
               value = numericValue.toLocaleString("en-US");
+            }
 
             return (
               <View key={label} style={styles.statCell}>
                 <Text
                   style={[
                     styles.statText,
-                    key === "streak" ? { color: streakColor } : undefined,
+                    key === "streak"
+                      ? {
+                          color: streakColor,
+                        }
+                      : undefined,
                   ]}
                 >
-                  {value}
+                  {value ?? "-"}
                 </Text>
               </View>
             );
@@ -417,6 +539,7 @@ export const StandingsList = ({
       <View style={styles.rankContainer}>
         <Text style={styles.rankText}>#</Text>
       </View>
+
       <View>
         <Text style={styles.teamHeaderText}>Team</Text>
       </View>
@@ -436,18 +559,23 @@ export const StandingsList = ({
   function Section({
     title,
     data,
-    isFirst,
     isLast,
   }: {
     title: string;
     data: StandingsTeam[];
-    isFirst?: boolean;
     isLast?: boolean;
   }) {
     const activeColumns = getActiveColumns(data);
 
     return (
-      <View style={[styles.wrapper, { marginBottom: isLast ? 0 : 12 }]}>
+      <View
+        style={[
+          styles.wrapper,
+          {
+            marginBottom: isLast ? 0 : 12,
+          },
+        ]}
+      >
         <View style={styles.header}>
           <Text style={styles.heading}>{title}</Text>
         </View>
@@ -455,8 +583,13 @@ export const StandingsList = ({
         <View style={{ flexDirection: "row" }}>
           <FlatList
             data={data}
-            keyExtractor={(item) => item.teamId}
-            renderItem={(props) => renderLeftItem({ ...props, data })}
+            keyExtractor={(item) => String(item.teamId)}
+            renderItem={(props) =>
+              renderLeftItem({
+                ...props,
+                data,
+              })
+            }
             scrollEnabled={false}
             ListHeaderComponent={renderHeader}
             stickyHeaderIndices={[0]}
@@ -471,7 +604,10 @@ export const StandingsList = ({
               data={data}
               keyExtractor={(item) => String(item.teamId)}
               renderItem={(props) =>
-                renderRightItem(activeColumns)({ ...props, data })
+                renderRightItem(activeColumns)({
+                  ...props,
+                  data,
+                })
               }
               scrollEnabled={false}
               ListHeaderComponent={() => renderStatsHeader(activeColumns)}
@@ -485,6 +621,36 @@ export const StandingsList = ({
 
   const conferenceConfig = leagueConferences[league].conferences;
 
+  const conferenceSections = Object.values(conferenceConfig)
+    .map((conference) => {
+      const data =
+        conferences?.find(
+          (item) =>
+            item.abbreviation === conference.code ||
+            item.name === conference.name,
+        )?.standings ?? [];
+
+      if (!data.length) {
+        return null;
+      }
+
+      return {
+        title: conference.name,
+        data,
+      };
+    })
+    .filter(
+      (
+        section,
+      ): section is {
+        title: string;
+        data: StandingsTeam[];
+      } => section !== null,
+    );
+
+  const displayedSections =
+    sortMode === "conference" ? conferenceSections : divisionStandings;
+
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
@@ -492,13 +658,13 @@ export const StandingsList = ({
       <View style={styles.dropdownRow}>
         {league !== "WNBA" && (
           <Dropdown
-            options={[
-              { label: "Conference", value: "conference" },
-              { label: "Division", value: "division" },
-            ]}
+            options={viewOptions}
             selectedValue={sortMode}
-            onSelect={(value) => setSortMode(value as any)}
+            onSelect={(value) =>
+              setSortMode(value as "conference" | "division")
+            }
             isDark={isDark}
+            width={140}
           />
         )}
 
@@ -508,42 +674,20 @@ export const StandingsList = ({
             selectedValue={safeYear}
             onSelect={onYearChange}
             isDark={isDark}
-            style={{ marginLeft: 10 }}
+            width={120}
           />
         )}
       </View>
-      {sortMode === "conference"
-        ? Object.values(conferenceConfig)
-            .map((conf) => {
-              const data =
-                conferences?.find(
-                  (c) =>
-                    c.abbreviation === conf.abbreviation ||
-                    c.name === conf.name,
-                )?.standings || [];
 
-              return data.length ? { title: conf.name, data } : null;
-            })
-            .filter(Boolean)
-            .map((section, index, arr) => (
-              <Section
-                key={section!.title}
-                title={section!.title}
-                data={section!.data}
-                isFirst={index === 0} // ✅ only first section gets the dropdown
-                isLast={index === arr.length - 1}
-              />
-            ))
-        : // Division mode
-          divisionStandings.map((section, index) => (
-            <Section
-              key={section.title}
-              title={section.title}
-              data={section.data}
-              isFirst={index === 0} // ✅ only first division shows dropdown
-              isLast={index === divisionStandings.length - 1}
-            />
-          ))}
+      {displayedSections.map((section, index) => (
+        <Section
+          key={section.title}
+          title={section.title}
+          data={section.data}
+          isLast={index === displayedSections.length - 1}
+        />
+      ))}
+
       <StatusLegend league={league} />
     </ScrollView>
   );

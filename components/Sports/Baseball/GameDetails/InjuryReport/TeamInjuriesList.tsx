@@ -1,17 +1,14 @@
 import { globalStyles } from "@/constants/styles";
-import { FootballInjury } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Injury } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { FlatList, Text, View } from "react-native";
 import InjuryRow from "./InjuryRow";
 
 type Props = {
-  injuries: FootballInjury[];
+  injuries: Injury[];
   isDark: boolean;
 };
 
-export default function TeamInjuriesList({
-  injuries,
-  isDark,
-}: Props) {
+export default function TeamInjuriesList({ injuries, isDark }: Props) {
   const global = globalStyles(isDark);
 
   return (

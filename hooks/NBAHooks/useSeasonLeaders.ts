@@ -27,7 +27,7 @@ export function useSeasonLeaders() {
 
       try {
         const { data } = await apiClient.get<ApiResponse>(
-          `api/season-leaders/nba/leaders`,
+          `api/leaders/nba/leaders`,
         );
 
         if (!isCancelled) {

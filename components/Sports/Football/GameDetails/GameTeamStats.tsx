@@ -1,7 +1,11 @@
+import {
+  Team,
+  TeamBoxScoreStat,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useEffect, useRef, useState } from "react";
+import type { DimensionValue } from "react-native";
 import {
   Animated,
   Image,
@@ -12,80 +16,300 @@ import {
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
-import HeadingTwo from "../../../Headings/HeadingTwo";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
 
-type GameTeamStatsProps = {
-  stats: any[] | null | undefined;
-  isDark: boolean;
-  league: "NFL" | "CFB";
+type StatType = "number" | "time";
+
+type StatConfig = {
+  key: string;
+  label: string;
+  type: StatType;
 };
 
-// NFL-specific stat keys to display
-const STAT_KEYS: { key: string; label: string; type?: "percent" | "number" }[] =
-  [
-    { key: "plays.total", label: "Total Plays", type: "number" },
-    { key: "first_downs.total", label: "First Downs", type: "number" },
-    {
-      key: "first_downs.third_down_efficiency",
-      label: "Third Down Efficiency",
-      type: "number",
-    },
-    {
-      key: "first_downs.fourth_down_efficiency",
-      label: "Fourth Down Efficiency",
-      type: "number",
-    },
-    { key: "passing.total", label: "Passing Yards", type: "number" },
-    { key: "passing.comp_att", label: "Passing CMP/ATT", type: "number" },
-    {
-      key: "passing.yards_per_pass",
-      label: "Passing Yards Per Pass",
-      type: "number",
-    },
-    {
-      key: "passing.sacks_yards_lost",
-      label: "Sacks Yards Lost",
-      type: "number",
-    },
-    { key: "rushings.total", label: "Rushing Yards", type: "number" },
-    { key: "yards.total", label: "Total Yards", type: "number" },
-    { key: "yards.yards_per_play", label: "Yards Per Play", type: "number" },
-    { key: "turnovers.total", label: "Turnovers", type: "number" },
-    { key: "penalties.total", label: "Penalties", type: "number" },
-    { key: "posession.total", label: "Time of Possession", type: "number" },
-    { key: "points_against.total", label: "Points Allowed", type: "number" },
-    { key: "sacks.total", label: "Sacks", type: "number" },
-  ];
+type MappedStat = {
+  name: string;
+  value: TeamBoxScoreStat["value"];
+  displayValue: string | null;
+  label: string | null;
+};
 
-function flattenStats(obj: any, prefix = ""): Record<string, any> {
-  return Object.keys(obj).reduce(
-    (acc, key) => {
-      const value = obj[key];
-      const newKey = prefix ? `${prefix}.${key}` : key;
+const STAT_KEYS: StatConfig[] = [
+  {
+    key: "firstDowns",
+    label: "First Downs",
+    type: "number",
+  },
+  {
+    key: "firstDownsPassing",
+    label: "Passing First Downs",
+    type: "number",
+  },
+  {
+    key: "firstDownsRushing",
+    label: "Rushing First Downs",
+    type: "number",
+  },
+  {
+    key: "firstDownsPenalty",
+    label: "First Downs From Penalties",
+    type: "number",
+  },
+  {
+    key: "thirdDownEff",
+    label: "Third Down Efficiency",
+    type: "number",
+  },
+  {
+    key: "fourthDownEff",
+    label: "Fourth Down Efficiency",
+    type: "number",
+  },
+  {
+    key: "totalOffensivePlays",
+    label: "Total Plays",
+    type: "number",
+  },
+  {
+    key: "totalYards",
+    label: "Total Yards",
+    type: "number",
+  },
+  {
+    key: "yardsPerPlay",
+    label: "Yards per Play",
+    type: "number",
+  },
+  {
+    key: "totalDrives",
+    label: "Total Drives",
+    type: "number",
+  },
+  {
+    key: "netPassingYards",
+    label: "Passing",
+    type: "number",
+  },
+  {
+    key: "completionAttempts",
+    label: "Comp/Att",
+    type: "number",
+  },
+  {
+    key: "yardsPerPass",
+    label: "Yards per Pass",
+    type: "number",
+  },
+  {
+    key: "interceptions",
+    label: "Interceptions Thrown",
+    type: "number",
+  },
+  {
+    key: "sacksYardsLost",
+    label: "Sacks-Yards Lost",
+    type: "number",
+  },
+  {
+    key: "rushingYards",
+    label: "Rushing",
+    type: "number",
+  },
+  {
+    key: "rushingAttempts",
+    label: "Rushing Attempts",
+    type: "number",
+  },
+  {
+    key: "yardsPerRushAttempt",
+    label: "Yards per Rush",
+    type: "number",
+  },
+  {
+    key: "redZoneAttempts",
+    label: "Red Zone (Made-Att)",
+    type: "number",
+  },
+  {
+    key: "totalPenaltiesYards",
+    label: "Penalties",
+    type: "number",
+  },
+  {
+    key: "turnovers",
+    label: "Turnovers",
+    type: "number",
+  },
+  {
+    key: "fumblesLost",
+    label: "Fumbles Lost",
+    type: "number",
+  },
+  {
+    key: "defensiveTouchdowns",
+    label: "Defensive / Special Teams TDs",
+    type: "number",
+  },
+  {
+    key: "possessionTime",
+    label: "Time of Possession",
+    type: "time",
+  },
+];
 
-      if (value && typeof value === "object" && !Array.isArray(value)) {
-        Object.assign(acc, flattenStats(value, newKey));
-      } else {
-        acc[newKey] = value;
-      }
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
+function extractTimeInSeconds(value?: string | null) {
+  if (!value || !value.includes(":")) {
+    return 0;
+  }
+
+  const parts = value.split(":").map(Number);
+
+  if (parts.some((part) => Number.isNaN(part))) {
+    return 0;
+  }
+
+  if (parts.length === 2) {
+    const [minutes, seconds] = parts;
+
+    return minutes * 60 + seconds;
+  }
+
+  if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts;
+
+    return hours * 3600 + minutes * 60 + seconds;
+  }
+
+  return 0;
 }
-export default function GameTeamStats({
-  stats,
-  isDark,
-  league,
-}: GameTeamStatsProps) {
-  const styles = gameTeamStatsStyles(isDark);
 
-  const isNFL = league === "NFL";
+function extractNumber(value?: string | null, type: StatType = "number") {
+  if (!value || value === "-") {
+    return 0;
+  }
+
+  if (type === "time") {
+    return extractTimeInSeconds(value);
+  }
+
+  const normalizedValue = value.replace(/,/g, "").trim();
+
+  if (normalizedValue.includes("-")) {
+    const [firstValue] = normalizedValue.split("-");
+
+    return Number(firstValue) || 0;
+  }
+
+  if (normalizedValue.includes("/")) {
+    const [firstValue] = normalizedValue.split("/");
+
+    return Number(firstValue) || 0;
+  }
+
+  return Number(normalizedValue) || 0;
+}
+
+function mapStats(teamStats: TeamBoxScoreStat[]) {
+  return Object.fromEntries(
+    teamStats.map((stat) => [
+      stat.name,
+      {
+        name: stat.name,
+        value: stat.value,
+        displayValue:
+          stat.displayValue !== null && stat.displayValue !== undefined
+            ? String(stat.displayValue)
+            : null,
+        label:
+          stat.label !== null && stat.label !== undefined
+            ? String(stat.label)
+            : null,
+      },
+    ]),
+  ) as Record<string, MappedStat>;
+}
+
+function getNumericStatValue(stat: MappedStat | undefined, type: StatType) {
+  if (!stat) {
+    return 0;
+  }
+
+  if (typeof stat.value === "number" && Number.isFinite(stat.value)) {
+    return stat.value;
+  }
+
+  if (
+    typeof stat.value === "string" &&
+    stat.value.trim() !== "" &&
+    stat.value.trim() !== "-"
+  ) {
+    const numericValue = Number(stat.value);
+
+    if (Number.isFinite(numericValue)) {
+      return numericValue;
+    }
+  }
+
+  return extractNumber(stat.displayValue, type);
+}
+
+function getDisplayStatValue(stat: MappedStat | undefined) {
+  if (
+    stat?.displayValue !== null &&
+    stat?.displayValue !== undefined &&
+    stat.displayValue !== ""
+  ) {
+    return stat.displayValue;
+  }
+
+  if (stat?.value !== null && stat?.value !== undefined && stat.value !== "") {
+    return String(stat.value);
+  }
+
+  return "-";
+}
+
+function getBarWidth(value: number, max: number): DimensionValue {
+  if (!Number.isFinite(value) || value <= 0 || max <= 0) {
+    return "0%";
+  }
+
+  const percentage = Math.max(0, Math.min((value / max) * 100, 100));
+
+  return `${percentage}%` as DimensionValue;
+}
+
+export default function GameTeamStats({
+  teamStats,
+  state,
+  awayLogo,
+  homeLogo,
+  awayColor,
+  homeColor,
+  awayCode,
+  homeCode,
+  isDark,
+}: {
+  awayLogo: any;
+  homeLogo: any;
+  awayColor: string;
+  homeColor: string;
+  awayCode: string;
+  homeCode: string;
+  state?: string;
+  teamStats: {
+    team: Team;
+    stats: TeamBoxScoreStat[];
+  }[];
+  isDark: boolean;
+}) {
+  const styles = gameTeamStatsStyles(isDark);
+  const isScheduled = state === "pre";
+
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
+
   const heightAnim = useRef(
     new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   ).current;
@@ -100,61 +324,168 @@ export default function GameTeamStats({
     }).start();
   }, [expanded, fullHeight, heightAnim]);
 
-  if (!Array.isArray(stats) || stats.length < 2) return null;
+  if (!Array.isArray(teamStats) || teamStats.length < 2) {
+    return null;
+  }
 
-  const away = isNFL ? stats[0] : stats[1];
-  const home = isNFL ? stats[1] : stats[0];
+  const away = teamStats[0];
+  const home = teamStats[1];
 
-  const awayStats = flattenStats(away.statistics);
-  const homeStats = flattenStats(home.statistics);
+  const awayStats = mapStats(away.stats);
+  const homeStats = mapStats(home.stats);
+  const awayHasStats = Array.isArray(away.stats) && away.stats.length > 0;
+  const homeHasStats = Array.isArray(home.stats) && home.stats.length > 0;
 
-  const awayTeam = isNFL ? getNFLTeam(away.team.id) : getCFBTeam(away.team.id);
-  const homeTeam = isNFL ? getNFLTeam(home.team.id) : getCFBTeam(home.team.id);
+  const renderStatRow = (statConfig: StatConfig, hidden = false) => {
+    const { key, label, type } = statConfig;
 
-  const extractNumber = (value?: string | number) => {
-    if (value === null || value === undefined) return 0;
+    const awayStat = awayStats[key];
+    const homeStat = homeStats[key];
 
-    // Convert numbers to string for "made-attempted" check
-    const strValue = String(value);
+    const awayDisplayValue = getDisplayStatValue(awayStat);
+    const homeDisplayValue = getDisplayStatValue(homeStat);
 
-    if (strValue.includes("-")) {
-      const [made] = strValue.split("-");
-      return Number(made) || 0;
-    }
+    const awayNum = getNumericStatValue(awayStat, type);
+    const homeNum = getNumericStatValue(homeStat, type);
 
-    return Number(value) || 0;
+    const awayWins = awayNum > homeNum;
+    const homeWins = homeNum > awayNum;
+    const isTie = awayNum === homeNum;
+
+    const max = Math.max(awayNum, homeNum, 1);
+
+    const awayWidth = getBarWidth(awayNum, max);
+    const homeWidth = getBarWidth(homeNum, max);
+
+    return (
+      <View key={key} style={styles.statSection}>
+        <Text style={styles.statLabel}>{label}</Text>
+
+        <View style={styles.row}>
+          <Text
+            style={[
+              styles.barText,
+              !hidden && {
+                opacity: isTie || awayWins ? 1 : 0.4,
+              },
+            ]}
+          >
+            {awayDisplayValue}
+          </Text>
+
+          <View style={styles.barContainerLeft}>
+            {hidden ? (
+              <View
+                style={[
+                  styles.bar,
+                  {
+                    width: awayWidth,
+                    backgroundColor: awayColor,
+                  },
+                ]}
+              />
+            ) : (
+              <View
+                style={[
+                  styles.bar,
+                  {
+                    width: awayWidth,
+                    opacity: isTie || awayWins ? 1 : 0.4,
+                    borderRadius: 6,
+                    overflow: "hidden",
+                  },
+                ]}
+              >
+                <Svg width="100%" height="100%">
+                  <Defs>
+                    <Pattern
+                      id={`diagonalHatch-${key}`}
+                      patternUnits="userSpaceOnUse"
+                      width="6"
+                      height="6"
+                    >
+                      <Path
+                        d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
+                        stroke={Colors.white}
+                        strokeWidth={2}
+                      />
+                    </Pattern>
+                  </Defs>
+
+                  <Rect
+                    width="100%"
+                    height="100%"
+                    fill={awayColor || Colors.black}
+                  />
+
+                  <Rect
+                    width="100%"
+                    height="100%"
+                    fill={`url(#diagonalHatch-${key})`}
+                  />
+                </Svg>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.barContainerRight}>
+            <View
+              style={[
+                styles.bar,
+                {
+                  width: homeWidth,
+                  backgroundColor: homeColor,
+                  opacity: hidden || isTie || homeWins ? 1 : 0.4,
+                  borderWidth: hidden ? 0 : 1,
+                  borderColor: !hidden && isDark ? Colors.white : "transparent",
+                },
+              ]}
+            />
+          </View>
+
+          <Text
+            style={[
+              styles.barText,
+              !hidden && {
+                opacity: isTie || homeWins ? 1 : 0.4,
+              },
+            ]}
+          >
+            {homeDisplayValue}
+          </Text>
+        </View>
+      </View>
+    );
   };
 
-  const awayLogo = isNFL
-    ? getNFLTeamLogo(away.team.id, isDark)
-    : getCFBTeamLogo(away.team.id, isDark);
-  const homeLogo = isNFL
-    ? getNFLTeamLogo(home.team.id, isDark)
-    : getCFBTeamLogo(home.team.id, isDark);
-  const awayColor = isDark ? Colors.white : Colors.black;
-
-  const homeColor =
-    (isDark ? homeTeam?.secondaryColor : homeTeam?.color) ??
-    (isDark ? Colors.white : Colors.black);
-
-  if (!stats) return null;
+  if (!awayHasStats && !homeHasStats) {
+    return null;
+  }
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Game Stats</HeadingTwo>
+      <HeadingTwo isDark={isDark}>
+        {isScheduled ? "Team Stats" : "Game Stats"}
+      </HeadingTwo>
+
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
           <Image source={awayLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{awayTeam?.code}</Text>
+          <Text style={styles.teamLabel}>{awayCode}</Text>
         </View>
 
         <View style={styles.teamContainer}>
           <Image source={homeLogo} style={styles.logo} />
-          <Text style={styles.teamLabel}>{homeTeam?.code}</Text>
+          <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
+
       <ScrollView style={styles.container}>
         <View
+          pointerEvents="none"
+          onLayout={(event) => {
+            setFullHeight(event.nativeEvent.layout.height);
+          }}
           style={{
             position: "absolute",
             top: 0,
@@ -162,173 +493,25 @@ export default function GameTeamStats({
             right: 0,
             opacity: 0,
           }}
-          onLayout={(e) => setFullHeight(e.nativeEvent.layout.height)}
         >
-          {STAT_KEYS.map(({ key, label, type }) => {
-            const awayValue = awayStats[key];
-            const homeValue = homeStats[key];
-            if (!awayValue && !homeValue) return null;
-
-            const awayNum =
-              type === "percent" ? Number(awayValue) : extractNumber(awayValue);
-            const homeNum =
-              type === "percent" ? Number(homeValue) : extractNumber(homeValue);
-            const max = Math.max(awayNum, homeNum, 1);
-
-            return (
-              <View key={key} style={styles.statSection}>
-                <Text style={styles.statLabel}>{label}</Text>
-                <View style={styles.row}>
-                  <Text style={styles.barText}>
-                    {type === "percent" ? `${awayValue}%` : awayValue}
-                  </Text>
-                  <View style={styles.barContainerLeft}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          width: `${(awayNum / max) * 100}%`,
-                          backgroundColor: awayColor,
-                        },
-                      ]}
-                    />
-                  </View>
-                  <View style={styles.barContainerRight}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          width: `${(homeNum / max) * 100}%`,
-                          backgroundColor: homeColor,
-                        },
-                      ]}
-                    />
-                  </View>
-                  <Text style={styles.barText}>
-                    {type === "percent" ? `${homeValue}%` : homeValue}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
+          {STAT_KEYS.map((statConfig) => renderStatRow(statConfig, true))}
         </View>
 
-        {/* Animated content */}
-        <Animated.View style={{ maxHeight: heightAnim, overflow: "hidden" }}>
-          {STAT_KEYS.map(({ key, label, type }, index) => {
-            const awayValue = awayStats[key];
-            const homeValue = homeStats[key];
-            if (!awayValue && !homeValue) return null;
-
-            // Convert value to number for bar calculation
-            let awayNum =
-              type === "percent" ? Number(awayValue) : extractNumber(awayValue);
-            let homeNum =
-              type === "percent" ? Number(homeValue) : extractNumber(homeValue);
-
-            // ✅ Special handling for streak: consider negative streaks as well
-            if (key === "streak") {
-              // Streak can be like "W3" or "L2", so convert to number
-              const parseStreak = (s?: string) => {
-                if (!s) return 0;
-                const match = s.match(/[WL](\d+)/);
-                return match ? Number(match[1]) : 0;
-              };
-              awayNum = parseStreak(awayValue);
-              homeNum = parseStreak(homeValue);
-            }
-
-            const awayWins = awayNum > homeNum;
-            const homeWins = homeNum > awayNum;
-            const isTie = awayNum === homeNum;
-            const max = Math.max(awayNum, homeNum, 1);
-
-            return (
-              <View key={key} style={styles.statSection}>
-                <Text style={styles.statLabel}>{label}</Text>
-                <View style={styles.row}>
-                  <Text
-                    style={[
-                      styles.barText,
-                      { opacity: isTie ? 1 : awayWins ? 1 : 0.4 },
-                    ]}
-                  >
-                    {type === "percent" ? `${awayValue}%` : awayValue}
-                  </Text>
-                  <View style={styles.barContainerLeft}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          width: `${(awayNum / max) * 100}%`,
-                          opacity: isTie ? 1 : awayWins ? 1 : 0.4,
-                          borderRadius: 6, // 👈 make sure this exists
-                          overflow: "hidden",
-                        },
-                      ]}
-                    >
-                      <Svg width="100%" height="100%">
-                        <Defs>
-                          <Pattern
-                            id="diagonalHatch"
-                            patternUnits="userSpaceOnUse"
-                            width="6"
-                            height="6"
-                          >
-                            <Path
-                              d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
-                              stroke={awayColor}
-                              strokeWidth={2}
-                            />
-                          </Pattern>
-                        </Defs>
-
-                        {/* Base color fill (optional but recommended) */}
-                        <Rect
-                          width="100%"
-                          height="100%"
-                          fill={isDark ? Colors.black : Colors.white}
-                        />
-
-                        {/* Hatch overlay */}
-                        <Rect
-                          width="100%"
-                          height="100%"
-                          fill="url(#diagonalHatch)"
-                        />
-                      </Svg>
-                    </View>
-                  </View>
-                  <View style={styles.barContainerRight}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          width: `${(homeNum / max) * 100}%`,
-                          backgroundColor: homeColor,
-                          opacity: isTie ? 1 : homeWins ? 1 : 0.4,
-                        },
-                      ]}
-                    />
-                  </View>
-                  <Text
-                    style={[
-                      styles.barText,
-                      { opacity: isTie ? 1 : homeWins ? 1 : 0.4 },
-                    ]}
-                  >
-                    {type === "percent" ? `${homeValue}%` : homeValue}
-                  </Text>
-                </View>
-              </View>
-            );
-          })}
+        <Animated.View
+          style={{
+            maxHeight: heightAnim,
+            overflow: "hidden",
+          }}
+        >
+          {STAT_KEYS.map((statConfig) => renderStatRow(statConfig))}
         </Animated.View>
 
         <View style={styles.showMoreLessContainer}>
           <TouchableOpacity
             activeOpacity={0.5}
-            onPress={() => setExpanded((prev) => !prev)}
+            onPress={() => {
+              setExpanded((previous) => !previous);
+            }}
           >
             <Text style={styles.showMoreLess}>
               {expanded ? "Show Less" : "Show More"}

@@ -1,5 +1,4 @@
-import { BaseballTeam } from "@/types/baseball/baseball";
-
+import { Team } from "@/types/football/football";
 import {
   default as AngelsLogo,
   default as AngelsLogoLight,
@@ -86,7 +85,7 @@ import YankeesLogo from "assets/Baseball/MLB_Logos/Yankees.png";
 import YankeesLogoLight from "assets/Baseball/MLB_Logos/YankeesLight.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
-export const mlbTeams: BaseballTeam[] = [
+export const mlbTeams: Team[] = [
   {
     id: 2,
     espnId: 29,
@@ -99,16 +98,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: DiamondbacksLogo,
     logoLight: DiamondbacksLogoLight,
     established: 1998,
-    latitude: 33.4455,
-    longitude: -112.0667,
-    venueName: "Chase Field",
-    venueCapacity: "48,405",
-    address: "401 E Jefferson St, Phoenix, AZ 85004",
     city: "Phoenix, AZ",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/diamondbacks.jpg",
+    location: "Phoenix",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 963,
@@ -122,16 +116,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: AthleticsLogo,
     logoLight: AthleticsLogoLight,
     established: 1901,
-    latitude: 37.7516,
-    longitude: -122.2005,
-    venueName: "Oakland Coliseum",
-    venueCapacity: "63,132",
-    address: "7000 Coliseum Way, Oakland, CA 94621",
     city: "Oakland, CA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/athletics.jpg",
+    location: "Oakland",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 3,
@@ -145,16 +134,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: BravesLogo,
     logoLight: BravesLogoLight,
     established: 1876,
-    latitude: 33.8907,
-    longitude: -84.4677,
-    venueName: "Truist Park",
-    venueCapacity: "41,149",
-    address: "755 Battery Ave SE, Atlanta, GA 30339",
     city: "Atlanta, GA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
+    location: "Atlanta",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 4,
@@ -168,16 +152,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: OriolesLogo,
     logoLight: OriolesLogoLight,
     established: 1901,
-    latitude: 39.2839,
-    longitude: -76.6217,
-    venueName: "Oriole Park at Camden Yards",
-    venueCapacity: "45,971",
-    address: "333 W Camden St, Baltimore, MD 21201",
     city: "Baltimore, MD",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/braves.jpg",
+    location: "Baltimore",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 5,
@@ -191,16 +170,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RedSoxLogo,
     logoLight: RedSoxLogoLight,
     established: 1901,
-    latitude: 42.3465,
-    longitude: -71.0972,
-    venueName: "Fenway Park",
-    venueCapacity: "37,755",
-    address: "4 Jersey St, Boston, MA 02215",
     city: "Boston, MA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/redsox.jpg",
+    location: "Boston",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 6,
@@ -214,16 +188,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: CubsLogo,
     logoLight: CubsLogoLight,
     established: 1876,
-    latitude: 41.9484,
-    longitude: -87.6553,
-    venueName: "Wrigley Field",
-    venueCapacity: "41,649",
-    address: "1060 W Addison St, Chicago, IL 60613",
     city: "Chicago, IL",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cubs.jpg",
+    location: "Chicago",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 7,
@@ -237,16 +206,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: WhiteSoxLogo,
     logoLight: WhiteSoxLogoLight,
     established: 1901,
-    latitude: 41.8299,
-    longitude: -87.6339,
-    venueName: "Guaranteed Rate Field",
-    venueCapacity: "40,615",
-    address: "333 W 35th St, Chicago, IL 60616",
     city: "Chicago, IL",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/whitesox.jpg",
+    location: "Chicago",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 8,
@@ -260,16 +224,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RedsLogo,
     logoLight: RedsLogoLight,
     established: 1882,
-    latitude: 39.097,
-    longitude: -84.507,
-    venueName: "Great American Ball Park",
-    venueCapacity: "42,319",
-    address: "100 Joe Nuxhall Way, Cincinnati, OH 45202",
     city: "Cincinnati, OH",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/reds.jpg",
+    location: "Cincinnati",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 9,
@@ -283,16 +242,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: GuardiansLogo,
     logoLight: GuardiansLogoLight,
     established: 1901,
-    latitude: 41.4962,
-    longitude: -81.6852,
-    venueName: "Progressive Field",
-    venueCapacity: "34,830",
-    address: "2401 Ontario St, Cleveland, OH 44115",
     city: "Cleveland, OH",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/guardians.jpg",
+    location: "Cleveland",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 10,
@@ -306,16 +260,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RockiesLogo,
     logoLight: RockiesLogoLight,
     established: 1993,
-    latitude: 39.7559,
-    longitude: -104.9942,
-    venueName: "Coors Field",
-    venueCapacity: "50,398",
-    address: "2001 Blake St, Denver, CO 80205",
     city: "Denver, CO",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rockies.jpg",
+    location: "Denver",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 12,
@@ -329,16 +278,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: TigersLogo,
     logoLight: TigersLogoLight,
     established: 1901,
-    latitude: 42.3391,
-    longitude: -83.0484,
-    venueName: "Comerica Park",
-    venueCapacity: "41,083",
-    address: "2100 Woodward Ave, Detroit, MI 48201",
     city: "Detroit, MI",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/tigers.jpg",
+    location: "Detroit",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 15,
@@ -352,16 +296,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: AstrosLogo,
     logoLight: AstrosLogoLight,
     established: 1962,
-    latitude: 29.7573,
-    longitude: -95.3555,
-    venueName: "Minute Maid Park",
-    venueCapacity: "41,168",
-    address: "501 Crawford St, Houston, TX 77002",
     city: "Houston, TX",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/astros.jpg",
+    location: "Houston",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 16,
@@ -375,16 +314,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RoyalsLogo,
     logoLight: RoyalsLogoLight,
     established: 1969,
-    latitude: 39.0516,
-    longitude: -94.4808,
-    venueName: "Kauffman Stadium",
-    venueCapacity: "37,903",
-    address: "1 Royal Way, Kansas City, MO 64129",
     city: "Kansas City, MO",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/royals.jpg",
+    location: "Kansas",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 17,
@@ -398,16 +332,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: AngelsLogo,
     logoLight: AngelsLogoLight,
     established: 1961,
-    latitude: 33.8003,
-    longitude: -117.8827,
-    venueName: "Angel Stadium",
-    venueCapacity: "45,517",
-    address: "2000 E Gene Autry Way, Anaheim, CA 92806",
     city: "Anaheim, CA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/angels.jpg",
+    location: "Anaheim",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 18,
@@ -421,16 +350,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: DodgersLogo,
     logoLight: DodgersLogoLight,
     established: 1884,
-    latitude: 34.0739,
-    longitude: -118.24,
-    venueName: "Dodger Stadium",
-    venueCapacity: "56,000",
-    address: "1000 Vin Scully Ave, Los Angeles, CA 90012",
     city: "Los Angeles, CA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/dodgers.jpg",
+    location: "Los Angeles",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 19,
@@ -444,16 +368,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: MarlinsLogo,
     logoLight: MarlinsLogoLight,
     established: 1993,
-    latitude: 25.7781,
-    longitude: -80.2198,
-    venueName: "loanDepot park",
-    venueCapacity: "36,742",
-    address: "501 Marlins Way, Miami, FL 33125",
     city: "Miami, FL",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/marlins.jpg",
+    location: "Miami",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 20,
@@ -467,16 +386,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: BrewersLogo,
     logoLight: BrewersLogoLight,
     established: 1969,
-    latitude: 43.028,
-    longitude: -87.9712,
-    venueName: "American Family Field",
-    venueCapacity: "41,900",
-    address: "1 Brewers Way, Milwaukee, WI 53214",
     city: "Milwaukee, WI",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/brewers.jpg",
+    location: "Milwaukee",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 22,
@@ -490,16 +404,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: TwinsLogo,
     logoLight: TwinsLogoLight,
     established: 1901,
-    latitude: 44.9817,
-    longitude: -93.2777,
-    venueName: "Target Field",
-    venueCapacity: "38,544",
-    address: "1 Twins Way, Minneapolis, MN 55403",
     city: "Minneapolis, MN",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/twins.jpg",
+    location: "Minneapolis",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 24,
@@ -513,16 +422,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: MetsLogo,
     logoLight: MetsLogoLight,
     established: 1962,
-    latitude: 40.7571,
-    longitude: -73.8458,
-    venueName: "Citi Field",
-    venueCapacity: "41,922",
-    address: "41 Seaver Way, Queens, NY 11368",
     city: "Queens, NY",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mets.jpg",
+    location: "Queens",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 25,
@@ -536,16 +440,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: YankeesLogo,
     logoLight: YankeesLogoLight,
     established: 1901,
-    latitude: 40.8296,
-    longitude: -73.9262,
-    venueName: "Yankee Stadium",
-    venueCapacity: "46,537",
-    address: "1 E 161st St, Bronx, NY 10451",
     city: "Bronx, NY",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/yankees.jpg",
+    location: "Bronx",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 27,
@@ -559,16 +458,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: PhilliesLogo,
     logoLight: PhilliesLogoLight,
     established: 1883,
-    latitude: 39.9057,
-    longitude: -75.1665,
-    venueName: "Citizens Bank Park",
-    venueCapacity: "42,792",
-    address: "1 Citizens Bank Way, Philadelphia, PA 19148",
     city: "Philadelphia, PA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/phillies.jpg",
+    location: "Philadelphia",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 28,
@@ -582,16 +476,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: PiratesLogo,
     logoLight: PiratesLogoLight,
     established: 1882,
-    latitude: 40.4469,
-    longitude: -80.0057,
-    venueName: "PNC Park",
-    venueCapacity: "38,362",
-    address: "115 Federal St, Pittsburgh, PA 15212",
     city: "Pittsburgh, PA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/pirates.jpg",
+    location: "Pittsburgh",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 30,
@@ -605,16 +494,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: PadresLogo,
     logoLight: PadresLogoLight,
     established: 1969,
-    latitude: 32.7073,
-    longitude: -117.1573,
-    venueName: "Petco Park",
-    venueCapacity: "40,209",
-    address: "100 Park Blvd, San Diego, CA 92101",
     city: "San Diego, CA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/padres.jpg",
+    location: "San Diego",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 31,
@@ -628,16 +512,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: GiantsLogo,
     logoLight: GiantsLogoLight,
     established: 1883,
-    latitude: 37.7786,
-    longitude: -122.3893,
-    venueName: "Oracle Park",
-    venueCapacity: "41,915",
-    address: "24 Willie Mays Plaza, San Francisco, CA 94107",
     city: "San Francisco, CA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/giants.jpg",
+    location: "San Francisco",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 32,
@@ -651,16 +530,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: MarinersLogo,
     logoLight: MarinersLogoLight,
     established: 1977,
-    latitude: 47.5914,
-    longitude: -122.3325,
-    venueName: "T-Mobile Park",
-    venueCapacity: "47,929",
-    address: "1250 1st Ave S, Seattle, WA 98134",
     city: "Seattle, WA",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/mariners.jpg",
+    location: "Seattle",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 33,
@@ -674,16 +548,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: CardinalsLogo,
     logoLight: CardinalsLogoLight,
     established: 1882,
-    latitude: 38.6226,
-    longitude: -90.1928,
-    venueName: "Busch Stadium",
-    venueCapacity: "45,529",
-    address: "700 Clark Ave, St. Louis, MO 63102",
     city: "St. Louis, MO",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/cardinals.jpg",
+    location: "St. Louis",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 34,
@@ -697,16 +566,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RaysLogo,
     logoLight: RaysLogoLight,
     established: 1998,
-    latitude: 27.7683,
-    longitude: -82.6534,
-    venueName: "Tropicana Field",
-    venueCapacity: "25,025",
-    address: "1 Tropicana Dr, St. Petersburg, FL 33705",
     city: "St. Petersburg, FL",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rays.jpg",
+    location: "St. Petersburg",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 35,
@@ -720,16 +584,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: RangersLogo,
     logoLight: RangersLogoLight,
     established: 1961,
-    latitude: 32.7473,
-    longitude: -97.0842,
-    venueName: "Globe Life Field",
-    venueCapacity: "40,300",
-    address: "734 Stadium Dr, Arlington, TX 76011",
     city: "Arlington, TX",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/rangers.jpg",
+    location: "Arlington",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 36,
@@ -743,16 +602,11 @@ export const mlbTeams: BaseballTeam[] = [
     logo: BlueJaysLogo,
     logoLight: BlueJaysLogoLight,
     established: 1977,
-    latitude: 43.6415,
-    longitude: -79.3894,
-    venueName: "Rogers Centre",
-    venueCapacity: "49,282",
-    address: "1 Blue Jays Way, Toronto, ON M5V 1J1",
     city: "Toronto, Ontario",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/bluejays.jpg",
+    location: "Toronto",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 37,
@@ -766,23 +620,21 @@ export const mlbTeams: BaseballTeam[] = [
     logo: NationalsLogo,
     logoLight: NationalsLogoLight,
     established: 1969,
-    latitude: 38.873,
-    longitude: -77.0074,
-    venueName: "Nationals Park",
-    venueCapacity: "41,339",
-    address: "1500 S Capitol St SE, Washington, DC 20003",
     city: "Washington, DC",
-    venueImage:
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1774705671/stadiums/baseball/nationals.jpg",
+    location: "Washington",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
 ];
 
 export const getMLBTeam = (id: number | string) =>
   mlbTeams.find((t) => String(t.id) === String(id));
 
-export const getMLBTeamLogo = (id: number | string, isDark: boolean) => {
+export const getMLBTeamLogo = (
+  id: number | string | undefined,
+  isDark: boolean,
+) => {
   const team = mlbTeams.find((t) => String(t.id) === String(id));
   if (!team) return PlaceholderLogo;
 

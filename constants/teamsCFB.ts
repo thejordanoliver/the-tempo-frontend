@@ -382,6 +382,7 @@ export const cfbTeams: Team[] = [
     established: 1919,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -399,6 +400,7 @@ export const cfbTeams: Team[] = [
     established: 1955,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -416,6 +418,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -433,6 +436,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -450,6 +454,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 221,
@@ -467,6 +472,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -485,6 +491,7 @@ export const cfbTeams: Team[] = [
     established: 1921,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -503,6 +510,7 @@ export const cfbTeams: Team[] = [
     established: 1929,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -520,6 +528,7 @@ export const cfbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -538,6 +547,7 @@ export const cfbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -555,6 +565,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -573,6 +584,7 @@ export const cfbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -591,6 +603,7 @@ export const cfbTeams: Team[] = [
     established: 1916,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -608,6 +621,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -625,6 +639,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -642,6 +657,7 @@ export const cfbTeams: Team[] = [
     established: 1930,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -659,6 +675,7 @@ export const cfbTeams: Team[] = [
     established: 1922,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -677,6 +694,7 @@ export const cfbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -694,6 +712,7 @@ export const cfbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -711,6 +730,7 @@ export const cfbTeams: Team[] = [
     established: 2013,
     isActive: false,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -729,6 +749,7 @@ export const cfbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -747,6 +768,7 @@ export const cfbTeams: Team[] = [
     established: 1933,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -764,6 +786,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -781,6 +804,7 @@ export const cfbTeams: Team[] = [
     established: 1919,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -798,6 +822,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -815,6 +840,7 @@ export const cfbTeams: Team[] = [
     established: 1999,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -832,6 +858,7 @@ export const cfbTeams: Team[] = [
     established: 1883,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -849,6 +876,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -866,6 +894,7 @@ export const cfbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -883,6 +912,7 @@ export const cfbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -900,6 +930,7 @@ export const cfbTeams: Team[] = [
     established: 1886,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -917,6 +948,7 @@ export const cfbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -934,6 +966,7 @@ export const cfbTeams: Team[] = [
     established: 1908,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -952,6 +985,7 @@ export const cfbTeams: Team[] = [
     established: 1935,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -969,6 +1003,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -987,6 +1022,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1004,6 +1040,7 @@ export const cfbTeams: Team[] = [
     established: 1991,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1021,6 +1058,7 @@ export const cfbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1038,6 +1076,7 @@ export const cfbTeams: Team[] = [
     established: 1904,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1055,6 +1094,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1072,6 +1112,7 @@ export const cfbTeams: Team[] = [
     established: 2001,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1089,6 +1130,7 @@ export const cfbTeams: Team[] = [
     established: 1885,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1106,6 +1148,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1123,6 +1166,7 @@ export const cfbTeams: Team[] = [
     established: 2003,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1140,6 +1184,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1157,6 +1202,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1175,6 +1221,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1192,6 +1239,7 @@ export const cfbTeams: Team[] = [
     established: 1870,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1209,6 +1257,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1226,6 +1275,7 @@ export const cfbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1243,6 +1293,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1260,6 +1311,7 @@ export const cfbTeams: Team[] = [
     established: 1905,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1277,6 +1329,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1295,6 +1348,7 @@ export const cfbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1313,6 +1367,7 @@ export const cfbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1330,6 +1385,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1347,6 +1403,7 @@ export const cfbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1364,6 +1421,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1381,6 +1439,7 @@ export const cfbTeams: Team[] = [
     established: 1932,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1399,6 +1458,7 @@ export const cfbTeams: Team[] = [
     established: 1920,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1416,6 +1476,7 @@ export const cfbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1433,6 +1494,7 @@ export const cfbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1450,6 +1512,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1468,6 +1531,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1486,6 +1550,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1503,6 +1568,7 @@ export const cfbTeams: Team[] = [
     established: 1909,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1520,6 +1586,7 @@ export const cfbTeams: Team[] = [
     established: 2001,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1537,6 +1604,7 @@ export const cfbTeams: Team[] = [
     established: 2002,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1554,6 +1622,7 @@ export const cfbTeams: Team[] = [
     established: 1906,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1571,6 +1640,7 @@ export const cfbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1589,6 +1659,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1606,6 +1677,7 @@ export const cfbTeams: Team[] = [
     established: 1882,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1624,6 +1696,7 @@ export const cfbTeams: Team[] = [
     established: 1921,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1642,6 +1715,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1659,6 +1733,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1676,6 +1751,7 @@ export const cfbTeams: Team[] = [
     established: 1970,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1693,6 +1769,7 @@ export const cfbTeams: Team[] = [
     established: 1874,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1710,6 +1787,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1727,6 +1805,7 @@ export const cfbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1745,6 +1824,7 @@ export const cfbTeams: Team[] = [
     established: 2010,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1762,6 +1842,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1779,6 +1860,7 @@ export const cfbTeams: Team[] = [
     established: 1928,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1797,6 +1879,7 @@ export const cfbTeams: Team[] = [
     established: 1973,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1814,6 +1897,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1831,6 +1915,7 @@ export const cfbTeams: Team[] = [
     established: 1873,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1848,6 +1933,7 @@ export const cfbTeams: Team[] = [
     established: 1909,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1866,6 +1952,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1883,6 +1970,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1900,6 +1988,7 @@ export const cfbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1917,6 +2006,7 @@ export const cfbTeams: Team[] = [
     established: 2013,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1934,6 +2024,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1951,6 +2042,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1969,6 +2061,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -1986,6 +2079,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2004,6 +2098,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2021,6 +2116,7 @@ export const cfbTeams: Team[] = [
     established: 2009,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2038,6 +2134,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2056,6 +2153,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2073,6 +2171,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2091,6 +2190,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2108,6 +2208,7 @@ export const cfbTeams: Team[] = [
     established: 1972,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2126,6 +2227,7 @@ export const cfbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2143,6 +2245,7 @@ export const cfbTeams: Team[] = [
     established: 1904,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2160,6 +2263,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2178,6 +2282,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2196,6 +2301,7 @@ export const cfbTeams: Team[] = [
     established: 2015,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2214,6 +2320,7 @@ export const cfbTeams: Team[] = [
     established: 1920,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2231,6 +2338,7 @@ export const cfbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2249,6 +2357,7 @@ export const cfbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2266,6 +2375,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2283,6 +2393,7 @@ export const cfbTeams: Team[] = [
     established: 1928,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2300,6 +2411,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2317,6 +2429,7 @@ export const cfbTeams: Team[] = [
     established: 1882,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2334,6 +2447,7 @@ export const cfbTeams: Team[] = [
     established: 1923,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2351,6 +2465,7 @@ export const cfbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2368,6 +2483,7 @@ export const cfbTeams: Team[] = [
     established: 1973,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2385,6 +2501,7 @@ export const cfbTeams: Team[] = [
     established: 1990,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2402,6 +2519,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2419,6 +2537,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2436,6 +2555,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2453,6 +2573,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2470,6 +2591,7 @@ export const cfbTeams: Team[] = [
     established: 1965,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2487,6 +2609,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2504,6 +2627,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2521,6 +2645,7 @@ export const cfbTeams: Team[] = [
     established: 1940,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2538,6 +2663,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2555,6 +2681,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2572,6 +2699,7 @@ export const cfbTeams: Team[] = [
     established: 1903,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2589,6 +2717,7 @@ export const cfbTeams: Team[] = [
     established: 1926,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2606,6 +2735,7 @@ export const cfbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2623,6 +2753,7 @@ export const cfbTeams: Team[] = [
     established: 1879,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2641,6 +2772,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2658,6 +2790,7 @@ export const cfbTeams: Team[] = [
     established: 1911,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2675,6 +2808,7 @@ export const cfbTeams: Team[] = [
     established: 1882,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2693,6 +2827,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2711,6 +2846,7 @@ export const cfbTeams: Team[] = [
     established: 1953,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2728,6 +2864,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2746,6 +2883,7 @@ export const cfbTeams: Team[] = [
     established: 1909,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2763,6 +2901,7 @@ export const cfbTeams: Team[] = [
     established: 1993,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2780,6 +2919,7 @@ export const cfbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2798,6 +2938,7 @@ export const cfbTeams: Team[] = [
     established: 1897,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2816,6 +2957,7 @@ export const cfbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2834,6 +2976,7 @@ export const cfbTeams: Team[] = [
     established: 1898,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2852,6 +2995,7 @@ export const cfbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2869,6 +3013,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2887,6 +3032,7 @@ export const cfbTeams: Team[] = [
     established: 1960,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2904,6 +3050,7 @@ export const cfbTeams: Team[] = [
     established: 1879,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2921,6 +3068,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2938,6 +3086,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2955,6 +3104,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2972,6 +3122,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -2990,6 +3141,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 164,
@@ -3006,6 +3158,7 @@ export const cfbTeams: Team[] = [
     established: 1972,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 393,
@@ -3022,6 +3175,7 @@ export const cfbTeams: Team[] = [
     established: 1920,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3040,6 +3194,7 @@ export const cfbTeams: Team[] = [
     established: 1938,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3057,6 +3212,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3074,6 +3230,7 @@ export const cfbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3092,6 +3249,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3110,6 +3268,7 @@ export const cfbTeams: Team[] = [
     established: 1884,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 454,
@@ -3127,6 +3286,7 @@ export const cfbTeams: Team[] = [
     established: 1856,
     isActive: false,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 302,
@@ -3144,6 +3304,7 @@ export const cfbTeams: Team[] = [
     established: 1922,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 731,
@@ -3161,6 +3322,7 @@ export const cfbTeams: Team[] = [
     established: 1899,
     isAllStar: false,
     isActive: false,
+    isNational: false,
   },
   {
     id: 518,
@@ -3178,6 +3340,7 @@ export const cfbTeams: Team[] = [
     established: 1886,
     isAllStar: false,
     isActive: false,
+    isNational: false,
   },
   {
     id: 678,
@@ -3195,6 +3358,7 @@ export const cfbTeams: Team[] = [
     established: 1874,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 860,
@@ -3212,6 +3376,7 @@ export const cfbTeams: Team[] = [
     established: 1861,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3230,6 +3395,7 @@ export const cfbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 157,
@@ -3246,6 +3412,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 652,
@@ -3263,6 +3430,7 @@ export const cfbTeams: Team[] = [
     established: 1924,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 254,
@@ -3280,6 +3448,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3297,6 +3466,7 @@ export const cfbTeams: Team[] = [
     established: 1994,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 58,
@@ -3313,6 +3483,7 @@ export const cfbTeams: Team[] = [
     established: 1913,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3330,6 +3501,7 @@ export const cfbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3347,6 +3519,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3364,6 +3537,7 @@ export const cfbTeams: Team[] = [
     established: 1899,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3381,6 +3555,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3398,6 +3573,7 @@ export const cfbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3416,6 +3592,7 @@ export const cfbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3434,6 +3611,7 @@ export const cfbTeams: Team[] = [
     established: 1979,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3451,6 +3629,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3468,6 +3647,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3485,6 +3665,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3502,6 +3683,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3519,6 +3701,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3536,6 +3719,7 @@ export const cfbTeams: Team[] = [
     established: 1930,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3553,6 +3737,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3570,6 +3755,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3587,6 +3773,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3604,6 +3791,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3621,6 +3809,7 @@ export const cfbTeams: Team[] = [
     established: 1876,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3639,6 +3828,7 @@ export const cfbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3656,6 +3846,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3673,6 +3864,7 @@ export const cfbTeams: Team[] = [
     established: 1947,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3690,6 +3882,7 @@ export const cfbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3707,6 +3900,7 @@ export const cfbTeams: Team[] = [
     established: 1913,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3724,6 +3918,7 @@ export const cfbTeams: Team[] = [
     established: 1869,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3741,6 +3936,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3758,6 +3954,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3775,6 +3972,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3792,6 +3990,7 @@ export const cfbTeams: Team[] = [
     established: 1881,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3809,6 +4008,7 @@ export const cfbTeams: Team[] = [
     established: 1994,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3826,6 +4026,7 @@ export const cfbTeams: Team[] = [
     established: 1869,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3843,6 +4044,7 @@ export const cfbTeams: Team[] = [
     established: 1930,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3860,6 +4062,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3877,6 +4080,7 @@ export const cfbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3895,6 +4099,7 @@ export const cfbTeams: Team[] = [
     established: 1954,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3912,6 +4117,7 @@ export const cfbTeams: Team[] = [
     established: 1991,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3929,6 +4135,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3946,6 +4153,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3963,6 +4171,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3980,6 +4189,7 @@ export const cfbTeams: Team[] = [
     established: 1956,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -3998,6 +4208,7 @@ export const cfbTeams: Team[] = [
     established: 1921,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4015,6 +4226,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4032,6 +4244,7 @@ export const cfbTeams: Team[] = [
     established: 2009,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4049,6 +4262,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4067,6 +4281,7 @@ export const cfbTeams: Team[] = [
     established: 1907,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4084,6 +4299,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 600,
@@ -4101,6 +4317,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isAllStar: false,
     isActive: false,
+    isNational: false,
   },
 
   {
@@ -4118,6 +4335,7 @@ export const cfbTeams: Team[] = [
     established: 1900,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4135,6 +4353,7 @@ export const cfbTeams: Team[] = [
     established: 1997,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4152,6 +4371,7 @@ export const cfbTeams: Team[] = [
     established: 1916,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4169,6 +4389,7 @@ export const cfbTeams: Team[] = [
     established: 1913,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4186,6 +4407,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4203,6 +4425,7 @@ export const cfbTeams: Team[] = [
     established: 1963,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4220,6 +4443,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4237,6 +4461,7 @@ export const cfbTeams: Team[] = [
     established: 1923,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4254,6 +4479,7 @@ export const cfbTeams: Team[] = [
     established: 1901,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4271,6 +4497,7 @@ export const cfbTeams: Team[] = [
     established: 1988,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4288,6 +4515,7 @@ export const cfbTeams: Team[] = [
     established: 1984,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4306,6 +4534,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4323,6 +4552,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4340,6 +4570,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4357,6 +4588,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4374,6 +4606,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4391,6 +4624,7 @@ export const cfbTeams: Team[] = [
     established: 1912,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4408,6 +4642,7 @@ export const cfbTeams: Team[] = [
     established: 1922,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4425,6 +4660,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4442,6 +4678,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4459,6 +4696,7 @@ export const cfbTeams: Team[] = [
     established: 1947,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4476,6 +4714,7 @@ export const cfbTeams: Team[] = [
     established: 1904,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4493,6 +4732,7 @@ export const cfbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4510,6 +4750,7 @@ export const cfbTeams: Team[] = [
     established: 1905,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4527,6 +4768,7 @@ export const cfbTeams: Team[] = [
     established: 1917,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4544,6 +4786,7 @@ export const cfbTeams: Team[] = [
     established: 1969,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4562,6 +4805,7 @@ export const cfbTeams: Team[] = [
     established: 1900,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4579,6 +4823,7 @@ export const cfbTeams: Team[] = [
     established: 1909,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4596,6 +4841,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4613,6 +4859,7 @@ export const cfbTeams: Team[] = [
     established: 1895,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4630,6 +4877,7 @@ export const cfbTeams: Team[] = [
     established: 1991,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4647,6 +4895,7 @@ export const cfbTeams: Team[] = [
     established: 1970,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4664,6 +4913,7 @@ export const cfbTeams: Team[] = [
     established: 1915,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4681,6 +4931,7 @@ export const cfbTeams: Team[] = [
     established: 1979,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4698,6 +4949,7 @@ export const cfbTeams: Team[] = [
     established: 1919,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4715,6 +4967,7 @@ export const cfbTeams: Team[] = [
     established: 1896,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4732,6 +4985,7 @@ export const cfbTeams: Team[] = [
     established: 1931,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4749,6 +5003,7 @@ export const cfbTeams: Team[] = [
     established: 1879,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4766,6 +5021,7 @@ export const cfbTeams: Team[] = [
     established: 1968,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4783,6 +5039,7 @@ export const cfbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4800,6 +5057,7 @@ export const cfbTeams: Team[] = [
     established: 1925,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4817,6 +5075,7 @@ export const cfbTeams: Team[] = [
     established: 1914,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4834,6 +5093,7 @@ export const cfbTeams: Team[] = [
     established: 2011,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4851,6 +5111,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4868,6 +5129,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4885,6 +5147,7 @@ export const cfbTeams: Team[] = [
     established: 2006,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4902,6 +5165,7 @@ export const cfbTeams: Team[] = [
     established: 1873,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4919,6 +5183,7 @@ export const cfbTeams: Team[] = [
     established: 1919,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4936,6 +5201,7 @@ export const cfbTeams: Team[] = [
     established: 1890,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4953,6 +5219,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4970,6 +5237,7 @@ export const cfbTeams: Team[] = [
     established: 1887,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -4987,6 +5255,7 @@ export const cfbTeams: Team[] = [
     established: 1892,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5004,6 +5273,7 @@ export const cfbTeams: Team[] = [
     established: 1927,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5021,6 +5291,7 @@ export const cfbTeams: Team[] = [
     established: 1888,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 205,
@@ -5037,6 +5308,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 201,
@@ -5054,6 +5326,7 @@ export const cfbTeams: Team[] = [
     established: 1894,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 227,
@@ -5070,6 +5343,7 @@ export const cfbTeams: Team[] = [
     established: 1962,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5087,6 +5361,7 @@ export const cfbTeams: Team[] = [
     established: 1938,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5104,6 +5379,7 @@ export const cfbTeams: Team[] = [
     established: 1946,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5121,6 +5397,7 @@ export const cfbTeams: Team[] = [
     established: 1904,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5138,6 +5415,7 @@ export const cfbTeams: Team[] = [
     established: 1891,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5155,6 +5433,7 @@ export const cfbTeams: Team[] = [
     established: 1931,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5172,6 +5451,7 @@ export const cfbTeams: Team[] = [
     established: 1902,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5189,6 +5469,7 @@ export const cfbTeams: Team[] = [
     established: 1908,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5206,6 +5487,7 @@ export const cfbTeams: Team[] = [
     established: 1906,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5223,6 +5505,7 @@ export const cfbTeams: Team[] = [
     established: 1928,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5240,6 +5523,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5257,6 +5541,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5274,6 +5559,7 @@ export const cfbTeams: Team[] = [
     established: 1889,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5291,6 +5577,7 @@ export const cfbTeams: Team[] = [
     established: 1893,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 
   {
@@ -5308,6 +5595,7 @@ export const cfbTeams: Team[] = [
     established: 1872,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 482,
@@ -5324,6 +5612,7 @@ export const cfbTeams: Team[] = [
     established: 1920,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 381,
@@ -5340,6 +5629,7 @@ export const cfbTeams: Team[] = [
     established: 1926,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
   {
     id: 238,
@@ -5357,6 +5647,7 @@ export const cfbTeams: Team[] = [
     established: 1938,
     isActive: true,
     isAllStar: false,
+    isNational: false,
   },
 ];
 
@@ -5445,7 +5736,7 @@ export function getCFBTeamLogo(id: number | string, isDark: boolean) {
 }
 
 export const getCFBTeamByESPNId = (espnId: number | string) => {
-  return cfbTeams.find((t) => t.espnId.toString() === espnId.toString())!;
+  return cfbTeams.find((t) => t.espnId?.toString() === espnId.toString())!;
 };
 
 export function getRivalryHeadline(homeId?: number, awayId?: number) {

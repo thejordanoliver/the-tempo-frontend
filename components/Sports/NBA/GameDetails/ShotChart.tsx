@@ -12,7 +12,7 @@ import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 interface Play {
-  id: string;
+  id: string | number;
   shootingPlay: boolean;
   scoringPlay?: boolean;
   coordinate: { x: number; y: number };
@@ -72,10 +72,6 @@ export default function ShotChart({
   const isCollegeBasketball = isMensCBB || isWCBB;
   const isWNBA = normalizedLeague === "wnba";
 
-  /**
-   * ESPN shot coordinates are based on a 94x50 court.
-   * Keep the SVG viewBox matching the real coordinate system.
-   */
   const COURT_LENGTH = 94;
   const COURT_WIDTH = 50;
 

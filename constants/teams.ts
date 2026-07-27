@@ -57,6 +57,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 2,
@@ -76,6 +77,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 4,
@@ -95,6 +97,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 5,
@@ -114,6 +117,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 6,
@@ -133,6 +137,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 7,
@@ -152,6 +157,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 8,
@@ -171,6 +177,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 9,
@@ -190,6 +197,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 10,
@@ -209,11 +217,12 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 11,
     espnId: 9,
-    summerLeagueId: 132762,
+    summerLeagueId: 11,
     name: "Warriors",
     shortName: "Warriors",
     fullName: "Golden State Warriors",
@@ -228,26 +237,28 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
    {
-    id: 132761,
-    espnId: 132761,
-    summerLeagueId: 132761,
-    name: "Warriors",
-    shortName: "Warriors Blue",
-    fullName: "Golden State Warriors",
-    code: "GSW",
-    location: "San Francisco, CA",
-    city: "San Francisco",
-    logo: WarriorsLogo,
-    logoLight: WarriorsLogo,
-    color: "#1d428a",
-    secondaryColor: "#ffc72c",
-    established: 1946,
-    conference: "Western",
-    isAllStar: false,
-    isActive: true,
-  },
+     id: 132761,
+     espnId: 132761,
+     summerLeagueId: 132761,
+     name: "Warriors",
+     shortName: "Warriors Blue",
+     fullName: "Golden State Warriors",
+     code: "GSW",
+     location: "San Francisco, CA",
+     city: "San Francisco",
+     logo: WarriorsLogo,
+     logoLight: WarriorsLogo,
+     color: "#1d428a",
+     secondaryColor: "#ffc72c",
+     established: 1946,
+     conference: "Western",
+     isAllStar: false,
+     isActive: true,
+     isNational: false
+   },
   {
     id: 14,
     espnId: 10,
@@ -266,6 +277,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 15,
@@ -285,6 +297,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 16,
@@ -304,6 +317,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 17,
@@ -323,6 +337,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 19,
@@ -342,6 +357,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 20,
@@ -361,6 +377,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 21,
@@ -380,6 +397,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 22,
@@ -399,6 +417,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
 
   {
@@ -419,6 +438,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 24,
@@ -438,6 +458,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 25,
@@ -457,6 +478,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
 
   {
@@ -477,6 +499,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 27,
@@ -496,6 +519,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 28,
@@ -515,6 +539,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 29,
@@ -534,11 +559,12 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 30,
     espnId: 23,
-    summerLeagueId: 110755,
+    summerLeagueId: 30,
     name: "Kings",
     shortName: "Kings",
     fullName: "Sacramento Kings",
@@ -553,6 +579,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 31,
@@ -572,6 +599,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 38,
@@ -591,6 +619,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 40,
@@ -610,6 +639,7 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
   {
     id: 41,
@@ -629,6 +659,7 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
+    isNational: false
   },
 ];
 

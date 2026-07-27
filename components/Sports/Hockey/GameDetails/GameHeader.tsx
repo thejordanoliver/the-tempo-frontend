@@ -23,7 +23,7 @@ type Props = {
   isDark: boolean;
   date: string | undefined;
   time: string | undefined;
-  headline: string;
+  headline: string | null;
   broadcast: string;
   homeRecord: string;
   awayRecord: string;

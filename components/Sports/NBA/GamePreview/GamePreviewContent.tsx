@@ -109,9 +109,9 @@ export default function GamePreviewContent({
         awayLogo={awayLogo}
         awayChance={awayChance}
         awayColor={awayColor}
+        state={state}
         size={180}
         isDark
-        state={state}
       />
 
       <GameLeaders
@@ -135,9 +135,9 @@ export default function GamePreviewContent({
         awayLogo={awayLogo}
         homeName={homeName}
         awayName={awayName}
-        isDark
         league={league}
         state={state}
+        isDark
       />
 
       <GameTeamStats
@@ -171,7 +171,13 @@ export default function GamePreviewContent({
       <TeamInjuries
         injuries={injuries}
         teamPlayersMap={teamPlayersMap}
-        league={league === "WNBA" ? "WNBA" : "NBA"}
+        homeCode={homeCode}
+        homeLogo={homeLogo}
+        homeId={homeTeamId}
+        awayId={awayTeamId}
+        awayCode={awayCode}
+        awayLogo={awayLogo}
+        league={league}
         isDark
       />
 

@@ -1,5 +1,10 @@
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
-import { getHolidayLabel } from "@/utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -29,16 +34,10 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
     });
   };
 
-  const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -98,7 +97,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
   const isTopInning = gameStatusDetail.includes("Top");
-  const holidayLabel = getHolidayLabel(gameDateObj);
+  const isBottomInning = gameStatusDetail.includes("Bot");
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
@@ -159,11 +158,20 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
       return (
         <>
           <View style={styles.infoWrapper}>
-            <Ionicons
-              name={isTopInning ? "caret-up" : "caret-down"}
-              size={10}
-              color={isDark ? Colors.white : Colors.black}
-            />
+            {isTopInning && (
+              <Ionicons
+                name={"caret-up"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
+            {isBottomInning && (
+              <Ionicons
+                name={"caret-down"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
             <Text style={styles.period}>{gameStatusDetail}</Text>
             <View style={styles.statusDivider} />
             <View style={styles.outsContainer}>{getOuts}</View>

@@ -46,7 +46,7 @@ export function CenterInfo({
         </View>
       )}
 
-      {inProgress && !endOfPeriod && !isDelayed && (
+      {inProgress && !endOfPeriod && !isDelayed && !isHalftime && (
         <View style={styles.infoWrapper}>
           <Text style={styles.date}>{period}</Text>
           <View style={styles.statusDivider} />

@@ -1,3 +1,9 @@
+import {
+  Team,
+  TeamBoxScoreStat,
+  TeamInjury,
+  TeamLeaders,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
@@ -8,6 +14,9 @@ import {
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
+import GameLeaders from "../GameDetails/GameLeaders";
+import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
   homeColor: string;
@@ -15,6 +24,10 @@ type GamePreviewContentProps = {
   homeLogo: any;
   awayColor: string;
   awayCode: string;
+  homeId: number;
+  awayId: number;
+  homeEspnId: number;
+  awayEspnId: number;
   awayLogo: any;
   homeChance: number;
   awayChance: number;
@@ -22,6 +35,12 @@ type GamePreviewContentProps = {
     home: string[];
     away: string[];
   };
+  teamStats: {
+    team: Team;
+    stats: TeamBoxScoreStat[];
+  }[];
+  leaders: TeamLeaders[];
+  injuries: TeamInjury[];
   homeLastGames: { games: any[] };
   awayLastGames: { games: any[] };
   officials: any[];
@@ -29,6 +48,7 @@ type GamePreviewContentProps = {
   venueImage?: any;
   venueName?: string;
   venueLocation?: string;
+  venueSurface?: boolean;
   venueAddress?: string;
   venueCapacity?: number | null;
   venueAttendance?: number | null;
@@ -40,18 +60,26 @@ type GamePreviewContentProps = {
 
 export default function GamePreviewContent({
   homeColor,
+  homeId,
+  homeEspnId,
   homeCode,
   homeLogo,
   awayColor,
+  awayId,
+  awayEspnId,
   awayCode,
   awayLogo,
   lineScore,
+  teamStats,
+  leaders,
+  injuries,
   officials,
   homeChance,
   awayChance,
   venueImage,
   venueName,
   venueLocation,
+  venueSurface,
   venueAddress,
   venueCapacity,
   venueAttendance,
@@ -78,24 +106,58 @@ export default function GamePreviewContent({
           awayChance={awayChance}
           awayColor={awayColor}
           size={180}
-          isDark
           state={state}
+          isDark
         />
 
         <LineScore
           linescore={lineScore}
           homeCode={homeCode}
           awayCode={awayCode}
-          isDark
           state={state}
           league={league}
+          isDark
         />
 
-        <Officials
-          officials={officials ?? []}
-          isDark
+        <GameTeamStats
+          teamStats={teamStats}
+          awayLogo={awayLogo}
+          homeLogo={homeLogo}
+          awayCode={awayCode}
+          homeCode={homeCode}
+          homeColor={homeColor}
+          awayColor={awayColor}
           state={state}
+          isDark
         />
+
+        <GameLeaders
+          leaders={leaders}
+          awayId={awayId}
+          homeId={homeId}
+          awayLogo={awayLogo}
+          homeLogo={homeLogo}
+          awayCode={awayCode}
+          homeCode={homeCode}
+          league={league}
+          state={state}
+          isDark
+        />
+
+        <TeamInjuries
+          injuries={injuries}
+          awayId={awayEspnId}
+          homeId={homeEspnId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          state={state}
+          league={league}
+          isDark
+        />
+
+        <Officials officials={officials ?? []} state={state} isDark />
 
         <GameLocation
           venueImage={venueImage}
@@ -105,6 +167,8 @@ export default function GamePreviewContent({
           venueCapacity={venueCapacity}
           venueAttendance={venueAttendance}
           weather={weather}
+          grass={venueSurface}
+          surface={"football"}
           isDark
         />
       </View>

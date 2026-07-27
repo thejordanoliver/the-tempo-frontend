@@ -53,7 +53,6 @@ export type LeagueTeam = Team & { league: LeagueType };
 
 export type Venue = {
   id: string;
-  name: string;
   fullName: string;
   address?: {
     city?: string;
@@ -64,9 +63,8 @@ export type Venue = {
   grass?: boolean;
   images?: {
     href: string;
-    rel: string[];
+    rel?: string[];
   }[];
-  attendance?: number;
 };
 
 export type DBPlayer = {

@@ -1,13 +1,20 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
+import { Colors } from "@/constants/styles";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
-import { MMAFight } from "types/mma";
+import { MMAFight } from "types/mma/mma";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -34,46 +41,29 @@ type Props = {
 export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
 
-  function isValidDate(date: Date) {
-    return !Number.isNaN(date.getTime());
-  }
-
   // Modal open/close
   useEffect(() => {
     if (visible) sheetRef.current?.present();
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const gameDateObj = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game.headline || holidayLabel;
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
-
-  const firstFighter = game?.competitors[0];
-  const secondFighter = game?.competitors[1];
+  const styles = gamePreviewModalStyle();
+  const firstFighter = game?.competitors?.[0];
+  const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
   const secondFighterId = Number(secondFighter?.id);
   const firstFighterLastName = firstFighter?.lastName ?? "TBD";
   const secondFighterLastName = secondFighter?.lastName ?? "TBD";
   const firstFighterName = firstFighter?.shortName ?? "TBD";
   const secondFighterName = secondFighter?.shortName ?? "TBD";
-  const firstFighterColor = firstFighter?.color;
-  const secondFighterColor = secondFighter?.color;
+  const firstFighterColor = firstFighter?.color ?? Colors.midTone;
+  const secondFighterColor = secondFighter?.color ?? Colors.midTone;
   const firstFighterPhoto = firstFighter?.headshot ?? headshotPlaceholder;
   const secondFighterPhoto = secondFighter?.headshot ?? headshotPlaceholder;
   const firstFighterStance =
@@ -94,16 +84,16 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const secondFighterFlag = secondFighter?.flag ?? "N/A";
   const firstFighterRecord = firstFighter?.record ?? "0-0";
   const secondFighterRecord = secondFighter?.record ?? "0-0";
-  const firstFighterClass = firstFighter?.weightClassShortName ?? "0-0";
-  const secondFighterClass = secondFighter?.weightClassShortName ?? "0-0";
+  const firstFighterClass = firstFighter?.weightClassShortName ?? "N/A";
+  const secondFighterClass = secondFighter?.weightClassShortName ?? "N/A";
   const firstFighterWinner = firstFighter?.winner === true;
   const secondFighterWinner = secondFighter?.winner === true;
 
   const firstFighterIsChampion = firstFighter?.isChampion ?? false;
   const secondFighterIsChampion = secondFighter?.isChampion ?? false;
 
-  const gameStatusDescription = game?.status.description;
-  const state = game?.status.state;
+  const gameStatusDescription = game.status.description;
+  const state = game.status.state;
 
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -112,7 +102,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-  const headline = game?.headline;
+
   const resultText = game.method;
   const results =
     resultText?.toLowerCase() === "submission"
@@ -122,10 +112,8 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
         : resultText;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
-  const period = formatPeriod({ period: game?.status.period, isMMA: true });
-  const clock = game?.status.displayClock;
-
-  const styles = gamePreviewModalStyle();
+  const period = formatPeriod({ period: game?.status?.period, isMMA: true });
+  const clock = game?.status?.displayClock;
 
   const venueId = Number(game?.venue?.id);
   const { venue } = useVenue({ sport: "mma", id: venueId });
@@ -194,11 +182,8 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
           tint={"systemUltraThinMaterialDark"}
           style={styles.blurViewContainer}
         >
-          {headline && (
-            <>
-              {headline && <Text style={styles.headlineText}>{headline}</Text>}
-            </>
-          )}
+          {headline && <Text style={styles.headlineText}>{headline}</Text>}
+
           <View style={styles.gameHeaderContainer}>
             <FighterInfo
               side="away"

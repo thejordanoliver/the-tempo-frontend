@@ -1,4 +1,4 @@
-import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Official } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import refereePlaceholder from "assets/Placeholders/refereePlaceholder.png";
 import refereePlaceholderLight from "assets/Placeholders/refereePlaceholderLight.png";
 import HeadingTwo from "components/Headings/HeadingTwo";

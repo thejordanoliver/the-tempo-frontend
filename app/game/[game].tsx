@@ -34,7 +34,12 @@ import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -84,10 +89,6 @@ function parseGameParam(value?: string | string[]): BasketballGame | undefined {
   } catch {
     return undefined;
   }
-}
-
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
 }
 
 export default function GameDetailsScreen(
@@ -145,21 +146,10 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = getTeamLogo(homeId, true);
   const awayHeaderLogo = getTeamLogo(awayId, true);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
@@ -174,6 +164,8 @@ export default function GameDetailsScreen(
   const isLoading = !score || !details;
   const homeScore = score?.home.total ?? 0;
   const awayScore = score?.away.total ?? 0;
+  const homeRank = details?.homeRank ?? null;
+  const awayRank = details?.awayRank ?? null;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
   const homeRecord = details?.records.home.overall ?? "0-0";
@@ -203,7 +195,6 @@ export default function GameDetailsScreen(
   const teamStats = score?.teamStats ?? [];
   const lastPlay = score?.lastPlay ?? "";
   const headlineText = details?.headline;
-  const holidayLabel = getHolidayLabel(gameDateObj);
   const headline = headlineText ?? holidayLabel ?? "";
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
@@ -248,7 +239,7 @@ export default function GameDetailsScreen(
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
@@ -334,6 +325,8 @@ export default function GameDetailsScreen(
           awayScore={awayScore}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
+          homeRank={homeRank}
+          awayRank={awayRank}
           homeBonusState={homeBonus}
           awayBonusState={awayBonus}
           homeTimeouts={homeTimeouts}
@@ -506,6 +499,12 @@ export default function GameDetailsScreen(
               <TeamInjuries
                 injuries={injuries}
                 teamPlayersMap={teamPlayersMap}
+                homeId={homeId}
+                awayId={awayId}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
                 isDark={isDark}
                 league={LEAGUE}
               />

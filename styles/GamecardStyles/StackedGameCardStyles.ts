@@ -210,6 +210,7 @@ export const stackedGameCardStyles = (
     },
 
     winnerContainer: {
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
     },

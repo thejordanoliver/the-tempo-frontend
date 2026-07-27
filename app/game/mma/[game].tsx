@@ -5,6 +5,12 @@ import {
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
@@ -15,7 +21,7 @@ import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { MMAFightCardProps } from "types/mma";
+import { MMAFightCardProps } from "types/mma/mma";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -75,10 +81,6 @@ function parseGameParam(value?: string | string[]): MMAFight | undefined {
   }
 }
 
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
-}
-
 export default function GameDetailsScreen(
   props: Partial<MMAFightCardProps> = {},
 ) {
@@ -99,25 +101,14 @@ export default function GameDetailsScreen(
     return game?.date ? new Date(game.date) : null;
   }, [game?.date]);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id;
-  const firstFighter = game?.competitors[0];
-  const secondFighter = game?.competitors[1];
+  const firstFighter = game?.competitors?.[0];
+  const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
   const secondFighterId = Number(secondFighter?.id);
   const firstFighterLastName = firstFighter?.lastName ?? "TBD";
@@ -146,8 +137,8 @@ export default function GameDetailsScreen(
   const secondFighterFlag = secondFighter?.flag ?? "N/A";
   const firstFighterRecord = firstFighter?.record ?? "0-0";
   const secondFighterRecord = secondFighter?.record ?? "0-0";
-  const firstFighterClass = firstFighter?.weightClassShortName ?? "0-0";
-  const secondFighterClass = secondFighter?.weightClassShortName ?? "0-0";
+  const firstFighterClass = firstFighter?.weightClassShortName ?? "N/A";
+  const secondFighterClass = secondFighter?.weightClassShortName ?? "N/A";
   const firstFighterWinner = firstFighter?.winner === true;
   const secondFighterWinner = secondFighter?.winner === true;
   const firstFighterIsChampion = firstFighter?.isChampion ?? false;
@@ -163,7 +154,7 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-  const headline = game?.headline;
+  const headline = game?.headline ?? holidayLabel;
   const results = game?.method;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);

@@ -1,12 +1,12 @@
 // TeamInjuries.tsx
+import HomeAwayTabBar, {
+  HomeAwayTabValue,
+} from "@/components/TabBars/HomeAwayTabBar";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
-import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import TeamInjuriesList from "./TeamInjuriesList";
 
@@ -37,6 +37,12 @@ type Props = {
   isDark: boolean;
   loading?: boolean;
   league: string;
+  homeLogo: any;
+  awayLogo: any;
+  homeCode: string;
+  awayCode: string;
+  homeId: string | number;
+  awayId: string | number;
   teamPlayersMap?: Record<string, Player[]>;
 };
 
@@ -44,12 +50,18 @@ export default function TeamInjuries({
   injuries,
   loading,
   league,
+  homeLogo,
+  awayLogo,
+  homeCode,
+  awayCode,
+  homeId,
+  awayId,
   isDark,
   teamPlayersMap = {},
 }: Props) {
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const styles = teamInjuryStyles(isDark);
-  const isWNBA = league === "wnba";
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
   const reorderedInjuries =
     injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);
@@ -84,37 +96,21 @@ export default function TeamInjuries({
       <HeadingTwo isDark={isDark}>Injury Report</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabs.map((t) => t.id)}
-          selected={selectedTeamId}
-          onTabPress={setSelectedTeamId}
-          isDark={isDark}
-          renderLabel={(tabId, isSelected, tabStyles) => {
-            const team = isWNBA
-              ? getWNBATeamByESPNId(tabId)
-              : getTeamByESPNId(tabId);
-            const teamCode = team?.code;
-            const logo = isWNBA
-              ? getWNBATeamLogo(Number(team?.id), isDark)
-              : getTeamLogo(Number(team?.id), isDark);
-
-            return (
-              <View style={styles.tabLabel}>
-                {logo && (
-                  <Image
-                    source={logo}
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                )}
-
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  {teamCode}
-                </Text>
-              </View>
-            );
+        <HomeAwayTabBar
+          awayTeam={{
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: awayLogo,
           }}
+          homeTeam={{
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: homeLogo,
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
+          isDark={isDark}
+          showAllTab={false}
         />
 
         <TeamInjuriesList

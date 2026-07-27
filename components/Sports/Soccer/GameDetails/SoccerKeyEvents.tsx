@@ -1,9 +1,9 @@
-// components/Sports/Soccer/Game/SoccerKeyEvents.tsx
+// components/Sports/Soccer/Game/KeyEvents.tsx
 
+import HomeAwayTabBar from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import { SoccerKeyEvent } from "@/hooks/SoccerHooks/useSoccerGameDetails";
+import { KeyEvent } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { formatPeriod } from "@/utils/games";
-import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
 import {
@@ -17,20 +17,14 @@ import {
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 type Props = {
-  keyEvents?: SoccerKeyEvent[] | null;
+  keyEvents?: KeyEvent[] | null;
   loading?: boolean;
-
-  awayTeamId?: number | string | null;
-  homeTeamId?: number | string | null;
-
+  awayId: number | string;
+  homeId: number | string;
   awayLogo: any;
   homeLogo: any;
   awayCode: string;
   homeCode: string;
-
-  awayTeamEspnId?: number | string | null;
-  homeTeamEspnId?: number | string | null;
-
   isDark: boolean;
   gameStatusDescription?: string | null;
 };
@@ -79,7 +73,7 @@ function normalizeEventType(value?: string | null) {
     .replace(/[^a-z0-9]/g, "");
 }
 
-function getEventType(event: SoccerKeyEvent) {
+function getEventType(event: KeyEvent) {
   const type = normalizeEventType(event.type?.type);
   const text = normalizeEventType(event.type?.text);
 
@@ -89,11 +83,11 @@ function getEventType(event: SoccerKeyEvent) {
   };
 }
 
-function getEventLabel(event: SoccerKeyEvent) {
+function getEventLabel(event: KeyEvent) {
   return event.type?.text || event.type?.type || "Event";
 }
 
-function getEventKind(event: SoccerKeyEvent): KeyEventKind {
+function getEventKind(event: KeyEvent): KeyEventKind {
   const { combined } = getEventType(event);
 
   if (combined.includes("redcard")) {
@@ -130,11 +124,11 @@ function getEventTextColor(
   return undefined;
 }
 
-function getMainText(event: SoccerKeyEvent) {
+function getMainText(event: KeyEvent) {
   return event.shortText || event.text || getEventLabel(event);
 }
 
-function getParticipantText(event: SoccerKeyEvent) {
+function getParticipantText(event: KeyEvent) {
   const participants = Array.isArray(event.participants)
     ? event.participants
         .map((participant) => participant?.athlete?.displayName)
@@ -144,7 +138,7 @@ function getParticipantText(event: SoccerKeyEvent) {
   return participants.join(" • ");
 }
 
-function getSortValue(event: SoccerKeyEvent, index: number) {
+function getSortValue(event: KeyEvent, index: number) {
   const period = Number(event.period?.number ?? 0);
   const clock = Number(event.clock?.value ?? 0);
   const { normalized } = getEventType(event);
@@ -163,25 +157,19 @@ function getImageSource(image: any): ImageSourcePropType | null {
   return image;
 }
 
-export default function SoccerKeyEvents({
+export default function KeyEvents({
   keyEvents = [],
   loading = false,
-
-  awayTeamId,
-  homeTeamId,
-
+  awayId,
+  homeId,
   awayLogo,
   homeLogo,
   awayCode,
   homeCode,
-
-  awayTeamEspnId,
-  homeTeamEspnId,
-
   isDark,
   gameStatusDescription,
 }: Props) {
-  const styles = SoccerKeyEventsStyles(isDark);
+  const styles = KeyEventsStyles(isDark);
   const global = globalStyles(isDark);
 
   const [selectedTab, setSelectedTab] = useState<SelectedTab>("all");
@@ -209,7 +197,7 @@ export default function SoccerKeyEvents({
         key: "away",
         label: awayCode ?? "Away",
         logo: awayLogo,
-        ids: [awayTeamId, awayTeamEspnId]
+        ids: [awayId, awayId]
           .map(normalizeId)
           .filter((id): id is string => Boolean(id)),
       },
@@ -217,21 +205,12 @@ export default function SoccerKeyEvents({
         key: "home",
         label: homeCode ?? "Home",
         logo: homeLogo,
-        ids: [homeTeamId, homeTeamEspnId]
+        ids: [homeId, homeId]
           .map(normalizeId)
           .filter((id): id is string => Boolean(id)),
       },
     ],
-    [
-      awayCode,
-      awayLogo,
-      awayTeamId,
-      awayTeamEspnId,
-      homeCode,
-      homeLogo,
-      homeTeamId,
-      homeTeamEspnId,
-    ],
+    [awayCode, awayLogo, awayId, homeCode, homeLogo, homeId],
   );
 
   const selectedTeam = useMemo(() => {
@@ -259,37 +238,22 @@ export default function SoccerKeyEvents({
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Key Events</HeadingTwo>
-
       <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabs.map((tab) => tab.key)}
-          selected={selectedTab}
-          onTabPress={(tabKey) => setSelectedTab(tabKey as SelectedTab)}
-          isDark={isDark}
-          renderLabel={(tabKey, isSelected, tabStyles) => {
-            const team = tabs.find((tab) => tab.key === tabKey);
-
-            if (!team) return null;
-
-            const logoSource = getImageSource(team.logo);
-
-            return (
-              <View style={styles.tabLabel}>
-                {logoSource && (
-                  <Image
-                    source={logoSource}
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                )}
-
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  {team.label}
-                </Text>
-              </View>
-            );
+        <HomeAwayTabBar
+          awayTeam={{
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: awayLogo,
           }}
+          homeTeam={{
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: homeLogo,
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
+          isDark={isDark}
+          showAllTab
         />
 
         <View style={styles.listContainer}>
@@ -356,7 +320,7 @@ export default function SoccerKeyEvents({
   );
 }
 
-const SoccerKeyEventsStyles = (isDark: boolean) =>
+const KeyEventsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       marginTop: 10,
@@ -366,7 +330,6 @@ const SoccerKeyEventsStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderRadius: 8,
       overflow: "hidden",
-      paddingTop: 12,
     },
     tabLabel: {
       flexDirection: "row",

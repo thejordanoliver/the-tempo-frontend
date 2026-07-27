@@ -47,6 +47,7 @@ export const standingsStyles = (isDark: boolean) =>
       flexDirection: "row",
       justifyContent: "flex-end",
       marginBottom: 12,
+      gap: 12,
     },
     statsHeaderRow: {
       flexDirection: "row",

@@ -241,10 +241,6 @@ export default function GameTeamStats({
 
   const mapStats = (stats: any[]) =>
     Object.fromEntries(stats.map((s) => [s.name, s.displayValue]));
-
-  const awayStats = mapStats(away.stats);
-  const homeStats = mapStats(home.stats);
-
   const extractNumber = (value?: string) => {
     if (!value) return 0;
 
@@ -255,6 +251,15 @@ export default function GameTeamStats({
 
     return Number(value) || 0;
   };
+
+  const awayStats = mapStats(away.stats);
+  const homeStats = mapStats(home.stats);
+  const awayHasStats = Array.isArray(away.stats) && away.stats.length > 0;
+  const homeHasStats = Array.isArray(home.stats) && home.stats.length > 0;
+
+  if (!awayHasStats && !homeHasStats) {
+    return null;
+  }
 
   return (
     <View>

@@ -1,5 +1,5 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors } from "@/constants/styles";
 import { StyleSheet, View } from "react-native";
 import { ComparisonBio } from "./ComparisonBio";
 import { FighterBio } from "./FighterBio";
@@ -52,6 +52,8 @@ export default function MatchupComparison({
   secondFighterName,
   firstFighterClass,
   secondFighterClass,
+  firstFighterFlag,
+  secondFighterFlag,
   firstFighterCountry,
   secondFighterCountry,
   firstFighterRecord,
@@ -74,7 +76,7 @@ export default function MatchupComparison({
             stanceImage={secondFighterStance}
             name={secondFighterName}
             record={secondFighterRecord}
-            flag={secondFighterClass}
+            flag={secondFighterFlag}
             isWinner={secondFighterIsWinner}
             isChampion={secondFighterIsChampion}
             isDark={isDark}
@@ -107,7 +109,7 @@ export default function MatchupComparison({
             stanceImage={firstFighterStance}
             name={firstFighterName}
             record={firstFighterRecord}
-            flag={firstFighterClass}
+            flag={firstFighterFlag}
             isWinner={firstFighterIsWinner}
             isChampion={firstFighterIsChampion}
             isDark={isDark}
@@ -119,32 +121,24 @@ export default function MatchupComparison({
 }
 export const matchupComparisonStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {},
-    center: { alignItems: "center", justifyContent: "center", padding: 16 },
+    container: {
+      width: "100%",
+    },
     wrapper: {
-      padding: 12,
-      justifyContent: "space-around",
+      width: "100%",
+      padding: 10,
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.transparentBackground
+        : Colors.light.transparentBackground,
     },
     fightersContainer: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-      alignItems: "center",
-      flex: 1,
-    },
-    headlineContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headlineText: {
-      position: "absolute",
       width: "100%",
-      top: 0,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
-      textAlign: "center",
+      flexDirection: "row",
+      alignItems: "stretch",
+      justifyContent: "center",
+      gap: 8,
     },
   });

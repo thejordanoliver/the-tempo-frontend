@@ -9,7 +9,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { stackedGameCardStyles } from "styles/GamecardStyles/StackedGameCardStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballStackedGameCard({
@@ -32,25 +37,10 @@ export default function BasketballStackedGameCard({
     });
   };
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
-
   const gameDate = safeDate(game.date);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -94,9 +84,7 @@ export default function BasketballStackedGameCard({
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
 
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headlineText = game?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = game?.headline || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes(

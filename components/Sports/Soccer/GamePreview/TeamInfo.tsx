@@ -5,7 +5,7 @@ type TeamInfoProps = {
   name: string | undefined;
   rank: number | null | undefined;
   score?: number;
-  opponentScore?: number;
+  winner?: boolean;
   record?: string;
   side: "home" | "away";
   gameStatusDescription: string;
@@ -17,7 +17,7 @@ export default function TeamInfo({
   name,
   rank,
   score,
-  opponentScore,
+  winner,
   record,
   gameStatusDescription,
   state,
@@ -26,6 +26,9 @@ export default function TeamInfo({
 }: TeamInfoProps) {
   const styles = TeamInfoStyle;
 
+  /* ================================
+     GAME STATUS FLAGS
+  ================================= */
   const isFinal = state === "post";
   const isScheduled = state === "pre";
   const isSuspended = gameStatusDescription === "Suspended";
@@ -33,42 +36,23 @@ export default function TeamInfo({
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
+  const isInactiveGame =
+    isDelayed || isPostponed || isCanceled || isSuspended || isForfeited;
+  const displayRecord = isScheduled || isInactiveGame;
 
-  const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
+  const scoreOpacity = displayRecord ? 1 : winner ? 1 : 0.4;
 
-  const scoreOpacity =
-    !isFinal || isScheduled || isDelayed || isPostponed
-      ? 1
-      : isWinner
-        ? 1
-        : 0.4;
-
-  // --- Detect record vs score → dynamic font size ---
-  const isRecord =
-    isScheduled ||
-    isDelayed ||
-    isPostponed ||
-    isForfeited ||
-    isCanceled ||
-    isSuspended;
-  const valueFontSize = isRecord ? 22 : 36;
+  const valueFontSize = displayRecord ? 22 : 36;
 
   // --- Value shown ---
-  const displayValue = isRecord
+  const displayValue = displayRecord
     ? (record ?? "-")
     : score !== undefined
       ? score
       : "-";
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          justifyContent: side === "home" ? "flex-end" : "flex-start",
-        },
-      ]}
-    >
+    <View style={styles.container}>
       {/* ─────────── HOME SCORE (RIGHT) ─────────── */}
       {side === "home" && (
         <View style={styles.scoreWrapper}>

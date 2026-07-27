@@ -1,9 +1,37 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { TeamInjury } from "../FootballHooks/useFootballGameDetails";
 
-/* ---------------------------------- */
-/* Types                              */
-/* ---------------------------------- */
+type Team = {
+  id: string;
+  guid: string;
+  uid: string;
+  location: string;
+  name: string;
+  fullName: string;
+  shortName: string;
+  code: string;
+  homeAway: string;
+  score: number;
+  winner: boolean;
+  record: string;
+  records: [
+    {
+      type: "total";
+      summary: string;
+      displayValue: string;
+    },
+    {
+      type: "points";
+      summary: string;
+      displayValue: string;
+    },
+  ];
+  possession: boolean;
+  hits: number | null;
+  errors: number | null;
+  rank: number | null;
+};
 
 export type Venue = {
   id: string;
@@ -58,7 +86,7 @@ type TeamFouls = {
   teamFoulsCurrent?: number | null;
 };
 
-type TeamStat = {
+export type TeamStat = {
   name: string;
   displayValue: string;
 };
@@ -119,7 +147,7 @@ export type PlayerStatsByTeam = {
   totalsByKey: Record<string, string | number | null>;
   athletes: PlayerStatAthlete[];
 
-  // New full grouped stats
+  // Full grouped stats
   statBlocks: PlayerStatBlock[];
   statBlocksByType: Record<string, PlayerStatBlock>;
 
@@ -129,27 +157,29 @@ export type PlayerStatsByTeam = {
 };
 
 export type Score = {
-  gameId?: string;
-  home: { total: number };
-  away: { total: number };
-
+  gameId: string;
+  uid: string;
+  date: string;
+  lastUpdated?: number;
+  status: {
+    id: string;
+    name: "STATUS_SCHEDULED" | "STATUS_FINAL";
+    state: "pre" | "in" | "post";
+    completed: boolean;
+    gameStatusDescription: string;
+    gameStatusDetail: string;
+    shortDetail: string;
+    clock: number | null;
+    displayClock: string | null;
+    period: number | null;
+  };
+  home: Team;
+  away: Team;
   periodScores?: {
     period: number;
     home: number;
     away: number;
   }[];
-
-  homeTeam: string;
-  awayTeam: string;
-
-  status: "canceled" | "scheduled" | "in_play" | "final";
-
-  gameStatusDescription: string;
-  gameStatusDetail: string;
-  statusText?: string;
-  displayClock?: string | null;
-  period?: number | null;
-  lastUpdated?: number;
 
   boxScore?: any | null;
 
@@ -207,7 +237,7 @@ export type GameDetails = {
   broadcasts?: string[];
 
   officials: any[];
-  injuries: any[];
+  injuries: TeamInjury[];
   highlights: any[];
   neutralSite: boolean;
   headline?: string | null;
@@ -231,18 +261,23 @@ export const useBaseballGameDetails = (
   league: string | undefined,
   gameId?: string | number | null,
 ) => {
-  const [score, setScore] = useState<Score | undefined>();
-  const [details, setDetails] = useState<GameDetails | undefined>();
+  /*
+   * Use null as the explicit empty state.
+   * score and details will never be undefined.
+   */
+  const [score, setScore] = useState<Score | null>(null);
+  const [details, setDetails] = useState<GameDetails | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const skipFetch = !league || !gameId;
 
   /* ---------------------------------- */
-  /* Fetch from /api/baseball/details    */
+  /* Fetch from /api/baseball/details   */
   /* ---------------------------------- */
 
   const fetchDetails = useCallback(
@@ -250,7 +285,10 @@ export const useBaseballGameDetails = (
       if (skipFetch) return;
 
       try {
-        if (!silent) setLoading(true);
+        if (!silent) {
+          setLoading(true);
+        }
+
         setWarning(null);
 
         const params: Record<string, string | number | undefined> = {
@@ -262,22 +300,46 @@ export const useBaseballGameDetails = (
           params,
         });
 
-        if (data?.score) {
-          setScore(data.score);
-          setDetails(data.details);
-          setLastRefresh(new Date());
-        } else {
+        if (!data?.score) {
+          setScore(null);
+          setDetails(null);
           setWarning("Game data unavailable");
+          return;
         }
+
+        setScore(data.score as Score);
+        setDetails((data.details ?? null) as GameDetails | null);
+        setLastRefresh(new Date());
       } catch (err: any) {
         console.warn(`[${league}] game details fetch failed`, err);
-        setWarning(err?.message ?? "Unable to refresh game data");
+
+        setWarning(
+          err?.response?.data?.message ??
+            err?.message ??
+            "Unable to refresh game data",
+        );
       } finally {
-        if (!silent) setLoading(false);
+        if (!silent) {
+          setLoading(false);
+        }
       }
     },
     [league, gameId, skipFetch],
   );
+
+  /* ---------------------------------- */
+  /* Reset when identifiers are missing */
+  /* ---------------------------------- */
+
+  useEffect(() => {
+    if (!skipFetch) return;
+
+    setScore(null);
+    setDetails(null);
+    setWarning(null);
+    setLastRefresh(null);
+    setLoading(false);
+  }, [skipFetch]);
 
   /* ---------------------------------- */
   /* Initial fetch                      */
@@ -285,26 +347,27 @@ export const useBaseballGameDetails = (
 
   useEffect(() => {
     if (skipFetch) return;
-    fetchDetails(true);
+
+    void fetchDetails(true);
   }, [skipFetch, fetchDetails]);
 
   /* ---------------------------------- */
-  /* Poll LIVE games only               */
+  /* Poll live games only               */
   /* ---------------------------------- */
 
   useEffect(() => {
-    if (!score) return;
-
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
 
-    if (score.status !== "in_play") return;
+    if (score?.status.state !== "in") {
+      return;
+    }
 
     intervalRef.current = setInterval(() => {
-      fetchDetails(true);
-    }, 60000);
+      void fetchDetails(true);
+    }, 60_000);
 
     return () => {
       if (intervalRef.current) {
@@ -312,14 +375,16 @@ export const useBaseballGameDetails = (
         intervalRef.current = null;
       }
     };
-  }, [score?.status, score, fetchDetails]);
+  }, [score?.status.state, fetchDetails]);
 
   /* ---------------------------------- */
   /* Manual refresh                     */
   /* ---------------------------------- */
 
   const refresh = useCallback(() => {
-    if (!skipFetch) fetchDetails(false);
+    if (skipFetch) return;
+
+    void fetchDetails(false);
   }, [fetchDetails, skipFetch]);
 
   return {
@@ -328,17 +393,20 @@ export const useBaseballGameDetails = (
     loading,
     warning,
     refresh,
-    isLive: score?.status === "in_play",
+
+    isLive: score?.status.state === "in",
     lastRefresh,
 
-    battingStats: score?.playerStats?.map((team) => ({
-      team: team.team,
-      batting: team.batting,
-    })),
+    battingStats:
+      score?.playerStats.map((team) => ({
+        team: team.team,
+        batting: team.batting,
+      })) ?? [],
 
-    pitchingStats: score?.playerStats?.map((team) => ({
-      team: team.team,
-      pitching: team.pitching,
-    })),
+    pitchingStats:
+      score?.playerStats.map((team) => ({
+        team: team.team,
+        pitching: team.pitching,
+      })) ?? [],
   };
 };

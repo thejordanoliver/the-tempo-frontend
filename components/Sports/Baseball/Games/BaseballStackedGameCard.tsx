@@ -1,4 +1,10 @@
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -28,16 +34,10 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
     });
   };
 
-  const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -96,7 +96,8 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const homeRank = game.home.homeRank;
   const awayRank = game.away.awayRank;
   const isTopInning = gameStatusDetail.includes("Top");
-  const headline = game.headline;
+  const isBottomInning = gameStatusDetail.includes("Bot");
+  const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (
@@ -151,11 +152,20 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
       return (
         <View>
           <View style={styles.outsContainer}>
-            <Ionicons
-              size={10}
-              name={isTopInning ? "caret-up" : "caret-down"}
-              color={isDark ? Colors.white : Colors.black}
-            />
+            {isTopInning && (
+              <Ionicons
+                name={"caret-up"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
+            {isBottomInning && (
+              <Ionicons
+                name={"caret-down"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
             <Text style={styles.period}>{gameStatusDetail}</Text>
           </View>
           <View style={styles.basesContainer}>

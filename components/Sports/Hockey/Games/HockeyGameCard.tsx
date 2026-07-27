@@ -1,4 +1,10 @@
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -24,16 +30,10 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
     });
   };
 
-  const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -51,6 +51,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
 
+  const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
@@ -64,7 +65,6 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const period = formatPeriod({ period: game.status.period, isNHL: true });
-  const headlineText = game?.headline;
   const homeScore = game?.home?.score ?? 0;
   const awayScore = game?.away?.score ?? 0;
   const homeRecord = game?.home?.record ?? "0-0";

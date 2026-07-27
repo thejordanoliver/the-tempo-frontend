@@ -10,8 +10,8 @@ type Props = {
   awayName: string;
   awayLogo: any;
   homeLogo: any;
-  homeRank?: number;
-  awayRank?: number | null;
+  homeRank: number| null;
+  awayRank: number | null;
   homeScore: number;
   awayScore: number;
   homeBonusState?: string | null;

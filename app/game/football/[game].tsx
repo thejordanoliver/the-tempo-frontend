@@ -1,5 +1,6 @@
+import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
-import TeamInjuries from "@/components/Sports/Football/GameDetails/InjuryReport/TeamInjuries";
+import GameTeamStats from "@/components/Sports/Football/GameDetails/GameTeamStats";
 import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
@@ -32,7 +33,13 @@ import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getFootballSeason,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 
 type RouteParams = {
   game?: string | string[];
@@ -78,10 +85,6 @@ function parseGameParam(value?: string | string[]): FootballGame | undefined {
   }
 }
 
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
-}
-
 export default function GameDetailsScreen(
   props: Partial<FootballGameCardProps> = {},
 ) {
@@ -106,21 +109,11 @@ export default function GameDetailsScreen(
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
   }, [game?.date]);
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
 
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id ?? 0;
   const home = game?.home;
@@ -178,9 +171,9 @@ export default function GameDetailsScreen(
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
 
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const state = game?.status.state;
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
+  const state = score?.status.state;
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -188,12 +181,11 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-  const clock = score?.displayClock ?? "0:00";
-  const period = formatPeriod({ period: game?.status.period });
+  const clock = score?.status.displayClock ?? "0:00";
+  const period = formatPeriod({ period: score?.status.period });
+  
   const redzone = score?.possession?.isRedZone;
-  const headlineText = details?.headline;
-  const holidayLabel = getHolidayLabel(gameDateObj);
-  const headline = headlineText ?? holidayLabel;
+  const headline = details?.headline ?? holidayLabel;
   const broadcast = details?.broadcast ?? "";
   const currentDrives = score?.drives?.current;
   const previousDrives = score?.drives?.previous;
@@ -208,10 +200,11 @@ export default function GameDetailsScreen(
   const awayRecord = details?.records?.away?.overall;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-  const homeScore = score?.home.total ?? 0;
-  const awayScore = score?.away.total ?? 0;
+  const homeScore = score?.home.score ?? 0;
+  const awayScore = score?.away.score ?? 0;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
+  const isTie = homeScore === awayScore;
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
@@ -225,6 +218,7 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights;
   const injuries = details?.injuries ?? [];
   const leaders = score?.leaders;
+  const teamStats = score?.teamStats ?? [];
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "football", id: venueId });
@@ -325,6 +319,7 @@ export default function GameDetailsScreen(
           homeScore={homeScore}
           homeWins={homeWins}
           awayWins={awayWins}
+          isTie={isTie}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
           homeTimeouts={homeTimeouts}
@@ -387,6 +382,18 @@ export default function GameDetailsScreen(
               awayChance={awayChance}
               awayColor={awayColor}
               size={180}
+              isDark={isDark}
+              state={state}
+            />
+
+            <GameTeamStats
+              teamStats={teamStats}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              homeColor={homeColor}
+              awayColor={awayColor}
               isDark={isDark}
               state={state}
             />
@@ -457,8 +464,9 @@ export default function GameDetailsScreen(
               awayCode={awayCode}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
-              league={LEAGUE}
               isDark={isDark}
+              state={state}
+              league={LEAGUE}
             />
 
             <Officials officials={officials} isDark={isDark} state={state} />

@@ -28,12 +28,16 @@ type Props = {
   state?: string;
 };
 
-type TeamIds = {
+type TeamIdConfig = {
   localId: string | null;
   espnId: string | null;
+  label: string;
+  logo: any;
 };
 
-const normalizeId = (id?: number | string | null): string | null => {
+const normalizeId = (
+  id?: number | string | null,
+): string | null => {
   if (id === null || id === undefined || id === "") {
     return null;
   }
@@ -58,29 +62,49 @@ export default function TeamScoringSummary({
   const styles = TeamScoringSummaryStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
+  const [selectedTab, setSelectedTab] =
+    useState<HomeAwayTabValue>("all");
 
   const plays = useMemo(() => {
     return Array.isArray(scoringPlays) ? scoringPlays : [];
   }, [scoringPlays]);
 
-  const teamIds = useMemo<Record<HomeAwayTabValue, TeamIds>>(
+  const teamIds = useMemo<
+    Record<Exclude<HomeAwayTabValue, "all">, TeamIdConfig>
+  >(
     () => ({
       away: {
         localId: normalizeId(awayId),
-        espnId: normalizeId(awayTeamEspnId ?? awayId),
+        espnId: normalizeId(awayTeamEspnId),
+        label: awayCode?.trim() || "Away",
+        logo: awayLogo,
       },
       home: {
         localId: normalizeId(homeId),
-        espnId: normalizeId(homeTeamEspnId ?? homeId),
+        espnId: normalizeId(homeTeamEspnId),
+        label: homeCode?.trim() || "Home",
+        logo: homeLogo,
       },
     }),
-    [awayId, awayTeamEspnId, homeId, homeTeamEspnId],
+    [
+      awayCode,
+      awayId,
+      awayLogo,
+      awayTeamEspnId,
+      homeCode,
+      homeId,
+      homeLogo,
+      homeTeamEspnId,
+    ],
   );
 
-  const selectedTeamIds = teamIds[selectedTab];
+  const filteredPlays = useMemo(() => {
+    if (selectedTab === "all") {
+      return plays;
+    }
 
-  const teamPlays = useMemo(() => {
+    const selectedTeam = teamIds[selectedTab];
+
     return plays.filter((play) => {
       const playTeamId = normalizeId(play.team?.id);
 
@@ -89,15 +113,18 @@ export default function TeamScoringSummary({
       }
 
       return (
-        playTeamId === selectedTeamIds.localId ||
-        playTeamId === selectedTeamIds.espnId
+        playTeamId === selectedTeam.localId ||
+        playTeamId === selectedTeam.espnId
       );
     });
-  }, [plays, selectedTeamIds]);
+  }, [plays, selectedTab, teamIds]);
 
   const normalizedState = state?.toLowerCase();
 
-  if (normalizedState !== "post" && normalizedState !== "in") {
+  if (
+    normalizedState !== "post" &&
+    normalizedState !== "in"
+  ) {
     return null;
   }
 
@@ -105,101 +132,95 @@ export default function TeamScoringSummary({
     return null;
   }
 
-  if (!loading && teamPlays.length === 0) {
-    return (
-      <View>
-        <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
-        <View style={styles.wrapper}>
-          <HomeAwayTabBar
-            awayTeam={{
-              id: awayId,
-              name: awayCode?.trim() || "Away",
-
-              logo: awayLogo,
-            }}
-            homeTeam={{
-              id: homeId,
-              name: homeCode?.trim() || "Home",
-
-              logo: homeLogo,
-            }}
-            selected={selectedTab}
-            onTabPress={setSelectedTab}
-            isDark={isDark}
-          />
-
-          <View style={global.emptyContainer}>
-            <Text style={global.emptyText}>
-              No scoring plays for this team.
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
   return (
     <View>
-      <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
+      <HeadingTwo isDark={isDark}>
+        Scoring Summary
+      </HeadingTwo>
 
       <View style={styles.wrapper}>
         <HomeAwayTabBar
           awayTeam={{
             id: awayId,
             name: awayCode?.trim() || "Away",
-
             logo: awayLogo,
           }}
           homeTeam={{
             id: homeId,
             name: homeCode?.trim() || "Home",
-
             logo: homeLogo,
           }}
           selected={selectedTab}
           onTabPress={setSelectedTab}
           isDark={isDark}
+          showAllTab
         />
 
-        <View style={styles.listContainer}>
-          {teamPlays.map((play, index) => {
-            const period = formatPeriod({
-              period: play.period?.number,
-            });
+        {!loading && filteredPlays.length === 0 ? (
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyText}>
+              {selectedTab === "all"
+                ? "No scoring plays available."
+                : "No scoring plays for this team."}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.listContainer}>
+            {filteredPlays.map((play, index) => {
+              const period = formatPeriod({
+                period: play.period?.number,
+              });
 
-            const clock = play.clock?.displayValue;
-            const isLastPlay = index === teamPlays.length - 1;
+              const clock = play.clock?.displayValue;
+              const isLastPlay =
+                index === filteredPlays.length - 1;
 
-            return (
-              <View
-                key={`${play.id}-${index}`}
-                style={[styles.playRow, isLastPlay && styles.lastPlayRow]}
-              >
-                <View style={styles.status}>
-                  <Text numberOfLines={1} style={styles.statusText}>
-                    {period}
-                  </Text>
-
-                  {!!clock && (
-                    <Text numberOfLines={1} style={styles.clockText}>
-                      {clock}
+              return (
+                <View
+                  key={`${play.id ?? "scoring-play"}-${index}`}
+                  style={[
+                    styles.playRow,
+                    isLastPlay && styles.lastPlayRow,
+                  ]}
+                >
+                  <View style={styles.status}>
+                    <Text
+                      numberOfLines={1}
+                      style={styles.statusText}
+                    >
+                      {period}
                     </Text>
-                  )}
-                </View>
 
-                <View style={styles.play}>
-                  <Text style={styles.playText}>{play.text}</Text>
-                </View>
+                    {!!clock && (
+                      <Text
+                        numberOfLines={1}
+                        style={styles.clockText}
+                      >
+                        {clock}
+                      </Text>
+                    )}
+                  </View>
 
-                <View style={styles.score}>
-                  <Text numberOfLines={1} style={styles.scoreText}>
-                    {play.awayScore ?? 0}-{play.homeScore ?? 0}
-                  </Text>
+                  <View style={styles.play}>
+                    <Text style={styles.playText}>
+                      {play.text}
+                    </Text>
+                  </View>
+
+                  <View style={styles.score}>
+                    <Text
+                      numberOfLines={1}
+                      style={styles.scoreText}
+                    >
+                      {play.awayScore ?? 0}-
+                      {play.homeScore ?? 0}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            );
-          })}
-        </View>
+              );
+            })}
+          </View>
+        )}
       </View>
     </View>
   );
@@ -210,9 +231,13 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     wrapper: {
       overflow: "hidden",
       borderWidth: 1,
-      borderColor: isDark ? Colors.midTone : Colors.lightGray,
+      borderColor: isDark
+        ? Colors.midTone
+        : Colors.lightGray,
       borderRadius: 8,
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark
+        ? Colors.black
+        : Colors.white,
     },
 
     listContainer: {
@@ -227,7 +252,9 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       paddingVertical: 14,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.midTone : Colors.lightGray,
+      borderBottomColor: isDark
+        ? Colors.midTone
+        : Colors.lightGray,
     },
 
     lastPlayRow: {
@@ -253,7 +280,9 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       fontSize: 14,
       lineHeight: 16,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark ? Colors.midTone : Colors.darkGray,
+      color: isDark
+        ? Colors.midTone
+        : Colors.darkGray,
     },
 
     play: {

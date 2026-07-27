@@ -1,26 +1,46 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { StyleSheet, Text, View } from "react-native";
 
+type ComparisonValue = number | string | null | undefined;
+
 type ComparisonBioProps = {
-  firstFighterHeight: string | null;
-  secondFighterHeight: string | null;
-  firstFighterAge: number | string | null;
-  secondFighterAge: number | string | null;
-  firstFighterWeight: number | string | null;
-  secondFighterWeight: number | string | null;
-  firstFighterReach: string | null;
-  secondFighterReach: string | null;
+  firstFighterHeight: ComparisonValue;
+  secondFighterHeight: ComparisonValue;
+  firstFighterAge: ComparisonValue;
+  secondFighterAge: ComparisonValue;
+  firstFighterWeight: ComparisonValue;
+  secondFighterWeight: ComparisonValue;
+  firstFighterReach: ComparisonValue;
+  secondFighterReach: ComparisonValue;
   firstFighterIsWinner: boolean;
   secondFighterIsWinner: boolean;
-  firstFighterRecord: string;
-  secondFighterRecord: string;
-  firstFighterClass: string;
-  secondFighterClass: string;
-  firstFighterCountry: string | null;
-  secondFighterCountry: string | null;
+  firstFighterRecord: ComparisonValue;
+  secondFighterRecord: ComparisonValue;
+  firstFighterClass: ComparisonValue;
+  secondFighterClass: ComparisonValue;
+  firstFighterCountry: ComparisonValue;
+  secondFighterCountry: ComparisonValue;
   firstFighterIsChampion: boolean;
   secondFighterIsChampion: boolean | null;
   isDark: boolean;
+};
+
+type ComparisonRow = {
+  label: string;
+  leftValue: ComparisonValue;
+  rightValue: ComparisonValue;
+};
+
+const FALLBACK_VALUE = "—";
+
+const formatComparisonValue = (value: ComparisonValue) => {
+  if (value === null || value === undefined) return FALLBACK_VALUE;
+
+  const text = String(value).trim();
+
+  if (!text || text.toLowerCase() === "n/a") return FALLBACK_VALUE;
+
+  return text;
 };
 
 export function ComparisonBio({
@@ -38,42 +58,116 @@ export function ComparisonBio({
   secondFighterCountry,
   firstFighterRecord,
   secondFighterRecord,
+  firstFighterIsWinner,
+  secondFighterIsWinner,
+  firstFighterIsChampion,
+  secondFighterIsChampion,
   isDark,
 }: ComparisonBioProps) {
   const styles = comparisonBioStyles(isDark);
 
+  const rows: ComparisonRow[] = [
+    {
+      label: "Class",
+      leftValue: secondFighterClass,
+      rightValue: firstFighterClass,
+    },
+    {
+      label: "Record",
+      leftValue: secondFighterRecord,
+      rightValue: firstFighterRecord,
+    },
+    {
+      label: "Height",
+      leftValue: secondFighterHeight,
+      rightValue: firstFighterHeight,
+    },
+    {
+      label: "Weight",
+      leftValue: secondFighterWeight,
+      rightValue: firstFighterWeight,
+    },
+    {
+      label: "Reach",
+      leftValue: secondFighterReach,
+      rightValue: firstFighterReach,
+    },
+    {
+      label: "Age",
+      leftValue: secondFighterAge,
+      rightValue: firstFighterAge,
+    },
+    {
+      label: "Country",
+      leftValue: secondFighterCountry,
+      rightValue: firstFighterCountry,
+    },
+  ];
+
+  const renderValue = (
+    value: ComparisonValue,
+    isWinner: boolean,
+    isChampion?: boolean | null,
+  ) => {
+    return (
+      <View
+        style={[
+          styles.valueCell,
+          isWinner && styles.winnerValueCell,
+          isChampion && styles.championValueCell,
+        ]}
+      >
+        <Text
+          style={[
+            styles.categoryText,
+            isWinner && styles.winnerValueText,
+            isChampion && styles.championValueText,
+          ]}
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.72}
+        >
+          {formatComparisonValue(value)}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <View style={styles.leftColumn}>
-          <Text style={styles.categoryText}>{secondFighterClass}</Text>
-          <Text style={styles.categoryText}>{secondFighterRecord}</Text>
-          <Text style={styles.categoryText}>{secondFighterHeight}</Text>
-          <Text style={styles.categoryText}>{secondFighterWeight}</Text>
-          <Text style={styles.categoryText}>{secondFighterReach}</Text>
-          <Text style={styles.categoryText}>{secondFighterAge}</Text>
-          <Text style={styles.categoryText}>{secondFighterCountry}</Text>
-        </View>
+        {rows.map((row, index) => (
+          <View
+            key={row.label}
+            style={[
+              styles.row,
+              index === rows.length - 1 && styles.lastRow,
+            ]}
+          >
+            {renderValue(
+              row.leftValue,
+              secondFighterIsWinner,
+              secondFighterIsChampion,
+            )}
 
-        <View style={styles.centerColumn}>
-          <Text style={styles.categoryTitle}>Class</Text>
-          <Text style={styles.categoryTitle}>Record</Text>
-          <Text style={styles.categoryTitle}>Height</Text>
-          <Text style={styles.categoryTitle}>Weight</Text>
-          <Text style={styles.categoryTitle}>Reach</Text>
-          <Text style={styles.categoryTitle}>Age</Text>
-          <Text style={styles.categoryTitle}>Country</Text>
-        </View>
+            <View style={styles.centerCell}>
+              <Text
+                style={styles.categoryTitle}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.82}
+              >
+                {row.label}
+              </Text>
+            </View>
 
-        <View style={styles.rightColumn}>
-          <Text style={styles.categoryText}>{firstFighterClass}</Text>
-          <Text style={styles.categoryText}>{firstFighterRecord}</Text>
-          <Text style={styles.categoryText}>{firstFighterHeight}</Text>
-          <Text style={styles.categoryText}>{firstFighterWeight}</Text>
-          <Text style={styles.categoryText}>{firstFighterReach}</Text>
-          <Text style={styles.categoryText}>{firstFighterAge}</Text>
-          <Text style={styles.categoryText}>{firstFighterCountry}</Text>
-        </View>
+            {renderValue(
+              row.rightValue,
+              firstFighterIsWinner,
+              firstFighterIsChampion,
+            )}
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -82,43 +176,72 @@ export function ComparisonBio({
 export const comparisonBioStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      alignItems: "center",
-      justifyContent: "space-around",
       flex: 1,
+      minWidth: 0,
+      alignItems: "stretch",
+      justifyContent: "center",
     },
     wrapper: {
+      width: "100%",
+      minWidth: 0,
+    },
+    row: {
+      minHeight: 34,
       flexDirection: "row",
       alignItems: "center",
-      flex: 1,
+      borderBottomColor: isDark
+        ? Colors.dark.transparentWhite
+        : Colors.transparentBlack,
+      borderBottomWidth: StyleSheet.hairlineWidth,
     },
-    centerColumn: {
-      flex: 0.8,
+    lastRow: {
+      borderBottomWidth: 0,
+    },
+    valueCell: {
+      flex: 1,
+      minWidth: 0,
+      minHeight: 34,
       alignItems: "center",
       justifyContent: "center",
-      gap: 8,
+      paddingHorizontal: 4,
+      paddingVertical: 4,
     },
-    leftColumn: {
-      flex: 1,
+    winnerValueCell: {
+      backgroundColor: isDark
+        ? Colors.dark.transparentGreen
+        : Colors.light.transparentGreen,
+    },
+    championValueCell: {
+      borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
+      borderWidth: StyleSheet.hairlineWidth,
+    },
+    centerCell: {
+      width: 62,
+      minHeight: 34,
       alignItems: "center",
       justifyContent: "center",
-      gap: 8,
-    },
-    rightColumn: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
+      paddingHorizontal: 4,
     },
     categoryTitle: {
       fontFamily: Fonts.OSBOLD,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
+      textAlign: "center",
     },
     categoryText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSLIGHT,
-      fontSize: 12,
-      textTransform: "uppercase",
+      textAlign: "center",
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 11,
+      lineHeight: 15,
+    },
+    winnerValueText: {
+      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
+      fontFamily: Fonts.OSBOLD,
+    },
+    championValueText: {
+      color: isDark ? Colors.dark.yellow : Colors.light.gold,
+      fontFamily: Fonts.OSBOLD,
     },
   });

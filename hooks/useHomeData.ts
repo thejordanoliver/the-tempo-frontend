@@ -17,15 +17,13 @@ import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const getStartOfToday = () => dayjs().startOf("day").toDate();
+
 export function useHomeData(selectedTab: "scores" | "news") {
   const currentFootballSeason = getFootballSeason();
   const { favorites } = useFavoriteTeamsContext();
-
   const [refreshing, setRefreshing] = useState(false);
-
-  const [selectedDate, setSelectedDate] = useState(() =>
-    dayjs().startOf("day").toDate(),
-  );
+  const [selectedDate, setSelectedDate] = useState(getStartOfToday);
 
   const {
     articles,
@@ -521,6 +519,17 @@ export function useHomeData(selectedTab: "scores" | "news") {
     setRefreshing(true);
 
     try {
+      const today = getStartOfToday();
+      const shouldUpdateSelectedDate = !dayjs(selectedDate).isSame(today, "day");
+
+      if (shouldUpdateSelectedDate) {
+        setSelectedDate(today);
+
+        if (selectedTab === "scores") {
+          return;
+        }
+      }
+
       if (selectedTab === "scores") {
         await Promise.allSettled([
           refreshNBAGames(),

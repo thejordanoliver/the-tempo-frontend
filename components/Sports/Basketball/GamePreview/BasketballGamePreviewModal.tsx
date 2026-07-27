@@ -14,7 +14,12 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -53,26 +58,12 @@ export default function GamePreviewModal({
     }
   }, [visible]);
 
-  function isValidDate(date: Date) {
-    return !Number.isNaN(date.getTime());
-  }
-
-  const gameDateObj = game?.date ? new Date(game.date) : null;
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDateObj = new Date(game.date);
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game.headline || holidayLabel;
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "cbb";
@@ -127,9 +118,6 @@ export default function GamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const headlineText = game?.headline;
-  const holidayLabel = getHolidayLabel(gameDateObj);
-  const headline = headlineText || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes(
@@ -191,7 +179,7 @@ export default function GamePreviewModal({
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =

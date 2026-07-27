@@ -1,23 +1,25 @@
-import { Image, Text, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 
 type TeamInfoProps = {
-  logo: any;
+  logo: ImageSourcePropType;
   side: "home" | "away";
   name: string | undefined;
   rank: number;
   score?: number;
-  opponentScore?: number;
+  winner?: boolean;
   record?: string;
   gameStatusDescription: string;
+  state: string;
 };
 
 export default function TeamInfo({
   logo,
   name,
+  state,
   rank,
   score,
-  opponentScore,
+  winner,
   record,
   gameStatusDescription,
   side,
@@ -27,21 +29,24 @@ export default function TeamInfo({
   /* ================================
      GAME STATUS FLAGS
   ================================= */
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
+  const isFinal = state === "post";
+  const isScheduled = state === "pre";
+  const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isInactiveGame = isDelayed || isPostponed || isCanceled;
-  const isRecordDisplay = isScheduled || isInactiveGame;
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isInactiveGame =
+    isDelayed || isPostponed || isCanceled || isSuspended || isForfeited;
+  const displayRecord = isScheduled || isInactiveGame;
 
   /* ================================
      WINNER / SCORE LOGIC
   ================================= */
-  const isWinner = isFinal && (score ?? 0) > (opponentScore ?? 0);
-  const scoreOpacity = isFinal && !isWinner ? 0.4 : 1;
-  const valueFontSize = isRecordDisplay ? 22 : 36;
-  const displayValue = isRecordDisplay ? (record ?? "-") : (score ?? "-");
+
+  const scoreOpacity = isFinal && !winner ? 0.4 : 1;
+  const valueFontSize = displayRecord ? 22 : 36;
+  const displayValue = displayRecord ? (record ?? "-") : (score ?? "-");
 
   const ScoreText = ({
     value,
@@ -65,14 +70,7 @@ export default function TeamInfo({
   const isAway = side === "away";
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          justifyContent: isHome ? "flex-end" : "flex-start",
-        },
-      ]}
-    >
+    <View style={styles.container}>
       {/* HOME SCORE */}
       {isHome && (
         <ScoreText

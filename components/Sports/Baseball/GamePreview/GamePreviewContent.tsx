@@ -1,3 +1,7 @@
+import {
+  PlayerStatsByTeam,
+  TeamStat,
+} from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
@@ -9,16 +13,21 @@ import {
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import BoxScore from "../GameDetails/BoxScore";
+import GameTeamStats from "../GameDetails/GameTeamStats";
 import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
+import { Highlight } from "@/types/types";
 
 type GamePreviewContentProps = {
   homeId: number;
   homeColor: string;
   homeCode: string;
+  homeName: string;
   homeLogo: any;
   awayId: number;
   awayColor: string;
   awayCode: string;
+  awayName: string;
   awayLogo: any;
   homeChance: number;
   awayChance: number;
@@ -28,12 +37,17 @@ type GamePreviewContentProps = {
   };
   homeLastGames: { games: any[] };
   awayLastGames: { games: any[] };
-  homeHits: number;
-  awayHits: number;
-  homeRuns: number;
-  awayRuns: number;
+  homeHits: number | null;
+  awayHits: number | null;
+  homeRuns: number | null;
+  awayRuns: number | null;
   awayErrors: number;
   homeErrors: number;
+  teamStats: {
+    team: any;
+    stats: TeamStat[];
+  }[];
+  playerStats: PlayerStatsByTeam[];
   officials: any[];
   injuries: any[];
   teamPlayersMap: Record<string, any[]>;
@@ -49,6 +63,7 @@ type GamePreviewContentProps = {
   league: string;
   state: string;
   isChampionship: boolean;
+  highlights: Highlight[];
   isMLB: boolean;
 };
 
@@ -56,10 +71,12 @@ export default function GamePreviewContent({
   homeId,
   homeColor,
   homeCode,
+  homeName,
   homeLogo,
   awayId,
   awayColor,
   awayCode,
+  awayName,
   awayLogo,
   homeLastGames,
   awayLastGames,
@@ -70,6 +87,8 @@ export default function GamePreviewContent({
   awayRuns,
   awayErrors,
   homeErrors,
+  teamStats,
+  playerStats,
   officials,
   injuries,
   teamPlayersMap,
@@ -124,6 +143,30 @@ export default function GamePreviewContent({
           league={league}
         />
 
+        <GameTeamStats
+          stats={teamStats}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          awayColor={awayColor}
+          homeColor={homeColor}
+          isDark
+          state={state}
+        />
+
+        <BoxScore
+          awayTeamId={awayId}
+          homeTeamId={homeId}
+          awayName={awayName}
+          homeName={homeName}
+          awayLogo={awayLogo}
+          homeLogo={homeLogo}
+          playerStats={playerStats}
+          state={state}
+          isDark
+        />
+
         <Officials officials={officials ?? []} isDark state={state} />
 
         <LastFiveGames
@@ -145,6 +188,12 @@ export default function GamePreviewContent({
         <TeamInjuries
           injuries={injuries}
           teamPlayersMap={teamPlayersMap}
+          awayId={awayId}
+          homeId={homeId}
+          homeCode={homeCode}
+          homeLogo={homeLogo}
+          awayCode={awayCode}
+          awayLogo={awayLogo}
           league={isMLB}
           isDark
         />

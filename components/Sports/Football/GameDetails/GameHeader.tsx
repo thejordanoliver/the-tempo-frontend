@@ -23,6 +23,7 @@ type GameHeaderProps = {
   homePossesion: boolean | null;
   homeWins: boolean | null;
   awayWins: boolean | null;
+  isTie: boolean | null;
   isDark: boolean;
   homeRecord: string | undefined;
   awayRecord: string | undefined;
@@ -47,6 +48,7 @@ export default function GameHeader({
   awayRank,
   homeWins,
   awayWins,
+  isTie,
   homeScore,
   awayScore,
   awayPossesion,
@@ -88,6 +90,7 @@ export default function GameHeader({
           score={awayScore}
           record={awayRecord}
           isWinner={awayWins}
+          isTie={isTie}
           timeouts={awayTimeouts}
           gameStatusDescription={gameStatusDescription}
           hasPossession={awayPossesion}
@@ -117,6 +120,7 @@ export default function GameHeader({
           score={homeScore}
           record={homeRecord}
           isWinner={homeWins}
+           isTie={isTie}
           timeouts={homeTimeouts}
           gameStatusDescription={gameStatusDescription}
           hasPossession={homePossesion}

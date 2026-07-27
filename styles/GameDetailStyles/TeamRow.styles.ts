@@ -34,6 +34,7 @@ export type FootballTeamRowProps = {
   isHome?: boolean;
   score?: number | null;
   isWinner: boolean | null;
+  isTie: boolean | null;
   gameStatusDescription?: string;
   size?: SizeType;
   hasPossession: boolean | null;
@@ -49,7 +50,7 @@ export type BasketballTeamRowProps = {
   timeouts?: number;
   bonusState: string | undefined | null;
   size?: SizeType;
-  rank?: number | null;
+  rank: number | null;
   isDark: boolean;
   isHome?: boolean;
   score?: number;
@@ -104,7 +105,7 @@ export type BaseballProps = {
   isDark: boolean;
   isHome?: boolean;
   score?: number;
-  isWinner?: boolean | undefined | null;
+  isWinner: boolean;
   hideRecord?: boolean;
   gameStatusDescription?: string;
   league: string;

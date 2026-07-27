@@ -1,26 +1,3 @@
-export interface BaseballTeam {
-  id: number;
-  espnId?: number;
-  name: string;
-  shortName: string;
-  fullName: string;
-  code: string;
-  color: string | null;
-  secondaryColor: string;
-  logo: any | null;
-  logoLight: any | null;
-  established: number;
-  latitude: number;
-  longitude: number;
-  venueName: string;
-  venueCapacity: string;
-  venueImage: string;
-  address: string;
-  city: string;
-  isAllStar: boolean;
-  isActive: boolean;
-}
-
 export type BaseballGame = {
   league: {
     id: number;

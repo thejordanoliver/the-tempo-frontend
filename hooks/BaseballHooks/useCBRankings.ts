@@ -1,4 +1,4 @@
-import { BaseballTeam } from "@/types/baseball/baseball";
+import { Team } from "@/types/football/football";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -7,7 +7,7 @@ import { apiClient } from "utils/apiClient";
    TYPES
 ===================================================== */
 
-export type CBTeamWithGroups = BaseballTeam & {
+export type CBTeamWithGroups = Team & {
   abbreviation?: string | null;
   groups?: {
     id: string;

@@ -5,6 +5,12 @@ import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { HockeyGame } from "@/types/hockey/hockey";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -41,15 +47,11 @@ export default function HockeyGamePreviewModal({
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game.headline || holidayLabel;
 
   const LEAGUE = game?.league?.code ?? "nhl";
   const gameId = game?.id;
@@ -81,8 +83,8 @@ export default function HockeyGamePreviewModal({
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !!details;
-  const headlineText = game?.headline;
-  const isChampionship = headlineText.includes("Stanley Cup Final");
+
+  const isChampionship = headline?.includes("Stanley Cup Final");
   const styles = gamePreviewModalStyle(isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const gameStatusDescription = game.status.description ?? "";
@@ -176,19 +178,13 @@ export default function HockeyGamePreviewModal({
             </View>
           ) : (
             <>
-              {headlineText && (
-                <>
-                  {headlineText && (
-                    <Text style={styles.headlineText}>{headlineText}</Text>
-                  )}
-                </>
-              )}
-
+              {headline && <Text style={styles.headlineText}>{headline}</Text>}
               <View style={styles.gameHeaderContainer}>
                 <TeamInfo
                   side="away"
                   logo={awayLogo}
                   name={awayCode}
+                  rank={null}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
@@ -208,6 +204,7 @@ export default function HockeyGamePreviewModal({
                   side="home"
                   logo={homeLogo}
                   name={homeCode}
+                  rank={null}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}

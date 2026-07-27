@@ -1465,7 +1465,7 @@ export function CustomHeaderTitle({
             onPress={onBack}
             hitSlop={8}
           >
-            <Ionicons name="arrow-back" size={24} color={headerIconColor} />
+            <Ionicons  name="arrow-back" size={24} color={headerIconColor} />
           </TouchableOpacity>
         ) : tabName === "Explore" && onAddWidget ? (
           <TouchableOpacity

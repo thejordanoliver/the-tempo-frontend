@@ -6,15 +6,10 @@ export type StandingsTeam = {
   id?: string;
   teamId: string;
   name: string;
-  shortName?: string | null;
-  abbreviation: string;
-
-  logo?: string | null;
-  logoDark?: string | null;
-
+  shortName: string | null;
+  code: string;
   conference: string;
   division: string;
-
   wins: number;
   losses: number;
   ties: number;
@@ -23,16 +18,13 @@ export type StandingsTeam = {
   gamesAhead?: number | null;
   gamesBehind?: number | null;
   streak: string | null;
-
   rank?: number | null;
-
   overallRecord?: string | null;
   homeRecord?: string | null;
   roadRecord?: string | null;
   lastTen?: string | null;
   vsDiv?: string | null;
   vsConf?: string | null;
-
   pointsFor?: number | null;
   pointsAgainst?: number | null;
   avgPointsFor?: number | null;
@@ -40,10 +32,8 @@ export type StandingsTeam = {
   pointDifferential?: number | null;
   avgDifferential?: number | null;
   points?: number | null;
-
   divisionWinPercent?: number | null;
   leagueWinPercent?: number | null;
-
   clincher?: string | null;
   playoffSeed?: number | null;
 };

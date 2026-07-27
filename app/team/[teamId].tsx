@@ -6,6 +6,7 @@ import {
   useBasketballTeamGames,
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
+import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -24,25 +25,16 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
-import { getNBASeason, scrollToMonth } from "utils/dateUtils";
+import { getNBASeason } from "utils/dateUtils";
 import {
   filterGamesBySeasonYear,
   getFirstSeasonGame,
   isSameCalendarMonth,
 } from "utils/seasonGames";
-
-type MonthSelectorItem = {
-  key: string;
-  year: number;
-  month: number;
-  label: string;
-  count: number;
-};
 
 function getMonthKeyFromDate(date: Date | null) {
   if (!date) return null;
@@ -82,7 +74,6 @@ export default function TeamDetailScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
-  const scrollViewRef = useRef<ScrollView>(null);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -139,7 +130,7 @@ export default function TeamDetailScreen() {
     season: scheduleSeason,
   } = useBasketballTeamGames("nba", teamIdNum);
 
-  const monthsToShow = useMemo<MonthSelectorItem[]>(() => {
+  const monthGroups = useMemo(() => {
     return months
       .map((monthGroup) => {
         const monthIndex = getMonthIndex(monthGroup);
@@ -156,23 +147,14 @@ export default function TeamDetailScreen() {
           year: monthGroup.year,
           month: monthIndex,
           label: monthGroup.label,
-          count: monthGroup.games.length,
+          count: monthGroup.games?.length ?? 0,
+          games: monthGroup.games ?? [],
         };
       })
-      .filter((monthGroup): monthGroup is MonthSelectorItem =>
+      .filter((monthGroup): monthGroup is NonNullable<typeof monthGroup> =>
         Boolean(monthGroup),
       );
   }, [months]);
-
-  const gameCountByMonth = useMemo(() => {
-    const counts = new Map<string, number>();
-
-    monthsToShow.forEach((monthGroup) => {
-      counts.set(monthGroup.key, monthGroup.count);
-    });
-
-    return counts;
-  }, [monthsToShow]);
 
   const selectedMonthKey = useMemo(
     () => getMonthKeyFromDate(selectedDate),
@@ -205,35 +187,13 @@ export default function TeamDetailScreen() {
     [firstSeasonGame?.date, selectedDate],
   );
 
-  useEffect(() => {
-    if (selectedDate || monthsToShow.length === 0) return;
-
-    const today = new Date();
-
-    const currentMonth = monthsToShow.find(
-      (monthGroup) =>
-        monthGroup.month === today.getMonth() &&
-        monthGroup.year === today.getFullYear(),
-    );
-
-    const upcomingMonth = monthsToShow.find((monthGroup) => {
-      if (monthGroup.year > today.getFullYear()) return true;
-
-      return (
-        monthGroup.year === today.getFullYear() &&
-        monthGroup.month >= today.getMonth()
-      );
+  const { monthsToShow, gameCountByMonth, handleSelectMonth } =
+    useTeamMonthSelector({
+      gamesByMonth: monthGroups,
+      selectedDate,
+      setSelectedDate,
     });
 
-    const start = currentMonth ?? upcomingMonth ?? monthsToShow[0];
-
-    setSelectedDate(new Date(start.year, start.month, 1));
-  }, [monthsToShow, selectedDate]);
-
-  const handleSelectMonth = (month: number, year: number, index: number) => {
-    setSelectedDate(new Date(year, month, 1));
-    scrollToMonth(scrollViewRef, monthsToShow, month, year, index);
-  };
   const handleRefresh = async () => {
     setRefreshing(true);
 
@@ -307,9 +267,7 @@ export default function TeamDetailScreen() {
           <MonthSelector
             months={monthsToShow}
             selectedDate={selectedDate}
-            onSelect={(month, year, index) =>
-              handleSelectMonth(month, year, index)
-            }
+            onSelect={handleSelectMonth}
             loading={gamesLoading}
             gameCountByMonth={gameCountByMonth}
           />
@@ -320,10 +278,10 @@ export default function TeamDetailScreen() {
             loading={gamesLoading}
             refreshing={gamesRefreshing || refreshing}
             onRefresh={handleRefresh}
-            scrollEnabled={true}
-            showHeaders={true}
             showCountdown={isSeasonOpeningMonth}
             countdownGame={firstSeasonGame}
+            scrollEnabled={true}
+            showHeaders={true}
           />
         </View>
 

@@ -1,8 +1,13 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameTeamStats from "@/components/Sports/Baseball/GameDetails/GameTeamStats";
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
-import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
@@ -77,10 +82,6 @@ function parseGameParam(value?: string | string[]): BaseballGame | undefined {
   }
 }
 
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
-}
-
 export default function GameDetailsScreen(
   props: Partial<BaseballGameCardProps> = {},
 ) {
@@ -105,29 +106,17 @@ export default function GameDetailsScreen(
   );
 
   const LEAGUE = game?.league?.code ?? "mlb";
-  const normalizedLeague = LEAGUE.toLowerCase();
-  const isMLB = normalizedLeague === "mlb";
   const isCB = leagueId === 14;
   const isSB = leagueId === 102;
-
-  const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameId = game?.id;
+  const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDateObj = score?.date ? new Date(score.date) : null;
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game?.headline ?? holidayLabel;
 
   const home = game?.home;
   const away = game?.away;
@@ -196,22 +185,23 @@ export default function GameDetailsScreen(
 
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
-  const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
-  const broadcasts = getBroadcastDisplay(game?.broadcasts);
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const state = game?.status.state;
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const homeScore = score?.home.total ?? 0;
-  const awayScore = score?.away.total ?? 0;
-  const homeWins = homeScore > awayScore;
-  const awayWins = awayScore > homeScore;
+  const broadcast = getBroadcastDisplay(details?.broadcasts);
+  const state = score?.status.state;
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.shortDetail ?? "";
+  const isTopInning = gameStatusDetail.includes("Top");
+
+  const homeScore = score?.home.score ?? 0;
+  const awayScore = score?.away.score ?? 0;
+  const homeWins = score?.home?.winner ?? false;
+  const awayWins = score?.away?.winner ?? false;
+
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
-
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
 
@@ -225,13 +215,6 @@ export default function GameDetailsScreen(
       }
     : undefined;
 
-  const homeHits = game?.home.hits;
-  const homeErrors = game?.home.errors;
-  const awayHits = game?.away.hits;
-  const awayErrors = game?.away.errors;
-  const homeRuns = game?.home.score;
-  const awayRuns = game?.away.score;
-
   const outs = score?.outs ?? 0;
 
   const bases = {
@@ -240,12 +223,16 @@ export default function GameDetailsScreen(
     onThird: score?.bases?.onThird ?? false,
   };
 
+  const homeHits = score?.home.hits;
+  const homeErrors = score?.home.errors;
+  const awayHits = score?.away.hits;
+  const awayErrors = score?.away.errors;
+  const homeRuns = score?.home.score;
+  const awayRuns = score?.away.score;
   const homeRecord = home?.record ?? "0—0";
   const awayRecord = away?.record ?? "0—0";
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
-  const isTopInning = gameStatusDetail.includes("Top");
-  const headline = game?.headline ?? "";
   const lastPlay = score?.lastPlay;
   const teamStats = score?.teamStats ?? [];
   const playerStats = score?.playerStats ?? [];
@@ -277,13 +264,6 @@ export default function GameDetailsScreen(
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
-
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
 
@@ -354,7 +334,7 @@ export default function GameDetailsScreen(
           isDark={isDark}
           date={formattedDate}
           time={formattedTime}
-          broadcast={broadcasts}
+          broadcast={broadcast}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
           homeWins={homeWins}
@@ -469,9 +449,15 @@ export default function GameDetailsScreen(
 
             <TeamInjuries
               injuries={injuries}
-              teamPlayersMap={teamPlayersMap}
-              league={isMLB}
+              homeId={homeEspnId}
+              awayId={awayEspnId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               isDark={isDark}
+              state={state}
+              league={LEAGUE}
             />
 
             <GameLocation

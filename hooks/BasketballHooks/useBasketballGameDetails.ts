@@ -1,5 +1,5 @@
-import { Venue } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type Athlete = {
@@ -50,19 +50,40 @@ type TeamStat = {
   displayValue: string;
 };
 
+export type TeamRecords = {
+  overall: string | null;
+  home?: string | null;
+  away?: string | null;
+  conference?: string | null;
+};
+
+export type Predictor = {
+  header: string;
+  homeTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+  awayTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+};
+
 export type Score = {
+  gameId: string;
+  lastUpdated: number;
   home: { total: number };
   away: { total: number };
-  periodScores?: { period: number; home: number; away: number }[];
+  periodScores: { period: number; home: number; away: number }[];
   homeTeam: string;
   awayTeam: string;
-  status: "canceled" | "scheduled" | "in_play" | "final";
+  status: string;
   gameStatusDescription: string;
   gameStatusDetail: string;
-  statusText?: string;
-  displayClock?: string;
-  period?: number;
-  lastUpdated?: number;
+  displayClock: string | null;
+  period: number | null;
   boxScore: any | null;
   plays: any[];
   lastPlay: string;
@@ -95,35 +116,14 @@ export type Score = {
   foulTrouble?: FoulTroubleTeam[];
 };
 
-export type TeamRecords = {
-  overall: string | null;
-  home?: string | null;
-  away?: string | null;
-  conference?: string | null;
-};
-
-export type Predictor = {
-  header: string;
-  homeTeam: {
-    id: string;
-    gameProjection: string;
-    teamChanceLoss: string;
-  };
-  awayTeam: {
-    id: string;
-    gameProjection: string;
-    teamChanceLoss: string;
-  };
-};
-
-export type GameDetails = {
+export type Details = {
   homeRank: number;
   awayRank: number | null;
   broadcast?: string | null;
   broadcasts?: string[];
   officials: any[];
   injuries: any[];
-  highlights: any[];
+  highlights: Highlight[];
   neutralSite: boolean;
   venue: Venue | null;
   attendance: number | null;
@@ -148,7 +148,7 @@ export const useBasketballGameDetails = (
   gameId?: string | number | null,
 ) => {
   const [score, setScore] = useState<Score | undefined>();
-  const [details, setDetails] = useState<GameDetails | undefined>();
+  const [details, setDetails] = useState<Details | undefined>();
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);

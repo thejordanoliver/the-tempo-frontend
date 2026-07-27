@@ -60,27 +60,15 @@ const CATEGORY_KEYS: Record<Category, string[]> = {
   Passing: ["passingYards"],
   Rushing: ["rushingYards"],
   Receiving: ["receivingYards"],
-  Defensive: [
-    "totalTackles",
-    "sacks",
-    "interceptions",
-    "defensive",
-  ],
-  Kicking: [
-    "fieldGoalsMade",
-    "fieldGoals",
-    "kickingPoints",
-    "extraPointsMade",
-  ],
-  Punting: [
-    "puntYards",
-    "punts",
-    "grossAvgPuntYards",
-  ],
+  Defensive: ["totalTackles", "sacks", "interceptions", "defensive"],
+  Kicking: ["fieldGoalsMade", "fieldGoals", "kickingPoints", "extraPointsMade"],
+  Punting: ["puntYards", "punts", "grossAvgPuntYards"],
 };
 
 function normalizeValue(value: unknown): string {
-  return String(value ?? "").trim().toLowerCase();
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 function idsMatch(
@@ -129,9 +117,7 @@ function findCategory(
 
   return categoryKeys
     .map((key) =>
-      teamLeaders.leaders.find(
-        (leaderCategory) => leaderCategory.name === key,
-      ),
+      teamLeaders.leaders.find((leaderCategory) => leaderCategory.name === key),
     )
     .find(Boolean);
 }
@@ -145,9 +131,7 @@ function hasCategoryLeaders(
   return Boolean(leaderCategory?.leaders?.length);
 }
 
-function getHeadshotSource(
-  headshot: Athlete["headshot"],
-): ImageSourcePropType {
+function getHeadshotSource(headshot: Athlete["headshot"]): ImageSourcePropType {
   if (!headshot) {
     return Placeholder;
   }
@@ -204,35 +188,18 @@ function LeaderStats({
   entry: FootballLeaderEntry;
   isDark: boolean;
 }) {
-  const mainStatLabel =
-    entry.mainStat?.label ??
-    category.displayName ??
-    "STAT";
+  const mainStatLabel = entry.mainStat?.label ?? category.displayName ?? "STAT";
 
-  const mainStatValue =
-    entry.mainStat?.value ??
-    entry.value ??
-    "–";
+  const mainStatValue = entry.mainStat?.value ?? entry.value ?? "–";
 
-  const summary =
-    entry.summary?.trim() ||
-    entry.displayValue?.trim() ||
-    "";
+  const summary = entry.summary?.trim() || entry.displayValue?.trim() || "";
 
   return (
     <>
-      <Stat
-        label={mainStatLabel}
-        value={mainStatValue}
-        isDark={isDark}
-      />
+      <Stat label={mainStatLabel} value={mainStatValue} isDark={isDark} />
 
       {summary ? (
-        <Stat
-          label="SUMMARY"
-          value={summary}
-          isDark={isDark}
-        />
+        <Stat label="SUMMARY" value={summary} isDark={isDark} />
       ) : null}
     </>
   );
@@ -255,8 +222,7 @@ export default function GameLeaders({
   const styles = gameLeadersStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<Category>("Passing");
+  const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
 
   const normalizedLeaders = useMemo(
     () => (Array.isArray(leaders) ? leaders : []),
@@ -264,50 +230,23 @@ export default function GameLeaders({
   );
 
   const awayTeamLeaders = useMemo(
-    () =>
-      findTeamLeaders(
-        normalizedLeaders,
-        awayId,
-        awayCode,
-      ),
-    [
-      normalizedLeaders,
-      awayId,
-      awayCode,
-    ],
+    () => findTeamLeaders(normalizedLeaders, awayId, awayCode),
+    [normalizedLeaders, awayId, awayCode],
   );
 
   const homeTeamLeaders = useMemo(
-    () =>
-      findTeamLeaders(
-        normalizedLeaders,
-        homeId,
-        homeCode,
-      ),
-    [
-      normalizedLeaders,
-      homeId,
-      homeCode,
-    ],
+    () => findTeamLeaders(normalizedLeaders, homeId, homeCode),
+    [normalizedLeaders, homeId, homeCode],
   );
 
   const availableCategories = useMemo(
     () =>
       GAME_CATEGORIES.filter(
         (category) =>
-          hasCategoryLeaders(
-            awayTeamLeaders,
-            category,
-          ) ||
-          hasCategoryLeaders(
-            homeTeamLeaders,
-            category,
-          ),
+          hasCategoryLeaders(awayTeamLeaders, category) ||
+          hasCategoryLeaders(homeTeamLeaders, category),
       ),
-    [
-      awayTeamLeaders,
-      homeTeamLeaders,
-    ],
+    [awayTeamLeaders, homeTeamLeaders],
   );
 
   useEffect(() => {
@@ -315,31 +254,17 @@ export default function GameLeaders({
       return;
     }
 
-    if (
-      !availableCategories.includes(
-        selectedCategory,
-      )
-    ) {
-      setSelectedCategory(
-        availableCategories[0],
-      );
+    if (!availableCategories.includes(selectedCategory)) {
+      setSelectedCategory(availableCategories[0]);
     }
-  }, [
-    availableCategories,
-    selectedCategory,
-    state,
-  ]);
+  }, [availableCategories, selectedCategory, state]);
 
   const displayedLeaders = useMemo(() => {
     const result: DisplayLeader[] = [];
 
-    const awayCategory = findCategory(
-      awayTeamLeaders,
-      selectedCategory,
-    );
+    const awayCategory = findCategory(awayTeamLeaders, selectedCategory);
 
-    const awayEntry =
-      awayCategory?.leaders?.[0];
+    const awayEntry = awayCategory?.leaders?.[0];
 
     if (awayCategory && awayEntry) {
       result.push({
@@ -349,13 +274,9 @@ export default function GameLeaders({
       });
     }
 
-    const homeCategory = findCategory(
-      homeTeamLeaders,
-      selectedCategory,
-    );
+    const homeCategory = findCategory(homeTeamLeaders, selectedCategory);
 
-    const homeEntry =
-      homeCategory?.leaders?.[0];
+    const homeEntry = homeCategory?.leaders?.[0];
 
     if (homeCategory && homeEntry) {
       result.push({
@@ -366,24 +287,16 @@ export default function GameLeaders({
     }
 
     return result;
-  }, [
-    awayTeamLeaders,
-    homeTeamLeaders,
-    selectedCategory,
-  ]);
+  }, [awayTeamLeaders, homeTeamLeaders, selectedCategory]);
 
   if (error) {
     return (
       <View>
-        <HeadingTwo isDark={isDark}>
-          Game Leaders
-        </HeadingTwo>
+        <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
 
         <View style={styles.wrapper}>
           <View style={global.emptyContainer}>
-            <Text style={global.errorText}>
-              Failed to load leaders
-            </Text>
+            <Text style={global.errorText}>Failed to load leaders</Text>
           </View>
         </View>
       </View>
@@ -394,10 +307,7 @@ export default function GameLeaders({
     return <GameLeadersSkeleton />;
   }
 
-  if (
-    state !== "in" &&
-    state !== "post"
-  ) {
+  if (state !== "in" && state !== "post") {
     return null;
   }
 
@@ -407,9 +317,7 @@ export default function GameLeaders({
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>
-        Game Leaders
-      </HeadingTwo>
+      <HeadingTwo isDark={isDark}>Game Leaders</HeadingTwo>
 
       <View style={styles.wrapper}>
         <MainScrollTabBar
@@ -419,110 +327,74 @@ export default function GameLeaders({
           isDark={isDark}
         />
 
-        {displayedLeaders.map(
-          ({ side, category, entry }) => {
-            const isAway = side === "away";
+        {displayedLeaders.map(({ side, category, entry }) => {
+          const isAway = side === "away";
+          const teamLogo = isAway ? awayLogo : homeLogo;
+          const teamId = isAway ? awayId : homeId;
+          const player = entry.athlete;
 
-            const teamLogo = isAway
-              ? awayLogo
-              : homeLogo;
+          const playerName = player.shortName ?? "Unknown Player";
 
-            const teamCode = isAway
-              ? awayCode
-              : homeCode;
+          const jersey = `#${player.jersey}` || `N/A`;
 
-            const teamId = isAway
-              ? awayId
-              : homeId;
+          const handlePress = () => {
+            if (!player.id) {
+              return;
+            }
 
-            const player = entry.athlete;
+            router.push({
+              pathname: "/player/football/[id]",
+              params: {
+                id: String(player.id),
+                teamId: String(teamId),
+                league,
+              },
+            });
+          };
 
-            const playerName =
-              player.displayName ??
-              player.fullName ??
-              player.shortName ??
-              "Unknown Player";
-
-            const jersey = player.jersey
-              ? `#${player.jersey}`
-              : "";
-
-            const handlePress = () => {
-              if (!player.id) {
-                return;
-              }
-
-              router.push({
-                pathname:
-                  "/player/football/[id]",
-                params: {
-                  id: String(player.id),
-                  teamId: String(teamId),
-                  league,
-                },
-              });
-            };
-
-            return (
-              <Pressable
-                key={`${side}-${teamCode}-${selectedCategory}-${player.id}`}
-                onPress={handlePress}
-                style={({ pressed }) => [
-                  pressed && styles.pressed,
-                ]}
-              >
-                <View style={styles.card}>
-                  <View
-                    style={styles.avatarWrapper}
-                  >
-                    <Image
-                      source={getHeadshotSource(
-                        player.headshot,
-                      )}
-                      style={styles.avatar}
-                    />
-                  </View>
-
-                  <View
-                    style={styles.infoSection}
-                  >
-                    <View style={styles.nameRow}>
-                      <Text
-                        style={styles.playerName}
-                      >
-                        {playerName}
-                      </Text>
-
-                      {jersey ? (
-                        <Text
-                          style={styles.jersey}
-                        >
-                          {jersey}
-                        </Text>
-                      ) : null}
-                    </View>
-
-                    <View style={styles.statRow}>
-                      <LeaderStats
-                        category={category}
-                        entry={entry}
-                        isDark={isDark}
-                      />
-                    </View>
-                  </View>
-
-                  {teamLogo ? (
-                    <Image
-                      source={teamLogo}
-                      style={styles.teamLogo}
-                      resizeMode="contain"
-                    />
-                  ) : null}
+          return (
+            <Pressable
+              key={player.id}
+              onPress={handlePress}
+              style={({ pressed }) => [pressed && styles.pressed]}
+            >
+              <View style={styles.card}>
+                <View style={styles.avatarWrapper}>
+                  <Image
+                    source={getHeadshotSource(player.headshot)}
+                    style={styles.avatar}
+                  />
                 </View>
-              </Pressable>
-            );
-          },
-        )}
+
+                <View style={styles.infoSection}>
+                  <View style={styles.nameRow}>
+                    <Text style={styles.playerName}>{playerName}</Text>
+
+                    {jersey ? (
+                      <Text style={styles.jersey}>{jersey}</Text>
+                    ) : null}
+                  </View>
+
+                  <View style={styles.statRow}>
+                    <LeaderStats
+                      category={category}
+                      entry={entry}
+                      isDark={isDark}
+                    />
+                  </View>
+                </View>
+
+                {teamLogo ? (
+                  <Image
+                    source={teamLogo}
+                    style={styles.teamLogo}
+                    resizeMode="contain"
+                  />
+                ) : null}
+              </View>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );

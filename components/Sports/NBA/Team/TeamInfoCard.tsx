@@ -1,7 +1,4 @@
-import { BaseballTeam } from "@/types/baseball/baseball";
-import { BasketballTeam, NBATeam } from "@/types/basketball/basketball";
 import { Team } from "@/types/football/football";
-import { NHLTeam } from "@/types/hockey/hockey";
 import InfoCard from "components/Sports/NBA/Team/InfoCard";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -66,7 +63,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
 
   switch (league) {
     case "NBA": {
-      const t = team as NBATeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -101,7 +98,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
 
     case "CBB":
     case "WCBB": {
-      const t = team as BasketballTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -112,7 +109,6 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Arena" value={t.venueName} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
@@ -135,7 +131,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
     }
 
     case "MLB": {
-      const t = team as BaseballTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -146,14 +142,14 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.city} team={t} />
-          <InfoCard label="Stadium" value={t.venueName} team={t} />
+          <InfoCard label="Stadium" value={null} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
 
     case "NHL": {
-      const t = team as NHLTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -164,13 +160,12 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Arena" value={t.venueName} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );
     }
     case "WNBA": {
-      const t = team as BasketballTeam;
+      const t = team as Team;
 
       return (
         <View style={{ width: "100%" }}>
@@ -181,7 +176,7 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
           />
 
           <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Arena" value={t.venueName} team={t} />
+          <InfoCard label="Arena" value={null} team={t} />
           <InfoCard label="Established" value={t.established} team={t} />
         </View>
       );

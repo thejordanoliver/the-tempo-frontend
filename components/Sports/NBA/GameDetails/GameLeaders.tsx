@@ -16,7 +16,7 @@ type Props = {
   isDark: boolean;
   loading: boolean;
   error: any;
-  gameStatusDescription: string | undefined;
+  state: string | undefined;
 };
 
 export default function GameLeaders({
@@ -26,7 +26,7 @@ export default function GameLeaders({
   isDark,
   loading,
   error,
-  gameStatusDescription,
+  state,
 }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category>("points");
 
@@ -74,7 +74,7 @@ export default function GameLeaders({
   }
 
   if (!topPlayers.length) return null;
-  if (gameStatusDescription === "Scheduled") return null;
+  if (state === "pre") return null;
 
   return (
     <View style={styles.container}>

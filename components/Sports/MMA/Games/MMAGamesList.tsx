@@ -4,16 +4,15 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
+import { MMAEvent } from "hooks/MMAHooks/useMMAGames";
 import React, { useState } from "react";
 import { FlatList, Text, View, ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import MMAGameCard from "./MMAGameCard";
-
-import { MMAEvent } from "hooks/MMAHooks/useMMAGames";
-import { MMAFight } from "types/mma";
+import { MMAFight } from "types/mma/mma";
 import { getMMAGameId } from "utils/mmaEventUtils";
 import MMAGamePreviewModal from "../GamePreview/MMAGamePreviewModal";
+import MMAGameCard from "./MMAGameCard";
 import MMASquareGameCard from "./MMASquareGameCard";
 import MMAStackedGameCard from "./MMAStackedGameCard";
 

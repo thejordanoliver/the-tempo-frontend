@@ -18,7 +18,7 @@ export const TeamRow = ({
   isHome = false,
   score,
   isWinner,
-
+  isTie,
   gameStatusDescription,
   hasPossession = false,
   timeouts,
@@ -60,7 +60,11 @@ export const TeamRow = ({
           ? isDark
             ? Colors.dark.white
             : Colors.light.black
-          : Colors.midTone,
+          : isTie
+            ? isDark
+              ? Colors.dark.white
+              : Colors.light.black
+            : Colors.midTone,
       };
     }
 

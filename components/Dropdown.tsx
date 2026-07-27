@@ -12,19 +12,18 @@ import {
   ViewStyle,
 } from "react-native";
 
-type DropdownOption = {
+export type DropdownOption = {
   label: string;
   value: string;
 };
 
 type DropdownProps = {
   options: DropdownOption[];
-  selectedValue: string | undefined;
+  selectedValue?: string;
   onSelect: (value: string) => void;
   isDark: boolean;
   width?: number;
   style?: ViewStyle;
-  absolute?: boolean; // ✅ NEW
 };
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -34,91 +33,68 @@ export const Dropdown: React.FC<DropdownProps> = ({
   isDark,
   width = 180,
   style,
-  absolute = false, // default off
 }) => {
   const [visible, setVisible] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
 
-  const toggleDropdown = () => {
-    if (visible) {
-      Animated.timing(anim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => setVisible(false));
-    } else {
-      setVisible(true);
-      Animated.timing(anim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
+  const styles = dropDownStyles({
+    isDark,
+    width,
+    anim,
+    visible,
+  });
+
+  const openDropdown = () => {
+    setVisible(true);
+
+    Animated.timing(anim, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
   };
 
-  const translateY = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-10, 0],
-  });
+  const closeDropdown = () => {
+    Animated.timing(anim, {
+      toValue: 0,
+      duration: 180,
+      useNativeDriver: true,
+    }).start(() => {
+      setVisible(false);
+    });
+  };
+
+  const toggleDropdown = () => {
+    if (visible) {
+      closeDropdown();
+      return;
+    }
+
+    openDropdown();
+  };
 
   const handleSelect = (value: string) => {
     onSelect(value);
-    toggleDropdown();
+    closeDropdown();
   };
 
   const selectedLabel =
-    options.find((o) => o.value === selectedValue)?.label ?? "";
+    options.find((option) => option.value === selectedValue)?.label ??
+    options[0]?.label ??
+    "";
 
   return (
-    <View
-      style={[
-        absolute
-          ? {
-              position: "absolute",
-              right: 16,
-              top: 14,
-              zIndex: 999,
-              alignItems: "flex-end",
-            }
-          : { alignItems: "flex-end" }, // 🔥 Normal flow
-        style,
-      ]}
-    >
-      {/* TRIGGER BUTTON */}
+    <View style={[styles.container, style]}>
       <TouchableOpacity
+        activeOpacity={0.7}
         onPress={toggleDropdown}
-        style={{
-          paddingVertical: 8,
-          paddingHorizontal: 16,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: "#888",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
+        style={styles.toggleButton}
       >
-        <Text
-          style={{
-            color: isDark ? Colors.white : Colors.black,
-            fontFamily: Fonts.OSMEDIUM,
-            marginRight: 8,
-          }}
-        >
+        <Text numberOfLines={1} style={styles.selectedLabel}>
           {selectedLabel}
         </Text>
 
-        <Animated.View
-          style={{
-            transform: [
-              {
-                rotate: anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ["0deg", "180deg"],
-                }),
-              },
-            ],
-          }}
-        >
+        <Animated.View style={styles.chevronContainer}>
           <Ionicons
             name="chevron-down"
             size={20}
@@ -127,57 +103,199 @@ export const Dropdown: React.FC<DropdownProps> = ({
         </Animated.View>
       </TouchableOpacity>
 
-      {/* Dropdown panel */}
-      {visible && (
-        <Animated.View
-          style={{
-            position: "absolute",
-            top: 48,
-            width,
-            borderRadius: 12,
-            overflow: "hidden",
-            zIndex: 9999,
-            opacity: anim,
-            transform: [{ translateY }],
-          }}
-        >
+      {visible ? (
+        <Animated.View style={styles.dropdownPanel}>
           <BlurView
             intensity={100}
-            tint="systemUltraThinMaterial"
-            style={StyleSheet.absoluteFillObject}
+            tint={isDark ? "dark" : "light"}
+            style={styles.blurView}
           />
 
-          {/* ⭐ SCROLLABLE LIST */}
           <ScrollView
-            style={{ maxHeight: 260 }}
+            style={styles.optionsScrollView}
+            contentContainerStyle={styles.optionsContent}
             showsVerticalScrollIndicator={false}
+            nestedScrollEnabled
+            keyboardShouldPersistTaps="handled"
           >
-            {options.map((opt) => (
-              <TouchableOpacity
-                key={opt.value}
-                onPress={() => handleSelect(opt.value)}
-                style={{ paddingVertical: 12, paddingHorizontal: 16 }}
-              >
-                <Text
-                  style={{
-                    fontFamily: Fonts.OSMEDIUM,
-                    color:
-                      selectedValue === opt.value
-                        ? isDark
-                          ? "#0af"
-                          : "#06f"
-                        : isDark
-                          ? Colors.white
-                          : Colors.black,
-                  }}
+            {options.map((option, index) => {
+              const isSelected = selectedValue === option.value;
+              const isLast = index === options.length - 1;
+
+              return (
+                <TouchableOpacity
+                  key={option.value}
+                  activeOpacity={0.7}
+                  onPress={() => handleSelect(option.value)}
+                  style={[
+                    styles.optionButton,
+                    !isLast && styles.optionBorder,
+                    isSelected && styles.selectedOptionButton,
+                  ]}
                 >
-                  {opt.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      styles.optionText,
+                      isSelected && styles.selectedOptionText,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+
+                  {isSelected ? (
+                    <Ionicons
+                      name="checkmark"
+                      size={18}
+                      color={
+                        isDark
+                          ? Colors.dark.blue
+                          : Colors.light.blue
+                      }
+                    />
+                  ) : null}
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </Animated.View>
-      )}
+      ) : null}
     </View>
   );
+};
+
+type DropDownStylesParams = {
+  isDark: boolean;
+  width: number;
+  anim: Animated.Value;
+  visible: boolean;
+};
+
+export const dropDownStyles = ({
+  isDark,
+  width,
+  anim,
+  visible,
+}: DropDownStylesParams) => {
+  const translateY = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-10, 0],
+  });
+
+  const rotate = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
+
+  return StyleSheet.create({
+    container: {
+      width,
+      position: "relative",
+      zIndex: visible ? 9999 : 1,
+      elevation: visible ? 9999 : 1,
+    },
+
+    toggleButton: {
+      width: "100%",
+      minHeight: 42,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+
+    selectedLabel: {
+      flex: 1,
+      marginRight: 8,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+    },
+
+    chevronContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      transform: [{ rotate }],
+    },
+
+    dropdownPanel: {
+      position: "absolute",
+      top: 48,
+      left: 0,
+      width,
+      maxHeight: 260,
+      borderRadius: 12,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark
+        ? "rgba(255, 255, 255, 0.16)"
+        : "rgba(0, 0, 0, 0.12)",
+      overflow: "hidden",
+      backgroundColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
+      opacity: anim,
+      transform: [{ translateY }],
+      zIndex: 9999,
+      elevation: 9999,
+      shadowColor: Colors.black,
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+    },
+
+    blurView: {
+      ...StyleSheet.absoluteFillObject,
+    },
+
+    optionsScrollView: {
+      maxHeight: 260,
+    },
+
+    optionsContent: {
+      paddingVertical: 0,
+    },
+
+    optionButton: {
+      minHeight: 44,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+
+    optionBorder: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark
+        ? "rgba(255, 255, 255, 0.1)"
+        : "rgba(0, 0, 0, 0.08)",
+    },
+
+    selectedOptionButton: {
+      backgroundColor: isDark
+        ? "rgba(255, 255, 255, 0.08)"
+        : "rgba(0, 0, 0, 0.05)",
+    },
+
+    optionText: {
+      flex: 1,
+      marginRight: 8,
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.OSMEDIUM,
+      fontSize: 14,
+    },
+
+    selectedOptionText: {
+      color: isDark
+        ? Colors.dark.blue
+        : Colors.light.blue,
+    },
+  });
 };

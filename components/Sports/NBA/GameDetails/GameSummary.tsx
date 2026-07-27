@@ -1,4 +1,4 @@
-import { BasketballTeam, NBATeam } from "@/types/basketball/basketball";
+import { Team } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -19,8 +19,6 @@ import {
   UIManager,
   View,
 } from "react-native";
-
-type AnyTeam = NBATeam | BasketballTeam;
 
 interface Play {
   id: string;
@@ -182,12 +180,12 @@ export default function GameSummary({
           {teamPlays?.map((play) => {
             const playTeamId = play.team?.id;
 
-            const allTeams: AnyTeam[] =
+            const allTeams: Team[] =
               league === "CBB" || league === "WCBB"
-                ? (cbbTeams as BasketballTeam[])
+                ? cbbTeams
                 : league === "WNBA"
                   ? wnbaTeams
-                  : (nbaTeams as NBATeam[]);
+                  : nbaTeams;
 
             const teamObj = allTeams.find(
               (team) => String(team.espnId) === playTeamId,

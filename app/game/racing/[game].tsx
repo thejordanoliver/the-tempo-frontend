@@ -1,6 +1,12 @@
 import { GameLocation } from "@/components/Sports/NBA/GameDetails";
 import GameHeader from "@/components/Sports/Racing/GameDetails/GameHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
@@ -65,10 +71,8 @@ export default function GameDetailsScreen(
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const navigation = useNavigation();
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
   const game = useMemo(() => {
@@ -82,6 +86,11 @@ export default function GameDetailsScreen(
     getFirstParam(params.league) ??
     getFirstParam(params.leagueId);
 
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+
   const drivers = game?.drivers ?? [];
   const state = game?.status?.state ?? "pre";
   const gameStatusDescription = game?.status?.description ?? "";
@@ -93,7 +102,6 @@ export default function GameDetailsScreen(
   const circuitLength = game?.circuit.length ?? "";
   const circuitLaps = game?.circuit.laps ?? "";
   const circuitEstablished = game?.circuit.established ?? "N/A";
-
   const isLoading = !game;
 
   useLayoutEffect(() => {

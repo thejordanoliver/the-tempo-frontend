@@ -8,11 +8,11 @@ type FetchGamesOptions = {
   silent?: boolean;
 };
 
-const LIVE_STATES = new Set(["in", "half"]);
+const LIVE_STATES = "in";
 
 function isLiveSoccerGame(game: any) {
   const state = String(game?.status?.state || "").toLowerCase();
-  return LIVE_STATES.has(state);
+  return LIVE_STATES.includes(state);
 }
 
 export function useSoccerGames(date?: Date, league = "epl") {
@@ -54,7 +54,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
         }
       }
     },
-    [, formattedDate, league],
+    [formattedDate, league],
   );
 
   const refreshGames = useCallback(async () => {
@@ -74,7 +74,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
 
     const interval = setInterval(() => {
       fetchGames({ silent: true });
-    }, 60000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [hasLiveGame, fetchGames]);

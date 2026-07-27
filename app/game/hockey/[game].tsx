@@ -6,6 +6,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
+import { formatDate, formatTime, getHolidayLabel, safeDate } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
@@ -76,10 +77,6 @@ function parseGameParam(value?: string | string[]): HockeyGame | undefined {
   }
 }
 
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
-}
-
 export default function GameDetailsScreen(
   props: Partial<HockeyGameCardProps> = {},
 ) {
@@ -100,21 +97,10 @@ export default function GameDetailsScreen(
     return game?.date ? new Date(game.date) : null;
   }, [game?.date]);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const LEAGUE = game?.league?.code ?? "nhl";
   const gameId = game?.id;
@@ -157,7 +143,7 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-  const headline = details?.headline ?? "";
+  const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isNHL: true });
   const clock = score?.displayClock ?? "0:00";

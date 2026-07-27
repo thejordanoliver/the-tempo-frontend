@@ -12,7 +12,12 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 function FootballGameCard({
@@ -34,16 +39,10 @@ function FootballGameCard({
     });
   };
 
-  const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -75,6 +74,7 @@ function FootballGameCard({
       ? getCFBTeamLogo(awayId, isDark)
       : getUFLTeamLogo(awayId, isDark);
 
+  const headline = game.headline ?? holidayLabel;
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -94,8 +94,6 @@ function FootballGameCard({
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
-  const holidayLabel = getHolidayLabel(gameDateObj);
-  const headline = game.headline ?? holidayLabel;
   const possessionTeamId = game.situation.possession;
   const homeRecord = game?.home?.record ?? "0-0";
   const awayRecord = game?.away?.record ?? "0-0";

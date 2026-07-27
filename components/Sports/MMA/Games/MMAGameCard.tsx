@@ -1,4 +1,10 @@
 import { MMAFightCardProps } from "@/types/mma/mma";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity } from "constants/styles";
@@ -23,28 +29,12 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
     });
   };
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-
-    const d = new Date(date);
-
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
-
   const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
-
+  const headline = game?.headline || holidayLabel;
   const firstFighter = game.competitors?.[0];
   const secondFighter = game.competitors?.[1];
   const firstFighterName = firstFighter?.shortName ?? "TBD";
@@ -59,7 +49,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const secondFighterWinner = secondFighter?.winner === true;
   const styles = gameCardStyles(isDark);
   const gameStatusDescription = game?.status?.description;
-  const headline = game.headline;
+
   const isScheduled = gameStatusDescription === "Scheduled";
   const isPreFight = gameStatusDescription === "Pre-fight";
   const isCanceled = gameStatusDescription === "Canceled";

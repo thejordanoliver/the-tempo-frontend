@@ -12,7 +12,12 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -45,26 +50,11 @@ export default function SoccerGamePreviewModal({
     }
   }, [visible]);
 
-  function isValidDate(date: Date) {
-    return !Number.isNaN(date.getTime());
-  }
-
   const gameDateObj = game?.date ? new Date(game.date) : null;
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
-
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "epl";
@@ -88,9 +78,7 @@ export default function SoccerGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const headlineText = game?.headline;
-  const holidayLabel = getHolidayLabel(gameDateObj);
-  const headline = headlineText || holidayLabel;
+  const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
   const styles = gamePreviewModalStyle(isChampionship);
 
@@ -100,7 +88,6 @@ export default function SoccerGamePreviewModal({
   const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
-  const state = game.status.state;
   const isSuspended = gameStatusDescription === "Suspended";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -109,8 +96,13 @@ export default function SoccerGamePreviewModal({
 
   const dontShowDetails =
     isForfeited || isPostponed || isDelayed || isCanceled || isSuspended;
-  const homeRecord = game.home.record ?? "0-0";
-  const awayRecord = game.away.record ?? "0-0";
+  const state = score?.status.state ?? "";
+  const homeScore = score?.home?.score ?? 0;
+  const awayScore = score?.away?.score ?? 0;
+  const homeRecord = score?.home?.record ?? "0—0-0";
+  const awayRecord = score?.away?.record ?? "0—0-0";
+  const homeWins = score?.home?.winner;
+  const awayWins = score?.away?.winner;
   const teamStats = score?.teamStats ?? [];
   const officials = details?.officials ?? [];
 
@@ -146,9 +138,6 @@ export default function SoccerGamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
-
-  const homeScore = score?.home.total;
-  const awayScore = score?.away.total;
 
   return (
     <BottomSheetModal
@@ -211,7 +200,7 @@ export default function SoccerGamePreviewModal({
                   name={awayCode}
                   rank={null}
                   score={awayScore}
-                  opponentScore={homeScore}
+                  winner={awayWins}
                   record={awayRecord}
                   gameStatusDescription={gameStatusDescription}
                   state={state}
@@ -234,7 +223,7 @@ export default function SoccerGamePreviewModal({
                   name={homeCode}
                   rank={null}
                   score={homeScore}
-                  opponentScore={awayScore}
+                  winner={homeWins}
                   record={homeRecord}
                   gameStatusDescription={gameStatusDescription}
                   state={state}

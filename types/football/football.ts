@@ -6,15 +6,15 @@ import type { ImageSourcePropType } from "react-native";
 
 export type Team = {
   id: number;
-  espnId: number;
+  wid?: number;
+  espnId?: number | null;
   summerLeagueId?: number;
-  oddsId?: string;
   name: string;
   shortName?: string;
   fullName: string;
   code: string;
-  city: string;
-  location: string;
+  city: string | null;
+  location: string | null;
   coach?: string;
   conference?: string;
   conferenceShortName?: string;
@@ -23,7 +23,7 @@ export type Team = {
   logo: any;
   logoLight?: any;
   wLogo?: any;
-  color: string;
+  color: string | null;
   secondaryColor: string;
   championships?: number[];
   uniforms?: {
@@ -31,6 +31,7 @@ export type Team = {
     away?: ImageSourcePropType;
   };
   isAllStar: boolean;
+  isNational: boolean;
   isActive: boolean;
 };
 

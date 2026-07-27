@@ -8,7 +8,7 @@ type TeamInfoProps = {
   score: number;
   isWinner: boolean;
   isTie: boolean;
-  record?: string;
+  record: string;
   hasPossession: boolean;
   side: "home" | "away";
   timeouts?: number;
@@ -34,14 +34,9 @@ export default function TeamInfo({
   // --------------------------------------------------------------
   // GAME STATE
   // --------------------------------------------------------------
-  const isFinal =
-    gameStatusDescription === "Final" || gameStatusDescription === "Finished";
-  const isScheduled =
-    gameStatusDescription === "Scheduled" ||
-    gameStatusDescription === "Not Started";
+  const isFinal = gameStatusDescription === "Final";
+  const isScheduled = gameStatusDescription === "Scheduled";
 
-
- 
   const scoreOpacity = !isFinal ? 1 : isTie ? 1 : isWinner ? 1 : 0.5;
 
   const isRecord = isScheduled;
@@ -70,12 +65,7 @@ export default function TeamInfo({
   // RENDER
   // --------------------------------------------------------------
   return (
-    <View
-      style={[
-        styles.container,
-        { justifyContent: side === "home" ? "flex-end" : "flex-start" },
-      ]}
-    >
+    <View style={styles.container}>
       {/* ===== HOME SCORE (LEFT) ===== */}
       {side === "home" && (
         <View style={styles.scoreWrapper}>

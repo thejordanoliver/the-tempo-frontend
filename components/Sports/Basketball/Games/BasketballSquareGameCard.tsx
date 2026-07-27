@@ -9,7 +9,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
-import { getHolidayLabel } from "utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballSquareGameCard({
@@ -40,18 +40,9 @@ export default function BasketballSquareGameCard({
   };
 
   const gameDate = safeDate(game.date);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -92,9 +83,7 @@ export default function BasketballSquareGameCard({
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
 
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headlineText = game?.headline;
-  const headline = headlineText || holidayLabel;
+  const headline = game?.headline || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes(

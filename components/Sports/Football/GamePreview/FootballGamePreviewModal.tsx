@@ -21,7 +21,13 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { getFootballSeason, getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getFootballSeason,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
@@ -53,21 +59,19 @@ export default function FootballGamePreviewModal({
   }, [visible]);
 
   const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
+  const headline = game.headline || holidayLabel;
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "nfl";
 
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
+  const homeEspnId = game?.home?.espnId ?? 0;
+  const awayEspnId = game?.away?.espnId ?? 0;
 
   const homeTeam = isNFL
     ? getNFLTeam(homeId)
@@ -115,8 +119,6 @@ export default function FootballGamePreviewModal({
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
-  const holidayLabel = getHolidayLabel(gameDateObj);
-  const headline = game.headline ?? holidayLabel;
   const possessionTeamId = game.situation.possession;
   const homeRecord = game.home.record;
   const awayRecord = game.away.record;
@@ -142,7 +144,9 @@ export default function FootballGamePreviewModal({
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
+  const teamStats = score?.teamStats ?? [];
+  const leaders = score?.leaders ?? [];
+  const injuries = details?.injuries ?? [];
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "football", id: venueId });
   const { weather } = useWeather({
@@ -156,7 +160,7 @@ export default function FootballGamePreviewModal({
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueImage = venue?.image;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
@@ -165,6 +169,7 @@ export default function FootballGamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
+  const venueSurface = baseVenue?.grass;
 
   const isLoading = !!details;
 
@@ -266,10 +271,14 @@ export default function FootballGamePreviewModal({
 
               {!dontShowDetails && (
                 <GamePreviewContent
+                  homeId={homeId}
+                  homeEspnId={homeEspnId}
+                  awayEspnId={awayEspnId}
                   homeLogo={homeLogo}
                   homeCode={homeCode}
                   homeColor={homeColor}
                   homeLastGames={homeLastGames}
+                  awayId={awayId}
                   awayLogo={awayLogo}
                   awayCode={awayCode}
                   awayColor={awayColor}
@@ -277,11 +286,15 @@ export default function FootballGamePreviewModal({
                   homeChance={homeChance}
                   awayChance={awayChance}
                   lineScore={lineScore}
+                  teamStats={teamStats}
+                  leaders={leaders}
+                  injuries={injuries}
                   weather={weather}
                   venueImage={venueImage}
                   venueCapacity={venueCapacity}
                   venueName={venueName}
                   venueLocation={venueLocation}
+                  venueSurface={venueSurface}
                   venueAddress={venueAddress}
                   venueAttendance={venueAttendance}
                   state={state}

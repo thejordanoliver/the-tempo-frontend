@@ -1,5 +1,5 @@
 import { Colors } from "constants/styles";
-import { Image, Text, View } from "react-native";
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 import { TeamInfoStyle } from "styles/ModalsStyles/GamePreviewStyles/TeamInfoStyles";
 
 type TeamInfoProps = {
@@ -12,7 +12,7 @@ type TeamInfoProps = {
   timeouts: number | null;
   bonusState: string | undefined | null;
   gameStatusDescription: string;
-  logo: any;
+  logo: ImageSourcePropType;
 };
 
 export default function TeamInfo({
@@ -86,14 +86,7 @@ export default function TeamInfo({
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          justifyContent: side === "home" ? "flex-end" : "flex-start",
-        },
-      ]}
-    >
+    <View style={styles.container}>
       {/* ─────────── HOME SCORE (RIGHT) ─────────── */}
       {side === "home" && (
         <View style={styles.scoreWrapper}>

@@ -17,8 +17,8 @@ type Props = {
   awayScore: number;
   isDark: boolean;
   isTopInning: boolean;
-  homeWins: boolean | undefined | null;
-  awayWins: boolean | undefined | null;
+  homeWins: boolean;
+  awayWins: boolean;
   date: string;
   headline: string | null;
   outs?: number;

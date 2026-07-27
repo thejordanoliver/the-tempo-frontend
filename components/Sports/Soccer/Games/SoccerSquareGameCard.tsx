@@ -1,6 +1,6 @@
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
-import { getHolidayLabel } from "@/utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -31,18 +31,9 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   };
 
   const gameDate = safeDate(game.date);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
 
@@ -57,13 +48,10 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
 
   const homeLogo = getSOCCTeamLogo(home.id, isDark);
   const awayLogo = getSOCCTeamLogo(away.id, isDark);
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headlineText = game?.headline;
-  const headline = headlineText || holidayLabel;
+
+  const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
-
   const styles = squareGameCardStyles(isDark, isChampionship);
-
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
   const clock = game.status?.clock;
@@ -119,13 +107,14 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
     );
   };
   const renderStatus = () => {
-    if (inProgress && !isDelayed)
+    if (inProgress && !endOfPeriod && !isDelayed && !isHalftime) {
       return (
         <View>
           <Text style={styles.period}>{period}</Text>
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );
+    }
 
     if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;

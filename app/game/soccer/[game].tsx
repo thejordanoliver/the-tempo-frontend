@@ -1,11 +1,17 @@
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats";
+import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useVenue } from "@/hooks/useVenue";
-import { SoccerGameCardProps } from "@/types/soccer/soccer";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
@@ -39,50 +45,12 @@ type RouteParams = {
   league?: string | string[];
 };
 
-type SoccerGame = SoccerGameCardProps["game"];
-
 function getFirstParam(value?: string | string[]) {
   if (Array.isArray(value)) return value[0];
   return value;
 }
 
-function safeDecode(value: string) {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
-}
-
-function parseGameParam(value?: string | string[]): SoccerGame | undefined {
-  const rawValue = getFirstParam(value);
-
-  if (!rawValue || rawValue === "undefined" || rawValue === "null") {
-    return undefined;
-  }
-
-  const decodedValue = safeDecode(rawValue).trim();
-
-  // Dynamic route params are often just the game id.
-  // Only JSON strings should be parsed into a full game object.
-  if (!decodedValue.startsWith("{")) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(decodedValue) as SoccerGame;
-  } catch {
-    return undefined;
-  }
-}
-
-function isValidDate(date: Date) {
-  return !Number.isNaN(date.getTime());
-}
-
-export default function GameDetailsScreen(
-  props: Partial<SoccerGameCardProps> = {},
-) {
+export default function GameDetailsScreen() {
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
@@ -90,37 +58,26 @@ export default function GameDetailsScreen(
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
-  const game = useMemo(() => {
-    return (
-      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
-    );
-  }, [params.data, params.game, props.game]);
+  const routeGameId = getFirstParam(params.game);
+  const routeLeague =
+    getFirstParam(params.league) ?? getFirstParam(params.leagueId);
 
-  const LEAGUE = game?.league?.code ?? "epl";
+  const gameId = routeGameId ?? "";
+  const LEAGUE = routeLeague ?? "epl";
+
+  const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
 
   const gameDateObj = useMemo(() => {
-    return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+    return score?.date ? new Date(score?.date) : null;
+  }, [score?.date]);
 
-  const formattedDate =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleDateString([], {
-          month: "short",
-          day: "numeric",
-        })
-      : "TBD";
+  const gameDate = safeDate(score?.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
-  const formattedTime =
-    gameDateObj && isValidDate(gameDateObj)
-      ? gameDateObj.toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "TBD";
-
-  const gameId = game?.id;
-  const home = game?.home;
-  const away = game?.away;
+  const home = score?.home;
+  const away = score?.away;
 
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
@@ -147,18 +104,20 @@ export default function GameDetailsScreen(
 
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE);
-  const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
 
+  const headline = details?.headline ?? holidayLabel;
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
-  const broadcasts = getBroadcastDisplay(game?.broadcasts);
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const state = game?.status.state ?? "";
-  const homeScore = score?.home.total ?? 0;
-  const awayScore = score?.away.total ?? 0;
-  const homeWins = game?.home.winner;
-  const awayWins = game?.away.winner;
-  const isTie = game?.away.winner === game?.home.winner;
+  const broadcasts = getBroadcastDisplay(details?.broadcasts);
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
+  const state = score?.status.state ?? "";
+  const homeScore = score?.home?.score ?? 0;
+  const awayScore = score?.away?.score ?? 0;
+  const homeRecord = home?.record ?? "0—0-0";
+  const awayRecord = away?.record ?? "0—0-0";
+  const homeWins = score?.home?.winner;
+  const awayWins = score?.away?.winner;
+  const isTie = score?.away.winner === score?.home.winner;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -173,14 +132,14 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-  const homeRecord = home?.record ?? "0—0-0";
-  const awayRecord = away?.record ?? "0—0-0";
-  const period = formatPeriod({ period: game?.status.period, isSOCC: true });
-  const clock = game?.status.clock;
-  const headline = game?.headline ?? "";
+
+  const period = formatPeriod({ period: score?.status.period, isSOCC: true });
+  const clock = score?.status.displayClock ?? "00'";
   const lastPlay = score?.lastPlay;
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
+  const shotMap = score?.shotMap ?? [];
+  const keyEvents = score?.keyEvents ?? [];
 
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
@@ -198,7 +157,7 @@ export default function GameDetailsScreen(
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
-  const venueAttendance = game?.attendance || null;
+  const venueAttendance = details?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
@@ -208,7 +167,7 @@ export default function GameDetailsScreen(
       : (venueCity ?? "");
 
   useLayoutEffect(() => {
-    if (isLoading || !game || !home || !away) {
+    if (isLoading || !score || !details || !home || !away) {
       navigation.setOptions({
         header: () => null,
       });
@@ -232,10 +191,11 @@ export default function GameDetailsScreen(
     });
   }, [
     LEAGUE,
+    details,
+    score,
     away,
     awayId,
     awayCode,
-    game,
     awayHeaderLogo,
     homeHeaderLogo,
     home,
@@ -256,7 +216,7 @@ export default function GameDetailsScreen(
     );
   }
 
-  if (!game || !homeTeam || !awayTeam) return <View />;
+  if (!score || !details || !homeTeam || !awayTeam) return <View />;
 
   return (
     <>
@@ -337,16 +297,30 @@ export default function GameDetailsScreen(
               state={state}
             />
 
+            <SoccerShotMap
+              shots={shotMap}
+              shotMapAvailable={score?.shotMapAvailable === true}
+              awayId={awayId}
+              homeId={homeId}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              awayColor={awayColor}
+              homeColor={homeColor}
+              isDark={isDark}
+            />
+
             <SoccerKeyEvents
-              keyEvents={score?.keyEvents}
-              awayTeamId={awayId}
-              homeTeamId={homeId}
+              keyEvents={keyEvents}
+              awayId={awayId}
+              homeId={homeId}
               awayLogo={awayLogo}
               homeLogo={homeLogo}
               awayCode={awayCode}
               homeCode={homeCode}
               isDark={isDark}
-              gameStatusDescription={score?.gameStatusDescription}
+              gameStatusDescription={gameStatusDescription}
             />
 
             <HighlightVideoList highlights={highlights} isDark={isDark} />
@@ -388,7 +362,7 @@ export default function GameDetailsScreen(
       </ScrollView>
 
       <GameLiveChatOverlay
-        gameId={String(game.id)}
+        gameId={String(gameId)}
         opacityAnim={opacityAnim}
         state={state}
       />
