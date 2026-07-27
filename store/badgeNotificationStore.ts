@@ -54,7 +54,12 @@ const METRIC_ALIASES: Record<string, BadgeMetric> = {
   total_engagement: "totalEngagement",
 };
 
-const VALID_TIERS: BadgeTier[] = ["bronze", "silver", "gold", "platinum"];
+const VALID_TIERS: BadgeTier[] = [
+  "bronze",
+  "silver",
+  "gold",
+  "platinum",
+];
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null;
@@ -75,7 +80,9 @@ const normalizeNotificationId = (value: unknown): string | null => {
 };
 
 const normalizeMetric = (value: unknown): BadgeMetric | null => {
-  if (typeof value !== "string") return null;
+  if (typeof value !== "string") {
+    return null;
+  }
 
   return METRIC_ALIASES[value.trim()] ?? null;
 };
@@ -88,41 +95,63 @@ const normalizeNotification = (
   }
 
   const notificationId = normalizeNotificationId(
-    notification.notificationId ?? notification.notification_id ?? notification.id,
+    notification.notificationId ??
+      notification.notification_id ??
+      notification.id,
   );
+
   const userId = Number(notification.userId ?? notification.user_id);
+
   const badge = isRecord(notification.badge)
     ? notification.badge
     : notification;
-  const rawCreatedAt = notification.createdAt ?? notification.created_at;
-  const createdAt =
-    typeof rawCreatedAt === "string"
-      ? rawCreatedAt
-      : null;
 
-  const badgeId = normalizeNonEmptyString(badge.badgeId ?? badge.badge_id);
+  const rawCreatedAt =
+    notification.createdAt ?? notification.created_at;
+
+  const createdAt =
+    typeof rawCreatedAt === "string" ? rawCreatedAt : null;
+
+  const badgeId = normalizeNonEmptyString(
+    badge.badgeId ?? badge.badge_id,
+  );
+
   const name = normalizeNonEmptyString(badge.name);
+
   const description =
-    normalizeNonEmptyString(badge.description) ?? "You unlocked a new badge.";
+    normalizeNonEmptyString(badge.description) ??
+    "You unlocked a new badge.";
+
   const category =
     typeof badge.category === "string" &&
     VALID_CATEGORIES.includes(badge.category as BadgeCategory)
       ? (badge.category as BadgeCategory)
       : "community";
-  const metric = normalizeMetric(badge.metric) ?? "totalEngagement";
+
+  const metric =
+    normalizeMetric(badge.metric) ?? "totalEngagement";
+
   const tier =
     typeof badge.tier === "string" &&
     VALID_TIERS.includes(badge.tier as BadgeTier)
       ? (badge.tier as BadgeTier)
       : null;
+
   const threshold = Number(badge.threshold);
-  const symbol = normalizeNonEmptyString(badge.symbol) ?? "🏆";
-  const rawEarnedAt = badge.earnedAt ?? badge.earned_at;
+
+  const symbol =
+    normalizeNonEmptyString(badge.symbol) ?? "🏆";
+
+  const rawEarnedAt =
+    badge.earnedAt ?? badge.earned_at;
+
   const earnedAt =
     typeof rawEarnedAt === "string" || rawEarnedAt === null
       ? rawEarnedAt
       : null;
-  const normalizedCreatedAt = createdAt ?? earnedAt ?? new Date().toISOString();
+
+  const normalizedCreatedAt =
+    createdAt ?? earnedAt ?? new Date().toISOString();
 
   if (
     !notificationId ||
@@ -146,7 +175,10 @@ const normalizeNotification = (
       category,
       metric,
       tier,
-      threshold: Number.isFinite(threshold) && threshold > 0 ? threshold : 1,
+      threshold:
+        Number.isFinite(threshold) && threshold > 0
+          ? threshold
+          : 1,
       symbol,
       earnedAt,
     },
@@ -156,12 +188,15 @@ const normalizeNotification = (
 
 const warnInvalidNotification = (notification: unknown) => {
   if (__DEV__) {
-    console.warn("Ignoring malformed badge notification:", notification);
+    console.warn(
+      "[BadgeStore] Ignoring malformed badge notification",
+      notification,
+    );
   }
 };
 
-export const useBadgeNotificationStore = create<BadgeNotificationState>(
-  (set, get) => ({
+export const useBadgeNotificationStore =
+  create<BadgeNotificationState>((set, get) => ({
     currentNotification: null,
     queuedNotifications: [],
     knownNotificationIds: [],
@@ -170,47 +205,52 @@ export const useBadgeNotificationStore = create<BadgeNotificationState>(
     refreshVersion: 0,
 
     enqueueNotifications: (notifications) => {
-      if (__DEV__) {
-        console.log("[BadgeStore] incoming", notifications);
+      if (
+        !Array.isArray(notifications) ||
+        notifications.length === 0
+      ) {
+        return;
       }
 
-      if (!Array.isArray(notifications) || notifications.length === 0) return;
-
       set((state) => {
-        if (__DEV__) {
-          console.log("[BadgeStore] state before", state);
-        }
-
         const knownNotificationIds = new Set([
           ...state.knownNotificationIds,
           ...(state.currentNotification
             ? [state.currentNotification.notificationId]
             : []),
           ...state.queuedNotifications.map(
-            (notification) => notification.notificationId,
+            (notification) =>
+              notification.notificationId,
           ),
         ]);
+
         const knownBadgeIds = new Set([
           ...state.knownBadgeIds,
           ...(state.currentNotification
             ? [state.currentNotification.badge.badgeId]
             : []),
           ...state.queuedNotifications.map(
-            (notification) => notification.badge.badgeId,
+            (notification) =>
+              notification.badge.badgeId,
           ),
         ]);
+
         const validNewNotifications: BadgeNotification[] = [];
 
         notifications.forEach((notification) => {
-          const normalizedNotification = normalizeNotification(notification);
+          const normalizedNotification =
+            normalizeNotification(notification);
 
           if (!normalizedNotification) {
             warnInvalidNotification(notification);
             return;
           }
 
-          const { notificationId } = normalizedNotification;
-          const { badgeId } = normalizedNotification.badge;
+          const { notificationId } =
+            normalizedNotification;
+
+          const { badgeId } =
+            normalizedNotification.badge;
 
           if (
             knownNotificationIds.has(notificationId) ||
@@ -221,80 +261,104 @@ export const useBadgeNotificationStore = create<BadgeNotificationState>(
 
           knownNotificationIds.add(notificationId);
           knownBadgeIds.add(badgeId);
-          validNewNotifications.push(normalizedNotification);
+          validNewNotifications.push(
+            normalizedNotification,
+          );
         });
 
         if (validNewNotifications.length === 0) {
-          if (__DEV__) {
-            console.log("[BadgeStore] state after", state);
-          }
-
           return state;
         }
 
-        const [nextCurrentNotification, ...remainingNotifications] =
-          validNewNotifications;
+        const [
+          nextCurrentNotification,
+          ...remainingNotifications
+        ] = validNewNotifications;
+
         const nextKnownNotificationIds = [
           ...state.knownNotificationIds,
           ...validNewNotifications.map(
-            (notification) => notification.notificationId,
+            (notification) =>
+              notification.notificationId,
           ),
         ];
+
         const nextKnownBadgeIds = [
           ...state.knownBadgeIds,
           ...validNewNotifications.map(
-            (notification) => notification.badge.badgeId,
+            (notification) =>
+              notification.badge.badgeId,
           ),
         ];
 
-        const nextState = {
+        return {
           currentNotification:
-            state.currentNotification ?? nextCurrentNotification,
-          queuedNotifications: state.currentNotification
-            ? [...state.queuedNotifications, ...validNewNotifications]
-            : [...state.queuedNotifications, ...remainingNotifications],
-          knownNotificationIds: nextKnownNotificationIds,
+            state.currentNotification ??
+            nextCurrentNotification,
+          queuedNotifications:
+            state.currentNotification
+              ? [
+                  ...state.queuedNotifications,
+                  ...validNewNotifications,
+                ]
+              : [
+                  ...state.queuedNotifications,
+                  ...remainingNotifications,
+                ],
+          knownNotificationIds:
+            nextKnownNotificationIds,
           knownBadgeIds: nextKnownBadgeIds,
           refreshVersion: state.refreshVersion + 1,
         };
-
-        if (__DEV__) {
-          console.log("[BadgeStore] state after", nextState);
-        }
-
-        return nextState;
       });
     },
 
     dismissCurrentNotification: () => {
       set((state) => {
-        const [nextCurrentNotification, ...remainingNotifications] =
-          state.queuedNotifications;
+        const [
+          nextCurrentNotification,
+          ...remainingNotifications
+        ] = state.queuedNotifications;
 
         return {
-          currentNotification: nextCurrentNotification ?? null,
-          queuedNotifications: remainingNotifications,
+          currentNotification:
+            nextCurrentNotification ?? null,
+          queuedNotifications:
+            remainingNotifications,
         };
       });
     },
 
-    queueNotificationReadRetry: (notificationIds) => {
+    queueNotificationReadRetry: (
+      notificationIds,
+    ) => {
       const ids = Array.isArray(notificationIds)
         ? notificationIds
         : notificationIds
           ? [notificationIds]
           : [];
 
-      if (!ids.length) return;
+      if (!ids.length) {
+        return;
+      }
 
       set((state) => {
-        const knownIds = new Set(state.readRetryNotificationIds);
-        const nextIds = [...state.readRetryNotificationIds];
+        const knownIds = new Set(
+          state.readRetryNotificationIds,
+        );
+
+        const nextIds = [
+          ...state.readRetryNotificationIds,
+        ];
 
         ids.forEach((notificationId) => {
-          const normalizedId = normalizeNotificationId(notificationId);
+          const normalizedId =
+            normalizeNotificationId(notificationId);
 
-          if (!normalizedId || knownIds.has(normalizedId)) {
+          if (
+            !normalizedId ||
+            knownIds.has(normalizedId)
+          ) {
             return;
           }
 
@@ -302,7 +366,10 @@ export const useBadgeNotificationStore = create<BadgeNotificationState>(
           nextIds.push(normalizedId);
         });
 
-        if (nextIds.length === state.readRetryNotificationIds.length) {
+        if (
+          nextIds.length ===
+          state.readRetryNotificationIds.length
+        ) {
           return state;
         }
 
@@ -313,9 +380,12 @@ export const useBadgeNotificationStore = create<BadgeNotificationState>(
     },
 
     consumeReadRetryNotificationIds: () => {
-      const retryIds = get().readRetryNotificationIds;
+      const retryIds =
+        get().readRetryNotificationIds;
 
-      if (!retryIds.length) return [];
+      if (!retryIds.length) {
+        return [];
+      }
 
       set({
         readRetryNotificationIds: [],
@@ -337,31 +407,36 @@ export const useBadgeNotificationStore = create<BadgeNotificationState>(
 
     requestBadgeRefresh: () => {
       set((state) => ({
-        refreshVersion: state.refreshVersion + 1,
+        refreshVersion:
+          state.refreshVersion + 1,
       }));
     },
-  }),
-);
+  }));
 
 export const enqueueDebugBadgeNotification = () => {
-  if (!__DEV__) return;
+  if (!__DEV__) {
+    return;
+  }
 
-  useBadgeNotificationStore.getState().enqueueNotifications([
-    {
-      notificationId: `debug-${Date.now()}`,
-      userId: 1,
-      badge: {
-        badgeId: "debug-badge",
-        name: "Badge Test",
-        description: "You unlocked a Tempo badge.",
-        category: "community",
-        metric: "totalEngagement",
-        tier: "bronze",
-        threshold: 1,
-        symbol: "*",
-        earnedAt: new Date().toISOString(),
+  useBadgeNotificationStore
+    .getState()
+    .enqueueNotifications([
+      {
+        notificationId: `debug-${Date.now()}`,
+        userId: 1,
+        badge: {
+          badgeId: "debug-badge",
+          name: "Badge Test",
+          description:
+            "You unlocked a Tempo badge.",
+          category: "community",
+          metric: "totalEngagement",
+          tier: "bronze",
+          threshold: 1,
+          symbol: "*",
+          earnedAt: new Date().toISOString(),
+        },
+        createdAt: new Date().toISOString(),
       },
-      createdAt: new Date().toISOString(),
-    },
-  ]);
+    ]);
 };

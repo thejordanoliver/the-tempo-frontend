@@ -1,6 +1,7 @@
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
+import { isAxiosError } from "axios";
 import { PollData } from "components/Forum/PollEditorModal";
 import type { Post } from "components/Forum/PostItem";
-import { isAxiosError } from "axios";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
@@ -15,7 +16,6 @@ import {
 import { AlertConfig } from "types/alert";
 import type { ForumPostCreateResponse } from "types/badges";
 import { LeagueType } from "types/types";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { apiClient } from "utils/apiClient";
 
 export type MediaItem = {

@@ -1,8 +1,8 @@
 // hooks/useTeamForum.ts
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { apiClient } from "utils/apiClient";
 
 export function useTeamForum(teamId: string, league?: string) {
@@ -100,18 +100,21 @@ export function useTeamForum(teamId: string, league?: string) {
   DELETE POST
   -----------------------------
   */
-  const deletePost = useCallback(async (postId: string) => {
-    try {
-      await apiClient.delete(`/api/forum/post/${postId}`);
-      setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
-      requestBadgeDataRefresh();
-    } catch (err: any) {
-      const message =
-        err.response?.data?.error ?? err.message ?? "Failed to delete post";
-      console.error("Delete post error:", message);
-      throw new Error(message);
-    }
-  }, [requestBadgeDataRefresh]);
+  const deletePost = useCallback(
+    async (postId: string) => {
+      try {
+        await apiClient.delete(`/api/forum/post/${postId}`);
+        setPosts((prev) => prev.filter((p) => String(p.id) !== postId));
+        requestBadgeDataRefresh();
+      } catch (err: any) {
+        const message =
+          err.response?.data?.error ?? err.message ?? "Failed to delete post";
+        console.error("Delete post error:", message);
+        throw new Error(message);
+      }
+    },
+    [requestBadgeDataRefresh],
+  );
 
   /*
   -----------------------------

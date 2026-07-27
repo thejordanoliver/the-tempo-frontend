@@ -1,5 +1,6 @@
 // components/Forum/PostItem.tsx
 
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
 import ConfirmModal from "components/ConfirmModal";
@@ -17,7 +18,6 @@ import {
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type {
   ForumLikeMutationResponse,

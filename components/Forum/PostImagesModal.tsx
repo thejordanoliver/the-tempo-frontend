@@ -1,8 +1,8 @@
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,

@@ -9,7 +9,10 @@ import {
   getNotificationSocket,
 } from "@/services/notificationSocket";
 import { useBadgeNotificationStore } from "@/store/badgeNotificationStore";
-import type { BadgeEarnedSocketPayload, BadgeNotification } from "@/types/badges";
+import type {
+  BadgeEarnedSocketPayload,
+  BadgeNotification,
+} from "@/types/badges";
 
 type UseBadgeRealtimeNotificationsOptions = {
   token?: string | null;
@@ -67,7 +70,7 @@ export const handleBadgeEarnedSocketPayload = (
       payload !== null &&
       "recipientUserId" in payload
     ) {
-      console.log("[BadgeRealtimeHook] ignored recipient mismatch", {
+      console.warn("[BadgeRealtimeHook] Ignored recipient mismatch", {
         payloadRecipientUserId: payload.recipientUserId,
         currentUserId: userId,
       });
@@ -77,6 +80,7 @@ export const handleBadgeEarnedSocketPayload = (
   }
 
   enqueueNotifications(payload.notifications);
+
   return true;
 };
 
@@ -87,6 +91,7 @@ export const loadPendingBadgeNotifications = async (
   const notifications = await getPending();
 
   enqueueNotifications(notifications);
+
   return notifications;
 };
 
@@ -97,11 +102,14 @@ export const retryBadgeNotificationReadAcks = async ({
 }: RetryReadOptions) => {
   const retryIds = consumeReadRetryNotificationIds();
 
-  if (!retryIds.length) return [];
+  if (!retryIds.length) {
+    return [];
+  }
 
   try {
     const acknowledgedIds = await markRead(retryIds);
     const acknowledgedIdSet = new Set(acknowledgedIds);
+
     const unacknowledgedIds = retryIds.filter(
       (notificationId) => !acknowledgedIdSet.has(notificationId),
     );
@@ -115,7 +123,10 @@ export const retryBadgeNotificationReadAcks = async ({
     queueNotificationReadRetry(retryIds);
 
     if (__DEV__) {
-      console.warn("Failed to retry badge notification read acknowledgments:", error);
+      console.warn(
+        "[BadgeRealtimeHook] Failed to retry read acknowledgments",
+        error,
+      );
     }
 
     return [];
@@ -130,15 +141,6 @@ export function useBadgeRealtimeNotifications({
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
 
   useEffect(() => {
-    if (__DEV__) {
-      console.log("[BadgeRealtimeHook] auth state", {
-        hasToken: Boolean(token),
-        userId,
-      });
-    }
-  }, [token, userId]);
-
-  useEffect(() => {
     if (previousUserIdRef.current !== normalizedUserId) {
       useBadgeNotificationStore.getState().clearBadgeNotifications();
       previousUserIdRef.current = normalizedUserId;
@@ -149,55 +151,49 @@ export function useBadgeRealtimeNotifications({
     if (!token || !normalizedUserId) {
       disconnectNotificationSocket();
       useBadgeNotificationStore.getState().clearBadgeNotifications();
+
       return;
     }
 
     const socket = getNotificationSocket(token);
 
-    if (!socket) return;
+    if (!socket) {
+      return;
+    }
 
     let isActive = true;
     let appState: AppStateStatus = AppState.currentState;
 
-    const recoverPendingNotifications = async (reason: string) => {
+    const recoverPendingNotifications = async () => {
       try {
+        const store = useBadgeNotificationStore.getState();
+
         await retryBadgeNotificationReadAcks({
           consumeReadRetryNotificationIds:
-            useBadgeNotificationStore.getState()
-              .consumeReadRetryNotificationIds,
-          queueNotificationReadRetry:
-            useBadgeNotificationStore.getState().queueNotificationReadRetry,
+            store.consumeReadRetryNotificationIds,
+          queueNotificationReadRetry: store.queueNotificationReadRetry,
         });
 
-        const notifications = await loadPendingBadgeNotifications(
-          (pendingNotifications) => {
-            if (isActive) {
-              useBadgeNotificationStore
-                .getState()
-                .enqueueNotifications(pendingNotifications);
-            }
-          },
-        );
+        await loadPendingBadgeNotifications((pendingNotifications) => {
+          if (!isActive) {
+            return;
+          }
 
-        if (__DEV__) {
-          console.log("[BadgeRealtimeHook] pending response", notifications);
-          console.log("[BadgeSocket] pending", {
-            reason,
-            count: notifications.length,
-          });
-        }
+          useBadgeNotificationStore
+            .getState()
+            .enqueueNotifications(pendingNotifications);
+        });
       } catch (error) {
         if (__DEV__) {
-          console.warn("Failed to recover badge notifications:", error);
+          console.warn(
+            "[BadgeRealtimeHook] Failed to recover pending notifications",
+            error,
+          );
         }
       }
     };
 
     const handleBadgeEarned = (payload: BadgeEarnedSocketPayload) => {
-      if (__DEV__) {
-        console.log("[BadgeRealtimeHook] badge:earned", payload);
-      }
-
       handleBadgeEarnedSocketPayload(
         payload,
         normalizedUserId,
@@ -205,36 +201,20 @@ export function useBadgeRealtimeNotifications({
       );
     };
 
-    const handleReady = (payload: { userId: number }) => {
-      if (__DEV__) {
-        console.log("[BadgeRealtimeHook] notifications:ready", payload);
-      }
-    };
-
     const handleConnect = () => {
-      if (__DEV__) {
-        console.log("[BadgeSocket] connected");
-      }
-
-      void recoverPendingNotifications("connect");
-    };
-
-    const handleDisconnect = (reason: string) => {
-      if (__DEV__) {
-        console.log("[BadgeRealtimeHook] disconnect", { reason });
-      }
+      void recoverPendingNotifications();
     };
 
     const handleConnectError = (error: Error) => {
       if (__DEV__) {
-        console.log("[BadgeRealtimeHook] connect_error", {
+        console.warn("[BadgeRealtimeHook] Socket connection failed", {
           message: error.message,
         });
       }
     };
 
     const handleReconnect = () => {
-      void recoverPendingNotifications("reconnect");
+      void recoverPendingNotifications();
     };
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -244,14 +224,12 @@ export function useBadgeRealtimeNotifications({
       appState = nextAppState;
 
       if (wasBackgrounded && nextAppState === "active") {
-        void recoverPendingNotifications("foreground");
+        void recoverPendingNotifications();
       }
     };
 
     socket.on("badge:earned", handleBadgeEarned);
-    socket.on("notifications:ready", handleReady);
     socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
     socket.io.on("reconnect", handleReconnect);
 
@@ -261,24 +239,22 @@ export function useBadgeRealtimeNotifications({
     );
 
     if (socket.connected) {
-      void recoverPendingNotifications("already-connected");
+      void recoverPendingNotifications();
     } else {
       socket.connect();
     }
 
     return () => {
       isActive = false;
+
       socket.off("badge:earned", handleBadgeEarned);
-      socket.off("notifications:ready", handleReady);
       socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);
       socket.io.off("reconnect", handleReconnect);
+
       appStateSubscription.remove();
+
       disconnectNotificationSocket(token);
     };
-  }, [
-    normalizedUserId,
-    token,
-  ]);
+  }, [normalizedUserId, token]);
 }

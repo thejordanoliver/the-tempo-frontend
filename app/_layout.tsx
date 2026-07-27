@@ -30,8 +30,8 @@ import {
   PreferencesProvider,
   usePreferences,
 } from "../contexts/PreferencesContext";
+import { useBadgeRealtimeNotifications } from "../hooks/ForumHooks/useBadgeRealtimeNotifications";
 import { useAuth } from "../hooks/UserHooks/useAuth";
-import { useBadgeRealtimeNotifications } from "../hooks/useBadgeRealtimeNotifications";
 import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
 import { clearAuthSession } from "../utils/apiClient";
 

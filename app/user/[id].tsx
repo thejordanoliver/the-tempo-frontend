@@ -1,5 +1,6 @@
 import TabBar from "@/components/TabBars/TabBar";
 import { globalStyles } from "@/constants/styles";
+import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
@@ -10,7 +11,6 @@ import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useBadges } from "hooks/useBadges";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {

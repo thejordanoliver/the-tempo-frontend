@@ -1,7 +1,7 @@
 // profile.tsx
 import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
 import TabBar from "@/components/TabBars/TabBar";
-import { useBadges } from "@/hooks/useBadges";
+import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";

@@ -1,7 +1,7 @@
 // hooks/useTeamForumPosts.ts
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust path if needed
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { LeagueType } from "types/types";
 
 import { apiClient } from "utils/apiClient";

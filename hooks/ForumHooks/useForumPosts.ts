@@ -1,5 +1,5 @@
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { useCallback, useEffect, useState } from "react";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import type {
   ForumCommentCreateResponse,
   ForumLikeMutationResponse,

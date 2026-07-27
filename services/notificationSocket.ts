@@ -2,7 +2,9 @@ import { io, type Socket } from "socket.io-client";
 import type { BadgeEarnedSocketPayload } from "@/types/badges";
 
 const normalizeSocketBaseUrl = (value?: string) => {
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
 
   return value.replace(/\/+$/, "").replace(/\/api$/i, "");
 };
@@ -32,8 +34,12 @@ export type NotificationSocket = Socket<
 let notificationSocket: NotificationSocket | null = null;
 let activeToken: string | null = null;
 
-export const getNotificationSocket = (token?: string | null) => {
-  if (!token || !SOCKET_URL) return null;
+export const getNotificationSocket = (
+  token?: string | null,
+): NotificationSocket | null => {
+  if (!token || !SOCKET_URL) {
+    return null;
+  }
 
   if (notificationSocket && activeToken === token) {
     if (!notificationSocket.connected) {
@@ -44,63 +50,25 @@ export const getNotificationSocket = (token?: string | null) => {
   }
 
   notificationSocket?.disconnect();
+
   activeToken = token;
 
   const namespaceUrl = `${SOCKET_URL}/notifications`;
 
-  if (__DEV__) {
-    console.log("[BadgeSocket] creating socket", {
-      socketUrl: SOCKET_URL,
-      namespaceUrl,
-      hasToken: Boolean(token),
-      tokenLength: token.length,
-    });
-  }
-
   notificationSocket = io(namespaceUrl, {
-    auth: { token },
+    auth: {
+      token,
+    },
     transports: ["websocket", "polling"],
     autoConnect: true,
     reconnection: true,
   });
 
   if (__DEV__) {
-    notificationSocket.on("connect", () => {
-      console.log("[BadgeSocket] connected", {
-        socketId: notificationSocket?.id,
-        namespace: namespaceUrl,
-        transport: notificationSocket?.io.engine?.transport?.name,
-      });
-    });
-
-    notificationSocket.on("disconnect", (reason) => {
-      console.log("[BadgeSocket] disconnected", {
-        socketId: notificationSocket?.id,
-        namespace: namespaceUrl,
-        reason,
-      });
-    });
-
     notificationSocket.on("connect_error", (error) => {
-      console.log("[BadgeSocket] connect_error", {
+      console.warn("[BadgeSocket] Connection failed", {
         message: error.message,
         namespace: namespaceUrl,
-      });
-    });
-
-    notificationSocket.io.on("reconnect_attempt", (attempt) => {
-      console.log("[BadgeSocket] reconnect_attempt", {
-        attempt,
-        namespace: namespaceUrl,
-      });
-    });
-
-    notificationSocket.io.on("reconnect", (attempt) => {
-      console.log("[BadgeSocket] reconnect", {
-        attempt,
-        socketId: notificationSocket?.id,
-        namespace: namespaceUrl,
-        transport: notificationSocket?.io.engine?.transport?.name,
       });
     });
   }
@@ -108,8 +76,12 @@ export const getNotificationSocket = (token?: string | null) => {
   return notificationSocket;
 };
 
-export const disconnectNotificationSocket = (token?: string | null) => {
-  if (token && activeToken !== token) return;
+export const disconnectNotificationSocket = (
+  token?: string | null,
+) => {
+  if (token && activeToken !== token) {
+    return;
+  }
 
   notificationSocket?.disconnect();
   notificationSocket = null;

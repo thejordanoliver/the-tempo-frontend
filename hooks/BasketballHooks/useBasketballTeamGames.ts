@@ -1,4 +1,5 @@
 import { BasketballGame } from "@/types/basketball/basketball";
+import { isGameLive } from "@/utils/games";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -48,25 +49,6 @@ interface UseBasketballTeamGamesResult {
   refreshing: boolean;
   error: Error | null;
   refresh: () => Promise<void>;
-}
-
-const LIVE_STATES = new Set(["in", "half"]);
-
-function isLiveBasketballGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress") ||
-    description.includes("live") ||
-    detail.includes("live") ||
-    shortDetail.includes("live")
-  );
 }
 
 function groupGamesByMonth(games: BasketballGame[]): BasketballScheduleMonth[] {
@@ -223,7 +205,7 @@ export function useBasketballTeamGames(
   const games = useMemo(() => data?.games ?? [], [data]);
 
   const hasLiveGame = useMemo(() => {
-    return games.some(isLiveBasketballGame);
+    return games.some(isGameLive);
   }, [games]);
 
   useEffect(() => {

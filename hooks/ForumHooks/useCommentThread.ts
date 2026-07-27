@@ -1,8 +1,8 @@
+import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Post } from "components/Forum/PostItem";
 import { isAxiosError } from "axios";
+import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
-import { useBadgeNotifications } from "hooks/useBadgeNotifications";
 import { AlertConfig } from "types/alert";
 import type {
   ForumCommentCreateResponse,

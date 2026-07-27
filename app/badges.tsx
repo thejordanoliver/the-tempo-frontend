@@ -3,7 +3,7 @@ import BadgeCard from "@/components/Profile/Badges/BadgeCard";
 import PillTabs from "@/components/TabBars/PillTabs";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useBadges } from "@/hooks/useBadges";
+import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import type { BadgeFilter } from "@/types/badges";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
