@@ -1,4 +1,5 @@
 import { BaseballGame } from "@/types/baseball/baseball";
+import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -10,10 +11,6 @@ type FetchGamesOptions = {
   silent?: boolean;
 };
 
-function isLiveBaseballGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  return state.includes("in");
-}
 
 function getBaseballEndpoint(league: League) {
   switch (league) {
@@ -80,7 +77,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
-    return games.some(isLiveBaseballGame);
+    return games.some(isGameLive);
   }, [games]);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { BaseballGame } from "@/types/baseball/baseball";
+import { isGameLive } from "@/utils/games";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -51,24 +52,6 @@ interface UseBaseballTeamGamesResult {
   refresh: () => Promise<void>;
 }
 
-const LIVE_STATES = new Set(["in", "half"]);
-
-function isLiveBaseballGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress") ||
-    description.includes("live") ||
-    detail.includes("live") ||
-    shortDetail.includes("live")
-  );
-}
 
 function groupGamesByMonth(games: BaseballGame[]): BaseballScheduleMonth[] {
   const monthFormatter = new Intl.DateTimeFormat("en-US", {
@@ -224,7 +207,7 @@ export function useBaseballTeamGames(
   const games = useMemo(() => data?.games ?? [], [data]);
 
   const hasLiveGame = useMemo(() => {
-    return games.some(isLiveBaseballGame);
+    return games.some(isGameLive);
   }, [games]);
 
   useEffect(() => {

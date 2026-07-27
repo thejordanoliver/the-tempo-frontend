@@ -1,4 +1,5 @@
 import { BasketballGame } from "@/types/basketball/basketball";
+import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -17,21 +18,6 @@ type FetchGamesOptions = {
   silent?: boolean;
 };
 
-const LIVE_STATES = new Set(["in", "half"]);
-
-function isLiveBasketballGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  const description = String(game?.status?.description || "").toLowerCase();
-  const detail = String(game?.status?.detail || "").toLowerCase();
-  const shortDetail = String(game?.status?.shortDetail || "").toLowerCase();
-
-  return (
-    LIVE_STATES.has(state) ||
-    description.includes("in progress") ||
-    detail.includes("in progress") ||
-    shortDetail.includes("in progress")
-  );
-}
 
 function getBasketballEndpoint(league: League) {
   switch (league) {
@@ -105,7 +91,7 @@ export function useBasketballGames(date?: Date, league: League = "nba") {
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
-    return games.some(isLiveBasketballGame);
+    return games.some(isGameLive);
   }, [games]);
 
   useEffect(() => {
