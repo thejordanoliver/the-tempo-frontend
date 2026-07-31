@@ -27,7 +27,7 @@ type Props = {
   homeLogo: any;
   homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
-  state: string | undefined;
+  state: string | null;
 };
 
 export default function FanPredictionVote({

@@ -41,7 +41,7 @@ type Props = {
   home: TeamData;
   away: TeamData;
   league: string;
-  state?: string;
+  state: string | null;
 };
 
 export default function LastFiveGames({

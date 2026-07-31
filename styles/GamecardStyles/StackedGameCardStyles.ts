@@ -191,23 +191,6 @@ export const stackedGameCardStyles = (
       height: 25,
       resizeMode: "contain",
     },
-    expoFootballPossesion: {
-      width: 25,
-      height: 25,
-    },
-
-    mlbHeadlineText: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 8,
-      color: isChampionship
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.lightGray
-          : Colors.darkGray,
-      textAlign: "center",
-    },
 
     winnerContainer: {
       flexDirection: "row",

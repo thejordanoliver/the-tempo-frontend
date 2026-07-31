@@ -1,6 +1,6 @@
 import { BaseballGame } from "@/types/baseball/baseball";
 import { isGameLive } from "@/utils/games";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type BaseballTeamScheduleLeague = "mlb" | "cb" | "sb";
@@ -19,7 +19,6 @@ export type BaseballTeamScheduleTeam = {
   location?: string;
   name?: string;
   displayName?: string;
-  color?: string;
   logo?: string;
   recordSummary?: string;
   seasonSummary?: string;
@@ -27,10 +26,18 @@ export type BaseballTeamScheduleTeam = {
   groups?: any;
 };
 
+type Season = {
+  year: number;
+  type: number;
+  name: string;
+  displayName: string;
+  half: number;
+};
+
 export type BaseballTeamScheduleResponse = {
   league: string;
   team: BaseballTeamScheduleTeam | null;
-  season: any;
+  season: Season;
   games: BaseballGame[];
   months: BaseballScheduleMonth[];
 };
@@ -43,7 +50,7 @@ type FetchScheduleOptions = {
 interface UseBaseballTeamGamesResult {
   league: string | null;
   team: BaseballTeamScheduleTeam | null;
-  season: any;
+  season: Season | null;
   games: BaseballGame[];
   months: BaseballScheduleMonth[];
   loading: boolean;
@@ -52,99 +59,94 @@ interface UseBaseballTeamGamesResult {
   refresh: () => Promise<void>;
 }
 
+const LIVE_POLL_INTERVAL = 60_000;
+const IDLE_POLL_INTERVAL = 60_000;
 
-function groupGamesByMonth(games: BaseballGame[]): BaseballScheduleMonth[] {
-  const monthFormatter = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-
-  const monthMap = new Map<string, BaseballScheduleMonth>();
-
-  games.forEach((game) => {
-    const date = game.date ? new Date(game.date) : null;
-
-    if (!date || Number.isNaN(date.getTime())) {
-      const key = "unknown";
-
-      if (!monthMap.has(key)) {
-        monthMap.set(key, {
-          key,
-          label: "Unknown Date",
-          year: null,
-          month: null,
-          games: [],
-        });
-      }
-
-      monthMap.get(key)?.games.push(game);
-      return;
-    }
-
-    const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const key = `${year}-${String(month).padStart(2, "0")}`;
-
-    if (!monthMap.has(key)) {
-      monthMap.set(key, {
-        key,
-        label: monthFormatter.format(date),
-        year,
-        month,
-        games: [],
-      });
-    }
-
-    monthMap.get(key)?.games.push(game);
-  });
-
-  return Array.from(monthMap.values()).sort((a, b) => {
-    if (a.key === "unknown") return 1;
-    if (b.key === "unknown") return -1;
-    return a.key.localeCompare(b.key);
-  });
-}
-
-function getGameTime(game: BaseballGame) {
-  const timestamp = Number((game as any).timestamp);
-
-  if (Number.isFinite(timestamp) && timestamp > 0) {
-    return timestamp;
+function areScheduleResponsesEqual(
+  current: BaseballTeamScheduleResponse,
+  next: BaseballTeamScheduleResponse,
+): boolean {
+  if (current === next) {
+    return true;
   }
 
-  if (game.date) {
-    const dateTime = new Date(game.date).getTime();
-    return Number.isNaN(dateTime) ? 0 : dateTime;
+  try {
+    return JSON.stringify(current) === JSON.stringify(next);
+  } catch {
+    return false;
   }
-
-  return 0;
 }
 
-function sortGamesByDate(games: BaseballGame[]) {
-  return [...games].sort((a, b) => getGameTime(a) - getGameTime(b));
+function hasValidValue(
+  value: string | number | null | undefined,
+): value is string | number {
+  return value !== null && value !== undefined && value !== "";
+}
+
+function isBaseballGameLive(game: BaseballGame): boolean {
+  if (isGameLive(game)) {
+    return true;
+  }
+
+  const currentGame = game as any;
+
+  const state = String(
+    currentGame?.status?.type?.state ??
+      currentGame?.status?.state ??
+      currentGame?.state ??
+      currentGame?.statusState ??
+      "",
+  ).toLowerCase();
+
+  const statusName = String(
+    currentGame?.status?.type?.name ??
+      currentGame?.status?.name ??
+      currentGame?.statusName ??
+      "",
+  ).toLowerCase();
+
+  return (
+    state === "in" ||
+    state === "live" ||
+    state === "in_progress" ||
+    statusName === "status_in_progress" ||
+    statusName.includes("in_progress") ||
+    statusName.includes("in progress")
+  );
 }
 
 export function useBaseballTeamGames(
   league: BaseballTeamScheduleLeague,
-  teamId?: string | number | null,
+  teamId: string | number | null,
+  season: string | number | null,
 ): UseBaseballTeamGamesResult {
-  const [data, setData] = useState<BaseballTeamScheduleResponse | null>(null);
+  const [data, setData] =
+    useState<BaseballTeamScheduleResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  const pollingRequestInProgressRef = useRef(false);
 
   const fetchSchedule = useCallback(
     async ({
       isRefresh = false,
       silent = false,
     }: FetchScheduleOptions = {}) => {
-      if (!league || !teamId) {
+      if (!league || !hasValidValue(teamId) || !hasValidValue(season)) {
         setData(null);
         setLoading(false);
         setRefreshing(false);
         setError(null);
         return;
+      }
+
+      if (silent && pollingRequestInProgressRef.current) {
+        return;
+      }
+
+      if (silent) {
+        pollingRequestInProgressRef.current = true;
       }
 
       try {
@@ -154,40 +156,59 @@ export function useBaseballTeamGames(
           setLoading(true);
         }
 
-        setError(null);
-
         const response = await apiClient.get<BaseballTeamScheduleResponse>(
-          `api/games/baseball/team/${league}/${teamId}`,
+          `api/games/baseball/team/${league}/${teamId}/${season}`,
+          {
+            params: silent
+              ? {
+                  // Prevent cached live-score responses.
+                  _t: Date.now(),
+                }
+              : undefined,
+          },
         );
 
-        const games = sortGamesByDate(response.data.games || []);
+        const responseGames = response.data.games ?? [];
+        const responseMonths = response.data.months ?? [];
 
-        const months =
-          Array.isArray(response.data.months) && response.data.months.length > 0
-            ? response.data.months
-            : groupGamesByMonth(games);
-
-        setData({
-          ...response.data,
+        const nextData: BaseballTeamScheduleResponse = {
+          league: response.data.league,
           team: response.data.team ?? null,
-          games,
-          months,
+          season: response.data.season,
+          games: responseGames,
+          months: responseMonths,
+        };
+
+        setError(null);
+
+        setData((currentData) => {
+          if (
+            currentData &&
+            areScheduleResponsesEqual(currentData, nextData)
+          ) {
+            return currentData;
+          }
+
+          return nextData;
         });
       } catch (err: any) {
-        console.error(err);
-
         const message =
-          err?.response?.data?.error ||
-          err?.message ||
+          err?.response?.data?.error ??
+          err?.message ??
           `Failed to fetch ${league} baseball team schedule`;
 
-        setError(new Error(message));
-
-        // Do not wipe existing schedule during silent live polling.
-        if (!silent) {
+        if (silent) {
+          console.warn("BASEBALL SCHEDULE POLLING ERROR:", message);
+        } else {
+          console.error("BASEBALL TEAM SCHEDULE ERROR:", err);
+          setError(new Error(message));
           setData(null);
         }
       } finally {
+        if (silent) {
+          pollingRequestInProgressRef.current = false;
+        }
+
         if (isRefresh) {
           setRefreshing(false);
         }
@@ -197,7 +218,7 @@ export function useBaseballTeamGames(
         }
       }
     },
-    [league, teamId],
+    [league, teamId, season],
   );
 
   useEffect(() => {
@@ -206,18 +227,24 @@ export function useBaseballTeamGames(
 
   const games = useMemo(() => data?.games ?? [], [data]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isGameLive);
-  }, [games]);
+  const hasLiveGame = useMemo(
+    () => games.some(isBaseballGameLive),
+    [games],
+  );
 
   useEffect(() => {
-    if (!hasLiveGame) return;
+    // Keep polling so scheduled games can transition into a live state.
+    const intervalDuration = hasLiveGame
+      ? LIVE_POLL_INTERVAL
+      : IDLE_POLL_INTERVAL;
 
     const interval = setInterval(() => {
       fetchSchedule({ silent: true });
-    }, 60000);
+    }, intervalDuration);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, [hasLiveGame, fetchSchedule]);
 
   const refresh = useCallback(async () => {

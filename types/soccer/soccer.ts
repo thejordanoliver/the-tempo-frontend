@@ -56,7 +56,7 @@ export type SoccerGame = {
     logo: string;
     record: string;
     score: number;
-    winner: boolean | null;
+    winner: boolean;
   };
   away: {
     id: number;
@@ -68,7 +68,7 @@ export type SoccerGame = {
     logo: string;
     record: string;
     score: number;
-    winner: boolean | null;
+    winner: boolean;
   };
   isConferenceGame: boolean;
   isNeutralSite: boolean;

@@ -299,7 +299,6 @@ export default function GameDetailsScreen() {
 
             <SoccerShotMap
               shots={shotMap}
-              shotMapAvailable={score?.shotMapAvailable === true}
               awayId={awayId}
               homeId={homeId}
               homeLogo={homeLogo}

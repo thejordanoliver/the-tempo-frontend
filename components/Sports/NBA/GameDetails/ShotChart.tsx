@@ -1,31 +1,22 @@
+import { Dropdown } from "@/components/Dropdown";
+import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
-import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  LayoutChangeEvent,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Svg, { Circle } from "react-native-svg";
-
-interface Play {
-  id: string | number;
-  shootingPlay: boolean;
-  scoringPlay?: boolean;
-  coordinate: { x: number; y: number };
-  pointsAttempted?: number;
-  scoreValue?: number;
-  team?: { id: string | number };
-  text?: string;
-  period?: { number: number; displayValue: string };
-  type: {
-    id: number;
-    text: string;
-  };
-}
 
 interface ShotChartProps {
   plays?: Play[];
@@ -33,11 +24,13 @@ interface ShotChartProps {
   awayId: string | number;
   homeEspnId: string | number;
   awayEspnId: string | number;
+  homeColor: string;
+  awayColor: string;
   homeLogo: any;
   awayLogo: any;
   league: string;
   neutralSite?: boolean;
-  state: string | undefined;
+  state: string | null;
 }
 
 type ShotChartTab =
@@ -49,12 +42,20 @@ type ShotChartTab =
   | "1st Half"
   | "2nd Half";
 
+const COURT_LENGTH = 94;
+const COURT_WIDTH = 50;
+
+const normalizeId = (value: string | number | null | undefined) =>
+  String(value ?? "").trim();
+
 export default function ShotChart({
   plays = [],
   homeId,
   awayId,
   homeEspnId = "0",
   awayEspnId = "0",
+  homeColor,
+  awayColor,
   homeLogo,
   awayLogo,
   league,
@@ -62,34 +63,52 @@ export default function ShotChart({
   state,
 }: ShotChartProps) {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
-  const styles = shortChartStyles(isDark);
+  const styles = shotChartStyles(isDark);
 
-  const normalizedLeague = league.toLowerCase();
-
-  const isMensCBB = normalizedLeague === "cbb";
-  const isWCBB = normalizedLeague === "wcbb";
+  const isMensCBB = league === "cbb";
+  const isWCBB = league === "wcbb";
   const isCollegeBasketball = isMensCBB || isWCBB;
-  const isWNBA = normalizedLeague === "wnba";
+  const isWNBA = league === "wnba";
 
-  const COURT_LENGTH = 94;
-  const COURT_WIDTH = 50;
+  const homeColorValue = homeColor || Colors.midTone;
+  const awayColorValue = awayColor || Colors.midTone;
 
-  const homeEspnIdString = String(homeEspnId);
-  const awayEspnIdString = String(awayEspnId);
+  const homeDatabaseIdString = normalizeId(homeId);
+  const awayDatabaseIdString = normalizeId(awayId);
+  const homeEspnIdString = normalizeId(homeEspnId);
+  const awayEspnIdString = normalizeId(awayEspnId);
 
-  const [layout, setLayout] = useState({ width: 0, height: 0 });
-  const [selectedQuarter, setSelectedQuarter] = useState<ShotChartTab>("All");
+  const [layout, setLayout] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  const [selectedPeriod, setSelectedPeriod] =
+    useState<ShotChartTab>("All");
 
   const homeTeam = useMemo(() => {
-    if (isCollegeBasketball) return getCBBTeamByESPNId(homeEspnId);
-    if (isWNBA) return getWNBATeamByESPNId(homeEspnId);
+    if (isCollegeBasketball) {
+      return getCBBTeamByESPNId(homeEspnId);
+    }
+
+    if (isWNBA) {
+      return getWNBATeamByESPNId(homeEspnId);
+    }
+
     return getTeamByESPNId(homeEspnId);
   }, [homeEspnId, isCollegeBasketball, isWNBA]);
 
   const awayTeam = useMemo(() => {
-    if (isCollegeBasketball) return getCBBTeamByESPNId(awayEspnId);
-    if (isWNBA) return getWNBATeamByESPNId(awayEspnId);
+    if (isCollegeBasketball) {
+      return getCBBTeamByESPNId(awayEspnId);
+    }
+
+    if (isWNBA) {
+      return getWNBATeamByESPNId(awayEspnId);
+    }
+
     return getTeamByESPNId(awayEspnId);
   }, [awayEspnId, isCollegeBasketball, isWNBA]);
 
@@ -105,73 +124,126 @@ export default function ShotChart({
     return getTeamLogo(homeId, false);
   }, [homeId, isCollegeBasketball, isWCBB, isWNBA]);
 
-  const courtImage = isCollegeBasketball ? CBBCourtImage : CourtImage;
+  const courtImage = isCollegeBasketball
+    ? CBBCourtImage
+    : CourtImage;
 
-  const TABS: ShotChartTab[] = isCollegeBasketball
+  const tabs: ShotChartTab[] = isCollegeBasketball
     ? ["All", "1st Half", "2nd Half"]
     : ["All", "1st", "2nd", "3rd", "4th"];
 
-  const PERIOD_MAP: Record<string, number> = isCollegeBasketball
-    ? {
-        "1st Half": 1,
-        "2nd Half": 2,
+  const periodOptions = tabs.map((tab) => ({
+    label: tab,
+    value: tab,
+  }));
+
+  const filteredPlays = useMemo(() => {
+    const periodMap: Partial<Record<ShotChartTab, number>> =
+      isCollegeBasketball
+        ? {
+            "1st Half": 1,
+            "2nd Half": 2,
+          }
+        : {
+            "1st": 1,
+            "2nd": 2,
+            "3rd": 3,
+            "4th": 4,
+          };
+
+    return plays.filter((play) => {
+      if (!play.coordinate || !play.shootingPlay) {
+        return false;
       }
-    : {
-        "1st": 1,
-        "2nd": 2,
-        "3rd": 3,
-        "4th": 4,
-      };
 
-  const filteredPlays = plays.filter((p) => {
-    if (!p.coordinate || !p.shootingPlay) return false;
+      if (selectedPeriod === "All") {
+        return true;
+      }
 
-    if (selectedQuarter !== "All") {
-      return p.period?.number === PERIOD_MAP[selectedQuarter];
+      return play.period?.number === periodMap[selectedPeriod];
+    });
+  }, [plays, selectedPeriod, isCollegeBasketball]);
+
+  const renderShots = filteredPlays.map((play, index) => {
+    const rawX = Number(play.coordinate?.x);
+    const rawY = Number(play.coordinate?.y);
+
+    if (!Number.isFinite(rawX) || !Number.isFinite(rawY)) {
+      return null;
     }
 
-    return true;
-  });
+    const playTeamId = normalizeId(play.team?.id);
 
-  const renderShots = filteredPlays.map((p) => {
-    const rawX = p.coordinate.x; // 0-50 court width
-    const rawY = p.coordinate.y; // 0-94 court length
+    /*
+     * Plays can contain either the ESPN team ID or the database team ID.
+     * Check both so away shots are properly identified and mirrored.
+     */
+    const matchesHomeEspnId =
+      playTeamId !== "" && playTeamId === homeEspnIdString;
 
-    let svgX = COURT_LENGTH - (rawY / COURT_LENGTH) * COURT_LENGTH;
-    let svgY = (rawX / COURT_WIDTH) * COURT_WIDTH;
+    const matchesAwayEspnId =
+      playTeamId !== "" && playTeamId === awayEspnIdString;
 
-    const playTeamId = String(p.team?.id ?? "");
+    const matchesHomeDatabaseId =
+      playTeamId !== "" && playTeamId === homeDatabaseIdString;
 
-    const isHomeShot = playTeamId === homeEspnIdString;
-    const isAwayShot = playTeamId === awayEspnIdString;
+    const matchesAwayDatabaseId =
+      playTeamId !== "" && playTeamId === awayDatabaseIdString;
 
-    /**
-     * Flip away team shots so both teams are oriented correctly.
+    /*
+     * ESPN IDs take priority. The database-ID fallback is used when
+     * the play response has already been converted to internal IDs.
+     */
+    const isHomeShot =
+      matchesHomeEspnId ||
+      (!matchesAwayEspnId && matchesHomeDatabaseId);
+
+    const isAwayShot =
+      matchesAwayEspnId ||
+      (!matchesHomeEspnId &&
+        !isHomeShot &&
+        matchesAwayDatabaseId);
+
+    /*
+     * ESPN coordinates are represented as:
+     * x = court width
+     * y = distance along the court
+     */
+    let svgX = COURT_LENGTH - rawY;
+    let svgY = rawX;
+
+    /*
+     * ESPN normalizes shots toward the same basket.
+     * Mirror away shots so they appear on the opposite side.
      */
     if (isAwayShot) {
       svgX = COURT_LENGTH - svgX;
       svgY = COURT_WIDTH - svgY;
     }
 
-    const made = p.scoringPlay === true;
+    /*
+     * Keep markers inside the SVG if an upstream coordinate
+     * is slightly outside the expected court dimensions.
+     */
+    svgX = Math.max(0, Math.min(COURT_LENGTH, svgX));
+    svgY = Math.max(0, Math.min(COURT_WIDTH, svgY));
 
-    let color = Colors.midTone;
+    const color = isHomeShot
+      ? homeColorValue
+      : isAwayShot
+        ? awayColorValue
+        : Colors.midTone;
 
-    if (isHomeShot) {
-      color = homeTeam?.color ?? "#00274c";
-    } else if (isAwayShot) {
-      color = awayTeam?.color ?? "#FF3B30";
-    }
-
-    const missSize = 1.2;
+    const made = play.scoringPlay === true;
+    const shotKey = `${play.id ?? "shot"}-${index}`;
 
     if (made) {
       return (
         <Circle
-          key={p.id}
+          key={shotKey}
           cx={svgX}
           cy={svgY}
-          r={1.8}
+          r={1.4}
           fill={color}
           opacity={0.9}
         />
@@ -179,13 +251,19 @@ export default function ShotChart({
     }
 
     return (
-      <React.Fragment key={p.id}>
-        <Circle cx={svgX} cy={svgY} r={missSize} fill="white" opacity={0.95} />
+      <React.Fragment key={shotKey}>
+        <Circle
+          cx={svgX}
+          cy={svgY}
+          r={1.4}
+          fill={Colors.white}
+          opacity={0.95}
+        />
 
         <Circle
           cx={svgX}
           cy={svgY}
-          r={missSize}
+          r={1.2}
           stroke={color}
           strokeWidth={0.9}
           fill="none"
@@ -197,33 +275,39 @@ export default function ShotChart({
 
   const MadeView = ({ color }: { color: string }) => (
     <View
-      style={{
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        backgroundColor: color,
-        opacity: 1,
-      }}
+      style={[
+        styles.madeMarker,
+        {
+          backgroundColor: color,
+        },
+      ]}
     />
   );
 
   const MissView = ({ color }: { color: string }) => (
     <View
-      style={{
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        backgroundColor: Colors.white,
-        opacity: 1,
-        borderWidth: 4,
-        borderColor: color,
-      }}
+      style={[
+        styles.missedMarker,
+        {
+          borderColor: color,
+        },
+      ]}
     />
   );
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
-    setLayout({ width, height });
+
+    setLayout({
+      width,
+      height,
+    });
+  };
+
+  const handlePeriodSelect = (value: string) => {
+    if (tabs.includes(value as ShotChartTab)) {
+      setSelectedPeriod(value as ShotChartTab);
+    }
   };
 
   if (state === "pre") {
@@ -235,12 +319,14 @@ export default function ShotChart({
       <HeadingTwo isDark={isDark}>Shot Chart</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <TabBar
-          tabs={TABS}
-          selected={selectedQuarter}
-          onTabPress={(tab) => setSelectedQuarter(tab as ShotChartTab)}
-          isDark={isDark}
-        />
+        <View style={styles.dropdownRow}>
+          <Dropdown
+            options={periodOptions}
+            selectedValue={selectedPeriod}
+            onSelect={handlePeriodSelect}
+            isDark={isDark}
+          />
+        </View>
 
         <View style={styles.chartWrapper} onLayout={onLayout}>
           <Image
@@ -255,13 +341,13 @@ export default function ShotChart({
             layout.height > 0 && (
               <Image
                 source={courtLogo}
-                style={{
-                  position: "absolute",
-                  width: 150,
-                  height: 150,
-                  left: layout.width / 2 - 75,
-                  top: layout.height / 2 - 75,
-                }}
+                style={[
+                  styles.courtLogo,
+                  {
+                    left: layout.width / 2 - 75,
+                    top: layout.height / 2 - 75,
+                  },
+                ]}
                 resizeMode="contain"
               />
             )}
@@ -288,20 +374,20 @@ export default function ShotChart({
               <View style={styles.divider} />
 
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={awayTeam.color ?? Colors.midTone} />
+              <MadeView color={awayColorValue} />
 
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={awayTeam.color ?? Colors.midTone} />
+              <MissView color={awayColorValue} />
             </View>
           )}
 
           {homeTeam && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={homeTeam.color ?? Colors.midTone} />
+              <MadeView color={homeColorValue} />
 
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={homeTeam.color ?? Colors.midTone} />
+              <MissView color={homeColorValue} />
 
               <View style={styles.divider} />
 
@@ -318,7 +404,7 @@ export default function ShotChart({
   );
 }
 
-export const shortChartStyles = (isDark: boolean) =>
+export const shotChartStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       width: "100%",
@@ -328,23 +414,36 @@ export const shortChartStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      paddingTop: 12,
       overflow: "hidden",
+    },
+
+    dropdownRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      padding: 12,
+      zIndex: 20,
     },
 
     chartWrapper: {
       width: "100%",
-      aspectRatio: 94 / 50,
+      aspectRatio: COURT_LENGTH / COURT_WIDTH,
       overflow: "hidden",
       position: "relative",
     },
 
     courtImage: {
-      width: "100%",
-      height: "100%",
       position: "absolute",
       top: 0,
       left: 0,
+      width: "100%",
+      height: "100%",
+    },
+
+    courtLogo: {
+      position: "absolute",
+      width: 150,
+      height: 150,
     },
 
     legendContainer: {
@@ -363,14 +462,6 @@ export const shortChartStyles = (isDark: boolean) =>
       flexShrink: 1,
     },
 
-    colorDot: {
-      width: 20,
-      height: 20,
-      borderRadius: 100,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-    },
-
     legendText: {
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
@@ -386,5 +477,19 @@ export const shortChartStyles = (isDark: boolean) =>
       height: 14,
       width: 1,
       backgroundColor: isDark ? Colors.white : Colors.black,
+    },
+
+    madeMarker: {
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+    },
+
+    missedMarker: {
+      width: 14,
+      height: 14,
+      borderRadius: 7,
+      backgroundColor: Colors.white,
+      borderWidth: 4,
     },
   });

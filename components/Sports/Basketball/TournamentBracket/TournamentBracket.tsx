@@ -18,8 +18,10 @@ import type {
 import {
   canNavigateToBracketGame,
   createBracketGameMap,
+  getRenderableBracketTeam,
   isFinalBracketGame,
   isLiveBracketGame,
+  normalizeTournamentForBracket,
 } from "./tournamentBracket.utils";
 
 type RouteTeamPayload = {
@@ -147,37 +149,45 @@ function getRouteTeamName(
   team: BracketTeam | null,
   fallbackName: string,
 ): string {
-  return team?.shortName || team?.abbreviation || team?.name || fallbackName;
+  const displayTeam = getRenderableBracketTeam(team);
+
+  return (
+    displayTeam?.shortName ||
+    displayTeam?.abbreviation ||
+    displayTeam?.name ||
+    fallbackName
+  );
 }
 
 function toRouteTeam(
   team: BracketTeam | null,
   fallbackName: string,
 ): RouteTeamPayload {
-  const displayName = getRouteTeamName(team, fallbackName);
+  const displayTeam = getRenderableBracketTeam(team);
+  const displayName = getRouteTeamName(displayTeam, fallbackName);
 
-  const id = toNumber(team?.id);
-  const espnId = toNumber(team?.espnId) || id;
+  const id = toNumber(displayTeam?.id);
+  const espnId = toNumber(displayTeam?.espnId) || id;
 
   return {
     id,
     wid: id || null,
     espnId,
-    uid: String(team?.espnId ?? team?.id ?? ""),
-    name: team?.name || displayName,
+    uid: String(displayTeam?.espnId ?? displayTeam?.id ?? ""),
+    name: displayTeam?.name || displayName,
     shortName: displayName,
-    code: team?.abbreviation || "TBD",
+    code: displayTeam?.abbreviation || "TBD",
     city: "",
     state: "",
     location: "",
-    logo: team?.logo ?? "",
+    logo: displayTeam?.logo ?? "",
     primaryColor: "",
     secondaryColor: "",
     nbaAPIID: 0,
-    rank: team?.seed ?? 0,
-    score: toNumber(team?.score),
+    rank: displayTeam?.seed ?? 0,
+    score: toNumber(displayTeam?.score),
     record: "",
-    winner: team?.winner === true,
+    winner: displayTeam?.winner === true,
   };
 }
 
@@ -211,23 +221,25 @@ function createRoutePayload(
   season: number,
 ): RouteGamePayload {
   const league = getLeagueMetadata(competition);
-  const eventId = game.eventId ?? game.id;
+  const gameId = game.id;
   const date = game.date ?? "";
 
   const parsedTimestamp = date ? new Date(date).getTime() : 0;
 
   const timestamp = Number.isFinite(parsedTimestamp) ? parsedTimestamp : 0;
 
-  const topTeamName = game.topTeam?.name ?? game.topTeam?.shortName ?? "TBD";
+  const topTeam = getRenderableBracketTeam(game.topTeam);
+  const bottomTeam = getRenderableBracketTeam(game.bottomTeam);
 
-  const bottomTeamName =
-    game.bottomTeam?.name ?? game.bottomTeam?.shortName ?? "TBD";
+  const topTeamName = topTeam?.name ?? topTeam?.shortName ?? "TBD";
+
+  const bottomTeamName = bottomTeam?.name ?? bottomTeam?.shortName ?? "TBD";
 
   const topTeamAbbreviation =
-    game.topTeam?.abbreviation ?? game.topTeam?.shortName ?? "TBD";
+    topTeam?.abbreviation ?? topTeam?.shortName ?? "TBD";
 
   const bottomTeamAbbreviation =
-    game.bottomTeam?.abbreviation ?? game.bottomTeam?.shortName ?? "TBD";
+    bottomTeam?.abbreviation ?? bottomTeam?.shortName ?? "TBD";
 
   const venue = game.venue;
   const isLive = isLiveBracketGame(game);
@@ -241,8 +253,8 @@ function createRoutePayload(
       slug: league.slug,
     },
 
-    id: eventId,
-    uid: eventId,
+    id: gameId,
+    uid: gameId,
 
     name: `${topTeamName} vs ${bottomTeamName}`,
     shortName: `${topTeamAbbreviation} VS ` + bottomTeamAbbreviation,
@@ -279,20 +291,20 @@ function createRoutePayload(
      * Continue mapping bottom to home and top to away so the
      * existing game details route receives its expected shape.
      */
-    home: toRouteTeam(game.bottomTeam, "Home Team"),
+    home: toRouteTeam(bottomTeam, "Home Team"),
 
-    away: toRouteTeam(game.topTeam, "Away Team"),
+    away: toRouteTeam(topTeam, "Away Team"),
 
     isConferenceGame: false,
     isNeutralSite: true,
     attendance: 0,
-    playByPlayAvailable: Boolean(eventId),
+    playByPlayAvailable: Boolean(gameId),
     recent: isLive,
     wasSuspended: false,
 
     raw: {
-      eventId,
-      competitionId: game.id,
+      eventId: gameId,
+      competitionId: gameId,
     },
   };
 }
@@ -311,8 +323,12 @@ export default function TournamentBracket({
 
   const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
   const horizontalScrollRef = useRef<ScrollView>(null);
-  const tournamentKey = tournament
-    ? `${tournament.tournamentId ?? tournament.tournamentName}-${tournament.season}`
+  const bracketTournament = useMemo(
+    () => (tournament ? normalizeTournamentForBracket(tournament) : null),
+    [tournament],
+  );
+  const tournamentKey = bracketTournament
+    ? `${bracketTournament.tournamentId ?? bracketTournament.tournamentName}-${bracketTournament.season}`
     : null;
 
   useEffect(() => {
@@ -335,37 +351,37 @@ export default function TournamentBracket({
 
   const handleGamePress = useCallback(
     (game: BracketGame) => {
-      if (!tournament || !game.eventId || !canNavigateToBracketGame(game)) {
+      if (!bracketTournament || !canNavigateToBracketGame(game)) {
         return;
       }
 
-      const league = getLeagueMetadata(tournament.competition);
+      const league = getLeagueMetadata(bracketTournament.competition);
 
       const routePayload = createRoutePayload(
         game,
-        tournament.competition,
-        tournament.season,
+        bracketTournament.competition,
+        bracketTournament.season,
       );
 
       router.push({
         pathname: "/game/basketball/[game]",
         params: {
-          game: game.eventId,
+          game: game.id,
           leagueId: String(league.id),
           data: encodeURIComponent(JSON.stringify(routePayload)),
         },
       });
     },
-    [router, tournament],
+    [bracketTournament, router],
   );
 
   const gameById = useMemo<ReadonlyMap<string, BracketGame>>(() => {
-    if (!tournament) {
+    if (!bracketTournament) {
       return EMPTY_GAME_MAP;
     }
 
-    return createBracketGameMap(tournament);
-  }, [tournament]);
+    return createBracketGameMap(bracketTournament);
+  }, [bracketTournament]);
 
   const refreshControl = useMemo(() => {
     if (!onRefresh) {
@@ -389,7 +405,7 @@ export default function TournamentBracket({
    * starts. Only replace the content with a skeleton when no
    * tournament has loaded yet.
    */
-  if (loading && !tournament) {
+  if (loading && !bracketTournament) {
     return (
       <ScrollView
         style={styles.root}
@@ -407,7 +423,7 @@ export default function TournamentBracket({
    * Only show the full error state when there is no tournament
    * available to display.
    */
-  if (error && !tournament) {
+  if (error && !bracketTournament) {
     return (
       <TournamentBracketEmptyState
         title="Bracket unavailable"
@@ -418,7 +434,7 @@ export default function TournamentBracket({
     );
   }
 
-  if (!tournament) {
+  if (!bracketTournament) {
     return (
       <TournamentBracketEmptyState
         title="No bracket selected"
@@ -430,16 +446,16 @@ export default function TournamentBracket({
   }
 
   const hasBracketData =
-    tournament.regions.length > 0 ||
-    tournament.openingRoundGames.length > 0 ||
-    tournament.finalFourGames.length > 0 ||
-    Boolean(tournament.championshipGame);
+    bracketTournament.regions.length > 0 ||
+    bracketTournament.openingRoundGames.length > 0 ||
+    bracketTournament.finalFourGames.length > 0 ||
+    Boolean(bracketTournament.championshipGame);
 
   if (!hasBracketData) {
     return (
       <TournamentBracketEmptyState
         title="Bracket not populated"
-        message="The tournament is available, but games have not been assigned to the bracket yet."
+        message="Tournament games are unavailable for this bracket."
         isDark={isDark}
         onRetry={onRefresh ? handleRefresh : undefined}
       />
@@ -454,14 +470,14 @@ export default function TournamentBracket({
       refreshControl={refreshControl}
       nestedScrollEnabled
     >
-      <TournamentBracketHeader tournament={tournament} isDark={isDark} />
+      <TournamentBracketHeader tournament={bracketTournament} isDark={isDark} />
 
       <OpeningRoundSection
-        label={tournament.openingRoundLabel ?? "Opening Round"}
-        games={tournament.openingRoundGames}
+        label={bracketTournament.openingRoundLabel ?? "Opening Round"}
+        games={bracketTournament.openingRoundGames}
         isDark={isDark}
-        competition={tournament.competition}
-        regions={tournament.regions}
+        competition={bracketTournament.competition}
+        regions={bracketTournament.regions}
         allGamesById={gameById}
         onGamePress={handleGamePress}
       />
@@ -475,7 +491,7 @@ export default function TournamentBracket({
         contentContainerStyle={styles.horizontalScrollContent}
       >
         <TournamentBracketCanvas
-          tournament={tournament}
+          tournament={bracketTournament}
           isDark={isDark}
           allGamesById={gameById}
           onGamePress={handleGamePress}

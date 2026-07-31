@@ -29,6 +29,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Search } from "reicon-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -1655,11 +1656,7 @@ export function CustomHeaderTitle({
             onPress={onSearchToggle}
             hitSlop={8}
           >
-            <Ionicons
-              name="search"
-              size={24}
-              color={isDark ? Colors.white : Colors.black}
-            />
+       <Search size={20} color={isDark ? Colors.white : Colors.black} />
           </TouchableOpacity>
         ) : isMessagesListScreen && onCreateMessage ? (
           <Pressable

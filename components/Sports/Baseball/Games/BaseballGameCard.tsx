@@ -1,3 +1,4 @@
+import { useBaseballGameDetails } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -16,7 +17,7 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
 function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
@@ -38,8 +39,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-
-  const league = game?.league?.id;
 
   const home = game?.home;
   const away = game?.away;
@@ -72,13 +71,17 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
       ? getCBTeamLogo(awayId, isDark)
       : getMLBTeamLogo(awayId, isDark);
 
+  const league = game?.league?.code ?? "mlb";
+  const gameId = game?.id;
+  const { score } = useBaseballGameDetails(league, gameId);
+
   const isChampionship = game?.season.slug === "championship-series";
   const styles = gameCardStyles(isDark, isChampionship);
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
-
+  const period = formatPeriod({ period: game.status.period });
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -90,8 +93,8 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const isDelayed =
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Rain Delay";
-  const homeScore = home?.score;
-  const awayScore = away?.score;
+  const homeScore = score?.home.score ?? home?.score ?? 0;
+  const awayScore = score?.away.score ?? away?.score ?? 0;
   const homeRecord = home?.record;
   const awayRecord = away?.record;
   const homeRank = home?.homeRank;
@@ -120,13 +123,13 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -227,11 +230,9 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
 
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
 
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />

@@ -29,7 +29,6 @@ type Props = {
 
 export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   const { rankings, loading, error, refresh } = useCBBRankings(league);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();

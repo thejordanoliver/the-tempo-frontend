@@ -9029,13 +9029,16 @@ export const getCBBTeamLogo = (
 ) => {
   if (!id) return PlaceholderLogo;
 
-  // Try men's id first
-  let team = cbbTeams.find((t) => String(t.id) === String(id));
+  let team = isWomen
+    ? cbbTeams.find((t) => String(t.wid) === String(id))
+    : cbbTeams.find((t) => String(t.id) === String(id));
 
-  // If not found, try women's id
   if (!team) {
-    team = cbbTeams.find((t) => String(t.wid) === String(id));
-    if (team) isWomen = true;
+    team = isWomen
+      ? cbbTeams.find((t) => String(t.id) === String(id))
+      : cbbTeams.find((t) => String(t.wid) === String(id));
+
+    if (team && !isWomen) isWomen = true;
   }
 
   if (!team) return PlaceholderLogo;

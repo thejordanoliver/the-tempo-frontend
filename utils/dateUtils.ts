@@ -61,51 +61,69 @@ export const isTodayOrTomorrow = (dateString: string) => {
   );
 };
 
-export function getNBASeason(): string {
+export function getNBASeason(): number {
   const today = dayjs();
   const year = today.year();
   const month = today.month() + 1; // 1–12
 
-  // NBA season starts in October
-  if (month >= 10) {
-    return String(year);
+  // Beginning in September, use the upcoming season's ending year.
+  // September 2026–December 2026 represents the 2026–2027 season.
+  if (month >= 9) {
+    return year + 1;
   }
 
-  // Jan–Sep belongs to previous season
-  return String(year - 1);
+  // January–August use the current calendar year.
+  // January 2026–August 2026 represents the 2025–2026 season.
+  return year;
 }
 
-export function getWNBASeason(): string {
+export function getWNBASeason(): number {
   const today = dayjs();
   const year = today.year();
   const month = today.month() + 1; // 1–12
 
-  // WNBA season runs May–October, season year matches calendar year
+  // Beginning in March, use the upcoming/current WNBA season.
   if (month >= 3) {
-    return String(year);
+    return year;
   }
 
-  // Jan–Apr belongs to previous season
-  return String(year - 1);
+  // January–February continue showing the previous WNBA season.
+  return year - 1;
 }
 
-export function getCBBSeason(): string {
+export function getCBBSeason(): number {
   const today = dayjs();
   const year = today.year();
   const month = today.month() + 1; // 1–12
 
-  let startYear: number;
-  let endYear: number;
-
-  if (month >= 10) {
-    startYear = year;
-    endYear = year + 1;
-  } else {
-    startYear = year - 1;
-    endYear = year;
+  // January–April belong to the season that started last year.
+  // January 2026–April 2026 represents the 2025–2026 season.
+  if (month <= 4) {
+    return year - 1;
   }
 
-  return `${startYear}-${endYear}`;
+  // May–October represent the upcoming season.
+  // November–December represent the active season.
+  // May 2026–December 2026 represents the 2026–2027 season.
+  return year;
+}
+
+export function getMLBSeason(date: Date = new Date()): string {
+  // MLB seasons use a single calendar year.
+  return String(date.getFullYear());
+}
+
+export function getNHLSeason(date: Date = new Date()): string {
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0 = January, 9 = October
+
+  // January–September belong to the season that started last year.
+  if (month < 9) {
+    return String(year - 1);
+  }
+
+  // October–December begin the season for the current year.
+  return String(year);
 }
 
 export function getNBACalendarSeason(): string {
@@ -142,10 +160,6 @@ export const getHolidayLabel = (
   return null; // add more holidays here if needed
 };
 
-export function getMLBSeason(date: Date = new Date()): string {
-  return String(date.getFullYear());
-}
-
 export function getMLBStandingsSeason(date: Date = new Date()): string {
   const year = date.getFullYear();
   const month = date.getMonth(); // 0 = Jan, 1 = Feb, 2 = March
@@ -156,20 +170,6 @@ export function getMLBStandingsSeason(date: Date = new Date()): string {
   }
 
   // March and later → use current year
-  return String(year);
-}
-
-export function getNHLSeason(date: Date = new Date()): string {
-  const year = date.getFullYear();
-  const month = date.getMonth(); // 0 = Jan, 11 = Dec
-
-  // NHL season starts in October
-  // Jan–Sep belong to previous season
-  if (month < 9) {
-    return String(year);
-  }
-
-  // Oct–Dec belong to current year season
   return String(year);
 }
 

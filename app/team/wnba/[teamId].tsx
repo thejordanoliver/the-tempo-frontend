@@ -53,24 +53,22 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "WNBA";
+  const currentSeason = getWNBASeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
-
   const { teamId } = useLocalSearchParams();
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-
   const team = getWNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [standingsYear, setStandingsYear] = useState(getWNBASeason().toString());
+  const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
@@ -128,7 +126,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("wnba", teamIdNum);
+  } = useBasketballTeamGames("wnba", teamIdNum, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months

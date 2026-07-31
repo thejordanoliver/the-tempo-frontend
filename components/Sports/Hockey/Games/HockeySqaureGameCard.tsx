@@ -53,11 +53,12 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
 
   const headlineText = game?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const state = game.status.state ?? "";
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isFinal = gameStatusDescription === "Final";
+  const isFinal = state === "post";
+  const isScheduled = state === "pre";
+  const inProgress = state === "in";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isHalftime = gameStatusDescription === "Halftime";
@@ -76,13 +77,13 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -186,11 +187,9 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

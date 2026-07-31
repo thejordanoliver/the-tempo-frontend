@@ -1,77 +1,17 @@
-export type TournamentRound =
-  | "OPENING"
-  | "ROUND_OF_64"
-  | "ROUND_OF_32"
-  | "SWEET_16"
-  | "ELITE_8"
-  | "FINAL_4"
-  | "CHAMPIONSHIP";
+import type {
+  TournamentData,
+  TournamentGame,
+  TournamentTeam,
+  TournamentVenue,
+} from "hooks/BasketballHooks/useTournamentBracket";
 
+export type TournamentRound = TournamentGame["round"];
 export type BracketPosition = "top" | "bottom";
-
-export type BracketTeam = {
-  id: string;
-  espnId: string | number | null;
-  name: string;
-  shortName: string | null;
-  abbreviation: string | null;
-  logo: string | null;
-  seed: number | null;
-  score: number | string | null;
-  winner: boolean | null;
-  record?: string | null;
-};
-
-export type BracketGameStatus =
-  | "scheduled"
-  | "pre"
-  | "live"
-  | "in"
-  | "halftime"
-  | "post"
-  | "final"
-  | "delayed"
-  | "postponed"
-  | "canceled";
-
-export type BracketVenue = {
-  id: string | null;
-  name: string | null;
-  city: string | null;
-  state: string | null;
-  indoor: boolean | null;
-};
-
-export type BracketGame = {
-  id: string;
-  eventId: string | null;
-  tournamentId: string | null;
-  regionId: string | null;
-  regionName: string | null;
-  round: TournamentRound;
-  roundLabel: string | null;
-  roundOrder: number;
-  gameOrder: number;
-  bracketSlot: number | null;
-  topTeam: BracketTeam | null;
-  bottomTeam: BracketTeam | null;
-  topSourceGameId: string | null;
-  bottomSourceGameId: string | null;
-  winnerTeamId: string | null;
-  nextGameId: string | null;
-  nextGamePosition: BracketPosition | null;
-  destinationRegionId: string | null;
-  destinationRound: TournamentRound | null;
-  destinationSeed: number | null;
-  destinationGameId: string | null;
-  destinationPosition: BracketPosition | null;
-  date: string | null;
-  status: BracketGameStatus;
-  statusText: string | null;
-  venue: BracketVenue | null;
-  broadcast: string | null;
-  headline: string | null;
-};
+export type BracketTeam = TournamentTeam;
+export type BracketVenue = TournamentVenue;
+export type BracketGame = TournamentGame;
+export type TournamentBracketCompetition = "CBB" | "WCBB";
+export type TournamentBracketSourceData = TournamentData;
 
 export type BracketRegion = {
   id: string;
@@ -82,25 +22,17 @@ export type BracketRegion = {
   games: BracketGame[];
 };
 
-export type TournamentBracketCompetition = "CBB" | "WCBB";
-
 export type TournamentBracketData = {
-  tournamentId: string | null;
-  tournamentName: string;
-  season: number;
+  tournamentId: TournamentData["tournamentId"] | null;
+  tournamentName: TournamentData["tournamentName"];
+  season: TournamentData["season"];
   competition: TournamentBracketCompetition;
-  openingRoundLabel: string | null;
+  openingRoundLabel: TournamentData["openingRoundLabel"] | null;
   regions: BracketRegion[];
   openingRoundGames: BracketGame[];
   finalFourGames: BracketGame[];
   championshipGame: BracketGame | null;
-  metadata: {
-    source: string;
-    fetchedAt: string;
-    totalGames: number;
-    unresolvedConnections: unknown[];
-    warnings: string[];
-  };
+  metadata: TournamentData["metadata"];
 };
 
 export type RegionPlacement = {
@@ -166,11 +98,9 @@ export type BracketRegionLayout = {
 };
 
 export type TournamentBracketProps = {
-  tournament: TournamentBracketData | null;
+  tournament: TournamentBracketSourceData | null;
   loading?: boolean;
   error?: string | null;
   refreshing?: boolean;
   onRefresh?: () => void | Promise<void>;
 };
-
-export type TournamentBracketApiResponse = unknown;

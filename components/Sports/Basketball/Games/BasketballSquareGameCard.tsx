@@ -45,27 +45,29 @@ export default function BasketballSquareGameCard({
   const holidayLabel = getHolidayLabel(gameDate);
 
   const league = game?.league?.id;
+  const home = game?.home;
+  const away = game?.away;
+  const homeId = home?.id;
+  const awayId = away?.id;
 
-  const homeId = Number(game.home?.id);
-  const awayId = Number(game.away?.id);
-
-  const home = isCBB
+  const homeTeam = isCBB
     ? getCBBTeam(homeId)
     : isWCBB
-      ? getCBBTeam(homeId, true)
+      ? getCBBTeam(homeId, isWCBB)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
-  const away = isCBB
+
+  const awayTeam = isCBB
     ? getCBBTeam(awayId)
     : isWCBB
-      ? getCBBTeam(awayId, true)
+      ? getCBBTeam(awayId, isWCBB)
       : isWNBA
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
 
-  const homeName = home?.code || game.home?.shortName;
-  const awayName = away?.code || game.away?.shortName;
+  const homeName = homeTeam?.fullName || game.home?.name;
+  const awayName = awayTeam?.fullName || game.away?.name;
 
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
@@ -119,13 +121,13 @@ export default function BasketballSquareGameCard({
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -233,11 +235,9 @@ export default function BasketballSquareGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

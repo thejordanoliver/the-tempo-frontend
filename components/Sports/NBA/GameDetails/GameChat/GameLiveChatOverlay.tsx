@@ -12,7 +12,7 @@ type GameChatSessionProps = {
 type GameLiveChat = {
   gameId: string;
   opacityAnim: Animated.Value;
-  state?: string;
+  state: string | null;
 };
 
 const GameChatSession = memo(function GameChatSession({

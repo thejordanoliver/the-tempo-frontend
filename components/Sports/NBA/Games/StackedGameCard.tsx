@@ -78,12 +78,13 @@ export default function StackedGameCard({
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -193,11 +194,9 @@ export default function StackedGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

@@ -56,17 +56,15 @@ export const squareGameCardStyles = (
       alignItems: "center",
       gap: 4,
     },
+
     logo: { width: 20, height: 20, resizeMode: "contain" },
-    expoLogo: { width: 20, height: 20 },
+
     footballPossesion: {
       width: 16,
       height: 16,
       resizeMode: "contain",
     },
-    expoFootballPossesion: {
-      width: 16,
-      height: 16,
-    },
+
     teamName: {
       fontSize: 14,
       fontFamily: Fonts.OSREGULAR,
@@ -181,7 +179,6 @@ export const squareGameCardStyles = (
       height: 30,
       resizeMode: "contain",
     },
-
 
     fighterContainer: {
       width: 25,

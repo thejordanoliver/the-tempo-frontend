@@ -181,11 +181,9 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

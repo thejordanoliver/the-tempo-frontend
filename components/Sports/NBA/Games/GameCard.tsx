@@ -1,5 +1,10 @@
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
-import { formatDate, formatTime, getHolidayLabel, safeDate } from "@/utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -27,8 +32,6 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
     });
   };
 
-  
-
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
@@ -49,7 +52,9 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
   const awayLogo = getTeamLogo(awayId, isDark);
 
   const headline = game?.headline || holidayLabel;
-  const isChampionship =  headline?.includes("NBA Summer League - Final") || headline?.includes("NBA Finals");
+  const isChampionship =
+    headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NBA Finals");
   const styles = gameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period });
@@ -75,12 +80,13 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -148,7 +154,7 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
       <View style={styles.teamSection}>
         <Image
           source={awayLogo}
-          style={styles.expoLogo}
+          style={styles.logo}
           contentFit="contain"
           accessibilityLabel={`${awayName} logo`}
         />
@@ -165,11 +171,9 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
 
       {/* Home Score / Record */}
@@ -179,7 +183,7 @@ export default function GameCard({ game, isSL }: BasketballGameCardProps) {
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}
-          style={styles.expoLogo}
+          style={styles.logo}
           contentFit="contain"
           accessibilityLabel={`${homeName} logo`}
         />

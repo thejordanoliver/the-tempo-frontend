@@ -29,16 +29,13 @@ import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import {
-  getCurrentMarchMadnessSeason,
-  useMarchMadness,
-} from "../../hooks/BasketballHooks/useTournamentBracket";
+import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { getRecruitYear } from "../../utils/dateUtils";
+import { getCBBSeason, getRecruitYear } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -48,6 +45,7 @@ type SelectedConference = number | string | null;
 
 export default function CBBLeagueScreen() {
   const league = "CBB";
+  const currentSeason = getCBBSeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -109,16 +107,12 @@ export default function CBBLeagueScreen() {
   } = useLeaguesNews(league, 10);
 
   const {
-    bracket,
+    tournament,
     loading: bracketLoading,
     error: bracketError,
     refreshing: bracketRefreshing,
     refresh: refreshBracket,
-  } = useMarchMadness({
-    league: "cbb",
-    season: getCurrentMarchMadnessSeason(),
-    enabled: selectedTab === "bracket",
-  });
+  } = useTournamentBracket(league, currentSeason);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -256,7 +250,7 @@ export default function CBBLeagueScreen() {
           {/* Bracket */}
           <View key="bracket" style={styles.contentArea}>
             <TournamentBracket
-              tournament={bracket}
+              tournament={tournament}
               loading={bracketLoading}
               error={bracketError}
               refreshing={bracketRefreshing}

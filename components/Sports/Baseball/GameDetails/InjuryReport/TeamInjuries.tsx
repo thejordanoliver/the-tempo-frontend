@@ -20,7 +20,7 @@ type Props = {
   awayCode: string;
   homeId: string | number;
   awayId: string | number;
-  state: string | undefined;
+  state: string | null;
 };
 
 const matchesTeam = (

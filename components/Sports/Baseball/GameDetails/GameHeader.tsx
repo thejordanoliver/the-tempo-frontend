@@ -4,7 +4,7 @@ import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  seasonState?: string | null;
+  state: "pre" | "in" | "post" | null;
   homeRank: number | undefined | null;
   awayRank: number | undefined | null;
   homeName: string;
@@ -17,6 +17,7 @@ type Props = {
   awayScore: number;
   isDark: boolean;
   isTopInning: boolean;
+  isBottomInning: boolean;
   homeWins: boolean;
   awayWins: boolean;
   date: string;
@@ -37,7 +38,9 @@ type Props = {
 };
 
 export default function GameHeader({
+  state,
   isTopInning,
+  isBottomInning,
   headline,
   homeId,
   awayId,
@@ -59,7 +62,7 @@ export default function GameHeader({
   date,
   time,
   broadcast,
-  outs,
+  outs = 0,
   bases,
   league,
 }: Props) {
@@ -88,6 +91,7 @@ export default function GameHeader({
         />
 
         <CenterInfo
+          state={state}
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
           date={date}
@@ -95,7 +99,8 @@ export default function GameHeader({
           isDark={isDark}
           broadcast={broadcast}
           isTopInning={isTopInning}
-          outs={outs ?? 0}
+          isBottomInning={isBottomInning}
+          outs={outs}
           bases={bases}
         />
 

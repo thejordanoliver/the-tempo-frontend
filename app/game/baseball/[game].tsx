@@ -187,15 +187,18 @@ export default function GameDetailsScreen(
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
 
   const broadcast = getBroadcastDisplay(details?.broadcasts);
-  const state = score?.status.state;
+
+  const state = score?.status.state ?? null;
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
   const isTopInning = gameStatusDetail.includes("Top");
+  const isBottomInning = gameStatusDetail.includes("Bot");
 
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
   const homeWins = score?.home?.winner ?? false;
   const awayWins = score?.away?.winner ?? false;
+
 
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -343,9 +346,11 @@ export default function GameDetailsScreen(
           awayRank={awayRank}
           homeId={homeId}
           awayId={awayId}
+          state={state}
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
           isTopInning={isTopInning}
+          isBottomInning={isBottomInning}
           outs={outs}
           bases={bases}
           league={LEAGUE}

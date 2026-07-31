@@ -26,7 +26,6 @@ export type ShotCoordinateMode = "espn" | "percentage";
 
 type SoccerShotMapProps = {
   shots?: Shot[];
-  shotMapAvailable?: boolean;
   homeLogo: any;
   awayLogo: any;
   homeCode: string;
@@ -297,7 +296,6 @@ function ShotMarker({
 
 export default function SoccerShotMap({
   shots = [],
-  shotMapAvailable,
   homeId,
   awayId,
   homeLogo,
@@ -344,11 +342,7 @@ export default function SoccerShotMap({
   );
 
   const getShotPoint = useCallback(
-    (
-      shot: Shot,
-      x: number | null,
-      y: number | null,
-    ): ShotPoint | null => {
+    (shot: Shot, x: number | null, y: number | null): ShotPoint | null => {
       if (!isValidCoordinate(x) || !isValidCoordinate(y)) return null;
 
       const convertedX = convertCoordinate(x, FIELD_WIDTH, coordinateMode);
@@ -487,10 +481,6 @@ export default function SoccerShotMap({
         selectedShot.coordinates.endY,
       )
     : null;
-
-  if (shotMapAvailable === false || shots.length === 0) {
-    return null;
-  }
 
   return (
     <View style={styles.container}>

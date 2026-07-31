@@ -44,7 +44,7 @@ export const gameLeadersStyles = (isDark: boolean) =>
     },
     nameRow: {
       flexDirection: "row",
-      alignItems: "flex-end", // Align text on the same baseline
+      alignItems: "flex-end",
     },
     infoSection: { flex: 1, marginLeft: 10, justifyContent: "flex-end" },
     playerName: {

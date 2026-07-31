@@ -1,94 +1,9 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-const TABS = [
-  {
-    name: "Home",
-    route: "/",
-    icon: require("../assets/icons8/Home.png"),
-  },
-  {
-    name: "Leagues",
-    route: "/league",
-    icon: require("../assets/icons8/Scoreboard.png"),
-  },
-  {
-    name: "Explore",
-    route: "/explore",
-    icon: require("../assets/icons8/Compass.png"),
-  },
-  {
-    name: "Profile",
-    route: "/profile",
-    icon: require("../assets/icons8/User.png"),
-  },
-];
-
-const TAB_ROUTE_PARENTS: Record<string, string> = {
-  "/league/stats": "/league",
-  "/league/schedule": "/league",
-
-  "/settings": "/profile",
-  "/settings/accountdetails": "/profile",
-  "/settings/appearance": "/profile",
-  "/settings/preferences": "/profile",
-
-  "/": "/",
-  "/league": "/league",
-  "/explore": "/explore",
-  "/profile": "/profile",
-};
-
-const HIDDEN_TAB_ROUTES = ["/login", "/forgot-password", "/create-post"];
-
-const HIDDEN_TAB_PREFIXES = [
-  "/messages",
-  "/comment-thread",
-  "/post",
-  "/edit-profile",
-];
-
-const DETAIL_SCREEN_PREFIXES = [
-  "/team",
-  "/game",
-  "/messages",
-  "/player",
-  "/user",
-  "/comment-thread",
-  "/post",
-];
-
-const MAIN_TABS = ["/", "/league", "/explore", "/profile"];
-
-function getActiveTab(pathname: string): string {
-  if (TAB_ROUTE_PARENTS[pathname]) return TAB_ROUTE_PARENTS[pathname];
-
-  const keys = Object.keys(TAB_ROUTE_PARENTS).sort(
-    (a, b) => b.length - a.length,
-  );
-
-  for (const key of keys) {
-    if (pathname.startsWith(key)) {
-      return TAB_ROUTE_PARENTS[key];
-    }
-  }
-
-  return "/";
-}
-
-function shouldHideTabBar(pathname: string) {
-  return (
-    HIDDEN_TAB_ROUTES.includes(pathname) ||
-    HIDDEN_TAB_PREFIXES.some((prefix) => pathname.startsWith(prefix))
-  );
-}
-
-function isDetailScreen(pathname: string) {
-  return DETAIL_SCREEN_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-}
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Balls, Compass, Home, User } from "reicon-react-native";
 
 export type TabBarProps = {
   isDark: boolean;
@@ -98,7 +13,125 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [lastActiveTab, setLastActiveTab] = useState<string>("/");
+  const iconColor = isDark ? Colors.white : Colors.black;
+
+  const TABS = [
+    {
+      name: "Home",
+      route: "/",
+      renderIcon: (focused: boolean) => (
+        <Home
+          size={24}
+          color={iconColor}
+          weight={focused ? "Filled" : "Outline"}
+        />
+      ),
+    },
+    {
+      name: "Leagues",
+      route: "/league",
+      renderIcon: (focused: boolean) => (
+        <Balls
+          size={24}
+          color={iconColor}
+          weight={focused ? "Filled" : "Outline"}
+        />
+      ),
+    },
+    {
+      name: "Explore",
+      route: "/explore",
+      renderIcon: (focused: boolean) => (
+        <Compass
+          size={24}
+          color={iconColor}
+          weight={focused ? "Filled" : "Outline"}
+        />
+      ),
+    },
+    {
+      name: "Profile",
+      route: "/profile",
+      renderIcon: (focused: boolean) => (
+        <User
+          size={24}
+          color={iconColor}
+          weight={focused ? "Filled" : "Outline"}
+        />
+      ),
+    },
+  ];
+
+  const TAB_ROUTE_PARENTS: Record<string, string> = {
+    "/league/stats": "/league",
+    "/league/schedule": "/league",
+
+    "/settings": "/profile",
+    "/settings/accountdetails": "/profile",
+    "/settings/appearance": "/profile",
+    "/settings/preferences": "/profile",
+
+    "/": "/",
+    "/league": "/league",
+    "/explore": "/explore",
+    "/profile": "/profile",
+  };
+
+  const HIDDEN_TAB_ROUTES = ["/login", "/forgot-password", "/create-post"];
+
+  const HIDDEN_TAB_PREFIXES = [
+    "/messages",
+    "/comment-thread",
+    "/post",
+    "/edit-profile",
+  ];
+
+  const DETAIL_SCREEN_PREFIXES = [
+    "/team",
+    "/game",
+    "/messages",
+    "/player",
+    "/user",
+    "/comment-thread",
+    "/post",
+  ];
+
+  const MAIN_TABS = ["/", "/league", "/explore", "/profile"];
+
+  function getActiveTab(currentPathname: string): string {
+    if (TAB_ROUTE_PARENTS[currentPathname]) {
+      return TAB_ROUTE_PARENTS[currentPathname];
+    }
+
+    const keys = Object.keys(TAB_ROUTE_PARENTS).sort(
+      (a, b) => b.length - a.length,
+    );
+
+    for (const key of keys) {
+      if (currentPathname.startsWith(key)) {
+        return TAB_ROUTE_PARENTS[key];
+      }
+    }
+
+    return "/";
+  }
+
+  function shouldHideTabBar(currentPathname: string) {
+    return (
+      HIDDEN_TAB_ROUTES.includes(currentPathname) ||
+      HIDDEN_TAB_PREFIXES.some((prefix) =>
+        currentPathname.startsWith(prefix),
+      )
+    );
+  }
+
+  function isDetailScreen(currentPathname: string) {
+    return DETAIL_SCREEN_PREFIXES.some((prefix) =>
+      currentPathname.startsWith(prefix),
+    );
+  }
+
+  const [lastActiveTab, setLastActiveTab] = useState("/");
 
   const currentActiveTab = getActiveTab(pathname);
   const detailScreen = isDetailScreen(pathname);
@@ -109,7 +142,9 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
     }
   }, [currentActiveTab, detailScreen]);
 
-  if (shouldHideTabBar(pathname)) return null;
+  if (shouldHideTabBar(pathname)) {
+    return null;
+  }
 
   const activeTabRoute = detailScreen ? lastActiveTab : currentActiveTab;
 
@@ -127,18 +162,20 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
             StyleSheet.absoluteFill,
             {
               backgroundColor: isDark
-                ? "rgba(0,0,0,0.3)"
+                ? "rgba(0, 0, 0, 0.3)"
                 : "rgba(255, 255, 255, 0.5)",
             },
           ]}
         />
 
         <View style={styles.tabRow}>
-          {TABS.map(({ name, route, icon }) => {
+          {TABS.map(({ name, route, renderIcon }) => {
             const focused = activeTabRoute === route;
 
             const handlePress = () => {
-              if (route === pathname) return;
+              if (route === pathname) {
+                return;
+              }
 
               if (detailScreen && MAIN_TABS.includes(route)) {
                 router.replace(route as any);
@@ -153,36 +190,24 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
                 key={name}
                 onPress={handlePress}
                 style={styles.tabButton}
-                activeOpacity={0.7}
+                activeOpacity={activeOpacity}
                 accessibilityRole="button"
                 accessibilityState={{ selected: focused }}
                 accessibilityLabel={`Go to ${name} tab`}
               >
-                <Image
-                  source={icon}
-                  style={{
-                    width: 24,
-                    height: 24,
-                    tintColor: focused
-                      ? isDark
-                        ? Colors.white
-                        : Colors.black
-                      : Colors.midTone,
-                  }}
-                  resizeMode="contain"
-                />
+                {renderIcon(focused)}
 
                 <Text
-                  style={{
-                    marginTop: 4,
-                    fontSize: 12,
-                    fontFamily: Fonts.OSREGULAR,
-                    color: focused
-                      ? isDark
-                        ? Colors.white
-                        : Colors.black
-                      : Colors.midTone,
-                  }}
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: focused
+                        ? isDark
+                          ? Colors.white
+                          : Colors.black
+                        : Colors.midTone,
+                    },
+                  ]}
                 >
                   {name}
                 </Text>
@@ -201,9 +226,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0,0,0,0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     shadowColor: "rgba(0, 0, 0, 0.8)",
-    shadowOffset: { width: 0, height: 5 },
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 12,
@@ -216,10 +244,10 @@ const styles = StyleSheet.create({
   },
 
   tabRow: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    flex: 1,
     marginBottom: 10,
     paddingVertical: 20,
   },
@@ -228,5 +256,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  tabLabel: {
+    marginTop: 4,
+    fontSize: 12,
+    fontFamily: Fonts.OSREGULAR,
   },
 });

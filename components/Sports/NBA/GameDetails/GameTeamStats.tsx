@@ -208,7 +208,7 @@ export default function GameTeamStats({
   homeColor: string;
   awayName: string;
   homeName: string;
-  state?: string;
+  state: string | null;
   stats: any[];
   isDark: boolean;
 }) {

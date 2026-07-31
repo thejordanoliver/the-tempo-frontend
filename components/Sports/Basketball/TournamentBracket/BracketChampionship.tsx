@@ -12,6 +12,7 @@ import type {
 } from "./tournamentBracket.types";
 import {
   getBracketTeamDisplayName,
+  getRenderableBracketTeam,
   getWinningTeam,
   isFinalBracketGame,
 } from "./tournamentBracket.utils";
@@ -40,18 +41,24 @@ function getChampionScoreText(
   team: BracketTeam,
   championshipGame: BracketGame,
 ) {
+  const topTeam = getRenderableBracketTeam(championshipGame.topTeam);
+  const bottomTeam = getRenderableBracketTeam(championshipGame.bottomTeam);
   const championScore =
-    team.score === null || team.score === undefined || team.score === ""
+    team.score === null ||
+    team.score === undefined ||
+    team.score === "" ||
+    !Number.isFinite(Number(team.score))
       ? null
       : String(team.score);
   const opponent =
-    championshipGame.topTeam?.id === team.id
-      ? championshipGame.bottomTeam
-      : championshipGame.topTeam;
+    topTeam?.id === team.id || topTeam?.espnId === team.espnId
+      ? bottomTeam
+      : topTeam;
   const opponentScore =
     opponent?.score === null ||
     opponent?.score === undefined ||
-    opponent?.score === ""
+    opponent?.score === "" ||
+    !Number.isFinite(Number(opponent?.score))
       ? null
       : String(opponent?.score);
 
@@ -89,6 +96,7 @@ function BracketChampionshipComponent({
     champion && championshipGame
       ? getChampionScoreText(champion, championshipGame)
       : null;
+  const centerColumnLabel = semifinalGames[0]?.roundLabel ?? "Final Four";
 
   const items = useMemo<ChampionshipItem[]>(() => {
     const semifinalItems: ChampionshipItem[] = [];
@@ -156,7 +164,7 @@ function BracketChampionshipComponent({
   return (
     <View style={[styles.championshipColumn, { height: columnHeight }]}>
       <Text numberOfLines={1} style={styles.championshipLabel} selectable>
-        Final Four
+        {centerColumnLabel}
       </Text>
 
       {champion && championLogo && championshipGame ? (

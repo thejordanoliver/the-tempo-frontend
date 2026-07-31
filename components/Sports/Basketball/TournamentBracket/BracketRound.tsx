@@ -49,12 +49,13 @@ function BracketRoundComponent({
         .sort((first, second) => first.layout.y - second.layout.y),
     [games, layouts],
   );
+  const roundLabel = games[0]?.roundLabel ?? getRoundDisplayLabel(round);
   let previousBottom = 0;
 
   return (
     <View style={styles.roundColumn}>
       <Text numberOfLines={1} style={styles.roundLabel} selectable>
-        {getRoundDisplayLabel(round)}
+        {roundLabel}
       </Text>
 
       <View style={[styles.roundMatchups, { height: contentHeight }]}>

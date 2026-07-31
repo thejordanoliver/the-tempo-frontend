@@ -69,6 +69,16 @@ const getRoundIndex = (round: TournamentRound) =>
 const getCardCenterY = (layout: BracketCardLayout) =>
   layout.y + layout.height / 2;
 
+const getNumericSlot = (
+  game: BracketGame,
+  fallbackSlot: number,
+): number => {
+  const value = game.bracketSlot ?? game.gameOrder ?? fallbackSlot;
+  const slot = Number(value);
+
+  return Number.isFinite(slot) && slot > 0 ? slot : fallbackSlot;
+};
+
 const getRegionWidth = (config: BracketLayoutConfig) =>
   REGIONAL_ROUNDS.length * config.roundColumnWidth +
   (REGIONAL_ROUNDS.length - 1) * config.horizontalRoundGap;
@@ -101,7 +111,7 @@ const getRegionBaseSlotCount = (
     const baseSlotsPerGame = getRegionalRoundBaseSlots(round);
     const roundGames = groupedGames[round];
     const largestSlot = roundGames.reduce((slotMax, game, index) => {
-      const slot = game.bracketSlot ?? game.gameOrder ?? index + 1;
+      const slot = getNumericSlot(game, index + 1);
       return Math.max(slotMax, slot);
     }, roundGames.length);
 
@@ -171,7 +181,7 @@ const getFallbackCardLayout = (
   side: "left" | "right",
   config: BracketLayoutConfig,
 ) => {
-  const slot = game.bracketSlot ?? game.gameOrder ?? index + 1;
+  const slot = getNumericSlot(game, index + 1);
   const centerY = getRegionalGameCenterY(round, slot, config);
 
   return {

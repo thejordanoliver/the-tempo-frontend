@@ -29,10 +29,10 @@ export function isGameLive(game: any) {
   const status = String(game.status?.state).toLowerCase();
 
   if (status === "in") return true;
-
   if (status === "post") return false;
+  if (status === "pre") return false;
 
-  return true;
+  return false;
 }
 
 type FormatPeriodArgs = {

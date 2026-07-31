@@ -51,8 +51,6 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const awayScore = Number(game?.away?.score ?? 0);
   const homeRecord = game?.home?.record ?? "0-0-0";
   const awayRecord = game?.away?.record ?? "0-0-0";
-  const homeWins = Boolean(game?.home?.winner);
-  const awayWins = Boolean(game?.away?.winner);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship = Boolean(headline?.includes("Final"));
@@ -74,12 +72,16 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const isHalftime = gameStatusDescription === "Halftime";
   const endOfPeriod = gameStatusDescription === "End of Period";
 
-  const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
+  // -----------------------------------------------------
+  // SCORE TEXT COMPONENT
+  // -----------------------------------------------------
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: !isFinal || isTie ? 1 : teamWins ? 1 : 0.35,
-    fontWeight: isFinal && teamWins ? ("700" as const) : ("500" as const),
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -167,12 +169,9 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
       <View style={styles.info}>
         {renderStatus()}
-
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
 
       <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />

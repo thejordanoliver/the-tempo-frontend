@@ -11,6 +11,7 @@ import {
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { getCBBSeason } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -52,6 +53,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "CBB";
+  const currentSeason = getCBBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -120,7 +122,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("cbb", teamIdNum);
+  } = useBasketballTeamGames("cbb", espnId, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months

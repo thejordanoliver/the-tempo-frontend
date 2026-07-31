@@ -1,3 +1,4 @@
+import { useBaseballGameDetails } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -39,7 +40,9 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const league = game?.league?.id;
+  const league = game?.league?.code ?? "mlb";
+  const gameId = game?.id;
+  const { score } = useBaseballGameDetails(league, gameId);
 
   const home = game?.home;
   const away = game?.away;
@@ -89,8 +92,8 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
-  const homeScore = game?.home?.score;
-  const awayScore = game?.away?.score;
+  const homeScore = score?.home.score ?? home?.score ?? 0;
+  const awayScore = score?.away.score ?? away?.score ?? 0;
   const homeRecord = game.home.record;
   const awayRecord = game.away.record;
   const homeRank = game.home.homeRank;
@@ -117,13 +120,13 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -246,11 +249,9 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

@@ -1,17 +1,11 @@
-import { Athlete } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import {
+  Athlete,
+  PlayerStats,
+} from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { getNBATeam } from "constants/teams";
-import { getCBBTeamByESPNId } from "constants/teamsCBB";
-import { getWNBATeamByESPNId } from "constants/teamsWNBA";
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import {
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
 import {
   Colors,
@@ -57,103 +51,135 @@ const DEFAULT_KEYS = [
   "plusMinus",
 ];
 
-type TeamInfo = {
-  id?: number | string | null;
-  teamId?: number | string | null;
-  team_id?: number | string | null;
+/*
+ * PlayerStats is currently declared as an array in the hook.
+ * PlayerStats[number] gives us one team box-score block.
+ */
+type TeamBlock = PlayerStats[number];
+type TeamInfo = TeamBlock["team"];
+
+type AthleteRecord = Athlete & {
   espnId?: number | string | null;
-  espn_id?: number | string | null;
-  wid?: number | string | null;
-  code?: string | null;
-  abbreviation?: string | null;
-  name?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
   fullName?: string | null;
   displayName?: string | null;
-  shortName?: string | null;
-  short_name?: string | null;
-  shortDisplayName?: string | null;
-};
-
-type TeamBlock = {
-  team?: TeamInfo | null;
-  names?: string[];
-  keys?: string[];
-  labels?: string[];
-  athletes?: Athlete[];
+  teamId?: number | string | null;
+  team?: {
+    id?: number | string | null;
+  } | null;
+  athlete?: {
+    id?: number | string | null;
+    espnId?: number | string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    fullName?: string | null;
+    displayName?: string | null;
+    shortName?: string | null;
+    headshot?: string | null;
+    jersey?: string | null;
+    position?: string | null;
+    teamId?: number | string | null;
+    team?: {
+      id?: number | string | null;
+    } | null;
+  } | null;
 };
 
 type Props = {
-  homeTeamId: number;
-  awayTeamId: number;
+  homeId: number | string;
+  awayId: number | string;
   homeName: string;
   awayName: string;
   homeLogo: any;
   awayLogo: any;
-  playerStats?: TeamBlock[];
+
+  /*
+   * The union temporarily supports both:
+   * - the actual API array
+   * - the nested array caused by PlayerStats[] in the hook
+   */
+  playerStats: PlayerStats | PlayerStats[];
+
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
   league: string;
-  state: string | undefined;
+  state: string | null;
 };
 
-type AthleteRecord = Athlete["athlete"] & Record<string, any>;
+const normalizeIdentifier = (value: unknown): string => {
+  if (value === null || value === undefined) {
+    return "";
+  }
 
-const normalizeIdentifier = (value: unknown) => {
-  if (value === null || value === undefined) return null;
-
-  const normalized = String(value).trim().toLowerCase();
-  return normalized.length > 0 ? normalized : null;
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
 };
 
-const collectTeamIdentifiers = (team?: TeamInfo | null) => {
-  if (!team) return [];
+const collectTeamIdentifiers = (team?: TeamInfo | null): string[] => {
+  if (!team) {
+    return [];
+  }
 
   return [
     team.id,
-    team.teamId,
-    team.team_id,
     team.espnId,
-    team.espn_id,
-    team.wid,
-    team.code,
-    team.abbreviation,
     team.name,
     team.fullName,
-    team.displayName,
-    team.shortName,
-    team.short_name,
-    team.shortDisplayName,
+    team.code,
+    team.location,
+    team.city,
+    team.state,
   ]
     .map(normalizeIdentifier)
-    .filter((value): value is string => Boolean(value));
+    .filter(Boolean);
 };
 
-const getAthleteId = (athlete?: AthleteRecord | null) =>
-  athlete?.playerId ?? athlete?.id ?? athlete?.espnId ?? athlete?.espn_id;
+const isTeamBlock = (value: unknown): value is TeamBlock => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    "team" in value
+  );
+};
 
-const getAthleteTeamId = (
-  athlete?: AthleteRecord | null,
-  fallbackTeamId?: number | string,
-) =>
-  athlete?.teamId ??
-  athlete?.team_id ??
-  athlete?.team?.id ??
-  athlete?.team?.teamId ??
-  fallbackTeamId;
+const normalizePlayerStats = (
+  playerStats: PlayerStats | PlayerStats[],
+): TeamBlock[] => {
+  if (!Array.isArray(playerStats)) {
+    return [];
+  }
 
-const getAthleteName = (athlete?: AthleteRecord | null) =>
-  athlete?.shortName ??
-  athlete?.short_name ??
-  athlete?.displayName ??
-  athlete?.fullName ??
-  athlete?.name ??
-  "Player";
+  const blocks: TeamBlock[] = [];
 
-const getPlayers = (teamBlock?: TeamBlock | null) =>
-  Array.isArray(teamBlock?.athletes) ? teamBlock.athletes : [];
+  for (const item of playerStats) {
+    if (Array.isArray(item)) {
+      for (const nestedItem of item) {
+        if (isTeamBlock(nestedItem)) {
+          blocks.push(nestedItem);
+        }
+      }
 
-const getStatLabels = (teamBlock?: TeamBlock | null) => {
+      continue;
+    }
+
+    if (isTeamBlock(item)) {
+      blocks.push(item);
+    }
+  }
+
+  return blocks;
+};
+
+const getPlayers = (teamBlock: TeamBlock | null): Athlete[] => {
+  return Array.isArray(teamBlock?.athletes) ? teamBlock.athletes : [];
+};
+
+const getStatLabels = (teamBlock: TeamBlock | null): string[] => {
   if (Array.isArray(teamBlock?.labels) && teamBlock.labels.length > 0) {
     return teamBlock.labels;
   }
@@ -165,7 +191,7 @@ const getStatLabels = (teamBlock?: TeamBlock | null) => {
   return DEFAULT_LABELS;
 };
 
-const getStatKeys = (teamBlock?: TeamBlock | null) => {
+const getStatKeys = (teamBlock: TeamBlock | null): string[] => {
   if (Array.isArray(teamBlock?.keys) && teamBlock.keys.length > 0) {
     return teamBlock.keys;
   }
@@ -173,41 +199,69 @@ const getStatKeys = (teamBlock?: TeamBlock | null) => {
   return DEFAULT_KEYS;
 };
 
+const getAthleteId = (player: AthleteRecord): number | string | null => {
+  return player.id ?? null;
+};
+
+const getAthleteTeamId = (
+  player: AthleteRecord,
+  fallbackTeamId: number | string,
+): number | string => {
+  return (
+    player.teamId ??
+    player.team?.id ??
+    player.athlete?.teamId ??
+    player.athlete?.team?.id ??
+    fallbackTeamId
+  );
+};
+
+const getAthleteName = (player: AthleteRecord): string => {
+  return player.shortName ?? "Unknown Player";
+};
+
 const getStatValue = (
   player: Athlete,
   statKey: string | undefined,
   statIndex: number,
-) => {
-  const playerRecord = player as Athlete & Record<string, any>;
+): string => {
+  const playerRecord = player as AthleteRecord;
+  const statsByKey = playerRecord.statsByKey as
+    | Record<string, string>
+    | undefined;
 
-  if (Array.isArray(playerRecord.stats)) {
-    const value = playerRecord.stats[statIndex];
-    return value === null || value === undefined || value === "" ? "—" : value;
+  if (statKey && statsByKey) {
+    const keyedValue = statsByKey[statKey];
+
+    if (keyedValue !== null && keyedValue !== undefined && keyedValue !== "") {
+      return String(keyedValue);
+    }
   }
 
-  const value =
-    playerRecord[statKey ?? ""] ??
-    playerRecord.statistics?.[statKey ?? ""] ??
-    playerRecord.stats?.[statKey ?? ""];
+  if (Array.isArray(playerRecord.stats)) {
+    const indexedValue = playerRecord.stats[statIndex];
 
-  return value === null || value === undefined || value === "" ? "—" : value;
+    if (
+      indexedValue !== null &&
+      indexedValue !== undefined &&
+      indexedValue !== ""
+    ) {
+      return String(indexedValue);
+    }
+  }
+
+  return "—";
 };
 
-const getDidNotPlayText = (player: Athlete) => {
-  const playerRecord = player as Athlete & Record<string, any>;
+const getDidNotPlayText = (player: Athlete): string => {
+  const reason = player.reason?.trim();
 
-  const reason =
-    playerRecord.reason ??
-    playerRecord.didNotPlayReason ??
-    playerRecord.status ??
-    playerRecord.comment;
-
-  return reason ? `DID NOT PLAY: ${String(reason).toUpperCase()}` : "DID NOT PLAY";
+  return reason ? `DID NOT PLAY: ${reason}` : "DID NOT PLAY";
 };
 
 export default function BoxScore({
-  homeTeamId,
-  awayTeamId,
+  homeId,
+  awayId,
   homeName,
   awayName,
   homeLogo,
@@ -226,38 +280,9 @@ export default function BoxScore({
     {},
   );
 
-  const isNBA = league === "NBA" || league === "SL";
-  const isWNBA = league === "WNBA";
-
   const normalizedPlayerStats = useMemo(
-    () =>
-      Array.isArray(playerStats)
-        ? playerStats.filter(
-            (block): block is TeamBlock =>
-              Boolean(block) && typeof block === "object",
-          )
-        : [],
+    () => normalizePlayerStats(playerStats),
     [playerStats],
-  );
-
-  const homeTeam = useMemo(
-    () =>
-      isNBA
-        ? getNBATeam(homeTeamId)
-        : isWNBA
-          ? getWNBATeamByESPNId(homeTeamId)
-          : getCBBTeamByESPNId(homeTeamId),
-    [homeTeamId, isNBA, isWNBA],
-  );
-
-  const awayTeam = useMemo(
-    () =>
-      isNBA
-        ? getNBATeam(awayTeamId)
-        : isWNBA
-          ? getWNBATeamByESPNId(awayTeamId)
-          : getCBBTeamByESPNId(awayTeamId),
-    [awayTeamId, isNBA, isWNBA],
   );
 
   const getRowBackground = useCallback(
@@ -274,23 +299,22 @@ export default function BoxScore({
     ({
       targetTeamId,
       targetName,
-      targetTeam,
       fallbackIndex,
     }: {
       targetTeamId: number | string;
       targetName: string;
-      targetTeam?: TeamInfo | null;
       fallbackIndex: number;
-    }) => {
-      const targetIdentifiers = new Set([
-        normalizeIdentifier(targetTeamId),
-        normalizeIdentifier(targetName),
-        ...collectTeamIdentifiers(targetTeam),
-      ]);
+    }): TeamBlock | null => {
+      const targetIdentifiers = new Set(
+        [targetTeamId, targetName].map(normalizeIdentifier).filter(Boolean),
+      );
 
       const matchedBlock = normalizedPlayerStats.find((block) => {
         const blockIdentifiers = collectTeamIdentifiers(block.team);
-        return blockIdentifiers.some((id) => targetIdentifiers.has(id));
+
+        return blockIdentifiers.some((identifier) =>
+          targetIdentifiers.has(identifier),
+        );
       });
 
       return matchedBlock ?? normalizedPlayerStats[fallbackIndex] ?? null;
@@ -301,44 +325,51 @@ export default function BoxScore({
   const awayTeamBlock = useMemo(
     () =>
       findTeamBlock({
-        targetTeamId: awayTeamId,
+        targetTeamId: awayId,
         targetName: awayName,
-        targetTeam: awayTeam,
         fallbackIndex: 0,
       }),
-    [awayName, awayTeam, awayTeamId, findTeamBlock],
+    [awayId, awayName, findTeamBlock],
   );
 
   const homeTeamBlock = useMemo(
     () =>
       findTeamBlock({
-        targetTeamId: homeTeamId,
+        targetTeamId: homeId,
         targetName: homeName,
-        targetTeam: homeTeam,
         fallbackIndex: 1,
       }),
-    [homeName, homeTeam, homeTeamId, findTeamBlock],
+    [homeId, homeName, findTeamBlock],
   );
 
   const hasPlayerStats =
-    getPlayers(awayTeamBlock).length > 0 || getPlayers(homeTeamBlock).length > 0;
+    getPlayers(awayTeamBlock).length > 0 ||
+    getPlayers(homeTeamBlock).length > 0;
 
   const toggleExpand = useCallback((sectionKey: string) => {
-    setExpandedTeams((prev) => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey],
+    setExpandedTeams((previous) => ({
+      ...previous,
+      [sectionKey]: !previous[sectionKey],
     }));
   }, []);
 
   const handlePlayerPress = useCallback(
     (
-      playerId: number | string | undefined | null,
-      teamId: number | string | undefined | null,
+      playerId: number | string | null,
+      teamId: number | string | null,
+      league: string,
     ) => {
-      if (!playerId || !teamId) return;
+      if (
+        playerId === null ||
+        playerId === undefined ||
+        teamId === null ||
+        teamId === undefined
+      ) {
+        return;
+      }
 
       router.push({
-        pathname: isNBA ? "/player/[id]" : "/player/basketball/[id]",
+        pathname: "/player/basketball/[id]",
         params: {
           id: String(playerId),
           teamId: String(teamId),
@@ -346,7 +377,7 @@ export default function BoxScore({
         },
       });
     },
-    [isNBA, league],
+    [],
   );
 
   const renderTeamBox = ({
@@ -357,17 +388,22 @@ export default function BoxScore({
     teamBlock,
   }: {
     sectionKey: "away" | "home";
-    teamId: number;
+    teamId: number | string;
     teamName: string;
     teamLogo: any;
     teamBlock: TeamBlock | null;
   }) => {
     const players = getPlayers(teamBlock);
-    if (players.length === 0) return null;
+
+    if (players.length === 0) {
+      return null;
+    }
 
     const labels = getStatLabels(teamBlock);
     const statKeys = getStatKeys(teamBlock);
+    const resolvedTeamId = teamBlock?.team?.id ?? teamId;
     const isExpanded = expandedTeams[sectionKey] ?? false;
+
     const visiblePlayers = isExpanded
       ? players
       : players.slice(0, COLLAPSED_ROWS);
@@ -393,9 +429,9 @@ export default function BoxScore({
             </View>
 
             {visiblePlayers.map((player, index) => {
-              const athlete = player.athlete as AthleteRecord;
+              const athlete = player as AthleteRecord;
               const playerId = getAthleteId(athlete);
-              const playerTeamId = getAthleteTeamId(athlete, teamId);
+              const playerTeamId = getAthleteTeamId(athlete, resolvedTeamId);
               const playerName = getAthleteName(athlete);
 
               return (
@@ -403,12 +439,16 @@ export default function BoxScore({
                   key={`${sectionKey}-name-${playerId ?? index}`}
                   style={[
                     styles.tableRow,
-                    { backgroundColor: getRowBackground(index) },
+                    {
+                      backgroundColor: getRowBackground(index),
+                    },
                   ]}
                 >
                   <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={() => handlePlayerPress(playerId, playerTeamId)}
+                    activeOpacity={activeOpacity}
+                    onPress={() =>
+                      handlePlayerPress(playerId, playerTeamId, league.toUpperCase())
+                    }
                   >
                     <Text style={styles.cellName} numberOfLines={1}>
                       {playerName}
@@ -424,34 +464,39 @@ export default function BoxScore({
               <View
                 style={[
                   styles.tableHeader,
-                  { minWidth: labels.length * COLUMN_WIDTH },
+                  {
+                    minWidth: labels.length * COLUMN_WIDTH,
+                  },
                 ]}
               >
-                {labels.map((label) => (
-                  <Text key={label} style={styles.cell}>
+                {labels.map((label, index) => (
+                  <Text key={`${label}-${index}`} style={styles.cell}>
                     {label}
                   </Text>
                 ))}
               </View>
 
               {visiblePlayers.map((player, index) => {
-                const athlete = player.athlete as AthleteRecord;
+                const athlete = player as AthleteRecord;
                 const playerId = getAthleteId(athlete);
-                const playerRecord = player as Athlete & Record<string, any>;
 
                 return (
                   <View
                     key={`${sectionKey}-stats-${playerId ?? index}`}
                     style={[
                       styles.tableRow,
-                      { backgroundColor: getRowBackground(index) },
+                      {
+                        backgroundColor: getRowBackground(index),
+                      },
                     ]}
                   >
-                    {playerRecord.didNotPlay ? (
+                    {player.didNotPlay ? (
                       <View
                         style={[
                           styles.didNotPlayerRow,
-                          { minWidth: labels.length * COLUMN_WIDTH },
+                          {
+                            minWidth: labels.length * COLUMN_WIDTH,
+                          },
                         ]}
                       >
                         <Text style={styles.didNotPlayCell}>
@@ -461,7 +506,9 @@ export default function BoxScore({
                     ) : (
                       labels.map((label, statIndex) => (
                         <View
-                          key={`${sectionKey}-${playerId ?? index}-${label}`}
+                          key={`${sectionKey}-${
+                            playerId ?? index
+                          }-${label}-${statIndex}`}
                           style={styles.cellContainer}
                         >
                           <Text style={styles.cell}>
@@ -485,7 +532,10 @@ export default function BoxScore({
           <TouchableOpacity
             activeOpacity={activeOpacity}
             onPress={() => toggleExpand(sectionKey)}
-            style={{ padding: 10, alignItems: "center" }}
+            style={{
+              padding: 10,
+              alignItems: "center",
+            }}
           >
             <Text style={styles.showMoreLess}>
               {isExpanded ? "Show Less" : "Show More"}
@@ -504,6 +554,7 @@ export default function BoxScore({
     return (
       <ScrollView>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
+
         <BoxScoreSkeleton isDark={isDark} />
       </ScrollView>
     );
@@ -513,6 +564,7 @@ export default function BoxScore({
     return (
       <ScrollView>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
+
         <Text style={global.errorText}>Failed to load box score.</Text>
       </ScrollView>
     );
@@ -539,8 +591,8 @@ export default function BoxScore({
           <View style={{ marginBottom: 24 }}>
             {renderTeamBox({
               sectionKey: "away",
-              teamId: awayTeamId,
-              teamName: awayName ?? "Away Team",
+              teamId: awayId,
+              teamName: awayName || "Away Team",
               teamLogo: awayLogo,
               teamBlock: awayTeamBlock,
             })}
@@ -548,8 +600,8 @@ export default function BoxScore({
 
           {renderTeamBox({
             sectionKey: "home",
-            teamId: homeTeamId,
-            teamName: homeName ?? "Home Team",
+            teamId: homeId,
+            teamName: homeName || "Home Team",
             teamLogo: homeLogo,
             teamBlock: homeTeamBlock,
           })}

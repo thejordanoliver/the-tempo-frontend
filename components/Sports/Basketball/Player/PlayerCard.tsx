@@ -26,7 +26,6 @@ export interface PlayerCardProps {
 }
 
 type PlayerRoutePathname =
-  | "/player/[id]"
   | "/player/basketball/[id]"
   | "/player/baseball/[id]"
   | "/player/mma/[id]"

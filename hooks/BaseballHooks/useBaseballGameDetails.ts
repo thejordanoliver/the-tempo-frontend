@@ -156,11 +156,18 @@ export type PlayerStatsByTeam = {
   fielding: PlayerStatBlock | null;
 };
 
+export type TeamRecords = {
+  overall: string | null;
+  home?: string | null;
+  away?: string | null;
+  conference?: string | null;
+};
+
 export type Score = {
   gameId: string;
   uid: string;
   date: string;
-  lastUpdated?: number;
+  lastUpdated: number;
   status: {
     id: string;
     name: "STATUS_SCHEDULED" | "STATUS_FINAL";
@@ -180,8 +187,6 @@ export type Score = {
     home: number;
     away: number;
   }[];
-
-  boxScore?: any | null;
 
   plays: any[];
   lastPlay: any | null;
@@ -213,13 +218,6 @@ export type Score = {
     onSecond: boolean;
     onThird: boolean;
   };
-};
-
-export type TeamRecords = {
-  overall: string | null;
-  home?: string | null;
-  away?: string | null;
-  conference?: string | null;
 };
 
 export type GameDetails = {

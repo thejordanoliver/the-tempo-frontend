@@ -1,14 +1,13 @@
 import type {
   BracketGame,
-  BracketGameStatus,
   BracketLayoutConfig,
   BracketPosition,
   BracketRegion,
   BracketTeam,
   RegionPlacement,
-  TournamentBracketApiResponse,
   TournamentBracketCompetition,
   TournamentBracketData,
+  TournamentBracketSourceData,
   TournamentRound,
 } from "./tournamentBracket.types";
 
@@ -42,7 +41,7 @@ export const BRACKET_LAYOUT: BracketLayoutConfig = {
   regionPadding: 8,
 };
 
-export const REGIONAL_ROUND_BASE_COUNTS: Record<TournamentRound, number> = {
+export const REGIONAL_ROUND_BASE_COUNTS: Record<string, number> = {
   OPENING: 0,
   ROUND_OF_64: 8,
   ROUND_OF_32: 4,
@@ -59,7 +58,7 @@ export const TOURNAMENT_ROUNDS: TournamentRound[] = [
   "CHAMPIONSHIP",
 ];
 
-export const ROUND_ORDER: Record<TournamentRound, number> = {
+export const ROUND_ORDER: Record<string, number> = {
   OPENING: 0,
   ROUND_OF_64: 1,
   ROUND_OF_32: 2,
@@ -69,7 +68,7 @@ export const ROUND_ORDER: Record<TournamentRound, number> = {
   CHAMPIONSHIP: 6,
 };
 
-const ROUND_LABELS: Record<TournamentRound, string> = {
+const ROUND_LABELS: Record<string, string> = {
   OPENING: "Opening Round",
   ROUND_OF_64: "Round of 64",
   ROUND_OF_32: "Round of 32",
@@ -81,12 +80,6 @@ const ROUND_LABELS: Record<TournamentRound, string> = {
 
 const isRecord = (value: unknown): value is JsonRecord =>
   typeof value === "object" && value !== null && !Array.isArray(value);
-
-const asRecord = (value: unknown): JsonRecord | null =>
-  isRecord(value) ? value : null;
-
-const asArray = (value: unknown): unknown[] =>
-  Array.isArray(value) ? value : [];
 
 const asString = (value: unknown): string | null => {
   if (typeof value === "string") {
@@ -112,13 +105,12 @@ const asNumber = (value: unknown): number | null => {
   return null;
 };
 
-const asBoolean = (value: unknown): boolean | null =>
-  typeof value === "boolean" ? value : null;
-
-const asStringArray = (value: unknown): string[] =>
-  asArray(value)
-    .map(asString)
-    .filter((item): item is string => Boolean(item));
+const normalizeText = (value: unknown) =>
+  String(value ?? "")
+    .replace(/[-_/]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
 
 const getValue = (record: JsonRecord, keys: readonly string[]) => {
   for (const key of keys) {
@@ -130,331 +122,11 @@ const getValue = (record: JsonRecord, keys: readonly string[]) => {
   return undefined;
 };
 
-const getRecordValue = (
-  record: JsonRecord,
-  keys: readonly string[],
-): JsonRecord | null => asRecord(getValue(record, keys));
-
-const normalizeText = (value: unknown) =>
-  String(value ?? "")
-    .replace(/[-_/]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
-
 const normalizeCompetition = (
   value: unknown,
-  fallback: TournamentBracketCompetition,
 ): TournamentBracketCompetition => {
   const text = normalizeText(value).toUpperCase();
-  return text === "WCBB" || text.includes("WOMEN") ? "WCBB" : fallback;
-};
-
-export function normalizeTournamentRound(
-  value: unknown,
-  order?: number | null,
-): TournamentRound {
-  const text = normalizeText(value);
-
-  if (
-    text.includes("first four") ||
-    text.includes("opening") ||
-    text === "open"
-  ) {
-    return "OPENING";
-  }
-
-  if (
-    text.includes("round of 64") ||
-    text.includes("first round") ||
-    text.includes("1st round")
-  ) {
-    return "ROUND_OF_64";
-  }
-
-  if (
-    text.includes("round of 32") ||
-    text.includes("second round") ||
-    text.includes("2nd round")
-  ) {
-    return "ROUND_OF_32";
-  }
-
-  if (
-    text.includes("sweet 16") ||
-    text.includes("sweet sixteen") ||
-    text.includes("regional semifinal")
-  ) {
-    return "SWEET_16";
-  }
-
-  if (
-    text.includes("elite 8") ||
-    text.includes("elite eight") ||
-    text.includes("regional final")
-  ) {
-    return "ELITE_8";
-  }
-
-  if (
-    text.includes("final four") ||
-    text.includes("national semifinal") ||
-    text === "semifinal" ||
-    text === "semifinals"
-  ) {
-    return "FINAL_4";
-  }
-
-  if (text.includes("championship") || text.includes("national title")) {
-    return "CHAMPIONSHIP";
-  }
-
-  const roundByOrder = TOURNAMENT_ROUNDS.find(
-    (round) => ROUND_ORDER[round] === order,
-  );
-
-  return roundByOrder ?? "ROUND_OF_64";
-}
-
-const normalizeStatus = (value: unknown): BracketGameStatus => {
-  const statusRecord = asRecord(value);
-  const text = normalizeText(
-    statusRecord
-      ? [
-          statusRecord.state,
-          statusRecord.name,
-          statusRecord.description,
-          statusRecord.detail,
-          statusRecord.shortDetail,
-        ]
-          .filter(Boolean)
-          .join(" ")
-      : value,
-  );
-
-  if (text.includes("cancel")) return "canceled";
-  if (text.includes("postpone")) return "postponed";
-  if (text.includes("delay") || text.includes("suspend")) return "delayed";
-  if (
-    text.includes("final") ||
-    text.includes("complete") ||
-    text.includes("status final")
-  ) {
-    return "final";
-  }
-  if (
-    text.includes("in progress") ||
-    text.includes("halftime") ||
-    text.includes("live") ||
-    text === "in"
-  ) {
-    return "live";
-  }
-  if (text.includes("pre")) return "pre";
-  if (text.includes("post")) return "post";
-
-  return "scheduled";
-};
-
-const getStatusText = (value: unknown) => {
-  const statusRecord = asRecord(value);
-
-  if (!statusRecord) return asString(value);
-
-  return asString(
-    getValue(statusRecord, [
-      "shortDetail",
-      "detail",
-      "description",
-      "displayName",
-      "name",
-      "state",
-    ]),
-  );
-};
-
-const normalizeTeam = (value: unknown): BracketTeam | null => {
-  const record = asRecord(value);
-  if (!record) return null;
-
-  const id =
-    asString(getValue(record, ["id", "teamId", "uid"])) ??
-    asString(getValue(record, ["espnId", "espnID"]));
-  const name =
-    asString(getValue(record, ["name", "displayName", "fullName"])) ??
-    asString(getValue(record, ["shortName", "abbreviation", "code"]));
-
-  if (!id && !name) return null;
-
-  return {
-    id: id ?? name ?? "team",
-    espnId: asString(getValue(record, ["espnId", "espnID"])) ?? null,
-    name: name ?? "TBD",
-    shortName: asString(getValue(record, ["shortName", "shortDisplayName"])),
-    abbreviation: asString(getValue(record, ["abbreviation", "code"])),
-    logo: asString(getValue(record, ["logo", "logoUrl", "logoURL"])),
-    seed: asNumber(getValue(record, ["seed", "rank", "curatedRank"])),
-    score: asNumber(getValue(record, ["score", "points"])) ??
-      asString(getValue(record, ["score", "points"])),
-    winner: asBoolean(getValue(record, ["winner", "isWinner"])),
-    record: asString(getValue(record, ["record", "summary", "teamRecord"])),
-  };
-};
-
-const normalizeNextGamePosition = (
-  value: unknown,
-): BracketPosition | null => {
-  const text = normalizeText(value);
-  if (text === "top" || text === "away") return "top";
-  if (text === "bottom" || text === "home") return "bottom";
-  return null;
-};
-
-const normalizeVenue = (value: unknown) => {
-  const record = asRecord(value);
-
-  if (!record) {
-    const name = asString(value);
-
-    return name
-      ? {
-          id: null,
-          name,
-          city: null,
-          state: null,
-          indoor: null,
-        }
-      : null;
-  }
-
-  const addressRecord = asRecord(record.address);
-
-  return {
-    id: asString(getValue(record, ["id", "venueId"])) ?? null,
-    name: asString(getValue(record, ["name", "fullName"])) ?? null,
-    city:
-      asString(getValue(record, ["city"])) ??
-      asString(addressRecord?.city) ??
-      null,
-    state:
-      asString(getValue(record, ["state"])) ??
-      asString(addressRecord?.state) ??
-      null,
-    indoor: asBoolean(getValue(record, ["indoor", "isIndoor"])),
-  };
-};
-
-const normalizeBracketGame = (
-  value: unknown,
-  index: number,
-  region?: Pick<BracketRegion, "id" | "name">,
-): BracketGame | null => {
-  const record = asRecord(value);
-  if (!record) return null;
-
-  const roundOrderValue = asNumber(
-    getValue(record, ["roundOrder", "round_order", "order"]),
-  );
-  const round = normalizeTournamentRound(
-    getValue(record, ["round", "roundKey", "roundLabel", "label", "name"]),
-    roundOrderValue,
-  );
-  const statusValue = getValue(record, ["status", "statusText", "state"]);
-  const status = normalizeStatus(statusValue);
-  const teamsRecord = getRecordValue(record, ["teams"]);
-  const topTeam =
-    normalizeTeam(getValue(record, ["topTeam", "top"])) ??
-    (teamsRecord ? normalizeTeam(getValue(teamsRecord, ["top", "away"])) : null);
-  const bottomTeam =
-    normalizeTeam(getValue(record, ["bottomTeam", "bottom"])) ??
-    (teamsRecord
-      ? normalizeTeam(getValue(teamsRecord, ["bottom", "home"]))
-      : null);
-  const fallbackId =
-    asString(getValue(record, ["id", "gameId", "eventId"])) ??
-    `${region?.id ?? "bracket"}-${round}-${index}`;
-
-  return {
-    id: fallbackId,
-    eventId:
-      asString(getValue(record, ["eventId", "eventID", "externalEventId"])) ??
-      asString(getValue(record, ["gameId"])) ??
-      null,
-    tournamentId: asString(getValue(record, ["tournamentId", "tournamentID"])),
-    regionId:
-      asString(getValue(record, ["regionId", "regionID"])) ??
-      region?.id ??
-      null,
-    regionName:
-      asString(getValue(record, ["regionName", "region"])) ??
-      region?.name ??
-      null,
-    round,
-    roundLabel: asString(getValue(record, ["roundLabel", "label", "name"])),
-    roundOrder: roundOrderValue ?? ROUND_ORDER[round],
-    gameOrder:
-      asNumber(getValue(record, ["gameOrder", "game_order", "slot", "order"])) ??
-      index + 1,
-    bracketSlot:
-      asNumber(getValue(record, ["bracketSlot", "bracket_slot", "slot"])) ??
-      null,
-    topTeam,
-    bottomTeam,
-    topSourceGameId: asString(
-      getValue(record, ["topSourceGameId", "top_source_game_id"]),
-    ),
-    bottomSourceGameId: asString(
-      getValue(record, ["bottomSourceGameId", "bottom_source_game_id"]),
-    ),
-    winnerTeamId: asString(getValue(record, ["winnerTeamId", "winnerId"])),
-    nextGameId: asString(getValue(record, ["nextGameId", "next_game_id"])),
-    nextGamePosition: normalizeNextGamePosition(
-      getValue(record, ["nextGamePosition", "next_game_position"]),
-    ),
-    destinationRegionId: asString(
-      getValue(record, ["destinationRegionId", "destination_region_id"]),
-    ),
-    destinationRound: (() => {
-      const value = getValue(record, [
-        "destinationRound",
-        "destination_round",
-      ]);
-
-      return value === undefined || value === null
-        ? null
-        : normalizeTournamentRound(value);
-    })(),
-    destinationSeed: asNumber(
-      getValue(record, ["destinationSeed", "destination_seed"]),
-    ),
-    destinationGameId: asString(
-      getValue(record, [
-        "destinationGameId",
-        "destination_game_id",
-        "nextGameId",
-        "next_game_id",
-      ]),
-    ),
-    destinationPosition: normalizeNextGamePosition(
-      getValue(record, ["destinationPosition", "destination_position"]),
-    ),
-    date: asString(getValue(record, ["date", "startDate", "startTime"])),
-    status,
-    statusText: getStatusText(statusValue),
-    venue: normalizeVenue(getValue(record, ["venue", "venueName"])),
-    broadcast: (() => {
-      const directBroadcast = asString(getValue(record, ["broadcast", "tv"]));
-      if (directBroadcast) return directBroadcast;
-
-      const broadcastList = asArray(getValue(record, ["broadcasts"]))
-        .map(asString)
-        .filter((item): item is string => Boolean(item))
-        .join(" / ");
-
-      return broadcastList || null;
-    })(),
-    headline: asString(getValue(record, ["headline", "description"])),
-  };
+  return text === "WCBB" || text.includes("WOMEN") ? "WCBB" : "CBB";
 };
 
 const normalizeSide = (value: unknown): "left" | "right" | null => {
@@ -473,89 +145,157 @@ const normalizeVerticalPosition = (
   return null;
 };
 
-const normalizeRegion = (value: unknown, index: number): BracketRegion | null => {
-  const record = asRecord(value);
-  if (!record) return null;
+const isTournamentGame = (value: unknown): value is BracketGame => {
+  if (!isRecord(value)) return false;
 
-  const id =
-    asString(getValue(record, ["id", "regionId", "regionID", "key"])) ??
-    `region-${index + 1}`;
-  const name =
-    asString(getValue(record, ["name", "regionName", "label"])) ??
-    `Region ${index + 1}`;
-  const order = asNumber(getValue(record, ["order", "regionOrder"])) ?? index + 1;
-  const side = normalizeSide(getValue(record, ["side"])) ?? "left";
-  const verticalPosition =
-    normalizeVerticalPosition(
-      getValue(record, ["verticalPosition", "position", "vertical"]),
-    ) ?? "top";
-
-  const games = asArray(getValue(record, ["games", "matchups"]))
-    .map((game, gameIndex) => normalizeBracketGame(game, gameIndex, { id, name }))
-    .filter((game): game is BracketGame => Boolean(game))
-    .filter((game) => REGIONAL_ROUNDS.includes(game.round));
-
-  return {
-    id,
-    name,
-    order,
-    side,
-    verticalPosition,
-    games: sortBracketGames(games),
-  };
+  return typeof value.id === "string" && typeof value.round === "string";
 };
 
-const buildRegionsFromGames = (games: readonly BracketGame[]) => {
-  const regionMap = new Map<string, BracketGame[]>();
+const getRoundSortOrder = (game: BracketGame) =>
+  Number.isFinite(game.roundOrder)
+    ? game.roundOrder
+    : ROUND_ORDER[game.round] ?? Number.MAX_SAFE_INTEGER;
 
-  games
-    .filter((game) => REGIONAL_ROUNDS.includes(game.round))
-    .forEach((game) => {
-      const key = game.regionId ?? game.regionName ?? "unassigned";
-      const existing = regionMap.get(key) ?? [];
-      existing.push(game);
-      regionMap.set(key, existing);
-    });
+const getGameSortOrder = (game: BracketGame) =>
+  Number.isFinite(game.gameOrder)
+    ? game.gameOrder
+    : asNumber(game.bracketSlot) ?? Number.MAX_SAFE_INTEGER;
 
-  return [...regionMap.entries()].map(([key, regionGames], index) => ({
-    id: key,
-    name: regionGames[0]?.regionName ?? `Region ${index + 1}`,
-    order: index + 1,
-    side: index < 2 ? ("left" as const) : ("right" as const),
-    verticalPosition: index % 2 === 0 ? ("top" as const) : ("bottom" as const),
-    games: sortBracketGames(regionGames),
-  }));
+const getRegionSortOrder = (region: JsonRecord, fallbackOrder: number) =>
+  asNumber(getValue(region, ["order", "regionOrder", "region_order"])) ??
+  fallbackOrder;
+
+const getRegionIdentity = (
+  region: JsonRecord,
+  games: readonly BracketGame[],
+  fallbackIndex: number,
+) => {
+  const id =
+    asString(getValue(region, ["id", "regionId", "regionID", "key"])) ??
+    games.find((game) => game.regionId)?.regionId ??
+    `region-${fallbackIndex + 1}`;
+  const name =
+    asString(getValue(region, ["name", "regionName", "label"])) ??
+    games.find((game) => game.regionName)?.regionName ??
+    `Region ${fallbackIndex + 1}`;
+
+  return { id, name };
+};
+
+const collectGamesFromRegionShape = (value: unknown): BracketGame[] => {
+  const gamesById = new Map<string, BracketGame>();
+  const visited = new WeakSet<object>();
+
+  const visit = (candidate: unknown) => {
+    if (candidate === null || candidate === undefined) return;
+
+    if (isTournamentGame(candidate)) {
+      gamesById.set(candidate.id, candidate);
+      return;
+    }
+
+    if (Array.isArray(candidate)) {
+      candidate.forEach(visit);
+      return;
+    }
+
+    if (!isRecord(candidate) || visited.has(candidate)) return;
+
+    visited.add(candidate);
+
+    [
+      "games",
+      "rounds",
+      "matchups",
+      "children",
+      "items",
+      "slots",
+      "bracket",
+    ].forEach((key) => visit(candidate[key]));
+  };
+
+  visit(value);
+
+  return sortBracketGames(Array.from(gamesById.values()));
+};
+
+const normalizeRegions = (
+  regions: readonly unknown[],
+): BracketRegion[] => {
+  return regions
+    .map((regionValue, index) => {
+      if (!isRecord(regionValue)) return null;
+
+      const regionalGames = collectGamesFromRegionShape(regionValue).filter(
+        (game) => REGIONAL_ROUNDS.includes(game.round),
+      );
+      const { id, name } = getRegionIdentity(regionValue, regionalGames, index);
+      const order = getRegionSortOrder(regionValue, index + 1);
+
+      return {
+        id,
+        name,
+        order,
+        side:
+          normalizeSide(getValue(regionValue, ["side"])) ??
+          (order <= 2 ? "left" : "right"),
+        verticalPosition:
+          normalizeVerticalPosition(
+            getValue(regionValue, [
+              "verticalPosition",
+              "position",
+              "vertical",
+            ]),
+          ) ?? (order % 2 === 1 ? "top" : "bottom"),
+        games: sortBracketGames(regionalGames),
+      } satisfies BracketRegion;
+    })
+    .filter((region): region is BracketRegion => Boolean(region))
+    .sort((first, second) => first.order - second.order);
 };
 
 export function sortBracketGames(
   games: readonly BracketGame[],
 ): BracketGame[] {
-  return [...games].sort((a, b) => {
-    if (a.roundOrder !== b.roundOrder) return a.roundOrder - b.roundOrder;
-    if (a.gameOrder !== b.gameOrder) return a.gameOrder - b.gameOrder;
+  return [...games].sort((first, second) => {
+    const firstRoundOrder = getRoundSortOrder(first);
+    const secondRoundOrder = getRoundSortOrder(second);
 
-    const aTime = a.date ? new Date(a.date).getTime() : 0;
-    const bTime = b.date ? new Date(b.date).getTime() : 0;
-    const safeATime = Number.isNaN(aTime) ? 0 : aTime;
-    const safeBTime = Number.isNaN(bTime) ? 0 : bTime;
+    if (firstRoundOrder !== secondRoundOrder) {
+      return firstRoundOrder - secondRoundOrder;
+    }
 
-    if (safeATime !== safeBTime) return safeATime - safeBTime;
+    const firstGameOrder = getGameSortOrder(first);
+    const secondGameOrder = getGameSortOrder(second);
 
-    return a.id.localeCompare(b.id);
+    if (firstGameOrder !== secondGameOrder) {
+      return firstGameOrder - secondGameOrder;
+    }
+
+    const firstTime = first.date ? new Date(first.date).getTime() : 0;
+    const secondTime = second.date ? new Date(second.date).getTime() : 0;
+    const safeFirstTime = Number.isNaN(firstTime) ? 0 : firstTime;
+    const safeSecondTime = Number.isNaN(secondTime) ? 0 : secondTime;
+
+    if (safeFirstTime !== safeSecondTime) {
+      return safeFirstTime - safeSecondTime;
+    }
+
+    return first.id.localeCompare(second.id);
   });
 }
 
 export function groupGamesByRound(
   games: readonly BracketGame[],
 ): Record<TournamentRound, BracketGame[]> {
-  return TOURNAMENT_ROUNDS.reduce(
-    (acc, round) => {
-      acc[round] = sortBracketGames(
+  return TOURNAMENT_ROUNDS.reduce<Record<TournamentRound, BracketGame[]>>(
+    (rounds, round) => {
+      rounds[round] = sortBracketGames(
         games.filter((game) => game.round === round),
       );
-      return acc;
+      return rounds;
     },
-    {} as Record<TournamentRound, BracketGame[]>,
+    {},
   );
 }
 
@@ -563,6 +303,52 @@ export function groupRegionGamesByRound(
   games: readonly BracketGame[],
 ): Record<TournamentRound, BracketGame[]> {
   return groupGamesByRound(games);
+}
+
+export function normalizeTournamentForBracket(
+  tournament: TournamentBracketSourceData,
+): TournamentBracketData {
+  const regions = normalizeRegions(tournament.regions ?? []);
+  const regionalGames = regions.flatMap((region) => region.games);
+  const explicitOpeningRoundGames = sortBracketGames(
+    tournament.openingRoundGames ?? [],
+  );
+  const explicitFinalFourGames = sortBracketGames(
+    tournament.finalFourGames ?? [],
+  );
+  const knownGames = [
+    ...regionalGames,
+    ...explicitOpeningRoundGames,
+    ...explicitFinalFourGames,
+    ...(tournament.championshipGame ? [tournament.championshipGame] : []),
+  ];
+  const openingRoundGames =
+    explicitOpeningRoundGames.length > 0
+      ? explicitOpeningRoundGames
+      : sortBracketGames(knownGames.filter((game) => game.round === "OPENING"));
+  const finalFourGames =
+    explicitFinalFourGames.length > 0
+      ? explicitFinalFourGames
+      : sortBracketGames(knownGames.filter((game) => game.round === "FINAL_4"));
+  const championshipGame =
+    tournament.championshipGame ??
+    sortBracketGames(
+      knownGames.filter((game) => game.round === "CHAMPIONSHIP"),
+    )[0] ??
+    null;
+
+  return {
+    tournamentId: tournament.tournamentId ?? null,
+    tournamentName: tournament.tournamentName,
+    season: tournament.season,
+    competition: normalizeCompetition(tournament.competition),
+    openingRoundLabel: tournament.openingRoundLabel ?? null,
+    regions,
+    openingRoundGames,
+    finalFourGames,
+    championshipGame,
+    metadata: tournament.metadata,
+  };
 }
 
 export function getBracketRegionPlacement(
@@ -618,10 +404,41 @@ export function getRegionPlacement(
   return getBracketRegionPlacement(regions);
 }
 
-export function getBracketTeamDisplayName(team: BracketTeam | null): string {
-  if (!team) return "TBD";
+export function hasRenderableBracketTeam(
+  team: BracketTeam | null | undefined,
+): team is BracketTeam {
+  if (!team) return false;
 
-  return team.shortName || team.abbreviation || team.name;
+  return Boolean(
+    team.id ??
+      team.espnId ??
+      team.name ??
+      team.shortName ??
+      team.abbreviation ??
+      team.logo ??
+      team.seed ??
+      team.score,
+  );
+}
+
+export function getRenderableBracketTeam(
+  team: BracketTeam | null | undefined,
+): BracketTeam | null {
+  return hasRenderableBracketTeam(team) ? team : null;
+}
+
+export function getBracketTeamDisplayName(
+  team: BracketTeam | null | undefined,
+): string {
+  const displayTeam = getRenderableBracketTeam(team);
+  if (!displayTeam) return "TBD";
+
+  return (
+    displayTeam.shortName ||
+    displayTeam.abbreviation ||
+    displayTeam.name ||
+    "TBD"
+  );
 }
 
 export function getPlaceholderTeamLabel(
@@ -644,7 +461,10 @@ export function getBracketPositionLabel(
     const sourceGame = gameById.get(sourceGameId);
 
     if (sourceGame) {
-      const roundLabel = getRoundDisplayLabel(sourceGame.round);
+      const roundLabel = getRoundDisplayLabel(
+        sourceGame.round,
+        sourceGame.roundLabel,
+      );
       const slot = sourceGame.bracketSlot ?? sourceGame.gameOrder;
 
       return `Winner of ${roundLabel} Game ${slot}`;
@@ -666,8 +486,8 @@ export function isFinalBracketGame(game: BracketGame): boolean {
   const statusText = normalizeText(game.statusText);
 
   return (
-    game.status === "final" ||
-    game.status === "post" ||
+    normalizeText(game.status) === "final" ||
+    normalizeText(game.status) === "post" ||
     statusText.includes("final") ||
     statusText.includes("complete")
   );
@@ -675,30 +495,36 @@ export function isFinalBracketGame(game: BracketGame): boolean {
 
 export function isLiveBracketGame(game: BracketGame): boolean {
   const statusText = normalizeText(game.statusText);
+  const status = normalizeText(game.status);
 
   if (isFinalBracketGame(game)) return false;
 
   return (
-    game.status === "live" ||
-    game.status === "in" ||
+    status === "live" ||
+    status === "in" ||
     statusText.includes("in progress") ||
     statusText.includes("halftime") ||
     statusText.includes("live")
   );
 }
 
+const teamMatchesWinnerId = (team: BracketTeam, winnerTeamId: string) => {
+  return [team.id, team.espnId]
+    .filter((value) => value !== null && value !== undefined)
+    .some((value) => String(value) === winnerTeamId);
+};
+
 export function getWinningTeam(game: BracketGame): BracketTeam | null {
   if (!isFinalBracketGame(game)) return null;
 
-  const teams = [game.topTeam, game.bottomTeam].filter(
-    (team): team is BracketTeam => Boolean(team),
-  );
+  const teams = [
+    getRenderableBracketTeam(game.topTeam),
+    getRenderableBracketTeam(game.bottomTeam),
+  ].filter((team): team is BracketTeam => Boolean(team));
 
   if (game.winnerTeamId) {
-    const winner = teams.find(
-      (team) =>
-        String(team.id) === String(game.winnerTeamId) ||
-        String(team.espnId) === String(game.winnerTeamId),
+    const winner = teams.find((team) =>
+      teamMatchesWinnerId(team, String(game.winnerTeamId)),
     );
 
     if (winner) return winner;
@@ -717,7 +543,7 @@ export function getRoundDisplayLabel(
   round: TournamentRound,
   customLabel?: string | null,
 ): string {
-  return customLabel || ROUND_LABELS[round];
+  return customLabel || ROUND_LABELS[round] || round;
 }
 
 export function getRoundVerticalSpacing(
@@ -764,12 +590,13 @@ export function getRegionalGameTop(
   bracketSlot: number,
   layout: BracketLayoutConfig,
 ): number {
-  return getRegionalGameCenterY(round, bracketSlot, layout) - layout.gameCardHeight / 2;
+  return (
+    getRegionalGameCenterY(round, bracketSlot, layout) -
+    layout.gameCardHeight / 2
+  );
 }
 
-export function getRegionalRoundBaseSlots(
-  round: TournamentRound,
-): number {
+export function getRegionalRoundBaseSlots(round: TournamentRound): number {
   const roundIndex = REGIONAL_ROUNDS.indexOf(round);
   return roundIndex < 0 ? 1 : Math.pow(2, roundIndex);
 }
@@ -811,113 +638,6 @@ export function getOpeningRoundDestinationLabel(
 }
 
 export function canNavigateToBracketGame(game: BracketGame): boolean {
-  return Boolean(game.eventId && (game.topTeam || game.bottomTeam));
-}
-
-export function transformTournamentBracketResponse(
-  response: TournamentBracketApiResponse,
-  fallbackCompetition: TournamentBracketCompetition = "CBB",
-): TournamentBracketData {
-  const responseRecord = asRecord(response) ?? {};
-  const rootCandidate =
-    asRecord(responseRecord.bracket) ??
-    asRecord(responseRecord.tournament) ??
-    asRecord(responseRecord.data) ??
-    responseRecord;
-  const root =
-    asRecord(rootCandidate.bracket) ??
-    asRecord(rootCandidate.tournament) ??
-    rootCandidate;
-  const seasonValue = getValue(root, ["season", "seasonYear", "year"]);
-  const seasonRecord = asRecord(seasonValue);
-  const season =
-    asNumber(seasonValue) ?? asNumber(seasonRecord?.year) ?? new Date().getFullYear();
-  const competition = normalizeCompetition(
-    getValue(root, ["competition", "league", "leagueKey", "sport"]),
-    fallbackCompetition,
-  );
-  const rootGames = asArray(getValue(root, ["games", "events", "matchups"]))
-    .map((game, index) => normalizeBracketGame(game, index))
-    .filter((game): game is BracketGame => Boolean(game));
-  const regionsFromApi = asArray(getValue(root, ["regions", "regionals"]))
-    .map(normalizeRegion)
-    .filter((region): region is BracketRegion => Boolean(region));
-  const allRegionalGames = regionsFromApi.flatMap((region) => region.games);
-  const allGames = [...rootGames, ...allRegionalGames];
-  const regions =
-    regionsFromApi.length > 0
-      ? regionsFromApi.sort((a, b) => a.order - b.order)
-      : buildRegionsFromGames(rootGames);
-  const openingRoundGames = asArray(
-    getValue(root, ["openingRoundGames", "openingGames", "firstFourGames"]),
-  )
-    .map((game, index) => normalizeBracketGame(game, index))
-    .filter((game): game is BracketGame => Boolean(game));
-  const finalFourGames = asArray(
-    getValue(root, ["finalFourGames", "semifinalGames"]),
-  )
-    .map((game, index) => normalizeBracketGame(game, index))
-    .filter((game): game is BracketGame => Boolean(game));
-  const championshipGameRecord = getValue(root, [
-    "championshipGame",
-    "nationalChampionshipGame",
-    "finalGame",
-  ]);
-  const championshipGame = normalizeBracketGame(championshipGameRecord, 0);
-  const derivedOpeningGames = sortBracketGames(
-    allGames.filter((game) => game.round === "OPENING"),
-  );
-  const derivedFinalFourGames = sortBracketGames(
-    allGames.filter((game) => game.round === "FINAL_4"),
-  );
-  const derivedChampionshipGame =
-    sortBracketGames(allGames.filter((game) => game.round === "CHAMPIONSHIP"))[0] ??
-    null;
-  const metadataRecord = asRecord(getValue(root, ["metadata"]));
-  const normalizedOpeningRoundGames =
-    openingRoundGames.length > 0
-      ? sortBracketGames(openingRoundGames)
-      : derivedOpeningGames;
-  const normalizedFinalFourGames =
-    finalFourGames.length > 0
-      ? sortBracketGames(finalFourGames)
-      : derivedFinalFourGames;
-  const normalizedChampionshipGame =
-    championshipGame ?? derivedChampionshipGame;
-
-  return {
-    tournamentId:
-      asString(getValue(root, ["tournamentId", "id", "uid"])) ??
-      null,
-    tournamentName:
-      asString(getValue(root, ["tournamentName", "name", "title"])) ??
-      `${competition} Tournament`,
-    season,
-    competition,
-    openingRoundLabel: asString(
-      getValue(root, ["openingRoundLabel", "firstFourLabel"]),
-    ),
-    regions,
-    openingRoundGames: normalizedOpeningRoundGames,
-    finalFourGames: normalizedFinalFourGames,
-    championshipGame: normalizedChampionshipGame,
-    metadata: {
-      source:
-        asString(metadataRecord?.source) ??
-        asString(getValue(root, ["source"])) ??
-        "unknown",
-      fetchedAt:
-        asString(metadataRecord?.fetchedAt) ??
-        asString(getValue(root, ["fetchedAt"])) ??
-        "",
-      totalGames:
-        asNumber(metadataRecord?.totalGames) ??
-        normalizedOpeningRoundGames.length +
-          regions.reduce((count, region) => count + region.games.length, 0) +
-          normalizedFinalFourGames.length +
-          (normalizedChampionshipGame ? 1 : 0),
-      unresolvedConnections: asArray(metadataRecord?.unresolvedConnections),
-      warnings: asStringArray(metadataRecord?.warnings),
-    },
-  };
+  const gameId = asString(game.id);
+  return Boolean(gameId && gameId !== "undefined" && gameId !== "null");
 }

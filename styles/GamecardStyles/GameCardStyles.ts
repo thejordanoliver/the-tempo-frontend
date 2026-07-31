@@ -29,6 +29,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     info: {
+      marginTop: 4,
       alignItems: "center",
       justifyContent: "center",
       width: 100,
@@ -57,11 +58,6 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       width: 40,
       height: 40,
       resizeMode: "contain",
-    },
-
-    expoLogo: {
-      width: 40,
-      height: 40,
     },
 
     teamName: {
@@ -244,24 +240,10 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
       bottom: -14,
     },
 
-    expoAwayPossession: {
-      width: 22,
-      height: 22,
-      position: "absolute",
-      bottom: -14,
-    },
-
     homePossession: {
       width: 22,
       height: 22,
       resizeMode: "contain",
-      position: "absolute",
-      bottom: -14,
-    },
-
-    expoHomePossession: {
-      width: 22,
-      height: 22,
       position: "absolute",
       bottom: -14,
     },

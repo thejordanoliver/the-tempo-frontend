@@ -110,7 +110,7 @@ const RecruitsHeader = memo(function RecruitsHeader({
             selectedValue={year}
             onSelect={onYearChange}
             isDark={isDark}
-            width={120}
+            width={100}
           />
 
           {view === "players" && (
@@ -119,7 +119,7 @@ const RecruitsHeader = memo(function RecruitsHeader({
               selectedValue={team}
               onSelect={onTeamChange}
               isDark={isDark}
-              width={150}
+              width={120}
             />
           )}
 
@@ -128,7 +128,7 @@ const RecruitsHeader = memo(function RecruitsHeader({
             selectedValue={view}
             onSelect={(v) => onViewChange(v as "players" | "teams")}
             isDark={isDark}
-            width={130}
+            width={120}
           />
         </View>
       </View>

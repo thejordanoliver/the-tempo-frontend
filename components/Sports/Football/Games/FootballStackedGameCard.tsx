@@ -2,8 +2,6 @@ import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { FootballGameCardProps } from "@/types/football/football";
-import Football from "assets/icons8/Football.png";
-import FootballLight from "assets/icons8/FootballLight.png";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -12,6 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { Rugby } from "reicon-react-native";
 import {
   formatDate,
   formatTime,
@@ -38,12 +37,13 @@ function FootballStackedGameCard({
       },
     });
   };
-
+  const iconColor = isDark ? Colors.white : Colors.black;
+  const iconSize = 12;
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  
+
   const league = game?.league?.id;
 
   const homeId = game?.home?.id ?? 0;
@@ -100,7 +100,7 @@ function FootballStackedGameCard({
   const awayScore = game.away.score ?? 0;
   const homeRank = game.home.rank ?? null;
   const awayRank = game.home.rank ?? null;
-  const football = isDark ? FootballLight : Football;
+
   const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
@@ -108,16 +108,17 @@ function FootballStackedGameCard({
   const styles = stackedGameCardStyles(isDark, isChampionship);
   const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
   const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = homeScore > awayScore;
-  const awayWins = awayScore > homeScore;
-  const isTie = awayScore === homeScore;
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -223,10 +224,11 @@ function FootballStackedGameCard({
               {awayName}
             </Text>
             {inProgress && awayHasPossession && (
-              <Image
-                source={football}
-                style={styles.expoFootballPossesion}
-                contentFit="contain"
+              <Rugby
+                weight="Filled"
+                color={iconColor}
+                size={iconSize}
+                style={styles.footballPossesion}
               />
             )}
           </View>
@@ -251,10 +253,11 @@ function FootballStackedGameCard({
               {homeName}
             </Text>
             {inProgress && homeHasPossession && (
-              <Image
-                source={football}
-                style={styles.expoFootballPossesion}
-                contentFit="contain"
+              <Rugby
+                weight="Filled"
+                color={iconColor}
+                size={iconSize}
+                style={styles.footballPossesion}
               />
             )}
           </View>
@@ -270,11 +273,9 @@ function FootballStackedGameCard({
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );

@@ -11,6 +11,7 @@ import {
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import { getCBBSeason } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -52,6 +53,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "WCBB";
+  const currentSeason = getCBBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -60,10 +62,11 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const team = getCBBTeam(teamIdNum);
+  const team = getCBBTeam(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
-  const teamLogo = getCBBTeamLogo(teamIdNum, true);
+  const teamLogo = getCBBTeamLogo(teamIdNum, true, true);
+  const wcbbTeamId = team?.wid ?? teamIdNum;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -110,7 +113,7 @@ export default function TeamDetailScreen() {
     error: playersError,
   } = useRoster(teamIdNum, league);
 
-  const favorited = team ? isFavorite(league, team.id ?? 0) : false;
+  const favorited = team ? isFavorite(league, wcbbTeamId) : false;
 
   const {
     games,
@@ -120,7 +123,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("wcbb", teamIdNum);
+  } = useBasketballTeamGames("wcbb", espnId, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months
@@ -216,7 +219,7 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleFavorite={() => team && toggleFavorite(league, wcbbTeamId)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -230,6 +233,7 @@ export default function TeamDetailScreen() {
     favorited,
     toggleFavorite,
     teamIdNum,
+    wcbbTeamId,
   ]);
 
   if (!team) {

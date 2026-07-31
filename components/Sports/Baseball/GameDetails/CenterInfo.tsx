@@ -5,12 +5,14 @@ import { gameInfoStyles } from "styles/GameDetailStyles/GameInfoStyles";
 import { BasesIndicator } from "./BasesIndicator";
 
 type CenterInfoProps = {
+  state: "pre" | "in" | "post" | null;
   gameStatusDescription: string;
   gameStatusDetail: string;
   date: string;
   time: string;
   isDark: boolean;
   isTopInning: boolean;
+  isBottomInning: boolean;
   broadcast?: string;
   outs: number;
   bases: {
@@ -21,6 +23,7 @@ type CenterInfoProps = {
 };
 
 export function CenterInfo({
+  state,
   gameStatusDescription,
   gameStatusDetail,
   date,
@@ -28,6 +31,7 @@ export function CenterInfo({
   isDark,
   broadcast,
   isTopInning,
+  isBottomInning,
   outs,
   bases,
 }: CenterInfoProps) {
@@ -38,9 +42,7 @@ export function CenterInfo({
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Inning";
+  const inProgress = state === "in";
 
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
   const getOuts = [1, 2, 3].map((i) => (
@@ -67,11 +69,20 @@ export function CenterInfo({
       {inProgress && (
         <View>
           <View style={styles.infoWrapper}>
-            <Ionicons
-              name={isTopInning ? "caret-up" : "caret-down"}
-              size={14}
-              color={isDark ? Colors.white : Colors.black}
-            />
+            {isTopInning && (
+              <Ionicons
+                name={"caret-up"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
+            {isBottomInning && (
+              <Ionicons
+                name={"caret-down"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
             <Text style={styles.date}>{gameStatusDetail}</Text>
 
             <View style={styles.statusDivider} />

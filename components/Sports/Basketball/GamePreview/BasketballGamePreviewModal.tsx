@@ -9,7 +9,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -72,51 +72,33 @@ export default function GamePreviewModal({
 
   const home = game?.home;
   const away = game?.away;
-  const homeId = isWCBB ? (home.wid ?? 0) : home?.id;
-  const awayId = isWCBB ? (away.wid ?? 0) : away?.id;
-  const homeEspnId = game.home.espnId;
-  const awayEspnId = game.away.espnId;
+  const homeId = home?.id ?? 0;
+  const awayId = away?.id ?? 0;
 
-  const homeCode = home?.code || game.home?.shortName;
-  const awayCode = away?.code || game.away?.shortName;
-
-  const homeTeam = isCBB
-    ? getCBBTeam(homeId)
-    : isWCBB
+  const homeTeam = isWNBA
+    ? getWNBATeam(homeId)
+    : isCBB
       ? getCBBTeam(homeId, isWCBB)
-      : isWNBA
-        ? getWNBATeam(homeId)
-        : getNBATeam(homeId);
-
-  const awayTeam = isCBB
-    ? getCBBTeam(awayId)
-    : isWCBB
+      : getNBATeam(homeId);
+  const awayTeam = isWNBA
+    ? getWNBATeam(awayId)
+    : isCBB
       ? getCBBTeam(awayId, isWCBB)
-      : isWNBA
-        ? getWNBATeam(awayId)
-        : getNBATeam(awayId);
+      : getNBATeam(awayId);
 
+  const homeCode = homeTeam?.code ?? "";
+  const awayCode = awayTeam?.code ?? "";
   const awayName = awayTeam?.fullName ?? awayTeam?.name ?? "Away Team";
   const homeName = homeTeam?.fullName ?? homeTeam?.name ?? "Home Team";
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam?.color ?? Colors.midTone;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, true)
-    : isWCBB
-      ? getCBBTeamLogo(homeId, true, true)
-      : isWNBA
-        ? getWNBATeamLogo(homeId, true)
-        : getTeamLogo(homeId, true);
-
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, true)
-    : isWCBB
-      ? getCBBTeamLogo(awayId, true, true)
-      : isWNBA
-        ? getWNBATeamLogo(awayId, true)
-        : getTeamLogo(awayId, true);
-
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
+  const homeLogo = isWNBA
+    ? getWNBATeamLogo(homeId, true)
+    : getCBBTeamLogo(homeId, true, isWCBB);
+  const awayLogo = isWNBA
+    ? getWNBATeamLogo(awayId, true)
+    : getCBBTeamLogo(awayId, true, isWCBB);
 
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
@@ -128,7 +110,6 @@ export default function GamePreviewModal({
     );
 
   const styles = gamePreviewModalStyle(isChampionship);
-
   const isLoading = !!details;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
@@ -149,12 +130,19 @@ export default function GamePreviewModal({
   const playerStats = score?.playerStats ?? [];
   const leaders = score?.leaders ?? [];
   const officials = details?.officials ?? [];
+  const highlights = details?.highlights ?? [];
 
-  const homeBonus = score?.fouls?.home?.bonusState;
-  const awayBonus = score?.fouls?.away?.bonusState;
+  const homeRank = home?.rank ?? null;
+  const awayRank = away?.rank ?? null;
 
-  const homeTimeouts = score?.timeouts.home ?? 0;
-  const awayTimeouts = score?.timeouts.away ?? 0;
+  const homeScore = score?.home.score;
+  const awayScore = score?.away.score;
+
+  const homeBonus = score?.home?.fouls?.bonusState;
+  const awayBonus = score?.away?.fouls?.bonusState;
+
+  const homeTimeouts = score?.home.timeouts ?? 0;
+  const awayTimeouts = score?.away.timeouts ?? 0;
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -188,8 +176,6 @@ export default function GamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
-  const homeScore = score?.home.total;
-  const awayScore = score?.away.total;
 
   return (
     <BottomSheetModal
@@ -250,7 +236,7 @@ export default function GamePreviewModal({
                   side="away"
                   logo={awayLogo}
                   name={awayCode}
-                  rank={null}
+                  rank={awayRank}
                   score={awayScore}
                   opponentScore={homeScore}
                   record={awayRecord}
@@ -273,7 +259,7 @@ export default function GamePreviewModal({
                   side="home"
                   logo={homeLogo}
                   name={homeCode}
-                  rank={null}
+                  rank={homeRank}
                   score={homeScore}
                   opponentScore={awayScore}
                   record={homeRecord}
@@ -287,16 +273,14 @@ export default function GamePreviewModal({
               {!dontShowDetails && (
                 <GamePreviewContent
                   state={state}
-                  homeTeamId={homeId}
-                  awayTeamId={awayId}
+                  homeId={homeId}
+                  awayId={awayId}
                   homeColor={homeColor}
-                  homeEspnId={homeEspnId}
                   homeName={homeName}
                   homeLogo={homeLogo}
                   awayLogo={awayLogo}
                   awayCode={awayCode}
                   awayColor={awayColor}
-                  awayEspnId={awayEspnId}
                   awayName={awayName}
                   homeCode={homeCode}
                   homeChance={homeChance}
@@ -307,6 +291,7 @@ export default function GamePreviewModal({
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}
                   officials={officials}
+                  highlights={highlights}
                   venueImage={venueImage}
                   venueLocation={venueLocation}
                   venueName={venueName}

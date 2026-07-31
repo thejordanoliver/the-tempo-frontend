@@ -5,6 +5,7 @@ import ConferenceListModal, {
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { cbbConferences } from "@/constants/cbbConferences";
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
+import { getCBBSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -28,10 +29,7 @@ import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
-import {
-  getCurrentMarchMadnessSeason,
-  useTournamentBracket,
-} from "../../hooks/BasketballHooks/useTournamentBracket";
+import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
@@ -46,6 +44,7 @@ type SelectedConference = number | string | null;
 
 export default function WCBBLeagueScreen() {
   const league = "WCBB";
+  const currentSeason = getCBBSeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -81,11 +80,8 @@ export default function WCBBLeagueScreen() {
     error: bracketError,
     refreshing: bracketRefreshing,
     refresh: refreshBracket,
-  } = useTournamentBracket({
-    competition: league,
-    season: getCurrentMarchMadnessSeason(),
-    enabled: selectedTab === "bracket",
-  });
+  } = useTournamentBracket(league, currentSeason);
+
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
 
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -223,14 +219,16 @@ export default function WCBBLeagueScreen() {
           <View key="standings">
             <>
               {selectedConference === "Top 25" ||
-              selectedConference === "NCAA Tournament" ||
-              !selectedConference ? (
-                <CBBStandingsList league={league} />
-              ) : (
-                <CBBConferenceStandingsList
-                  selectedConference={String(selectedConferenceGroupId)}
-                />
-              )}
+                selectedConference === "NCAA Tournament" ||
+                (!selectedConference && <CBBStandingsList league={league} />)}
+
+              {selectedConference === "Top 25" ||
+                selectedConference === "NCAA Tournament" ||
+                (!selectedConference && (
+                  <CBBConferenceStandingsList
+                    selectedConference={String(selectedConferenceGroupId)}
+                  />
+                ))}
             </>
           </View>
 

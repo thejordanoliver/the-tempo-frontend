@@ -54,16 +54,15 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "NBA";
+  const currentSeason = getNBASeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const navigation = useNavigation();
-
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
@@ -128,7 +127,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("nba", teamIdNum);
+  } = useBasketballTeamGames("nba", teamIdNum, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months
@@ -147,8 +146,8 @@ export default function TeamDetailScreen() {
           year: monthGroup.year,
           month: monthIndex,
           label: monthGroup.label,
-          count: monthGroup.games?.length ?? 0,
-          games: monthGroup.games ?? [],
+          count: monthGroup.games.length,
+          games: monthGroup.games,
         };
       })
       .filter((monthGroup): monthGroup is NonNullable<typeof monthGroup> =>

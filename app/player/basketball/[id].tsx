@@ -1,4 +1,5 @@
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
@@ -123,6 +124,7 @@ export default function PlayerDetailScreen() {
         error={seasonsError}
         league={league}
       />
+      <PlayerAwardList player={player} />
     </ScrollView>
   );
 }

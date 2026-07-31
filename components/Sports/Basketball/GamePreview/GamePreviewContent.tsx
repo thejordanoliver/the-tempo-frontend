@@ -1,9 +1,12 @@
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
+import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
   GameTeamStats,
+  HighlightVideoList,
   LineScore,
   MatchupPredictor,
 } from "components/Sports/NBA/GameDetails";
@@ -12,14 +15,12 @@ import Officials from "components/Sports/NBA/GameDetails/Officials";
 import React from "react";
 
 type GamePreviewContentProps = {
-  homeTeamId: any;
-  homeEspnId: number;
+  homeId: any;
   homeColor: string;
   homeName: string;
   homeCode: string;
   homeLogo: any;
-  awayTeamId: number;
-  awayEspnId: number;
+  awayId: number;
   awayColor: string;
   awayName: string;
   awayCode: string;
@@ -34,7 +35,8 @@ type GamePreviewContentProps = {
   awayLastGames: { games: any[] };
   playerStats: any[];
   teamStats: any[];
-  officials: any[];
+  officials: Official[];
+  highlights: Highlight[];
   error?: string | null;
   leaders: any;
   venueImage?: any;
@@ -49,14 +51,12 @@ type GamePreviewContentProps = {
 };
 
 export default function GamePreviewContent({
-  homeTeamId,
-  homeEspnId,
+  homeId,
   homeColor,
   homeName,
   homeCode,
   homeLogo,
-  awayTeamId,
-  awayEspnId,
+  awayId,
   awayColor,
   awayName,
   awayCode,
@@ -64,6 +64,7 @@ export default function GamePreviewContent({
   homeChance,
   awayChance,
   lineScore,
+  highlights,
   homeLastGames,
   awayLastGames,
   playerStats,
@@ -90,7 +91,7 @@ export default function GamePreviewContent({
         awayCode={awayCode}
         homeCode={homeCode}
         league={league}
-        isDark
+        isDark={true}
         state={state}
       />
 
@@ -104,21 +105,31 @@ export default function GamePreviewContent({
         awayChance={awayChance}
         awayColor={awayColor}
         size={180}
-        isDark
+        isDark={true}
         state={state}
       />
 
       <GameLeaders
         leaders={leaders}
-        homeCode={homeCode}
+        homeId={homeId}
         homeLogo={homeLogo}
-        awayCode={awayCode}
+        awayId={awayId}
         awayLogo={awayLogo}
-        homeTeamId={Number(homeEspnId)}
-        awayTeamId={Number(awayEspnId)}
+        state={state}
+        isDark={true}
+      />
+
+      <BoxScore
+        playerStats={playerStats}
+        homeId={homeId}
+        homeName={homeName}
+        homeLogo={homeLogo}
+        awayId={awayId}
+        awayName={awayName}
+        awayLogo={awayLogo}
+        isDark={true}
         league={league}
         state={state}
-        isDark
       />
 
       <GameTeamStats
@@ -130,39 +141,28 @@ export default function GamePreviewContent({
         homeLogo={homeLogo}
         homeColor={homeColor}
         state={state}
-        isDark
-      />
-
-      <BoxScore
-        playerStats={playerStats}
-        awayTeamId={Number(awayEspnId)}
-        awayLogo={awayLogo}
-        awayName={awayName}
-        homeTeamId={Number(homeEspnId)}
-        homeLogo={homeLogo}
-        homeName={homeName}
-        league={league}
-        isDark
-        state={state}
+        isDark={true}
       />
 
       <LastFiveGames
-        away={{
-          teamId: awayTeamId,
-          teamCode: awayCode,
-          games: awayLastGames.games,
-        }}
         home={{
-          teamId: homeTeamId,
+          teamId: homeId,
           teamCode: homeCode,
           games: homeLastGames.games,
         }}
-        isDark
+        away={{
+          teamId: awayId,
+          teamCode: awayCode,
+          games: awayLastGames.games,
+        }}
         league={league}
         state={state}
+        isDark={true}
       />
 
-      <Officials officials={officials} isDark state={state} />
+      <HighlightVideoList highlights={highlights} isDark={true} />
+
+      <Officials officials={officials} isDark={true} state={state} />
 
       <GameLocation
         venueImage={venueImage}
@@ -172,7 +172,7 @@ export default function GamePreviewContent({
         venueCapacity={venueCapacity}
         venueAttendance={venueAttendance}
         weather={weather}
-        isDark
+        isDark={true}
       />
     </BottomSheetScrollView>
   );

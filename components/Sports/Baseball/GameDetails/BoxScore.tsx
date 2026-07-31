@@ -190,7 +190,7 @@ type Props = {
   isError?: boolean;
   isDark: boolean;
   league?: string;
-  state?: string | undefined;
+  state?: string | null;
 };
 
 const BATTING_FALLBACK_LABELS = [
@@ -1306,7 +1306,7 @@ export default function BoxScore({
       if (!playerId || !teamId) return;
 
       router.push({
-        pathname: "/player/[id]",
+        pathname: "/player/baseball/[id]",
         params: {
           id: String(playerId),
           teamId: String(teamId),

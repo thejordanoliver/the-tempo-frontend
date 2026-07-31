@@ -1,19 +1,8 @@
-import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-
+// hooks/BasketballHooks/useTournamentBracket.ts
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import { getCBBSeason } from "utils/dateUtils";
 
-import type {
-  TournamentBracketApiResponse,
-  TournamentBracketCompetition,
-  TournamentBracketData,
-} from "components/Sports/Basketball/TournamentBracket/tournamentBracket.types";
-import { transformTournamentBracketResponse } from "components/Sports/Basketball/TournamentBracket/tournamentBracket.utils";
-
-export type MarchMadnessLeague = "cbb" | "wcbb";
-
-export type MarchMadnessLeagueInfo = {
+export type TournamentLeagueInfo = {
   id: number;
   uid: string;
   code: string;
@@ -21,281 +10,350 @@ export type MarchMadnessLeagueInfo = {
   slug: string;
 };
 
-export type MarchMadnessApiResponse = {
-  success?: boolean;
-  league?: MarchMadnessLeague;
-  leagueInfo?: MarchMadnessLeagueInfo | null;
-  data?: TournamentBracketApiResponse;
-  bracket?: TournamentBracketApiResponse;
-  tournament?: TournamentBracketApiResponse;
+export type TournamentTeam = {
+  id?: string | number;
+  espnId?: string | number | null;
+  name?: string;
+  shortName?: string;
+  abbreviation?: string;
+  seed?: number | null;
+  score?: number | string | null;
+  winner?: boolean | null;
+  logo?: string | null;
+  record?: string | null;
+};
+
+export type TournamentVenue = {
+  id: string | null;
+  name: string | null;
+  city: string | null;
+  state: string | null;
+  indoor: boolean | null;
+};
+
+export type TournamentGame = {
+  id: string;
+  tournamentId: string;
+  regionId: string | null;
+  regionName: string | null;
+  round: string;
+  roundLabel: string;
+  roundOrder: number;
+  gameOrder: number;
+  bracketSlot: string | number | null;
+
+  /*
+   * The API returns each team as an object.
+   * It may return an empty object when team data is unavailable.
+   */
+  topTeam: TournamentTeam;
+  bottomTeam: TournamentTeam;
+
+  winnerTeamId: string | null;
+  topSourceGameId: string | null;
+  bottomSourceGameId: string | null;
+  nextGameId: string | null;
+  nextGamePosition: string | null;
+
+  destinationRegionId: string | null;
+  destinationRound: string | null;
+  destinationSeed: number | null;
+
+  date: string | null;
+  status: string;
+  statusText: string | null;
+  venue: TournamentVenue | null;
+  broadcast: string | null;
+  headline: string | null;
+};
+
+export type TournamentRound = {
+  id?: string;
+  name?: string;
+  label?: string;
+  round?: string;
+  roundLabel?: string;
+  roundOrder?: number;
+  games?: TournamentGame[];
+  [key: string]: unknown;
+};
+
+export type TournamentRegion = {
+  id?: string;
+  regionId?: string;
+  name?: string;
+  regionName?: string;
+  rounds?: TournamentRound[];
+  games?: TournamentGame[];
+  [key: string]: unknown;
+};
+
+export type TournamentMetadata = {
+  source: string;
+  fetchedAt: string;
+  totalGames: number;
+  warnings: string[];
+};
+
+export type TournamentData = {
+  tournamentId: string;
+  tournamentName: string;
+  season: number;
+  competition: string;
+  openingRoundLabel: string;
+  regions: TournamentRegion[];
+  openingRoundGames: TournamentGame[];
+  finalFourGames: TournamentGame[];
+  championshipGame: TournamentGame | null;
+  metadata: TournamentMetadata;
+};
+
+export type TournamentResponse = {
+  success: boolean;
+  league: string;
+  leagueInfo: TournamentLeagueInfo;
+  data: TournamentData;
   error?: string;
-  message?: string;
 };
 
-export type UseMarchMadnessOptions = {
-  season?: number;
-  league?: MarchMadnessLeague;
-  enabled?: boolean;
+export type TournamentRoundsMap = Record<string, TournamentGame[]>;
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === "object" && value !== null;
 };
 
-export type UseMarchMadnessResult = {
-  bracket: TournamentBracketData | null;
-  leagueInfo: MarchMadnessLeagueInfo | null;
-  loading: boolean;
-  refreshing: boolean;
-  error: string | null;
-  refresh: () => Promise<void>;
-};
-
-export type UseTournamentBracketOptions = {
-  competition: TournamentBracketCompetition;
-  season?: number;
-  enabled?: boolean;
-};
-
-export type UseTournamentBracketResult = UseMarchMadnessResult & {
-  tournament: TournamentBracketData | null;
-};
-
-type FetchMode = "load" | "refresh";
-
-type InFlightRequest = {
-  key: string;
-  promise: Promise<FetchBracketResult | null>;
-};
-
-type FetchBracketResult = {
-  bracket: TournamentBracketData;
-  leagueInfo: MarchMadnessLeagueInfo | null;
-};
-
-function getRequestErrorMessage(error: unknown): string {
-  if (axios.isAxiosError<{ error?: string; message?: string }>(error)) {
-    return (
-      error.response?.data?.error ||
-      error.response?.data?.message ||
-      error.message ||
-      "Unable to load the March Madness bracket."
-    );
+const isTournamentGame = (value: unknown): value is TournamentGame => {
+  if (!isRecord(value)) {
+    return false;
   }
 
-  if (error instanceof Error) {
+  return (
+    typeof value.id === "string" &&
+    typeof value.round === "string" &&
+    typeof value.roundLabel === "string"
+  );
+};
+
+/**
+ * Recursively finds games inside the tournament data.
+ *
+ * This supports:
+ * - openingRoundGames
+ * - games nested inside regions/rounds
+ * - finalFourGames
+ * - championshipGame
+ */
+const collectTournamentGames = (
+  tournament: TournamentData,
+): TournamentGame[] => {
+  const gamesById = new Map<string, TournamentGame>();
+  const visited = new WeakSet<object>();
+
+  const visit = (value: unknown) => {
+    if (value === null || value === undefined) {
+      return;
+    }
+
+    if (isTournamentGame(value)) {
+      gamesById.set(value.id, value);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+
+    if (!isRecord(value) || visited.has(value)) {
+      return;
+    }
+
+    visited.add(value);
+    Object.values(value).forEach(visit);
+  };
+
+  visit(tournament.openingRoundGames);
+  visit(tournament.regions);
+  visit(tournament.finalFourGames);
+  visit(tournament.championshipGame);
+
+  return Array.from(gamesById.values()).sort((firstGame, secondGame) => {
+    if (firstGame.roundOrder !== secondGame.roundOrder) {
+      return firstGame.roundOrder - secondGame.roundOrder;
+    }
+
+    return firstGame.gameOrder - secondGame.gameOrder;
+  });
+};
+
+const getErrorMessage = (error: unknown): string => {
+  if (!isRecord(error)) {
+    return "Something went wrong";
+  }
+
+  const response = error.response;
+
+  if (isRecord(response)) {
+    const responseData = response.data;
+
+    if (isRecord(responseData) && typeof responseData.error === "string") {
+      return responseData.error;
+    }
+
+    return "Server error";
+  }
+
+  if ("request" in error) {
+    return "Network error";
+  }
+
+  if (typeof error.message === "string") {
     return error.message;
   }
 
-  return "Unable to load the March Madness bracket.";
-}
+  return "Something went wrong";
+};
 
-function getFallbackCompetition(
-  league: MarchMadnessLeague,
-): TournamentBracketCompetition {
-  return league === "wcbb" ? "WCBB" : "CBB";
-}
-
-function parseSeasonEndYear(seasonLabel: string): number {
-  const years = seasonLabel
-    .match(/\d{4}/g)
-    ?.map((year) => Number(year))
-    .filter(Number.isFinite);
-
-  return years?.[years.length - 1] ?? new Date().getFullYear();
-}
-
-export function getCurrentMarchMadnessSeason(): number {
-  return parseSeasonEndYear(getCBBSeason());
-}
-
-function getBracketPayload(response: MarchMadnessApiResponse) {
-  return response.data ?? response.bracket ?? response.tournament ?? response;
-}
-
-export function useMarchMadness({
-  season = getCurrentMarchMadnessSeason(),
-  league = "cbb",
-  enabled = true,
-}: UseMarchMadnessOptions = {}): UseMarchMadnessResult {
-  const [bracket, setBracket] =
-    useState<TournamentBracketData | null>(null);
+export function useTournamentBracket(league: string, season: number) {
+  const normalizedLeague = useMemo(
+    () => league.trim().toLowerCase(),
+    [league],
+  );
+  const [tournament, setTournament] = useState<TournamentData | null>(null);
   const [leagueInfo, setLeagueInfo] =
-    useState<MarchMadnessLeagueInfo | null>(null);
-  const [loading, setLoading] = useState(enabled);
+    useState<TournamentLeagueInfo | null>(null);
+
+  const [responseLeague, setResponseLeague] = useState(normalizedLeague);
+  const [bracket, setBracket] = useState<TournamentGame[]>([]);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const inFlightRequestRef = useRef<InFlightRequest | null>(null);
-  const loadedRequestKeyRef = useRef<string | null>(null);
-  const mountedRef = useRef(true);
-  const requestIdRef = useRef(0);
-  const requestKey = `${league}:${season}`;
-
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false;
-      abortControllerRef.current?.abort();
-    };
-  }, []);
-
-  const fetchBracket = useCallback(
-    async (mode: FetchMode = "load") => {
-      if (!enabled) {
-        if (mountedRef.current) {
-          setLoading(false);
-          setRefreshing(false);
-        }
-        return null;
+  const fetchTournamentGames = useCallback(
+    async (isRefresh = false) => {
+      if (!normalizedLeague || !Number.isFinite(season)) {
+        setTournament(null);
+        setLeagueInfo(null);
+        setBracket([]);
+        setResponseLeague(normalizedLeague);
+        setError("A valid league and season are required.");
+        return;
       }
 
-      if (inFlightRequestRef.current?.key === requestKey) {
-        const result = await inFlightRequestRef.current.promise;
-        return result?.bracket ?? null;
-      }
-
-      abortControllerRef.current?.abort();
-
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      const requestId = requestIdRef.current + 1;
-      requestIdRef.current = requestId;
-      const isRefresh = mode === "refresh";
-      const shouldClearBracket =
-        !isRefresh && loadedRequestKeyRef.current !== requestKey;
-
-      if (mountedRef.current) {
-        if (shouldClearBracket) {
-          setBracket(null);
-          setLeagueInfo(null);
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
         }
 
         setError(null);
-        setLoading(!isRefresh);
-        setRefreshing(isRefresh);
-      }
 
-      const requestPromise = apiClient
-        .get<MarchMadnessApiResponse>(
-          `api/games/basketball/${league}/march-madness`,
+        const response = await apiClient.get<TournamentResponse>(
+          `api/games/basketball/${normalizedLeague}/tournament`,
           {
             params: {
               season,
             },
-            signal: controller.signal,
           },
-        )
-        .then((response): FetchBracketResult => {
-          const responseData = response.data ?? {};
+        );
 
-          if (responseData.success === false) {
-            throw new Error(
-              responseData.error ||
-                responseData.message ||
-                "The March Madness bracket response was invalid.",
-            );
-          }
+        const payload = response.data;
 
-          return {
-            bracket: transformTournamentBracketResponse(
-              getBracketPayload(responseData),
-              getFallbackCompetition(league),
-            ),
-            leagueInfo: responseData.leagueInfo ?? null,
-          };
-        });
-
-      inFlightRequestRef.current = {
-        key: requestKey,
-        promise: requestPromise,
-      };
-
-      try {
-        const result = await requestPromise;
-
-        if (
-          !result ||
-          !mountedRef.current ||
-          controller.signal.aborted ||
-          requestId !== requestIdRef.current
-        ) {
-          return null;
+        if (!payload.success || !payload.data) {
+          throw new Error(
+            payload.error || "Tournament data could not be loaded.",
+          );
         }
 
-        setBracket(result.bracket);
-        setLeagueInfo(result.leagueInfo);
-        setError(null);
-        loadedRequestKeyRef.current = requestKey;
+        const tournamentGames = collectTournamentGames(payload.data);
 
-        return result.bracket;
-      } catch (requestError: unknown) {
-        if (
-          controller.signal.aborted ||
-          axios.isCancel(requestError) ||
-          requestId !== requestIdRef.current
-        ) {
-          return null;
+        setTournament(payload.data);
+        setLeagueInfo(payload.leagueInfo);
+        setResponseLeague(payload.league);
+        setBracket(tournamentGames);
+      } catch (fetchError: unknown) {
+        console.error("Tournament fetch error:", fetchError);
+
+        /*
+         * Keep the currently displayed bracket when a manual refresh fails.
+         * Clear it only when the initial request fails.
+         */
+        if (!isRefresh) {
+          setTournament(null);
+          setLeagueInfo(null);
+          setBracket([]);
         }
 
-        if (mountedRef.current) {
-          setError(getRequestErrorMessage(requestError));
-        }
-
-        return null;
+        setError(getErrorMessage(fetchError));
       } finally {
-        if (inFlightRequestRef.current?.promise === requestPromise) {
-          inFlightRequestRef.current = null;
-        }
-
-        if (mountedRef.current && requestId === requestIdRef.current) {
-          setLoading(false);
+        if (isRefresh) {
           setRefreshing(false);
+        } else {
+          setLoading(false);
         }
       }
     },
-    [enabled, league, requestKey, season],
+    [normalizedLeague, season],
   );
 
   useEffect(() => {
-    if (!enabled) {
-      abortControllerRef.current?.abort();
-      abortControllerRef.current = null;
-      inFlightRequestRef.current = null;
-      requestIdRef.current += 1;
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
-
-    void fetchBracket("load");
-  }, [enabled, fetchBracket]);
+    void fetchTournamentGames();
+  }, [fetchTournamentGames]);
 
   const refresh = useCallback(async () => {
-    await fetchBracket("refresh");
-  }, [fetchBracket]);
+    await fetchTournamentGames(true);
+  }, [fetchTournamentGames]);
+
+  const roundsMap = useMemo<TournamentRoundsMap>(() => {
+    return bracket.reduce<TournamentRoundsMap>((rounds, game) => {
+      const roundName = game.roundLabel || game.round || "Other";
+
+      if (!rounds[roundName]) {
+        rounds[roundName] = [];
+      }
+
+      rounds[roundName].push(game);
+
+      return rounds;
+    }, {});
+  }, [bracket]);
+
+  const roundNames = useMemo(() => {
+    return Object.keys(roundsMap);
+  }, [roundsMap]);
+
+  const count = tournament?.metadata.totalGames ?? bracket.length;
+  const isPostseason = tournament !== null;
 
   return {
-    bracket,
+    tournament,
+    tournamentId: tournament?.tournamentId ?? null,
+    tournamentName: tournament?.tournamentName ?? null,
+    tournamentSeason: tournament?.season ?? season,
+    competition: tournament?.competition ?? null,
+    openingRoundLabel: tournament?.openingRoundLabel ?? null,
+
+    league: responseLeague,
     leagueInfo,
+
+    regions: tournament?.regions ?? [],
+    openingRoundGames: tournament?.openingRoundGames ?? [],
+    finalFourGames: tournament?.finalFourGames ?? [],
+    championshipGame: tournament?.championshipGame ?? null,
+
+    bracket,
+    count,
+    isPostseason,
+    roundsMap,
+    roundNames,
+
+    metadata: tournament?.metadata ?? null,
+    warnings: tournament?.metadata.warnings ?? [],
+
     loading,
     refreshing,
     error,
     refresh,
   };
 }
-
-export function useTournamentBracket({
-  competition,
-  season = getCurrentMarchMadnessSeason(),
-  enabled = true,
-}: UseTournamentBracketOptions): UseTournamentBracketResult {
-  const result = useMarchMadness({
-    league: competition === "WCBB" ? "wcbb" : "cbb",
-    season,
-    enabled,
-  });
-
-  return {
-    ...result,
-    tournament: result.bracket,
-  };
-}
-
-export default useMarchMadness;

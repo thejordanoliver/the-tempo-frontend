@@ -52,12 +52,13 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
+  const league = "MLB";
   const navigation = useNavigation();
+  const currentSeason = getMLBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "MLB";
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
@@ -68,7 +69,7 @@ export default function TeamDetailScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [standingsYear, setStandingsYear] = useState(getMLBSeason().toString());
+  const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const favorited = team ? isFavorite(league, team.id) : false;
@@ -102,7 +103,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBaseballTeamGames("mlb", teamIdNum);
+  } = useBaseballTeamGames("mlb", teamIdNum, currentSeason);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -204,7 +205,7 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
           onBack={goBack}
@@ -216,7 +217,15 @@ export default function TeamDetailScreen() {
         />
       ),
     });
-  }, [favorited, navigation, team, teamLogo, teamColor, toggleFavorite]);
+  }, [
+    favorited,
+    navigation,
+    team,
+    teamIdNum,
+    teamLogo,
+    teamColor,
+    toggleFavorite,
+  ]);
 
   if (!team) {
     return (

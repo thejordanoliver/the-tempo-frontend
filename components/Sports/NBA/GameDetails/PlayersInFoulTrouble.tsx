@@ -1,30 +1,26 @@
+import HomeAwayTabBar, {
+  HomeAwayTabValue,
+} from "@/components/TabBars/HomeAwayTabBar";
+import {
+  FoulTrouble,
+  FoulTroublePlayer,
+} from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { Colors, Fonts } from "constants/styles";
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 
-type Player = {
-  id: string;
-  teamId: string;
-  name: string;
-  jersey: string;
-  fouls: number;
-  headshot: string;
-};
-
 type Props = {
-  homeId: string;
-  awayId: string;
+  homeId: number;
+  awayId: number;
   homeCode: string | undefined;
   awayCode: string | undefined;
-  homeLogo?: any;
-  awayLogo?: any;
-  homePlayers: Player[];
-  awayPlayers: Player[];
+  homeLogo: any;
+  awayLogo: any;
+  foulTrouble: FoulTrouble[];
   isDark: boolean;
   league: string;
-  state: string | undefined;
+  state: string | null;
 };
 
 export default function PlayersInFoulTrouble({
@@ -34,48 +30,55 @@ export default function PlayersInFoulTrouble({
   awayCode,
   homeLogo,
   awayLogo,
-  homePlayers,
-  awayPlayers,
+  foulTrouble,
   isDark,
   league = "NBA",
   state,
 }: Props) {
   const styles = foulTroubleStyles(isDark);
 
-  const tabs = useMemo(
-    () => [
-      { id: awayId, label: awayCode, logo: awayLogo },
-      { id: homeId, label: homeCode, logo: homeLogo },
-    ],
-    [homeId, awayId, homeCode, awayCode, homeLogo, awayLogo],
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
+
+  /*
+   * The foulTrouble response is expected to contain the away team first
+   * and the home team second.
+   */
+  const awayPlayers = useMemo(
+    () => foulTrouble?.[0]?.players ?? [],
+    [foulTrouble],
   );
 
-  const tabIds = useMemo(() => tabs.map((tab) => tab.id), [tabs]);
-
-  const [selectedTeamId, setSelectedTeamId] = useState(tabIds[0] ?? "");
-
-  useEffect(() => {
-    if (!selectedTeamId || !tabIds.includes(selectedTeamId)) {
-      setSelectedTeamId(tabIds[0] ?? "");
-    }
-  }, [selectedTeamId, tabIds]);
-
-  const players = useMemo(
-    () => [...homePlayers, ...awayPlayers],
-    [homePlayers, awayPlayers],
+  const homePlayers = useMemo(
+    () => foulTrouble?.[1]?.players ?? [],
+    [foulTrouble],
   );
 
   const filteredPlayers = useMemo(() => {
-    return players
-      .filter((player) => !selectedTeamId || player.teamId === selectedTeamId)
-      .sort((a, b) => b.fouls - a.fouls);
-  }, [players, selectedTeamId]);
+    if (selectedTab === "home") {
+      return homePlayers;
+    }
 
-  const renderRow = ({ item, index }: { item: Player; index: number }) => {
+    if (selectedTab === "away") {
+      return awayPlayers;
+    }
+
+    return [...awayPlayers, ...homePlayers];
+  }, [selectedTab, homePlayers, awayPlayers]);
+
+  const normalizedLeague = league.trim().toUpperCase();
+
+  const foulLimit =
+    normalizedLeague === "NBA" || normalizedLeague === "WNBA" ? 6 : 5;
+
+  const renderRow = ({
+    item,
+    index,
+  }: {
+    item: FoulTroublePlayer;
+    index: number;
+  }) => {
     const isLast = index === filteredPlayers.length - 1;
-    const foulLimit = league === "NBA" ? 6 : 5;
     const isFouledOut = item.fouls >= foulLimit;
-    
 
     return (
       <View style={[styles.playerRow, isLast && styles.lastPlayerRow]}>
@@ -88,7 +91,7 @@ export default function PlayersInFoulTrouble({
 
           <View style={styles.playerInfo}>
             <Text style={styles.name} numberOfLines={1}>
-              {item.name}
+              {item.shortName}
             </Text>
 
             {item.jersey ? (
@@ -104,7 +107,7 @@ export default function PlayersInFoulTrouble({
     );
   };
 
-  if (state !== "in") {
+  if (state !== "post") {
     return null;
   }
 
@@ -113,37 +116,28 @@ export default function PlayersInFoulTrouble({
       <HeadingTwo isDark={isDark}>In Foul Trouble</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabIds}
-          selected={selectedTeamId}
-          onTabPress={setSelectedTeamId}
-          renderLabel={(tabKey, isSelected, tabStyles) => {
-            const tab = tabs.find((teamTab) => teamTab.id === tabKey);
-
-            return (
-              <View style={styles.tabLabel}>
-                {tab?.logo ? (
-                  <Image
-                    source={tab.logo}
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                ) : null}
-
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                  numberOfLines={1}
-                >
-                  {tab?.label ?? ""}
-                </Text>
-              </View>
-            );
+        <HomeAwayTabBar
+          awayTeam={{
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: awayLogo,
           }}
+          homeTeam={{
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: homeLogo,
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
           isDark={isDark}
+          showAllTab={false}
         />
 
-        <FlatList
+        <FlatList<FoulTroublePlayer>
           data={filteredPlayers}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) =>
+            item.id != null ? String(item.id) : `foul-trouble-${index}`
+          }
           renderItem={renderRow}
           scrollEnabled={false}
           ListEmptyComponent={<Text style={styles.emptyText}>No Players</Text>}
@@ -160,7 +154,6 @@ const foulTroubleStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      paddingTop: 10,
       overflow: "hidden",
     },
     playerRow: {
@@ -221,22 +214,10 @@ const foulTroubleStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSREGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
-    tabLabel: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
-      minWidth: 0,
-    },
-    tabLogo: {
-      width: 28,
-      height: 28,
-      resizeMode: "contain",
-    },
     emptyText: {
       fontSize: 16,
       color: Colors.midTone,
       textAlign: "center",
-      marginTop: 20,
       fontFamily: Fonts.OSREGULAR,
       padding: 12,
     },

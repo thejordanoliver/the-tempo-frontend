@@ -1,9 +1,9 @@
 import { Colors, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { router } from "expo-router";
 import React, { memo, useMemo } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-
 import { BracketTeamRow } from "./BracketTeamRow";
 import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
@@ -15,6 +15,7 @@ import {
   canNavigateToBracketGame,
   getBracketPositionLabel,
   getBracketTeamDisplayName,
+  getRenderableBracketTeam,
   getWinningTeam,
   isFinalBracketGame,
   isLiveBracketGame,
@@ -67,19 +68,27 @@ const getTeamSummary = (
   position: "top" | "bottom",
   gameById?: ReadonlyMap<string, BracketGame>,
 ) => {
-  if (!team) {
+  const displayTeam = getRenderableBracketTeam(team);
+
+  if (!displayTeam) {
     return gameById
       ? getBracketPositionLabel(game, position, gameById)
       : `${position === "top" ? "Top" : "Bottom"} team to be determined`;
   }
 
-  const seed = team.seed ? `${team.seed} seed ` : "";
-  const score =
-    team.score === null || team.score === undefined || team.score === ""
-      ? ""
-      : ` ${team.score}`;
+  const seed =
+    displayTeam.seed !== null && displayTeam.seed !== undefined
+      ? `${displayTeam.seed} seed `
+      : "";
+  const hasValidScore =
+    displayTeam.score === null ||
+    displayTeam.score === undefined ||
+    displayTeam.score === ""
+      ? false
+      : Number.isFinite(Number(displayTeam.score));
+  const score = hasValidScore ? ` ${displayTeam.score}` : "";
 
-  return `${seed}${getBracketTeamDisplayName(team)}${score}`;
+  return `${seed}${getBracketTeamDisplayName(displayTeam)}${score}`;
 };
 
 const getAccessibilityLabel = (
@@ -98,12 +107,19 @@ const getAccessibilityLabel = (
 };
 
 const teamMatches = (team: BracketTeam | null, winner: BracketTeam | null) => {
-  if (!team || !winner) return false;
+  const displayTeam = getRenderableBracketTeam(team);
+  const displayWinner = getRenderableBracketTeam(winner);
 
-  return (
-    String(team.id) === String(winner.id) ||
-    String(team.espnId) === String(winner.espnId)
-  );
+  if (!displayTeam || !displayWinner) return false;
+
+  const teamIds = [displayTeam.id, displayTeam.espnId]
+    .filter((value) => value !== null && value !== undefined)
+    .map(String);
+  const winnerIds = [displayWinner.id, displayWinner.espnId]
+    .filter((value) => value !== null && value !== undefined)
+    .map(String);
+
+  return teamIds.some((teamId) => winnerIds.includes(teamId));
 };
 
 function BracketMatchupComponent({
@@ -115,14 +131,27 @@ function BracketMatchupComponent({
   allGamesById,
   onPress,
 }: BracketMatchupProps) {
+  const handlePress = () => {
+    router.push({
+      pathname: "/game/basketball/[game]",
+      params: {
+        game: String(game.id),
+        leagueId: String(competition),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    });
+  };
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
   const isFinal = isFinalBracketGame(game);
   const isLive = isLiveBracketGame(game);
   const winner = getWinningTeam(game);
-  const topWins = teamMatches(game.topTeam, winner);
-  const bottomWins = teamMatches(game.bottomTeam, winner);
+  const topTeam = getRenderableBracketTeam(game.topTeam);
+  const bottomTeam = getRenderableBracketTeam(game.bottomTeam);
+  const topWins = teamMatches(topTeam, winner);
+  const bottomWins = teamMatches(bottomTeam, winner);
   const disabled = !canNavigateToBracketGame(game);
   const statusLabel = getStatusLabel(game);
   const isChampionship = side === "center" && game.round === "CHAMPIONSHIP";
@@ -139,7 +168,7 @@ function BracketMatchupComponent({
       accessibilityRole={disabled ? "text" : "button"}
       accessibilityState={{ disabled }}
       accessibilityLabel={getAccessibilityLabel(game, allGamesById)}
-      onPress={() => onPress?.(game)}
+      onPress={handlePress}
       style={[
         styles.matchupCard,
         isChampionship ? styles.championshipCard : null,
@@ -151,7 +180,7 @@ function BracketMatchupComponent({
     >
       <BracketTeamRow
         game={game}
-        team={game.topTeam}
+        team={topTeam}
         position="top"
         isDark={isDark}
         competition={competition}
@@ -164,7 +193,7 @@ function BracketMatchupComponent({
 
       <BracketTeamRow
         game={game}
-        team={game.bottomTeam}
+        team={bottomTeam}
         position="bottom"
         isDark={isDark}
         competition={competition}

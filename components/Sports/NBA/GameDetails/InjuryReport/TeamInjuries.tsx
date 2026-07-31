@@ -1,95 +1,74 @@
-// TeamInjuries.tsx
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
-import { Player } from "@/hooks/LeagueHooks/useRoster";
+import { Team, TeamInjury } from "@/hooks/FootballHooks/useFootballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TeamInjuriesSkeleton from "components/Skeletons/GameDetails/TeamInjuriesSkeleton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { teamInjuryStyles } from "styles/GameDetailStyles/TeamInjuriesList.styles";
 import TeamInjuriesList from "./TeamInjuriesList";
 
-export type TeamInjury = {
-  team: {
-    id: string | number;
-    displayName: string;
-    abbreviation: string;
-  };
-  injuries: {
-    athlete: {
-      id: string | number;
-      fullName: string;
-      headshot?: string;
-      position?: string;
-      jersey?: string;
-    };
-    status: string;
-    details?: {
-      detail?: string;
-      returnDate?: string;
-    };
-  }[];
-};
-
 type Props = {
-  injuries: TeamInjury[];
-  isDark: boolean;
+  injuries?: TeamInjury[];
   loading?: boolean;
   league: string;
+  isDark: boolean;
   homeLogo: any;
   awayLogo: any;
   homeCode: string;
   awayCode: string;
   homeId: string | number;
   awayId: string | number;
-  teamPlayersMap?: Record<string, Player[]>;
+  state: string | null;
+};
+
+const matchesTeam = (
+  team: Team | undefined,
+  selectedTeamId: string | number,
+) => {
+  if (!team) return false;
+
+  return [team.espnId].some(
+    (id) =>
+      id !== null && id !== undefined && String(id) === String(selectedTeamId),
+  );
 };
 
 export default function TeamInjuries({
-  injuries,
-  loading,
+  injuries = [],
+  loading = false,
   league,
+  isDark,
   homeLogo,
   awayLogo,
   homeCode,
   awayCode,
   homeId,
   awayId,
-  isDark,
-  teamPlayersMap = {},
+  state,
 }: Props) {
-  const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const styles = teamInjuryStyles(isDark);
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
-
-  const reorderedInjuries =
-    injuries?.length === 2 ? [injuries[1], injuries[0]] : (injuries ?? []);
-
-  // Generate tabs for the tab bar
-  const tabs = reorderedInjuries.map((inj) => {
-    return {
-      id: String(inj.team.id),
-    };
-  });
-
-  useEffect(() => {
-    if (!selectedTeamId && tabs.length) {
-      setSelectedTeamId(tabs[0].id);
-    }
-  }, [tabs, selectedTeamId]);
-
-  const currentInjuries = reorderedInjuries.find(
-    (t) => String(t.team.id) === selectedTeamId,
-  );
+  const hasInjuries = injuries.some((team) => team.injuries?.length > 0);
 
   if (loading) {
     return <TeamInjuriesSkeleton />;
   }
 
-  if (!injuries || injuries.length === 0 || !currentInjuries) {
+  if (
+    (league !== "mlb" && league !== "nfl") ||
+    state === "post" ||
+    !hasInjuries
+  ) {
     return null;
   }
+
+  const selectedTeamId = selectedTab === "away" ? awayId : homeId;
+
+  const selectedInjuries =
+    injuries.find((teamInjury) => matchesTeam(teamInjury.team, selectedTeamId))
+      ?.injuries ?? [];
 
   return (
     <View>
@@ -113,12 +92,7 @@ export default function TeamInjuries({
           showAllTab={false}
         />
 
-        <TeamInjuriesList
-          injuries={[currentInjuries]}
-          teamPlayersMap={teamPlayersMap}
-          isDark={isDark}
-          league={league}
-        />
+        <TeamInjuriesList injuries={selectedInjuries} isDark={isDark} />
       </View>
     </View>
   );

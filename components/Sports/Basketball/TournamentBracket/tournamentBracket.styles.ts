@@ -54,6 +54,22 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       color: mutedTextColor,
       textTransform: "uppercase",
     },
+    warningBanner: {
+      marginHorizontal: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
+      backgroundColor: isDark
+        ? Colors.dark.transparentGold
+        : Colors.light.transparentGold,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+    },
+    warningText: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      color: textColor,
+    },
     bracketBoard: {
       position: "relative",
       backgroundColor: boardBackground,

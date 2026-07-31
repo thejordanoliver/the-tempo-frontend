@@ -42,13 +42,13 @@ export default function BasketballGameCard({
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  
+
   const league = game?.league?.id;
 
   const home = game?.home;
   const away = game?.away;
-  const homeId = isWCBB ? (home.wid ?? 0) : home?.id;
-  const awayId = isWCBB ? (away.wid ?? 0) : away?.id;
+  const homeId = home?.id;
+  const awayId = away?.id;
 
   const homeTeam = isCBB
     ? getCBBTeam(homeId)
@@ -124,13 +124,13 @@ export default function BasketballGameCard({
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
-  const isTie = (awayScore ?? 0) === (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean) => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity: isFinal ? (isTie ? 1 : teamWins ? 1 : 0.5) : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -198,7 +198,7 @@ export default function BasketballGameCard({
       <View style={styles.teamSection}>
         <Image
           source={awayLogo}
-          style={styles.expoLogo}
+          style={styles.logo}
           contentFit="contain"
           accessibilityLabel={`${awayName} logo`}
         />
@@ -218,11 +218,9 @@ export default function BasketballGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
 
       {/* Home Score / Record */}
@@ -232,7 +230,7 @@ export default function BasketballGameCard({
       <View style={styles.teamSection}>
         <Image
           source={homeLogo}
-          style={styles.expoLogo}
+          style={styles.logo}
           contentFit="contain"
           accessibilityLabel={`${homeName} logo`}
         />

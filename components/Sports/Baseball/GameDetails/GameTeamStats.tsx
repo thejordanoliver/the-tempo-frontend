@@ -391,7 +391,7 @@ export default function GameTeamStats({
   awayCode?: string | undefined;
   awayColor?: string;
   homeColor?: string;
-  state: string | undefined;
+  state: string | null;
   stats: MlbTeamBoxscore[] | undefined;
   isDark: boolean;
 }) {

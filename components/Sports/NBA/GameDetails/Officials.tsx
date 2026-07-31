@@ -1,4 +1,4 @@
-import { Official } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import refereePlaceholder from "assets/Placeholders/refereePlaceholder.png";
 import refereePlaceholderLight from "assets/Placeholders/refereePlaceholderLight.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -8,7 +8,7 @@ import { officialsStyles } from "styles/GameDetailStyles/OfficialsStyles";
 type Props = {
   officials: Official[];
   isDark: boolean;
-  state: string | undefined;
+  state: string | null;
 };
 
 export default function Officials({ officials, isDark, state }: Props) {

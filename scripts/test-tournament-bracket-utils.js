@@ -36,6 +36,7 @@ const {
   getWinningTeam,
   groupRegionGamesByRound,
   isLiveBracketGame,
+  normalizeTournamentForBracket,
 } = utils;
 
 const team = (id, name, seed, score, winner = false) => ({
@@ -267,9 +268,15 @@ assert.equal(canNavigateToBracketGame(championship), true);
 assert.equal(
   canNavigateToBracketGame({
     ...championship,
-    eventId: null,
     topTeam: null,
     bottomTeam: null,
+  }),
+  true,
+);
+assert.equal(
+  canNavigateToBracketGame({
+    ...championship,
+    id: "",
   }),
   false,
 );
@@ -281,5 +288,29 @@ assert.equal(
   "Florida",
 );
 assert.equal(createBracketGameMap({ ...tournament, championshipGame: null }).has("title"), false);
+
+const normalizedTournament = normalizeTournamentForBracket({
+  ...tournament,
+  competition: "wcbb",
+  regions: [
+    {
+      id: "nested",
+      name: "Nested",
+      rounds: [
+        {
+          round: "ROUND_OF_64",
+          roundLabel: "First Round",
+          games: [regionalGames[0]],
+        },
+      ],
+    },
+  ],
+  openingRoundGames: [],
+  finalFourGames: [],
+  championshipGame: null,
+});
+
+assert.equal(normalizedTournament.competition, "WCBB");
+assert.equal(normalizedTournament.regions[0].games[0].id, "r64-1");
 
 console.log("Tournament bracket utility tests passed.");

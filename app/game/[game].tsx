@@ -1,7 +1,7 @@
+import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -11,7 +11,6 @@ import {
   FanPredictionVote,
   GameHeader,
   GameLocation,
-  GameOddsSection,
   HighlightVideoList,
   LastFiveGames,
   LastPlay,
@@ -21,7 +20,6 @@ import {
   PlayersInFoulTrouble,
   PlayersOnCourt,
   ShotChart,
-  TeamInjuries,
 } from "components/Sports/NBA/GameDetails";
 import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "constants/styles";
@@ -116,7 +114,6 @@ export default function GameDetailsScreen(
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
   }, [game?.date]);
-  const gameDateStr = game?.date ?? "";
 
   const gameId = game?.id ?? "";
 
@@ -153,28 +150,24 @@ export default function GameDetailsScreen(
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
 
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
   const isLoading = !score || !details;
-  const homeScore = score?.home.total ?? 0;
-  const awayScore = score?.away.total ?? 0;
+  const homeScore = score?.home.score ?? 0;
+  const awayScore = score?.away.score ?? 0;
+  const homeWins = score?.home.winner ?? false;
+  const awayWins = score?.away.winner ?? false;
+  const homeRecord = score?.home?.record ?? "0-0";
+  const awayRecord = score?.away?.record ?? "0-0";
   const homeRank = details?.homeRank ?? null;
   const awayRank = details?.awayRank ?? null;
-  const homeWins = homeScore > awayScore;
-  const awayWins = awayScore > homeScore;
-  const homeRecord = details?.records.home.overall ?? "0-0";
-  const awayRecord = details?.records.away.overall ?? "0-0";
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const state = game?.status.state ?? "";
+  const homeTimeouts = score?.home?.timeouts ?? 0;
+  const awayTimeouts = score?.away?.timeouts ?? 0;
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const state = score?.status.state ?? null;
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const period = formatPeriod({ period: game?.status.period });
-  const clock = score?.displayClock ?? "0:00";
+  const clock = score?.status.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -182,47 +175,23 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-  const homeBonus = score?.fouls?.home?.bonusState ?? null;
-  const awayBonus = score?.fouls?.away?.bonusState ?? null;
-  const homeTimeouts = score?.timeouts.home ?? 0;
-  const awayTimeouts = score?.timeouts.away ?? 0;
+  const homeBonus = score?.home?.fouls?.bonusState ?? null;
+  const awayBonus = score?.away?.fouls?.bonusState ?? null;
+
   const plays = score?.plays ?? [];
+  const foulTrouble = score?.foulTrouble ?? [];
   const highlights = details?.highlights ?? [];
   const injuries = details?.injuries ?? [];
   const officials = details?.officials ?? [];
   const leaders = score?.leaders ?? [];
   const playerStats = score?.playerStats ?? [];
   const teamStats = score?.teamStats ?? [];
-  const lastPlay = score?.lastPlay ?? "";
+  const lastPlay = score?.plays[0];
   const headlineText = details?.headline;
   const headline = headlineText ?? holidayLabel ?? "";
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-
-  const homeFoulPlayers =
-    score?.foulTrouble
-      ?.find((t) => String(t.team?.id) === String(homeEspnId))
-      ?.players?.map((p) => ({
-        id: p.id,
-        teamId: String(homeEspnId),
-        name: p.shortName,
-        jersey: p.jersey,
-        fouls: p.fouls,
-        headshot: p.avatar ?? "",
-      })) ?? [];
-
-  const awayFoulPlayers =
-    score?.foulTrouble
-      ?.find((t) => String(t.team?.id) === String(awayEspnId))
-      ?.players?.map((p) => ({
-        id: p.id,
-        teamId: String(awayEspnId),
-        name: p.shortName,
-        jersey: p.jersey,
-        fouls: p.fouls,
-        headshot: p.avatar ?? "",
-      })) ?? [];
 
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
@@ -349,8 +318,8 @@ export default function GameDetailsScreen(
             <>
               <LastPlay
                 lastPlay={lastPlay}
-                homeTeamId={homeId}
-                awayTeamId={awayId}
+                homeId={homeId}
+                awayId={awayId}
                 state={state}
                 league={LEAGUE}
               />
@@ -391,40 +360,24 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
-              <GameOddsSection
-                date={gameDateStr}
-                gameDate={formattedDate}
-                homeCode={homeCode}
-                awayCode={awayCode}
-                homeLogo={homeLogo}
-                awayLogo={awayLogo}
-                league={LEAGUE}
-                isDark={isDark}
-                state={state}
-              />
-
               <GameLeaders
                 leaders={leaders}
-                homeCode={homeCode}
+                homeId={homeId}
                 homeLogo={homeLogo}
-                awayCode={awayCode}
+                awayId={awayId}
                 awayLogo={awayLogo}
-                homeTeamId={Number(homeEspnId)}
-                awayTeamId={Number(awayEspnId)}
-                league={LEAGUE}
                 state={state}
                 isDark={isDark}
               />
 
               <PlayersInFoulTrouble
-                homeId={String(homeEspnId)}
-                awayId={String(awayEspnId)}
+                foulTrouble={foulTrouble}
+                homeId={homeId}
                 homeCode={homeCode}
-                awayCode={awayCode}
                 homeLogo={homeLogo}
+                awayId={awayId}
+                awayCode={awayCode}
                 awayLogo={awayLogo}
-                homePlayers={homeFoulPlayers}
-                awayPlayers={awayFoulPlayers}
                 league={LEAGUE}
                 isDark={isDark}
                 state={state}
@@ -432,12 +385,12 @@ export default function GameDetailsScreen(
 
               <BoxScore
                 playerStats={playerStats}
-                awayTeamId={Number(awayEspnId)}
-                homeTeamId={Number(homeEspnId)}
-                homeLogo={homeLogo}
-                awayLogo={awayLogo}
+                homeId={homeId}
                 homeName={homeName}
+                homeLogo={homeLogo}
+                awayId={awayId}
                 awayName={awayName}
+                awayLogo={awayLogo}
                 isDark={isDark}
                 league={LEAGUE}
                 state={state}
@@ -445,10 +398,12 @@ export default function GameDetailsScreen(
 
               <ShotChart
                 plays={plays}
-                homeEspnId={String(homeEspnId)}
-                awayEspnId={String(awayEspnId)}
+                homeEspnId={homeEspnId}
+                awayEspnId={awayEspnId}
                 homeId={homeId}
                 awayId={awayId}
+                homeColor={homeColor}
+                awayColor={awayColor}
                 homeLogo={homeLogo}
                 awayLogo={awayLogo}
                 league={LEAGUE}
@@ -498,7 +453,6 @@ export default function GameDetailsScreen(
 
               <TeamInjuries
                 injuries={injuries}
-                teamPlayersMap={teamPlayersMap}
                 homeId={homeId}
                 awayId={awayId}
                 homeCode={homeCode}
@@ -507,6 +461,7 @@ export default function GameDetailsScreen(
                 awayLogo={awayLogo}
                 isDark={isDark}
                 league={LEAGUE}
+                state={state}
               />
 
               <HighlightVideoList highlights={highlights} isDark={isDark} />

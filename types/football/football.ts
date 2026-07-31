@@ -123,7 +123,7 @@ export type FootballGame = {
     record: string;
     rank: number | null;
     score: number;
-    winner: boolean | null;
+    winner: boolean;
   };
   away: {
     id: number;
@@ -139,7 +139,7 @@ export type FootballGame = {
     record: string;
     rank: number | null;
     score: number;
-    winner: boolean | null;
+    winner: boolean;
   };
   isConferenceGame: boolean;
   isNeutralSite: boolean;

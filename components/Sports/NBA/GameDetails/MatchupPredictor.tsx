@@ -15,7 +15,7 @@ interface Props {
   awayChance: number;
   size?: number;
   isDark: boolean;
-  state: string | undefined;
+  state: string | null;
 }
 
 const MatchupPredictor: React.FC<Props> = ({

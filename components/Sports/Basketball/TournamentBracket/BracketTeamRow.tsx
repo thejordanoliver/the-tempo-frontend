@@ -17,6 +17,7 @@ import type {
 import {
   getBracketTeamDisplayName,
   getPlaceholderTeamLabel,
+  getRenderableBracketTeam,
 } from "./tournamentBracket.utils";
 
 type BracketTeamRowProps = {
@@ -35,26 +36,38 @@ export const getBracketTeamLogoSource = (
   competition: TournamentBracketCompetition,
   isDark: boolean,
 ): ImageSourcePropType => {
-  if (!team) return PlaceholderLogo;
+  const displayTeam = getRenderableBracketTeam(team);
+  if (!displayTeam) return PlaceholderLogo;
 
   const isWomen = competition === "WCBB";
-  const teamByLocalId = getCBBTeam(team.id, isWomen);
+  const teamByLocalId = getCBBTeam(displayTeam.id, isWomen);
 
   const teamByEspnId =
-    team.espnId != null ? getCBBTeamByESPNId(team.espnId) : undefined;
-  const localTeam = teamByLocalId ?? teamByEspnId;
+    displayTeam.espnId != null
+      ? getCBBTeamByESPNId(displayTeam.espnId)
+      : undefined;
+  const teamByIdAsEspn =
+    displayTeam.id != null ? getCBBTeamByESPNId(displayTeam.id) : undefined;
+  const localTeam = teamByLocalId ?? teamByEspnId ?? teamByIdAsEspn;
   const localId = isWomen ? (localTeam?.wid ?? localTeam?.id) : localTeam?.id;
 
-  return getCBBTeamLogo(localId ?? team.id, isDark, isWomen);
+  return getCBBTeamLogo(localId ?? displayTeam.id, isDark, isWomen);
 };
 
 const getScoreText = (team: BracketTeam | null) => {
-  if (!team) return "TBD";
-  if (team.score === null || team.score === undefined || team.score === "") {
-    return "-";
+  const displayTeam = getRenderableBracketTeam(team);
+  if (
+    !displayTeam ||
+    displayTeam.score === null ||
+    displayTeam.score === undefined ||
+    displayTeam.score === ""
+  ) {
+    return "";
   }
 
-  return String(team.score);
+  const score = Number(displayTeam.score);
+
+  return Number.isFinite(score) ? String(displayTeam.score) : "";
 };
 
 function BracketTeamRowComponent({
@@ -68,21 +81,25 @@ function BracketTeamRowComponent({
   isLoser = false,
 }: BracketTeamRowProps) {
   const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const displayTeam = getRenderableBracketTeam(team);
   const logoSource = useMemo(
-    () => getBracketTeamLogoSource(team, competition, isDark),
-    [competition, isDark, team],
+    () => getBracketTeamLogoSource(displayTeam, competition, isDark),
+    [competition, displayTeam, isDark],
   );
-  const name = team
-    ? getBracketTeamDisplayName(team)
+  const name = displayTeam
+    ? getBracketTeamDisplayName(displayTeam)
     : allGamesById
       ? getPlaceholderTeamLabel(game, position, allGamesById)
       : getPlaceholderTeamLabel(game, position);
-  const seedText = team?.seed ? String(team.seed) : "-";
-  const scoreText = getScoreText(team);
-  const recordText = team?.record?.trim() || null;
+  const seedText =
+    displayTeam?.seed !== null && displayTeam?.seed !== undefined
+      ? String(displayTeam.seed)
+      : "";
+  const scoreText = getScoreText(displayTeam);
+  const recordText = displayTeam?.record?.trim() || null;
   const textStyle: StyleProp<TextStyle> = [
     styles.teamName,
-    !team ? styles.placeholderName : null,
+    !displayTeam ? styles.placeholderName : null,
     isWinner ? styles.winnerText : null,
     isLoser ? styles.loserText : null,
   ];

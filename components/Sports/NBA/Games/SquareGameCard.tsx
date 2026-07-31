@@ -12,7 +12,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function SquareGameCard({
@@ -79,19 +79,13 @@ export default function SquareGameCard({
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
   // -----------------------------------------------------
-  const homeWins = (homeScore ?? 0) > (awayScore ?? 0);
-  const awayWins = (awayScore ?? 0) > (homeScore ?? 0);
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
+  const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (teamWins: boolean): TextStyle => ({
+  const winnerStyle = (winner: boolean) => ({
     color: isDark ? Colors.white : Colors.black,
-    opacity:
-      inProgress || isHalftime || isEndOfPeriod
-        ? 1
-        : isFinal
-          ? teamWins
-            ? 1
-            : 0.5
-          : 1,
+    opacity: isTie ? 1 : winner ? 1 : 0.5,
   });
 
   const ScoreText = ({
@@ -158,7 +152,7 @@ export default function SquareGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={awayLogo}
-              style={styles.expoLogo}
+              style={styles.logo}
               contentFit="contain"
               accessibilityLabel={`${awayName} logo`}
             />
@@ -177,7 +171,7 @@ export default function SquareGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={homeLogo}
-              style={styles.expoLogo}
+              style={styles.logo}
               contentFit="contain"
               accessibilityLabel={`${homeName} logo`}
             />
@@ -194,11 +188,9 @@ export default function SquareGameCard({
       {/* Game Info */}
       <View style={styles.info}>
         {renderStatus()}
-        {!isFinal &&
-          !isPostponed &&
-          !isCanceled &&
-          !isForfeited &&
-          broadcast && <Text style={styles.broadcast}>{broadcast}</Text>}
+        {!isFinal && broadcast && (
+          <Text style={styles.broadcast}>{broadcast}</Text>
+        )}
       </View>
     </>
   );
