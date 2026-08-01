@@ -29,12 +29,11 @@ export default function PlayerDetailScreen() {
   const playerId = Number(id);
 
   const { player, loading, error } = usePlayerById(playerId, league);
-  const {
-    careerStatsFlattened,
-    seasonStatsFlattened,
-    loading: seasonsLoading,
-    error: seasonsError,
-  } = usePlayerSeasons(playerId);
+
+  const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
+    playerId,
+    league,
+  );
 
   const {
     game,
@@ -90,10 +89,10 @@ export default function PlayerDetailScreen() {
       />
 
       <PlayerStatTable
-        seasonStatsFlattened={seasonStatsFlattened}
-        careerStatsFlattened={careerStatsFlattened}
+        seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
+        league={league}
       />
     </ScrollView>
   );

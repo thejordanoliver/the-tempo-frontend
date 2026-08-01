@@ -1,609 +1,1084 @@
+import PillTabs from "@/components/TabBars/PillTabs";
 import { getNHLTeamByEspnId } from "@/constants/teamsNHL";
-import {
-  CareerTotals,
-  NhlSeasonStatsRow,
-  NhlStatMap,
-  NhlStatValue,
-} from "@/hooks/HockeyHooks/usePlayerSeasons";
-import HeadingWithDropdowns from "components/Headings/HeadingWithDropdowns";
+import { Dropdown } from "components/Dropdown";
+import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { Season, StatValue } from "hooks/HockeyHooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
 
 interface Props {
-  seasonStatsFlattened: NhlSeasonStatsRow[];
-  careerStatsFlattened: NhlSeasonStatsRow[];
+  seasons: Season[];
   loading: boolean;
   error: string | null;
+  league: "NHL";
 }
 
 type StatView = "totals" | "pergame";
-type StatType = "skater" | "goalie";
+type SeasonType = "regularseason" | "postseason";
 
-type NhlPositionBucket =
-  | "center"
-  | "leftWing"
-  | "rightWing"
-  | "defense"
-  | "defenseman"
-  | "goalie"
-  | "goaltending"
-  | "skater"
-  | "forward";
+type CountingStatKey =
+  | "goals"
+  | "assists"
+  | "points"
+  | "plusMinus"
+  | "penaltyMinutes"
+  | "shootoutGoals"
+  | "powerPlayGoals"
+  | "powerPlayAssists"
+  | "shortHandedGoals"
+  | "shortHandedAssists"
+  | "gameWinningGoals";
 
-type TableRow = NhlSeasonStatsRow & {
+type CountingStats = Record<CountingStatKey, number | null>;
+type StatRecord = Record<string, StatValue>;
+
+type NormalizedSeasonRow = {
   rowKey: string;
-  team: number | null;
-  stats: NhlStatMap;
+  seasonNumber: number;
+  seasonSortValue: number;
+  displaySeason: string;
+  team: string;
+  seasonType: SeasonType;
+  games: number | null;
+  stats: CountingStats;
+  shootingPct: number | null;
+  timeOnIcePerGame: string | null;
+  production: string | null;
 };
 
-interface GoalieCareerTotals {
+type CareerStats = {
   games: number;
-  gamesStarted: number;
-  wins: number;
-  losses: number;
-  overtimeLosses: number;
-  goalsAgainst: number;
-  shotsAgainst: number;
-  saves: number;
-  shutouts: number;
-  minutes: number;
-}
+  stats: Record<CountingStatKey, number>;
+  shootingPct: number | null;
+  timeOnIcePerGame: string | null;
+  production: string | null;
+};
 
-const STAT_OPTIONS = [
-  { label: "Totals", value: "totals" },
-  { label: "Per Game", value: "pergame" },
+type StatCell = {
+  key: string;
+  value: string;
+};
+
+const EMPTY_STAT = "-";
+
+const STAT_OPTIONS: { label: string; value: StatView }[] = [
+  {
+    label: "Totals",
+    value: "totals",
+  },
+  {
+    label: "Per Game",
+    value: "pergame",
+  },
 ];
 
-const STAT_TYPE_OPTIONS = [
-  { label: "Skater", value: "skater" },
-  { label: "Goalie", value: "goalie" },
+const SEASON_TYPE_OPTIONS: {
+  label: string;
+  value: SeasonType;
+}[] = [
+  {
+    label: "Regular Season",
+    value: "regularseason",
+  },
+  {
+    label: "Postseason",
+    value: "postseason",
+  },
 ];
 
-const isMissing = (value: NhlStatValue) =>
-  value === undefined ||
-  value === null ||
-  value === "" ||
-  value === "--" ||
-  value === "-";
+const TABLE_HEADERS = [
+  "GP",
+  "G",
+  "A",
+  "PTS",
+  "+/-",
+  "PIM",
+  "SOG",
+  "SPCT",
+  "PPG",
+  "PPA",
+  "SHG",
+  "SHA",
+  "GWG",
+  "TOI/G",
+  "PROD",
+];
 
-const toNumber = (value: NhlStatValue) => {
-  if (isMissing(value)) return 0;
+const NHL_STAT_GLOSSARY = [
+  {
+    abbr: "+/-",
+    label: "Plus/Minus Rating",
+  },
+  {
+    abbr: "A",
+    label: "Assists",
+  },
+  {
+    abbr: "G",
+    label: "Goals",
+  },
+  {
+    abbr: "GP",
+    label: "Games Played",
+  },
+  {
+    abbr: "GWG",
+    label: "Game-Winning Goals",
+  },
+  {
+    abbr: "PIM",
+    label: "Penalty Minutes",
+  },
+  {
+    abbr: "PPA",
+    label: "Power Play Assists",
+  },
+  {
+    abbr: "PPG",
+    label: "Power Play Goals",
+  },
+  {
+    abbr: "PROD",
+    label: "Production",
+  },
+  {
+    abbr: "PTS",
+    label: "Points",
+  },
+  {
+    abbr: "SHA",
+    label: "Short-Handed Assists",
+  },
+  {
+    abbr: "SHG",
+    label: "Short-Handed Goals",
+  },
+  {
+    abbr: "SOG",
+    label: "Shootout Goals",
+  },
+  {
+    abbr: "SPCT",
+    label: "Shooting Percentage",
+  },
+  {
+    abbr: "TOI/G",
+    label: "Time On Ice Per Game",
+  },
+];
 
-  const parsed = Number(String(value).replace(/,/g, ""));
+const COUNTING_STAT_KEYS: CountingStatKey[] = [
+  "goals",
+  "assists",
+  "points",
+  "plusMinus",
+  "penaltyMinutes",
+  "shootoutGoals",
+  "powerPlayGoals",
+  "powerPlayAssists",
+  "shortHandedGoals",
+  "shortHandedAssists",
+  "gameWinningGoals",
+];
 
-  return Number.isFinite(parsed) ? parsed : 0;
+const COMBINED_TEAM_CODES = new Set(["TOT", "2TM", "3TM", "4TM", "5TM"]);
+
+const createEmptyCountingStats = (): CountingStats => ({
+  goals: null,
+  assists: null,
+  points: null,
+  plusMinus: null,
+  penaltyMinutes: null,
+  shootoutGoals: null,
+  powerPlayGoals: null,
+  powerPlayAssists: null,
+  shortHandedGoals: null,
+  shortHandedAssists: null,
+  gameWinningGoals: null,
+});
+
+const createEmptyCareerStats = (): CareerStats => ({
+  games: 0,
+  stats: {
+    goals: 0,
+    assists: 0,
+    points: 0,
+    plusMinus: 0,
+    penaltyMinutes: 0,
+    shootoutGoals: 0,
+    powerPlayGoals: 0,
+    powerPlayAssists: 0,
+    shortHandedGoals: 0,
+    shortHandedAssists: 0,
+    gameWinningGoals: 0,
+  },
+  shootingPct: null,
+  timeOnIcePerGame: null,
+  production: null,
+});
+
+const chunk = <T,>(items: T[], size: number): T[][] => {
+  const result: T[][] = [];
+
+  for (let index = 0; index < items.length; index += size) {
+    result.push(items.slice(index, index + size));
+  }
+
+  return result;
 };
 
-const displayStat = (value: NhlStatValue) => {
-  if (isMissing(value)) return "—";
-  return String(value);
+const isMissing = (value: StatValue) => {
+  return value === null || value === undefined || value === "";
 };
 
-const perGame = (stat?: NhlStatValue, gamesPlayed?: NhlStatValue) => {
-  const games = toNumber(gamesPlayed);
-  if (!games) return "0.00";
+const toNumberOrNull = (value: StatValue): number | null => {
+  if (isMissing(value)) {
+    return null;
+  }
 
-  return (toNumber(stat) / games).toFixed(2);
+  const normalizedValue = String(value)
+    .replace("%", "")
+    .replace(/,/g, "")
+    .trim();
+
+  const numberValue = Number(normalizedValue);
+
+  return Number.isFinite(numberValue) ? numberValue : null;
 };
 
-const renderCount = (
-  value: NhlStatValue,
-  gamesPlayed: NhlStatValue,
-  statView: StatView,
-) => {
-  return statView === "totals"
-    ? displayStat(value)
-    : perGame(value, gamesPlayed);
-};
+const firstNumber = (...values: StatValue[]): number | null => {
+  for (const value of values) {
+    const parsedValue = toNumberOrNull(value);
 
-const renderCareerCount = (
-  value: number,
-  gamesPlayed: number,
-  statView: StatView,
-) => {
-  return statView === "totals"
-    ? String(value)
-    : gamesPlayed > 0
-      ? (value / gamesPlayed).toFixed(2)
-      : "0.00";
-};
-
-const formatDecimal = (value: number, digits = 1) => {
-  if (!Number.isFinite(value)) return "—";
-  return value.toFixed(digits);
-};
-
-const formatRate3 = (value: number) => {
-  if (!Number.isFinite(value)) return "—";
-
-  const fixed = value.toFixed(3);
-
-  return fixed.startsWith("0") ? fixed.slice(1) : fixed;
-};
-
-const parseTimeToSeconds = (value: NhlStatValue) => {
-  if (isMissing(value)) return 0;
-
-  const raw = String(value).trim();
-
-  if (!raw.includes(":")) return 0;
-
-  const [minutesRaw, secondsRaw] = raw.split(":");
-  const minutes = Number(minutesRaw);
-  const seconds = Number(secondsRaw);
-
-  if (!Number.isFinite(minutes) || !Number.isFinite(seconds)) return 0;
-
-  return minutes * 60 + seconds;
-};
-
-const formatSecondsToTime = (totalSeconds: number) => {
-  if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) return "—";
-
-  const rounded = Math.round(totalSeconds);
-  const minutes = Math.floor(rounded / 60);
-  const seconds = rounded % 60;
-
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-};
-
-const getFirst = (stats: NhlStatMap, keys: string[]) => {
-  for (const key of keys) {
-    if (!isMissing(stats[key])) return stats[key];
+    if (parsedValue !== null) {
+      return parsedValue;
+    }
   }
 
   return null;
 };
 
-const isStatMap = (value: unknown): value is NhlStatMap => {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-};
-
-const getPositionBucket = (position?: string | null): NhlPositionBucket => {
-  const normalized = String(position ?? "")
-    .trim()
-    .toUpperCase();
-
-  switch (normalized) {
-    case "C":
-      return "center";
-    case "LW":
-      return "leftWing";
-    case "RW":
-      return "rightWing";
-    case "D":
-    case "DEF":
-      return "defense";
-    case "G":
-    case "GK":
-      return "goalie";
-    default:
-      return "skater";
+const firstString = (...values: StatValue[]): string | null => {
+  for (const value of values) {
+    if (!isMissing(value)) {
+      return String(value).trim();
+    }
   }
+
+  return null;
 };
 
-const mergeStats = (...sources: (NhlStatMap | null | undefined)[]) => {
-  const merged: NhlStatMap = {};
+const toStatRecord = (value: unknown): StatRecord => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
 
-  sources.forEach((source) => {
-    if (!source) return;
+  return value as StatRecord;
+};
 
-    Object.entries(source).forEach(([key, value]) => {
-      if (!isMissing(value)) {
-        merged[key] = value;
-      }
+const getSeasonNumber = (value: StatValue): number => {
+  const directNumber = toNumberOrNull(value);
+
+  if (directNumber !== null) {
+    return directNumber;
+  }
+
+  const yearMatch = String(value ?? "").match(/\d{4}/);
+
+  return yearMatch ? Number(yearMatch[0]) : 0;
+};
+
+const formatNumber = (value: StatValue): string => {
+  const numberValue = toNumberOrNull(value);
+
+  if (numberValue === null) {
+    return EMPTY_STAT;
+  }
+
+  if (Number.isInteger(numberValue)) {
+    return String(numberValue);
+  }
+
+  return numberValue.toFixed(1);
+};
+
+const formatOneDecimal = (value: StatValue): string => {
+  const numberValue = toNumberOrNull(value);
+
+  if (numberValue === null) {
+    return EMPTY_STAT;
+  }
+
+  return numberValue.toFixed(1);
+};
+
+const formatPercent = (value: StatValue): string => {
+  const numberValue = toNumberOrNull(value);
+
+  if (numberValue === null) {
+    return EMPTY_STAT;
+  }
+
+  const percentage =
+    Math.abs(numberValue) <= 1 ? numberValue * 100 : numberValue;
+
+  return `${percentage.toFixed(1)}%`;
+};
+
+const parseClockToSeconds = (value: StatValue): number | null => {
+  if (isMissing(value)) {
+    return null;
+  }
+
+  const normalizedValue = String(value).trim();
+
+  if (!normalizedValue.includes(":")) {
+    const numericValue = toNumberOrNull(value);
+
+    if (numericValue === null) {
+      return null;
+    }
+
+    return numericValue * 60;
+  }
+
+  const parts = normalizedValue.split(":").map(Number);
+
+  if (
+    parts.length < 2 ||
+    parts.some((part) => !Number.isFinite(part) || part < 0)
+  ) {
+    return null;
+  }
+
+  if (parts.length === 2) {
+    const [minutes, seconds] = parts;
+    return minutes * 60 + seconds;
+  }
+
+  const [hours, minutes, seconds] = parts;
+
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+const formatSecondsAsClock = (
+  totalSeconds: number | null | undefined,
+): string => {
+  if (
+    totalSeconds === null ||
+    totalSeconds === undefined ||
+    !Number.isFinite(totalSeconds) ||
+    totalSeconds < 0
+  ) {
+    return EMPTY_STAT;
+  }
+
+  const roundedSeconds = Math.round(totalSeconds);
+  const hours = Math.floor(roundedSeconds / 3600);
+  const minutes = Math.floor((roundedSeconds % 3600) / 60);
+  const seconds = roundedSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(
+      seconds,
+    ).padStart(2, "0")}`;
+  }
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+};
+
+const formatClockValue = (value: StatValue): string => {
+  const seconds = parseClockToSeconds(value);
+
+  if (seconds !== null) {
+    return formatSecondsAsClock(seconds);
+  }
+
+  return firstString(value) ?? EMPTY_STAT;
+};
+
+const sumNullableNumbers = (
+  values: (number | null | undefined)[],
+): number | null => {
+  let total = 0;
+  let foundValue = false;
+
+  values.forEach((value) => {
+    if (value === null || value === undefined) {
+      return;
+    }
+
+    total += value;
+    foundValue = true;
+  });
+
+  return foundValue ? total : null;
+};
+
+const averageFromTotals = (
+  total: number | null | undefined,
+  games: number | null,
+): number | null => {
+  if (total === null || total === undefined || games === null || games <= 0) {
+    return null;
+  }
+
+  return total / games;
+};
+
+const areNumbersClose = (
+  first: number | null | undefined,
+  second: number | null | undefined,
+): boolean => {
+  if (
+    first === null ||
+    first === undefined ||
+    second === null ||
+    second === undefined
+  ) {
+    return false;
+  }
+
+  return Math.abs(first - second) < 0.001;
+};
+
+const getSeasonType = (season: Season): SeasonType => {
+  const seasonTypeValue = String(season.season_type_value ?? "").trim();
+
+  if (seasonTypeValue === "3") {
+    return "postseason";
+  }
+
+  if (seasonTypeValue === "2") {
+    return "regularseason";
+  }
+
+  const seasonTypeLabel = String(season.season_type_label ?? "")
+    .toLowerCase()
+    .replace(/[\s_-]/g, "");
+
+  if (
+    seasonTypeLabel.includes("postseason") ||
+    seasonTypeLabel.includes("playoff")
+  ) {
+    return "postseason";
+  }
+
+  const seasonType = String(season.season_type ?? "")
+    .toLowerCase()
+    .replace(/[\s_-]/g, "");
+
+  if (seasonType.includes("postseason") || seasonType.includes("playoff")) {
+    return "postseason";
+  }
+
+  return "regularseason";
+};
+
+const getDisplaySeason = (season: Season): string => {
+  if (!isMissing(season.display_season)) {
+    return String(season.display_season);
+  }
+
+  if (!isMissing(season.season)) {
+    return String(season.season);
+  }
+
+  return EMPTY_STAT;
+};
+
+const getRowDisplaySeason = (
+  row: NormalizedSeasonRow,
+  showSeasonTypeTabs: boolean,
+): string => {
+  if (!showSeasonTypeTabs && row.seasonType === "postseason") {
+    return `${row.displaySeason} POST`;
+  }
+
+  return row.displaySeason;
+};
+
+const getTeamCodeFromSeason = (season: Season): string => {
+  const numericTeamId = Number(season.team_id);
+
+  const fallbackTeamCode = !isMissing(season.team_slug)
+    ? String(season.team_slug).toUpperCase()
+    : "";
+
+  if (!Number.isFinite(numericTeamId)) {
+    return fallbackTeamCode;
+  }
+
+  const team = getNHLTeamByEspnId(numericTeamId);
+
+  return team?.code ?? fallbackTeamCode;
+};
+
+const getSeasonRowSortValue = (season: Season, index: number): number => {
+  const seasonRowId = toNumberOrNull(season.id);
+
+  return seasonRowId ?? index;
+};
+
+const normalizeStatsRow = (
+  season: Season,
+  index: number,
+): NormalizedSeasonRow => {
+  const totals = toStatRecord(season.totals);
+
+  const games = firstNumber(totals.games, totals.gamesPlayed);
+
+  const seasonType = getSeasonType(season);
+  const seasonNumber = getSeasonNumber(season.season);
+  const teamCode = getTeamCodeFromSeason(season);
+
+  return {
+    rowKey: `${seasonNumber}-${seasonType}-${teamCode}-${season.id ?? index}`,
+    seasonNumber,
+    seasonSortValue: getSeasonRowSortValue(season, index),
+    displaySeason: getDisplaySeason(season),
+    team: teamCode,
+    seasonType,
+    games,
+    stats: {
+      goals: firstNumber(totals.goals),
+      assists: firstNumber(totals.assists),
+      points: firstNumber(totals.points),
+      plusMinus: firstNumber(totals.plusMinus),
+      penaltyMinutes: firstNumber(totals.penaltyMinutes),
+      shootoutGoals: firstNumber(
+        totals.shootoutGoals,
+        totals.shotsOnGoal,
+        totals.shotsTotal,
+      ),
+      powerPlayGoals: firstNumber(totals.powerPlayGoals),
+      powerPlayAssists: firstNumber(totals.powerPlayAssists),
+      shortHandedGoals: firstNumber(totals.shortHandedGoals),
+      shortHandedAssists: firstNumber(totals.shortHandedAssists),
+      gameWinningGoals: firstNumber(totals.gameWinningGoals),
+    },
+    shootingPct: firstNumber(totals.shootingPct, totals.shootingPercentage),
+    timeOnIcePerGame: firstString(totals.timeOnIcePerGame, totals.avgTimeOnIce),
+    production: firstString(totals.production),
+  };
+};
+
+const getSeasonGroupKey = (row: NormalizedSeasonRow): string => {
+  return `${row.seasonNumber}-${row.seasonType}`;
+};
+
+const getSeasonGroupSortValue = (rows: NormalizedSeasonRow[]): number => {
+  return rows.reduce(
+    (lowestValue, row) => Math.min(lowestValue, row.seasonSortValue),
+    Number.POSITIVE_INFINITY,
+  );
+};
+
+const isCombinedTeamCode = (teamCode: string): boolean => {
+  return COMBINED_TEAM_CODES.has(teamCode.toUpperCase());
+};
+
+const isExplicitCombinedRow = (row: NormalizedSeasonRow): boolean => {
+  return !row.team || isCombinedTeamCode(row.team);
+};
+
+const getCombinedTeamCode = (rows: NormalizedSeasonRow[]): string => {
+  const uniqueTeamCodes = rows
+    .map((row) => row.team)
+    .filter(Boolean)
+    .filter((teamCode) => !isCombinedTeamCode(teamCode))
+    .filter(
+      (teamCode, index, teamCodes) => teamCodes.indexOf(teamCode) === index,
+    );
+
+  return uniqueTeamCodes.join("-");
+};
+
+const findCombinedSeasonRow = (
+  rows: NormalizedSeasonRow[],
+): NormalizedSeasonRow | null => {
+  const explicitCombinedRow = rows
+    .filter(isExplicitCombinedRow)
+    .sort(
+      (firstRow, secondRow) => (secondRow.games ?? 0) - (firstRow.games ?? 0),
+    )[0];
+
+  if (explicitCombinedRow) {
+    return explicitCombinedRow;
+  }
+
+  if (rows.length < 3) {
+    return null;
+  }
+
+  return (
+    rows.find((candidateRow, candidateIndex) => {
+      const otherRows = rows.filter(
+        (_, rowIndex) => rowIndex !== candidateIndex,
+      );
+
+      const otherGames = sumNullableNumbers(otherRows.map((row) => row.games));
+
+      const otherPoints = sumNullableNumbers(
+        otherRows.map((row) => row.stats.points),
+      );
+
+      const gamesMatch = areNumbersClose(candidateRow.games, otherGames);
+
+      const pointsMatch =
+        candidateRow.stats.points === null ||
+        otherPoints === null ||
+        areNumbersClose(candidateRow.stats.points, otherPoints);
+
+      return gamesMatch && pointsMatch;
+    }) ?? null
+  );
+};
+
+const getWeightedShootingPct = (rows: NormalizedSeasonRow[]): number | null => {
+  let weightedTotal = 0;
+  let totalWeight = 0;
+
+  rows.forEach((row) => {
+    if (row.shootingPct === null || row.games === null || row.games <= 0) {
+      return;
+    }
+
+    weightedTotal += row.shootingPct * row.games;
+    totalWeight += row.games;
+  });
+
+  return totalWeight > 0 ? weightedTotal / totalWeight : null;
+};
+
+const getTotalIceTimeSeconds = (rows: NormalizedSeasonRow[]): number | null => {
+  let totalSeconds = 0;
+  let foundValue = false;
+
+  rows.forEach((row) => {
+    const secondsPerGame = parseClockToSeconds(row.timeOnIcePerGame);
+
+    if (secondsPerGame === null || row.games === null || row.games <= 0) {
+      return;
+    }
+
+    totalSeconds += secondsPerGame * row.games;
+    foundValue = true;
+  });
+
+  return foundValue ? totalSeconds : null;
+};
+
+const aggregateSeasonRows = (
+  rows: NormalizedSeasonRow[],
+): NormalizedSeasonRow => {
+  const firstRow = rows[0];
+  const games = sumNullableNumbers(rows.map((row) => row.games));
+
+  const stats = createEmptyCountingStats();
+
+  COUNTING_STAT_KEYS.forEach((statKey) => {
+    stats[statKey] = sumNullableNumbers(rows.map((row) => row.stats[statKey]));
+  });
+
+  const totalIceTimeSeconds = getTotalIceTimeSeconds(rows);
+
+  const timeOnIcePerGame =
+    totalIceTimeSeconds !== null && games !== null && games > 0
+      ? formatSecondsAsClock(totalIceTimeSeconds / games)
+      : null;
+
+  const production =
+    totalIceTimeSeconds !== null && stats.points !== null && stats.points > 0
+      ? formatSecondsAsClock(totalIceTimeSeconds / stats.points)
+      : null;
+
+  const combinedTeamCode = getCombinedTeamCode(rows);
+
+  return {
+    rowKey: `${getSeasonGroupKey(firstRow)}-${combinedTeamCode || "all"}`,
+    seasonNumber: firstRow.seasonNumber,
+    seasonSortValue: getSeasonGroupSortValue(rows),
+    displaySeason: firstRow.displaySeason,
+    team: combinedTeamCode || firstRow.team,
+    seasonType: firstRow.seasonType,
+    games,
+    stats,
+    shootingPct: getWeightedShootingPct(rows),
+    timeOnIcePerGame,
+    production,
+  };
+};
+
+const getCombinedSeasonRow = (
+  combinedRow: NormalizedSeasonRow,
+  rows: NormalizedSeasonRow[],
+): NormalizedSeasonRow => {
+  const combinedTeamCode = getCombinedTeamCode(rows);
+
+  return {
+    ...combinedRow,
+    rowKey: `${getSeasonGroupKey(combinedRow)}-${
+      combinedTeamCode || combinedRow.team || "all"
+    }`,
+    seasonSortValue: getSeasonGroupSortValue(rows),
+    team: combinedTeamCode || combinedRow.team,
+  };
+};
+
+const collapseSplitSeasonRows = (
+  rows: NormalizedSeasonRow[],
+): NormalizedSeasonRow[] => {
+  const groupedRows = new Map<string, NormalizedSeasonRow[]>();
+
+  rows.forEach((row) => {
+    const groupKey = getSeasonGroupKey(row);
+    const existingRows = groupedRows.get(groupKey) ?? [];
+
+    existingRows.push(row);
+    groupedRows.set(groupKey, existingRows);
+  });
+
+  return Array.from(groupedRows.values()).map((seasonRows) => {
+    if (seasonRows.length === 1) {
+      return seasonRows[0];
+    }
+
+    const combinedRow = findCombinedSeasonRow(seasonRows);
+
+    if (combinedRow) {
+      return getCombinedSeasonRow(combinedRow, seasonRows);
+    }
+
+    return aggregateSeasonRows(seasonRows);
+  });
+};
+
+const sortRows = (rows: NormalizedSeasonRow[]): NormalizedSeasonRow[] => {
+  return [...rows].sort((firstRow, secondRow) => {
+    if (secondRow.seasonNumber !== firstRow.seasonNumber) {
+      return secondRow.seasonNumber - firstRow.seasonNumber;
+    }
+
+    return firstRow.seasonSortValue - secondRow.seasonSortValue;
+  });
+};
+
+const hasUsableRowStats = (row: NormalizedSeasonRow): boolean => {
+  if (row.games !== null && row.games > 0) {
+    return true;
+  }
+
+  if (
+    row.shootingPct !== null ||
+    row.timeOnIcePerGame !== null ||
+    row.production !== null
+  ) {
+    return true;
+  }
+
+  return COUNTING_STAT_KEYS.some((statKey) => row.stats[statKey] !== null);
+};
+
+const normalizeStatsData = (seasons: Season[]): NormalizedSeasonRow[] => {
+  const normalizedRows = seasons.map((season, index) =>
+    normalizeStatsRow(season, index),
+  );
+
+  return sortRows(collapseSplitSeasonRows(normalizedRows));
+};
+
+const calculateCareerStats = (rows: NormalizedSeasonRow[]): CareerStats => {
+  const career = createEmptyCareerStats();
+
+  rows.forEach((row) => {
+    career.games += row.games ?? 0;
+
+    COUNTING_STAT_KEYS.forEach((statKey) => {
+      career.stats[statKey] += row.stats[statKey] ?? 0;
     });
   });
 
-  return merged;
+  career.shootingPct = getWeightedShootingPct(rows);
+
+  const totalIceTimeSeconds = getTotalIceTimeSeconds(rows);
+
+  if (totalIceTimeSeconds !== null && career.games > 0) {
+    career.timeOnIcePerGame = formatSecondsAsClock(
+      totalIceTimeSeconds / career.games,
+    );
+  }
+
+  if (totalIceTimeSeconds !== null && career.stats.points > 0) {
+    career.production = formatSecondsAsClock(
+      totalIceTimeSeconds / career.stats.points,
+    );
+  }
+
+  return career;
 };
 
-const getCategoryStatsByType = (
-  row: NhlSeasonStatsRow,
-  type: StatType,
-): NhlStatMap[] => {
-  const categories = Object.values(row.categories ?? {});
+const formatCountingStat = (
+  total: number | null,
+  games: number | null,
+  statView: StatView,
+): string => {
+  if (statView === "totals") {
+    return formatNumber(total);
+  }
 
-  return categories
-    .filter((category) => {
-      const statCategory = String(category.statCategory ?? "").toLowerCase();
-      const key = String(category.key ?? "").toLowerCase();
-      const name = String(category.name ?? "").toLowerCase();
-
-      if (type === "goalie") {
-        return (
-          statCategory.includes("goal") ||
-          key.includes("goal") ||
-          name.includes("goal")
-        );
-      }
-
-      return (
-        statCategory.includes("skater") ||
-        statCategory.includes("forward") ||
-        statCategory.includes("defense") ||
-        key.includes("skater") ||
-        key.includes("forward") ||
-        key.includes("defense") ||
-        name.includes("skater") ||
-        name.includes("forward") ||
-        name.includes("defense")
-      );
-    })
-    .map((category) => category.stats)
-    .filter(isStatMap);
+  return formatOneDecimal(averageFromTotals(total, games));
 };
 
-const getSkaterStats = (row: NhlSeasonStatsRow) => {
-  const bucket = getPositionBucket(row.position);
-  const bucketStats = row[bucket];
+const formatCareerCountingStat = (
+  career: CareerStats,
+  statKey: CountingStatKey,
+  statView: StatView,
+): string => {
+  const total = career.stats[statKey];
 
-  const fallbackBuckets: NhlPositionBucket[] = [
-    "center",
-    "leftWing",
-    "rightWing",
-    "defense",
-    "defenseman",
-    "forward",
-    "skater",
+  if (statView === "totals") {
+    return formatNumber(total);
+  }
+
+  return career.games > 0 ? formatOneDecimal(total / career.games) : EMPTY_STAT;
+};
+
+const getRowStatCells = (
+  row: NormalizedSeasonRow,
+  statView: StatView,
+): StatCell[] => {
+  const formatStat = (statKey: CountingStatKey) =>
+    formatCountingStat(row.stats[statKey], row.games, statView);
+
+  return [
+    {
+      key: "games",
+      value: formatNumber(row.games),
+    },
+    {
+      key: "goals",
+      value: formatStat("goals"),
+    },
+    {
+      key: "assists",
+      value: formatStat("assists"),
+    },
+    {
+      key: "points",
+      value: formatStat("points"),
+    },
+    {
+      key: "plusMinus",
+      value: formatStat("plusMinus"),
+    },
+    {
+      key: "penaltyMinutes",
+      value: formatStat("penaltyMinutes"),
+    },
+    {
+      key: "shootoutGoals",
+      value: formatStat("shootoutGoals"),
+    },
+    {
+      key: "shootingPct",
+      value: formatPercent(row.shootingPct),
+    },
+    {
+      key: "powerPlayGoals",
+      value: formatStat("powerPlayGoals"),
+    },
+    {
+      key: "powerPlayAssists",
+      value: formatStat("powerPlayAssists"),
+    },
+    {
+      key: "shortHandedGoals",
+      value: formatStat("shortHandedGoals"),
+    },
+    {
+      key: "shortHandedAssists",
+      value: formatStat("shortHandedAssists"),
+    },
+    {
+      key: "gameWinningGoals",
+      value: formatStat("gameWinningGoals"),
+    },
+    {
+      key: "timeOnIcePerGame",
+      value: formatClockValue(row.timeOnIcePerGame),
+    },
+    {
+      key: "production",
+      value: formatClockValue(row.production),
+    },
   ];
-
-  const fallbackStats = fallbackBuckets
-    .map((key) => row[key])
-    .filter(isStatMap);
-
-  return mergeStats(
-    row.totals,
-    isStatMap(bucketStats) ? bucketStats : null,
-    ...fallbackStats,
-    ...getCategoryStatsByType(row, "skater"),
-  );
 };
 
-const getGoalieStats = (row: NhlSeasonStatsRow) => {
-  return mergeStats(
-    row.totals,
-    row.goalie,
-    row.goaltending,
-    ...getCategoryStatsByType(row, "goalie"),
-  );
+const getCareerStatCells = (
+  career: CareerStats,
+  statView: StatView,
+): StatCell[] => {
+  const formatStat = (statKey: CountingStatKey) =>
+    formatCareerCountingStat(career, statKey, statView);
+
+  return [
+    {
+      key: "games",
+      value: formatNumber(career.games),
+    },
+    {
+      key: "goals",
+      value: formatStat("goals"),
+    },
+    {
+      key: "assists",
+      value: formatStat("assists"),
+    },
+    {
+      key: "points",
+      value: formatStat("points"),
+    },
+    {
+      key: "plusMinus",
+      value: formatStat("plusMinus"),
+    },
+    {
+      key: "penaltyMinutes",
+      value: formatStat("penaltyMinutes"),
+    },
+    {
+      key: "shootoutGoals",
+      value: formatStat("shootoutGoals"),
+    },
+    {
+      key: "shootingPct",
+      value: formatPercent(career.shootingPct),
+    },
+    {
+      key: "powerPlayGoals",
+      value: formatStat("powerPlayGoals"),
+    },
+    {
+      key: "powerPlayAssists",
+      value: formatStat("powerPlayAssists"),
+    },
+    {
+      key: "shortHandedGoals",
+      value: formatStat("shortHandedGoals"),
+    },
+    {
+      key: "shortHandedAssists",
+      value: formatStat("shortHandedAssists"),
+    },
+    {
+      key: "gameWinningGoals",
+      value: formatStat("gameWinningGoals"),
+    },
+    {
+      key: "timeOnIcePerGame",
+      value: formatClockValue(career.timeOnIcePerGame),
+    },
+    {
+      key: "production",
+      value: formatClockValue(career.production),
+    },
+  ];
 };
 
-const getStatsForType = (row: NhlSeasonStatsRow, statType: StatType) => {
-  return statType === "goalie" ? getGoalieStats(row) : getSkaterStats(row);
-};
-
-const hasSkaterStats = (stats: NhlStatMap) => {
-  return (
-    !isMissing(stats.games) ||
-    !isMissing(stats.goals) ||
-    !isMissing(stats.assists) ||
-    !isMissing(stats.points)
-  );
-};
-
-const hasGoalieStats = (stats: NhlStatMap) => {
-  return (
-    !isMissing(getFirst(stats, ["wins", "losses", "goalsAgainst", "saves"])) ||
-    !isMissing(
-      getFirst(stats, ["savePct", "savePercentage", "goalsAgainstAverage"]),
-    )
-  );
-};
-
-const getRows = (
-  seasonStatsFlattened: NhlSeasonStatsRow[],
-  careerStatsFlattened: NhlSeasonStatsRow[],
-) => {
-  const source =
-    seasonStatsFlattened?.length > 0
-      ? seasonStatsFlattened
-      : careerStatsFlattened;
-
-  return (source ?? [])
-    .filter((row) => row && Number.isFinite(Number(row.season)))
-    .sort((a, b) => Number(b.season) - Number(a.season));
-};
-
-const getGames = (stats: NhlStatMap) =>
-  getFirst(stats, ["games", "gamesPlayed", "GP"]);
-
-const getGoals = (stats: NhlStatMap) => getFirst(stats, ["goals", "G"]);
-
-const getAssists = (stats: NhlStatMap) => getFirst(stats, ["assists", "A"]);
-
-const getPoints = (stats: NhlStatMap) => getFirst(stats, ["points", "PTS"]);
-
-const getPlusMinus = (stats: NhlStatMap) =>
-  getFirst(stats, ["plusMinus", "plusMinusRating"]);
-
-const getPenaltyMinutes = (stats: NhlStatMap) =>
-  getFirst(stats, ["penaltyMinutes", "PIM"]);
-
-const getPowerPlayGoals = (stats: NhlStatMap) =>
-  getFirst(stats, ["powerPlayGoals", "PPG"]);
-
-const getPowerPlayAssists = (stats: NhlStatMap) =>
-  getFirst(stats, ["powerPlayAssists", "PPA"]);
-
-const getShortHandedGoals = (stats: NhlStatMap) =>
-  getFirst(stats, ["shortHandedGoals", "shorthandedGoals", "SHG"]);
-
-const getShortHandedAssists = (stats: NhlStatMap) =>
-  getFirst(stats, ["shortHandedAssists", "shorthandedAssists", "SHA"]);
-
-const getGameWinningGoals = (stats: NhlStatMap) =>
-  getFirst(stats, ["gameWinningGoals", "GWG"]);
-
-const getShots = (stats: NhlStatMap) =>
-  getFirst(stats, ["shots", "shotsOnGoal", "SOG"]);
-
-const getShootingPct = (stats: NhlStatMap) =>
-  getFirst(stats, ["shootingPct", "shotPct"]);
-
-const getTimeOnIcePerGame = (stats: NhlStatMap) =>
-  getFirst(stats, ["timeOnIcePerGame", "avgTimeOnIce"]);
-
-const getGoalieGamesStarted = (stats: NhlStatMap) =>
-  getFirst(stats, ["gamesStarted", "starts", "GS"]);
-
-const getGoalieWins = (stats: NhlStatMap) => getFirst(stats, ["wins", "W"]);
-
-const getGoalieLosses = (stats: NhlStatMap) => getFirst(stats, ["losses", "L"]);
-
-const getGoalieOvertimeLosses = (stats: NhlStatMap) =>
-  getFirst(stats, ["overtimeLosses", "OTL", "otLosses"]);
-
-const getGoalsAgainst = (stats: NhlStatMap) =>
-  getFirst(stats, ["goalsAgainst", "GA"]);
-
-const getGoalsAgainstAverage = (stats: NhlStatMap) =>
-  getFirst(stats, ["goalsAgainstAverage", "GAA"]);
-
-const getShotsAgainst = (stats: NhlStatMap) =>
-  getFirst(stats, ["shotsAgainst", "SA"]);
-
-const getSaves = (stats: NhlStatMap) => getFirst(stats, ["saves", "SV"]);
-
-const getSavePct = (stats: NhlStatMap) =>
-  getFirst(stats, ["savePct", "savePercentage", "SVPct"]);
-
-const getShutouts = (stats: NhlStatMap) => getFirst(stats, ["shutouts", "SO"]);
-
-const getGoalieMinutes = (stats: NhlStatMap) =>
-  getFirst(stats, ["minutes", "minutesPlayed", "timeOnIce"]);
-
-export default function PlayerStatTable({
-  seasonStatsFlattened,
-  careerStatsFlattened,
-  loading,
-  error,
-}: Props) {
+export default function PlayerStatTable({ seasons, loading, error }: Props) {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
   const [statView, setStatView] = useState<StatView>("totals");
-  const [statType, setStatType] = useState<StatType>("skater");
 
-  const rows = useMemo(
-    () => getRows(seasonStatsFlattened, careerStatsFlattened),
-    [seasonStatsFlattened, careerStatsFlattened],
-  );
+  const [selectedSeasonType, setSelectedSeasonType] =
+    useState<SeasonType>("regularseason");
 
-  const filteredSeasons = useMemo<TableRow[]>(() => {
-    return rows
-      .map((row) => {
-        const stats = getStatsForType(row, statType);
-        const team = Number(row.espnTeamId ?? row.teamId ?? 0) || null;
+  const normalizedRows = useMemo(() => normalizeStatsData(seasons), [seasons]);
 
-        return {
-          ...row,
-          rowKey: `${row.season}-${row.seasonType ?? "type"}-${
-            row.espnTeamId ?? row.teamId ?? "team"
-          }`,
-          team,
-          stats,
-        };
-      })
-      .filter((row) =>
-        statType === "goalie"
-          ? hasGoalieStats(row.stats)
-          : hasSkaterStats(row.stats),
-      );
-  }, [rows, statType]);
+  const filteredRows = useMemo(() => {
+    const rowsForSeasonType = normalizedRows.filter(
+      (row) => row.seasonType === selectedSeasonType,
+    );
+
+    if (selectedSeasonType === "postseason") {
+      return rowsForSeasonType.filter(hasUsableRowStats);
+    }
+
+    return rowsForSeasonType;
+  }, [normalizedRows, selectedSeasonType]);
 
   const bestRowKey = useMemo(() => {
-    let best: string | null = null;
-    let compareValue = statType === "goalie" ? Infinity : -Infinity;
+    let bestRow: string | null = null;
+    let bestPointsPerGame = Number.NEGATIVE_INFINITY;
 
-    filteredSeasons.forEach((row) => {
-      const stats = row.stats;
+    filteredRows.forEach((row) => {
+      const pointsPerGame = averageFromTotals(row.stats.points, row.games);
 
-      const value =
-        statType === "goalie"
-          ? toNumber(getGoalsAgainstAverage(stats))
-          : toNumber(getPoints(stats));
-
-      if (!Number.isFinite(value)) return;
-
-      if (
-        (statType === "goalie" && value > 0 && value < compareValue) ||
-        (statType === "skater" && value > compareValue)
-      ) {
-        compareValue = value;
-        best = row.rowKey;
+      if (pointsPerGame !== null && pointsPerGame > bestPointsPerGame) {
+        bestPointsPerGame = pointsPerGame;
+        bestRow = row.rowKey;
       }
     });
 
-    return best;
-  }, [filteredSeasons, statType]);
+    return bestRow;
+  }, [filteredRows]);
 
-  const skaterCareerTotals = useMemo(() => {
-    return filteredSeasons.reduce<CareerTotals>(
-      (acc, row) => {
-        const stats = row.stats;
-        const games = toNumber(getGames(stats));
+  const career = useMemo(
+    () => calculateCareerStats(filteredRows),
+    [filteredRows],
+  );
 
-        acc.games += games;
-        acc.goals += toNumber(getGoals(stats));
-        acc.assists += toNumber(getAssists(stats));
-        acc.points += toNumber(getPoints(stats));
-        acc.plusMinus += toNumber(getPlusMinus(stats));
-        acc.penaltyMinutes += toNumber(getPenaltyMinutes(stats));
+  const isPostseasonSelected = selectedSeasonType === "postseason";
 
-        acc.powerPlayGoals += toNumber(getPowerPlayGoals(stats));
-        acc.powerPlayAssists += toNumber(getPowerPlayAssists(stats));
-        acc.shortHandedGoals += toNumber(getShortHandedGoals(stats));
-        acc.shortHandedAssists += toNumber(getShortHandedAssists(stats));
-        acc.gameWinningGoals += toNumber(getGameWinningGoals(stats));
+  const emptyText = isPostseasonSelected
+    ? "Stats not available"
+    : "No stats available";
 
-        acc.shots += toNumber(getShots(stats));
+  const getDataRowStyle = (row: NormalizedSeasonRow, index: number) => {
+    const zebraStyle =
+      index % 2 === 1
+        ? isDark
+          ? styles.rowAltDark
+          : styles.rowAltLight
+        : null;
 
-        const shootingPct = toNumber(getShootingPct(stats));
+    const highlightStyle = row.rowKey === bestRowKey ? styles.best : null;
 
-        if (shootingPct > 0) {
-          acc.shootingPctTotal += shootingPct;
-          acc.shootingPctCount += 1;
-        }
+    return [styles.row, zebraStyle, highlightStyle];
+  };
 
-        const toiSeconds = parseTimeToSeconds(getTimeOnIcePerGame(stats));
+  const renderHeader = () => (
+    <>
+      <View style={styles.statsHeader}>
+        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
-        if (toiSeconds > 0 && games > 0) {
-          acc.timeOnIceSeconds += toiSeconds * games;
-          acc.timeOnIceGames += games;
-        }
+        {filteredRows.length > 0 ? (
+          <Dropdown
+            isDark={isDark}
+            options={STAT_OPTIONS}
+            selectedValue={statView}
+            onSelect={(value) => setStatView(value as StatView)}
+            style={styles.dropdown}
+          />
+        ) : null}
+      </View>
 
-        return acc;
-      },
-      {
-        games: 0,
-        goals: 0,
-        assists: 0,
-        points: 0,
-        plusMinus: 0,
-        penaltyMinutes: 0,
-        powerPlayGoals: 0,
-        powerPlayAssists: 0,
-        shortHandedGoals: 0,
-        shortHandedAssists: 0,
-        gameWinningGoals: 0,
-        shootoutGoals: 0,
-        shots: 0,
-        shootingPctTotal: 0,
-        shootingPctCount: 0,
-        timeOnIceSeconds: 0,
-        timeOnIceGames: 0,
-      },
-    );
-  }, [filteredSeasons]);
-
-  const goalieCareerTotals = useMemo(() => {
-    return filteredSeasons.reduce<GoalieCareerTotals>(
-      (acc, row) => {
-        const stats = row.stats;
-
-        acc.games += toNumber(getGames(stats));
-        acc.gamesStarted += toNumber(getGoalieGamesStarted(stats));
-        acc.wins += toNumber(getGoalieWins(stats));
-        acc.losses += toNumber(getGoalieLosses(stats));
-        acc.overtimeLosses += toNumber(getGoalieOvertimeLosses(stats));
-        acc.goalsAgainst += toNumber(getGoalsAgainst(stats));
-        acc.shotsAgainst += toNumber(getShotsAgainst(stats));
-        acc.saves += toNumber(getSaves(stats));
-        acc.shutouts += toNumber(getShutouts(stats));
-        acc.minutes += toNumber(getGoalieMinutes(stats));
-
-        return acc;
-      },
-      {
-        games: 0,
-        gamesStarted: 0,
-        wins: 0,
-        losses: 0,
-        overtimeLosses: 0,
-        goalsAgainst: 0,
-        shotsAgainst: 0,
-        saves: 0,
-        shutouts: 0,
-        minutes: 0,
-      },
-    );
-  }, [filteredSeasons]);
-
-  const careerShootingPct =
-    skaterCareerTotals.shots > 0
-      ? formatDecimal(
-          (skaterCareerTotals.goals / skaterCareerTotals.shots) * 100,
-        )
-      : skaterCareerTotals.shootingPctCount > 0
-        ? formatDecimal(
-            skaterCareerTotals.shootingPctTotal /
-              skaterCareerTotals.shootingPctCount,
-          )
-        : "—";
-
-  const careerTimeOnIce =
-    skaterCareerTotals.timeOnIceGames > 0
-      ? formatSecondsToTime(
-          skaterCareerTotals.timeOnIceSeconds /
-            skaterCareerTotals.timeOnIceGames,
-        )
-      : "—";
-
-  const careerGoalieGAA =
-    goalieCareerTotals.minutes > 0
-      ? formatDecimal(
-          (goalieCareerTotals.goalsAgainst * 60) / goalieCareerTotals.minutes,
-          2,
-        )
-      : "—";
-
-  const careerGoalieSavePct =
-    goalieCareerTotals.shotsAgainst > 0
-      ? formatRate3(goalieCareerTotals.saves / goalieCareerTotals.shotsAgainst)
-      : "—";
-
-  const headers = useMemo(() => {
-    if (statType === "goalie") {
-      return [
-        "GP",
-        "GS",
-        "W",
-        "L",
-        "OTL",
-        "GA",
-        "GAA",
-        "SA",
-        "SV",
-        "SV%",
-        "SO",
-        "MIN",
-      ];
-    }
-
-    return [
-      "GP",
-      "G",
-      "A",
-      "PTS",
-      "+/-",
-      "PIM",
-      "PPG",
-      "PPA",
-      "SHG",
-      "SHA",
-      "GWG",
-      "SOG",
-      "S%",
-      "TOI/G",
-    ];
-  }, [statType]);
+      <PillTabs
+        tabs={SEASON_TYPE_OPTIONS}
+        selectedValue={selectedSeasonType}
+        onChange={setSelectedSeasonType}
+      />
+    </>
+  );
 
   if (loading) {
     return (
@@ -614,391 +1089,172 @@ export default function PlayerStatTable({
   }
 
   if (error) {
-    return <Text style={global.errorText}>Failed to load stats</Text>;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load stats</Text>
+      </View>
+    );
   }
 
-  if (!filteredSeasons.length) {
+  if (!normalizedRows.length) {
     return (
-      <View style={styles.container}>
-        <HeadingWithDropdowns
-          title={statType === "goalie" ? "Goalie" : "Skater"}
-          dropdowns={[
-            {
-              options: STAT_TYPE_OPTIONS,
-              selectedValue: statType,
-              onSelect: (val) => setStatType(val as StatType),
-            },
-            {
-              options: STAT_OPTIONS,
-              selectedValue: statView,
-              onSelect: (val) => setStatView(val as StatView),
-            },
-          ]}
-          isDark={isDark}
-        />
-
-        <Text style={global.errorText}>No {statType} stats available.</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No stats available</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <HeadingWithDropdowns
-        title={statType === "goalie" ? "Goalie" : "Skater"}
-        dropdowns={[
-          {
-            options: STAT_TYPE_OPTIONS,
-            selectedValue: statType,
-            onSelect: (val) => setStatType(val as StatType),
-          },
-          {
-            options: STAT_OPTIONS,
-            selectedValue: statView,
-            onSelect: (val) => setStatView(val as StatView),
-          },
-        ]}
-        isDark={isDark}
-      />
+      {renderHeader()}
 
-      <View style={styles.tableWrapper}>
-        <View style={styles.seasonColumn}>
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
-              SEASON
-            </Text>
-          </View>
+      {!filteredRows.length ? (
+        <Text style={global.emptyText}>{emptyText}</Text>
+      ) : (
+        <>
+          <View style={styles.tableWrapper}>
+            <View style={styles.fixedSection}>
+              <View style={styles.seasonColumn}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  <Text style={[styles.fixedCell, styles.fixedHeaderCell]}>
+                    SEASON
+                  </Text>
+                </View>
 
-          {filteredSeasons.map((row, index) => {
-            const zebra =
-              index % 2 === 1
-                ? isDark
-                  ? styles.rowAltDark
-                  : styles.rowAltLight
-                : null;
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-season`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    <Text
+                      style={styles.fixedCell}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      {getRowDisplaySeason(row, true)}
+                    </Text>
+                  </View>
+                ))}
 
-            const highlight = row.rowKey === bestRowKey ? styles.best : null;
-            const formatNHLSeason = (row: NhlSeasonStatsRow) => {
-              const season = Number(row.season);
-
-              if (Number.isFinite(season)) {
-                const startYear = season - 1;
-                const endYearShort = String(season).slice(-2);
-
-                return `${startYear}-${endYearShort}`;
-              }
-
-              return row.displaySeason ?? "—";
-            };
-            return (
-              <View key={row.rowKey} style={[styles.row, zebra, highlight]}>
-                <Text style={styles.fixedCell}>{formatNHLSeason(row)}</Text>
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  <Text
+                    style={[
+                      styles.fixedCell,
+                      styles.fixedHeaderCell,
+                      styles.fixedCareerHeaderCell,
+                    ]}
+                  >
+                    CAREER
+                  </Text>
+                </View>
               </View>
-            );
-          })}
 
-          <View style={[styles.row, styles.careerRow]}>
-            <Text
-              style={[
-                styles.fixedCell,
-                styles.fixedHeaderCell,
-                { color: Colors.white },
-              ]}
-            >
-              CAREER
-            </Text>
-          </View>
-        </View>
+              <View style={styles.teamColumn}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  <Text style={[styles.fixedTeamCell, styles.fixedHeaderCell]}>
+                    TEAM
+                  </Text>
+                </View>
 
-        <View style={styles.teamColumn}>
-          <View style={[styles.row, styles.headerRow]}>
-            <Text style={[styles.fixedTeamCell, styles.fixedHeaderCell]}>
-              TEAM
-            </Text>
-          </View>
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-team`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    <Text
+                      style={styles.fixedTeamCell}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                    >
+                      {row.team || EMPTY_STAT}
+                    </Text>
+                  </View>
+                ))}
 
-          {filteredSeasons.map((row, index) => {
-            const zebra =
-              index % 2 === 1
-                ? isDark
-                  ? styles.rowAltDark
-                  : styles.rowAltLight
-                : null;
-
-            const highlight = row.rowKey === bestRowKey ? styles.best : null;
-            const team = getNHLTeamByEspnId(row.team ?? 0);
-
-            return (
-              <View
-                key={`${row.rowKey}-team`}
-                style={[styles.row, zebra, highlight]}
-              >
-                <Text style={styles.fixedTeamCell}>
-                  {team?.code ?? row.teamSlug ?? "—"}
-                </Text>
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  <Text style={styles.fixedCareerCell}> </Text>
+                </View>
               </View>
-            );
-          })}
-
-          <View style={[styles.row, styles.careerRow]}>
-            <Text style={styles.fixedCareerCell}></Text>
-          </View>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.statScrollContent}>
-            <View style={[styles.row, styles.headerRow]}>
-              {headers.map((header) => (
-                <Text key={header} style={[styles.cell, styles.headerCell]}>
-                  {header}
-                </Text>
-              ))}
             </View>
 
-            {filteredSeasons.map((row, index) => {
-              const stats = row.stats;
-              const games = getGames(stats);
-              const zebra =
-                index % 2 === 1
-                  ? isDark
-                    ? styles.rowAltDark
-                    : styles.rowAltLight
-                  : null;
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.scrollSection}
+            >
+              <View style={styles.statScrollContent}>
+                <View
+                  style={[styles.row, styles.headerRow, styles.tableHeaderRow]}
+                >
+                  {TABLE_HEADERS.map((header) => (
+                    <Text key={header} style={[styles.cell, styles.headerCell]}>
+                      {header}
+                    </Text>
+                  ))}
+                </View>
 
-              const highlight = row.rowKey === bestRowKey ? styles.best : null;
+                {filteredRows.map((row, index) => (
+                  <View
+                    key={`${row.rowKey}-stats`}
+                    style={getDataRowStyle(row, index)}
+                  >
+                    {getRowStatCells(row, statView).map((cell) => (
+                      <Text key={cell.key} style={styles.cell}>
+                        {cell.value}
+                      </Text>
+                    ))}
+                  </View>
+                ))}
+
+                <View style={[styles.row, styles.careerRow, styles.lastRow]}>
+                  {getCareerStatCells(career, statView).map((cell) => (
+                    <Text key={cell.key} style={styles.careerCell}>
+                      {cell.value}
+                    </Text>
+                  ))}
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+
+          <View style={styles.glossaryContainer}>
+            <Text style={styles.headerName}>Stat Glossary</Text>
+
+            {chunk(NHL_STAT_GLOSSARY, 2).map((glossaryRow, rowIndex) => {
+              const isAlternateRow = rowIndex % 2 === 1;
 
               return (
                 <View
-                  key={`${row.rowKey}-stats`}
-                  style={[styles.row, zebra, highlight]}
+                  key={`glossary-row-${rowIndex}`}
+                  style={styles.glossaryRow}
                 >
-                  {statType === "skater" && (
-                    <>
-                      <Text style={styles.cell}>{displayStat(games)}</Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getGoals(stats), games, statView)}
+                  {glossaryRow.map((item, columnIndex) => (
+                    <View
+                      key={item.abbr}
+                      style={[
+                        styles.glossaryCell,
+                        isAlternateRow && styles.glossaryCellAlt,
+                        columnIndex === 0 && styles.glossaryCellWithRightBorder,
+                      ]}
+                    >
+                      <Text style={styles.glossaryAbbr}>
+                        {item.abbr}{" "}
+                        <Text style={styles.glossaryDisplayName}>
+                          {item.label}
+                        </Text>
                       </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getAssists(stats), games, statView)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getPoints(stats), games, statView)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getPlusMinus(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getPenaltyMinutes(stats), games, statView)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getPowerPlayGoals(stats), games, statView)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(
-                          getPowerPlayAssists(stats),
-                          games,
-                          statView,
-                        )}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(
-                          getShortHandedGoals(stats),
-                          games,
-                          statView,
-                        )}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(
-                          getShortHandedAssists(stats),
-                          games,
-                          statView,
-                        )}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(
-                          getGameWinningGoals(stats),
-                          games,
-                          statView,
-                        )}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {renderCount(getShots(stats), games, statView)}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getShootingPct(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getTimeOnIcePerGame(stats))}
-                      </Text>
-                    </>
-                  )}
-
-                  {statType === "goalie" && (
-                    <>
-                      <Text style={styles.cell}>{displayStat(games)}</Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalieGamesStarted(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalieWins(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalieLosses(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalieOvertimeLosses(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalsAgainst(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalsAgainstAverage(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getShotsAgainst(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getSaves(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getSavePct(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getShutouts(stats))}
-                      </Text>
-                      <Text style={styles.cell}>
-                        {displayStat(getGoalieMinutes(stats))}
-                      </Text>
-                    </>
-                  )}
+                    </View>
+                  ))}
                 </View>
               );
             })}
-
-            <View style={[styles.row, styles.careerRow]}>
-              {statType === "skater" && (
-                <>
-                  <Text style={styles.careerCell}>
-                    {skaterCareerTotals.games}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.goals,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.assists,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.points,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {skaterCareerTotals.plusMinus}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.penaltyMinutes,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.powerPlayGoals,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.powerPlayAssists,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.shortHandedGoals,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.shortHandedAssists,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.gameWinningGoals,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {renderCareerCount(
-                      skaterCareerTotals.shots,
-                      skaterCareerTotals.games,
-                      statView,
-                    )}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerShootingPct}</Text>
-                  <Text style={styles.careerCell}>{careerTimeOnIce}</Text>
-                </>
-              )}
-
-              {statType === "goalie" && (
-                <>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.games}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.gamesStarted}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.wins}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.losses}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.overtimeLosses}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.goalsAgainst}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerGoalieGAA}</Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.shotsAgainst}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.saves}
-                  </Text>
-                  <Text style={styles.careerCell}>{careerGoalieSavePct}</Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.shutouts}
-                  </Text>
-                  <Text style={styles.careerCell}>
-                    {goalieCareerTotals.minutes}
-                  </Text>
-                </>
-              )}
-            </View>
           </View>
-        </ScrollView>
-      </View>
+        </>
+      )}
     </View>
   );
 }

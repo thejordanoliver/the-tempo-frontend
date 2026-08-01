@@ -30,10 +30,10 @@ export default function PlayerDetailScreen() {
   const global = globalStyles(isDark);
   const navigation = useNavigation();
   const playerId = Number(id);
-  const isWCBB = league === "WCBB";
   const isNBA = league === "NBA";
-  const isCBB = league === "CBB";
   const isWNBA = league === "WNBA";
+  const isCBB = league === "CBB";
+  const isWCBB = league === "WCBB";
   const { player, loading, error } = usePlayerById(playerId, league);
   const team =
     teamId && isNBA

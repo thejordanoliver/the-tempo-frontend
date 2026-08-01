@@ -29,7 +29,7 @@ type PlayerRoutePathname =
   | "/player/basketball/[id]"
   | "/player/baseball/[id]"
   | "/player/mma/[id]"
-  | "/player/nhl/[id]"
+  | "/player/hockey/[id]"
   | "/player/football/[id]"
   | "/player/basketball/[id]";
 
@@ -44,7 +44,7 @@ const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   NFL: "/player/football/[id]",
   CFB: "/player/football/[id]",
   UFC: "/player/mma/[id]",
-  NHL: "/player/nhl/[id]",
+  NHL: "/player/hockey/[id]",
 };
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
