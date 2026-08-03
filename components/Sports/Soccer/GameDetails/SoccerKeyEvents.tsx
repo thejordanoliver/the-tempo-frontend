@@ -6,14 +6,7 @@ import { KeyEvent } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { formatPeriod } from "@/utils/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TextStyle, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 type Props = {
@@ -147,16 +140,6 @@ function getSortValue(event: KeyEvent, index: number) {
   return period * 100000 + clock * 10 + priority + index / 1000;
 }
 
-function getImageSource(image: any): ImageSourcePropType | null {
-  if (!image) return null;
-
-  if (typeof image === "string") {
-    return { uri: image };
-  }
-
-  return image;
-}
-
 export default function KeyEvents({
   keyEvents = [],
   loading = false,
@@ -274,7 +257,7 @@ export default function KeyEvents({
 
             const teamId = Number(event?.team?.id) || 0;
             const teamLogo = teamId ? getSOCCTeamLogo(teamId, isDark) : null;
-            const teamLogoSource = getImageSource(teamLogo);
+            const teamLogoSource = teamLogo;
 
             return (
               <View

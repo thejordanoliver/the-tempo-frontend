@@ -1,30 +1,32 @@
 import {
-  PlayerStatsByTeam,
-  TeamStat,
-} from "@/hooks/BaseballHooks/useBaseballGameDetails";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import {
   GameLocation,
+  GameTeamStats,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
-} from "components/Sports/NBA/GameDetails";
+} from "@/components/Sports/Basketball/GameDetails";
+import {
+  PlayerStatsByTeam,
+  TeamStat,
+} from "@/hooks/BaseballHooks/useBaseballGameDetails";
+import { Highlight } from "@/types/types";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import BoxScore from "../GameDetails/BoxScore";
-import GameTeamStats from "../GameDetails/GameTeamStats";
 import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
-import { Highlight } from "@/types/types";
 
 type GamePreviewContentProps = {
   homeId: number;
+  homeEspnId: number;
   homeColor: string;
   homeCode: string;
   homeName: string;
   homeLogo: any;
   awayId: number;
+  awayEspnId: number;
   awayColor: string;
   awayCode: string;
   awayName: string;
@@ -50,7 +52,7 @@ type GamePreviewContentProps = {
   playerStats: PlayerStatsByTeam[];
   officials: any[];
   injuries: any[];
-  teamPlayersMap: Record<string, any[]>;
+
   error?: string | null;
   venueImage?: any;
   venueName?: string;
@@ -69,11 +71,13 @@ type GamePreviewContentProps = {
 
 export default function GamePreviewContent({
   homeId,
+  homeEspnId,
   homeColor,
   homeCode,
   homeName,
   homeLogo,
   awayId,
+  awayEspnId,
   awayColor,
   awayCode,
   awayName,
@@ -91,7 +95,6 @@ export default function GamePreviewContent({
   playerStats,
   officials,
   injuries,
-  teamPlayersMap,
   homeChance,
   awayChance,
   venueImage,
@@ -153,6 +156,7 @@ export default function GamePreviewContent({
           homeColor={homeColor}
           isDark
           state={state}
+          league={league}
         />
 
         <BoxScore
@@ -187,15 +191,15 @@ export default function GamePreviewContent({
 
         <TeamInjuries
           injuries={injuries}
-          teamPlayersMap={teamPlayersMap}
-          awayId={awayId}
-          homeId={homeId}
+          homeId={homeEspnId}
+          awayId={awayEspnId}
           homeCode={homeCode}
-          homeLogo={homeLogo}
           awayCode={awayCode}
+          homeLogo={homeLogo}
           awayLogo={awayLogo}
-          league={isMLB}
           isDark
+          state={state}
+          league={league}
         />
 
         <GameLocation

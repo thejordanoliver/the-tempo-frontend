@@ -1,6 +1,8 @@
+import GamesList from "@/components/Sports/Basketball/Games/GamesList";
+import Roster from "@/components/Sports/Basketball/Team/Roster";
+import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import DepthChart from "@/components/Sports/Football/Team/DepthChart";
-import GamesList from "@/components/Sports/NBA/Games/GamesList";
-import RosterStats from "@/components/Sports/NBA/Team/RosterStats";
 import { Colors } from "@/constants/styles";
 import {
   BasketballScheduleMonth,
@@ -16,8 +18,6 @@ import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import Roster from "components/Sports/NBA/Team/Roster";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";

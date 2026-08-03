@@ -1,9 +1,8 @@
 import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Colors, globalStyles } from "constants/styles";
-import { getCFBTeamLogo, getCFBTeamByESPNId } from "constants/teamsCFB";
-import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { FlatList, Image, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
 
 type Props = {
@@ -21,7 +20,7 @@ export default function DrivesList({
   loading,
   error,
   isDark,
-  league = "NFL",
+  league = "nfl",
 }: Props) {
   const styles = getStyles(isDark);
   const global = globalStyles(isDark);
@@ -57,74 +56,65 @@ export default function DrivesList({
 
   return (
     <View>
-      <ScrollView style={{ maxHeight: 400 }}>
-        <FlatList
-          data={drives}
-          keyExtractor={(item) => item.id} // 👈 now ID is unique
-          contentContainerStyle={styles.listContainer}
-          scrollEnabled={false}
-          renderItem={({ item, index }) => {
-            const isNFL = league === "NFL";
-            const teamId = item.team?.id ?? "ALL";
+      <FlatList
+        data={drives}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        scrollEnabled={false}
+        renderItem={({ item, index }) => {
+          const isNFL = league === "nfl";
+          const teamId = item.team?.id ?? "ALL";
+          const team = isNFL ? getNFLTeam(teamId) : getCFBTeam(teamId);
+          const isLast = index === drives.length - 1;
+          const logo = isNFL
+            ? getNFLTeamLogo(teamId, isDark)
+            : getCFBTeamLogo(teamId, isDark);
 
-            const team =
-              league === "CFB"
-                ? getCFBTeamByESPNId(teamId)
-                : getNFLTeamByESPNId(teamId);
-            const isLast = index === drives.length - 1;
-            const logo = isNFL
-              ? getNFLTeamLogo(team?.id ?? 0, isDark)
-              : getCFBTeamLogo(Number(team?.id), isDark);
+          const resultUpper = (item.result ?? "").toUpperCase();
+          let resultColor = subTextColor;
 
-            const resultUpper = (item.result ?? "").toUpperCase();
-            let resultColor = subTextColor;
+          if (
+            resultUpper.includes("INT") ||
+            resultUpper.includes("FUMBLE") ||
+            resultUpper.includes("MISSED FG") ||
+            resultUpper.includes("BLOCKED PUNT TD") ||
+            resultUpper.includes("DOWNS")
+          ) {
+            resultColor = isDark ? Colors.dark.lightRed : Colors.light.red;
+          } else if (resultUpper.includes("TD") || resultUpper.includes("FG")) {
+            resultColor = isDark ? Colors.dark.leafGreen : Colors.light.green;
+          } else if (resultUpper.includes("PUNT")) {
+            resultColor = isDark ? Colors.dark.yellow : Colors.light.yellow;
+          }
 
-            if (
-              resultUpper.includes("INT") ||
-              resultUpper.includes("FUMBLE") ||
-              resultUpper.includes("MISSED FG") ||
-              resultUpper.includes("BLOCKED PUNT TD") ||
-              resultUpper.includes("DOWNS")
-            ) {
-              resultColor = isDark ? Colors.dark.lightRed : Colors.light.red;
-            } else if (
-              resultUpper.includes("TD") ||
-              resultUpper.includes("FG")
-            ) {
-              resultColor = isDark ? Colors.dark.leafGreen : Colors.light.green;
-            } else if (resultUpper.includes("PUNT")) {
-              resultColor = isDark ? Colors.dark.yellow : Colors.light.yellow;
-            }
-
-            return (
-              <View
-                style={[
-                  styles.driveCard,
-                  !isLast && { borderBottomColor: borderColor },
-                  isLast && { borderBottomWidth: 0 },
-                ]}
-              >
-                <View style={styles.headerRow}>
-                  {logo && (
-                    <Image
-                      style={styles.teamLogo}
-                      source={logo}
-                      resizeMode="contain"
-                    />
-                  )}
-                  <Text style={styles.driveTeam}>{team?.code}</Text>
-                </View>
-
-                <Text style={styles.driveDescription}>{item.description}</Text>
-
-                <Text style={[styles.driveDetail, { color: resultColor }]}>
-                  Result: {item.displayResult ?? "N/A"}
-                </Text>
+          return (
+            <View
+              style={[
+                styles.driveCard,
+                !isLast && { borderBottomColor: borderColor },
+                isLast && { borderBottomWidth: 0 },
+              ]}
+            >
+              <View style={styles.headerRow}>
+                {logo && (
+                  <Image
+                    style={styles.teamLogo}
+                    source={logo}
+                    resizeMode="contain"
+                  />
+                )}
+                <Text style={styles.driveTeam}>{team?.code}</Text>
               </View>
-            );
-          }}
-        />
-      </ScrollView>
+
+              <Text style={styles.driveDescription}>{item.description}</Text>
+
+              <Text style={[styles.driveDetail, { color: resultColor }]}>
+                Result: {item.displayResult ?? "N/A"}
+              </Text>
+            </View>
+          );
+        }}
+      />
     </View>
   );
 }

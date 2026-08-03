@@ -25,7 +25,7 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import CenterInfo from "../../NBA/GamePreview/CenterInfo";
+import CenterInfo from "../../Basketball/GamePreview/CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
 import TeamInfo from "./TeamInfo";
 

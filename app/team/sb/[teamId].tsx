@@ -1,5 +1,6 @@
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
@@ -9,7 +10,6 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";

@@ -25,8 +25,8 @@ import {
   LastFiveGames,
   LineScore,
   Officials,
-} from "../../../components/Sports/NBA/GameDetails";
-import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
+} from "../../../components/Sports/Basketball/GameDetails";
+import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
@@ -94,6 +94,24 @@ export default function GameDetailsScreen() {
   const homeColor = useMemo(
     () => homeTeam?.color ?? Colors.midTone,
     [homeTeam?.color],
+  );
+
+  const isHomeNational = useMemo(
+    () => homeTeam?.isNational,
+    [homeTeam?.isNational],
+  );
+  const isHomeAllStar = useMemo(
+    () => homeTeam?.isAllStar,
+    [homeTeam?.isAllStar],
+  );
+
+  const isAwayNational = useMemo(
+    () => awayTeam?.isNational,
+    [awayTeam?.isNational],
+  );
+  const isAwayAllStar = useMemo(
+    () => awayTeam?.isAllStar,
+    [awayTeam?.isAllStar],
   );
 
   const homeLogo = getSOCCTeamLogo(homeId, isDark);
@@ -246,10 +264,14 @@ export default function GameDetailsScreen() {
           isTie={isTie}
           homeRank={null}
           awayRank={null}
+          isHomeAllStar={isHomeAllStar}
+          isHomeNational={isHomeNational}
+          isAwayAllStar={isAwayAllStar}
+          isAwayNational={isAwayNational}
           homeId={homeId}
           awayId={awayId}
-          gameStatusDescription={gameStatusDescription}
           state={state}
+          gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
           period={period}
           clock={clock}

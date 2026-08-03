@@ -154,7 +154,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
     <>
       <View style={styles.teamSection}>
         <Image
-          source={{ uri: awayLogo }}
+          source={awayLogo}
           style={styles.logo}
           accessibilityLabel={`${awayName} logo`}
         />
@@ -178,7 +178,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
       <View style={styles.teamSection}>
         <Image
-          source={{ uri: homeLogo }}
+          source={homeLogo}
           style={styles.logo}
           accessibilityLabel={`${homeName} logo`}
         />

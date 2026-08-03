@@ -2,7 +2,7 @@ import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -19,6 +19,7 @@ import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function BasketballGameCard({
   game,
+  isSL,
   isCBB,
   isWCBB,
   isWNBA,
@@ -56,7 +57,9 @@ export default function BasketballGameCard({
       ? getCBBTeam(homeId, isWCBB)
       : isWNBA
         ? getWNBATeam(homeId)
-        : getNBATeam(homeId);
+        : isSL
+          ? getTeamBySummerId(homeId)
+          : getNBATeam(homeId);
 
   const awayTeam = isCBB
     ? getCBBTeam(awayId)
@@ -64,7 +67,9 @@ export default function BasketballGameCard({
       ? getCBBTeam(awayId, isWCBB)
       : isWNBA
         ? getWNBATeam(awayId)
-        : getNBATeam(awayId);
+        : isSL
+          ? getTeamBySummerId(awayId)
+          : getNBATeam(awayId);
 
   const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
   const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
@@ -88,6 +93,7 @@ export default function BasketballGameCard({
   const headline = game?.headline || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NBA Finals") ||
     headline?.includes(
       "Men's Basketball Championship - National Championship",
     ) ||

@@ -72,7 +72,7 @@ export default function BasketballSquareGameCard({
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(homeId, isDark)
+      ? getCBBTeamLogo(homeId, isDark, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getTeamLogo(homeId, isDark);
@@ -80,7 +80,7 @@ export default function BasketballSquareGameCard({
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(awayId, isDark)
+      ? getCBBTeamLogo(awayId, isDark, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
@@ -88,6 +88,7 @@ export default function BasketballSquareGameCard({
   const headline = game?.headline || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NBA Finals") ||
     headline?.includes(
       "Men's Basketball Championship - National Championship",
     ) ||
@@ -195,7 +196,7 @@ export default function BasketballSquareGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={awayLogo}
-              style={styles.expoLogo}
+              style={styles.logo}
               contentFit="contain"
               accessibilityLabel={`${awayName} logo`}
             />
@@ -214,7 +215,7 @@ export default function BasketballSquareGameCard({
           <View style={styles.teamWrapper}>
             <Image
               source={homeLogo}
-              style={styles.expoLogo}
+              style={styles.logo}
               contentFit="contain"
               accessibilityLabel={`${homeName} logo`}
             />

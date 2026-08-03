@@ -1,3 +1,4 @@
+import { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -15,16 +16,6 @@ import {
   UIManager,
   View,
 } from "react-native";
-
-interface Play {
-  id: string;
-  team?: { id: string };
-  text?: string;
-  period?: { number: number };
-  clock?: { displayValue: string };
-  awayScore: number;
-  homeScore: number;
-}
 
 type Props = {
   plays?: Play[];

@@ -20,29 +20,9 @@ type Props = {
   awayCode: string;
   homeCode: string;
 
-  awayTeamEspnId?: number | string | null;
-  homeTeamEspnId?: number | string | null;
-
   isDark: boolean;
   league: string;
   state?: string;
-};
-
-type TeamIdConfig = {
-  localId: string | null;
-  espnId: string | null;
-  label: string;
-  logo: any;
-};
-
-const normalizeId = (
-  id?: number | string | null,
-): string | null => {
-  if (id === null || id === undefined || id === "") {
-    return null;
-  }
-
-  return String(id);
 };
 
 export default function TeamScoringSummary({
@@ -54,77 +34,39 @@ export default function TeamScoringSummary({
   homeLogo,
   awayCode,
   homeCode,
-  awayTeamEspnId,
-  homeTeamEspnId,
   isDark,
   state,
 }: Props) {
   const styles = TeamScoringSummaryStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [selectedTab, setSelectedTab] =
-    useState<HomeAwayTabValue>("all");
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("all");
 
   const plays = useMemo(() => {
     return Array.isArray(scoringPlays) ? scoringPlays : [];
   }, [scoringPlays]);
-
-  const teamIds = useMemo<
-    Record<Exclude<HomeAwayTabValue, "all">, TeamIdConfig>
-  >(
-    () => ({
-      away: {
-        localId: normalizeId(awayId),
-        espnId: normalizeId(awayTeamEspnId),
-        label: awayCode?.trim() || "Away",
-        logo: awayLogo,
-      },
-      home: {
-        localId: normalizeId(homeId),
-        espnId: normalizeId(homeTeamEspnId),
-        label: homeCode?.trim() || "Home",
-        logo: homeLogo,
-      },
-    }),
-    [
-      awayCode,
-      awayId,
-      awayLogo,
-      awayTeamEspnId,
-      homeCode,
-      homeId,
-      homeLogo,
-      homeTeamEspnId,
-    ],
-  );
 
   const filteredPlays = useMemo(() => {
     if (selectedTab === "all") {
       return plays;
     }
 
-    const selectedTeam = teamIds[selectedTab];
+    const selectedTeamId = selectedTab === "away" ? awayId : homeId;
 
     return plays.filter((play) => {
-      const playTeamId = normalizeId(play.team?.id);
+      const playTeamId = play.team?.id;
 
-      if (!playTeamId) {
+      if (playTeamId === null || playTeamId === undefined) {
         return false;
       }
 
-      return (
-        playTeamId === selectedTeam.localId ||
-        playTeamId === selectedTeam.espnId
-      );
+      return String(playTeamId) === String(selectedTeamId);
     });
-  }, [plays, selectedTab, teamIds]);
+  }, [plays, selectedTab, awayId, homeId]);
 
   const normalizedState = state?.toLowerCase();
 
-  if (
-    normalizedState !== "post" &&
-    normalizedState !== "in"
-  ) {
+  if (normalizedState !== "post" && normalizedState !== "in") {
     return null;
   }
 
@@ -134,9 +76,7 @@ export default function TeamScoringSummary({
 
   return (
     <View>
-      <HeadingTwo isDark={isDark}>
-        Scoring Summary
-      </HeadingTwo>
+      <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
 
       <View style={styles.wrapper}>
         <HomeAwayTabBar
@@ -172,48 +112,32 @@ export default function TeamScoringSummary({
               });
 
               const clock = play.clock?.displayValue;
-              const isLastPlay =
-                index === filteredPlays.length - 1;
+              const isLastPlay = index === filteredPlays.length - 1;
 
               return (
                 <View
                   key={`${play.id ?? "scoring-play"}-${index}`}
-                  style={[
-                    styles.playRow,
-                    isLastPlay && styles.lastPlayRow,
-                  ]}
+                  style={[styles.playRow, isLastPlay && styles.lastPlayRow]}
                 >
                   <View style={styles.status}>
-                    <Text
-                      numberOfLines={1}
-                      style={styles.statusText}
-                    >
+                    <Text numberOfLines={1} style={styles.statusText}>
                       {period}
                     </Text>
 
                     {!!clock && (
-                      <Text
-                        numberOfLines={1}
-                        style={styles.clockText}
-                      >
+                      <Text numberOfLines={1} style={styles.clockText}>
                         {clock}
                       </Text>
                     )}
                   </View>
 
                   <View style={styles.play}>
-                    <Text style={styles.playText}>
-                      {play.text}
-                    </Text>
+                    <Text style={styles.playText}>{play.text}</Text>
                   </View>
 
                   <View style={styles.score}>
-                    <Text
-                      numberOfLines={1}
-                      style={styles.scoreText}
-                    >
-                      {play.awayScore ?? 0}-
-                      {play.homeScore ?? 0}
+                    <Text numberOfLines={1} style={styles.scoreText}>
+                      {play.awayScore ?? 0}-{play.homeScore ?? 0}
                     </Text>
                   </View>
                 </View>
@@ -231,13 +155,9 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     wrapper: {
       overflow: "hidden",
       borderWidth: 1,
-      borderColor: isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+      borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.black
-        : Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
     listContainer: {
@@ -252,9 +172,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       paddingVertical: 14,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark
-        ? Colors.midTone
-        : Colors.lightGray,
+      borderBottomColor: isDark ? Colors.midTone : Colors.lightGray,
     },
 
     lastPlayRow: {
@@ -280,9 +198,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       fontSize: 14,
       lineHeight: 16,
       fontFamily: Fonts.OSREGULAR,
-      color: isDark
-        ? Colors.midTone
-        : Colors.darkGray,
+      color: isDark ? Colors.midTone : Colors.darkGray,
     },
 
     play: {

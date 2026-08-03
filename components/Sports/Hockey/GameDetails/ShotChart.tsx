@@ -1,103 +1,248 @@
-import RinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
+import { Dropdown } from "@/components/Dropdown";
+import type { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import rinkImage from "assets/Placeholders/NHLRinkPlaceholder.png";
+
+import { getNHLTeam, getNHLTeamLogo } from "@/constants/teamsNHL";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
-import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
-import React, { useState } from "react";
+import { usePreferences } from "contexts/PreferencesContext";
+import React, { useMemo, useState } from "react";
 import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
-interface Play {
-  id: string;
-  shootingPlay: boolean;
-  scoringPlay?: boolean;
-  coordinate: { x: number; y: number };
-  team?: { id: string };
-  period?: { number: number };
-  type: {
-    id: number;
-    text: string;
-  };
-}
-
 interface ShotChartProps {
   plays?: Play[];
-  homeTeamId?: string;
-  awayTeamId?: string;
+  homeId: string | number;
+  awayId: string | number;
+  homeEspnId: string | number;
+  awayEspnId: string | number;
+  homeColor: string;
+  awayColor: string;
+  homeLogo: any;
+  awayLogo: any;
+  league: string;
   neutralSite?: boolean;
-  isDark: boolean;
-  gameStatusDescription: string;
+  state: string | null;
 }
+
+type ShotChartTab =
+  | "All"
+  | "1st"
+  | "2nd"
+  | "3rd"
+  | "4th"
+  | "1st Half"
+  | "2nd Half";
+
+type ShotEventFilter = "All Events" | "Goals" | "Blocked Shots";
+
+const RINK_LENGTH = 200;
+const RINK_WIDTH = 85;
+const RINK_HALF_LENGTH = 100;
+const RINK_HALF_WIDTH = 42.5;
+const RINK_ASSET_WIDTH = 1976;
+const RINK_ASSET_HEIGHT = 963;
+const RINK_ASSET_BOUNDS = {
+  left: 63,
+  top: 64,
+  right: 1911,
+  bottom: 899,
+};
+const RINK_VIEWBOX_BOUNDS = {
+  left: (RINK_ASSET_BOUNDS.left / RINK_ASSET_WIDTH) * RINK_LENGTH,
+  top: (RINK_ASSET_BOUNDS.top / RINK_ASSET_HEIGHT) * RINK_WIDTH,
+  right: (RINK_ASSET_BOUNDS.right / RINK_ASSET_WIDTH) * RINK_LENGTH,
+  bottom: (RINK_ASSET_BOUNDS.bottom / RINK_ASSET_HEIGHT) * RINK_WIDTH,
+};
+const RINK_VIEWBOX_LENGTH =
+  RINK_VIEWBOX_BOUNDS.right - RINK_VIEWBOX_BOUNDS.left;
+const RINK_VIEWBOX_WIDTH =
+  RINK_VIEWBOX_BOUNDS.bottom - RINK_VIEWBOX_BOUNDS.top;
+const RINK_CENTER_LOGO_SIZE = 50;
+
+const normalizeId = (value: string | number | null | undefined) =>
+  String(value ?? "").trim();
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value));
+
+const getPlayEventText = (play: Play) =>
+  [play.type?.text, play.text, play.shortDescription]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+const isGoalPlay = (play: Play) =>
+  play.scoringPlay === true || /\bgoals?\b/.test(getPlayEventText(play));
+
+const isBlockedShot = (play: Play) =>
+  /\b(block|blocked|blocks)\b/.test(getPlayEventText(play));
+
+const matchesEventFilter = (play: Play, filter: ShotEventFilter) => {
+  if (filter === "Goals") {
+    return isGoalPlay(play);
+  }
+
+  if (filter === "Blocked Shots") {
+    return isBlockedShot(play);
+  }
+
+  return true;
+};
 
 export default function ShotChart({
   plays = [],
-  homeTeamId,
-  awayTeamId,
+  homeId,
+  awayId,
+  homeEspnId = "0",
+  awayEspnId = "0",
+  homeColor,
+  awayColor,
+  homeLogo,
+  awayLogo,
+  league,
   neutralSite = false,
-  isDark,
-  gameStatusDescription,
+  state,
 }: ShotChartProps) {
-  const styles = getStyles(isDark);
+  const { resolvedColorScheme } = usePreferences();
 
-  const RINK_LENGTH = 200;
-  const RINK_WIDTH = 85;
+  const isDark = resolvedColorScheme === "dark";
+  const styles = shotChartStyles(isDark);
 
-  const [layout, setLayout] = useState({ width: 0, height: 0 });
-  const [selectedQuarter, setSelectedQuarter] = useState<
-    "All" | "1st" | "2nd" | "3rd"
-  >("All");
+  const homeColorValue = homeColor || Colors.midTone;
+  const awayColorValue = awayColor || Colors.midTone;
 
-  const homeTeam = getNHLTeamByEspnId(homeTeamId ?? 0);
-  const awayTeam = getNHLTeamByEspnId(awayTeamId ?? 0);
+  const homeDatabaseIdString = normalizeId(homeId);
+  const awayDatabaseIdString = normalizeId(awayId);
+  const homeEspnIdString = normalizeId(homeEspnId);
+  const awayEspnIdString = normalizeId(awayEspnId);
 
-  const homeLogo = getNHLTeamLogo(homeTeam?.id ?? 0, isDark);
-  const awayLogo = getNHLTeamLogo(awayTeam?.id ?? 0, isDark);
-
-  const courtLogo = getNHLTeamLogo(homeTeam?.id ?? 0, false);
-  const courtImage = RinkImage;
-
-  const TABS = ["All", "1st", "2nd", "3rd"];
-  const PERIOD_MAP: Record<string, number> = { "1st": 1, "2nd": 2, "3rd": 3 };
-
-  const filteredPlays = plays.filter((p) => {
-    if (!p.coordinate || !p.shootingPlay) return false;
-    if (selectedQuarter !== "All") {
-      return p.period?.number === PERIOD_MAP[selectedQuarter];
-    }
-    return true;
+  const [layout, setLayout] = useState({
+    width: 0,
+    height: 0,
   });
 
-  const renderShots = filteredPlays.map((p) => {
-    let rawX = p.coordinate.x;
-    let rawY = p.coordinate.y;
+  const [selectedPeriod, setSelectedPeriod] = useState<ShotChartTab>("All");
+  const [selectedEventFilter, setSelectedEventFilter] =
+    useState<ShotEventFilter>("All Events");
 
-    // Clamp coordinates inside rink bounds
-    rawX = Math.max(-100, Math.min(100, rawX));
-    rawY = Math.max(-42.5, Math.min(42.5, rawY));
+  const homeTeam = getNHLTeam(homeId);
+  const awayTeam = getNHLTeam(awayId);
 
-    // Flip only X for away team (correct NHL orientation)
-    if (p.team?.id === awayTeamId) {
-      rawX = -rawX;
+  const rinkLogo = useMemo(() => {
+    return getNHLTeamLogo(homeId, false);
+  }, [homeId]);
+
+  const tabs: ShotChartTab[] = ["All", "1st", "2nd", "3rd"];
+
+  const periodOptions = tabs.map((tab) => ({
+    label: tab,
+    value: tab,
+  }));
+
+  const eventOptions: { label: ShotEventFilter; value: ShotEventFilter }[] = [
+    {
+      label: "All Events",
+      value: "All Events",
+    },
+    {
+      label: "Goals",
+      value: "Goals",
+    },
+    {
+      label: "Blocked Shots",
+      value: "Blocked Shots",
+    },
+  ];
+
+  const filteredPlays = useMemo(() => {
+    const periodMap: Partial<Record<ShotChartTab, number>> = {
+      "1st": 1,
+      "2nd": 2,
+      "3rd": 3,
+    };
+
+    return plays.filter((play) => {
+      if (!play.coordinate || !play.shootingPlay) {
+        return false;
+      }
+
+      if (!matchesEventFilter(play, selectedEventFilter)) {
+        return false;
+      }
+
+      return (
+        selectedPeriod === "All" ||
+        play.period?.number === periodMap[selectedPeriod]
+      );
+    });
+  }, [plays, selectedEventFilter, selectedPeriod]);
+
+  const renderShots = filteredPlays.map((play, index) => {
+    const rawX = Number(play.coordinate?.x);
+    const rawY = Number(play.coordinate?.y);
+
+    if (!Number.isFinite(rawX) || !Number.isFinite(rawY)) {
+      return null;
     }
 
-    const svgX = ((rawX + 100) / 200) * RINK_LENGTH;
-    const svgY = ((rawY + 42.5) / 85) * RINK_WIDTH;
+    const playTeamId = normalizeId(play.team?.id);
 
-    const made = p.scoringPlay === true;
+    /*
+     * Plays can contain either the ESPN team ID or the database team ID.
+     * Check both so team colors are applied correctly.
+     */
+    const matchesHomeEspnId =
+      playTeamId !== "" && playTeamId === homeEspnIdString;
 
-    let color = "gray";
-    if (p.team?.id === homeTeamId) color = homeTeam?.color ?? "#007AFF";
-    else if (p.team?.id === awayTeamId) color = awayTeam?.color ?? "#FF3B30";
+    const matchesAwayEspnId =
+      playTeamId !== "" && playTeamId === awayEspnIdString;
 
-    const size = 1.2;
+    const matchesHomeDatabaseId =
+      playTeamId !== "" && playTeamId === homeDatabaseIdString;
+
+    const matchesAwayDatabaseId =
+      playTeamId !== "" && playTeamId === awayDatabaseIdString;
+
+    /*
+     * ESPN IDs take priority. The database-ID fallback is used when
+     * the play response has already been converted to internal IDs.
+     */
+    const isHomeShot =
+      matchesHomeEspnId || (!matchesAwayEspnId && matchesHomeDatabaseId);
+
+    const isAwayShot =
+      matchesAwayEspnId ||
+      (!matchesHomeEspnId && !isHomeShot && matchesAwayDatabaseId);
+
+    const rinkX = clamp(rawX + RINK_HALF_LENGTH, 0, RINK_LENGTH);
+    const rinkY = clamp(RINK_HALF_WIDTH - rawY, 0, RINK_WIDTH);
+
+    /*
+     * The rink PNG includes transparent padding around the drawn rink.
+     * Scale NHL coordinates into the visible rink bounds inside that asset.
+     */
+    const svgX =
+      RINK_VIEWBOX_BOUNDS.left + (rinkX / RINK_LENGTH) * RINK_VIEWBOX_LENGTH;
+    const svgY =
+      RINK_VIEWBOX_BOUNDS.top + (rinkY / RINK_WIDTH) * RINK_VIEWBOX_WIDTH;
+
+    const color = isHomeShot
+      ? homeColorValue
+      : isAwayShot
+        ? awayColorValue
+        : Colors.midTone;
+
+    const made = play.scoringPlay === true;
+    const shotKey = `${play.id ?? "shot"}-${index}`;
 
     if (made) {
       return (
         <Circle
-          key={p.id}
+          key={shotKey}
           cx={svgX}
           cy={svgY}
-          r={1.8}
+          r={1.4}
           fill={color}
           opacity={0.9}
         />
@@ -105,12 +250,19 @@ export default function ShotChart({
     }
 
     return (
-      <React.Fragment key={p.id}>
-        <Circle cx={svgX} cy={svgY} r={size} fill="white" opacity={0.95} />
+      <React.Fragment key={shotKey}>
         <Circle
           cx={svgX}
           cy={svgY}
-          r={size}
+          r={1.4}
+          fill={Colors.white}
+          opacity={0.95}
+        />
+
+        <Circle
+          cx={svgX}
+          cy={svgY}
+          r={1.2}
           stroke={color}
           strokeWidth={0.9}
           fill="none"
@@ -121,59 +273,103 @@ export default function ShotChart({
   });
 
   const MadeView = ({ color }: { color: string }) => (
-    <View style={[styles.madeView, { backgroundColor: color }]} />
+    <View
+      style={[
+        styles.madeMarker,
+        {
+          backgroundColor: color,
+        },
+      ]}
+    />
   );
 
   const MissView = ({ color }: { color: string }) => (
-    <View style={[styles.missView, { borderColor: color }]} />
+    <View
+      style={[
+        styles.missedMarker,
+        {
+          borderColor: color,
+        },
+      ]}
+    />
   );
 
   const onLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
-    setLayout({ width, height });
+
+    setLayout({
+      width,
+      height,
+    });
   };
 
-  if (gameStatusDescription === "Scheduled") return null;
+  const handlePeriodSelect = (value: string) => {
+    if (tabs.includes(value as ShotChartTab)) {
+      setSelectedPeriod(value as ShotChartTab);
+    }
+  };
+
+  const handleEventSelect = (value: string) => {
+    if (eventOptions.some((option) => option.value === value)) {
+      setSelectedEventFilter(value as ShotEventFilter);
+    }
+  };
+
+  if (state === "pre") {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Shot Chart</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <TabBar
-          tabs={TABS}
-          selected={selectedQuarter}
-          onTabPress={(tab) => setSelectedQuarter(tab as any)}
-          isDark={isDark}
-        />
+        <View style={styles.dropdownRow}>
+          <Dropdown
+            options={periodOptions}
+            selectedValue={selectedPeriod}
+            onSelect={handlePeriodSelect}
+            isDark={isDark}
+            width={142}
+          />
+
+          <Dropdown
+            options={eventOptions}
+            selectedValue={selectedEventFilter}
+            onSelect={handleEventSelect}
+            isDark={isDark}
+            width={165}
+          />
+        </View>
 
         <View style={styles.chartWrapper} onLayout={onLayout}>
           <Image
-            source={courtImage}
-            style={styles.courtImage}
+            source={rinkImage}
+            style={styles.rinkImageStyle}
             resizeMode="stretch"
           />
 
           {!neutralSite &&
-            courtLogo &&
+            rinkLogo &&
             layout.width > 0 &&
             layout.height > 0 && (
               <Image
-                source={courtLogo}
-                style={{
-                  position: "absolute",
-                  width: 40,
-                  height: 40,
-                  left: layout.width / 2 - 20,
-                  top: layout.height / 2 - 20,
-                }}
+                source={rinkLogo}
+                style={[
+                  styles.rinkLogo,
+                  {
+                    left: layout.width / 2 - RINK_CENTER_LOGO_SIZE / 2,
+                    top: layout.height / 2 - RINK_CENTER_LOGO_SIZE / 2,
+                  },
+                ]}
+                resizeMode="contain"
               />
             )}
 
           <Svg
             width="100%"
             height="100%"
-            viewBox={`0 0 ${RINK_LENGTH} ${RINK_WIDTH}`}
+            viewBox="0 0 200 85"
             style={StyleSheet.absoluteFill}
           >
             {renderShots}
@@ -183,23 +379,37 @@ export default function ShotChart({
         <View style={styles.legendContainer}>
           {awayTeam && (
             <View style={styles.legendItem}>
-              <Image source={awayLogo} style={styles.legendLogo} />
+              <Image
+                source={awayLogo}
+                style={styles.legendLogo}
+                resizeMode="contain"
+              />
+
               <View style={styles.divider} />
+
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={awayTeam.color ?? Colors.midTone} />
+              <MadeView color={awayColorValue} />
+
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={awayTeam.color ?? Colors.midTone} />
+              <MissView color={awayColorValue} />
             </View>
           )}
 
           {homeTeam && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={homeTeam.color ?? Colors.midTone} />
+              <MadeView color={homeColorValue} />
+
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={homeTeam.color ?? Colors.midTone} />
+              <MissView color={homeColorValue} />
+
               <View style={styles.divider} />
-              <Image source={homeLogo} style={styles.legendLogo} />
+
+              <Image
+                source={homeLogo}
+                style={styles.legendLogo}
+                resizeMode="contain"
+              />
             </View>
           )}
         </View>
@@ -208,30 +418,47 @@ export default function ShotChart({
   );
 }
 
-const getStyles = (isDark: boolean) =>
+export const shotChartStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { width: "100%" },
+    container: {
+      width: "100%",
+    },
 
     wrapper: {
       borderColor: Colors.midTone,
       borderWidth: 1,
       borderRadius: 8,
-      paddingTop: 12,
+      overflow: "hidden",
+    },
+
+    dropdownRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "center",
+      gap: 12,
+      padding: 12,
+      zIndex: 20,
     },
 
     chartWrapper: {
       width: "100%",
-      aspectRatio: 175 / 85,
+      aspectRatio: RINK_LENGTH / RINK_WIDTH,
       overflow: "hidden",
       position: "relative",
     },
 
-    courtImage: {
-      width: "100%",
-      height: "100%",
+    rinkImageStyle: {
       position: "absolute",
       top: 0,
       left: 0,
+      width: "100%",
+      height: "100%",
+    },
+
+    rinkLogo: {
+      position: "absolute",
+      width: RINK_CENTER_LOGO_SIZE,
+      height: RINK_CENTER_LOGO_SIZE,
     },
 
     legendContainer: {
@@ -240,12 +467,14 @@ const getStyles = (isDark: boolean) =>
       justifyContent: "space-between",
       marginTop: 10,
       padding: 12,
+      gap: 12,
     },
 
     legendItem: {
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
+      flexShrink: 1,
     },
 
     legendText: {
@@ -265,13 +494,13 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
-    madeView: {
+    madeMarker: {
       width: 14,
       height: 14,
       borderRadius: 7,
     },
 
-    missView: {
+    missedMarker: {
       width: 14,
       height: 14,
       borderRadius: 7,

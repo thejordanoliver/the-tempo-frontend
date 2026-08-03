@@ -1,5 +1,7 @@
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Hockey/Games/GamesList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
+import { Colors } from "@/constants/styles";
 import { ScheduleMonth, useTeamGames } from "@/hooks/HockeyHooks/useTeamGames";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -10,7 +12,6 @@ import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Sports/Baseball/Team/Roster";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -29,7 +30,6 @@ import {
 } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import { Colors } from "@/constants/styles";
 
 function getMonthKeyFromDate(date: Date | null) {
   if (!date) return null;

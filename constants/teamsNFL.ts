@@ -36,7 +36,8 @@ import SteelersLogo from "assets/Football/NFL_Logos/Steelers.png";
 import TexansLogo from "assets/Football/NFL_Logos/Texans.png";
 import TitansLogo from "assets/Football/NFL_Logos/Titans.png";
 import VikingsLogo from "assets/Football/NFL_Logos/Vikings.png";
-import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+const placeholderLogo =
+  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
 
 export const nflTeams: Team[] = [
   {
@@ -693,26 +694,29 @@ export const getNFLTeam = (id: number | string) =>
   nflTeams.find((t) => String(t.id) === String(id));
 
 export function getNFLTeamLogo(
-  id: string | number | undefined,
+  id: number | string | undefined,
   isDark: boolean,
 ) {
-  if (!id) return PlaceholderLogo; // fallback
+  if (id === undefined || id === null || id === "") {
+    return placeholderLogo;
+  }
 
-  const searchStr = String(id).toLowerCase();
+  const normalizedId = String(id);
 
-  const team = nflTeams.find((t) => {
-    return (
-      t.id === Number(id) || // match by ID
-      (t.name && t.name.toLowerCase() === searchStr) || // match by name
-      (t.code && t.code.toLowerCase() === searchStr) // match by code
-    );
-  });
+  const team = nflTeams.find(
+    (team) =>
+      String(team.id) === normalizedId ||
+      String(team.summerLeagueId) === normalizedId,
+  );
 
-  if (!team) return PlaceholderLogo;
+  if (!team) {
+    return placeholderLogo;
+  }
 
-  return isDark ? team.logoLight || team.logo : team.logo;
+  return isDark
+    ? team.logoLight ?? team.logo ?? placeholderLogo
+    : team.logo ?? placeholderLogo;
 }
-
 export const getNFLTeamByESPNId = (espnId: number | string) => {
   return nflTeams.find((t) => t.espnId?.toString() === espnId?.toString());
 };

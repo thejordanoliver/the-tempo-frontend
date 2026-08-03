@@ -22,7 +22,7 @@ import CustomActivityIndicator from "../components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
 import PollEditorModal, { PollData } from "../components/Forum/PollEditorModal";
 import VideoEditorModal from "../components/Forum/VideoEditorModal";
-import { GiphySearchModal } from "../components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
+import { GiphySearchModal } from "../components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { MediaItem, useCreatePost } from "../hooks/ForumHooks/useCreatePost";
 import { useAuth } from "../hooks/UserHooks/useAuth";

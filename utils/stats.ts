@@ -97,7 +97,7 @@ export type RosterStatsProps = {
 };
 
 // Team Stats
-const numberFormatter = new Intl.NumberFormat("en-US");
+export const numberFormatter = new Intl.NumberFormat("en-US");
 export const formatStatValue = (value: unknown): string => {
   if (value === null || value === undefined || value === "") return "—";
 

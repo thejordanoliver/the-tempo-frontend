@@ -16,6 +16,7 @@ import {
   StatTab,
   TeamStats,
 } from "@/types/football/stats";
+import { formatStatValue } from "@/utils/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -64,8 +65,6 @@ const createRow = (
   displayValue: formatValue(value, suffix),
 });
 
-const numberFormatter = new Intl.NumberFormat("en-US");
-
 const parseStatNumber = (value: FootballStatValue) => {
   if (value === null || value === undefined || value === "") return 0;
 
@@ -77,27 +76,6 @@ const parseStatNumber = (value: FootballStatValue) => {
   const parsed = Number(normalized);
 
   return Number.isFinite(parsed) ? parsed : 0;
-};
-
-const formatPlayerStatValue = (value: FootballStatValue) => {
-  if (value === null || value === undefined || value === "") return "—";
-
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? numberFormatter.format(value) : "—";
-  }
-
-  const raw = String(value).trim();
-  if (!raw) return "—";
-
-  if (raw.endsWith("%")) {
-    const parsed = parseStatNumber(raw);
-
-    return Number.isFinite(parsed) ? `${numberFormatter.format(parsed)}%` : raw;
-  }
-
-  const parsed = Number(raw.replace(/,/g, ""));
-
-  return Number.isFinite(parsed) ? numberFormatter.format(parsed) : raw;
 };
 
 const isStatGroup = (value: unknown): value is FootballStatGroup =>
@@ -736,8 +714,7 @@ export default function RosterStats({
     [roster],
   );
 
-  const route =
-    league === "NFL" ? "/player/football/[id]" : "/player/football/[id]";
+  const route = "/player/football/[id]";
   const handlePress = (player: FootballRosterStatsPlayer) => {
     const id = player.playerId || player.player_id || player.id;
 
@@ -824,7 +801,7 @@ export default function RosterStats({
             </Text>
 
             <Text style={styles.cardValue}>
-              {formatPlayerStatValue(leader.value)}
+              {formatStatValue(leader.value)}
             </Text>
           </View>
         </View>
@@ -911,7 +888,7 @@ export default function RosterStats({
                       { width: column.width ?? 82 },
                     ]}
                   >
-                    {formatPlayerStatValue(getPlayerStatValue(player, column))}
+                    {formatStatValue(getPlayerStatValue(player, column))}
                   </Text>
                 ))}
               </View>
@@ -1058,6 +1035,7 @@ export default function RosterStats({
           {renderPlayerStats()}
         </View>
       )}
+      
       {mountedTabs["Team Stats"] && (
         <View
           style={[

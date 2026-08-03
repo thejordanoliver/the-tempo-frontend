@@ -381,13 +381,15 @@ export const useSoccerGameDetails = (
 
         setWarning(null);
 
+        const params = {
+          league,
+          gameId,
+        };
+
         const { data } = await apiClient.get<GameDetailsResponse>(
-          "api/games/soccer/details",
+          "api/soccer/details",
           {
-            params: {
-              league,
-              gameId,
-            },
+            params,
           },
         );
 

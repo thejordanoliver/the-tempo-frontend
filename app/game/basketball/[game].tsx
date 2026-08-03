@@ -1,8 +1,23 @@
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
+import {
+  GameHeader,
+  GameLocation,
+  GameTeamStats,
+  LastPlay,
+  LineScore,
+} from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
+import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
+import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
+import { HighlightVideoList } from "@/components/Sports/Basketball/GameDetails/Highlights/HighlightVideoList";
+import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+import MatchupPredictor from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
+import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
+import PlayersInFoulTrouble from "@/components/Sports/Basketball/GameDetails/PlayersInFoulTrouble";
 import PlayersOnCourt from "@/components/Sports/Basketball/GameDetails/PlayersOnCourt";
-import { getNBATeam } from "@/constants/teams";
+import ShotChart from "@/components/Sports/Basketball/GameDetails/ShotChart";
+import { getNBATeam, getTeamLogo } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
@@ -12,21 +27,6 @@ import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import {
-  GameHeader,
-  GameLocation,
-  GameTeamStats,
-  LastPlay,
-  LineScore,
-} from "components/Sports/NBA/GameDetails";
-import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
-import MatchupPredictor from "components/Sports/NBA/GameDetails/MatchupPredictor";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
-import PlayersInFoulTrouble from "components/Sports/NBA/GameDetails/PlayersInFoulTrouble";
-import ShotChart from "components/Sports/NBA/GameDetails/ShotChart";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -35,8 +35,17 @@ import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
-import { formatDate, formatTime, getHolidayLabel, safeDate } from "utils/dateUtils";
-import { formatPeriod, formatVenueAddress, getBroadcastDisplay } from "utils/games";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
+import {
+  formatPeriod,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "utils/games";
 
 type RouteParams = {
   game?: string | string[];
@@ -82,7 +91,9 @@ function parseGameParam(value?: string | string[]): BasketballGame | undefined {
   }
 }
 
-export default function GameDetailsScreen(props: Partial<BasketballGameCardProps> = {}) {
+export default function GameDetailsScreen(
+  props: Partial<BasketballGameCardProps> = {},
+) {
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
@@ -91,11 +102,16 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
 
   const game = useMemo(() => {
-    return props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game);
+    return (
+      props.game ?? parseGameParam(params.data) ?? parseGameParam(params.game)
+    );
   }, [params.data, params.game, props.game]);
 
   const leagueId = Number(
-    getFirstParam(params.leagueId) ?? getFirstParam(params.league) ?? game?.league?.id ?? 0,
+    getFirstParam(params.leagueId) ??
+      getFirstParam(params.league) ??
+      game?.league?.id ??
+      0,
   );
 
   const LEAGUE = game?.league?.code ?? "";
@@ -138,18 +154,36 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
   const awayColor = awayTeam?.color ?? Colors.midTone;
   const homeColor = homeTeam?.color ?? Colors.midTone;
 
-  const homeLogo = isWNBA
-    ? getWNBATeamLogo(homeId, isDark)
-    : getCBBTeamLogo(homeId, isDark, isWCBB);
-  const awayLogo = isWNBA
-    ? getWNBATeamLogo(awayId, isDark)
-    : getCBBTeamLogo(awayId, isDark, isWCBB);
-  const homeHeaderLogo = isWNBA
-    ? getWNBATeamLogo(homeId, true)
-    : getCBBTeamLogo(homeId, true, isWCBB);
-  const awayHeaderLogo = isWNBA
-    ? getWNBATeamLogo(awayId, true)
-    : getCBBTeamLogo(awayId, true, isWCBB);
+  const homeLogo = isCBB
+    ? getCBBTeamLogo(homeId, isDark)
+    : isWCBB
+      ? getCBBTeamLogo(homeId, isDark, true)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, isDark)
+        : getTeamLogo(homeId, isDark);
+
+  const awayLogo = isCBB
+    ? getCBBTeamLogo(awayId, isDark)
+    : isWCBB
+      ? getCBBTeamLogo(awayId, isDark, true)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, isDark)
+        : getTeamLogo(awayId, isDark);
+
+  const homeHeaderLogo = isCBB
+    ? getCBBTeamLogo(homeId, true)
+    : isWCBB
+      ? getCBBTeamLogo(homeId, true, true)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, true)
+        : getTeamLogo(homeId, true);
+  const awayHeaderLogo = isCBB
+    ? getCBBTeamLogo(awayId, true)
+    : isWCBB
+      ? getCBBTeamLogo(awayId, true, true)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, true)
+        : getTeamLogo(awayId, true);
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
@@ -175,7 +209,8 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const homeRank = home?.rank ?? null;
   const awayRank = away?.rank ?? null;
   const plays = score?.plays ?? [];
@@ -210,9 +245,12 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
-  const venueRegion = venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
+  const venueRegion =
+    venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
   const venueLocation =
-    venueCity && venueRegion ? `${venueCity}, ${venueRegion}` : (venueCity ?? "");
+    venueCity && venueRegion
+      ? `${venueCity}, ${venueRegion}`
+      : (venueCity ?? "");
 
   const lineScore = score?.periodScores?.length
     ? {
@@ -280,16 +318,10 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
-        stickyHeaderIndices={[0]}>
+        stickyHeaderIndices={[0]}
+      >
         <GameHeader
           headline={headline}
-          gameStatusDescription={gameStatusDescription}
-          gameStatusDetail={gameStatusDetail}
-          clock={clock}
-          period={period}
-          date={formattedDate}
-          time={formattedTime}
-          broadcast={broadcast}
           homeId={homeId}
           awayId={awayId}
           homeLogo={homeLogo}
@@ -300,14 +332,21 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
           awayScore={awayScore}
           homeRecord={homeRecord}
           awayRecord={awayRecord}
+          homeRank={homeRank}
+          awayRank={awayRank}
           homeBonusState={homeBonus}
           awayBonusState={awayBonus}
           homeTimeouts={homeTimeouts}
           awayTimeouts={awayTimeouts}
-          homeRank={homeRank}
-          awayRank={awayRank}
           homeWins={homeWins}
           awayWins={awayWins}
+          clock={clock}
+          period={period}
+          date={formattedDate}
+          time={formattedTime}
+          broadcast={broadcast}
+          gameStatusDescription={gameStatusDescription}
+          gameStatusDetail={gameStatusDetail}
           isDark={isDark}
           league={LEAGUE}
         />
@@ -368,6 +407,7 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
                 state={state}
                 isDark={isDark}
               />
+
               <PlayersInFoulTrouble
                 foulTrouble={foulTrouble}
                 homeId={homeId}
@@ -429,6 +469,7 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
                 homeName={homeCode}
                 homeLogo={homeLogo}
                 homeColor={homeColor}
+                league={LEAGUE}
                 state={state}
                 isDark={isDark}
               />
@@ -482,7 +523,11 @@ export default function GameDetailsScreen(props: Partial<BasketballGameCardProps
       </ScrollView>
 
       {!dontShowDetails && (
-        <GameLiveChatOverlay gameId={String(gameId)} opacityAnim={opacityAnim} state={state} />
+        <GameLiveChatOverlay
+          gameId={String(gameId)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
       )}
     </>
   );

@@ -1,6 +1,8 @@
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
+import { useRosterStats } from "@/hooks/BaseballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -12,7 +14,6 @@ import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import Roster from "components/Sports/Baseball/Team/Roster";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -83,11 +84,21 @@ export default function TeamDetailScreen() {
   } = useLeaguesNews(league, 10);
 
   const {
+    teamRoster,
+    refreshingStats,
+    loading: rosterStatsLoading,
+    error: rosterStatsError,
+    refetch,
+  } = useRosterStats(teamIdNum, league);
+
+  const {
     teamStats,
     loading: teamStatsLoading,
     error: teamStatsError,
-    refresh: teamStatsRefresh,
-  } = useTeamStats({ teamId: espnId, league: league });
+  } = useTeamStats({
+    teamId: espnId,
+    league,
+  });
 
   const {
     players,
@@ -300,13 +311,14 @@ export default function TeamDetailScreen() {
         {/* STATS */}
         <View key="stats" style={styles.contentArea}>
           <RosterStats
+            rosterStats={teamRoster}
+            teamId={teamIdNum}
             teamStats={teamStats}
-            rosterStats={[]}
-            teamId={String(teamIdNum)}
-            loading={teamStatsLoading}
-            error={teamStatsError}
-            onRefresh={teamStatsRefresh}
-            refreshing={false}
+            loading={rosterStatsLoading || teamStatsLoading}
+            error={rosterStatsError || teamStatsError}
+            refreshing={refreshingStats}
+            onRefresh={refetch}
+            league={league}
           />
         </View>
 

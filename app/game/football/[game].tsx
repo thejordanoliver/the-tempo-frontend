@@ -1,19 +1,19 @@
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
-import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
-import GameTeamStats from "@/components/Sports/Football/GameDetails/GameTeamStats";
-import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
-import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
-import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import {
   FanPredictionVote,
   GameLocation,
+  GameTeamStats,
   HighlightVideoList,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
-} from "@/components/Sports/NBA/GameDetails";
-import GameLiveChatOverlay from "@/components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
+} from "@/components/Sports/Basketball/GameDetails";
+import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
+import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
+import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
+import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
+import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -171,7 +171,7 @@ export default function GameDetailsScreen(
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
 
-  const state = score?.status.state;
+  const state = score?.status.state ?? "pre";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -183,7 +183,7 @@ export default function GameDetailsScreen(
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-  
+
   const redzone = score?.possession?.isRedZone;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = details?.broadcast ?? "";
@@ -196,8 +196,8 @@ export default function GameDetailsScreen(
   const awayHasPossesion = possessionTeamId === away?.espnId;
   const homeTimeouts = score?.possession.homeTimeouts;
   const awayTimeouts = score?.possession.awayTimeouts;
-  const homeRecord = details?.records?.home?.overall;
-  const awayRecord = details?.records?.away?.overall;
+  const homeRecord = score?.home.record;
+  const awayRecord = score?.away.record;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const homeScore = score?.home.score ?? 0;
@@ -211,8 +211,8 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-  const homeRank = home?.rank;
-  const awayRank = away?.rank;
+  const homeRank = score?.home?.rank;
+  const awayRank = score?.away?.rank;
   const lastPlay = score?.lastPlay ?? "";
   const officials = details?.officials ?? [];
   const highlights = details?.highlights;
@@ -387,15 +387,16 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              teamStats={teamStats}
+              stats={teamStats}
+              awayName={awayCode}
               awayLogo={awayLogo}
-              homeLogo={homeLogo}
-              awayCode={awayCode}
-              homeCode={homeCode}
-              homeColor={homeColor}
               awayColor={awayColor}
-              isDark={isDark}
+              homeName={homeCode}
+              homeLogo={homeLogo}
+              homeColor={homeColor}
+              league={LEAGUE}
               state={state}
+              isDark={isDark}
             />
 
             <GameLeaders
@@ -414,8 +415,8 @@ export default function GameDetailsScreen(
             <TeamDrives
               previousDrives={previousDrives ?? []}
               currentDrives={currentDrives ?? []}
-              awayId={awayEspnId}
-              homeId={homeEspnId}
+              awayId={awayId}
+              homeId={homeId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}
@@ -427,8 +428,8 @@ export default function GameDetailsScreen(
 
             <TeamScoringSummary
               scoringPlays={scoringPlays}
-              homeId={homeEspnId}
-              awayId={awayEspnId}
+              homeId={homeId}
+              awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}

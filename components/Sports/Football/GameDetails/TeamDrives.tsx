@@ -8,7 +8,7 @@ import { StyleSheet, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import DrivesList from "./DrivesList";
 
-type League = "NFL" | "CFB" | string;
+type League = "nfl" | "cfb" | string;
 
 type Props = {
   previousDrives?: PlayObject[] | null;
@@ -46,7 +46,7 @@ export default function TeamDrives({
   awayCode,
   homeCode,
   isDark,
-  league = "NFL",
+  league = "nfl",
   state,
 }: Props) {
   const styles = TeamDrivesStyles(isDark);

@@ -5,6 +5,7 @@ export const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     listContainer: {
       marginVertical: 8,
+      maxHeight: 400,
     },
     driveCard: {
       paddingHorizontal: 12,

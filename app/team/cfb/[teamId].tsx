@@ -1,6 +1,8 @@
 import Roster from "@/components/Sports/Baseball/Team/Roster";
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
+import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -10,7 +12,6 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import NewsList from "components/News/NewsList";
 import { CFBConferenceStandingsList } from "components/Sports/Football/Standings/CFBConferenceStandingsList";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -26,7 +27,6 @@ import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getFirstSeasonGame } from "utils/seasonGames";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import { Colors } from "@/constants/styles";
 
 export default function TeamDetailScreen() {
   const league = "CFB";

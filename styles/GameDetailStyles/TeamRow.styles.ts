@@ -118,8 +118,8 @@ export type SoccerProps = {
   record: string;
   size?: SizeType;
   rank: number | undefined | null;
-  isDark: boolean;
   isHome?: boolean;
+  isDark: boolean;
   score?: number;
   isTie?: boolean | undefined | null;
   isWinner?: boolean | undefined | null;
@@ -127,6 +127,8 @@ export type SoccerProps = {
   state: string;
   gameStatusDescription?: string;
   league: string;
+  isNational: boolean | undefined | null;
+  isAllStar: boolean | undefined | null;
 };
 
 export type NHLProps = {

@@ -45,6 +45,9 @@ export const rosterStatsStyles = (isDark: boolean) =>
       minHeight: 40,
     },
     teamTableContainer: { flex: 1, gap: 20 },
+    playerStatSelector: {
+      marginBottom: 16,
+    },
 
     teamTableRow: {
       flexDirection: "row",
@@ -85,7 +88,6 @@ export const rosterStatsStyles = (isDark: boolean) =>
       fontFamily: Fonts.OSMEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
-      
     },
     cardWrapper: { flexDirection: "row", alignItems: "flex-end" },
     cardContainer: {
@@ -156,7 +158,6 @@ export const rosterStatsStyles = (isDark: boolean) =>
       fontSize: 20,
       marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
-      marginLeft: 4,
     },
 
     tabScene: {

@@ -21,10 +21,6 @@ import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/Bas
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
 import BaseballSquareGameCard from "components/Sports/Baseball/Games/BaseballSquareGameCard";
 import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballStackedGameCard";
-import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
-import GameCard from "components/Sports/NBA/Games/GameCard";
-import SquareGameCard from "components/Sports/NBA/Games/SquareGameCard";
-import StackedGameCard from "components/Sports/NBA/Games/StackedGameCard";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
 import {
@@ -74,6 +70,7 @@ const BUNDESLIGA_LEAGUE_ID = 720;
 const FOOTBALL_PREVIEW_CATEGORIES = ["NFL", "UFL", "College Football"];
 const HOCKEY_PREVIEW_CATEGORIES = ["NHL", "Men's College Hockey"];
 const BASKETBALL_PREVIEW_CATEGORIES = [
+  "NBA",
   "Men's College Basketball",
   "Women's College Basketball",
   "WNBA",
@@ -288,10 +285,11 @@ export default function LeagueGamesList({
     // ✅ NBA
     if (category === "NBA") {
       const nbaGame = item as BasketballGame;
-      if (viewMode === "list") return wrapper(<GameCard game={nbaGame} />);
+      if (viewMode === "list")
+        return wrapper(<BasketballGameCard game={nbaGame} />);
       if (viewMode === "grid")
-        return wrapper(<SquareGameCard game={nbaGame} />, index);
-      return wrapper(<StackedGameCard game={nbaGame} />);
+        return wrapper(<BasketballSquareGameCard game={nbaGame} />, index);
+      return wrapper(<BasketballStackedGameCard game={nbaGame} />);
     }
 
     // ✅ Men's College Basketball
@@ -789,17 +787,11 @@ export default function LeagueGamesList({
           isCBB={previewCategory === "Men's College Basketball"}
           isWCBB={previewCategory === "Women's College Basketball"}
           isWNBA={previewCategory === "WNBA"}
+          isSL={previewCategory === "NBA Summer League"}
           onClose={() => setModalVisible(false)}
         />
       )}
 
-      {modalVisible && previewGame && previewCategory === "NBA" && (
-        <GamePreviewModal
-          visible={modalVisible}
-          game={previewGame as BasketballGame}
-          onClose={() => setModalVisible(false)}
-        />
-      )}
       {modalVisible && previewGame && previewCategory === "MMA" && (
         <MMAGamePreviewModal
           visible={modalVisible}

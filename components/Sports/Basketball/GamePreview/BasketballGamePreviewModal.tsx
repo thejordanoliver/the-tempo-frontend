@@ -9,7 +9,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getNBATeam } from "constants/teams";
+import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -26,14 +26,15 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import CenterInfo from "../../NBA/GamePreview/CenterInfo";
-import TeamInfo from "../../NBA/GamePreview/TeamInfo";
+import CenterInfo from "./CenterInfo";
 import GamePreviewContent from "./GamePreviewContent";
+import TeamInfo from "./TeamInfo";
 
 type Props = {
   visible: boolean;
   game: BasketballGame;
   onClose: () => void;
+  isSL: boolean;
   isCBB: boolean;
   isWCBB: boolean;
   isWNBA: boolean;
@@ -43,6 +44,7 @@ export default function GamePreviewModal({
   visible,
   game,
   onClose,
+  isSL,
   isCBB,
   isWCBB,
   isWNBA,
@@ -79,12 +81,16 @@ export default function GamePreviewModal({
     ? getWNBATeam(homeId)
     : isCBB
       ? getCBBTeam(homeId, isWCBB)
-      : getNBATeam(homeId);
+      : isSL
+        ? getTeamBySummerId(homeId)
+        : getNBATeam(homeId);
   const awayTeam = isWNBA
     ? getWNBATeam(awayId)
     : isCBB
       ? getCBBTeam(awayId, isWCBB)
-      : getNBATeam(awayId);
+      : isSL
+        ? getTeamBySummerId(awayId)
+        : getNBATeam(awayId);
 
   const homeCode = homeTeam?.code ?? "";
   const awayCode = awayTeam?.code ?? "";
@@ -93,15 +99,25 @@ export default function GamePreviewModal({
   const awayColor = awayTeam?.color ?? Colors.midTone;
   const homeColor = homeTeam?.color ?? Colors.midTone;
 
-  const homeLogo = isWNBA
-    ? getWNBATeamLogo(homeId, true)
-    : getCBBTeamLogo(homeId, true, isWCBB);
-  const awayLogo = isWNBA
-    ? getWNBATeamLogo(awayId, true)
-    : getCBBTeamLogo(awayId, true, isWCBB);
+  const homeLogo = isCBB
+    ? getCBBTeamLogo(homeId, true)
+    : isWCBB
+      ? getCBBTeamLogo(homeId, true, true)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, true)
+        : getTeamLogo(homeId, true);
+
+  const awayLogo = isCBB
+    ? getCBBTeamLogo(awayId, true)
+    : isWCBB
+      ? getCBBTeamLogo(awayId, true, true)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, true)
+        : getTeamLogo(awayId, true);
 
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NBA Finals") ||
     headline?.includes(
       "Men's Basketball Championship - National Championship",
     ) ||

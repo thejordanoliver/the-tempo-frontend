@@ -1,5 +1,6 @@
 // post/[postId].tsx
 
+import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -7,7 +8,6 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { CommentItem } from "components/Forum/CommentItem";
 import { Post, PostItem } from "components/Forum/PostItem";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
-import { GiphySearchModal } from "components/Sports/NBA/GameDetails/GameChat/GiphySearchSheet";
 import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";

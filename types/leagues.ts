@@ -1,8 +1,8 @@
+import { MMAFight } from "@/hooks/MMAHooks/useMMAGames";
 import { BaseballGame } from "./baseball/baseball";
 import { BasketballGame } from "./basketball/basketball";
 import { FootballGame } from "./football/football";
 import { HockeyGame } from "./hockey/hockey";
-import { MMAFight } from "./mma";
 import { SoccerGame } from "./soccer/soccer";
 
 export type LeagueCategory =

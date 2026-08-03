@@ -42,7 +42,7 @@ export const lastPlayStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    avatar: {
+    headhshot: {
       width: 40,
       height: 40,
       borderRadius: 100,

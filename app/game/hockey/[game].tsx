@@ -1,24 +1,31 @@
+import {
+  GameLocation,
+  GameTeamStats,
+  LastFiveGames,
+  LastPlay,
+  LineScore,
+} from "@/components/Sports/Basketball/GameDetails";
+import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
+import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
+import { HighlightVideoList } from "@/components/Sports/Basketball/GameDetails/Highlights/HighlightVideoList";
+import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
 import NHLInjuries from "@/components/Sports/Hockey/GameDetails/NHLInjuries";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
+import { Colors } from "@/constants/styles";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
-import { formatDate, formatTime, getHolidayLabel, safeDate } from "@/utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
-import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
-import {
-  GameLocation,
-  LastFiveGames,
-  LineScore,
-} from "components/Sports/NBA/GameDetails";
-import FanPredictionVote from "components/Sports/NBA/GameDetails/FanPredictionVote";
-import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
-import { HighlightVideoList } from "components/Sports/NBA/GameDetails/Highlights/HighlightVideoList";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
@@ -108,13 +115,13 @@ export default function GameDetailsScreen(
   const home = game?.home;
   const away = game?.away;
 
-  const homeId = Number(home?.id ?? 0);
-  const awayId = Number(away?.id ?? 0);
-  const homeTeam = getNHLTeam(home?.id ?? 0) ?? null;
-  const awayTeam = getNHLTeam(away?.id ?? 0) ?? null;
+  const homeId = home?.id ?? 0;
+  const awayId = away?.id ?? 0;
+  const homeTeam = getNHLTeam(homeId);
+  const awayTeam = getNHLTeam(awayId);
 
-  const homeEspnId = homeTeam?.espnId;
-  const awayEspnId = awayTeam?.espnId;
+  const homeEspnId = homeTeam?.espnId ?? 0;
+  const awayEspnId = awayTeam?.espnId ?? 0;
 
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
@@ -123,19 +130,22 @@ export default function GameDetailsScreen(
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
 
-  const awayColor = useMemo(() => awayTeam?.color, [awayTeam?.color]);
-  const homeColor = useMemo(() => homeTeam?.color, [homeTeam?.color]);
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam?.color ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE);
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
-  const gameStatusDescription = score?.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.gameStatusDetail ?? "";
-  const state = game?.status.state;
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
+  const state = score?.status.state ?? null;
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
+  // const playerStats = score?.playerStats ?? [];
+  const teamStats = score?.teamStats ?? [];
+  console.log(LEAGUE);
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -146,15 +156,15 @@ export default function GameDetailsScreen(
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isNHL: true });
-  const clock = score?.displayClock ?? "0:00";
-  const homeScore = score?.home?.total ?? 0;
-  const awayScore = score?.away?.total ?? 0;
+  const clock = score?.status.displayClock ?? "0:00";
+  const homeScore = score?.home?.score ?? 0;
+  const awayScore = score?.away?.score ?? 0;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
-  const homeRecord = details?.records?.home.overall ?? "0-0";
-  const awayRecord = details?.records?.away.overall ?? "0-0";
-  const homeTimeouts = score?.timeouts?.home ?? 0;
-  const awayTimeouts = score?.timeouts?.away ?? 0;
+  const homeRecord = score?.home.records[0].summary ?? "0-0";
+  const awayRecord = score?.away.records[0].summary ?? "0-0";
+  const homeTimeouts = score?.home?.timeouts ?? 0;
+  const awayTimeouts = score?.away.timeouts ?? 0;
   const officials = details?.officials ?? [];
   const injuries = details?.injuries ?? [];
   const highlights = details?.highlights ?? [];
@@ -179,7 +189,7 @@ export default function GameDetailsScreen(
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
@@ -280,9 +290,11 @@ export default function GameDetailsScreen(
           <View style={styles.innerContainer}>
             <LastPlay
               lastPlay={lastPlay}
-              gameStatusDescription={gameStatusDescription}
+              homeId={homeId}
+              awayId={awayId}
+              state={state}
+              league={LEAGUE}
             />
-
             <FanPredictionVote
               gameId={String(gameId)}
               awayId={awayId}
@@ -307,10 +319,29 @@ export default function GameDetailsScreen(
 
             <ShotChart
               plays={plays}
-              homeTeamId={String(homeEspnId)}
-              awayTeamId={String(awayEspnId)}
+              homeEspnId={homeEspnId}
+              awayEspnId={awayEspnId}
+              homeId={homeId}
+              awayId={awayId}
+              homeColor={homeColor}
+              awayColor={awayColor}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              league={LEAGUE}
+              state={state}
+            />
+
+            <GameTeamStats
+              stats={teamStats}
+              awayName={awayCode}
+              awayLogo={awayLogo}
+              awayColor={awayColor}
+              homeName={homeCode}
+              homeLogo={homeLogo}
+              homeColor={homeColor}
+              league={LEAGUE}
+              state={state}
               isDark={isDark}
-              gameStatusDescription={gameStatusDescription}
             />
 
             <GameSummary plays={plays ?? []} isDark={isDark} />

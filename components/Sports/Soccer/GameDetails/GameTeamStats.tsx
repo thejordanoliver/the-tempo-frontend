@@ -235,12 +235,12 @@ export default function GameTeamStats({
       <HeadingTwo isDark={isDark}>Team Stats</HeadingTwo>
       <View style={styles.logosRow}>
         <View style={styles.teamContainer}>
-          <Image source={{ uri: awayLogo }} style={styles.logo} />
+          <Image source={awayLogo} style={styles.logo} />
           <Text style={styles.teamLabel}>{awayCode}</Text>
         </View>
 
         <View style={styles.teamContainer}>
-          <Image source={{ uri: homeLogo }} style={styles.logo} />
+          <Image source={homeLogo} style={styles.logo} />
           <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>

@@ -87,6 +87,7 @@ export default function BasketballStackedGameCard({
   const headline = game?.headline || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
+    headline?.includes("NBA Finals") ||
     headline?.includes(
       "Men's Basketball Championship - National Championship",
     ) ||

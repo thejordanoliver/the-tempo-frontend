@@ -1,30 +1,78 @@
+import { Venue } from "@/types/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
-/* ---------------------------------- */
-/* Types                              */
-/* ---------------------------------- */
 
-export type Venue = {
+export type StatsByKey = {
+  minutes: string;
+  points: string;
+  "fieldGoalsMade-fieldGoalsAttempted": string;
+  "threePointFieldGoalsMade-threePointFieldGoalsAttempted": string;
+  "freeThrowsMade-freeThrowsAttempted": string;
+  rebounds: string;
+  assists: string;
+  turnovers: string;
+  steals: string;
+  blocks: string;
+  offensiveRebounds: string;
+  defensiveRebounds: string;
+  fouls: string;
+  plusMinus: string;
+};
+
+export type StatItem = {
+  key: string;
+  name: string;
+  label: string;
+  description: string;
+  value: string;
+};
+
+export type TeamRecord = {
+  type: string;
+  summary: string;
+  displayValue: string;
+};
+
+export type Team = {
   id: string;
+  guid: string;
+  uid: string;
+  location: string;
+  name: string;
   fullName: string;
-  address: {
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
+  shortName: string;
+  code: string;
+  homeAway: string;
+  score: number;
+  winner: boolean;
+  record: string;
+  records: TeamRecord[];
+  timeouts: number | null;
+  fouls: {
+    teamFouls: number;
+    teamFoulsCurrent: number;
+    foulsToGive: number;
+    bonusState: string;
   };
-  grass: boolean;
-  images: [
-    {
-      href: string;
-      rel: ["full", "day"];
-    },
-    {
-      href: string;
-      rel: ["full", "day", "interior"];
-    },
-  ];
-  
+  rank: number | null;
+};
+
+export type Athlete = {
+  id: number;
+  active: boolean;
+  starter: boolean;
+  didNotPlay: boolean;
+  reason: string | null;
+  ejected: boolean;
+  uid: string | null;
+  guid: string | null;
+  shortName: string | null;
+  headshot: string | null;
+  jersey: string | null;
+  position: string | null;
+  stats: string[];
+  statsByKey: StatsByKey;
+  statItems: StatItem[];
 };
 
 export type SeriesSummary = {
@@ -65,61 +113,188 @@ export type Predictor = {
   };
 };
 
-type TeamFouls = {
-  bonusState: string | null;
-  foulsToGive: number;
-  teamFouls: number;
-  teamFoulsCurrent: number;
+export type StatsTeam = {
+  id: number;
+  espnId: number;
+  name: string;
+  fullName: string;
+  code: string;
+  location: string;
+  city: string;
+  state: string;
+  primaryColor: string;
+  secondaryColor: string;
+  established: number;
+  venueId: string;
+  venueLeagueKey: string;
 };
 
-type TeamStat = {
+export type PlayerStatsGroup = {
+  team: StatsTeam;
+  names: string[];
+  keys: string[];
+  labels: string[];
+  athletes: Athlete[];
+};
+
+export type PlayerStats = PlayerStatsGroup[];
+
+export type TeamStat = {
   name: string;
   displayValue: string;
 };
 
-export type Score = {
-  home: { total: number };
-  away: { total: number };
-  periodScores?: { period: number; home: number; away: number }[];
-  homeTeam: string;
-  awayTeam: string;
-  status: "canceled" | "scheduled" | "in_play" | "final";
+export type TeamStatsGroup = {
+  team: StatsTeam;
+  stats: TeamStat[];
+};
+
+export type TeamStats = TeamStatsGroup[];
+
+/* ---------------------------------- */
+/* Play participant types             */
+/* ---------------------------------- */
+
+export type PlayParticipantAthlete = {
+  id: number | null;
+  espnId: number | null;
+  teamId: number | null;
+  teamEspnId: number | null;
+  name: string | null;
+  displayName: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  shortName: string | null;
+  headshot: string | null;
+  jersey: string | null;
+  position: string | null;
+};
+
+export type PlayParticipant = {
+  teamId: number | null;
+  teamEspnId: number | null;
+  athlete: PlayParticipantAthlete;
+};
+
+export type Play = {
+  id: string;
+  sequenceNumber: string;
+  type: {
+    id: string;
+    text: string;
+  };
+  text: string;
+  awayScore: number;
+  homeScore: number;
+  period: {
+    number: number;
+    displayValue: string;
+  };
+  clock: {
+    displayValue: string;
+  };
+  scoringPlay: boolean;
+  scoreValue: number;
+  team: {
+    id: number;
+    espnId: number;
+  };
+  participants?: PlayParticipant[];
+  wallclock: string;
+  shootingPlay: boolean;
+  coordinate: {
+    x: number;
+    y: number;
+  };
+  pointsAttempted: number;
+  shortDescription: string;
+};
+
+/* ---------------------------------- */
+/* Leader types                       */
+/* ---------------------------------- */
+
+export type Statistics = {
+  name: string;
+  displayName: string;
+  shortDisplayName: string;
+  description: string;
+  abbreviation: string;
+  value: number;
+  displayValue: string;
+};
+
+export type LeaderAthlete = {
+  id: number;
+  espnId: number;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  shortName: string;
+  headshot: string | null;
+  jersey: string | null;
+  position: string | null;
+};
+
+export type PlayerLeader = {
+  displayValue: string;
+  value: number;
+  athlete: LeaderAthlete;
+  statistics: Statistics[];
+  mainStat: {
+    value: string;
+    label: string;
+  };
+  summary: string;
+};
+
+export type PlayerLeaders = {
+  name: string;
+  displayName: string;
+  leaders: PlayerLeader[];
+};
+
+export type Leaders = {
+  team: StatsTeam;
+  leaders: PlayerLeaders[];
+};
+
+/* ---------------------------------- */
+/* Score and details                  */
+/* ---------------------------------- */
+
+export type GameStatus = {
+  id: string;
+  name: "STATUS_SCHEDULED" | "STATUS_IN_PROGRESS" | "STATUS_FINAL";
+  state: "pre" | "in" | "post";
+  completed: boolean;
   gameStatusDescription: string;
   gameStatusDetail: string;
-  statusText?: string;
-  displayClock?: string;
-  period?: number;
-  lastUpdated?: number;
-  boxScore: any | null;
-  plays: any[];
-  lastPlay: string;
-  teamStats: {
-    team: any;
-    stats: TeamStat[];
-  }[];
-  outs: number;
-  playerStats: {
-    team: any;
-    names: string[];
-    keys: string[];
-    labels: string[];
-    athletes: any[];
-  }[];
+  shortDetail: string;
+  clock: number | null;
+  displayClock: string | null;
+  period: number | null;
+};
 
-  leaders: any[];
-  timeouts: {
-    home: number | null;
-    away: number | null;
-  };
-  fouls: {
-    home: TeamFouls;
-    away: TeamFouls;
-  };
-  bases: {
-    onFirst: boolean;
-    onSecond: boolean;
-    onThird: boolean;
-  };
+export type Score = {
+  gameId: string;
+  uid?: string;
+  date?: string;
+  lastUpdated: number;
+  status: GameStatus;
+  periodScores: {
+    period: number;
+    home: number;
+    away: number;
+  }[];
+  home: Team;
+  away: Team;
+  plays: Play[];
+  lastPlay: Play;
+  teamStats: TeamStats;
+  playerStats: PlayerStats;
+  leaders: Leaders[];
 };
 
 export type TeamRecords = {
@@ -225,7 +400,7 @@ export const useHockeyGameDetails = (
       intervalRef.current = null;
     }
 
-    if (score.status !== "in_play") return;
+    if (score.status.state !== "in") return;
 
     intervalRef.current = setInterval(() => {
       fetchDetails(true);
@@ -249,7 +424,7 @@ export const useHockeyGameDetails = (
     loading,
     warning,
     refresh,
-    isLive: score?.status === "in_play",
+    isLive: score?.status.state === "in",
     lastRefresh,
   };
 };

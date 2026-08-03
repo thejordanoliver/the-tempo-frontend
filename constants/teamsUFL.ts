@@ -28,6 +28,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 132261,
@@ -45,6 +46,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 112646,
@@ -62,6 +64,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 112647,
@@ -79,6 +82,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 126075,
@@ -96,6 +100,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 132262,
@@ -113,6 +118,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 132263,
@@ -130,6 +136,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
   {
     id: 112651,
@@ -147,6 +154,7 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
+    isNational: false
   },
 ];
 

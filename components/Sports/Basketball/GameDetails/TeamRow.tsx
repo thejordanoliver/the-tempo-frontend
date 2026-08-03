@@ -2,91 +2,78 @@ import { Colors } from "constants/styles";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
-  SizeType,
+  BasketballTeamRowProps,
   teamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
-type CollegeBasketballTeamRowProps = {
-  team: {
-    id?: string | number;
-    wid?: string | number;
-    logo: any;
-    code?: string;
-    record?: string;
-  };
-  rank?: number | null;
-  isDark: boolean;
-  isHome?: boolean;
-  score?: number | null;
-  isWinner?: boolean;
-  gameStatusDescription?: string;
-  size?: SizeType;
-  timeouts?: number | null;
-  bonusState?: string | null;
-  status?: string;
-  league?: "cbb" | "wcbb";
-};
+/* -----------------------------------------------------
+ * Helpers
+ * --------------------------------------------------- */
 
 export const TeamRow = ({
-  team,
+  id,
+  name,
   rank,
+  logo,
+  record,
   isDark,
   isHome = false,
   score,
   isWinner,
   gameStatusDescription,
   timeouts,
-  league = "cbb",
-}: CollegeBasketballTeamRowProps) => {
+  bonusState,
+  league,
+}: BasketballTeamRowProps) => {
   const router = useRouter();
   const styles = teamRowStyles(isDark);
 
-  const logo = team.logo;
-  const code = team.code;
-  const record = team.record;
-
-  // -----------------------------------------------------
-  // Status normalization
-  // -----------------------------------------------------
-
-  const isScheduled = gameStatusDescription === "Scheduled";
-
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "Halftime" ||
-    gameStatusDescription === "End of Period";
-
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
+  /* -----------------------------------------------------
+   * Game State
+   * --------------------------------------------------- */
   const isFinal = gameStatusDescription === "Final";
-  const isForfeit = gameStatusDescription === "Forfeit";
+  const isScheduled =
+    gameStatusDescription === "Scheduled" ||
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Postponed";
 
-  const isInvalidRecord = record === "-";
-  const displayRecord = isInvalidRecord ? "" : record;
+  const inProgress = ["In Progress", "Halftime", "End of Period"].includes(
+    gameStatusDescription ?? "",
+  );
 
-  // -----------------------------------------------------
-  // Routing
-  // -----------------------------------------------------
+  const showRecordInsteadOfScore = isScheduled || score == null;
+
+  /* -----------------------------------------------------
+   * Routing
+   * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (league === "wcbb") {
-      if (!team.wid) return;
-      router.push(`/team/wcbb/${team.wid}`);
-      return;
+    if (league === "nba") {
+      router.push(`/team/${id}`);
     }
-
-    // Men's college
-    if (!team.id) return;
-    router.push(`/team/cbb/${team.id}`);
+    if (league === "wnba") {
+      router.push(`/team/wnba/${id}`);
+    }
+    if (league === "cbb") {
+      router.push(`/team/cbb/${id}`);
+    }
+    if (league === "wcbb") {
+      router.push(`/team/wcbb/${id}`);
+    }
   };
 
-  const showRecordInsteadOfScore =
-    isCanceled || isDelayed || isPostponed || isScheduled || score == null;
-
+  /* -----------------------------------------------------
+   * Styles
+   * --------------------------------------------------- */
   const getScoreStyle = () => {
-    if (score == null) return { color: Colors.midTone, opacity: 0.5 };
-    if (inProgress) return { color: isDark ? Colors.white : Colors.black };
-    if (isFinal || isForfeit) {
+    if (score == null) {
+      return { color: Colors.midTone, opacity: 0.5 };
+    }
+
+    if (inProgress) {
+      return { color: isDark ? Colors.white : Colors.black };
+    }
+
+    if (isFinal) {
       return {
         color: isWinner
           ? isDark
@@ -95,9 +82,43 @@ export const TeamRow = ({
           : Colors.midTone,
       };
     }
+
     return { color: Colors.midTone };
   };
 
+  /* -----------------------------------------------------
+   * Render Helpers
+   * --------------------------------------------------- */
+  const renderTimeouts = (remaining: number) => {
+    const total = 7;
+
+    return (
+      <View style={{ flexDirection: "row", marginTop: 4 }}>
+        {Array.from({ length: total }).map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 4,
+              height: 2,
+              borderRadius: 4,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              opacity: i < remaining ? 1 : 0.5,
+              marginHorizontal: 2,
+            }}
+          />
+        ))}
+      </View>
+    );
+  };
+
+  const renderBonus = () =>
+    bonusState === "DOUBLE" && !isFinal ? (
+      <Text style={styles.bonus}>BONUS</Text>
+    ) : null;
+
+  /* -----------------------------------------------------
+   * Render
+   * --------------------------------------------------- */
   return (
     <View style={styles.row}>
       {/* Home Score */}
@@ -110,8 +131,9 @@ export const TeamRow = ({
                 : [styles.score, getScoreStyle()]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
+            {showRecordInsteadOfScore ? record : (score ?? "")}
           </Text>
+          {renderBonus()}
         </View>
       )}
 
@@ -124,15 +146,17 @@ export const TeamRow = ({
         <View style={styles.teamInfo}>
           <Text style={styles.teamName}>
             {rank && <Text style={styles.rank}>{rank} </Text>}
-            {code}
+            {name}
           </Text>
 
           {!showRecordInsteadOfScore && !inProgress && (
-            <Text style={styles.record}>{displayRecord}</Text>
+            <Text style={styles.record}>{record}</Text>
           )}
 
-          {inProgress && timeouts !== undefined && (
-            <View style={{ alignItems: "center" }}></View>
+          {inProgress && timeouts != null && (
+            <View style={styles.timeoutsContainer}>
+              {renderTimeouts(timeouts)}
+            </View>
           )}
         </View>
       </View>
@@ -143,16 +167,13 @@ export const TeamRow = ({
           <Text
             style={
               showRecordInsteadOfScore
-                ? [styles.preGameRecord, styles.preGameRecord]
-                : [
-                    styles.score,
-                    styles.score,
-                    getScoreStyle(), // ✅ CALL IT
-                  ]
+                ? [styles.preGameRecord]
+                : [styles.score, getScoreStyle()]
             }
           >
-            {showRecordInsteadOfScore ? displayRecord : (score ?? "")}
+            {showRecordInsteadOfScore ? record : (score ?? "")}
           </Text>
+          {renderBonus()}
         </View>
       )}
     </View>

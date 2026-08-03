@@ -16,6 +16,7 @@ import {
 import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 
+import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
 import DateNavigator from "../../components/DateNavigator";
@@ -30,8 +31,7 @@ import SportsListModal, {
 } from "../../components/League/SportsListModal";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
-import GamesList from "../../components/Sports/NBA/Games/GamesList";
-import { NBAPlayoffBracket } from "../../components/Sports/NBA/Playoffs/NBAPlayoffBracket";
+import { NBAPlayoffBracket } from "../../components/Sports/Basketball/NBAPlayoffs/NBAPlayoffBracket";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";

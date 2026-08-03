@@ -275,7 +275,7 @@ export type Leaders = {
 
 export type GameStatus = {
   id: string;
-  name: "STATUS_SCHEDULED" | "STATUS_IN_PROGRESS" | "STATUS_FINAL";
+  name: "STATUS_SCHEDULED" | "STATUS_IN_PROGRESS" | "STATUS_HALFTIME" | "STATUS_FINAL";
   state: "pre" | "in" | "post";
   completed: boolean;
   gameStatusDescription: string;

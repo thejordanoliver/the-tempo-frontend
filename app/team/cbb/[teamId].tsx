@@ -1,7 +1,8 @@
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
-import Roster from "@/components/Sports/NBA/Team/Roster";
-import RosterStats from "@/components/Sports/NBA/Team/RosterStats";
+import Roster from "@/components/Sports/Basketball/Team/Roster";
+import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
+import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import {
@@ -17,7 +18,6 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
-import TeamInfoModal from "components/Sports/NBA/Team/TeamInfoModal";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";

@@ -1,5 +1,4 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
-import GameTeamStats from "@/components/Sports/Baseball/GameDetails/GameTeamStats";
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { useVenue } from "@/hooks/useVenue";
 import {
@@ -18,13 +17,14 @@ import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
   FanPredictionVote,
   GameLocation,
+  GameTeamStats,
   HighlightVideoList,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
-} from "../../../components/Sports/NBA/GameDetails";
-import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
+} from "../../../components/Sports/Basketball/GameDetails";
+import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
 import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
@@ -98,17 +98,11 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const leagueId = Number(
-    getFirstParam(params.leagueId) ??
-      getFirstParam(params.league) ??
-      game?.league?.id ??
-      0,
-  );
-
   const LEAGUE = game?.league?.code ?? "mlb";
-  const isCB = leagueId === 14;
-  const isSB = leagueId === 102;
+  const isCB = LEAGUE === "cb";
+  const isSB = LEAGUE === "sb";
   const gameId = game?.id;
+
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
   const gameDateObj = score?.date ? new Date(score.date) : null;
@@ -140,6 +134,7 @@ export default function GameDetailsScreen(
 
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+
   const awayName = useMemo(
     () => awayTeam?.fullName ?? "",
     [awayTeam?.fullName],
@@ -198,7 +193,6 @@ export default function GameDetailsScreen(
   const awayScore = score?.away.score ?? 0;
   const homeWins = score?.home?.winner ?? false;
   const awayWins = score?.away?.winner ?? false;
-
 
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -407,14 +401,15 @@ export default function GameDetailsScreen(
 
             <GameTeamStats
               stats={teamStats}
-              homeLogo={homeLogo}
+              awayName={awayCode}
               awayLogo={awayLogo}
-              homeCode={homeCode}
-              awayCode={awayCode}
               awayColor={awayColor}
+              homeName={homeCode}
+              homeLogo={homeLogo}
               homeColor={homeColor}
-              isDark={isDark}
+              league={LEAGUE}
               state={state}
+              isDark={isDark}
             />
 
             <BoxScore
@@ -428,6 +423,7 @@ export default function GameDetailsScreen(
               state={state}
               isDark={isDark}
             />
+
             <HighlightVideoList highlights={highlights} isDark={isDark} />
 
             <Officials

@@ -1,10 +1,10 @@
 // components/Sports/Football/GameDetails/GameLeaders.tsx
 
-import {
+import type {
   Athlete,
-  FootballLeaderCategory,
-  FootballLeaderEntry,
-  FootballTeamLeaders,
+  LeaderCategory,
+  LeaderEntry,
+  TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -36,7 +36,7 @@ type Category = (typeof GAME_CATEGORIES)[number];
 type Side = "away" | "home";
 
 type Props = {
-  leaders: FootballTeamLeaders[] | undefined;
+  leaders?: TeamLeaders[];
   awayLogo: ImageSourcePropType | null;
   homeLogo: ImageSourcePropType | null;
   awayCode: string;
@@ -52,23 +52,151 @@ type Props = {
 
 type DisplayLeader = {
   side: Side;
-  category: FootballLeaderCategory;
-  entry: FootballLeaderEntry;
+  category: LeaderCategory;
+  entry: LeaderEntry;
+};
+
+type StatDefinition = {
+  label: string;
+  index: number;
+};
+
+type DisplayStat = {
+  label: string;
+  value: string | number;
 };
 
 const CATEGORY_KEYS: Record<Category, string[]> = {
-  Passing: ["passingYards"],
-  Rushing: ["rushingYards"],
-  Receiving: ["receivingYards"],
-  Defensive: ["totalTackles", "sacks", "interceptions", "defensive"],
-  Kicking: ["fieldGoalsMade", "fieldGoals", "kickingPoints", "extraPointsMade"],
-  Punting: ["puntYards", "punts", "grossAvgPuntYards"],
+  Passing: ["passing", "passingyards"],
+  Rushing: ["rushing", "rushingyards"],
+  Receiving: ["receiving", "receivingyards"],
+  Defensive: ["defensive", "defense", "totaltackles", "sacks", "interceptions"],
+  Kicking: [
+    "kicking",
+    "fieldgoalsmade",
+    "fieldgoals",
+    "kickingpoints",
+    "extrapointsmade",
+  ],
+  Punting: ["punting", "puntyards", "punts", "grossavgpuntyards"],
+};
+
+/*
+ * These indexes match the order of the stats arrays returned
+ * by the football game-details API.
+ */
+const STAT_DEFINITIONS: Record<string, StatDefinition[]> = {
+  passing: [
+    { label: "CMP/ATT", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  passingyards: [
+    { label: "CMP/ATT", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  rushing: [
+    { label: "CAR", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  rushingyards: [
+    { label: "CAR", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  receiving: [
+    { label: "REC", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  receivingyards: [
+    { label: "REC", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "TD", index: 3 },
+    { label: "AVG", index: 2 },
+  ],
+
+  defensive: [
+    { label: "TOT", index: 0 },
+    { label: "SOLO", index: 1 },
+    { label: "SACKS", index: 2 },
+    { label: "TFL", index: 3 },
+  ],
+
+  defense: [
+    { label: "TOT", index: 0 },
+    { label: "SOLO", index: 1 },
+    { label: "SACKS", index: 2 },
+    { label: "TFL", index: 3 },
+  ],
+
+  totaltackles: [
+    { label: "TOT", index: 0 },
+    { label: "SOLO", index: 1 },
+    { label: "SACKS", index: 2 },
+    { label: "TFL", index: 3 },
+  ],
+
+  interceptions: [
+    { label: "INT", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "AVG", index: 2 },
+    { label: "TD", index: 4 },
+  ],
+
+  kicking: [
+    { label: "FG", index: 0 },
+    { label: "XP", index: 3 },
+    { label: "LONG", index: 2 },
+    { label: "PTS", index: 4 },
+  ],
+
+  fieldgoalsmade: [
+    { label: "FG", index: 0 },
+    { label: "XP", index: 3 },
+    { label: "LONG", index: 2 },
+    { label: "PTS", index: 4 },
+  ],
+
+  fieldgoals: [
+    { label: "FG", index: 0 },
+    { label: "XP", index: 3 },
+    { label: "LONG", index: 2 },
+    { label: "PTS", index: 4 },
+  ],
+
+  punting: [
+    { label: "NO", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "AVG", index: 2 },
+    { label: "LONG", index: 5 },
+  ],
+
+  puntyards: [
+    { label: "NO", index: 0 },
+    { label: "YDS", index: 1 },
+    { label: "AVG", index: 2 },
+    { label: "LONG", index: 5 },
+  ],
 };
 
 function normalizeValue(value: unknown): string {
   return String(value ?? "")
     .trim()
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[\s_-]/g, "");
 }
 
 function idsMatch(
@@ -84,46 +212,54 @@ function idsMatch(
     return false;
   }
 
-  return String(first) === String(second);
+  return String(first).trim() === String(second).trim();
 }
 
 function findTeamLeaders(
-  leaders: FootballTeamLeaders[],
+  leaders: TeamLeaders[],
   teamId: string | number,
   teamCode: string,
-): FootballTeamLeaders | undefined {
+): TeamLeaders | undefined {
   const normalizedCode = normalizeValue(teamCode);
 
   return leaders.find((teamLeaders) => {
     const team = teamLeaders.team;
 
-    return (
-      idsMatch(team?.id, teamId) ||
-      idsMatch(team?.espnId, teamId) ||
-      normalizeValue(team?.abbreviation) === normalizedCode
-    );
+    const matchesId =
+      idsMatch(team?.id, teamId) || idsMatch(team?.espnId, teamId);
+
+    const teamCodes = [
+      normalizeValue(team?.code),
+      normalizeValue(team?.abbreviation),
+      normalizeValue(team?.shortName),
+    ];
+
+    return matchesId || teamCodes.includes(normalizedCode);
   });
 }
 
 function findCategory(
-  teamLeaders: FootballTeamLeaders | undefined,
+  teamLeaders: TeamLeaders | undefined,
   category: Category,
-): FootballLeaderCategory | undefined {
+): LeaderCategory | undefined {
   if (!teamLeaders?.leaders?.length) {
     return undefined;
   }
 
   const categoryKeys = CATEGORY_KEYS[category];
 
-  return categoryKeys
-    .map((key) =>
-      teamLeaders.leaders.find((leaderCategory) => leaderCategory.name === key),
-    )
-    .find(Boolean);
+  return teamLeaders.leaders.find((leaderCategory) => {
+    const names = [
+      normalizeValue(leaderCategory.name),
+      normalizeValue(leaderCategory.displayName),
+    ];
+
+    return categoryKeys.some((key) => names.includes(normalizeValue(key)));
+  });
 }
 
 function hasCategoryLeaders(
-  teamLeaders: FootballTeamLeaders | undefined,
+  teamLeaders: TeamLeaders | undefined,
   category: Category,
 ): boolean {
   const leaderCategory = findCategory(teamLeaders, category);
@@ -132,23 +268,70 @@ function hasCategoryLeaders(
 }
 
 function getHeadshotSource(headshot: Athlete["headshot"]): ImageSourcePropType {
-  if (!headshot) {
+  if (!headshot || typeof headshot !== "string") {
     return Placeholder;
   }
 
-  if (typeof headshot === "string") {
-    return {
-      uri: headshot,
-    };
+  return {
+    uri: headshot,
+  };
+}
+
+function getDisplayStats(
+  category: LeaderCategory,
+  entry: LeaderEntry,
+): DisplayStat[] {
+  const stats = Array.isArray(entry.stats) ? entry.stats : [];
+  const categoryName = normalizeValue(category.name);
+  const definitions = STAT_DEFINITIONS[categoryName];
+
+  if (definitions?.length && stats.length) {
+    return definitions.reduce<DisplayStat[]>((displayStats, definition) => {
+      const value = stats[definition.index];
+
+      if (
+        value !== null &&
+        value !== undefined &&
+        String(value).trim() !== ""
+      ) {
+        displayStats.push({
+          label: definition.label,
+          value,
+        });
+      }
+
+      return displayStats;
+    }, []);
   }
 
-  if (headshot.href) {
-    return {
-      uri: headshot.href,
-    };
+  if (stats.length) {
+    return stats.slice(0, 4).map((value, index) => ({
+      label: `STAT ${index + 1}`,
+      value: value ?? "–",
+    }));
   }
 
-  return Placeholder;
+  const fallbackValue =
+    entry.mainStat?.value ?? entry.displayValue ?? entry.value;
+
+  if (
+    fallbackValue === null ||
+    fallbackValue === undefined ||
+    fallbackValue === ""
+  ) {
+    return [];
+  }
+
+  return [
+    {
+      label:
+        entry.mainStat?.label ??
+        category.shortDisplayName ??
+        category.abbreviation ??
+        "STAT",
+      value: fallbackValue,
+    },
+  ];
 }
 
 function Stat({
@@ -184,23 +367,22 @@ function LeaderStats({
   entry,
   isDark,
 }: {
-  category: FootballLeaderCategory;
-  entry: FootballLeaderEntry;
+  category: LeaderCategory;
+  entry: LeaderEntry;
   isDark: boolean;
 }) {
-  const mainStatLabel = entry.mainStat?.label ?? category.displayName ?? "STAT";
-
-  const mainStatValue = entry.mainStat?.value ?? entry.value ?? "–";
-
-  const summary = entry.summary?.trim() || entry.displayValue?.trim() || "";
+  const displayStats = getDisplayStats(category, entry);
 
   return (
     <>
-      <Stat label={mainStatLabel} value={mainStatValue} isDark={isDark} />
-
-      {summary ? (
-        <Stat label="SUMMARY" value={summary} isDark={isDark} />
-      ) : null}
+      {displayStats.map((stat) => (
+        <Stat
+          key={`${stat.label}-${stat.value}`}
+          label={stat.label}
+          value={stat.value}
+          isDark={isDark}
+        />
+      ))}
     </>
   );
 }
@@ -224,30 +406,34 @@ export default function GameLeaders({
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
 
-  const normalizedLeaders = useMemo(
+  const normalizedState = state?.trim().toLowerCase();
+
+  const normalizedLeaders = useMemo<TeamLeaders[]>(
     () => (Array.isArray(leaders) ? leaders : []),
     [leaders],
   );
 
-  const awayTeamLeaders = useMemo(
-    () => findTeamLeaders(normalizedLeaders, awayId, awayCode),
-    [normalizedLeaders, awayId, awayCode],
-  );
+  const awayTeamLeaders = useMemo(() => {
+    return (
+      findTeamLeaders(normalizedLeaders, awayId, awayCode) ??
+      normalizedLeaders[0]
+    );
+  }, [normalizedLeaders, awayId, awayCode]);
 
-  const homeTeamLeaders = useMemo(
-    () => findTeamLeaders(normalizedLeaders, homeId, homeCode),
-    [normalizedLeaders, homeId, homeCode],
-  );
+  const homeTeamLeaders = useMemo(() => {
+    return (
+      findTeamLeaders(normalizedLeaders, homeId, homeCode) ??
+      normalizedLeaders[1]
+    );
+  }, [normalizedLeaders, homeId, homeCode]);
 
-  const availableCategories = useMemo(
-    () =>
-      GAME_CATEGORIES.filter(
-        (category) =>
-          hasCategoryLeaders(awayTeamLeaders, category) ||
-          hasCategoryLeaders(homeTeamLeaders, category),
-      ),
-    [awayTeamLeaders, homeTeamLeaders],
-  );
+  const availableCategories = useMemo<Category[]>(() => {
+    return GAME_CATEGORIES.filter(
+      (category) =>
+        hasCategoryLeaders(awayTeamLeaders, category) ||
+        hasCategoryLeaders(homeTeamLeaders, category),
+    );
+  }, [awayTeamLeaders, homeTeamLeaders]);
 
   useEffect(() => {
     if (!availableCategories.length) {
@@ -257,9 +443,9 @@ export default function GameLeaders({
     if (!availableCategories.includes(selectedCategory)) {
       setSelectedCategory(availableCategories[0]);
     }
-  }, [availableCategories, selectedCategory, state]);
+  }, [availableCategories, selectedCategory]);
 
-  const displayedLeaders = useMemo(() => {
+  const displayedLeaders = useMemo<DisplayLeader[]>(() => {
     const result: DisplayLeader[] = [];
 
     const awayCategory = findCategory(awayTeamLeaders, selectedCategory);
@@ -289,6 +475,14 @@ export default function GameLeaders({
     return result;
   }, [awayTeamLeaders, homeTeamLeaders, selectedCategory]);
 
+  if (normalizedState !== "in" && normalizedState !== "post") {
+    return null;
+  }
+
+  if (loading) {
+    return <GameLeadersSkeleton />;
+  }
+
   if (error) {
     return (
       <View>
@@ -301,14 +495,6 @@ export default function GameLeaders({
         </View>
       </View>
     );
-  }
-
-  if (loading) {
-    return <GameLeadersSkeleton />;
-  }
-
-  if (state !== "in" && state !== "post") {
-    return null;
   }
 
   if (!availableCategories.length) {
@@ -333,19 +519,25 @@ export default function GameLeaders({
           const teamId = isAway ? awayId : homeId;
           const player = entry.athlete;
 
-          const playerName = player.shortName ?? "Unknown Player";
+          const playerId = player.id ?? player.espnId;
 
-          const jersey = `#${player.jersey}` || `N/A`;
+          const playerName =
+            player.shortName ??
+            player.displayName ??
+            player.fullName ??
+            "Unknown Player";
+
+          const jersey = player.jersey ? `#${player.jersey}` : null;
 
           const handlePress = () => {
-            if (!player.id) {
+            if (playerId === null || playerId === undefined) {
               return;
             }
 
             router.push({
               pathname: "/player/football/[id]",
               params: {
-                id: String(player.id),
+                id: String(playerId),
                 teamId: String(teamId),
                 league,
               },
@@ -354,9 +546,12 @@ export default function GameLeaders({
 
           return (
             <Pressable
-              key={player.id}
+              key={`${side}-${category.name}-${playerId ?? playerName}`}
               onPress={handlePress}
-              style={({ pressed }) => [pressed && styles.pressed]}
+              disabled={playerId === null || playerId === undefined}
+              style={({ pressed }) => [
+                pressed && playerId != null && styles.pressed,
+              ]}
             >
               <View style={styles.card}>
                 <View style={styles.avatarWrapper}>

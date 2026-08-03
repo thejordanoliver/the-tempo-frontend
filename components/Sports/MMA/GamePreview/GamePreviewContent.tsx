@@ -1,5 +1,5 @@
+import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { GameLocation } from "components/Sports/NBA/GameDetails";
 import React from "react";
 import MatchupComparison from "../GameDetails/MatchupComparison/MatchupComparison";
 
@@ -112,7 +112,7 @@ export default function GamePreviewContent({
         gameStatusDescription={gameStatusDescription}
         isDark
       />
-      
+
       <GameLocation
         venueImage={venueImage}
         venueName={venueName}

@@ -1,10 +1,11 @@
 import {
   FanPredictionVote,
   GameLocation,
-} from "@/components/Sports/NBA/GameDetails";
+} from "@/components/Sports/Basketball/GameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 
+import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import {
   formatDate,
   formatTime,
@@ -14,7 +15,6 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
-import GameLiveChatOverlay from "components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useScrollFade } from "hooks/useScrollFade";

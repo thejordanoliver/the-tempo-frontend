@@ -1,22 +1,22 @@
 import {
+  GameLocation,
+  GameTeamStats,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+} from "@/components/Sports/Basketball/GameDetails";
+import {
   Team,
   TeamBoxScoreStat,
   TeamInjury,
   TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import {
-  GameLocation,
-  LineScore,
-  MatchupPredictor,
-  Officials,
-} from "components/Sports/NBA/GameDetails";
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import GameLeaders from "../GameDetails/GameLeaders";
-import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
   homeColor: string;
@@ -120,13 +120,14 @@ export default function GamePreviewContent({
         />
 
         <GameTeamStats
-          teamStats={teamStats}
+          stats={teamStats}
+          awayName={awayCode}
           awayLogo={awayLogo}
-          homeLogo={homeLogo}
-          awayCode={awayCode}
-          homeCode={homeCode}
-          homeColor={homeColor}
           awayColor={awayColor}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeColor={homeColor}
+          league={league}
           state={state}
           isDark
         />

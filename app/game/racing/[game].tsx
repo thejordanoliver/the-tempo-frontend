@@ -1,4 +1,4 @@
-import { GameLocation } from "@/components/Sports/NBA/GameDetails";
+import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
 import GameHeader from "@/components/Sports/Racing/GameDetails/GameHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
 import {
@@ -13,7 +13,7 @@ import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CustomActivityIndicator from "../../../components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
-import GameLiveChatOverlay from "../../../components/Sports/NBA/GameDetails/GameChat/GameLiveChatOverlay";
+import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";

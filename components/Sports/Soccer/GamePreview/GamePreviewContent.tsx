@@ -1,10 +1,10 @@
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
   LastFiveGames,
   LineScore,
   Officials,
-} from "components/Sports/NBA/GameDetails";
+} from "@/components/Sports/Basketball/GameDetails";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import GameTeamStats from "../GameDetails/GameTeamStats";
 

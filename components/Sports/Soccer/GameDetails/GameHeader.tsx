@@ -18,6 +18,10 @@ type Props = {
   isTie: boolean | undefined | null;
   homeWins: boolean | undefined | null;
   awayWins: boolean | undefined | null;
+  isAwayNational: boolean | undefined | null;
+  isAwayAllStar: boolean | undefined | null;
+  isHomeNational: boolean | undefined | null;
+  isHomeAllStar: boolean | undefined | null;
   date: string;
   headline: string | null;
   period?: number | string;
@@ -46,6 +50,10 @@ export default function GameHeader({
   awayScore,
   homeWins,
   awayWins,
+  isAwayNational,
+  isAwayAllStar,
+  isHomeNational,
+  isHomeAllStar,
   isTie,
   homeRecord,
   awayRecord,
@@ -81,6 +89,8 @@ export default function GameHeader({
           record={awayRecord}
           isHome={false}
           isDark={isDark}
+          isNational={isAwayNational}
+          isAllStar={isAwayAllStar}
           league={league}
           state={state}
           gameStatusDescription={gameStatusDescription}
@@ -109,6 +119,8 @@ export default function GameHeader({
           record={homeRecord}
           isHome={true}
           isDark={isDark}
+          isNational={isHomeNational}
+          isAllStar={isHomeAllStar}
           league={league}
           state={state}
           gameStatusDescription={gameStatusDescription}

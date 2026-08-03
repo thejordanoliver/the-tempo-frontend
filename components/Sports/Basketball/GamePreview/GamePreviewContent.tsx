@@ -1,17 +1,17 @@
-import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
-import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { Highlight } from "@/types/types";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
   GameTeamStats,
   HighlightVideoList,
   LineScore,
   MatchupPredictor,
-} from "components/Sports/NBA/GameDetails";
-import LastFiveGames from "components/Sports/NBA/GameDetails/LastFiveGames";
-import Officials from "components/Sports/NBA/GameDetails/Officials";
+} from "@/components/Sports/Basketball/GameDetails";
+import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
+import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
+import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
+import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Highlight } from "@/types/types";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 
 type GamePreviewContentProps = {

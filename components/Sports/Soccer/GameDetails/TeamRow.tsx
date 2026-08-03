@@ -17,7 +17,8 @@ export const TeamRow = ({
   score,
   isWinner,
   isTie,
-  league,
+  isAllStar,
+  isNational,
   state,
   gameStatusDescription,
 }: SoccerProps) => {
@@ -59,9 +60,7 @@ export const TeamRow = ({
   };
 
   const handleTeamPress = () => {
-    if (id && league === "mls") router.push(`/team/soccer/${id}`);
-    if (id && league === "champions") router.push(`/team/soccer/${id}`);
-    if (id && league === "epl") router.push(`/team/soccer/${id}`);
+    if (id && !isNational && !isAllStar) router.push(`/team/soccer/${id}`);
   };
 
   const showRecordInsteadOfScore =
@@ -90,7 +89,7 @@ export const TeamRow = ({
       {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
-          <Image source={{ uri: logo }} style={styles.logo} />
+          <Image source={logo} style={styles.logo} />
         </Pressable>
 
         <View style={styles.teamInfo}>

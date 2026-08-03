@@ -9,7 +9,6 @@ import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
-import GamePreviewModal from "components/Sports/NBA/GamePreview/GamePreviewModal";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
 import { Text, View } from "react-native";
@@ -148,20 +147,16 @@ export default function LatestGame({
         </LongPressGestureHandler>
       </View>
 
-      {league === "NBA" && modalVisible && (
-        <GamePreviewModal
-          game={game}
-          visible={modalVisible}
-          onClose={handleCloseModal}
-        />
-      )}
-
-      {(league === "CBB" || league === "WCBB" || league === "WNBA") &&
+      {(league === "NBA" ||
+        league === "CBB" ||
+        league === "WCBB" ||
+        league === "WNBA") &&
         modalVisible && (
           <BasketballGamePreviewModal
             game={game}
             visible={modalVisible}
             onClose={handleCloseModal}
+            isSL={false}
             isCBB={isCBB}
             isWCBB={isWCBB}
             isWNBA={isWNBA}

@@ -1,6 +1,5 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
-import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { BaseballGame } from "@/types/baseball/baseball";
@@ -188,13 +187,6 @@ export default function BaseballGamePreviewModal({
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
 
-  const homeTeamPlayersData = useRoster(homeId, LEAGUE);
-  const awayTeamPlayersData = useRoster(awayId, LEAGUE);
-  const teamPlayersMap = {
-    [String(homeEspnId)]: homeTeamPlayersData.players,
-    [String(awayEspnId)]: awayTeamPlayersData.players,
-  };
-
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -290,7 +282,8 @@ export default function BaseballGamePreviewModal({
                 <GamePreviewContent
                   homeId={homeId}
                   awayId={awayId}
-                  teamPlayersMap={teamPlayersMap}
+                  homeEspnId={homeEspnId}
+                  awayEspnId={awayEspnId}
                   homeLogo={homeLogo}
                   homeCode={homeCode}
                   homeName={homeName}

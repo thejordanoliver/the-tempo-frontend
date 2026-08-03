@@ -1,6 +1,9 @@
+import {
+  GameLocation,
+  LastFiveGames,
+} from "@/components/Sports/Basketball/GameDetails";
+import LineScore from "@/components/Sports/Basketball/GameDetails/LineScore";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { GameLocation, LastFiveGames } from "components/Sports/NBA/GameDetails";
-import LineScore from "components/Sports/NBA/GameDetails/LineScore";
 import React from "react";
 
 type GamePreviewContentProps = {

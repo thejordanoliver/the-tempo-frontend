@@ -142,7 +142,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image
-              source={{ uri: awayLogo }}
+              source={awayLogo}
               style={styles.logo}
               accessibilityLabel={`${homeName} logo`}
             />
@@ -160,7 +160,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image
-              source={{ uri: homeLogo }}
+              source={homeLogo}
               style={styles.logo}
               accessibilityLabel={`${homeName} logo`}
             />

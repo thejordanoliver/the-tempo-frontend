@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import BasketballGamePreviewModal from "../GamePreview/BasketballGamePreviewModal";
+import GamePreviewModal from "../GamePreview/BasketballGamePreviewModal";
 import BasketballGameCard from "./BasketballGameCard";
 import BasketballSquareGameCard from "./BasketballSquareGameCard";
 import BasketballStackedGameCard from "./BasketballStackedGameCard";
@@ -59,7 +59,7 @@ export default function GamesList({
   error,
   expectedCount,
   day,
-  showHeaders = false,
+  showHeaders,
   scrollEnabled = true,
   showCountdown = false,
   countdownGame = null,
@@ -73,6 +73,10 @@ export default function GamesList({
   const [previewGame, setPreviewGame] = useState<BasketballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const isSLGame = (game: BasketballGame) =>
+    String(game?.league?.id) === "23170" ||
+    String(game?.league?.id) === "64" ||
+    String(game?.league?.id) === "63";
   const isCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
   const isWCBBGame = (game: BasketballGame) =>
     String(game?.league?.id) === "54";
@@ -128,6 +132,7 @@ export default function GamesList({
         <Wrapper>
           <BasketballGameCard
             game={game}
+            isSL={isSLGame(game)}
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
@@ -141,6 +146,7 @@ export default function GamesList({
         <Wrapper>
           <BasketballSquareGameCard
             game={game}
+            isSL={isSLGame(game)}
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
@@ -153,6 +159,7 @@ export default function GamesList({
       <Wrapper>
         <BasketballStackedGameCard
           game={game}
+          isSL={isSLGame(game)}
           isCBB={isCBBGame(game)}
           isWNBA={isWNBAGame(game)}
           isWCBB={isWCBBGame(game)}
@@ -261,12 +268,12 @@ export default function GamesList({
           refreshing={refreshing}
           onRefresh={onRefresh}
           scrollEnabled={scrollEnabled}
-          contentContainerStyle={styles.gridListContainer}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
               <CountdownClock game={countdownGame} loading={loading} />
             ) : null
           }
+          contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
             <Text style={global.emptyText}>
               {day === "todayTomorrow"
@@ -295,10 +302,11 @@ export default function GamesList({
       )}
 
       {modalVisible && previewGame && (
-        <BasketballGamePreviewModal
+        <GamePreviewModal
           game={previewGame}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
+          isSL={isSLGame(previewGame)}
           isCBB={isCBBGame(previewGame)}
           isWCBB={isWCBBGame(previewGame)}
           isWNBA={isWNBAGame(previewGame)}

@@ -1,6 +1,339 @@
 import { Team } from "@/types/football/football";
-const placeholderLogo =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
+import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
+import AFCBournemouthLogo from "../assets/Soccer/Logos/AFCBournemouth.png";
+import AFCBournemouthLogoLight from "../assets/Soccer/Logos/AFCBournemouthLight.png";
+import AlavesLogo from "../assets/Soccer/Logos/Alaves.png";
+import AlavesLogoLight from "../assets/Soccer/Logos/AlavesLight.png";
+import AlgeriaLogo from "../assets/Soccer/Logos/Algeria.png";
+import AlgeriaLogoLight from "../assets/Soccer/Logos/AlgeriaLight.png";
+import ArgentinaLogo from "../assets/Soccer/Logos/Argentina.png";
+import Argentina2750Logo from "../assets/Soccer/Logos/Argentina2750.png";
+import Argentina2750LogoLight from "../assets/Soccer/Logos/Argentina2750Light.png";
+import ArgentinaLogoLight from "../assets/Soccer/Logos/ArgentinaLight.png";
+import ArsenalLogo from "../assets/Soccer/Logos/Arsenal.png";
+import ArsenalLogoLight from "../assets/Soccer/Logos/ArsenalLight.png";
+import AstonVillaLogo from "../assets/Soccer/Logos/AstonVilla.png";
+import AstonVillaLogoLight from "../assets/Soccer/Logos/AstonVillaLight.png";
+import AthleticClubLogo from "../assets/Soccer/Logos/AthleticClub.png";
+import AthleticClubLogoLight from "../assets/Soccer/Logos/AthleticClubLight.png";
+import AtlantaUnitedFCLogo from "../assets/Soccer/Logos/AtlantaUnitedFC.png";
+import AtlantaUnitedFCLogoLight from "../assets/Soccer/Logos/AtlantaUnitedFCLight.png";
+import AtleticoMadridLogo from "../assets/Soccer/Logos/AtleticoMadrid.png";
+import AtleticoMadridLogoLight from "../assets/Soccer/Logos/AtleticoMadridLight.png";
+import AustinFCLogo from "../assets/Soccer/Logos/AustinFC.png";
+import AustinFCLogoLight from "../assets/Soccer/Logos/AustinFCLight.png";
+import AustraliaLogo from "../assets/Soccer/Logos/Australia.png";
+import Australia2751Logo from "../assets/Soccer/Logos/Australia2751.png";
+import Australia2751LogoLight from "../assets/Soccer/Logos/Australia2751Light.png";
+import AustraliaLogoLight from "../assets/Soccer/Logos/AustraliaLight.png";
+import AustriaLogo from "../assets/Soccer/Logos/Austria.png";
+import AustriaLogoLight from "../assets/Soccer/Logos/AustriaLight.png";
+import BarcelonaLogo from "../assets/Soccer/Logos/Barcelona.png";
+import BarcelonaLogoLight from "../assets/Soccer/Logos/BarcelonaLight.png";
+import BayerLeverkusenLogo from "../assets/Soccer/Logos/BayerLeverkusen.png";
+import BayerLeverkusenLogoLight from "../assets/Soccer/Logos/BayerLeverkusenLight.png";
+import BayernMunichLogo from "../assets/Soccer/Logos/BayernMunich.png";
+import BayernMunichLogoLight from "../assets/Soccer/Logos/BayernMunichLight.png";
+import BelgiumLogo from "../assets/Soccer/Logos/Belgium.png";
+import BelgiumLogoLight from "../assets/Soccer/Logos/BelgiumLight.png";
+import BorussiaDortmundLogo from "../assets/Soccer/Logos/BorussiaDortmund.png";
+import BorussiaDortmundLogoLight from "../assets/Soccer/Logos/BorussiaDortmundLight.png";
+import BorussiaMonchengladbachLogo from "../assets/Soccer/Logos/BorussiaMonchengladbach.png";
+import BorussiaMonchengladbachLogoLight from "../assets/Soccer/Logos/BorussiaMonchengladbachLight.png";
+import BosniaHerzegovinaLogo from "../assets/Soccer/Logos/BosniaHerzegovina.png";
+import BosniaHerzegovinaLogoLight from "../assets/Soccer/Logos/BosniaHerzegovinaLight.png";
+import BrazilLogo from "../assets/Soccer/Logos/Brazil.png";
+import Brazil2752Logo from "../assets/Soccer/Logos/Brazil2752.png";
+import Brazil2752LogoLight from "../assets/Soccer/Logos/Brazil2752Light.png";
+import BrazilLogoLight from "../assets/Soccer/Logos/BrazilLight.png";
+import BrentfordLogo from "../assets/Soccer/Logos/Brentford.png";
+import BrentfordLogoLight from "../assets/Soccer/Logos/BrentfordLight.png";
+import BrightonHoveAlbionLogo from "../assets/Soccer/Logos/BrightonHoveAlbion.png";
+import BrightonHoveAlbionLogoLight from "../assets/Soccer/Logos/BrightonHoveAlbionLight.png";
+import BurnleyLogo from "../assets/Soccer/Logos/Burnley.png";
+import BurnleyLogoLight from "../assets/Soccer/Logos/BurnleyLight.png";
+import CanadaLogo from "../assets/Soccer/Logos/Canada.png";
+import Canada2753Logo from "../assets/Soccer/Logos/Canada2753.png";
+import Canada2753LogoLight from "../assets/Soccer/Logos/Canada2753Light.png";
+import CanadaLogoLight from "../assets/Soccer/Logos/CanadaLight.png";
+import CapeVerdeLogo from "../assets/Soccer/Logos/CapeVerde.png";
+import CapeVerdeLogoLight from "../assets/Soccer/Logos/CapeVerdeLight.png";
+import CeltaVigoLogo from "../assets/Soccer/Logos/CeltaVigo.png";
+import CeltaVigoLogoLight from "../assets/Soccer/Logos/CeltaVigoLight.png";
+import CFMontrealLogo from "../assets/Soccer/Logos/CFMontreal.png";
+import CFMontrealLogoLight from "../assets/Soccer/Logos/CFMontrealLight.png";
+import CharlotteFCLogo from "../assets/Soccer/Logos/CharlotteFC.png";
+import CharlotteFCLogoLight from "../assets/Soccer/Logos/CharlotteFCLight.png";
+import ChelseaLogo from "../assets/Soccer/Logos/Chelsea.png";
+import ChelseaLogoLight from "../assets/Soccer/Logos/ChelseaLight.png";
+import ChicagoFireFCLogo from "../assets/Soccer/Logos/ChicagoFireFC.png";
+import ChicagoFireFCLogoLight from "../assets/Soccer/Logos/ChicagoFireFCLight.png";
+import ChinaLogo from "../assets/Soccer/Logos/China.png";
+import ChinaLogoLight from "../assets/Soccer/Logos/ChinaLight.png";
+import ColombiaLogo from "../assets/Soccer/Logos/Colombia.png";
+import Colombia11337Logo from "../assets/Soccer/Logos/Colombia11337.png";
+import Colombia11337LogoLight from "../assets/Soccer/Logos/Colombia11337Light.png";
+import ColombiaLogoLight from "../assets/Soccer/Logos/ColombiaLight.png";
+import ColoradoRapidsLogo from "../assets/Soccer/Logos/ColoradoRapids.png";
+import ColoradoRapidsLogoLight from "../assets/Soccer/Logos/ColoradoRapidsLight.png";
+import ColumbusCrewLogo from "../assets/Soccer/Logos/ColumbusCrew.png";
+import ColumbusCrewLogoLight from "../assets/Soccer/Logos/ColumbusCrewLight.png";
+import CongoDRLogo from "../assets/Soccer/Logos/CongoDR.png";
+import CongoDRLogoLight from "../assets/Soccer/Logos/CongoDRLight.png";
+import CostaRicaLogo from "../assets/Soccer/Logos/CostaRica.png";
+import CostaRicaLogoLight from "../assets/Soccer/Logos/CostaRicaLight.png";
+import CroatiaLogo from "../assets/Soccer/Logos/Croatia.png";
+import CroatiaLogoLight from "../assets/Soccer/Logos/CroatiaLight.png";
+import CrystalPalaceLogo from "../assets/Soccer/Logos/CrystalPalace.png";
+import CrystalPalaceLogoLight from "../assets/Soccer/Logos/CrystalPalaceLight.png";
+import CuracaoLogo from "../assets/Soccer/Logos/Curacao.png";
+import CzechiaLogo from "../assets/Soccer/Logos/Czechia.png";
+import CzechiaLogoLight from "../assets/Soccer/Logos/CzechiaLight.png";
+import DCUnitedLogo from "../assets/Soccer/Logos/DCUnited.png";
+import DCUnitedLogoLight from "../assets/Soccer/Logos/DCUnitedLight.png";
+import DenmarkLogo from "../assets/Soccer/Logos/Denmark.png";
+import DenmarkLogoLight from "../assets/Soccer/Logos/DenmarkLight.png";
+import EcuadorLogo from "../assets/Soccer/Logos/Ecuador.png";
+import EcuadorLogoLight from "../assets/Soccer/Logos/EcuadorLight.png";
+import EgyptLogo from "../assets/Soccer/Logos/Egypt.png";
+import EgyptLogoLight from "../assets/Soccer/Logos/EgyptLight.png";
+import EintrachtFrankfurtLogo from "../assets/Soccer/Logos/EintrachtFrankfurt.png";
+import EintrachtFrankfurtLogoLight from "../assets/Soccer/Logos/EintrachtFrankfurtLight.png";
+import ElcheLogo from "../assets/Soccer/Logos/Elche.png";
+import ElcheLogoLight from "../assets/Soccer/Logos/ElcheLight.png";
+import EnglandLogo from "../assets/Soccer/Logos/England.png";
+import England5159Logo from "../assets/Soccer/Logos/England5159.png";
+import England5159LogoLight from "../assets/Soccer/Logos/England5159Light.png";
+import EnglandLogoLight from "../assets/Soccer/Logos/EnglandLight.png";
+import EspanyolLogo from "../assets/Soccer/Logos/Espanyol.png";
+import EspanyolLogoLight from "../assets/Soccer/Logos/EspanyolLight.png";
+import EvertonLogo from "../assets/Soccer/Logos/Everton.png";
+import EvertonLogoLight from "../assets/Soccer/Logos/EvertonLight.png";
+import FCAugsburgLogo from "../assets/Soccer/Logos/FCAugsburg.png";
+import FCAugsburgLogoLight from "../assets/Soccer/Logos/FCAugsburgLight.png";
+import FCCincinnatiLogo from "../assets/Soccer/Logos/FCCincinnati.png";
+import FCCincinnatiLogoLight from "../assets/Soccer/Logos/FCCincinnatiLight.png";
+import FCCologneLogo from "../assets/Soccer/Logos/FCCologne.png";
+import FCCologneLogoLight from "../assets/Soccer/Logos/FCCologneLight.png";
+import FCDallasLogo from "../assets/Soccer/Logos/FCDallas.png";
+import FCDallasLogoLight from "../assets/Soccer/Logos/FCDallasLight.png";
+import FranceLogo from "../assets/Soccer/Logos/France.png";
+import France2755Logo from "../assets/Soccer/Logos/France2755.png";
+import France2755LogoLight from "../assets/Soccer/Logos/France2755Light.png";
+import FranceLogoLight from "../assets/Soccer/Logos/FranceLight.png";
+import FulhamLogo from "../assets/Soccer/Logos/Fulham.png";
+import FulhamLogoLight from "../assets/Soccer/Logos/FulhamLight.png";
+import GermanyLogo from "../assets/Soccer/Logos/Germany.png";
+import Germany2756Logo from "../assets/Soccer/Logos/Germany2756.png";
+import Germany2756LogoLight from "../assets/Soccer/Logos/Germany2756Light.png";
+import GermanyLogoLight from "../assets/Soccer/Logos/GermanyLight.png";
+import GetafeLogo from "../assets/Soccer/Logos/Getafe.png";
+import GetafeLogoLight from "../assets/Soccer/Logos/GetafeLight.png";
+import GhanaLogo from "../assets/Soccer/Logos/Ghana.png";
+import GhanaLogoLight from "../assets/Soccer/Logos/GhanaLight.png";
+import GironaLogo from "../assets/Soccer/Logos/Girona.png";
+import GironaLogoLight from "../assets/Soccer/Logos/GironaLight.png";
+import HaitiLogo from "../assets/Soccer/Logos/Haiti.png";
+import Haiti2891Logo from "../assets/Soccer/Logos/Haiti2891.png";
+import Haiti2891LogoLight from "../assets/Soccer/Logos/Haiti2891Light.png";
+import HaitiLogoLight from "../assets/Soccer/Logos/HaitiLight.png";
+import HamburgSVLogo from "../assets/Soccer/Logos/HamburgSV.png";
+import HamburgSVLogoLight from "../assets/Soccer/Logos/HamburgSVLight.png";
+import HoustonDynamoFCLogo from "../assets/Soccer/Logos/HoustonDynamoFC.png";
+import HoustonDynamoFCLogoLight from "../assets/Soccer/Logos/HoustonDynamoFCLight.png";
+import InterMiamiCFLogo from "../assets/Soccer/Logos/InterMiamiCF.png";
+import InterMiamiCFLogoLight from "../assets/Soccer/Logos/InterMiamiCFLight.png";
+import IranLogo from "../assets/Soccer/Logos/Iran.png";
+import IranLogoLight from "../assets/Soccer/Logos/IranLight.png";
+import IraqLogo from "../assets/Soccer/Logos/Iraq.png";
+import IraqLogoLight from "../assets/Soccer/Logos/IraqLight.png";
+import ItalyLogo from "../assets/Soccer/Logos/Italy.png";
+import ItalyLogoLight from "../assets/Soccer/Logos/ItalyLight.png";
+import IvoryCoastLogo from "../assets/Soccer/Logos/IvoryCoast.png";
+import IvoryCoastLogoLight from "../assets/Soccer/Logos/IvoryCoastLight.png";
+import JamaicaLogo from "../assets/Soccer/Logos/Jamaica.png";
+import JamaicaLogoLight from "../assets/Soccer/Logos/JamaicaLight.png";
+import JapanLogo from "../assets/Soccer/Logos/Japan.png";
+import Japan2758Logo from "../assets/Soccer/Logos/Japan2758.png";
+import Japan2758LogoLight from "../assets/Soccer/Logos/Japan2758Light.png";
+import JapanLogoLight from "../assets/Soccer/Logos/JapanLight.png";
+import JordanLogo from "../assets/Soccer/Logos/Jordan.png";
+import JordanLogoLight from "../assets/Soccer/Logos/JordanLight.png";
+import LAFCLogo from "../assets/Soccer/Logos/LAFC.png";
+import LAFCLogoLight from "../assets/Soccer/Logos/LAFCLight.png";
+import LAGalaxyLogo from "../assets/Soccer/Logos/LAGalaxy.png";
+import LAGalaxyLogoLight from "../assets/Soccer/Logos/LAGalaxyLight.png";
+import LeedsUnitedLogo from "../assets/Soccer/Logos/LeedsUnited.png";
+import LeedsUnitedLogoLight from "../assets/Soccer/Logos/LeedsUnitedLight.png";
+import LevanteLogo from "../assets/Soccer/Logos/Levante.png";
+import LevanteLogoLight from "../assets/Soccer/Logos/LevanteLight.png";
+import LiverpoolLogo from "../assets/Soccer/Logos/Liverpool.png";
+import LiverpoolLogoLight from "../assets/Soccer/Logos/LiverpoolLight.png";
+import MainzLogo from "../assets/Soccer/Logos/Mainz.png";
+import MainzLogoLight from "../assets/Soccer/Logos/MainzLight.png";
+import MallorcaLogo from "../assets/Soccer/Logos/Mallorca.png";
+import MallorcaLogoLight from "../assets/Soccer/Logos/MallorcaLight.png";
+import ManchesterCityLogo from "../assets/Soccer/Logos/ManchesterCity.png";
+import ManchesterCityLogoLight from "../assets/Soccer/Logos/ManchesterCityLight.png";
+import ManchesterUnitedLogo from "../assets/Soccer/Logos/ManchesterUnited.png";
+import ManchesterUnitedLogoLight from "../assets/Soccer/Logos/ManchesterUnitedLight.png";
+import MexicoLogo from "../assets/Soccer/Logos/Mexico.png";
+import MexicoLogoLight from "../assets/Soccer/Logos/MexicoLight.png";
+import MinnesotaUnitedFCLogo from "../assets/Soccer/Logos/MinnesotaUnitedFC.png";
+import MinnesotaUnitedFCLogoLight from "../assets/Soccer/Logos/MinnesotaUnitedFCLight.png";
+import MoroccoLogo from "../assets/Soccer/Logos/Morocco.png";
+import Morocco18221Logo from "../assets/Soccer/Logos/Morocco18221.png";
+import Morocco18221LogoLight from "../assets/Soccer/Logos/Morocco18221Light.png";
+import MoroccoLogoLight from "../assets/Soccer/Logos/MoroccoLight.png";
+import NashvilleSCLogo from "../assets/Soccer/Logos/NashvilleSC.png";
+import NashvilleSCLogoLight from "../assets/Soccer/Logos/NashvilleSCLight.png";
+import NetherlandsLogo from "../assets/Soccer/Logos/Netherlands.png";
+import Netherlands7151Logo from "../assets/Soccer/Logos/Netherlands7151.png";
+import Netherlands7151LogoLight from "../assets/Soccer/Logos/Netherlands7151Light.png";
+import NetherlandsLogoLight from "../assets/Soccer/Logos/NetherlandsLight.png";
+import NewcastleUnitedLogo from "../assets/Soccer/Logos/NewcastleUnited.png";
+import NewcastleUnitedLogoLight from "../assets/Soccer/Logos/NewcastleUnitedLight.png";
+import NewEnglandRevolutionLogo from "../assets/Soccer/Logos/NewEnglandRevolution.png";
+import NewEnglandRevolutionLogoLight from "../assets/Soccer/Logos/NewEnglandRevolutionLight.png";
+import NewYorkCityFCLogo from "../assets/Soccer/Logos/NewYorkCityFC.png";
+import NewYorkCityFCLogoLight from "../assets/Soccer/Logos/NewYorkCityFCLight.png";
+import NewZealandLogo from "../assets/Soccer/Logos/NewZealand.png";
+import NewZealand4153Logo from "../assets/Soccer/Logos/NewZealand4153.png";
+import NewZealand4153LogoLight from "../assets/Soccer/Logos/NewZealand4153Light.png";
+import NewZealandLogoLight from "../assets/Soccer/Logos/NewZealandLight.png";
+import NigeriaLogo from "../assets/Soccer/Logos/Nigeria.png";
+import NigeriaLogoLight from "../assets/Soccer/Logos/NigeriaLight.png";
+import NorwayLogo from "../assets/Soccer/Logos/Norway.png";
+import Norway2762Logo from "../assets/Soccer/Logos/Norway2762.png";
+import Norway2762LogoLight from "../assets/Soccer/Logos/Norway2762Light.png";
+import NorwayLogoLight from "../assets/Soccer/Logos/NorwayLight.png";
+import NottinghamForestLogo from "../assets/Soccer/Logos/NottinghamForest.png";
+import NottinghamForestLogoLight from "../assets/Soccer/Logos/NottinghamForestLight.png";
+import OrlandoCitySCLogo from "../assets/Soccer/Logos/OrlandoCitySC.png";
+import OrlandoCitySCLogoLight from "../assets/Soccer/Logos/OrlandoCitySCLight.png";
+import OsasunaLogo from "../assets/Soccer/Logos/Osasuna.png";
+import OsasunaLogoLight from "../assets/Soccer/Logos/OsasunaLight.png";
+import PanamaLogo from "../assets/Soccer/Logos/Panama.png";
+import Panama2895Logo from "../assets/Soccer/Logos/Panama2895.png";
+import Panama2895LogoLight from "../assets/Soccer/Logos/Panama2895Light.png";
+import PanamaLogoLight from "../assets/Soccer/Logos/PanamaLight.png";
+import ParaguayLogo from "../assets/Soccer/Logos/Paraguay.png";
+import ParaguayLogoLight from "../assets/Soccer/Logos/ParaguayLight.png";
+import PhiladelphiaUnionLogo from "../assets/Soccer/Logos/PhiladelphiaUnion.png";
+import PhiladelphiaUnionLogoLight from "../assets/Soccer/Logos/PhiladelphiaUnionLight.png";
+import PhilippinesLogo from "../assets/Soccer/Logos/Philippines.png";
+import PhilippinesLogoLight from "../assets/Soccer/Logos/PhilippinesLight.png";
+import PortlandTimbersLogo from "../assets/Soccer/Logos/PortlandTimbers.png";
+import PortlandTimbersLogoLight from "../assets/Soccer/Logos/PortlandTimbersLight.png";
+import PortugalLogo from "../assets/Soccer/Logos/Portugal.png";
+import Portugal9531Logo from "../assets/Soccer/Logos/Portugal9531.png";
+import Portugal9531LogoLight from "../assets/Soccer/Logos/Portugal9531Light.png";
+import PortugalLogoLight from "../assets/Soccer/Logos/PortugalLight.png";
+import QatarLogo from "../assets/Soccer/Logos/Qatar.png";
+import QatarLogoLight from "../assets/Soccer/Logos/QatarLight.png";
+import RayoVallecanoLogo from "../assets/Soccer/Logos/RayoVallecano.png";
+import RayoVallecanoLogoLight from "../assets/Soccer/Logos/RayoVallecanoLight.png";
+import RBLeipzigLogo from "../assets/Soccer/Logos/RBLeipzig.png";
+import RBLeipzigLogoLight from "../assets/Soccer/Logos/RBLeipzigLight.png";
+import RealBetisLogo from "../assets/Soccer/Logos/RealBetis.png";
+import RealBetisLogoLight from "../assets/Soccer/Logos/RealBetisLight.png";
+import RealMadridLogo from "../assets/Soccer/Logos/RealMadrid.png";
+import RealMadridLogoLight from "../assets/Soccer/Logos/RealMadridLight.png";
+import RealOviedoLogo from "../assets/Soccer/Logos/RealOviedo.png";
+import RealSaltLakeLogo from "../assets/Soccer/Logos/RealSaltLake.png";
+import RealSaltLakeLogoLight from "../assets/Soccer/Logos/RealSaltLakeLight.png";
+import RealSociedadLogo from "../assets/Soccer/Logos/RealSociedad.png";
+import RealSociedadLogoLight from "../assets/Soccer/Logos/RealSociedadLight.png";
+import RedBullNewYorkLogo from "../assets/Soccer/Logos/RedBullNewYork.png";
+import RedBullNewYorkLogoLight from "../assets/Soccer/Logos/RedBullNewYorkLight.png";
+import RepublicOfIrelandLogo from "../assets/Soccer/Logos/RepublicOfIreland.png";
+import RepublicOfIrelandLogoLight from "../assets/Soccer/Logos/RepublicOfIrelandLight.png";
+import SanDiegoFCLogo from "../assets/Soccer/Logos/SanDiegoFC.png";
+import SanDiegoFCLogoLight from "../assets/Soccer/Logos/SanDiegoFCLight.png";
+import SanJoseEarthquakesLogo from "../assets/Soccer/Logos/SanJoseEarthquakes.png";
+import SanJoseEarthquakesLogoLight from "../assets/Soccer/Logos/SanJoseEarthquakesLight.png";
+import SaudiArabiaLogo from "../assets/Soccer/Logos/SaudiArabia.png";
+import SaudiArabiaLogoLight from "../assets/Soccer/Logos/SaudiArabiaLight.png";
+import SCFreiburgLogo from "../assets/Soccer/Logos/SCFreiburg.png";
+import SCFreiburgLogoLight from "../assets/Soccer/Logos/SCFreiburgLight.png";
+import ScotlandLogo from "../assets/Soccer/Logos/Scotland.png";
+import ScotlandLogoLight from "../assets/Soccer/Logos/ScotlandLight.png";
+import SeattleSoundersFCLogo from "../assets/Soccer/Logos/SeattleSoundersFC.png";
+import SeattleSoundersFCLogoLight from "../assets/Soccer/Logos/SeattleSoundersFCLight.png";
+import SenegalLogo from "../assets/Soccer/Logos/Senegal.png";
+import SenegalLogoLight from "../assets/Soccer/Logos/SenegalLight.png";
+import SevillaLogo from "../assets/Soccer/Logos/Sevilla.png";
+import SevillaLogoLight from "../assets/Soccer/Logos/SevillaLight.png";
+import SouthAfricaLogo from "../assets/Soccer/Logos/SouthAfrica.png";
+import SouthAfrica13313Logo from "../assets/Soccer/Logos/SouthAfrica13313.png";
+import SouthAfrica13313LogoLight from "../assets/Soccer/Logos/SouthAfrica13313Light.png";
+import SouthAfricaLogoLight from "../assets/Soccer/Logos/SouthAfricaLight.png";
+import SouthKoreaLogo from "../assets/Soccer/Logos/SouthKorea.png";
+import SouthKorea17639Logo from "../assets/Soccer/Logos/SouthKorea17639.png";
+import SouthKorea17639LogoLight from "../assets/Soccer/Logos/SouthKorea17639Light.png";
+import SouthKoreaLogoLight from "../assets/Soccer/Logos/SouthKoreaLight.png";
+import SpainLogo from "../assets/Soccer/Logos/Spain.png";
+import Spain17640Logo from "../assets/Soccer/Logos/Spain17640.png";
+import Spain17640LogoLight from "../assets/Soccer/Logos/Spain17640Light.png";
+import SpainLogoLight from "../assets/Soccer/Logos/SpainLight.png";
+import SportingKansasCityLogo from "../assets/Soccer/Logos/SportingKansasCity.png";
+import SportingKansasCityLogoLight from "../assets/Soccer/Logos/SportingKansasCityLight.png";
+import StLouisCITYSCLogo from "../assets/Soccer/Logos/StLouisCITYSC.png";
+import StLouisCITYSCLogoLight from "../assets/Soccer/Logos/StLouisCITYSCLight.png";
+import StPauliLogo from "../assets/Soccer/Logos/StPauli.png";
+import StPauliLogoLight from "../assets/Soccer/Logos/StPauliLight.png";
+import SunderlandLogo from "../assets/Soccer/Logos/Sunderland.png";
+import SunderlandLogoLight from "../assets/Soccer/Logos/SunderlandLight.png";
+import SwedenLogo from "../assets/Soccer/Logos/Sweden.png";
+import Sweden2764Logo from "../assets/Soccer/Logos/Sweden2764.png";
+import Sweden2764LogoLight from "../assets/Soccer/Logos/Sweden2764Light.png";
+import SwedenLogoLight from "../assets/Soccer/Logos/SwedenLight.png";
+import SwitzerlandLogo from "../assets/Soccer/Logos/Switzerland.png";
+import Switzerland17641Logo from "../assets/Soccer/Logos/Switzerland17641.png";
+import Switzerland17641LogoLight from "../assets/Soccer/Logos/Switzerland17641Light.png";
+import SwitzerlandLogoLight from "../assets/Soccer/Logos/SwitzerlandLight.png";
+import Team1FCHeidenheim1846Logo from "../assets/Soccer/Logos/Team1FCHeidenheim1846.png";
+import Team1FCHeidenheim1846LogoLight from "../assets/Soccer/Logos/Team1FCHeidenheim1846Light.png";
+import Team1FCUnionBerlinLogo from "../assets/Soccer/Logos/Team1FCUnionBerlin.png";
+import Team1FCUnionBerlinLogoLight from "../assets/Soccer/Logos/Team1FCUnionBerlinLight.png";
+import TorontoFCLogo from "../assets/Soccer/Logos/TorontoFC.png";
+import TorontoFCLogoLight from "../assets/Soccer/Logos/TorontoFCLight.png";
+import TottenhamHotspurLogo from "../assets/Soccer/Logos/TottenhamHotspur.png";
+import TottenhamHotspurLogoLight from "../assets/Soccer/Logos/TottenhamHotspurLight.png";
+import TSGHoffenheimLogo from "../assets/Soccer/Logos/TSGHoffenheim.png";
+import TSGHoffenheimLogoLight from "../assets/Soccer/Logos/TSGHoffenheimLight.png";
+import TunisiaLogo from "../assets/Soccer/Logos/Tunisia.png";
+import TunisiaLogoLight from "../assets/Soccer/Logos/TunisiaLight.png";
+import TurkiyeLogo from "../assets/Soccer/Logos/Turkiye.png";
+import TurkiyeLogoLight from "../assets/Soccer/Logos/TurkiyeLight.png";
+import UnitedStatesLogo from "../assets/Soccer/Logos/UnitedStates.png";
+import UnitedStates2765Logo from "../assets/Soccer/Logos/UnitedStates2765.png";
+import UnitedStates2765LogoLight from "../assets/Soccer/Logos/UnitedStates2765Light.png";
+import UnitedStatesLogoLight from "../assets/Soccer/Logos/UnitedStatesLight.png";
+import UruguayLogo from "../assets/Soccer/Logos/Uruguay.png";
+import UruguayLogoLight from "../assets/Soccer/Logos/UruguayLight.png";
+import UzbekistanLogo from "../assets/Soccer/Logos/Uzbekistan.png";
+import UzbekistanLogoLight from "../assets/Soccer/Logos/UzbekistanLight.png";
+import ValenciaLogo from "../assets/Soccer/Logos/Valencia.png";
+import ValenciaLogoLight from "../assets/Soccer/Logos/ValenciaLight.png";
+import VancouverWhitecapsLogo from "../assets/Soccer/Logos/VancouverWhitecaps.png";
+import VancouverWhitecapsLogoLight from "../assets/Soccer/Logos/VancouverWhitecapsLight.png";
+import VfBStuttgartLogo from "../assets/Soccer/Logos/VfBStuttgart.png";
+import VfBStuttgartLogoLight from "../assets/Soccer/Logos/VfBStuttgartLight.png";
+import VfLWolfsburgLogo from "../assets/Soccer/Logos/VfLWolfsburg.png";
+import VfLWolfsburgLogoLight from "../assets/Soccer/Logos/VfLWolfsburgLight.png";
+import VietnamLogo from "../assets/Soccer/Logos/Vietnam.png";
+import VietnamLogoLight from "../assets/Soccer/Logos/VietnamLight.png";
+import VillarrealLogo from "../assets/Soccer/Logos/Villarreal.png";
+import VillarrealLogoLight from "../assets/Soccer/Logos/VillarrealLight.png";
+import WerderBremenLogo from "../assets/Soccer/Logos/WerderBremen.png";
+import WerderBremenLogoLight from "../assets/Soccer/Logos/WerderBremenLight.png";
+import WestHamUnitedLogo from "../assets/Soccer/Logos/WestHamUnited.png";
+import WestHamUnitedLogoLight from "../assets/Soccer/Logos/WestHamUnitedLight.png";
+import WolverhamptonWanderersLogo from "../assets/Soccer/Logos/WolverhamptonWanderers.png";
+import WolverhamptonWanderersLogoLight from "../assets/Soccer/Logos/WolverhamptonWanderersLight.png";
+import ZambiaLogo from "../assets/Soccer/Logos/Zambia.png";
+import ZambiaLogoLight from "../assets/Soccer/Logos/ZambiaLight.png";
 
 export const soccerTeams: Team[] = [
   {
@@ -13,8 +346,8 @@ export const soccerTeams: Team[] = [
     coach: "Yoann Damet",
     owner: "Carolyn Kindle",
     established: 2019,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/21812.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/21812.png",
+    logo: StLouisCITYSCLogo,
+    logoLight: StLouisCITYSCLogoLight,
     name: "St. Louis CITY SC",
     shortName: "St. Louis",
     color: "#ec1458",
@@ -33,8 +366,8 @@ export const soccerTeams: Team[] = [
     coach: "Robin Fraser",
     owner: "Maple Leaf Sports & Entertainment",
     established: 2005,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/7318.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/7318.png",
+    logo: TorontoFCLogo,
+    logoLight: TorontoFCLogoLight,
     name: "Toronto FC",
     shortName: "Toronto",
     color: "#aa182c",
@@ -53,8 +386,8 @@ export const soccerTeams: Team[] = [
     coach: "Jesper Sørensen",
     owner: "Greg Kerfoot, Steve Luczo, Jeff Mallett, Steve Nash",
     established: 1974,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9727.png",
+    logo: VancouverWhitecapsLogo,
+    logoLight: VancouverWhitecapsLogoLight,
     name: "Vancouver Whitecaps",
     shortName: "Vancouver",
     color: "#ffffff",
@@ -68,11 +401,11 @@ export const soccerTeams: Team[] = [
     espnId: 624,
     fullName: "Algeria",
     code: "ALG",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/alg.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/alg.png",
+    logo: AlgeriaLogo,
+    logoLight: AlgeriaLogoLight,
     name: "Algeria",
     shortName: "Algeria",
     color: "#5bbd19",
@@ -86,11 +419,11 @@ export const soccerTeams: Team[] = [
     espnId: 202,
     fullName: "Argentina",
     code: "ARG",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/arg.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/arg.png",
+    logo: ArgentinaLogo,
+    logoLight: ArgentinaLogoLight,
     name: "Argentina",
     shortName: "Argentina",
     color: "#74acdf",
@@ -104,11 +437,11 @@ export const soccerTeams: Team[] = [
     espnId: 628,
     fullName: "Australia",
     code: "AUS",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/aus.png",
+    logo: AustraliaLogo,
+    logoLight: AustraliaLogoLight,
     name: "Australia",
     shortName: "Australia",
     color: "#2a2d7c",
@@ -125,8 +458,8 @@ export const soccerTeams: Team[] = [
     city: "Vienna",
     location: "Vienna, Austria",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/aut.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/aut.png",
+    logo: AustriaLogo,
+    logoLight: AustriaLogoLight,
     name: "Austria",
     shortName: "Austria",
     color: "#d72b2c",
@@ -143,8 +476,8 @@ export const soccerTeams: Team[] = [
     city: "Brussels",
     location: "Brussels, Belgium",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/bel.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/bel.png",
+    logo: BelgiumLogo,
+    logoLight: BelgiumLogoLight,
     name: "Belgium",
     shortName: "Belgium",
     color: "#ef3340",
@@ -158,11 +491,11 @@ export const soccerTeams: Team[] = [
     espnId: 452,
     fullName: "Bosnia-Herzegovina",
     code: "BIH",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/bih.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/bih.png",
+    logo: BosniaHerzegovinaLogo,
+    logoLight: BosniaHerzegovinaLogoLight,
     name: "Bosnia-Herzegovina",
     shortName: "Bosnia-Herz",
     color: "#112855",
@@ -176,11 +509,11 @@ export const soccerTeams: Team[] = [
     espnId: 205,
     fullName: "Brazil",
     code: "BRA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/bra.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/bra.png",
+    logo: BrazilLogo,
+    logoLight: BrazilLogoLight,
     name: "Brazil",
     shortName: "Brazil",
     color: "#fee000",
@@ -194,11 +527,11 @@ export const soccerTeams: Team[] = [
     espnId: 206,
     fullName: "Canada",
     code: "CAN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/can.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/can.png",
+    logo: CanadaLogo,
+    logoLight: CanadaLogoLight,
     name: "Canada",
     shortName: "Canada",
     color: "#ed2224",
@@ -215,8 +548,8 @@ export const soccerTeams: Team[] = [
     city: "Praia",
     location: "Praia, Cape Verde",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/cpv.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/cpv.png",
+    logo: CapeVerdeLogo,
+    logoLight: CapeVerdeLogoLight,
     name: "Cape Verde",
     shortName: "Cape Verde",
     color: "#0000ff",
@@ -233,8 +566,8 @@ export const soccerTeams: Team[] = [
     city: "Barranquilla",
     location: "Barranquilla, Colombia",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/col.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/col.png",
+    logo: ColombiaLogo,
+    logoLight: ColombiaLogoLight,
     name: "Colombia",
     shortName: "Colombia",
     color: "#fbd632",
@@ -251,8 +584,8 @@ export const soccerTeams: Team[] = [
     city: "Kinshasa",
     location: "Kinshasa, DR Congo",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/rdc.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/rdc.png",
+    logo: CongoDRLogo,
+    logoLight: CongoDRLogoLight,
     name: "Congo DR",
     shortName: "Congo DR",
     color: "#418fde",
@@ -266,11 +599,11 @@ export const soccerTeams: Team[] = [
     espnId: 477,
     fullName: "Croatia",
     code: "CRO",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/cro.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/cro.png",
+    logo: CroatiaLogo,
+    logoLight: CroatiaLogoLight,
     name: "Croatia",
     shortName: "Croatia",
     color: "#ff0000",
@@ -287,8 +620,8 @@ export const soccerTeams: Team[] = [
     city: "Willemstad",
     location: "Willemstad, Curaçao",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/11678.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500/11678.png",
+    logo: CuracaoLogo,
+    logoLight: CuracaoLogo,
     name: "Curaçao",
     shortName: "Curaçao",
     color: "#0537e4",
@@ -302,11 +635,11 @@ export const soccerTeams: Team[] = [
     espnId: 450,
     fullName: "Czechia",
     code: "CZE",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/cze.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/cze.png",
+    logo: CzechiaLogo,
+    logoLight: CzechiaLogoLight,
     name: "Czechia",
     shortName: "Czechia",
     color: "#d7141a",
@@ -320,11 +653,11 @@ export const soccerTeams: Team[] = [
     espnId: 209,
     fullName: "Ecuador",
     code: "ECU",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ecu.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ecu.png",
+    logo: EcuadorLogo,
+    logoLight: EcuadorLogoLight,
     name: "Ecuador",
     shortName: "Ecuador",
     color: "#ffdd00",
@@ -341,8 +674,8 @@ export const soccerTeams: Team[] = [
     city: "Cairo",
     location: "Cairo, Egypt",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/egy.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/egy.png",
+    logo: EgyptLogo,
+    logoLight: EgyptLogoLight,
     name: "Egypt",
     shortName: "Egypt",
     color: "#D20300",
@@ -359,8 +692,8 @@ export const soccerTeams: Team[] = [
     city: "London",
     location: "London, England",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/eng.png",
+    logo: EnglandLogo,
+    logoLight: EnglandLogoLight,
     name: "England",
     shortName: "England",
     color: "#ffffff",
@@ -377,8 +710,8 @@ export const soccerTeams: Team[] = [
     city: "Saint-Denis",
     location: "Saint-Denis, France",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/fra.png",
+    logo: FranceLogo,
+    logoLight: FranceLogoLight,
     name: "France",
     shortName: "France",
     color: "#0c2fff",
@@ -392,11 +725,11 @@ export const soccerTeams: Team[] = [
     espnId: 481,
     fullName: "Germany",
     code: "GER",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ger.png",
+    logo: GermanyLogo,
+    logoLight: GermanyLogoLight,
     name: "Germany",
     shortName: "Germany",
     color: "#000000",
@@ -410,11 +743,11 @@ export const soccerTeams: Team[] = [
     espnId: 4469,
     fullName: "Ghana",
     code: "GHA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/gha.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/gha.png",
+    logo: GhanaLogo,
+    logoLight: GhanaLogoLight,
     name: "Ghana",
     shortName: "Ghana",
     color: "#ce2931",
@@ -428,11 +761,11 @@ export const soccerTeams: Team[] = [
     espnId: 2654,
     fullName: "Haiti",
     code: "HAI",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/hai.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/hai.png",
+    logo: HaitiLogo,
+    logoLight: HaitiLogoLight,
     name: "Haiti",
     shortName: "Haiti",
     color: "#0033a0",
@@ -449,8 +782,8 @@ export const soccerTeams: Team[] = [
     city: "Tehran",
     location: "Tehran, Iran",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/irn.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/irn.png",
+    logo: IranLogo,
+    logoLight: IranLogoLight,
     name: "Iran",
     shortName: "Iran",
     color: "#da0000",
@@ -464,11 +797,11 @@ export const soccerTeams: Team[] = [
     espnId: 4375,
     fullName: "Iraq",
     code: "IRQ",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/irq.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/irq.png",
+    logo: IraqLogo,
+    logoLight: IraqLogoLight,
     name: "Iraq",
     shortName: "Iraq",
     color: "#00843d",
@@ -482,11 +815,11 @@ export const soccerTeams: Team[] = [
     espnId: 4789,
     fullName: "Ivory Coast",
     code: "CIV",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/civ.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/civ.png",
+    logo: IvoryCoastLogo,
+    logoLight: IvoryCoastLogoLight,
     name: "Ivory Coast",
     shortName: "Ivory Coast",
     color: "#d48c00",
@@ -500,11 +833,11 @@ export const soccerTeams: Team[] = [
     espnId: 627,
     fullName: "Japan",
     code: "JPN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/jpn.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/jpn.png",
+    logo: JapanLogo,
+    logoLight: JapanLogoLight,
     name: "Japan",
     shortName: "Japan",
     color: "#ed1c24",
@@ -521,8 +854,8 @@ export const soccerTeams: Team[] = [
     city: "Amman",
     location: "Amman, Jordan",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/jor.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/jor.png",
+    logo: JordanLogo,
+    logoLight: JordanLogoLight,
     name: "Jordan",
     shortName: "Jordan",
     color: "#E70000",
@@ -539,8 +872,8 @@ export const soccerTeams: Team[] = [
     city: "Mexico City",
     location: "Mexico City, Mexico",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/mex.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/mex.png",
+    logo: MexicoLogo,
+    logoLight: MexicoLogoLight,
     name: "Mexico",
     shortName: "Mexico",
     color: "#006847",
@@ -554,11 +887,11 @@ export const soccerTeams: Team[] = [
     espnId: 2869,
     fullName: "Morocco",
     code: "MAR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/mar.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/mar.png",
+    logo: MoroccoLogo,
+    logoLight: MoroccoLogoLight,
     name: "Morocco",
     shortName: "Morocco",
     color: "#009060",
@@ -572,11 +905,11 @@ export const soccerTeams: Team[] = [
     espnId: 449,
     fullName: "Netherlands",
     code: "NED",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ned.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ned.png",
+    logo: NetherlandsLogo,
+    logoLight: NetherlandsLogoLight,
     name: "Netherlands",
     shortName: "Netherlands",
     color: "#fb5d00",
@@ -590,11 +923,11 @@ export const soccerTeams: Team[] = [
     espnId: 2666,
     fullName: "New Zealand",
     code: "NZL",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/nzl.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/nzl.png",
+    logo: NewZealandLogo,
+    logoLight: NewZealandLogoLight,
     name: "New Zealand",
     shortName: "New Zealand",
     color: "#273476",
@@ -611,8 +944,8 @@ export const soccerTeams: Team[] = [
     city: "Oslo",
     location: "Oslo, Norway",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/nor.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/nor.png",
+    logo: NorwayLogo,
+    logoLight: NorwayLogoLight,
     name: "Norway",
     shortName: "Norway",
     color: "#ef2b2d",
@@ -629,8 +962,8 @@ export const soccerTeams: Team[] = [
     city: "Panama City",
     location: "Panama City, Panama",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/pan.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/pan.png",
+    logo: PanamaLogo,
+    logoLight: PanamaLogoLight,
     name: "Panama",
     shortName: "Panama",
     color: "#d21034",
@@ -647,8 +980,8 @@ export const soccerTeams: Team[] = [
     city: "Asunción",
     location: "Asunción, Paraguay",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/par.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/par.png",
+    logo: ParaguayLogo,
+    logoLight: ParaguayLogoLight,
     name: "Paraguay",
     shortName: "Paraguay",
     color: "#ea2300",
@@ -662,11 +995,11 @@ export const soccerTeams: Team[] = [
     espnId: 482,
     fullName: "Portugal",
     code: "POR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/por.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/por.png",
+    logo: PortugalLogo,
+    logoLight: PortugalLogoLight,
     name: "Portugal",
     shortName: "Portugal",
     color: "#da291c",
@@ -680,11 +1013,11 @@ export const soccerTeams: Team[] = [
     espnId: 4398,
     fullName: "Qatar",
     code: "QAT",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/qat.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/qat.png",
+    logo: QatarLogo,
+    logoLight: QatarLogoLight,
     name: "Qatar",
     shortName: "Qatar",
     color: "#691a40",
@@ -698,11 +1031,11 @@ export const soccerTeams: Team[] = [
     espnId: 655,
     fullName: "Saudi Arabia",
     code: "KSA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ksa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ksa.png",
+    logo: SaudiArabiaLogo,
+    logoLight: SaudiArabiaLogoLight,
     name: "Saudi Arabia",
     shortName: "Saudi Arabia",
     color: "#dddddd",
@@ -719,8 +1052,8 @@ export const soccerTeams: Team[] = [
     city: "Glasgow",
     location: "Glasgow, Scotland",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/sco.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/sco.png",
+    logo: ScotlandLogo,
+    logoLight: ScotlandLogoLight,
     name: "Scotland",
     shortName: "Scotland",
     color: "#1a2d69",
@@ -737,8 +1070,8 @@ export const soccerTeams: Team[] = [
     city: "Diamniadio",
     location: "Diamniadio, Senegal",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/sen.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/sen.png",
+    logo: SenegalLogo,
+    logoLight: SenegalLogoLight,
     name: "Senegal",
     shortName: "Senegal",
     color: "#00853f",
@@ -755,8 +1088,8 @@ export const soccerTeams: Team[] = [
     city: "Johannesburg",
     location: "Johannesburg, South Africa",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/rsa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/rsa.png",
+    logo: SouthAfricaLogo,
+    logoLight: SouthAfricaLogoLight,
     name: "South Africa",
     shortName: "South Africa",
     color: "#087d5a",
@@ -773,8 +1106,8 @@ export const soccerTeams: Team[] = [
     city: "Seoul",
     location: "Seoul, South Korea",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/kors.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/kors.png",
+    logo: SouthKoreaLogo,
+    logoLight: SouthKoreaLogoLight,
     name: "South Korea",
     shortName: "South Korea",
     color: "#ce2028",
@@ -788,11 +1121,11 @@ export const soccerTeams: Team[] = [
     espnId: 164,
     fullName: "Spain",
     code: "ESP",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/esp.png",
+    logo: SpainLogo,
+    logoLight: SpainLogoLight,
     name: "Spain",
     shortName: "Spain",
     color: "#c60b1e",
@@ -809,8 +1142,8 @@ export const soccerTeams: Team[] = [
     city: "Solna",
     location: "Solna, Sweden",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/swe.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/swe.png",
+    logo: SwedenLogo,
+    logoLight: SwedenLogoLight,
     name: "Sweden",
     shortName: "Sweden",
     color: "#fecb00",
@@ -824,11 +1157,11 @@ export const soccerTeams: Team[] = [
     espnId: 475,
     fullName: "Switzerland",
     code: "SUI",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/sui.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/sui.png",
+    logo: SwitzerlandLogo,
+    logoLight: SwitzerlandLogoLight,
     name: "Switzerland",
     shortName: "Switzerland",
     color: "#d72b2c",
@@ -845,8 +1178,8 @@ export const soccerTeams: Team[] = [
     city: "Radès",
     location: "Radès, Tunisia",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/tun.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/tun.png",
+    logo: TunisiaLogo,
+    logoLight: TunisiaLogoLight,
     name: "Tunisia",
     shortName: "Tunisia",
     color: "#D20300",
@@ -860,11 +1193,11 @@ export const soccerTeams: Team[] = [
     espnId: 465,
     fullName: "Türkiye",
     code: "TUR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/tur.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/tur.png",
+    logo: TurkiyeLogo,
+    logoLight: TurkiyeLogoLight,
     name: "Türkiye",
     shortName: "Türkiye",
     color: "#ffffff",
@@ -878,11 +1211,11 @@ export const soccerTeams: Team[] = [
     espnId: 660,
     fullName: "United States",
     code: "USA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/usa.png",
+    logo: UnitedStatesLogo,
+    logoLight: UnitedStatesLogoLight,
     name: "United States",
     shortName: "USA",
     color: "#213065",
@@ -899,8 +1232,8 @@ export const soccerTeams: Team[] = [
     city: "Montevideo",
     location: "Montevideo, Uruguay",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/uru.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/uru.png",
+    logo: UruguayLogo,
+    logoLight: UruguayLogoLight,
     name: "Uruguay",
     shortName: "Uruguay",
     color: "#003da5",
@@ -917,8 +1250,8 @@ export const soccerTeams: Team[] = [
     city: "Tashkent",
     location: "Tashkent, Uzbekistan",
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/uzb.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/uzb.png",
+    logo: UzbekistanLogo,
+    logoLight: UzbekistanLogoLight,
     name: "Uzbekistan",
     shortName: "Uzbekistan",
     color: "#0081d6",
@@ -937,8 +1270,8 @@ export const soccerTeams: Team[] = [
     coach: "Gerardo Martino",
     owner: "Arthur Blank",
     established: 2014,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/18418.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/18418.png",
+    logo: AtlantaUnitedFCLogo,
+    logoLight: AtlantaUnitedFCLogoLight,
     name: "Atlanta United FC",
     shortName: "Atlanta",
     color: "#9d2235",
@@ -957,8 +1290,8 @@ export const soccerTeams: Team[] = [
     coach: "Davy Arnaud (interim)",
     owner: "Two Oak Ventures",
     established: 2018,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/20906.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/20906.png",
+    logo: AustinFCLogo,
+    logoLight: AustinFCLogoLight,
     name: "Austin FC",
     shortName: "Austin",
     color: "#00b140",
@@ -977,8 +1310,8 @@ export const soccerTeams: Team[] = [
     coach: "Philippe Eullaffroy (interim)",
     owner: "Joey Saputo",
     established: 1992,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9720.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9720.png",
+    logo: CFMontrealLogo,
+    logoLight: CFMontrealLogoLight,
     name: "CF Montréal",
     shortName: "CF Montréal",
     color: "#003da6",
@@ -997,8 +1330,8 @@ export const soccerTeams: Team[] = [
     coach: "Dean Smith",
     owner: "David Tepper",
     established: 2019,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/21300.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/21300.png",
+    logo: CharlotteFCLogo,
+    logoLight: CharlotteFCLogoLight,
     name: "Charlotte FC",
     shortName: "Charlotte",
     color: "#0085ca",
@@ -1017,8 +1350,8 @@ export const soccerTeams: Team[] = [
     coach: "Gregg Berhalter",
     owner: "Joe Mansueto",
     established: 1997,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/182.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/182.png",
+    logo: ChicagoFireFCLogo,
+    logoLight: ChicagoFireFCLogoLight,
     name: "Chicago Fire FC",
     shortName: "Chicago",
     color: "#7ccdef",
@@ -1037,8 +1370,8 @@ export const soccerTeams: Team[] = [
     coach: "Matt Wells",
     owner: "Kroenke Sports & Entertainment",
     established: 1995,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/184.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/184.png",
+    logo: ColoradoRapidsLogo,
+    logoLight: ColoradoRapidsLogoLight,
     name: "Colorado Rapids",
     shortName: "Colorado",
     color: "#8a2432",
@@ -1057,8 +1390,8 @@ export const soccerTeams: Team[] = [
     coach: "Henrik Rydström",
     owner: "Haslam Sports Group",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/183.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/183.png",
+    logo: ColumbusCrewLogo,
+    logoLight: ColumbusCrewLogoLight,
     name: "Columbus Crew",
     shortName: "Columbus",
     color: "#000000",
@@ -1077,8 +1410,8 @@ export const soccerTeams: Team[] = [
     coach: "René Weiler",
     owner: "D.C. United Holdings",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/193.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/193.png",
+    logo: DCUnitedLogo,
+    logoLight: DCUnitedLogoLight,
     name: "D.C. United",
     shortName: "D.C. United",
     color: "#000000",
@@ -1097,8 +1430,8 @@ export const soccerTeams: Team[] = [
     coach: "Pat Noonan",
     owner: "Carl Lindner III",
     established: 2015,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/18267.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/18267.png",
+    logo: FCCincinnatiLogo,
+    logoLight: FCCincinnatiLogoLight,
     name: "FC Cincinnati",
     shortName: "Cincinnati",
     color: "#003087",
@@ -1117,8 +1450,8 @@ export const soccerTeams: Team[] = [
     coach: "Eric Quill",
     owner: "Hunt Sports Group",
     established: 1995,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/185.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/185.png",
+    logo: FCDallasLogo,
+    logoLight: FCDallasLogoLight,
     name: "FC Dallas",
     shortName: "Dallas",
     color: "#c6093b",
@@ -1137,8 +1470,8 @@ export const soccerTeams: Team[] = [
     coach: "Ben Olsen",
     owner: "Ted Segal",
     established: 2005,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/6077.png",
+    logo: HoustonDynamoFCLogo,
+    logoLight: HoustonDynamoFCLogoLight,
     name: "Houston Dynamo FC",
     shortName: "Houston",
     color: "#ff6b00",
@@ -1157,8 +1490,8 @@ export const soccerTeams: Team[] = [
     coach: "Guillermo Hoyos",
     owner: "David Beckham, Jorge Mas, Jose Mas",
     established: 2018,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/20232.png",
+    logo: InterMiamiCFLogo,
+    logoLight: InterMiamiCFLogoLight,
     name: "Inter Miami CF",
     shortName: "Miami",
     color: "#231f20",
@@ -1177,8 +1510,8 @@ export const soccerTeams: Team[] = [
     coach: "Greg Vanney",
     owner: "Anschutz Entertainment Group",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/187.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/187.png",
+    logo: LAGalaxyLogo,
+    logoLight: LAGalaxyLogoLight,
     name: "LA Galaxy",
     shortName: "LA Galaxy",
     color: "#00235d",
@@ -1197,8 +1530,8 @@ export const soccerTeams: Team[] = [
     coach: "Marc Dos Santos",
     owner: "Bennett Rosenthal, Brandon Beck, Larry Berg",
     established: 2014,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/18966.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/18966.png",
+    logo: LAFCLogo,
+    logoLight: LAFCLogoLight,
     name: "LAFC",
     shortName: "LAFC",
     color: "#000000",
@@ -1217,8 +1550,8 @@ export const soccerTeams: Team[] = [
     coach: "Cameron Knowles",
     owner: "Bill McGuire",
     established: 2015,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/17362.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/17362.png",
+    logo: MinnesotaUnitedFCLogo,
+    logoLight: MinnesotaUnitedFCLogoLight,
     name: "Minnesota United FC",
     shortName: "Minnesota",
     color: "#000000",
@@ -1237,8 +1570,8 @@ export const soccerTeams: Team[] = [
     coach: "B. J. Callaghan",
     owner: "John R. Ingram",
     established: 2016,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/18986.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/18986.png",
+    logo: NashvilleSCLogo,
+    logoLight: NashvilleSCLogoLight,
     name: "Nashville SC",
     shortName: "Nashville",
     color: "#ece83a",
@@ -1257,8 +1590,8 @@ export const soccerTeams: Team[] = [
     coach: "Marko Mitrović",
     owner: "Robert Kraft",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/189.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/189.png",
+    logo: NewEnglandRevolutionLogo,
+    logoLight: NewEnglandRevolutionLogoLight,
     name: "New England Revolution",
     shortName: "New England",
     color: "#022166",
@@ -1277,8 +1610,8 @@ export const soccerTeams: Team[] = [
     coach: "Pascal Jansen",
     owner: "City Football Group, Yankee Global Enterprises",
     established: 2013,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/17606.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/17606.png",
+    logo: NewYorkCityFCLogo,
+    logoLight: NewYorkCityFCLogoLight,
     name: "New York City FC",
     shortName: "NYCFC",
     color: "#9fd2ff",
@@ -1297,8 +1630,8 @@ export const soccerTeams: Team[] = [
     coach: "Martín Perelman (interim)",
     owner: "Zygi Wilf, Mark Wilf, Lise Wilf",
     established: 2010,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/12011.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/12011.png",
+    logo: OrlandoCitySCLogo,
+    logoLight: OrlandoCitySCLogoLight,
     name: "Orlando City SC",
     shortName: "Orlando",
     color: "#60269e",
@@ -1317,8 +1650,8 @@ export const soccerTeams: Team[] = [
     coach: "Ryan Richter (interim)",
     owner: "Jay Sugarman",
     established: 2008,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/10739.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/10739.png",
+    logo: PhiladelphiaUnionLogo,
+    logoLight: PhiladelphiaUnionLogoLight,
     name: "Philadelphia Union",
     shortName: "Philadelphia",
     color: "#051f31",
@@ -1337,8 +1670,8 @@ export const soccerTeams: Team[] = [
     coach: "Phil Neville",
     owner: "Peregrine Sports",
     established: 2009,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9723.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9723.png",
+    logo: PortlandTimbersLogo,
+    logoLight: PortlandTimbersLogoLight,
     name: "Portland Timbers",
     shortName: "Portland",
     color: "#2c5234",
@@ -1357,8 +1690,8 @@ export const soccerTeams: Team[] = [
     coach: "Pablo Mastroeni",
     owner: "David Blitzer, Ryan Smith",
     established: 2004,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/4771.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/4771.png",
+    logo: RealSaltLakeLogo,
+    logoLight: RealSaltLakeLogoLight,
     name: "Real Salt Lake",
     shortName: "Salt Lake",
     color: "#a32035",
@@ -1377,8 +1710,8 @@ export const soccerTeams: Team[] = [
     coach: "Michael Bradley",
     owner: "Red Bull GmbH",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/190.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/190.png",
+    logo: RedBullNewYorkLogo,
+    logoLight: RedBullNewYorkLogoLight,
     name: "Red Bull New York",
     shortName: "Red Bull NY",
     color: "#ba0c2f",
@@ -1397,8 +1730,8 @@ export const soccerTeams: Team[] = [
     coach: "Mikey Varas",
     owner: "Mohamed Mansour, Sycuan Band of the Kumeyaay Nation",
     established: 2023,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/22529.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/22529.png",
+    logo: SanDiegoFCLogo,
+    logoLight: SanDiegoFCLogoLight,
     name: "San Diego FC",
     shortName: "San Diego",
     color: "#697a7C",
@@ -1417,8 +1750,8 @@ export const soccerTeams: Team[] = [
     coach: "Bruce Arena",
     owner: "John Fisher",
     established: 1994,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/191.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/191.png",
+    logo: SanJoseEarthquakesLogo,
+    logoLight: SanJoseEarthquakesLogoLight,
     name: "San Jose Earthquakes",
     shortName: "San Jose",
     color: "#003da6",
@@ -1437,8 +1770,8 @@ export const soccerTeams: Team[] = [
     coach: "Brian Schmetzer",
     owner: "Adrian Hanauer",
     established: 2007,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9726.png",
+    logo: SeattleSoundersFCLogo,
+    logoLight: SeattleSoundersFCLogoLight,
     name: "Seattle Sounders FC",
     shortName: "Seattle",
     color: "#2dc84d",
@@ -1457,8 +1790,8 @@ export const soccerTeams: Team[] = [
     coach: "Raphaël Wicky",
     owner: "Sporting Club",
     established: 1995,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/186.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/186.png",
+    logo: SportingKansasCityLogo,
+    logoLight: SportingKansasCityLogoLight,
     name: "Sporting Kansas City",
     shortName: "Kansas City",
     color: "#a7c6ed",
@@ -1477,8 +1810,8 @@ export const soccerTeams: Team[] = [
     coach: "Yoann Damet",
     owner: "Carolyn Kindle",
     established: 2019,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/21812.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/21812.png",
+    logo: StLouisCITYSCLogo,
+    logoLight: StLouisCITYSCLogoLight,
     name: "St. Louis CITY SC",
     shortName: "St. Louis",
     color: "#ec1458",
@@ -1497,8 +1830,8 @@ export const soccerTeams: Team[] = [
     coach: "Robin Fraser",
     owner: "Maple Leaf Sports & Entertainment",
     established: 2005,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/7318.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/7318.png",
+    logo: TorontoFCLogo,
+    logoLight: TorontoFCLogoLight,
     name: "Toronto FC",
     shortName: "Toronto",
     color: "#aa182c",
@@ -1517,8 +1850,8 @@ export const soccerTeams: Team[] = [
     coach: "Jesper Sørensen",
     owner: "Greg Kerfoot, Steve Luczo, Jeff Mallett, Steve Nash",
     established: 1974,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9727.png",
+    logo: VancouverWhitecapsLogo,
+    logoLight: VancouverWhitecapsLogoLight,
     name: "Vancouver Whitecaps",
     shortName: "Vancouver",
     color: "#ffffff",
@@ -1537,8 +1870,8 @@ export const soccerTeams: Team[] = [
     coach: "Marco Rose",
     owner: "Black Knight Football Club UK Limited",
     established: 1899,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/349.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/349.png",
+    logo: AFCBournemouthLogo,
+    logoLight: AFCBournemouthLogoLight,
     name: "AFC Bournemouth",
     shortName: "Bournemouth",
     color: "#f42727",
@@ -1557,8 +1890,8 @@ export const soccerTeams: Team[] = [
     coach: "Mikel Arteta",
     owner: "Kroenke Sports & Entertainment",
     established: 1886,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/359.png",
+    logo: ArsenalLogo,
+    logoLight: ArsenalLogoLight,
     name: "Arsenal",
     shortName: "Arsenal",
     color: "#e20520",
@@ -1577,8 +1910,8 @@ export const soccerTeams: Team[] = [
     coach: "Unai Emery",
     owner: "Nassef Sawiris, Wes Edens",
     established: 1874,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/362.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/362.png",
+    logo: AstonVillaLogo,
+    logoLight: AstonVillaLogoLight,
     name: "Aston Villa",
     shortName: "Aston Villa",
     color: "#660e36",
@@ -1597,8 +1930,8 @@ export const soccerTeams: Team[] = [
     coach: "Keith Andrews",
     owner: "Matthew Benham",
     established: 1889,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/337.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/337.png",
+    logo: BrentfordLogo,
+    logoLight: BrentfordLogoLight,
     name: "Brentford",
     shortName: "Brentford",
     color: "#f42727",
@@ -1617,8 +1950,8 @@ export const soccerTeams: Team[] = [
     coach: "Fabian Hürzeler",
     owner: "Tony Bloom",
     established: 1901,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/331.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/331.png",
+    logo: BrightonHoveAlbionLogo,
+    logoLight: BrightonHoveAlbionLogoLight,
     name: "Brighton & Hove Albion",
     shortName: "Brighton",
     color: "#0606fa",
@@ -1637,8 +1970,8 @@ export const soccerTeams: Team[] = [
     coach: "Mike Jackson (interim)",
     owner: "ALK Capital LLC",
     established: 1882,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/379.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/379.png",
+    logo: BurnleyLogo,
+    logoLight: BurnleyLogoLight,
     name: "Burnley",
     shortName: "Burnley",
     color: "#6C1D45",
@@ -1657,8 +1990,8 @@ export const soccerTeams: Team[] = [
     coach: "Xabi Alonso",
     owner: "BlueCo",
     established: 1905,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/363.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/363.png",
+    logo: ChelseaLogo,
+    logoLight: ChelseaLogoLight,
     name: "Chelsea",
     shortName: "Chelsea",
     color: "#144992",
@@ -1676,8 +2009,8 @@ export const soccerTeams: Team[] = [
     location: "London, England",
     owner: "Steve Parish",
     established: 1905,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/384.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/384.png",
+    logo: CrystalPalaceLogo,
+    logoLight: CrystalPalaceLogoLight,
     name: "Crystal Palace",
     shortName: "C Palace",
     color: "#0202fb",
@@ -1696,8 +2029,8 @@ export const soccerTeams: Team[] = [
     coach: "David Moyes",
     owner: "The Friedkin Group",
     established: 1878,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/368.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/368.png",
+    logo: EvertonLogo,
+    logoLight: EvertonLogoLight,
     name: "Everton",
     shortName: "Everton",
     color: "#0606fa",
@@ -1715,8 +2048,8 @@ export const soccerTeams: Team[] = [
     location: "London, England",
     owner: "Shahid Khan",
     established: 1879,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/370.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/370.png",
+    logo: FulhamLogo,
+    logoLight: FulhamLogoLight,
     name: "Fulham",
     shortName: "Fulham",
     color: "#ffffff",
@@ -1735,8 +2068,8 @@ export const soccerTeams: Team[] = [
     coach: "Daniel Farke",
     owner: "49ers Enterprises",
     established: 1919,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/357.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/357.png",
+    logo: LeedsUnitedLogo,
+    logoLight: LeedsUnitedLogoLight,
     name: "Leeds United",
     shortName: "Leeds",
     color: "#ffffff",
@@ -1755,8 +2088,8 @@ export const soccerTeams: Team[] = [
     coach: "Andoni Iraola",
     owner: "Fenway Sports Group",
     established: 1892,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/364.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/364.png",
+    logo: LiverpoolLogo,
+    logoLight: LiverpoolLogoLight,
     name: "Liverpool",
     shortName: "Liverpool",
     color: "#d11317",
@@ -1774,8 +2107,8 @@ export const soccerTeams: Team[] = [
     location: "Manchester, England",
     owner: "City Football Group Limited",
     established: 1880,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/382.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/382.png",
+    logo: ManchesterCityLogo,
+    logoLight: ManchesterCityLogoLight,
     name: "Manchester City",
     shortName: "Man City",
     color: "#99c5ea",
@@ -1794,8 +2127,8 @@ export const soccerTeams: Team[] = [
     coach: "Michael Carrick",
     owner: "Manchester United plc",
     established: 1878,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/360.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/360.png",
+    logo: ManchesterUnitedLogo,
+    logoLight: ManchesterUnitedLogoLight,
     name: "Manchester United",
     shortName: "Man United",
     color: "#da020e",
@@ -1814,8 +2147,8 @@ export const soccerTeams: Team[] = [
     coach: "Eddie Howe",
     owner: "Public Investment Fund, RB Sports & Media, PCP Capital Partners",
     established: 1892,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/361.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/361.png",
+    logo: NewcastleUnitedLogo,
+    logoLight: NewcastleUnitedLogoLight,
     name: "Newcastle United",
     shortName: "Newcastle",
     color: "#000000",
@@ -1834,8 +2167,8 @@ export const soccerTeams: Team[] = [
     coach: "Vítor Pereira",
     owner: "Evangelos Marinakis",
     established: 1865,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/393.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/393.png",
+    logo: NottinghamForestLogo,
+    logoLight: NottinghamForestLogoLight,
     name: "Nottingham Forest",
     shortName: "Nottm Forest",
     color: "#c8102e",
@@ -1854,8 +2187,8 @@ export const soccerTeams: Team[] = [
     coach: "Régis Le Bris",
     owner: "Kyril Louis-Dreyfus",
     established: 1879,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/366.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/366.png",
+    logo: SunderlandLogo,
+    logoLight: SunderlandLogoLight,
     name: "Sunderland",
     shortName: "Sunderland",
     color: "#EB172B",
@@ -1874,8 +2207,8 @@ export const soccerTeams: Team[] = [
     coach: "Roberto De Zerbi",
     owner: "ENIC International Ltd.",
     established: 1882,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/367.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/367.png",
+    logo: TottenhamHotspurLogo,
+    logoLight: TottenhamHotspurLogoLight,
     name: "Tottenham Hotspur",
     shortName: "Spurs",
     color: "#ffffff",
@@ -1894,8 +2227,8 @@ export const soccerTeams: Team[] = [
     coach: "Nuno Espírito Santo",
     owner: "David Sullivan, Daniel Křetínský, Vanessa Gold",
     established: 1895,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/371.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/371.png",
+    logo: WestHamUnitedLogo,
+    logoLight: WestHamUnitedLogoLight,
     name: "West Ham United",
     shortName: "West Ham",
     color: "#7c2c3b",
@@ -1913,8 +2246,8 @@ export const soccerTeams: Team[] = [
     location: "Wolverhampton, England",
     owner: "Fosun International",
     established: 1877,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/380.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/380.png",
+    logo: WolverhamptonWanderersLogo,
+    logoLight: WolverhamptonWanderersLogoLight,
     name: "Wolverhampton Wanderers",
     shortName: "Wolves",
     color: "#fdb913",
@@ -1928,11 +2261,11 @@ export const soccerTeams: Team[] = [
     espnId: 2750,
     fullName: "Argentina",
     code: "ARG",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/arg.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/arg.png",
+    logo: Argentina2750Logo,
+    logoLight: Argentina2750LogoLight,
     name: "Argentina",
     shortName: "Argentina",
     color: "#74acdf",
@@ -1946,11 +2279,11 @@ export const soccerTeams: Team[] = [
     espnId: 2751,
     fullName: "Australia",
     code: "AUS",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/aus.png",
+    logo: Australia2751Logo,
+    logoLight: Australia2751LogoLight,
     name: "Australia",
     shortName: "Australia",
     color: "#2a2d7c",
@@ -1964,11 +2297,11 @@ export const soccerTeams: Team[] = [
     espnId: 2752,
     fullName: "Brazil",
     code: "BRA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/bra.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/bra.png",
+    logo: Brazil2752Logo,
+    logoLight: Brazil2752LogoLight,
     name: "Brazil",
     shortName: "Brazil",
     color: "#fee000",
@@ -1982,11 +2315,11 @@ export const soccerTeams: Team[] = [
     espnId: 2753,
     fullName: "Canada",
     code: "CAN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/can.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/can.png",
+    logo: Canada2753Logo,
+    logoLight: Canada2753LogoLight,
     name: "Canada",
     shortName: "Canada ",
     color: "#ed2224",
@@ -2000,11 +2333,11 @@ export const soccerTeams: Team[] = [
     espnId: 2754,
     fullName: "China",
     code: "CHN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/chn.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/chn.png",
+    logo: ChinaLogo,
+    logoLight: ChinaLogoLight,
     name: "China",
     shortName: "China",
     color: "#dd342c",
@@ -2018,11 +2351,11 @@ export const soccerTeams: Team[] = [
     espnId: 11337,
     fullName: "Colombia",
     code: "COL",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/col.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/col.png",
+    logo: Colombia11337Logo,
+    logoLight: Colombia11337LogoLight,
     name: "Colombia",
     shortName: "Colombia",
     color: "#fbd632",
@@ -2036,11 +2369,11 @@ export const soccerTeams: Team[] = [
     espnId: 2894,
     fullName: "Costa Rica",
     code: "CRC",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/crc.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/crc.png",
+    logo: CostaRicaLogo,
+    logoLight: CostaRicaLogoLight,
     name: "Costa Rica",
     shortName: "Costa Rica",
     color: "#ce1126",
@@ -2054,11 +2387,11 @@ export const soccerTeams: Team[] = [
     espnId: 2896,
     fullName: "Denmark",
     code: "DEN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/den.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/den.png",
+    logo: DenmarkLogo,
+    logoLight: DenmarkLogoLight,
     name: "Denmark",
     shortName: "Denmark",
     color: "#d02a3e",
@@ -2072,11 +2405,11 @@ export const soccerTeams: Team[] = [
     espnId: 5159,
     fullName: "England",
     code: "ENG",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/eng.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/eng.png",
+    logo: England5159Logo,
+    logoLight: England5159LogoLight,
     name: "England",
     shortName: "England",
     color: "#ce1124",
@@ -2090,11 +2423,11 @@ export const soccerTeams: Team[] = [
     espnId: 2755,
     fullName: "France",
     code: "FRA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/fra.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/fra.png",
+    logo: France2755Logo,
+    logoLight: France2755LogoLight,
     name: "France",
     shortName: "France",
     color: "#002f79",
@@ -2108,11 +2441,11 @@ export const soccerTeams: Team[] = [
     espnId: 2756,
     fullName: "Germany",
     code: "GER",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ger.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ger.png",
+    logo: Germany2756Logo,
+    logoLight: Germany2756LogoLight,
     name: "Germany",
     shortName: "Germany",
     color: "#000000",
@@ -2126,11 +2459,11 @@ export const soccerTeams: Team[] = [
     espnId: 2891,
     fullName: "Haiti",
     code: "HAI",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/hai.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/hai.png",
+    logo: Haiti2891Logo,
+    logoLight: Haiti2891LogoLight,
     name: "Haiti",
     shortName: "Haiti",
     color: "#0033a0",
@@ -2144,11 +2477,11 @@ export const soccerTeams: Team[] = [
     espnId: 2792,
     fullName: "Italy",
     code: "ITA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ita.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ita.png",
+    logo: ItalyLogo,
+    logoLight: ItalyLogoLight,
     name: "Italy",
     shortName: "Italy",
     color: "#24923c",
@@ -2162,11 +2495,11 @@ export const soccerTeams: Team[] = [
     espnId: 2893,
     fullName: "Jamaica",
     code: "JAM",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/jam.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/jam.png",
+    logo: JamaicaLogo,
+    logoLight: JamaicaLogoLight,
     name: "Jamaica",
     shortName: "Jamaica",
     color: "#348b42",
@@ -2180,11 +2513,11 @@ export const soccerTeams: Team[] = [
     espnId: 2758,
     fullName: "Japan",
     code: "JPN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/jpn.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/jpn.png",
+    logo: Japan2758Logo,
+    logoLight: Japan2758LogoLight,
     name: "Japan",
     shortName: "Japan",
     color: "#ed1c24",
@@ -2198,11 +2531,11 @@ export const soccerTeams: Team[] = [
     espnId: 18221,
     fullName: "Morocco",
     code: "MAR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/mor.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/mor.png",
+    logo: Morocco18221Logo,
+    logoLight: Morocco18221LogoLight,
     name: "Morocco",
     shortName: "Morocco",
     color: "#df2027",
@@ -2216,11 +2549,11 @@ export const soccerTeams: Team[] = [
     espnId: 7151,
     fullName: "Netherlands",
     code: "NED",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/ned.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/ned.png",
+    logo: Netherlands7151Logo,
+    logoLight: Netherlands7151LogoLight,
     name: "Netherlands",
     shortName: "Netherlands",
     color: "#ec2f00",
@@ -2234,11 +2567,11 @@ export const soccerTeams: Team[] = [
     espnId: 4153,
     fullName: "New Zealand",
     code: "NZL",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/nzl.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/nzl.png",
+    logo: NewZealand4153Logo,
+    logoLight: NewZealand4153LogoLight,
     name: "New Zealand",
     shortName: "New Zealand",
     color: "#273476",
@@ -2252,11 +2585,11 @@ export const soccerTeams: Team[] = [
     espnId: 2761,
     fullName: "Nigeria",
     code: "NGA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/nga.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/nga.png",
+    logo: NigeriaLogo,
+    logoLight: NigeriaLogoLight,
     name: "Nigeria",
     shortName: "Nigeria",
     color: "#008751",
@@ -2270,11 +2603,11 @@ export const soccerTeams: Team[] = [
     espnId: 2762,
     fullName: "Norway",
     code: "NOR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/nor.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/nor.png",
+    logo: Norway2762Logo,
+    logoLight: Norway2762LogoLight,
     name: "Norway",
     shortName: "Norway",
     color: "#ef2b2d",
@@ -2288,11 +2621,11 @@ export const soccerTeams: Team[] = [
     espnId: 2895,
     fullName: "Panama",
     code: "PAN",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/pan.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/pan.png",
+    logo: Panama2895Logo,
+    logoLight: Panama2895LogoLight,
     name: "Panama",
     shortName: "Panama",
     color: "#d60a14",
@@ -2306,11 +2639,11 @@ export const soccerTeams: Team[] = [
     espnId: 21546,
     fullName: "Philippines",
     code: "PHI",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/phi.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/phi.png",
+    logo: PhilippinesLogo,
+    logoLight: PhilippinesLogoLight,
     name: "Philippines",
     shortName: "Philippines",
     color: "#1f449b",
@@ -2324,11 +2657,11 @@ export const soccerTeams: Team[] = [
     espnId: 9531,
     fullName: "Portugal",
     code: "POR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/por.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/por.png",
+    logo: Portugal9531Logo,
+    logoLight: Portugal9531LogoLight,
     name: "Portugal",
     shortName: "Portugal",
     color: "#006600",
@@ -2342,11 +2675,11 @@ export const soccerTeams: Team[] = [
     espnId: 4178,
     fullName: "Republic of Ireland",
     code: "IRL",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/irl.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/irl.png",
+    logo: RepublicOfIrelandLogo,
+    logoLight: RepublicOfIrelandLogoLight,
     name: "Republic of Ireland",
     shortName: "Rep Ireland",
     color: "#049a64",
@@ -2360,11 +2693,11 @@ export const soccerTeams: Team[] = [
     espnId: 13313,
     fullName: "South Africa",
     code: "RSA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/rsa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/rsa.png",
+    logo: SouthAfrica13313Logo,
+    logoLight: SouthAfrica13313LogoLight,
     name: "South Africa",
     shortName: "South Africa",
     color: "#ffef00",
@@ -2378,11 +2711,11 @@ export const soccerTeams: Team[] = [
     espnId: 17639,
     fullName: "South Korea",
     code: "KOR",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/kors.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/kors.png",
+    logo: SouthKorea17639Logo,
+    logoLight: SouthKorea17639LogoLight,
     name: "South Korea",
     shortName: "South Korea",
     color: "#ce2028",
@@ -2396,11 +2729,11 @@ export const soccerTeams: Team[] = [
     espnId: 17640,
     fullName: "Spain",
     code: "ESP",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/esp.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/esp.png",
+    logo: Spain17640Logo,
+    logoLight: Spain17640LogoLight,
     name: "Spain",
     shortName: "Spain",
     color: "#c60b1e",
@@ -2414,11 +2747,11 @@ export const soccerTeams: Team[] = [
     espnId: 2764,
     fullName: "Sweden",
     code: "SWE",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/swe.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/swe.png",
+    logo: Sweden2764Logo,
+    logoLight: Sweden2764LogoLight,
     name: "Sweden",
     shortName: "Sweden",
     color: "#fecb00",
@@ -2432,11 +2765,11 @@ export const soccerTeams: Team[] = [
     espnId: 17641,
     fullName: "Switzerland",
     code: "SUI",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/sui.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/sui.png",
+    logo: Switzerland17641Logo,
+    logoLight: Switzerland17641LogoLight,
     name: "Switzerland",
     shortName: "Switzerland",
     color: "#d72b2c",
@@ -2450,11 +2783,11 @@ export const soccerTeams: Team[] = [
     espnId: 2765,
     fullName: "United States",
     code: "USA",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/usa.png",
+    logo: UnitedStates2765Logo,
+    logoLight: UnitedStates2765LogoLight,
     name: "United States",
     shortName: "USA",
     color: "#213065",
@@ -2468,11 +2801,11 @@ export const soccerTeams: Team[] = [
     espnId: 17815,
     fullName: "Vietnam",
     code: "VIE",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/vie.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/vie.png",
+    logo: VietnamLogo,
+    logoLight: VietnamLogoLight,
     name: "Vietnam",
     shortName: "Vietnam",
     color: "#DA251D",
@@ -2486,11 +2819,11 @@ export const soccerTeams: Team[] = [
     espnId: 20795,
     fullName: "Zambia",
     code: "ZAM",
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
-    logo: "https://a.espncdn.com/i/teamlogos/countries/500/zam.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/zam.png",
+    logo: ZambiaLogo,
+    logoLight: ZambiaLogoLight,
     name: "Zambia",
     shortName: "Zambia",
     color: "#00843d",
@@ -2508,8 +2841,8 @@ export const soccerTeams: Team[] = [
     location: "Heidenheim an der Brenz, Germany",
     coach: "Frank Schmidt",
     established: 1846,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/6418.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/6418.png",
+    logo: Team1FCHeidenheim1846Logo,
+    logoLight: Team1FCHeidenheim1846LogoLight,
     name: "1. FC Heidenheim 1846",
     shortName: "Heidenheim",
     color: "#DA0308",
@@ -2527,8 +2860,8 @@ export const soccerTeams: Team[] = [
     location: "Berlin, Germany",
     coach: "Mauro Lustrinelli",
     established: 1966,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/598.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/598.png",
+    logo: Team1FCUnionBerlinLogo,
+    logoLight: Team1FCUnionBerlinLogoLight,
     name: "1. FC Union Berlin",
     shortName: "Union Berlin",
     color: "#DA0308",
@@ -2547,8 +2880,8 @@ export const soccerTeams: Team[] = [
     coach: "Carles Martínez Novell",
     owner: "Bayer AG",
     established: 1904,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/131.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/131.png",
+    logo: BayerLeverkusenLogo,
+    logoLight: BayerLeverkusenLogoLight,
     name: "Bayer Leverkusen",
     shortName: "Leverkusen",
     color: "#DA0308",
@@ -2567,8 +2900,8 @@ export const soccerTeams: Team[] = [
     coach: "Vincent Kompany",
     owner: "FC Bayern München e.V.",
     established: 1900,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/132.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/132.png",
+    logo: BayernMunichLogo,
+    logoLight: BayernMunichLogoLight,
     name: "Bayern Munich",
     shortName: "Bayern",
     color: "#dc052d",
@@ -2587,8 +2920,8 @@ export const soccerTeams: Team[] = [
     coach: "Niko Kovač",
     owner: "Borussia Dortmund GmbH & Co. KGaA",
     established: 1909,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/124.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/124.png",
+    logo: BorussiaDortmundLogo,
+    logoLight: BorussiaDortmundLogoLight,
     name: "Borussia Dortmund",
     shortName: "Dortmund",
     color: "#ffee00",
@@ -2606,8 +2939,8 @@ export const soccerTeams: Team[] = [
     location: "Mönchengladbach, Germany",
     coach: "Eugen Polański",
     established: 1900,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/268.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/268.png",
+    logo: BorussiaMonchengladbachLogo,
+    logoLight: BorussiaMonchengladbachLogoLight,
     name: "Borussia Mönchengladbach",
     shortName: "Gladbach",
     color: "#ffffff",
@@ -2625,8 +2958,8 @@ export const soccerTeams: Team[] = [
     location: "Frankfurt, Germany",
     coach: "Adi Hütter",
     established: 1899,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/125.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/125.png",
+    logo: EintrachtFrankfurtLogo,
+    logoLight: EintrachtFrankfurtLogoLight,
     name: "Eintracht Frankfurt",
     shortName: "Frankfurt",
     color: "#ffffff",
@@ -2645,8 +2978,8 @@ export const soccerTeams: Team[] = [
     coach: "Manuel Baum",
     owner: "FC Augsburg 1907 GmbH & Co. KGaA",
     established: 1907,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/3841.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/3841.png",
+    logo: FCAugsburgLogo,
+    logoLight: FCAugsburgLogoLight,
     name: "FC Augsburg",
     shortName: "Augsburg",
     color: "#ffffff",
@@ -2664,8 +2997,8 @@ export const soccerTeams: Team[] = [
     location: "Cologne, Germany",
     coach: "René Wagner",
     established: 1948,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/122.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/122.png",
+    logo: FCCologneLogo,
+    logoLight: FCCologneLogoLight,
     name: "FC Cologne",
     shortName: "Cologne",
     color: "#ffffff",
@@ -2683,8 +3016,8 @@ export const soccerTeams: Team[] = [
     location: "Hamburg, Germany",
     coach: "Merlin Polzin",
     established: 1887,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/127.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/127.png",
+    logo: HamburgSVLogo,
+    logoLight: HamburgSVLogoLight,
     name: "Hamburg SV",
     shortName: "Hamburg",
     color: "#1a26af",
@@ -2702,8 +3035,8 @@ export const soccerTeams: Team[] = [
     location: "Mainz, Germany",
     coach: "Urs Fischer",
     established: 1905,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/2950.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/2950.png",
+    logo: MainzLogo,
+    logoLight: MainzLogoLight,
     name: "Mainz",
     shortName: "Mainz",
     color: "#DA0308",
@@ -2722,8 +3055,8 @@ export const soccerTeams: Team[] = [
     coach: "Ole Werner",
     owner: "Red Bull GmbH",
     established: 2009,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/11420.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/11420.png",
+    logo: RBLeipzigLogo,
+    logoLight: RBLeipzigLogoLight,
     name: "RB Leipzig",
     shortName: "RB Leipzig",
     color: "#ffffff",
@@ -2741,8 +3074,8 @@ export const soccerTeams: Team[] = [
     location: "Freiburg, Germany",
     coach: "Julian Schuster",
     established: 1904,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/126.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/126.png",
+    logo: SCFreiburgLogo,
+    logoLight: SCFreiburgLogoLight,
     name: "SC Freiburg",
     shortName: "Freiburg",
     color: "#DA0308",
@@ -2759,8 +3092,8 @@ export const soccerTeams: Team[] = [
     city: "Hamburg",
     location: "Hamburg, Germany",
     established: 1910,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/270.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/270.png",
+    logo: StPauliLogo,
+    logoLight: StPauliLogoLight,
     name: "St. Pauli",
     shortName: "St. Pauli",
     color: "#442e23",
@@ -2779,8 +3112,8 @@ export const soccerTeams: Team[] = [
     coach: "Christian Ilzer",
     owner: "Dietmar Hopp",
     established: 1899,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/7911.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/7911.png",
+    logo: TSGHoffenheimLogo,
+    logoLight: TSGHoffenheimLogoLight,
     name: "TSG Hoffenheim",
     shortName: "Hoffenheim",
     color: "#003399",
@@ -2799,8 +3132,8 @@ export const soccerTeams: Team[] = [
     coach: "Sebastian Hoeneß",
     owner: "VfB Stuttgart 1893 AG",
     established: 1893,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/134.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/134.png",
+    logo: VfBStuttgartLogo,
+    logoLight: VfBStuttgartLogoLight,
     name: "VfB Stuttgart",
     shortName: "Stuttgart",
     color: "#ffffff",
@@ -2819,8 +3152,8 @@ export const soccerTeams: Team[] = [
     coach: "Tobias Strobl",
     owner: "Volkswagen AG",
     established: 1945,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/138.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/138.png",
+    logo: VfLWolfsburgLogo,
+    logoLight: VfLWolfsburgLogoLight,
     name: "VfL Wolfsburg",
     shortName: "Wolfsburg",
     color: "#81f733",
@@ -2839,8 +3172,8 @@ export const soccerTeams: Team[] = [
     coach: "Daniel Thioune",
     owner: "SV Werder Bremen GmbH & Co. KG aA",
     established: 1899,
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/137.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/137.png",
+    logo: WerderBremenLogo,
+    logoLight: WerderBremenLogoLight,
     name: "Werder Bremen",
     shortName: "Bremen",
     color: "#03915c",
@@ -2858,13 +3191,13 @@ export const soccerTeams: Team[] = [
     code: "ALA",
     color: "#0000ff",
     secondaryColor: "#c3c3c3",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/96.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/96.png",
+    logo: AlavesLogo,
+    logoLight: AlavesLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2876,13 +3209,13 @@ export const soccerTeams: Team[] = [
     code: "ATH",
     color: "#C8142F",
     secondaryColor: "#0000ff",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/93.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/93.png",
+    logo: AthleticClubLogo,
+    logoLight: AthleticClubLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2894,13 +3227,13 @@ export const soccerTeams: Team[] = [
     code: "ATM",
     color: "#ca3624",
     secondaryColor: "#000099",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/1068.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/1068.png",
+    logo: AtleticoMadridLogo,
+    logoLight: AtleticoMadridLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2912,13 +3245,13 @@ export const soccerTeams: Team[] = [
     code: "BAR",
     color: "#990000",
     secondaryColor: "#FCE38A",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/83.png",
+    logo: BarcelonaLogo,
+    logoLight: BarcelonaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2930,13 +3263,13 @@ export const soccerTeams: Team[] = [
     code: "CEL",
     color: "#6cace4",
     secondaryColor: "#004996",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/85.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/85.png",
+    logo: CeltaVigoLogo,
+    logoLight: CeltaVigoLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2948,13 +3281,13 @@ export const soccerTeams: Team[] = [
     code: "ELC",
     color: "#ffffff",
     secondaryColor: "#288A00",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/3751.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/3751.png",
+    logo: ElcheLogo,
+    logoLight: ElcheLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2966,13 +3299,13 @@ export const soccerTeams: Team[] = [
     code: "ESP",
     color: "#3366CC",
     secondaryColor: "#C8142F",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/88.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/88.png",
+    logo: EspanyolLogo,
+    logoLight: EspanyolLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -2984,13 +3317,13 @@ export const soccerTeams: Team[] = [
     code: "GET",
     color: "#0000ff",
     secondaryColor: "#C8142F",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/2922.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/2922.png",
+    logo: GetafeLogo,
+    logoLight: GetafeLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3002,13 +3335,13 @@ export const soccerTeams: Team[] = [
     code: "GIR",
     color: "#C60000",
     secondaryColor: "#004996",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/9812.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/9812.png",
+    logo: GironaLogo,
+    logoLight: GironaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3020,13 +3353,13 @@ export const soccerTeams: Team[] = [
     code: "LEV",
     color: "#C8142F",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/1538.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/1538.png",
+    logo: LevanteLogo,
+    logoLight: LevanteLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3038,13 +3371,13 @@ export const soccerTeams: Team[] = [
     code: "MLL",
     color: "#C8142F",
     secondaryColor: "#ccff00",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/84.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/84.png",
+    logo: MallorcaLogo,
+    logoLight: MallorcaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3056,13 +3389,13 @@ export const soccerTeams: Team[] = [
     code: "OSA",
     color: "#cd0000",
     secondaryColor: "#ffffff",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/97.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/97.png",
+    logo: OsasunaLogo,
+    logoLight: OsasunaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3074,13 +3407,13 @@ export const soccerTeams: Team[] = [
     code: "RAY",
     color: "#ffffff",
     secondaryColor: "#cd0000",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/101.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/101.png",
+    logo: RayoVallecanoLogo,
+    logoLight: RayoVallecanoLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3092,13 +3425,13 @@ export const soccerTeams: Team[] = [
     code: "BET",
     color: "#288A00",
     secondaryColor: "#ccff00",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/244.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/244.png",
+    logo: RealBetisLogo,
+    logoLight: RealBetisLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3110,13 +3443,13 @@ export const soccerTeams: Team[] = [
     code: "RMA",
     color: "#ffffff",
     secondaryColor: "#00529F",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/86.png",
+    logo: RealMadridLogo,
+    logoLight: RealMadridLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3128,13 +3461,13 @@ export const soccerTeams: Team[] = [
     code: "OVI",
     color: "#e23627",
     secondaryColor: "#ffd200",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/92.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500/92.png",
+    logo: RealOviedoLogo,
+    logoLight: RealOviedoLogo,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3146,13 +3479,13 @@ export const soccerTeams: Team[] = [
     code: "RSO",
     color: "#3366CC",
     secondaryColor: "#ffdd00",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/89.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/89.png",
+    logo: RealSociedadLogo,
+    logoLight: RealSociedadLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3164,13 +3497,13 @@ export const soccerTeams: Team[] = [
     code: "SEV",
     color: "#ffffff",
     secondaryColor: "#d81022",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/243.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/243.png",
+    logo: SevillaLogo,
+    logoLight: SevillaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3182,13 +3515,13 @@ export const soccerTeams: Team[] = [
     code: "VAL",
     color: "#ffffff",
     secondaryColor: "#004996",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/94.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/94.png",
+    logo: ValenciaLogo,
+    logoLight: ValenciaLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
   {
@@ -3200,13 +3533,13 @@ export const soccerTeams: Team[] = [
     code: "VIL",
     color: "#ffff00",
     secondaryColor: "#6cace4",
-    logo: "https://a.espncdn.com/i/teamlogos/soccer/500/102.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/soccer/500-dark/102.png",
+    logo: VillarrealLogo,
+    logoLight: VillarrealLogoLight,
     isActive: true,
     isAllStar: false,
     isNational: true,
-    city: "",
-    location: "",
+    city: null,
+    location: null,
     established: 0,
   },
 ];
@@ -3221,11 +3554,11 @@ export function getSOCCTeamLogo(
   isDark: boolean,
 ) {
   const team = soccerTeams.find((t) => String(t.id) === String(id));
-  if (!id || team?.logo === null || "") return placeholderLogo;
+  if (!id || !team || team.logo === null) return PlaceholderLogo;
 
   return team
     ? isDark
-      ? team.logoLight || team.logo || placeholderLogo
-      : team.logo || placeholderLogo
-    : placeholderLogo;
+      ? team.logoLight || team.logo || PlaceholderLogo
+      : team.logo || PlaceholderLogo
+    : PlaceholderLogo;
 }
