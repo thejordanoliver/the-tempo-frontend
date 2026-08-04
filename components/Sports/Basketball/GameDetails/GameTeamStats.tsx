@@ -607,7 +607,7 @@ export default function GameTeamStats({
                 {
                   width: getBarWidth(row.homeNum, row.max),
                   backgroundColor: homeColor,
-                  borderWidth: 1,
+                  borderWidth: row.homeNum === 0 ? 0 : 1,
                   borderColor: isDark ? Colors.white : "transparent",
                   opacity: homeOpacity,
                 },

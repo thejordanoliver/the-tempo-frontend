@@ -124,6 +124,7 @@ export default function PlayerDetailScreen() {
         error={seasonsError}
         league={league}
       />
+      
       <PlayerAwardList player={player} />
     </ScrollView>
   );

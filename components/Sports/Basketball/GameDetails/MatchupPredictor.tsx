@@ -89,10 +89,7 @@ const MatchupPredictor: React.FC<Props> = ({
   }, [animatedAwayPercent, animatedHomePercent, awayChance, homeChance]);
 
   const homeRingProps = useAnimatedProps(() => {
-    const arcLength = getArcLength(
-      animatedHomePercent.value,
-      usableArcLength,
-    );
+    const arcLength = getArcLength(animatedHomePercent.value, usableArcLength);
 
     return {
       strokeDashoffset: circumference - arcLength,
@@ -100,10 +97,7 @@ const MatchupPredictor: React.FC<Props> = ({
   });
 
   const awayRingProps = useAnimatedProps(() => {
-    const arcLength = getArcLength(
-      animatedAwayPercent.value,
-      usableArcLength,
-    );
+    const arcLength = getArcLength(animatedAwayPercent.value, usableArcLength);
 
     return {
       strokeDashoffset: circumference + arcLength,
@@ -144,7 +138,11 @@ const MatchupPredictor: React.FC<Props> = ({
               cx={svgCenter}
               cy={svgCenter}
               r={radius}
-              stroke="transparent"
+              stroke={
+                isDark
+                  ? Colors.dark.transparentItemBackground
+                  : Colors.light.transparentItemBackground
+              }
               strokeWidth={strokeWidth}
               fill="none"
             />

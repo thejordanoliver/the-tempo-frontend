@@ -1,3 +1,4 @@
+import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { Ionicons } from "@expo/vector-icons";
 import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/styles";
@@ -50,6 +51,8 @@ export default function ResultItemRow({
       teamLogo = getWNBATeamLogo(team.id, isDark);
     else if (team.isMLB && team.id != null)
       teamLogo = getMLBTeamLogo(team.id, isDark);
+    else if (team.isSOCC && team.id != null)
+      teamLogo = getSOCCTeamLogo(team.id, isDark);
     else if (team.isNHL && team.id != null)
       teamLogo = getNHLTeamLogo(team.id, isDark);
     else if (team.isCFB && team.id != null)
@@ -120,6 +123,8 @@ export default function ResultItemRow({
                     ? getMLBTeam(teamId)
                     : teamId && player.isNHL
                       ? getNHLTeam(teamId)
+                    : teamId && player.isSOCC
+                      ? getSOCCTeam(teamId)
                       : null;
 
     return (

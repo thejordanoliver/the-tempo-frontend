@@ -4,6 +4,7 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
+import { getWNBASeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -47,12 +48,13 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 }
 
 export default function SoftballTeamDetailScreen() {
+  const league = "SB";
+  const currentSeason = getWNBASeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const league = "SB";
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
@@ -81,7 +83,7 @@ export default function SoftballTeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBaseballTeamGames("sb", teamIdNum ?? null);
+  } = useBaseballTeamGames("sb", teamIdNum ?? null, currentSeason);
 
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
@@ -270,7 +272,8 @@ export default function SoftballTeamDetailScreen() {
       <TeamInfoModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        teamId={team.id}
+        teamId={teamIdNum}
+        teamLogo={teamLogo}
         league={league}
         isDark={isDark}
       />

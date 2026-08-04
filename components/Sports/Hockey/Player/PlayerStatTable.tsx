@@ -992,11 +992,9 @@ const getCareerStatCells = (
 
 export default function PlayerStatTable({ seasons, loading, error }: Props) {
   const { resolvedColorScheme } = usePreferences();
-
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
-
   const [statView, setStatView] = useState<StatView>("totals");
 
   const [selectedSeasonType, setSelectedSeasonType] =

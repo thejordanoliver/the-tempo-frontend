@@ -23,7 +23,6 @@ export const playerOnCourtStyles = (isDark: boolean) =>
     wrapper: {
       borderRadius: 10,
       overflow: "hidden",
-      paddingTop: 12,
       borderColor: Colors.midTone,
       borderWidth: 1,
       width: "100%",

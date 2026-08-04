@@ -1,4 +1,5 @@
 import ChampionshipBanner from "@/components/Sports/Basketball/Team/ChampionshipBanner";
+import useTeamDetails from "@/hooks/useTeams";
 import { snapPoints } from "@/utils/modalUtils";
 import {
   BottomSheetBackdrop,
@@ -6,17 +7,8 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { Colors, Fonts } from "constants/styles";
-import { getNBATeam } from "constants/teams";
-import { getCBBTeam } from "constants/teamsCBB";
-import { getCFBTeam } from "constants/teamsCFB";
-import { getMLBTeam } from "constants/teamsMLB";
-import { getNFLTeam } from "constants/teamsNFL";
-import { getNHLTeam } from "constants/teamsNHL";
-import { getWNBATeam } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
-import { useChampions } from "hooks/LeagueHooks/useChampions";
-import { useTeamCoaches } from "hooks/useTeamCoaches";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
@@ -28,6 +20,7 @@ type Props = {
   coach?: string;
   teamHistory?: string;
   teamId?: string | number;
+  teamLogo?: any
   league: LeagueType;
   isDark: boolean;
 };
@@ -36,6 +29,7 @@ export default function TeamInfoModal({
   visible,
   onClose,
   teamId,
+  teamLogo,
   league,
   isDark,
 }: Props) {
@@ -44,70 +38,7 @@ export default function TeamInfoModal({
   const isPresentedRef = useRef(false);
 
   const styles = TeamInfoModalStyles(isDark, insets);
-
-  const isChampionsSupported =
-    league === "NBA" ||
-    league === "WNBA" ||
-    league === "CFB" ||
-    league === "NFL" ||
-    league === "MLB" ||
-    league === "NHL" ||
-    league === "CBB" ||
-    league === "WCBB";
-
-  const { coaches } = useTeamCoaches(
-    teamId != null ? Number(teamId) : 0,
-    league,
-  );
-
-  const { data: champions } = useChampions({
-    league,
-  });
-
-  const team = useMemo(() => {
-    if (teamId == null) return null;
-
-    switch (league) {
-      case "CBB":
-        return getCBBTeam(teamId);
-      case "WNBA":
-        return getWNBATeam(teamId);
-      case "WCBB":
-        return getCBBTeam(teamId, true);
-      case "CFB":
-        return getCFBTeam(teamId);
-      case "MLB":
-        return getMLBTeam(teamId);
-      case "NHL":
-        return getNHLTeam(teamId);
-      case "NFL":
-        return getNFLTeam(teamId);
-      case "NBA":
-        return getNBATeam(teamId);
-      default:
-        return null;
-    }
-  }, [teamId, league]);
-
-  const getTeamId = useCallback((teamData: any, leagueType: LeagueType) => {
-    if (!teamData) return undefined;
-
-    if (leagueType === "WCBB" && "wid" in teamData) {
-      return teamData.wid;
-    }
-
-    return teamData.id;
-  }, []);
-
-  const teamChampionshipNotes = useMemo(() => {
-    if (!isChampionsSupported || teamId == null || !champions) return [];
-
-    return champions
-      .filter((c) => Number(c.team?.id) === Number(teamId))
-      .map((c) => c.notes ?? c.season)
-      .filter((val) => val != null)
-      .sort((a, b) => Number(a) - Number(b));
-  }, [champions, teamId, isChampionsSupported]);
+  const { team } = useTeamDetails(league, teamId);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -162,9 +93,7 @@ export default function TeamInfoModal({
         />
 
         <View style={styles.wrapper}>
-          {team?.fullName && (
-            <Text style={styles.teamName}>{team.fullName}</Text>
-          )}
+          {team?.name && <Text style={styles.teamName}>{team.name}</Text>}
 
           <BottomSheetScrollView
             contentContainerStyle={styles.contentContainerStyle}
@@ -173,24 +102,20 @@ export default function TeamInfoModal({
             <Text style={styles.sectionTitle}>Championships</Text>
 
             <ChampionshipBanner
-              years={
-                isChampionsSupported
-                  ? teamChampionshipNotes
-                  : Array.isArray((team as any)?.championships)
-                    ? (team as any).championships
-                    : []
-              }
+              championships={team?.championships}
               logo={team?.logo}
-              teamName={team?.fullName}
-              teamId={getTeamId(team, league)}
+              teamName={team?.name ?? team?.shortName}
+              teamLogo={teamLogo}
+              teamId={teamId}
               league={league}
               isDark={isDark}
             />
 
             <TeamInfoCard
-              teamId={getTeamId(team, league)}
+              teamId={teamId}
+              teamDetails={team ?? null}
               league={league}
-              coach={coaches?.[0]}
+              isDark={isDark}
             />
           </BottomSheetScrollView>
         </View>
@@ -199,7 +124,7 @@ export default function TeamInfoModal({
   );
 }
 
-const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
+export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
   StyleSheet.create({
     backgroundStyle: { backgroundColor: "transparent", overflow: "hidden" },
     handleStyle: {
@@ -239,7 +164,7 @@ const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       fontSize: 20,
       paddingBottom: 12,
       textAlign: "center",
-      paddingTop: Math.max(insets.top - 20, 12),
+      paddingTop: Math.max(insets?.top - 20, 12),
       color: isDark ? Colors.white : Colors.black,
     },
     sectionTitle: {
@@ -252,4 +177,5 @@ const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
       color: isDark ? Colors.white : Colors.black,
     },
+    infoCardContainer: { width: "100%" },
   });

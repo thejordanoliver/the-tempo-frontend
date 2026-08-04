@@ -15,6 +15,7 @@ export type PlayerResult = {
   isWCBB?: boolean;
   isWNBA?: boolean;
   isNHL?: boolean;
+  isSOCC?: boolean;
   type: "player";
   score: number;
 };
@@ -32,6 +33,7 @@ export type TeamResult = {
   isCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
+  isSOCC?: boolean;
   is_active?: boolean;
   type: "team";
   score: number;

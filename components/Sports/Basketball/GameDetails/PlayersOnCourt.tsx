@@ -1,11 +1,18 @@
+import HomeAwayTabBar, {
+  HomeAwayTabValue,
+} from "@/components/TabBars/HomeAwayTabBar";
+import {
+  Athlete,
+  PlayerStats,
+  PlayerStatsGroup,
+} from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
-import { getNBATeam, getTeamByESPNId } from "constants/teams";
-import { getCBBTeamByESPNId } from "constants/teamsCBB";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Image,
+  ImageSourcePropType,
   Platform,
   ScrollView,
   Text,
@@ -14,6 +21,7 @@ import {
   View,
 } from "react-native";
 import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
+
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -22,14 +30,14 @@ if (
 }
 
 type Props = {
-  homeTeamId: number;
-  awayTeamId: number;
-  awayLogo: any;
-  homeLogo: any;
+  homeId: number;
+  awayId: number;
+  awayLogo: ImageSourcePropType;
+  homeLogo: ImageSourcePropType;
   awayCode: string;
   homeCode: string;
-  playerStats: any[];
-  teamStats?: any[];
+  playerStats: PlayerStats;
+  teamStats?: unknown[];
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
@@ -37,27 +45,20 @@ type Props = {
   state: string | null;
 };
 
-type Player = {
-  athlete: {
-    id: string;
-    playerId: number;
-    uid: string;
-    guid: string;
-    displayName: string;
-    teamId: number;
-    shortName: string;
-    headshot: { href: string; alt: string };
-    jersey: string;
-    position: { name: string; displayName: string; abbreviation: string };
-  };
-  teamType: "home" | "away";
-  active: boolean;
-  team: { id: number };
-};
+function findTeamGroup(
+  playerStats: PlayerStats,
+  teamId: number,
+): PlayerStatsGroup | undefined {
+  return playerStats.find(
+    (group) =>
+      Number(group.team.id) === Number(teamId) ||
+      Number(group.team.espnId) === Number(teamId),
+  );
+}
 
 export default function PlayersOnCourt({
-  homeTeamId,
-  awayTeamId,
+  homeId,
+  awayId,
   awayLogo,
   homeLogo,
   awayCode,
@@ -71,98 +72,104 @@ export default function PlayersOnCourt({
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
   const router = useRouter();
-  const isWomen = league === "WCBB";
-  const isNBA = league === "NBA";
 
-  const tabs = [
-    { key: "away", label: awayCode ?? "Away Team" },
-    { key: "home", label: homeCode ?? "Home Team" },
-  ];
-  const [selectedTab, setSelectedTab] = useState<"home" | "away">("away");
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
-  // Map ESPN players
-  const mapESPNPlayers = (teamId: number) => {
-    const block = playerStats.find(
-      (p) => Number(p.team?.id) === Number(teamId),
-    );
-    if (!block) return [];
+  const awayGroup = useMemo(
+    () => findTeamGroup(playerStats, awayId) ?? playerStats[0],
+    [awayId, playerStats],
+  );
 
-    const internalTeamId = getTeamByESPNId(teamId)?.id;
+  const homeGroup = useMemo(
+    () => findTeamGroup(playerStats, homeId) ?? playerStats[1],
+    [homeId, playerStats],
+  );
 
-    return block.athletes.map((ath: any) => {
-      const a = ath.athlete || {};
-      return {
-        athlete: a,
-        teamType: teamId === homeTeamId ? "home" : "away",
-        team: { id: internalTeamId },
-        active: ath.active,
-      };
-    });
-  };
-
-  const homePlayers = mapESPNPlayers(homeTeamId);
-  const awayPlayers = mapESPNPlayers(awayTeamId);
+  const awayPlayers = awayGroup?.athletes ?? [];
+  const homePlayers = homeGroup?.athletes ?? [];
 
   const renderOnCourtList = (
-    players: Player[],
-    teamCode: string | undefined,
-  ) => (
-    <View>
-      {players
-        .filter((p) => p.active)
-        .map((p, index, arr) => {
-          const nbaTeam = getNBATeam(p.team.id);
-          const collegeTeam = getCBBTeamByESPNId(p.athlete.teamId);
-          const nbaTeamId = nbaTeam?.id;
-          const collegeTeamId = isWomen ? collegeTeam?.wid : collegeTeam?.id;
+    players: Athlete[],
+    team: PlayerStatsGroup["team"] | undefined,
+    teamCode: string,
+  ) => {
+    const activePlayers = players.filter(
+      (player) => player.active && !player.didNotPlay,
+    );
+
+    return (
+      <View>
+        {activePlayers.map((player, index) => {
+          const playerId = player.id;
+          const teamId = team?.id;
+
           return (
             <View
-              key={`${teamCode}-row-${p.athlete.id}-${index}`}
+              key={`${teamCode}-row-${player.id}`}
               style={[
                 styles.tableRow,
-                index === arr.length - 1 && { borderBottomWidth: 0 },
+                index === activePlayers.length - 1 && {
+                  borderBottomWidth: 0,
+                },
               ]}
             >
               <TouchableOpacity
                 activeOpacity={0.6}
                 style={styles.playerInfo}
                 onPress={() => {
-                  if (p.athlete.playerId || p.athlete.id) {
-                    router.push({
-                      pathname: `/player/basketball/[id]`,
-                      params: {
-                        id: isNBA ? p.athlete.playerId : p.athlete.id,
-                        teamId: isNBA ? nbaTeamId : collegeTeamId,
-                        league,
-                      },
-                    });
+                  if (!playerId) {
+                    return;
                   }
+
+                  router.push({
+                    pathname: "/player/basketball/[id]",
+                    params: {
+                      id: String(playerId),
+                      teamId: teamId != null ? String(teamId) : undefined,
+                      league,
+                    },
+                  });
                 }}
               >
                 <View style={styles.playerInfoWrapper}>
                   <View style={styles.avatarWrapper}>
                     <Image
-                      source={{ uri: p.athlete.headshot?.href }}
-                      alt={p.athlete.headshot?.alt}
+                      source={
+                        player.headshot ? { uri: player.headshot } : Placeholder
+                      }
+                      accessibilityLabel={player.shortName ?? "Player headshot"}
                       style={styles.avatar}
                     />
                   </View>
+
                   <View style={styles.nameWrapper}>
-                    <Text style={styles.playerName}>{p.athlete.shortName}</Text>
-                    <Text style={styles.posistion}>
-                      {p.athlete.position.abbreviation}
+                    <Text style={styles.playerName}>
+                      {player.shortName ?? "Unknown Player"}
                     </Text>
+
+                    {player.position && (
+                      <Text style={styles.posistion}>{player.position}</Text>
+                    )}
                   </View>
                 </View>
-                <View style={{ flexDirection: "row", alignContent: "center" }}>
-                  <Text style={styles.jersey}>#{p.athlete.jersey}</Text>
-                </View>
+
+                {player.jersey && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={styles.jersey}>#{player.jersey}</Text>
+                  </View>
+                )}
               </TouchableOpacity>
             </View>
           );
         })}
-    </View>
-  );
+      </View>
+    );
+  };
 
   if (state !== "in") {
     return null;
@@ -171,39 +178,30 @@ export default function PlayersOnCourt({
   return (
     <ScrollView>
       <HeadingTwo isDark={isDark}>On The Court</HeadingTwo>
-      <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabs.map((t) => t.key)}
-          selected={selectedTab}
-          renderLabel={(tabKey, isSelected, tabStyles) => {
-            const teamLogo = tabKey === "home" ? homeLogo : awayLogo;
-            const teamCode = tabKey === "home" ? homeCode : awayCode;
-            return (
-              <View style={styles.tabLabel}>
-                {teamLogo && (
-                  <Image
-                    source={teamLogo}
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                )}
 
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  {teamCode}
-                </Text>
-              </View>
-            );
+      <View style={styles.wrapper}>
+        <HomeAwayTabBar
+          awayTeam={{
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: awayLogo,
           }}
-          onTabPress={(tabKey) => setSelectedTab(tabKey as "home" | "away")}
+          homeTeam={{
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: homeLogo,
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
           isDark={isDark}
+          showAllTab={false}
         />
 
         {!isLoading && !isError && (
           <View style={styles.container}>
             {selectedTab === "home"
-              ? renderOnCourtList(homePlayers, homeCode)
-              : renderOnCourtList(awayPlayers, awayCode)}
+              ? renderOnCourtList(homePlayers, homeGroup?.team, homeCode)
+              : renderOnCourtList(awayPlayers, awayGroup?.team, awayCode)}
           </View>
         )}
       </View>

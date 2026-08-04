@@ -1,25 +1,26 @@
+import { Championships } from "@/hooks/useTeams";
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
 import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
-import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
-import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
-import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
+import { getNBATeam } from "constants/teams";
+import { getCBBTeam } from "constants/teamsCBB";
+import { getCFBTeam } from "constants/teamsCFB";
+import { getMLBTeam } from "constants/teamsMLB";
+import { getNFLTeam } from "constants/teamsNFL";
+import { getNHLTeam } from "constants/teamsNHL";
+import { getWNBATeam } from "constants/teamsWNBA";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { LeagueType } from "types/types";
 
 type Props = {
   isDark: boolean;
-  years?: (number | string)[];
-  currentYear?: number;
+  championships: Championships[] | undefined;
   logo?: any;
   teamId?: string | number;
   teamName?: string;
+  teamLogo?: any;
   league?: LeagueType;
 };
 
@@ -65,49 +66,16 @@ function getTeamByLeague(league: LeagueType, teamId?: string | number) {
       return getNBATeam(teamId);
   }
 }
-function getTeamLogoByLeague(
-  league: LeagueType,
-  isDark: boolean,
-  teamId?: string | number,
-) {
-  if (!teamId) return undefined;
-
-  switch (league) {
-    case "NFL":
-      return getNFLTeamLogo(Number(teamId), isDark);
-
-    case "CFB":
-      return getCFBTeamLogo(Number(teamId), isDark);
-
-    case "CBB":
-      return getCBBTeamLogo(Number(teamId), isDark);
-    case "WCBB":
-      return getCBBTeamLogo(Number(teamId), isDark, true);
-
-    case "MLB":
-      return getMLBTeamLogo(Number(teamId), isDark);
-
-    case "NHL":
-      return getNHLTeamLogo(Number(teamId), isDark);
-
-    case "WNBA":
-      return getWNBATeamLogo(Number(teamId), isDark);
-
-    default:
-      return getTeamLogo(teamId, isDark);
-  }
-}
 
 export default function ChampionshipBanner({
   isDark,
-  years,
-  currentYear,
+  championships,
   teamId,
   teamName,
+  teamLogo,
   league = "NBA",
 }: Props) {
   const team = getTeamByLeague(league, teamId);
-  const teamLogo = getTeamLogoByLeague(league, true, teamId);
   const styles = championshipBannerStyles(isDark);
 
   if (!team) {
@@ -116,56 +84,74 @@ export default function ChampionshipBanner({
     );
   }
 
-  const baseYears = Array.isArray(years) ? years : [];
-  let safeYears = [...baseYears];
+  const championshipList = championships ?? [];
+  const isNone = championshipList.length === 0;
+  const isMany = championshipList.length > 10;
 
-  if (currentYear && !safeYears.includes(currentYear)) {
-    safeYears = [currentYear, ...safeYears];
-  }
-
-  const isNone = safeYears.length === 0;
-  const isMany = safeYears.length > 10;
-  const bannerList = isNone ? [null] : isMany ? [safeYears.length] : safeYears;
+  const bannerList = isNone
+    ? [{ season: null, displayValue: null, isCount: false }]
+    : isMany
+      ? [
+          {
+            season: null,
+            displayValue: championshipList.length,
+            isCount: true,
+          },
+        ]
+      : championshipList.map((championship) => ({
+          season: championship.season,
+          displayValue:
+            league === "NFL"
+              ? championship.notes || championship.season
+              : championship.season,
+          isCount: false,
+        }));
 
   return (
     <View style={styles.wrapper}>
-      {bannerList.map((yearVal, index) => {
+      {bannerList.map(({ season, displayValue, isCount }, index) => {
         const yearShort = isNone
           ? "NONE"
-          : isMany
-            ? `x${yearVal}`
-            : typeof yearVal === "number" || !isNaN(Number(yearVal))
-              ? league === "CFB"
-                ? `'${String(Number(yearVal)).slice(-2)}`
-                : `'${String(yearVal).slice(-2)}`
-              : String(yearVal);
+          : isCount
+            ? `x${displayValue}`
+            : league === "NFL"
+              ? String(displayValue)
+              : typeof displayValue === "number" ||
+                  !Number.isNaN(Number(displayValue))
+                ? `'${String(displayValue).slice(-2)}`
+                : String(displayValue);
 
         let label = `${league} CHAMPIONS`;
 
-        if (league === "CFB" && !isMany && yearVal != null) {
-          const numericYear = Number(yearVal);
-          if (!isNaN(numericYear)) {
+        if (league === "CFB" && !isCount && season != null) {
+          const numericYear = Number(season);
+
+          if (!Number.isNaN(numericYear)) {
             label = numericYear <= 2013 ? "BCS CHAMPIONS" : "CFP CHAMPIONS";
           }
         }
 
-        if (league === "MLB" && yearVal != null) {
+        if (league === "MLB") {
           label = "WORLD SERIES CHAMPIONS";
         }
 
-        if (league === "NFL" && yearVal != null) {
+        if (league === "NFL") {
           label = "SUPER BOWL CHAMPIONS";
         }
 
-        if (league === "NHL" && yearVal != null) {
+        if (league === "NHL") {
           label = "STANLEY CUP CHAMPIONS";
         }
-        if (league === "WNBA" && yearVal != null) {
+
+        if (league === "WNBA") {
           label = "WNBA CHAMPIONS";
         }
 
         return (
-          <View key={index} style={styles.bannerWrapper}>
+          <View
+            key={`${season ?? displayValue ?? "none"}-${index}`}
+            style={styles.bannerWrapper}
+          >
             <Image
               source={Fill}
               style={[

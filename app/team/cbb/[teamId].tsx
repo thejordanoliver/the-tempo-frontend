@@ -331,6 +331,7 @@ export default function TeamDetailScreen() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}
+        teamLogo={teamLogo}
         league={league}
         isDark={isDark}
       />

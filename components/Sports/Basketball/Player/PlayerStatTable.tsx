@@ -1084,6 +1084,7 @@ export default function PlayerStatTable({
             selectedValue={statView}
             onSelect={(value) => setStatView(value as StatView)}
             style={styles.dropdown}
+            width={160}
           />
         ) : null}
       </View>

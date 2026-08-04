@@ -120,8 +120,10 @@ export default function FootballGamePreviewModal({
   const broadcast = getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
   const possessionTeamId = game.situation.possession;
-  const homeRecord = game.home.record;
-  const awayRecord = game.away.record;
+  const homeRecord = score?.home.record;
+  const awayRecord = score?.away.record;
+  const homeTimeouts = score?.home.timeouts;
+  const awayTimeouts = score?.away.timeouts;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const officials = details?.officials ?? [];
@@ -239,7 +241,7 @@ export default function FootballGamePreviewModal({
                   record={awayRecord}
                   hasPossession={awayHasPossession}
                   gameStatusDescription={gameStatusDescription}
-                  timeouts={0}
+                  timeouts={awayTimeouts}
                 />
 
                 <CenterInfo
@@ -265,7 +267,7 @@ export default function FootballGamePreviewModal({
                   record={homeRecord}
                   hasPossession={homeHasPossession}
                   gameStatusDescription={gameStatusDescription}
-                  timeouts={0}
+                  timeouts={homeTimeouts}
                 />
               </View>
 

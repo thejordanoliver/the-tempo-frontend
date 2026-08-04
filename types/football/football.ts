@@ -24,7 +24,7 @@ export type Team = {
   logoLight?: any;
   wLogo?: any;
   color: string | null;
-  secondaryColor: string;
+  secondaryColor: string | null;
   championships?: number[];
   uniforms?: {
     home?: ImageSourcePropType;

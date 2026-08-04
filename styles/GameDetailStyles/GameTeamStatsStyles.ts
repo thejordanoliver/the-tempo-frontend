@@ -65,11 +65,17 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
       flex: 1,
       alignItems: "flex-start",
       marginLeft: 12,
+     backgroundColor: isDark
+        ? Colors.dark.transparentItemBackground
+        : Colors.light.transparentItemBackground,
     },
     barContainerRight: {
       flex: 1,
       alignItems: "flex-end",
       marginRight: 12,
+      backgroundColor: isDark
+        ? Colors.dark.transparentItemBackground
+        : Colors.light.transparentItemBackground,
     },
     bar: {
       height: 8,

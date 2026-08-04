@@ -11,12 +11,14 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
+  shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { usePreferences } from "contexts/PreferencesContext";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
@@ -104,6 +106,7 @@ export default function GameDetailsScreen(
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
+  const showGameChat = shouldShowGameChat(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id;
@@ -146,7 +149,7 @@ export default function GameDetailsScreen(
 
   const gameStatusDescription = game?.status.description;
 
-  const state = game?.status.state;
+  const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -198,7 +201,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
-          onBack={() => router.back()}
+          onBack={goBack}
           awayTeamCode={secondFighterLastName}
           homeTeamCode={firstFighterLastName}
           homeLogo={firstFighterFlag}
@@ -324,7 +327,7 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && (
+      {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
           gameId={String(gameId)}
           opacityAnim={opacityAnim}

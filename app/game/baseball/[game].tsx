@@ -6,8 +6,10 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
+  shouldShowGameChat,
 } from "@/utils/dateUtils";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import CustomActivityIndicator from "../../../components/CustomActivityIndicator";
@@ -111,6 +113,7 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game?.headline ?? holidayLabel;
+  const showGameChat = shouldShowGameChat(gameDateObj);
 
   const home = game?.home;
   const away = game?.away;
@@ -276,7 +279,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
-          onBack={() => router.back()}
+          onBack={goBack}
           homeLogo={homeHeaderLogo}
           awayLogo={awayHeaderLogo}
           homeTeamCode={homeCode}
@@ -475,9 +478,9 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && (
+      {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          gameId={String(game.id)}
+          gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}
         />

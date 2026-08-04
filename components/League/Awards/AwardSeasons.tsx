@@ -171,6 +171,7 @@ export default function AwardSeasons({ league }: Props) {
             selectedValue={selectedAward}
             onSelect={(val) => setSelectedAward(val as AwardCategory)}
             isDark={isDark}
+            width={120}
           />
         )}
 
@@ -179,6 +180,7 @@ export default function AwardSeasons({ league }: Props) {
           selectedValue={viewMode}
           onSelect={(val) => setViewMode(val as ViewMode)}
           isDark={isDark}
+          width={160}
         />
       </View>
 

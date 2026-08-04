@@ -35,7 +35,11 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   { flag: "isMMA", pathname: "/player/mma/[id]", league: "MMA" },
   { flag: "isMLB", pathname: "/player/baseball/[id]", league: "MLB" },
   { flag: "isNHL", pathname: "/player/nhl/[id]", league: "NHL" },
+  { flag: "isNBA", pathname: "/player/basketball/[id]", league: "NBA" },
+  { flag: "isCBB", pathname: "/player/basketball/[id]", league: "CBB" },
+  { flag: "isWCBB", pathname: "/player/basketball/[id]", league: "WCBB" },
   { flag: "isWNBA", pathname: "/player/basketball/[id]", league: "WNBA" },
+  { flag: "isSOCC", pathname: "/player/soccer/[id]", league: "SOCC" },
 ];
 
 export function getExploreRouteForResult(item: ResultItem): ExploreRoute {

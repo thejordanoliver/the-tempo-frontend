@@ -1,4 +1,5 @@
 import InfoCard from "@/components/Sports/Basketball/Team/InfoCard";
+import { TeamDetails } from "@/hooks/useTeams";
 import { Team } from "@/types/football/football";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -7,17 +8,27 @@ import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
-import { Coach } from "hooks/useTeamCoaches";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LeagueType } from "types/types";
+import { TeamInfoModalStyles } from "./TeamInfoModal";
 
 type Props = {
   teamId?: string | number;
+  teamDetails: TeamDetails | null;
   league: LeagueType;
-  coach?: Coach;
+  isDark: boolean;
 };
 
-export default function TeamInfoCard({ teamId, league, coach }: Props) {
+export default function TeamInfoCard({
+  teamId,
+  teamDetails,
+  league,
+  isDark,
+}: Props) {
+  const insets = useSafeAreaInsets();
+  const styles = TeamInfoModalStyles(isDark, insets);
+
   if (!teamId) return null;
 
   // --------------------------------------------------
@@ -66,15 +77,20 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
 
-          <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
         </View>
       );
     }
@@ -83,15 +99,25 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
 
-          <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
+          <InfoCard
+            label="Conference"
+            value={teamDetails?.conference?.shortName}
+            team={t}
+          />
         </View>
       );
     }
@@ -101,15 +127,25 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
 
-          <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
+          <InfoCard
+            label="Conference"
+            value={teamDetails?.conference?.shortName}
+            team={t}
+          />
         </View>
       );
     }
@@ -118,14 +154,19 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
-
-          <InfoCard label="Location" value={t.location} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
         </View>
       );
     }
@@ -134,16 +175,20 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Manager"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
 
-          <InfoCard label="Location" value={t.city} team={t} />
-          <InfoCard label="Stadium" value={null} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
         </View>
       );
     }
@@ -152,15 +197,20 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
 
-          <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
         </View>
       );
     }
@@ -168,16 +218,19 @@ export default function TeamInfoCard({ teamId, league, coach }: Props) {
       const t = team as Team;
 
       return (
-        <View style={{ width: "100%" }}>
+        <View style={styles.infoCardContainer}>
           <InfoCard
             label="Coach"
-            value={`${coach?.first_name ?? ""} ${coach?.last_name ?? ""}`}
+            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
             team={t}
           />
-
-          <InfoCard label="Location" value={t.location} team={t} />
-          <InfoCard label="Arena" value={null} team={t} />
-          <InfoCard label="Established" value={t.established} team={t} />
+          <InfoCard label="Location" value={teamDetails?.location} team={t} />
+          <InfoCard
+            label="Established"
+            value={teamDetails?.established}
+            team={t}
+          />
+          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
         </View>
       );
     }

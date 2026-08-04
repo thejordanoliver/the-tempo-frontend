@@ -10,6 +10,7 @@ export type PlayerLeague =
   | "WCBB"
   | "MLB"
   | "NHL"
+  | "SOCC"
   | "WNBA";
 
 export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
@@ -42,7 +43,9 @@ export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
                       ? `api/roster/nhl/player/${playerId}`
                       : league === "WNBA"
                         ? `api/roster/wnba/player/${playerId}`
-                        : `api/roster/nfl/player/${playerId}`;
+                        : league === "SOCC"
+                          ? `api/roster/socc/player/${playerId}`
+                          : `api/roster/nfl/player/${playerId}`;
 
         const res = await apiClient.get(url, {
           signal: controller.signal,

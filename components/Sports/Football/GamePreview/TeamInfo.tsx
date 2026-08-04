@@ -8,10 +8,10 @@ type TeamInfoProps = {
   score: number;
   isWinner: boolean;
   isTie: boolean;
-  record: string;
+  record?: string;
   hasPossession: boolean;
   side: "home" | "away";
-  timeouts?: number;
+  timeouts?: number | null;
   gameStatusDescription: string | undefined;
   rank: number | null;
 };
@@ -46,21 +46,24 @@ export default function TeamInfo({
   // --------------------------------------------------------------
   // TIMEOUTS RENDERING
   // --------------------------------------------------------------
-  const renderTimeouts = (remaining: number = 0) => {
+  const renderTimeouts = (remaining: number | null = 0) => {
     const totalTimeouts = 3;
+    const remainingTimeouts = remaining ?? 0;
 
     return (
       <View style={styles.timeoutsWrapper}>
         {Array.from({ length: totalTimeouts }).map((_, i) => (
           <View
             key={i}
-            style={[styles.timeoutBar, { opacity: i < remaining ? 1 : 0.3 }]}
+            style={[
+              styles.timeoutBar,
+              { opacity: i < remainingTimeouts ? 1 : 0.3 },
+            ]}
           />
         ))}
       </View>
     );
   };
-
   // --------------------------------------------------------------
   // RENDER
   // --------------------------------------------------------------

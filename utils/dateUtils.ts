@@ -12,6 +12,26 @@ function padDatePart(value: number) {
   return String(value).padStart(2, "0");
 }
 
+export function shouldShowGameChat(gameDate: Date | null): boolean {
+  if (!gameDate || Number.isNaN(gameDate.getTime())) {
+    return false;
+  }
+
+  // Start at midnight on the calendar day of the game.
+  const chatStart = new Date(gameDate);
+  chatStart.setHours(0, 0, 0, 0);
+  chatStart.setDate(chatStart.getDate() - 0);
+
+  // End at midnight on the calendar day after the game.
+  const chatEnd = new Date(gameDate);
+  chatEnd.setHours(0, 0, 0, 0);
+  chatEnd.setDate(chatEnd.getDate() + 1);
+
+  const currentTime = Date.now();
+
+  return currentTime >= chatStart.getTime() && currentTime < chatEnd.getTime();
+}
+
 export function formatDateToUTCYYYYMMDD(
   value: Date | string | number | null | undefined,
 ) {

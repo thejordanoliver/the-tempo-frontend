@@ -6,8 +6,10 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
+  shouldShowGameChat,
 } from "@/utils/dateUtils";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -86,14 +88,28 @@ export default function GameDetailsScreen(
     getFirstParam(params.league) ??
     getFirstParam(params.leagueId);
 
+  const gameDateObj = useMemo(() => {
+    return game?.date ? new Date(game.date) : null;
+  }, [game?.date]);
+
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
 
+  const gameId = game?.id;
   const drivers = game?.drivers ?? [];
-  const state = game?.status?.state ?? "pre";
+  const showGameChat = shouldShowGameChat(gameDateObj);
+
   const gameStatusDescription = game?.status?.description ?? "";
+  const state = game?.status.state ?? "";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
 
   // Circuit info (was previously mis-mapped onto venue/weather fields)
   const circuitDiagram = game?.venue.image?.href;
@@ -118,7 +134,7 @@ export default function GameDetailsScreen(
         <CustomHeaderTitle
           tabName={league}
           title={game.name ?? ""}
-          onBack={() => router.back()}
+          onBack={goBack}
           isEvent
         />
       ),
@@ -165,11 +181,13 @@ export default function GameDetailsScreen(
         </View>
       </ScrollView>
 
-      <GameLiveChatOverlay
-        gameId={String(game.id)}
-        opacityAnim={opacityAnim}
-        state={state}
-      />
+      {!dontShowDetails && showGameChat && (
+        <GameLiveChatOverlay
+          gameId={String(gameId)}
+          opacityAnim={opacityAnim}
+          state={state}
+        />
+      )}
     </>
   );
 }

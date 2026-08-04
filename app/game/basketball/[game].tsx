@@ -40,6 +40,7 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
+  shouldShowGameChat,
 } from "utils/dateUtils";
 import {
   formatPeriod,
@@ -118,12 +119,13 @@ export default function GameDetailsScreen(
   const isWNBA = leagueId === 59;
   const isWCBB = leagueId === 14;
   const isCBB = leagueId === 10;
-  const gameDateObj = game?.date ? new Date(game.date) : null;
 
+  const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
+  const showGameChat = shouldShowGameChat(gameDateObj);
 
   const gameId = game?.id ?? "";
 
@@ -408,6 +410,19 @@ export default function GameDetailsScreen(
                 isDark={isDark}
               />
 
+              <PlayersOnCourt
+                playerStats={playerStats}
+                homeId={Number(homeEspnId)}
+                awayId={Number(awayEspnId)}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                league={LEAGUE}
+                isDark={isDark}
+                state={state}
+              />
+
               <PlayersInFoulTrouble
                 foulTrouble={foulTrouble}
                 homeId={homeId}
@@ -445,19 +460,6 @@ export default function GameDetailsScreen(
                 homeLogo={homeLogo}
                 awayLogo={awayLogo}
                 league={LEAGUE}
-                state={state}
-              />
-
-              <PlayersOnCourt
-                playerStats={playerStats}
-                homeTeamId={Number(homeEspnId)}
-                awayTeamId={Number(awayEspnId)}
-                homeCode={homeCode}
-                awayCode={awayCode}
-                homeLogo={homeLogo}
-                awayLogo={awayLogo}
-                league={LEAGUE}
-                isDark={isDark}
                 state={state}
               />
 
@@ -522,7 +524,7 @@ export default function GameDetailsScreen(
         </View>
       </ScrollView>
 
-      {!dontShowDetails && (
+      {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
           gameId={String(gameId)}
           opacityAnim={opacityAnim}

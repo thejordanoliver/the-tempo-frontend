@@ -26,7 +26,8 @@ import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NFLGameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useLastFiveGames } from "hooks/FootballHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -39,6 +40,7 @@ import {
   getFootballSeason,
   getHolidayLabel,
   safeDate,
+  shouldShowGameChat,
 } from "utils/dateUtils";
 
 type RouteParams = {
@@ -113,6 +115,7 @@ export default function GameDetailsScreen(
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
+  const showGameChat = shouldShowGameChat(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id ?? 0;
@@ -258,7 +261,7 @@ export default function GameDetailsScreen(
       header: () => (
         <CustomHeaderTitle
           tabName="Game"
-          onBack={() => router.back()}
+          onBack={goBack}
           homeLogo={homeHeaderLogo}
           awayLogo={awayHeaderLogo}
           homeTeamCode={homeCode}
@@ -488,9 +491,9 @@ export default function GameDetailsScreen(
         )}
       </ScrollView>
 
-      {!dontShowDetails && (
+      {!dontShowDetails && showGameChat && (
         <GameLiveChatOverlay
-          gameId={String(game.id)}
+          gameId={String(gameId)}
           opacityAnim={opacityAnim}
           state={state}
         />

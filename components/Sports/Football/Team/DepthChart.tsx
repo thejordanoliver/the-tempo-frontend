@@ -269,12 +269,15 @@ const PlayerRow = memo(function PlayerRow({
 type PositionCardProps = {
   position: DepthChartPosition;
   styles: DepthChartStyles;
+  isDark: boolean;
 };
 
 const PositionCard = memo(function PositionCard({
   position,
   styles,
+  isDark,
 }: PositionCardProps) {
+  const global = globalStyles(isDark);
   const athletes = useMemo(() => position.athletes ?? [], [position.athletes]);
 
   const showSlot = useMemo(() => hasMultipleSlots(athletes), [athletes]);
@@ -309,7 +312,7 @@ const PositionCard = memo(function PositionCard({
         </View>
       </View>
 
-      <View style={styles.playersList}>
+      <View>
         {athletes.length > 0 ? (
           athletes.map((entry, index) => (
             <View
@@ -323,7 +326,7 @@ const PositionCard = memo(function PositionCard({
             </View>
           ))
         ) : (
-          <Text style={styles.emptyText}>No players listed.</Text>
+          <Text style={global.emptyText}>No players listed.</Text>
         )}
       </View>
     </View>
@@ -492,10 +495,10 @@ export default function DepthChart({
   const renderPosition = useCallback(
     ({ item }: ListRenderItemInfo<DepthChartPosition>) => (
       <View>
-        <PositionCard position={item} styles={styles} />
+        <PositionCard position={item} styles={styles} isDark={isDark} />
       </View>
     ),
-    [styles],
+    [styles, isDark],
   );
 
   const listHeaderComponent = useMemo(
@@ -619,9 +622,6 @@ function depthChartStyles(isDark: boolean) {
     },
 
     positionCard: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.background,
       borderColor,
       borderRadius: 8,
       borderWidth: StyleSheet.hairlineWidth,
@@ -640,7 +640,7 @@ function depthChartStyles(isDark: boolean) {
     positionAbbrBox: {
       alignItems: "center",
       backgroundColor: isDark
-        ? Colors.dark.background
+        ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       borderRadius: 10,
       height: 40,
@@ -671,10 +671,6 @@ function depthChartStyles(isDark: boolean) {
       marginTop: 2,
     },
 
-    playersList: {
-      paddingLeft: 12,
-    },
-
     playerRowWrap: {
       borderBottomColor: borderColor,
       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -695,9 +691,6 @@ function depthChartStyles(isDark: boolean) {
 
     rankBadge: {
       alignItems: "center",
-      backgroundColor: isDark
-        ? Colors.dark.background
-        : Colors.light.itemBackground,
       borderRadius: 14,
       height: 28,
       justifyContent: "center",
@@ -707,18 +700,16 @@ function depthChartStyles(isDark: boolean) {
     rankText: {
       color: theme.text,
       fontFamily: Fonts.OSBOLD,
-      fontSize: 12,
+      fontSize: 14,
     },
 
     headshot: {
-      backgroundColor: isDark
-        ? Colors.dark.background
-        : Colors.light.itemBackground,
+      paddingTop: 4,
       borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 21,
       borderWidth: StyleSheet.hairlineWidth,
-      height: 42,
-      width: 42,
+      height: 44,
+      width: 44,
     },
 
     fallbackHeadshot: {

@@ -28,6 +28,32 @@ export const statsTableStyles = (isDark: boolean) => {
       top: -12,
     },
 
+    filtersRow: {
+      position: "absolute",
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      gap: 8,
+      zIndex: 20,
+      right: 0,
+      top: -12,
+    },
+
+    filterDropdown: { marginBottom: 4 },
+
+    compColumn: {
+      width: 96,
+    },
+
+    compCell: {
+      width: 96,
+    },
+
+    emptyText: {
+      marginTop: 8,
+      fontFamily: Fonts.OSMEDIUM,
+      color: Colors.midTone,
+    },
+
     tableWrapper: {
       flexDirection: "row",
       borderRadius: 8,
@@ -181,8 +207,12 @@ export const statsTableStyles = (isDark: boolean) => {
       marginBottom: 16,
       borderRadius: 999,
       borderWidth: 1,
-      borderColor: isDark ? Colors.transparentDarkGray : Colors.transparentLightGray ,
-      backgroundColor: isDark ?  Colors.dark.itemBackground: Colors.light.itemBackground ,
+      borderColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
 
     tabContainer: {

@@ -243,16 +243,14 @@ export default function TeamDetailScreen() {
         </View>
       </PagerView>
 
-      {/* --- Bottom Sheet --- */}
-      {team && (
-        <TeamInfoModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={team.id}
-          league={league}
-          isDark={isDark}
-        />
-      )}
+      <TeamInfoModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        teamId={teamIdNum}
+        teamLogo={teamLogo}
+        league={league}
+        isDark={isDark}
+      />
     </View>
   );
 }

@@ -1,3 +1,4 @@
+import { CalendarModalProps, CalendarMonth } from "@/types/date";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -5,21 +6,9 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { BlurView } from "expo-blur";
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import {
-  Calendar,
-  LocaleConfig,
-} from "react-native-calendars";
+import { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 import Modal from "react-native-modal";
 
 dayjs.extend(utc);
@@ -66,22 +55,14 @@ LocaleConfig.locales.custom = {
     "Saturday",
   ],
 
-  dayNamesShort: [
-    "S",
-    "M",
-    "T",
-    "W",
-    "T",
-    "F",
-    "S",
-  ],
+  dayNamesShort: ["S", "M", "T", "W", "T", "F", "S"],
 
   today: "Today",
 };
 
 LocaleConfig.defaultLocale = "custom";
 
-type CalendarDay = {
+export type CalendarDay = {
   dateString: string;
   day: number;
   month: number;
@@ -89,74 +70,28 @@ type CalendarDay = {
   timestamp: number;
 };
 
-type CalendarMonth = {
-  dateString: string;
-  day: number;
-  month: number;
-  year: number;
-  timestamp: number;
-};
-
-type MarkedDate = {
-  marked?: boolean;
-  dotColor?: string;
-  selected?: boolean;
-  selectedColor?: string;
-  selectedTextColor?: string;
-  disableTouchEvent?: boolean;
-};
-
-type Props = {
-  visible: boolean;
-  selectedDate?: string;
-  onClose: () => void;
-  onSelectDate: (date: string) => void;
-  onMonthChange?: (date: string) => void;
-  markedDates: Record<string, MarkedDate>;
-};
-
-const getValidCalendarDate = (
-  value?: string,
-): string => {
+const getValidCalendarDate = (value?: string): string => {
   if (!value) {
-    return dayjs()
-      .tz("America/New_York")
-      .format("YYYY-MM-DD");
+    return dayjs().tz("America/New_York").format("YYYY-MM-DD");
   }
 
-  const parsedDate = dayjs(
-    value,
-    "YYYY-MM-DD",
-  );
+  const parsedDate = dayjs(value, "YYYY-MM-DD");
 
   if (parsedDate.isValid()) {
-    return parsedDate.format(
-      "YYYY-MM-DD",
-    );
+    return parsedDate.format("YYYY-MM-DD");
   }
 
-  return dayjs()
-    .tz("America/New_York")
-    .format("YYYY-MM-DD");
+  return dayjs().tz("America/New_York").format("YYYY-MM-DD");
 };
 
-const getMonthAnchor = (
-  value: string,
-): string => {
-  const parsedDate = dayjs(
-    value,
-    "YYYY-MM-DD",
-  );
+const getMonthAnchor = (value: string): string => {
+  const parsedDate = dayjs(value, "YYYY-MM-DD");
 
   if (!parsedDate.isValid()) {
-    return dayjs()
-      .startOf("month")
-      .format("YYYY-MM-DD");
+    return dayjs().startOf("month").format("YYYY-MM-DD");
   }
 
-  return parsedDate
-    .startOf("month")
-    .format("YYYY-MM-DD");
+  return parsedDate.startOf("month").format("YYYY-MM-DD");
 };
 
 export default function CalendarModal({
@@ -166,105 +101,70 @@ export default function CalendarModal({
   onSelectDate,
   onMonthChange,
   markedDates,
-}: Props) {
-  const { resolvedColorScheme } =
-    usePreferences();
+}: CalendarModalProps) {
+  const { resolvedColorScheme } = usePreferences();
 
-  const isDark =
-    resolvedColorScheme === "dark";
+  const isDark = resolvedColorScheme === "dark";
 
-  const styles =
-    calendarModalStyles(isDark);
+  const styles = calendarModalStyles(isDark);
 
-  const [selectedDay, setSelectedDay] =
-    useState(() =>
-      getValidCalendarDate(
-        selectedDate,
-      ),
-    );
-
-  const [
-    displayedCalendarDate,
-    setDisplayedCalendarDate,
-  ] = useState(() =>
-    getValidCalendarDate(
-      selectedDate,
-    ),
+  const [selectedDay, setSelectedDay] = useState(() =>
+    getValidCalendarDate(selectedDate),
   );
 
-  const [calendarKey, setCalendarKey] =
-    useState(0);
+  const [displayedCalendarDate, setDisplayedCalendarDate] = useState(() =>
+    getValidCalendarDate(selectedDate),
+  );
+
+  const [calendarKey, setCalendarKey] = useState(0);
 
   useEffect(() => {
     if (!visible) {
       return;
     }
 
-    const validSelectedDate =
-      getValidCalendarDate(
-        selectedDate,
-      );
+    const validSelectedDate = getValidCalendarDate(selectedDate);
 
     setSelectedDay(validSelectedDate);
-    setDisplayedCalendarDate(
-      validSelectedDate,
-    );
+    setDisplayedCalendarDate(validSelectedDate);
 
-    setCalendarKey(
-      (previous) => previous + 1,
-    );
+    setCalendarKey((previous) => previous + 1);
   }, [visible, selectedDate]);
 
-  const combinedMarkedDates =
-    useMemo(() => {
-      const existingSelectedDateMark =
-        markedDates[selectedDay] ?? {};
+  const combinedMarkedDates = useMemo(() => {
+    const existingSelectedDateMark = markedDates[selectedDay] ?? {};
 
-      return {
-        ...markedDates,
+    return {
+      ...markedDates,
 
-        [selectedDay]: {
-          ...existingSelectedDateMark,
-          selected: true,
-          selectedColor: "transparent",
-          selectedTextColor:
-            Colors.dark.limeGreen,
-        },
-      };
-    }, [markedDates, selectedDay]);
+      [selectedDay]: {
+        ...existingSelectedDateMark,
+        selected: true,
+        selectedColor: "transparent",
+        selectedTextColor: Colors.dark.limeGreen,
+      },
+    };
+  }, [markedDates, selectedDay]);
 
-  const handleMonthChange = (
-    month: CalendarMonth,
-  ) => {
-    const monthString = String(
-      month.month,
-    ).padStart(2, "0");
+  const handleMonthChange = (month: CalendarMonth) => {
+    const monthString = String(month.month).padStart(2, "0");
 
-    const anchorDate =
-      `${month.year}-${monthString}-01`;
+    const anchorDate = `${month.year}-${monthString}-01`;
 
-    setDisplayedCalendarDate(
-      anchorDate,
-    );
+    setDisplayedCalendarDate(anchorDate);
 
     onMonthChange?.(anchorDate);
   };
 
   const goToToday = () => {
-    const today = dayjs()
-      .tz("America/New_York")
-      .format("YYYY-MM-DD");
+    const today = dayjs().tz("America/New_York").format("YYYY-MM-DD");
 
     setSelectedDay(today);
     setDisplayedCalendarDate(today);
 
-    setCalendarKey(
-      (previous) => previous + 1,
-    );
+    setCalendarKey((previous) => previous + 1);
 
-    onMonthChange?.(
-      getMonthAnchor(today),
-    );
+    onMonthChange?.(getMonthAnchor(today));
   };
 
   return (
@@ -278,11 +178,7 @@ export default function CalendarModal({
     >
       <BlurView
         intensity={100}
-        tint={
-          isDark
-            ? "systemMaterialDark"
-            : "systemMaterialLight"
-        }
+        tint={"systemMaterial"}
         style={styles.blurContainer}
       >
         <View style={styles.calendarWrapper}>
@@ -294,11 +190,7 @@ export default function CalendarModal({
             <Ionicons
               name="close"
               size={28}
-              color={
-                isDark
-                  ? Colors.white
-                  : Colors.black
-              }
+              color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
 
@@ -310,42 +202,24 @@ export default function CalendarModal({
             <Ionicons
               name="calendar"
               size={18}
-              color={
-                isDark
-                  ? Colors.white
-                  : Colors.black
-              }
+              color={isDark ? Colors.white : Colors.black}
               style={styles.todayIcon}
             />
 
-            <Text style={styles.todayText}>
-              Today
-            </Text>
+            <Text style={styles.todayText}>Today</Text>
           </TouchableOpacity>
 
           <Calendar
             key={calendarKey}
             current={displayedCalendarDate}
-            markedDates={
-              combinedMarkedDates
-            }
-            onMonthChange={
-              handleMonthChange
-            }
-            onDayPress={(
-              day: CalendarDay,
-            ) => {
-              setSelectedDay(
-                day.dateString,
-              );
+            markedDates={combinedMarkedDates}
+            onMonthChange={handleMonthChange}
+            onDayPress={(day: CalendarDay) => {
+              setSelectedDay(day.dateString);
 
-              setDisplayedCalendarDate(
-                day.dateString,
-              );
+              setDisplayedCalendarDate(day.dateString);
 
-              onSelectDate(
-                day.dateString,
-              );
+              onSelectDate(day.dateString);
 
               onClose();
             }}
@@ -353,59 +227,35 @@ export default function CalendarModal({
             disableMonthChange={false}
             hideExtraDays={false}
             theme={{
-              backgroundColor:
-                "transparent",
+              backgroundColor: "transparent",
 
-              calendarBackground:
-                "transparent",
+              calendarBackground: "transparent",
 
-              textSectionTitleColor:
-                isDark
-                  ? Colors.white
-                  : Colors.black,
+              textSectionTitleColor: isDark ? Colors.white : Colors.black,
 
-              todayTextColor: isDark
-                ? Colors.dark.lightRed
-                : Colors.light.red,
+              todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
 
-              dayTextColor: isDark
-                ? Colors.white
-                : Colors.black,
+              dayTextColor: isDark ? Colors.white : Colors.black,
 
-              textDisabledColor: isDark
-                ? Colors.darkGray
-                : Colors.lightGray,
+              textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
 
-              dotColor: isDark
-                ? Colors.white
-                : Colors.black,
+              dotColor: isDark ? Colors.white : Colors.black,
 
-              selectedDotColor: isDark
-                ? Colors.white
-                : Colors.black,
+              selectedDotColor: isDark ? Colors.white : Colors.black,
 
-              selectedDayBackgroundColor:
-                "transparent",
+              selectedDayBackgroundColor: "transparent",
 
-              selectedDayTextColor:
-                Colors.dark.limeGreen,
+              selectedDayTextColor: Colors.dark.limeGreen,
 
-              monthTextColor: isDark
-                ? Colors.white
-                : Colors.black,
+              monthTextColor: isDark ? Colors.white : Colors.black,
 
-              arrowColor: isDark
-                ? Colors.white
-                : Colors.black,
+              arrowColor: isDark ? Colors.white : Colors.black,
 
-              textDayFontFamily:
-                Fonts.OSBOLD,
+              textDayFontFamily: Fonts.OSBOLD,
 
-              textMonthFontFamily:
-                Fonts.OSBOLD,
+              textMonthFontFamily: Fonts.OSBOLD,
 
-              textDayHeaderFontFamily:
-                Fonts.OSBOLD,
+              textDayHeaderFontFamily: Fonts.OSBOLD,
 
               textMonthFontSize: 24,
               textDayFontSize: 20,
@@ -418,9 +268,7 @@ export default function CalendarModal({
   );
 }
 
-const calendarModalStyles = (
-  isDark: boolean,
-) =>
+const calendarModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     modal: {
       margin: 0,
@@ -468,9 +316,7 @@ const calendarModalStyles = (
     },
 
     todayText: {
-      color: isDark
-        ? Colors.white
-        : Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.OSBOLD,
     },
   });
