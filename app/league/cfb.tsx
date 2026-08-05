@@ -1,6 +1,7 @@
 import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { cfbConferences } from "@/constants/cfbConferences";
+import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -64,16 +65,7 @@ export default function CFBLeagueScreen() {
   const [recruitTeam, setRecruitTeam] = useState("all");
   const [screenRefreshing, setScreenRefreshing] = useState(false);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
-
-  const {
-    data: bracketData,
-    loading: playoffLoading,
-    error: playoffError,
-    refreshing: playoffRefreshing,
-    onRefresh,
-  } = useCFPBracket();
 
   const getSeasonTypeFromStage = (stage?: string) => {
     const normalizedStage = String(stage || "").toLowerCase();
@@ -169,20 +161,6 @@ export default function CFBLeagueScreen() {
     return selectedWeekGames;
   }, [selectedWeekGames, selectedConference]);
 
-  const {
-    categories,
-    loading: leadersLoading,
-    error: leadersError,
-  } = useSeasonLeaders(2025, league);
-
-  const {
-    articles,
-    loading: newsLoading,
-    refreshing: refreshingNews,
-    error: newsError,
-    refresh: refreshNews,
-  } = useLeaguesNews(league, 10);
-
   useEffect(() => {
     if (!weekGroups.length) {
       setSelectedWeekIndex(0);
@@ -234,6 +212,31 @@ export default function CFBLeagueScreen() {
       ),
     });
   }, [navigation, selectedConferenceName, isDropdownOpen]);
+
+  const { conferences, conferencesLoading, conferencesError } =
+    useCFBConferenceStandings(selectedConferenceGroupId);
+
+  const {
+    data: bracketData,
+    playoffLoading,
+    playoffError,
+    playoffRefreshing,
+    onRefresh,
+  } = useCFPBracket();
+
+  const {
+    categories,
+    loading: leadersLoading,
+    error: leadersError,
+  } = useSeasonLeaders(currentSeason, league);
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
 
   const handleRefresh = async () => {
     setScreenRefreshing(true);
@@ -308,7 +311,9 @@ export default function CFBLeagueScreen() {
               <CFBStandingsList />
             ) : (
               <CFBConferenceStandingsList
-                selectedConference={String(selectedConferenceGroupId)}
+                conferences={conferences}
+                loading={conferencesLoading}
+                error={conferencesError}
               />
             )}
           </View>

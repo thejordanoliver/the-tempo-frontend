@@ -189,7 +189,7 @@ const getFooterLabel = (matchup: NBABracketMatchup) => {
   return "Best of 7";
 };
 
-export const MatchupCard = ({
+export const GameCard = ({
   matchup,
   layout,
   isDark,

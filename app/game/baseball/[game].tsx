@@ -357,7 +357,10 @@ export default function GameDetailsScreen(
           <View style={styles.innerContainer}>
             <LastPlay
               lastPlay={lastPlay}
-              gameStatusDescription={gameStatusDescription}
+              homeId={homeId}
+              awayId={awayId}
+              state={state}
+              league={LEAGUE}
             />
 
             <FanPredictionVote

@@ -105,7 +105,7 @@ type ErrorResponse = {
 };
 
 type UseTeamDetailsResult = {
-  team: TeamDetails | null;
+  teamDetails: TeamDetails | null;
   leagueName: string | null;
   loading: boolean;
   error: string | null;
@@ -116,14 +116,14 @@ export default function useTeamDetails(
   league?: string,
   teamId?: string | number,
 ): UseTeamDetailsResult {
-  const [team, setTeam] = useState<TeamDetails | null>(null);
+  const [teamDetails, setTeamDetails] = useState<TeamDetails | null>(null);
   const [leagueName, setLeagueName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTeamDetails = useCallback(async () => {
     if (!league || teamId === undefined || teamId === null || teamId === "") {
-      setTeam(null);
+      setTeamDetails(null);
       setLeagueName(null);
       setError(null);
       setLoading(false);
@@ -142,7 +142,7 @@ export default function useTeamDetails(
         )}`,
       );
 
-      setTeam(response.data.team);
+      setTeamDetails(response.data.team);
       setLeagueName(response.data.league);
     } catch (requestError: any) {
       const responseData = requestError?.response?.data as
@@ -155,7 +155,7 @@ export default function useTeamDetails(
         requestError?.message ||
         "Failed to fetch team details";
 
-      setTeam(null);
+      setTeamDetails(null);
       setLeagueName(null);
       setError(message);
 
@@ -170,7 +170,7 @@ export default function useTeamDetails(
   }, [fetchTeamDetails]);
 
   return {
-    team,
+    teamDetails,
     leagueName,
     loading,
     error,

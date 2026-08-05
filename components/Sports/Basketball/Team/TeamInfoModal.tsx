@@ -1,5 +1,5 @@
 import ChampionshipBanner from "@/components/Sports/Basketball/Team/ChampionshipBanner";
-import useTeamDetails from "@/hooks/useTeams";
+import { TeamDetails } from "@/hooks/useTeams";
 import { snapPoints } from "@/utils/modalUtils";
 import {
   BottomSheetBackdrop,
@@ -15,17 +15,19 @@ import { LeagueType } from "types/types";
 import TeamInfoCard from "./TeamInfoCard";
 
 type Props = {
+  teamDetails: TeamDetails | null;
   visible: boolean;
   onClose: () => void;
   coach?: string;
   teamHistory?: string;
   teamId?: string | number;
-  teamLogo?: any
+  teamLogo?: any;
   league: LeagueType;
   isDark: boolean;
 };
 
 export default function TeamInfoModal({
+  teamDetails,
   visible,
   onClose,
   teamId,
@@ -36,9 +38,7 @@ export default function TeamInfoModal({
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
   const isPresentedRef = useRef(false);
-
   const styles = TeamInfoModalStyles(isDark, insets);
-  const { team } = useTeamDetails(league, teamId);
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -93,7 +93,9 @@ export default function TeamInfoModal({
         />
 
         <View style={styles.wrapper}>
-          {team?.name && <Text style={styles.teamName}>{team.name}</Text>}
+          {teamDetails?.name && (
+            <Text style={styles.teamName}>{teamDetails.name}</Text>
+          )}
 
           <BottomSheetScrollView
             contentContainerStyle={styles.contentContainerStyle}
@@ -102,9 +104,9 @@ export default function TeamInfoModal({
             <Text style={styles.sectionTitle}>Championships</Text>
 
             <ChampionshipBanner
-              championships={team?.championships}
-              logo={team?.logo}
-              teamName={team?.name ?? team?.shortName}
+              championships={teamDetails?.championships}
+              logo={teamDetails?.logo}
+              teamName={teamDetails?.name ?? teamDetails?.shortName}
               teamLogo={teamLogo}
               teamId={teamId}
               league={league}
@@ -113,7 +115,7 @@ export default function TeamInfoModal({
 
             <TeamInfoCard
               teamId={teamId}
-              teamDetails={team ?? null}
+              teamDetails={teamDetails ?? null}
               league={league}
               isDark={isDark}
             />

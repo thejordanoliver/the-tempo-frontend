@@ -32,7 +32,7 @@ import {
   WEST_ROUND2_LAYOUTS,
   WEST_ROUND3_LAYOUTS,
 } from "./ConnectorLayer";
-import { MatchupCard } from "./MatchupCard";
+import { GameCard } from "./GameCard";
 import { RoundLabel } from "./RoundLabel";
 
 type Conference = "east" | "west";
@@ -823,7 +823,7 @@ export function NBAPlayoffBracket({
           <ConnectorLayer isDark={isDark} />
 
           {bracket.west[0].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND1_LAYOUTS[index]}
@@ -832,7 +832,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.west[1].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND2_LAYOUTS[index]}
@@ -841,7 +841,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.west[2].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND3_LAYOUTS[index]}
@@ -850,7 +850,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[2].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND3_LAYOUTS[index]}
@@ -859,7 +859,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[1].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND2_LAYOUTS[index]}
@@ -868,7 +868,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[0].map((matchup, index) => (
-            <MatchupCard
+            <GameCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND1_LAYOUTS[index]}
@@ -877,7 +877,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.finals ? (
-            <MatchupCard
+            <GameCard
               matchup={bracket.finals}
               layout={FINALS_LAYOUT}
               isDark={isDark}

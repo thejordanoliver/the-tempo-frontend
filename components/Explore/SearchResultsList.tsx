@@ -22,6 +22,7 @@ type Props = {
   selectedTab: string;
   tabs: readonly string[];
   showAll?: boolean;
+  canExpandResults?: boolean;
   isSearching?: boolean;
 };
 
@@ -82,6 +83,7 @@ export default function SearchResultsList({
   tabs,
   handleTabPress,
   showAll = false,
+  canExpandResults = false,
   isSearching = false,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
@@ -103,7 +105,7 @@ export default function SearchResultsList({
   };
 
   const renderFooter = () => {
-    if (showAll || data.length <= 5) return null;
+    if (showAll || (!canExpandResults && data.length <= 5)) return null;
 
     return (
       <TouchableOpacity

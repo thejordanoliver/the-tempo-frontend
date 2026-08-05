@@ -436,29 +436,23 @@ export const CBBConferenceStandingsList = ({
     );
   }
 
+  if (conferenceSections.length < 0) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No standings found for</Text>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
-    >
-      {conferenceSections.length > 0 ? (
-        conferenceSections.map((conference, index) => (
-          <ConferenceSection
-            key={conference.id}
-            conference={conference}
-            isLast={index === conferenceSections.length - 1}
-          />
-        ))
-      ) : (
-        <View style={{ alignItems: "center", marginTop: 40 }}>
-          <Text style={styles.emptyText}>
-            No standings found for{" "}
-            {onlyTeamConference
-              ? "team conference"
-              : selectedConference || "selected conference"}
-            .
-          </Text>
-        </View>
-      )}
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      {conferenceSections.map((conference, index) => (
+        <ConferenceSection
+          key={conference.id}
+          conference={conference}
+          isLast={index === conferenceSections.length - 1}
+        />
+      ))}
     </ScrollView>
   );
 };

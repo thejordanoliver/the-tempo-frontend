@@ -150,10 +150,6 @@ const getStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
 
-      shadowColor: "#000",
-      shadowOpacity: isDark ? 0.3 : 0.15,
-      shadowRadius: 6,
-      elevation: 3,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       paddingHorizontal: 12,

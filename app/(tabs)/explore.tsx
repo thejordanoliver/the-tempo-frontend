@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
 
 import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
@@ -33,6 +33,9 @@ export default function ExplorePage() {
     loading,
     error,
     isSearching,
+    setSearchScope,
+    setExpandedSearch,
+    canExpandResults,
     saveToRecentSearches,
     deleteRecentSearch,
   } = useExplore();
@@ -43,6 +46,7 @@ export default function ExplorePage() {
   const {
     searchVisible,
     selectedTab,
+    selectedScope,
     showAll,
     tabs,
     searchResultsData,
@@ -56,6 +60,14 @@ export default function ExplorePage() {
     results,
     recentSearches,
   });
+
+  useEffect(() => {
+    setSearchScope(selectedScope);
+  }, [selectedScope, setSearchScope]);
+
+  useEffect(() => {
+    setExpandedSearch(showAll);
+  }, [setExpandedSearch, showAll]);
 
   const handleSelectItem = useCallback(
     (item: ResultItem) => {
@@ -108,6 +120,7 @@ export default function ExplorePage() {
         query={query}
         onSeeAll={handleSeeAll}
         showAll={showAll}
+        canExpandResults={canExpandResults}
         isSearching={isSearching}
         selectedTab={selectedTab}
         tabs={tabs}

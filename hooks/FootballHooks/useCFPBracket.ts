@@ -238,9 +238,9 @@ function buildBracket(events: any[]): BracketData {
 ----------------------------------------------------- */
 
 export function useCFPBracket() {
-  const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [playoffLoading, setPlayoffLoading] = useState(false);
+  const [playoffRefreshing, setPlayoffRefreshing] = useState(false);
+  const [playoffError, setPlayoffError] = useState<string | null>(null);
 
   const [events, setEvents] = useState<any[]>([]);
 
@@ -248,7 +248,7 @@ export function useCFPBracket() {
 
   const fetchBracket = useCallback(async () => {
     try {
-      setError(null);
+      setPlayoffError(null);
 
       const dates = generateDateRange("2025-12-19", "2026-01-20");
 
@@ -270,7 +270,7 @@ export function useCFPBracket() {
       setEvents(Array.from(map.values()));
     } catch (err) {
       console.error(err);
-      setError("Failed to load CFP bracket.");
+      setPlayoffError("Failed to load CFP bracket.");
     }
   }, []);
 
@@ -281,10 +281,10 @@ export function useCFPBracket() {
 
     const load = async () => {
       try {
-        setLoading(true);
+        setPlayoffLoading(true);
         await fetchBracket();
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) setPlayoffLoading(false);
       }
     };
 
@@ -298,9 +298,9 @@ export function useCFPBracket() {
   /* ================= REFRESH ================= */
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
+    setPlayoffRefreshing(true);
     await fetchBracket();
-    setRefreshing(false);
+    setPlayoffRefreshing(false);
   }, [fetchBracket]);
 
   /* ================= DERIVED ================= */
@@ -311,9 +311,9 @@ export function useCFPBracket() {
 
   return {
     data,
-    loading,
-    refreshing,
-    error,
+    playoffLoading,
+    playoffRefreshing,
+    playoffError,
     onRefresh,
   };
 }

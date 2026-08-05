@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ResultItem } from "types/explore";
+import type { ExploreSearchScope } from "./useExplore";
 
 export const EXPLORE_SEARCH_TABS = [
   "All",
@@ -14,6 +15,13 @@ const tabToTypeMap: Partial<Record<ExploreSearchTab, ResultItem["type"]>> = {
   Teams: "team",
   Players: "player",
   Accounts: "user",
+};
+
+const tabToScopeMap: Record<ExploreSearchTab, ExploreSearchScope> = {
+  All: "all",
+  Teams: "teams",
+  Players: "players",
+  Accounts: "users",
 };
 
 type UseExploreSearchStateOptions = {
@@ -90,6 +98,7 @@ export function useExploreSearchState({
   return {
     searchVisible,
     selectedTab,
+    selectedScope: tabToScopeMap[selectedTab],
     showAll,
     tabs: EXPLORE_SEARCH_TABS,
     filteredResults,

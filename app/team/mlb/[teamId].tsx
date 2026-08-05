@@ -6,6 +6,7 @@ import { useRosterStats } from "@/hooks/BaseballHooks/useRosterStats";
 import { useTeamStats } from "@/hooks/BaseballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
@@ -74,6 +75,8 @@ export default function TeamDetailScreen() {
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const favorited = team ? isFavorite(league, team.id) : false;
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -338,6 +341,7 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}

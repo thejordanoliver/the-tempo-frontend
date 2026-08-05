@@ -26,7 +26,7 @@ export const normalizeGames = (games: any[], leagueType: LeagueType) =>
     .filter(Boolean);
 
 export function isGameLive(game: any) {
-  const status = String(game.status?.state).toLowerCase();
+  const status = String(game?.status?.state).toLowerCase();
 
   if (status === "in") return true;
   if (status === "post") return false;

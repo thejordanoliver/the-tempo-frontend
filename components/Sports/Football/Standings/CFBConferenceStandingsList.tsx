@@ -4,7 +4,10 @@ import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useCFBConferenceStandings } from "hooks/FootballHooks/useCFBConferenceStandings";
+import {
+  type CFBStandingConference,
+  type CFBStandingTeam,
+} from "hooks/FootballHooks/useCFBConferenceStandings";
 import {
   FlatList,
   Image,
@@ -16,40 +19,16 @@ import {
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
-  selectedConference?: string;
+  selectedConference?: string | number;
+  conferences: CFBStandingConference[];
+  loading: boolean;
+  error: string | null;
   onlyTeamConference?: boolean;
-  teamName?: string;
+ 
 };
 
-type ConferenceTeam = {
-  teamId?: number | string | null;
-  name?: string | null;
-  abbreviation?: string | null;
-  rank?: number | string | null;
-  overall?: string | null;
-  confOverall?: string | null;
-  divisionOverall?: string | null;
-  homeOverall?: string | null;
-  awayOverall?: string | null;
-  gamesBehind?: string | number | null;
-  streak?: string | number | null;
-  vsAPTop25?: string | null;
-  pointsFor?: string | number | null;
-  pointsAgainst?: string | number | null;
-};
-
-type ConferenceDivision = {
-  name: string;
-  teams: ConferenceTeam[];
-};
-
-type ConferenceStanding = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  shortName: string;
-  divisions: ConferenceDivision[];
-};
+type ConferenceTeam = CFBStandingTeam;
+type ConferenceStanding = CFBStandingConference;
 
 function getStandingRankValue(rank: ConferenceTeam["rank"]) {
   const value = Number(rank);
@@ -72,105 +51,17 @@ function getStreakText(streak: ConferenceTeam["streak"]) {
   return String(streak);
 }
 
-function normalizeValue(value: unknown) {
-  return String(value ?? "")
-    .trim()
-    .toLowerCase();
-}
-
-function findTeamConferenceId(
-  conferences: ConferenceStanding[],
-  teamName?: string,
-) {
-  if (!teamName) return null;
-
-  const target = normalizeValue(teamName);
-
-  for (const conference of conferences) {
-    for (const division of conference.divisions ?? []) {
-      const foundTeam = division.teams?.find((team) => {
-        return (
-          normalizeValue(team.name) === target ||
-          normalizeValue(team.abbreviation) === target
-        );
-      });
-
-      if (foundTeam) {
-        return conference.id;
-      }
-    }
-  }
-
-  return null;
-}
-
 export const CFBConferenceStandingsList = ({
-  selectedConference,
-  teamName,
-  onlyTeamConference = false,
+  conferences,
+  loading,
+  error,
 }: Props) => {
-  const { conferences, loading, error } = useCFBConferenceStandings();
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = standingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
   const { isFavorite } = useFavoriteTeamsContext();
-
-  const safeConferences = Array.isArray(conferences)
-    ? (conferences as ConferenceStanding[])
-    : [];
-
-  const teamConferenceId = findTeamConferenceId(safeConferences, teamName);
-
-  const selectedConferenceId = onlyTeamConference
-    ? teamConferenceId
-    : selectedConference;
-
-  const selectedConferenceData =
-    selectedConferenceId && selectedConferenceId !== "top25"
-      ? safeConferences.find(
-          (conference) =>
-            String(conference.id) === String(selectedConferenceId),
-        )
-      : null;
-
-  const conferenceSections =
-    selectedConferenceId && selectedConferenceId !== "top25"
-      ? selectedConferenceData
-        ? [selectedConferenceData]
-        : []
-      : safeConferences;
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <StandingsSkeleton />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
-      </View>
-    );
-  }
-
-  if (conferenceSections.length < 0)
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>
-          No standings found for{" "}
-          {onlyTeamConference
-            ? "team conference"
-            : selectedConference || "selected conference"}
-          .
-        </Text>
-      </View>
-    );
 
   const renderLeftItem = ({
     item,
@@ -180,15 +71,15 @@ export const CFBConferenceStandingsList = ({
     index: number;
     isLastRow: boolean;
   }) => {
-    const espnId = item.teamId;
+    const espnId = item.id;
     const team = getCFBTeamByESPNId(espnId ?? 0);
-    const teamId = team.id;
-    const teamLogo = espnId ? getCFBTeamLogo(Number(teamId), isDark) : null;
-    const teamCode = item.abbreviation || "-";
+    const teamId = team?.id;
+    const teamLogo = teamId ? getCFBTeamLogo(Number(teamId), isDark) : null;
+    const teamCode = item.code || "-";
     const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
 
     const handleTeamPress = () => {
-      if (!espnId) return;
+      if (!teamId) return;
       router.push(`/team/cfb/${teamId}`);
     };
 
@@ -229,9 +120,9 @@ export const CFBConferenceStandingsList = ({
     isLastRow: boolean;
     showDivision: boolean;
   }) => {
-    const espnId = item.teamId;
+    const espnId = item.id;
     const team = getCFBTeamByESPNId(espnId ?? 0);
-    const teamId = team.id;
+    const teamId = team?.id;
     const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
     const streakText = getStreakText(item.streak);
 
@@ -384,7 +275,7 @@ export const CFBConferenceStandingsList = ({
               <View style={{ flexDirection: "row" }}>
                 <FlatList
                   data={sortedTeams}
-                  keyExtractor={(item) => String(item.teamId)}
+                  keyExtractor={(item) => String(item.id)}
                   renderItem={({ item, index }) =>
                     renderLeftItem({
                       item,
@@ -404,7 +295,7 @@ export const CFBConferenceStandingsList = ({
                 >
                   <FlatList
                     data={sortedTeams}
-                    keyExtractor={(item) => String(item.teamId)}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item, index }) =>
                       renderRightItem({
                         item,
@@ -425,29 +316,39 @@ export const CFBConferenceStandingsList = ({
     );
   }
 
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <StandingsSkeleton />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (conferences.length < 0) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No standings found.</Text>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 100 }}
-    >
-      {conferenceSections.length > 0 ? (
-        conferenceSections.map((conference, index) => (
-          <ConferenceSection
-            key={conference.id}
-            conference={conference}
-            isLast={index === conferenceSections.length - 1}
-          />
-        ))
-      ) : (
-        <View style={{ alignItems: "center", marginTop: 40 }}>
-          <Text style={styles.emptyText}>
-            No standings found for{" "}
-            {onlyTeamConference
-              ? "team conference"
-              : selectedConference || "selected conference"}
-            .
-          </Text>
-        </View>
-      )}
+    <ScrollView contentContainerStyle={styles.contentContainer}>
+      {conferences.map((conference, index) => (
+        <ConferenceSection
+          key={conference.id}
+          conference={conference}
+          isLast={index === conferences.length - 1}
+        />
+      ))}
     </ScrollView>
   );
 };

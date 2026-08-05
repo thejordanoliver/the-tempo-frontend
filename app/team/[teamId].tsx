@@ -12,6 +12,7 @@ import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
+import useTeamDetails from "@/hooks/useTeams";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
@@ -85,6 +86,8 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -342,6 +345,7 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}

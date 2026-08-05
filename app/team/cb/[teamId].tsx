@@ -4,6 +4,7 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getCBTeam, getCBTeamLogo } from "@/constants/teamsCB";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
+import useTeamDetails from "@/hooks/useTeams";
 import { getWNBASeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -68,6 +69,8 @@ export default function TeamDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -277,9 +280,10 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        teamId={team.id}
+        teamId={teamIdNum}
         teamLogo={teamLogo}
         league={league}
         isDark={isDark}

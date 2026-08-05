@@ -13,6 +13,10 @@ const RECENT_SEARCHES_KEY_PREFIX = "recentSearches";
 const RECENT_SEARCHES_LEGACY_KEY = RECENT_SEARCHES_KEY_PREFIX;
 const RECENT_SEARCHES_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 400;
+const COLLAPSED_SEARCH_LIMIT = 5;
+const EXPANDED_SEARCH_LIMIT = 25;
+
+export type ExploreSearchScope = "all" | "players" | "teams" | "users";
 
 type ExploreSearchResponse = {
   players: PlayerResult[];
@@ -161,6 +165,8 @@ export function useExplore() {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchScope, setSearchScope] = useState<ExploreSearchScope>("all");
+  const [expandedSearch, setExpandedSearch] = useState(false);
 
   const requestIdRef = useRef(0);
   const recentSearchLoadRequestIdRef = useRef(0);
@@ -168,6 +174,9 @@ export function useExplore() {
 
   const normalizedQuery = query.trim();
   const normalizedDebouncedQuery = debouncedQuery.trim();
+  const searchLimit = expandedSearch
+    ? EXPANDED_SEARCH_LIMIT
+    : COLLAPSED_SEARCH_LIMIT;
 
   const isSearching = useMemo(() => {
     return (
@@ -205,52 +214,67 @@ export function useExplore() {
     }
   }, []);
 
-  const search = useCallback(async (searchQuery: string) => {
-    const trimmedQuery = searchQuery.trim();
+  const search = useCallback(
+    async (
+      searchQuery: string,
+      options: {
+        scope?: ExploreSearchScope;
+        limit?: number;
+      } = {},
+    ) => {
+      const trimmedQuery = searchQuery.trim();
+      const requestScope = options.scope ?? searchScope;
+      const requestLimit = options.limit ?? searchLimit;
 
-    requestIdRef.current += 1;
-    const requestId = requestIdRef.current;
+      requestIdRef.current += 1;
+      const requestId = requestIdRef.current;
 
-    abortControllerRef.current?.abort();
+      abortControllerRef.current?.abort();
 
-    if (!trimmedQuery) {
-      setResults([]);
-      setError(null);
-      setLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await apiClient.get<ExploreSearchResponse>(
-        "api/explore/search",
-        {
-          params: { query: trimmedQuery },
-          signal: controller.signal,
-        },
-      );
-
-      if (requestId !== requestIdRef.current) return;
-
-      setResults(buildResults(res.data, trimmedQuery));
-      setError(null);
-    } catch (err: any) {
-      if (isCanceledRequest(err)) return;
-      if (requestId !== requestIdRef.current) return;
-
-      setError(err?.message || "Failed to fetch data");
-      setResults([]);
-    } finally {
-      if (requestId === requestIdRef.current) {
+      if (!trimmedQuery) {
+        setResults([]);
+        setError(null);
         setLoading(false);
+        return;
       }
-    }
-  }, []);
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await apiClient.get<ExploreSearchResponse>(
+          "api/explore/search",
+          {
+            params: {
+              query: trimmedQuery,
+              scope: requestScope,
+              limit: requestLimit,
+            },
+            signal: controller.signal,
+          },
+        );
+
+        if (requestId !== requestIdRef.current) return;
+
+        setResults(buildResults(res.data, trimmedQuery));
+        setError(null);
+      } catch (err: any) {
+        if (isCanceledRequest(err)) return;
+        if (requestId !== requestIdRef.current) return;
+
+        setError(err?.message || "Failed to fetch data");
+        setResults([]);
+      } finally {
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
+      }
+    },
+    [searchLimit, searchScope],
+  );
 
   const saveToRecentSearches = useCallback(async (item: ResultItem) => {
     const key = getResultKey(item);
@@ -313,8 +337,11 @@ export function useExplore() {
   }, [query]);
 
   useEffect(() => {
-    search(debouncedQuery);
-  }, [debouncedQuery, search]);
+    search(debouncedQuery, {
+      scope: searchScope,
+      limit: searchLimit,
+    });
+  }, [debouncedQuery, search, searchLimit, searchScope]);
 
   useFocusEffect(
     useCallback(() => {
@@ -336,6 +363,14 @@ export function useExplore() {
     loading,
     error,
     search,
+    searchScope,
+    setSearchScope,
+    expandedSearch,
+    setExpandedSearch,
+    canExpandResults:
+      normalizedQuery.length > 0 &&
+      !expandedSearch &&
+      results.length >= COLLAPSED_SEARCH_LIMIT,
     saveToRecentSearches,
     deleteRecentSearch,
     isSearching,

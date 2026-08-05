@@ -5,6 +5,7 @@ import { Colors } from "@/constants/styles";
 import { ScheduleMonth, useTeamGames } from "@/hooks/HockeyHooks/useTeamGames";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
@@ -65,6 +66,8 @@ export default function TeamDetailScreen() {
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const favorited = team ? isFavorite(league, team.id) : false;
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -297,6 +300,7 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}

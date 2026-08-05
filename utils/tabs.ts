@@ -79,6 +79,7 @@ export const TEAM_TABS = {
   SB: ["schedule", "news", "standings", "forum"],
   NHL: ["schedule", "news", "roster", "stats", "standings", "forum"],
   CFB: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  UFL: ["schedule", "news", "standings", "forum"],
   CBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
   WCBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
 } as const;

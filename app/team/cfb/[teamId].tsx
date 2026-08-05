@@ -3,9 +3,11 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
+import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import useTeamDetails from "@/hooks/useTeams";
 import { getFootballSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -38,6 +40,8 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
   const team = getCFBTeam(teamIdNum);
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
+  const conferenceId = teamDetails?.conferenceId;
   const espnId = team?.espnId ?? 0;
   const teamColor = team?.color ?? Colors.midTone;
   const teamLogo = getCFBTeamLogo(teamIdNum, true);
@@ -56,6 +60,9 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+
+  const { conferences, conferencesLoading, conferencesError } =
+    useCFBConferenceStandings(conferenceId);
 
   const {
     articles,
@@ -213,8 +220,9 @@ export default function TeamDetailScreen() {
         {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
           <CFBConferenceStandingsList
-            onlyTeamConference={true}
-            teamName={team.fullName}
+            conferences={conferences}
+            loading={conferencesLoading}
+            error={conferencesError}
           />
         </View>
 
@@ -225,6 +233,7 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}

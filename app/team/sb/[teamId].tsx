@@ -4,6 +4,7 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
 import { getSBTeam, getSBTeamLogo } from "@/constants/teamsSB";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
+import useTeamDetails from "@/hooks/useTeams";
 import { getWNBASeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -66,6 +67,8 @@ export default function SoftballTeamDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -270,6 +273,7 @@ export default function SoftballTeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}

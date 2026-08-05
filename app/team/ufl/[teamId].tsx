@@ -1,27 +1,23 @@
-import Roster from "@/components/Sports/Baseball/Team/Roster";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
+import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
-import useRoster from "@/hooks/LeagueHooks/useRoster";
+import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useRosterStats } from "hooks/FootballHooks/useRosterStats";
-import { useTeamStats } from "hooks/FootballHooks/useTeamStats";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { getFirstSeasonGame } from "utils/seasonGames";
@@ -29,7 +25,8 @@ import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
-  const league = "NFL";
+  const league = "UFL";
+  const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -37,9 +34,8 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
-  const team = getNFLTeam(teamIdNum);
-  const espnId = team?.espnId ?? 0;
-  const teamLogo = getNFLTeamLogo(teamIdNum, true);
+  const team = getUFLTeam(teamIdNum);
+  const teamLogo = getUFLTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
@@ -59,37 +55,20 @@ export default function TeamDetailScreen() {
     setSelectedTab(indexToTab(index));
   };
 
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
+
   const {
     articles,
     loading: newsLoading,
     error: newsError,
   } = useLeaguesNews(league, 10);
-  const {
-    players,
-    loading: playersLoading,
-    error: playersError,
-    refreshPlayers,
-  } = useRoster(teamIdNum, league);
 
   const {
     games: teamGames,
     loading: gamesLoading,
     error: gamesError,
     refreshGames: refreshTeamGames,
-  } = useFootballTeamGames(teamIdNum, "nfl", 2025);
-
-  const {
-    rosterStats,
-    loading: statsLoading,
-    error: statsError,
-    refreshingStats,
-    onRefresh: refreshRosterStats,
-  } = useRosterStats(league, teamIdNum);
-
-  const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    espnId,
-    league,
-  );
+  } = useFootballTeamGames(teamIdNum, league, currentSeason);
 
   const firstSeasonGame = useMemo(
     () => getFirstSeasonGame(teamGames),
@@ -101,10 +80,6 @@ export default function TeamDetailScreen() {
     try {
       if (selectedTab === "schedule") {
         await refreshTeamGames?.();
-      } else if (selectedTab === "roster") {
-        await refreshPlayers();
-      } else if (selectedTab === "stats") {
-        await Promise.all([refreshRosterStats(), refresh?.()]);
       }
     } catch (err) {
       console.error("Refresh failed:", err);
@@ -117,13 +92,13 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeaderTitle
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -133,6 +108,7 @@ export default function TeamDetailScreen() {
     navigation,
     isDark,
     team,
+    teamIdNum,
     teamColor,
     teamLogo,
     toggleFavorite,
@@ -173,57 +149,18 @@ export default function TeamDetailScreen() {
             showHeaders={true}
             showCountdown={true}
             countdownGame={firstSeasonGame}
-            isNFL={true}
           />
         </View>
 
-        {/* News */}
+        {/* NEWS */}
         <View key="news" style={styles.contentArea}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          >
-            <NewsList
-              items={articles}
-              isDark={isDark}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-            />
-          </ScrollView>
-        </View>
-
-        {/* ROSTER */}
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={playersLoading}
-            error={playersError}
+          <NewsList
+            items={articles}
+            loading={newsLoading}
+            error={newsError}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            league={league}
-          />
-        </View>
-
-        {/* STATS */}
-        <View key="stats" style={styles.contentArea}>
-          <RosterStats
-            rosterStats={rosterStats}
-            teamStats={teamStats}
-            loading={statsLoading || teamStatsLoading}
-            error={statsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refreshRosterStats}
-            teamId={teamIdNum}
-            teamID={Number(team.id)}
-            league={league}
+            isDark={isDark}
           />
         </View>
 
@@ -242,16 +179,15 @@ export default function TeamDetailScreen() {
         </View>
       </PagerView>
 
-      {/* --- Bottom Sheet --- */}
-      {team && (
-        <TeamInfoModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          teamId={team.id}
-          league={league}
-          isDark={isDark}
-        />
-      )}
+      <TeamInfoModal
+        teamDetails={teamDetails}
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        teamId={teamIdNum}
+        teamLogo={teamLogo}
+        league={league}
+        isDark={isDark}
+      />
     </View>
   );
 }

@@ -6,6 +6,7 @@ import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
+import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
@@ -49,7 +50,7 @@ export default function TeamDetailScreen() {
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs("NFL");
+  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
@@ -60,6 +61,8 @@ export default function TeamDetailScreen() {
   const handlePageChange = (index: number) => {
     setSelectedTab(indexToTab(index));
   };
+
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -244,6 +247,7 @@ export default function TeamDetailScreen() {
       </PagerView>
 
       <TeamInfoModal
+        teamDetails={teamDetails}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         teamId={teamIdNum}
