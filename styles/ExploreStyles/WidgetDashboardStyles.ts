@@ -23,6 +23,27 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     gridCellFull: {
       width: "100%",
     },
+    draggableCell: {
+      marginBottom: 0,
+    },
+    dropPlaceholder: {
+      width: "100%",
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      borderWidth: 1,
+      borderStyle: "dashed",
+      borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      backgroundColor: isDark
+        ? "rgba(68, 178, 111, 0.12)"
+        : "rgba(44, 156, 83, 0.1)",
+    },
+    dropPlaceholderText: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 13,
+      color: isDark ? Colors.dark.leafGreen : Colors.light.green,
+    },
     toolbar: {
       flexDirection: "row",
       justifyContent: "flex-end",

@@ -18,6 +18,9 @@ import type {
   ExploreWidgetType,
 } from "types/widgets";
 
+const applyVisibleOrder = (widgets: ExploreWidgetConfig[]) =>
+  widgets.map((widget, index) => ({ ...widget, order: index }));
+
 export function useExploreWidgets() {
   const [widgets, setWidgets] = useState<ExploreWidgetConfig[]>([]);
   const [widgetsReady, setWidgetsReady] = useState(false);
@@ -137,7 +140,33 @@ export function useExploreWidgets() {
         next[currentIndex],
       ];
 
-      return withSequentialOrder(next);
+      return applyVisibleOrder(next);
+    });
+  }, []);
+
+  const reorderWidgets = useCallback((nextWidgets: ExploreWidgetConfig[]) => {
+    setWidgets((prev) => {
+      const orderedPrevious = withSequentialOrder(prev);
+      const widgetsById = new Map(
+        orderedPrevious.map((widget) => [widget.id, widget]),
+      );
+      const seenIds = new Set<string>();
+
+      const nextOrderedWidgets = nextWidgets.flatMap((widget) => {
+        if (seenIds.has(widget.id)) return [];
+
+        const existingWidget = widgetsById.get(widget.id);
+        if (!existingWidget) return [];
+
+        seenIds.add(widget.id);
+        return [existingWidget];
+      });
+
+      const missingWidgets = orderedPrevious.filter(
+        (widget) => !seenIds.has(widget.id),
+      );
+
+      return applyVisibleOrder([...nextOrderedWidgets, ...missingWidgets]);
     });
   }, []);
 
@@ -149,6 +178,7 @@ export function useExploreWidgets() {
     removeWidget,
     resizeWidget,
     moveWidget,
+    reorderWidgets,
     reloadWidgets: loadWidgets,
   };
 }

@@ -4,6 +4,7 @@ import {
   getWidgetTitle,
   isExploreWidgetSize,
   isExploreWidgetType,
+  widgetAllowsDuplicates,
 } from "constants/exploreWidgets";
 import type { ExploreWidgetConfig } from "types/widgets";
 
@@ -57,6 +58,8 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
     rawWidgets = (value as { widgets: unknown[] }).widgets;
   }
 
+  const seenSingleInstanceTypes = new Set<ExploreWidgetConfig["type"]>();
+
   const normalized = rawWidgets
     .filter(
       (widget): widget is Partial<ExploreWidgetConfig> =>
@@ -88,6 +91,18 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
             ? widget.order
             : Number.MAX_SAFE_INTEGER,
       };
+    })
+    .filter((widget) => {
+      if (widgetAllowsDuplicates(widget.type)) {
+        return true;
+      }
+
+      if (seenSingleInstanceTypes.has(widget.type)) {
+        return false;
+      }
+
+      seenSingleInstanceTypes.add(widget.type);
+      return true;
     });
 
   return withSequentialOrder(normalized);

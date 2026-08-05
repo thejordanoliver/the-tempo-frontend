@@ -8,6 +8,7 @@ type EmptyStateProps = {
   onRemoveWidget: (widgetId: string) => void;
   onResizeWidget: (widgetId: string, size: ExploreWidgetSize) => void;
   onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
+  onReorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
 };
 
 export default function EmptyState(props: EmptyStateProps) {

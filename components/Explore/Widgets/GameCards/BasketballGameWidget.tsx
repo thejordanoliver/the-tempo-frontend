@@ -42,8 +42,12 @@ export default function BasketballGameWidget({
   const home = game.home;
   const away = game.away;
 
-  const homeId = isWCBB ? (home.wid ?? 0) : home?.id;
-  const awayId = isWCBB ? (away.wid ?? 0) : away?.id;
+  const homeId = isWCBB
+    ? ((home as typeof home & { wid?: string | number }).wid ?? home?.id ?? 0)
+    : home?.id;
+  const awayId = isWCBB
+    ? ((away as typeof away & { wid?: string | number }).wid ?? away?.id ?? 0)
+    : away?.id;
 
   const homeTeam = isCBB
     ? getCBBTeam(homeId, false)

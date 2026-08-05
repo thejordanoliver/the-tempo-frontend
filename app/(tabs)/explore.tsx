@@ -40,8 +40,14 @@ export default function ExplorePage() {
     deleteRecentSearch,
   } = useExplore();
 
-  const { widgets, addWidget, removeWidget, resizeWidget, moveWidget } =
-    useExploreWidgets();
+  const {
+    widgets,
+    addWidget,
+    removeWidget,
+    resizeWidget,
+    moveWidget,
+    reorderWidgets,
+  } = useExploreWidgets();
 
   const {
     searchVisible,
@@ -97,37 +103,37 @@ export default function ExplorePage() {
     });
   }, [navigation, toggleSearch]);
 
-  if (!searchVisible)
-    return (
-      <EmptyState
-        isDark={isDark}
-        selectedWidgets={widgets}
-        onAddWidget={openWidgetModal}
-        onRemoveWidget={removeWidget}
-        onResizeWidget={resizeWidget}
-        onMoveWidget={moveWidget}
-      />
-    );
-
   return (
     <View style={styles.container}>
-      <SearchResultsList
-        data={searchResultsData}
-        loading={loading}
-        error={error}
-        onSelect={handleSelectItem}
-        onDelete={deleteRecentSearch}
-        query={query}
-        onSeeAll={handleSeeAll}
-        showAll={showAll}
-        canExpandResults={canExpandResults}
-        isSearching={isSearching}
-        selectedTab={selectedTab}
-        tabs={tabs}
-        handleChangeText={handleChangeText}
-        handleTabPress={handleTabPress}
-        searchVisible={searchVisible}
-      />
+      {!searchVisible ? (
+        <EmptyState
+          isDark={isDark}
+          selectedWidgets={widgets}
+          onAddWidget={openWidgetModal}
+          onRemoveWidget={removeWidget}
+          onResizeWidget={resizeWidget}
+          onMoveWidget={moveWidget}
+          onReorderWidgets={reorderWidgets}
+        />
+      ) : (
+        <SearchResultsList
+          data={searchResultsData}
+          loading={loading}
+          error={error}
+          onSelect={handleSelectItem}
+          onDelete={deleteRecentSearch}
+          query={query}
+          onSeeAll={handleSeeAll}
+          showAll={showAll}
+          canExpandResults={canExpandResults}
+          isSearching={isSearching}
+          selectedTab={selectedTab}
+          tabs={tabs}
+          handleChangeText={handleChangeText}
+          handleTabPress={handleTabPress}
+          searchVisible={searchVisible}
+        />
+      )}
 
       <AddWidgetModal
         visible={widgetModalVisible}

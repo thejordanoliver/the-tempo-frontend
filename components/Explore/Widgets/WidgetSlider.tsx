@@ -60,7 +60,7 @@ type WidgetSliderProps = {
   widgetId?: string;
   widgetSize?: ExploreWidgetSize;
   isEditing?: boolean;
-  availableSizeOptions?: ExploreWidgetSize[];
+  availableSizeOptions?: readonly ExploreWidgetSize[];
   onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
   onRemoveWidget?: (widgetId: string) => void;
   onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
@@ -72,7 +72,7 @@ type WidgetEditControlsProps = {
   isDark: boolean;
   widgetId: string;
   widgetSize: ExploreWidgetSize;
-  availableSizeOptions?: ExploreWidgetSize[];
+  availableSizeOptions?: readonly ExploreWidgetSize[];
   onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
   onRemoveWidget?: (widgetId: string) => void;
   onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
@@ -81,7 +81,8 @@ type WidgetEditControlsProps = {
   compact?: boolean;
 };
 
-const DEFAULT_SIZE_OPTIONS: ExploreWidgetSize[] = [...EXPLORE_WIDGET_SIZES];
+const DEFAULT_SIZE_OPTIONS: readonly ExploreWidgetSize[] =
+  EXPLORE_WIDGET_SIZES;
 
 export function WidgetEditControls({
   isDark,
@@ -90,6 +91,9 @@ export function WidgetEditControls({
   availableSizeOptions = DEFAULT_SIZE_OPTIONS,
   onResizeWidget,
   onRemoveWidget,
+  onMoveWidget,
+  canMoveUp = false,
+  canMoveDown = false,
   compact = false,
 }: WidgetEditControlsProps) {
   const styles = editControlStyles(isDark, compact);
@@ -97,6 +101,50 @@ export function WidgetEditControls({
   return (
     <View style={styles.editOverlay} pointerEvents="box-none">
       <View style={styles.editControls}>
+        {onMoveWidget && (
+          <View style={styles.moveControls}>
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={() => onMoveWidget(widgetId, -1)}
+              disabled={!canMoveUp}
+              style={[
+                styles.moveButton,
+                !canMoveUp && styles.moveButtonDisabled,
+              ]}
+              hitSlop={4}
+              accessibilityRole="button"
+              accessibilityLabel="Move widget up"
+              accessibilityState={{ disabled: !canMoveUp }}
+            >
+              <Ionicons
+                name="chevron-up"
+                size={compact ? 13 : 15}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={() => onMoveWidget(widgetId, 1)}
+              disabled={!canMoveDown}
+              style={[
+                styles.moveButton,
+                !canMoveDown && styles.moveButtonDisabled,
+              ]}
+              hitSlop={4}
+              accessibilityRole="button"
+              accessibilityLabel="Move widget down"
+              accessibilityState={{ disabled: !canMoveDown }}
+            >
+              <Ionicons
+                name="chevron-down"
+                size={compact ? 13 : 15}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
         {onResizeWidget && (
           <View style={styles.sizeControls}>
             {availableSizeOptions.map((size) => (
@@ -159,6 +207,9 @@ export default function WidgetSlider({
   availableSizeOptions,
   onResizeWidget,
   onRemoveWidget,
+  onMoveWidget,
+  canMoveUp,
+  canMoveDown,
 }: WidgetSliderProps) {
   const { width: screenWidth, height: screenHeight } = useMemo(
     () => Dimensions.get("window"),
@@ -585,6 +636,9 @@ export default function WidgetSlider({
             availableSizeOptions={availableSizeOptions}
             onResizeWidget={onResizeWidget}
             onRemoveWidget={onRemoveWidget}
+            onMoveWidget={onMoveWidget}
+            canMoveUp={canMoveUp}
+            canMoveDown={canMoveDown}
             compact={slideWidth < 240 || slideHeight < 260}
           />
         )}
@@ -701,6 +755,24 @@ const editControlStyles = (isDark: boolean, compact: boolean) =>
       shadowRadius: 8,
       shadowOffset: { width: 0, height: 3 },
       elevation: 5,
+    },
+    moveControls: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2,
+    },
+    moveButton: {
+      width: compact ? 22 : 24,
+      height: compact ? 22 : 24,
+      borderRadius: 999,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    moveButtonDisabled: {
+      opacity: 0.35,
     },
     sizeControls: {
       flexDirection: "row",

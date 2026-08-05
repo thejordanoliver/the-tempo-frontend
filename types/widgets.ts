@@ -8,10 +8,7 @@ export type ExploreWidgetType =
   | "wcbb_games"
   | "cfb_games"
   | "favorite_games"
-  | "favorite_teams"
-  | "trending_news"
-  | "player_leaders"
-  | "standings";
+  | "favorite_teams";
 
 export type ExploreWidgetSize = "small" | "medium" | "large";
 

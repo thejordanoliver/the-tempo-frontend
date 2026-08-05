@@ -23,7 +23,7 @@ type FavoriteTeamsWidgetProps = {
   widgetId?: string;
   widgetSize?: ExploreWidgetSize;
   isEditing?: boolean;
-  availableSizeOptions?: ExploreWidgetSize[];
+  availableSizeOptions?: readonly ExploreWidgetSize[];
   onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
   onRemoveWidget?: (widgetId: string) => void;
   onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;

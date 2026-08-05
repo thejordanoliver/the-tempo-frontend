@@ -1,4 +1,441 @@
 import { Team } from "@/types/football/football";
+import AbileneChristianLogo from "assets/College_Logos/AbileneChristian.png";
+import AirForceLogo from "assets/College_Logos/AirForce.png";
+import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
+import AkronLogo from "assets/College_Logos/Akron.png";
+import AlabamaLogo from "assets/College_Logos/Alabama.png";
+import AlabamaAMLogo from "assets/College_Logos/AlabamaA&M.png";
+import AlabamaAMLogoLight from "assets/College_Logos/AlabamaA&MLight.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLight.png";
+import AlabamaStLogo from "assets/College_Logos/AlabamaSt.png";
+import AlcornStLogo from "assets/College_Logos/AlcornSt.png";
+import AmericanUniversityLogo from "assets/College_Logos/AmericanUniversity.png";
+import AppalachianStateLogo from "assets/College_Logos/AppalachianState.png";
+import ArizonaLogo from "assets/College_Logos/Arizona.png";
+import ArizonaStateLogo from "assets/College_Logos/ArizonaState.png";
+import ArkansasPineBluffLogo from "assets/College_Logos/Arkansas-PineBluff.png";
+import ArkansasLogo from "assets/College_Logos/Arkansas.png";
+import ArkansasLogoLight from "assets/College_Logos/ArkansasLight.png";
+import ArkansasStateLogo from "assets/College_Logos/ArkansasState.png";
+import ArmyLogo from "assets/College_Logos/Army.png";
+import AuburnLogo from "assets/College_Logos/Auburn.png";
+import AuburnLogoLight from "assets/College_Logos/AuburnLight.png";
+import AustinPeayLogo from "assets/College_Logos/AustinPeay.png";
+import BallStateLogo from "assets/College_Logos/BallState.png";
+import BaylorLogo from "assets/College_Logos/Baylor.png";
+import BaylorLogoLight from "assets/College_Logos/BaylorLight.png";
+import BellarmineLogo from "assets/College_Logos/Bellarmine.png";
+import BelmontLogo from "assets/College_Logos/Belmont.png";
+import BinghamtonLogo from "assets/College_Logos/Binghamton.png";
+import BobJonesLogo from "assets/College_Logos/BobJones.png";
+import BoiseStateLogo from "assets/College_Logos/BoiseState.png";
+import BostonCollegeLogo from "assets/College_Logos/BostonCollege.png";
+import BostonCollegeLogoLight from "assets/College_Logos/BostonCollegeLight.png";
+import BostonUniversityLogo from "assets/College_Logos/BostonUniversity.png";
+import BowlingGreenLogo from "assets/College_Logos/BowlingGreen.png";
+import BradleyLogo from "assets/College_Logos/Bradley.png";
+import BrownLogo from "assets/College_Logos/Brown.png";
+import BryantLogo from "assets/College_Logos/Bryant.png";
+import BucknellLogo from "assets/College_Logos/Bucknell.png";
+import BuffaloLogo from "assets/College_Logos/Buffalo.png";
+import ButlerLogo from "assets/College_Logos/Butler.png";
+import BYULogo from "assets/College_Logos/BYU.png";
+import BYULogoLight from "assets/College_Logos/BYULight.png";
+import CaliforniaLogo from "assets/College_Logos/California.png";
+import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptist.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLight.png";
+import CalPolyLogo from "assets/College_Logos/CalPoly.png";
+import CalStateNorthridgeLogo from "assets/College_Logos/CalStateNorthridge.png";
+import CampbellLogo from "assets/College_Logos/Campbell.png";
+import CanisiusLogo from "assets/College_Logos/Canisius.png";
+import CentralArkansasLogo from "assets/College_Logos/CentralArkansas.png";
+import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticut.png";
+import CentralMichiganLogo from "assets/College_Logos/CentralMichigan.png";
+import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLight.png";
+import CentralWashingtonLogo from "assets/College_Logos/CentralWashington.png";
+import CharlestonLogo from "assets/College_Logos/Charleston.png";
+import CharlestonSouthernLogo from "assets/College_Logos/CharlestonSouthern.png";
+import CharlotteLogo from "assets/College_Logos/Charlotte.png";
+import CharlotteLogoLight from "assets/College_Logos/CharlotteLight.png";
+import ChattanoogaLogo from "assets/College_Logos/Chattanooga.png";
+import ChicagoStateLogo from "assets/College_Logos/ChicagoState.png";
+import CincinnatiLogo from "assets/College_Logos/Cincinnati.png";
+import CincinnatiLogoLight from "assets/College_Logos/CincinnatiLight.png";
+import ClemsonLogo from "assets/College_Logos/Clemson.png";
+import ClemsonLogoLight from "assets/College_Logos/ClemsonLight.png";
+import ClevelandStateLogo from "assets/College_Logos/ClevelandState.png";
+import CoastalCarolinaLogo from "assets/College_Logos/CoastalCarolina.png";
+import ColgateLogo from "assets/College_Logos/Colgate.png";
+import ColgateLogoLight from "assets/College_Logos/ColgateLight.png";
+import ColoradoLogo from "assets/College_Logos/Colorado.png";
+import ColoradoStateLogo from "assets/College_Logos/ColoradoState.png";
+import ColumbiaLogo from "assets/College_Logos/Columbia.png";
+import CornellLogo from "assets/College_Logos/Cornell.png";
+import CreightonLogo from "assets/College_Logos/Creighton.png";
+import CSFullertonLogo from "assets/College_Logos/CSFullerton.png";
+import CSUBakersfieldLogo from "assets/College_Logos/CSUBakersfield.png";
+import DartmouthLogo from "assets/College_Logos/Dartmouth.png";
+import DavidsonLogo from "assets/College_Logos/Davidson.png";
+import DaytonLogo from "assets/College_Logos/Dayton.png";
+import DaytonLogoLight from "assets/College_Logos/DaytonLight.png";
+import DelawareLogo from "assets/College_Logos/Delaware.png";
+import DelawareStateLogo from "assets/College_Logos/DelawareState.png";
+import DenverLogo from "assets/College_Logos/Denver.png";
+import DenverLogoLight from "assets/College_Logos/DenverLight.png";
+import DepaulLogo from "assets/College_Logos/Depaul.png";
+import DetroitLogo from "assets/College_Logos/Detroit.png";
+import DrakeLogo from "assets/College_Logos/Drake.png";
+import DrexelLogo from "assets/College_Logos/Drexel.png";
+import DukeLogo from "assets/College_Logos/Duke.png";
+import DukeLogoLight from "assets/College_Logos/DukeLight.png";
+import DuquesneLogo from "assets/College_Logos/Duquesne.png";
+import DuquesneLogoLight from "assets/College_Logos/DuquesneLight.png";
+import ECULogo from "assets/College_Logos/EastCarolina.png";
+import EasternIllinoisLogo from "assets/College_Logos/EasternIllinois.png";
+import EasternKentuckyLogo from "assets/College_Logos/EasternKentucky.png";
+import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLight.png";
+import EasternMichiganLogo from "assets/College_Logos/EasternMichigan.png";
+import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLight.png";
+import EasternWashingtonLogo from "assets/College_Logos/EasternWashington.png";
+import EasternWashingtonLogoLight from "assets/College_Logos/EasternWashingtonLight.png";
+import EastTennesseeStateLogo from "assets/College_Logos/EastTennesseeState.png";
+import ElonLogo from "assets/College_Logos/Elon.png";
+import ETAMLogo from "assets/College_Logos/ETA&M.png";
+import EvansvilleLogo from "assets/College_Logos/Evansville.png";
+import FairfieldLogo from "assets/College_Logos/Fairfield.png";
+import FairleighDickinsonLogo from "assets/College_Logos/FairleighDickinson.png";
+import FAULogo from "assets/College_Logos/FAU.png";
+import FGCULogo from "assets/College_Logos/FGCU.png";
+import FisherLogo from "assets/College_Logos/Fisher.png";
+import FIULogo from "assets/College_Logos/FIU.png";
+import FIULogoLight from "assets/College_Logos/FIULight.png";
+import FloridaLogo from "assets/College_Logos/Florida.png";
+import FordhamLogo from "assets/College_Logos/Fordham.png";
+import FresnoStLogo from "assets/College_Logos/FresnoState.png";
+import FloridaStateLogo from "assets/College_Logos/FSU.png";
+import FurmanLogo from "assets/College_Logos/Furman.png";
+import GardnerWebbLogo from "assets/College_Logos/Gardner-Webb.png";
+import GeorgeMasonLogo from "assets/College_Logos/GeorgeMason.png";
+import GeorgetownLogo from "assets/College_Logos/Georgetown.png";
+import GeorgeWashingtonLogo from "assets/College_Logos/GeorgeWashington.png";
+import GeorgiaLogo from "assets/College_Logos/Georgia.png";
+import GeorgiaSouthernLogo from "assets/College_Logos/GeorgiaSouthern.png";
+import GeorgiaStateLogo from "assets/College_Logos/GeorgiaState.png";
+import GonzagaLogo from "assets/College_Logos/Gonzaga.png";
+import GramblingLogo from "assets/College_Logos/Grambling.png";
+import GrandCanyonLogo from "assets/College_Logos/GrandCanyon.png";
+import GrandCanyonLogoLight from "assets/College_Logos/GrandCanyonLight.png";
+import HamptonLogo from "assets/College_Logos/Hampton.png";
+import HarvardLogo from "assets/College_Logos/Harvard.png";
+import HawaiiLogo from "assets/College_Logos/Hawaii.png";
+import HighPointLogo from "assets/College_Logos/HighPoint.png";
+import HighPointLogoLight from "assets/College_Logos/HighPointLight.png";
+import HofstraLogo from "assets/College_Logos/Hofstra.png";
+import HofstraLogoLight from "assets/College_Logos/HofstraLight.png";
+import HolyCrossLogo from "assets/College_Logos/HolyCross.png";
+import HoustonLogo from "assets/College_Logos/Houston.png";
+import HoustonChristianLogo from "assets/College_Logos/HoustonChristian.png";
+import HowardLogo from "assets/College_Logos/Howard.png";
+import IdahoLogo from "assets/College_Logos/Idaho.png";
+import IdahoStateLogo from "assets/College_Logos/IdahoState.png";
+import IllinoisLogo from "assets/College_Logos/Illinois.png";
+import IllinoisStateLogo from "assets/College_Logos/IllinoisState.png";
+import IncarnateWordLogo from "assets/College_Logos/IncarnateWord.png";
+import IndianaLogo from "assets/College_Logos/Indiana.png";
+import IndianaLogoLight from "assets/College_Logos/IndianaLight.png";
+import IndianaStateLogo from "assets/College_Logos/IndianaState.png";
+import IonaLogo from "assets/College_Logos/Iona.png";
+import IowaLogo from "assets/College_Logos/Iowa.png";
+import IowaLogoLight from "assets/College_Logos/IowaLight.png";
+import IowaStateLogo from "assets/College_Logos/IowaState.png";
+import IUIndianapolisLogo from "assets/College_Logos/IUIndianapolis.png";
+import JacksonStateLogo from "assets/College_Logos/JacksonState.png";
+import JacksonvilleLogo from "assets/College_Logos/Jacksonville.png";
+import JacksonvilleLogoLight from "assets/College_Logos/JacksonvilleLight.png";
+import JamesMadisonLogo from "assets/College_Logos/JamesMadison.png";
+import JaxStateLogo from "assets/College_Logos/JaxState.png";
+import KansasLogo from "assets/College_Logos/Kansas.png";
+import KansasCityLogo from "assets/College_Logos/KansasCity.png";
+import KansasStLogo from "assets/College_Logos/KansasSt.png";
+import KansasStLogoLight from "assets/College_Logos/KansasStLight.png";
+import KennesawStateLogo from "assets/College_Logos/KennesawState.png";
+import KentStateLogo from "assets/College_Logos/KentState.png";
+import KentuckyLogo from "assets/College_Logos/Kentucky.png";
+import KentuckyLogoLight from "assets/College_Logos/KentuckyLight.png";
+import LafayetteLogo from "assets/College_Logos/Lafayette.png";
+import LamarLogo from "assets/College_Logos/Lamar.png";
+import LaSalleLogo from "assets/College_Logos/LaSalle.png";
+import LATechLogo from "assets/College_Logos/LATech.png";
+import LehighLogo from "assets/College_Logos/Lehigh.png";
+import LeMoyneLogo from "assets/College_Logos/LeMoyne.png";
+import LibertyLogo from "assets/College_Logos/Liberty.png";
+import LindenwoodLogo from "assets/College_Logos/Lindenwood.png";
+import LipscombLogo from "assets/College_Logos/Lipscomb.png";
+import LittleRockLogo from "assets/College_Logos/LittleRock.png";
+import LittleRockLogoLight from "assets/College_Logos/LittleRockLight.png";
+import LIULogo from "assets/College_Logos/LIU.png";
+import LongBeachStateLogo from "assets/College_Logos/LongBeachState.png";
+import LongBeachStateLogoLight from "assets/College_Logos/LongBeachStateLight.png";
+import LongwoodLogo from "assets/College_Logos/Longwood.png";
+import LouisianaLogo from "assets/College_Logos/Louisiana.png";
+import LouisianaChristianLogo from "assets/College_Logos/LouisianaChristian.png";
+import LouisvilleLogo from "assets/College_Logos/Louisville.png";
+import LoyolaChicagoLogo from "assets/College_Logos/LoyolaChicago.png";
+import LoyolaMarylandLogo from "assets/College_Logos/LoyolaMaryland.png";
+import LoyolaMarymountLogo from "assets/College_Logos/LoyolaMarymount.png";
+import LSULogo from "assets/College_Logos/LSU.png";
+import LSULogoLight from "assets/College_Logos/LSULight.png";
+import MaineLogo from "assets/College_Logos/Maine.png";
+import ManhattanLogo from "assets/College_Logos/Manhattan.png";
+import ManhattanLogoLight from "assets/College_Logos/ManhattanLight.png";
+import MaristLogo from "assets/College_Logos/Marist.png";
+import MarquetteLogo from "assets/College_Logos/Marquette.png";
+import MarshallLogo from "assets/College_Logos/Marshall.png";
+import MarylandLogo from "assets/College_Logos/Maryland.png";
+import McNeeseLogo from "assets/College_Logos/McNeese.png";
+import MemphisLogo from "assets/College_Logos/Memphis.png";
+import MercerLogo from "assets/College_Logos/Mercer.png";
+import MercyhurstLogo from "assets/College_Logos/Mercyhurst.png";
+import MerrimackLogo from "assets/College_Logos/Merrimack.png";
+import MiamiOHLogo from "assets/College_Logos/Miami(OH).png";
+import MiamiLogo from "assets/College_Logos/Miami.png";
+import MichiganLogo from "assets/College_Logos/Michigan.png";
+import MichiganStateLogo from "assets/College_Logos/MichiganState.png";
+import MichiganStateLogoLight from "assets/College_Logos/MichiganStateLight.png";
+import MilwaukeeLogo from "assets/College_Logos/Milwaukee.png";
+import MinnesotaLogo from "assets/College_Logos/Minnesota.png";
+import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLight.png";
+import MissouriLogo from "assets/College_Logos/Missouri.png";
+import MissouriStateLogo from "assets/College_Logos/MissouriState.png";
+import MissStLogo from "assets/College_Logos/MissSt.png";
+import MonmouthLogo from "assets/College_Logos/Monmouth.png";
+import MontanaLogo from "assets/College_Logos/Montana.png";
+import MontanaLogoLight from "assets/College_Logos/MontanaLight.png";
+import MoreheadStateLogo from "assets/College_Logos/MoreheadState.png";
+import MountSaintMarysLogo from "assets/College_Logos/MountSt.Mary's.png";
+import MiddleTennesseeLogo from "assets/College_Logos/MTSU.png";
+import MurrayStateLogo from "assets/College_Logos/MurrayState.png";
+import NavyLogo from "assets/College_Logos/Navy.png";
+import NCStateLogo from "assets/College_Logos/NCState.png";
+import NebraskaLogo from "assets/College_Logos/Nebraska.png";
+import NebraskaLogoLight from "assets/College_Logos/NebraskaLight.png";
+import NevadaLogo from "assets/College_Logos/Nevada.png";
+import NevadaLogoLight from "assets/College_Logos/NevadaLight.png";
+import NewberryLogo from "assets/College_Logos/Newberry.png";
+import NewHampshireLogo from "assets/College_Logos/NewHampshire.png";
+import NewHavenLogo from "assets/College_Logos/NewHaven.png";
+import NewMexicoLogo from "assets/College_Logos/NewMexico.png";
+import NewMexicoStateLogo from "assets/College_Logos/NewMexicoState.png";
+import NiagaraLogo from "assets/College_Logos/Niagara.png";
+import NichollsLogo from "assets/College_Logos/Nicholls.png";
+import NJITLogo from "assets/College_Logos/NJIT.png";
+import NorthFloridaLogo from "assets/College_Logos/NorhFlorida.png";
+import NorthAlabamaLogo from "assets/College_Logos/NorthAlabama.png";
+import NorthDakotaLogo from "assets/College_Logos/NorthDakota.png";
+import NorthDakotaStateLogo from "assets/College_Logos/NorthDakotaState.png";
+import NortheasternLogo from "assets/College_Logos/Northeastern.png";
+import NorthernArizonaLogo from "assets/College_Logos/NorthernArizona.png";
+import NorthernArizonaLogoLight from "assets/College_Logos/NorthernArizonaLight.png";
+import NorhternColoradoLogo from "assets/College_Logos/NorthernColorado.png";
+import NorthernIllinoisLogo from "assets/College_Logos/NorthernIllinois.png";
+import NorthernIowaLogo from "assets/College_Logos/NorthernIowa.png";
+import NorthernKentuckyLogo from "assets/College_Logos/NorthernKentucky.png";
+import NorthGreenvilleLogo from "assets/College_Logos/NorthGreenville.png";
+import NorthTexasLogo from "assets/College_Logos/NorthTexas.png";
+import NorthwesternLogo from "assets/College_Logos/Northwestern.png";
+import NorthwesternStateLogo from "assets/College_Logos/NorthwesternState.png";
+import NorthwoodLogo from "assets/College_Logos/Northwood.png";
+import NotreDameLogo from "assets/College_Logos/NotreDame.png";
+import NotreDameLogoLight from "assets/College_Logos/NotreDameLight.png";
+import OaklandLogo from "assets/College_Logos/Oakland.png";
+import OhioLogo from "assets/College_Logos/Ohio.png";
+import OhioStLogo from "assets/College_Logos/OhioState.png";
+import OhioStLogoLight from "assets/College_Logos/OhioStateLight.png";
+import OklahomaLogo from "assets/College_Logos/Oklahoma.png";
+import OklahomaLogoLight from "assets/College_Logos/OklahomaLight.png";
+import OKStateLogo from "assets/College_Logos/OklahomaState.png";
+import ODULogo from "assets/College_Logos/OldDominion.png";
+import OleMissLogo from "assets/College_Logos/OleMiss.png";
+import OleMissLogoLight from "assets/College_Logos/OleMissLight.png";
+import OmahaLogo from "assets/College_Logos/Omaha.png";
+import OralRobertsLogo from "assets/College_Logos/OralRoberts.png";
+import OralRobertsLogoLight from "assets/College_Logos/OralRobertsLight.png";
+import OregonLogo from "assets/College_Logos/Oregon.png";
+import OregonLogoLight from "assets/College_Logos/OregonLight.png";
+import OregonStateLogo from "assets/College_Logos/OregonState.png";
+import PacificLogo from "assets/College_Logos/Pacific.png";
+import PennLogo from "assets/College_Logos/Penn.png";
+import PennStateLogo from "assets/College_Logos/PennState.png";
+import PepperdineLogo from "assets/College_Logos/Pepperdine.png";
+import PittsburghLogo from "assets/College_Logos/Pittsburgh.png";
+import PittsburghLogoLight from "assets/College_Logos/PittsburghLight.png";
+import PortlandLogo from "assets/College_Logos/Portland.png";
+import PortlandStateLogo from "assets/College_Logos/PortlandState.png";
+import PrairieViewAMLogo from "assets/College_Logos/PrairieViewA&M.png";
+import PresbyterianLogo from "assets/College_Logos/Presbyterian.png";
+import PrincetonLogo from "assets/College_Logos/Princeton.png";
+import ProvidenceLogo from "assets/College_Logos/Providence.png";
+import PurdueLogo from "assets/College_Logos/Purdue.png";
+import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayne.png";
+import QueensLogo from "assets/College_Logos/Queens.png";
+import QuinnipiacLogo from "assets/College_Logos/Quinnipiac.png";
+import RadfordLogo from "assets/College_Logos/Radford.png";
+import RhodeIslandLogo from "assets/College_Logos/RhodeIsland.png";
+import RiceLogo from "assets/College_Logos/Rice.png";
+import RiceLogoLight from "assets/College_Logos/RiceLight.png";
+import RichmondLogo from "assets/College_Logos/Richmond.png";
+import RichmondLogoLight from "assets/College_Logos/RichmondLight.png";
+import RiderLogo from "assets/College_Logos/Rider.png";
+import RobertMorrisLogo from "assets/College_Logos/RobertMorris.png";
+import RutgersLogo from "assets/College_Logos/Rutgers.png";
+import SacramentoStateLogo from "assets/College_Logos/SacramentoState.png";
+import SacredHeartLogo from "assets/College_Logos/SacredHeart.png";
+import SaintJosephsLogo from "assets/College_Logos/SaintJosephs.png";
+import SaintLouisLogo from "assets/College_Logos/SaintLouis.png";
+import SaintMaryLogo from "assets/College_Logos/SaintMary.png";
+import SaintMaryLogoLight from "assets/College_Logos/SaintMaryLight.png";
+import SaintPetersLogo from "assets/College_Logos/SaintPeters.png";
+import SamfordLogo from "assets/College_Logos/Samford.png";
+import SamHoustonLogo from "assets/College_Logos/SamHouston.png";
+import SanDiegoLogo from "assets/College_Logos/SanDiego.png";
+import SanDiegoStLogo from "assets/College_Logos/SanDiegoSt..png";
+import SanFranciscoLogo from "assets/College_Logos/SanFrancisco.png";
+import SanFranciscoLogoLight from "assets/College_Logos/SanFranciscoLight.png";
+import SanJoseStateLogo from "assets/College_Logos/SanJoseState.png";
+import SantaClaraLogo from "assets/College_Logos/SantaClara.png";
+import SCUpstateLogo from "assets/College_Logos/SCUpstate.png";
+import SouthDakotaStateLogo from "assets/College_Logos/SDST.png";
+import SeattleLogo from "assets/College_Logos/Seattle.png";
+import SELouisianaLogo from "assets/College_Logos/SELouisiana.png";
+import SetonHallLogo from "assets/College_Logos/SetonHall.png";
+import SienaLogo from "assets/College_Logos/Siena.png";
+import SIUELogo from "assets/College_Logos/SIUEdwardsville.png";
+import SIUELogoLight from "assets/College_Logos/SIUEdwardsvilleLight.png";
+import SMULogo from "assets/College_Logos/SMU.png";
+import SouthAlabamaLogo from "assets/College_Logos/SouthAlabama.png";
+import SouthCarolinaLogo from "assets/College_Logos/SouthCarolina.png";
+import SouthCarolinaLogoLight from "assets/College_Logos/SouthCarolinaLight.png";
+import SouthCarolinaStateLogo from "assets/College_Logos/SouthCarolinaState.png";
+import SouthDakotaLogo from "assets/College_Logos/SouthDakota.png";
+import SoutheastMissouriStateLogo from "assets/College_Logos/SoutheastMissouriState.png";
+import SouthernLogo from "assets/College_Logos/Southern.png";
+import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinois.png";
+import SouthernIndianaLogo from "assets/College_Logos/SouthernIndiana.png";
+import SouthernMissLogo from "assets/College_Logos/SouthernMiss.png";
+import SouthernUtahLogo from "assets/College_Logos/SouthernUtah.png";
+import SpringHillLogo from "assets/College_Logos/SpringHill.png";
+import StJohnsLogo from "assets/College_Logos/St.Johns.png";
+import StJohnsLogoLight from "assets/College_Logos/St.JohnsLight.png";
+import StanfordLogo from "assets/College_Logos/Stanford.png";
+import StBonaventureLogo from "assets/College_Logos/StBonaventure.png";
+import StBonaventureLogoLight from "assets/College_Logos/StBonaventureLight.png";
+import StephenFAustinLogo from "assets/College_Logos/StephenFAustin.png";
+import StetsonLogo from "assets/College_Logos/Stetson.png";
+import StonehillLogo from "assets/College_Logos/Stonehill.png";
+import StonyBrookLogo from "assets/College_Logos/StonyBrook.png";
+import StThomasMinnesotaLogo from "assets/College_Logos/StThomasMinnesota.png";
+import SyracuseLogo from "assets/College_Logos/Syracuse.png";
+import SyracuseLogoLight from "assets/College_Logos/SyracuseLight.png";
+import TarletonStateLogo from "assets/College_Logos/TarletonState.png";
+import TCULogo from "assets/College_Logos/TCU.png";
+import TCULogoLight from "assets/College_Logos/TCULight.png";
+import TempleLogo from "assets/College_Logos/Temple.png";
+import TempleLogoLight from "assets/College_Logos/TempleLight.png";
+import TennesseeLogo from "assets/College_Logos/Tennessee.png";
+import TennesseeLogoLight from "assets/College_Logos/TennesseeLight.png";
+import TennesseeTechLogo from "assets/College_Logos/TennesseeTech.png";
+import TexasLogo from "assets/College_Logos/Texas.png";
+import TexasAMCCLogo from "assets/College_Logos/TexasA&M-CorpusChristi.png";
+import TexasAMLogo from "assets/College_Logos/TexasA&M.png";
+import TexasAMLogoLight from "assets/College_Logos/TexasA&MLight.png";
+import TexasLogoLight from "assets/College_Logos/TexasLight.png";
+import TexasSouthernLogo from "assets/College_Logos/TexasSouthern.png";
+import TexasStLogo from "assets/College_Logos/TexasSt.png";
+import TexasTechLogo from "assets/College_Logos/TexasTech.png";
+import TheCitadelLogo from "assets/College_Logos/TheCitadel.png";
+import TheCitadelLogoLight from "assets/College_Logos/TheCitadelLight.png";
+import ToledoLogo from "assets/College_Logos/Toledo.png";
+import ToledoLogoLight from "assets/College_Logos/ToledoLight.png";
+import TowsonLogo from "assets/College_Logos/Towson.png";
+import TroyLogo from "assets/College_Logos/Troy.png";
+import TulsaLogo from "assets/College_Logos/Tulsa.png";
+import TulsaLogoLight from "assets/College_Logos/TulsaLight.png";
+import UABLogo from "assets/College_Logos/UAB.png";
+import UAlbanyLogo from "assets/College_Logos/UAlbany.png";
+import UCDavisLogo from "assets/College_Logos/UCDavis.png";
+import UCDavisLogoLight from "assets/College_Logos/UCDavisLight.png";
+import UCFLogo from "assets/College_Logos/UCF.png";
+import UCIrvineLogo from "assets/College_Logos/UCIrvine.png";
+import UCLALogo from "assets/College_Logos/UCLA.png";
+import UCLALogoLight from "assets/College_Logos/UCLALight.png";
+import UConnLogo from "assets/College_Logos/UCONN.png";
+import UCRiversideLogo from "assets/College_Logos/UCRiverside.png";
+import UCSanDiegoLogo from "assets/College_Logos/UCSanDiego.png";
+import UCSantaBarbaraLogo from "assets/College_Logos/UCSantaBarbara.png";
+import UICLOGO from "assets/College_Logos/UIC.png";
+import ULMLogo from "assets/College_Logos/ULM.png";
+import UmassLogo from "assets/College_Logos/Umass.png";
+import UMassLowellLogo from "assets/College_Logos/UMassLowell.png";
+import UMBCLogo from "assets/College_Logos/UMBC.png";
+import UNCLogo from "assets/College_Logos/UNC.png";
+import UNCAshevilleLogo from "assets/College_Logos/UNCAsheville.png";
+import UNCGreensboroLogo from "assets/College_Logos/UNCGreensboro.png";
+import UNCWilmingtonLogo from "assets/College_Logos/UNCWilmington.png";
+import UNLVLogo from "assets/College_Logos/UNLV.png";
+import UNLVLogoLight from "assets/College_Logos/UNLVLight.png";
+import USCLogo from "assets/College_Logos/USC.png";
+import USCLogoLight from "assets/College_Logos/USCLight.png";
+import USFLogo from "assets/College_Logos/USF.png";
+import UtahLogo from "assets/College_Logos/Utah.png";
+import UtahLogoLight from "assets/College_Logos/UtahLight.png";
+import UtahStateLogo from "assets/College_Logos/UtahState.png";
+import UtahStateLogoLight from "assets/College_Logos/UtahStateLight.png";
+import UtahTechLogo from "assets/College_Logos/UtahTech.png";
+import UtahValleyLogo from "assets/College_Logos/UtahValley.png";
+import UTEPLogo from "assets/College_Logos/UTEP.png";
+import UTEPLogoLight from "assets/College_Logos/UTEPLight.png";
+import UTMartinLogo from "assets/College_Logos/UTMartin.png";
+import UTRioGrandeValleyLogo from "assets/College_Logos/UTRioGrandeValley.png";
+import UTSALogo from "assets/College_Logos/UTSA.png";
+import ValparaisoLogo from "assets/College_Logos/Valparaiso.png";
+import VanderbiltLogo from "assets/College_Logos/Vanderbilt.png";
+import VCULogo from "assets/College_Logos/VCU.png";
+import VermontLogo from "assets/College_Logos/Vermont.png";
+import VillanovaLogo from "assets/College_Logos/Villanova.png";
+import VirginiaLogo from "assets/College_Logos/Virginia.png";
+import VirginiaLogoLight from "assets/College_Logos/VirginiaLight.png";
+import VirginiaTechLogo from "assets/College_Logos/VirginiaTech.png";
+import VirginiaTechLogoLight from "assets/College_Logos/VirginiaTechLight.png";
+import VMILogo from "assets/College_Logos/VMI.png";
+import WagnerLogo from "assets/College_Logos/Wagner.png";
+import WakeForestLogo from "assets/College_Logos/WakeForest.png";
+import WakeForestLogoLight from "assets/College_Logos/WakeForestLight.png";
+import WashingtonLogo from "assets/College_Logos/Washington.png";
+import WashingtonLogoLight from "assets/College_Logos/WashingtonLight.png";
+import WashingtonStateLogo from "assets/College_Logos/WashingtonState.png";
+import WashingtonStateLogoLight from "assets/College_Logos/WashingtonStateLight.png";
+import WCarolinaLogo from "assets/College_Logos/WCarolina.png";
+import WeberStateLogo from "assets/College_Logos/WeberState.png";
+import WesternKentuckyLogo from "assets/College_Logos/WesternKentucky.png";
+import WesternMichiganLogo from "assets/College_Logos/WesternMichigan.png";
+import WestFloridaLogo from "assets/College_Logos/WestFlorida.png";
+import WestGeorgiaLogo from "assets/College_Logos/WestGeorgia.png";
+import WestVirginiaLogo from "assets/College_Logos/WestVirginia.png";
+import WestVirginiaLogoLight from "assets/College_Logos/WestVirginiaLight.png";
+import WilliamMaryLogo from "assets/College_Logos/WilliamMary.png";
+import WIllinoisLogo from "assets/College_Logos/WIllinois.png";
+import WinthropLogo from "assets/College_Logos/Winthrop.png";
+import WisconsinLogo from "assets/College_Logos/Wisconsin.png";
+import WisconsinGreenBayLogo from "assets/College_Logos/WisconsinGreenBay.png";
+import WisconsinGreenBayLogoLight from "assets/College_Logos/WisconsinGreenBayLight.png";
+import WoffordLogo from "assets/College_Logos/Wofford.png";
+import WrightStateLogo from "assets/College_Logos/WrightState.png";
+import WyomingLogo from "assets/College_Logos/Wyoming.png";
+import WyomingLogoLight from "assets/College_Logos/WyomingLight.png";
+import XavierLogo from "assets/College_Logos/Xavier.png";
+import XavierLogoLight from "assets/College_Logos/XavierLight.png";
+import YaleLogo from "assets/College_Logos/Yale.png";
+import YoungstownStateLogo from "assets/College_Logos/YoungstownState.png";
 import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 import AFCBournemouthLogo from "../assets/Soccer/Logos/AFCBournemouth.png";
 import AFCBournemouthLogoLight from "../assets/Soccer/Logos/AFCBournemouthLight.png";
@@ -334,443 +771,6 @@ import WolverhamptonWanderersLogo from "../assets/Soccer/Logos/WolverhamptonWand
 import WolverhamptonWanderersLogoLight from "../assets/Soccer/Logos/WolverhamptonWanderersLight.png";
 import ZambiaLogo from "../assets/Soccer/Logos/Zambia.png";
 import ZambiaLogoLight from "../assets/Soccer/Logos/ZambiaLight.png";
-import AirForceLogo from "assets/College_Logos/AirForce.png";
-import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
-import AkronLogo from "assets/College_Logos/Akron.png";
-import AlabamaLogo from "assets/College_Logos/Alabama.png";
-import AlabamaAMLogo from "assets/College_Logos/AlabamaA&M.png";
-import AlabamaAMLogoLight from "assets/College_Logos/AlabamaA&MLight.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLight.png";
-import AlabamaStLogo from "assets/College_Logos/AlabamaSt.png";
-import AlcornStLogo from "assets/College_Logos/AlcornSt.png";
-import AppalachianStateLogo from "assets/College_Logos/AppalachianState.png";
-import ArizonaLogo from "assets/College_Logos/Arizona.png";
-import ArizonaStateLogo from "assets/College_Logos/ArizonaState.png";
-import ArkansasPineBluffLogo from "assets/College_Logos/Arkansas-PineBluff.png";
-import ArkansasLogo from "assets/College_Logos/Arkansas.png";
-import ArkansasLogoLight from "assets/College_Logos/ArkansasLight.png";
-import AuburnLogo from "assets/College_Logos/Auburn.png";
-import AuburnLogoLight from "assets/College_Logos/AuburnLight.png";
-import AustinPeayLogo from "assets/College_Logos/AustinPeay.png";
-import BallStateLogo from "assets/College_Logos/BallState.png";
-import BaylorLogo from "assets/College_Logos/Baylor.png";
-import BaylorLogoLight from "assets/College_Logos/BaylorLight.png";
-import BoiseStateLogo from "assets/College_Logos/BoiseState.png";
-import BostonCollegeLogo from "assets/College_Logos/BostonCollege.png";
-import BostonCollegeLogoLight from "assets/College_Logos/BostonCollegeLight.png";
-import BowlingGreenLogo from "assets/College_Logos/BowlingGreen.png";
-import BryantLogo from "assets/College_Logos/Bryant.png";
-import BucknellLogo from "assets/College_Logos/Bucknell.png";
-import BuffaloLogo from "assets/College_Logos/Buffalo.png";
-import ButlerLogo from "assets/College_Logos/Butler.png";
-import BYULogo from "assets/College_Logos/BYU.png";
-import BYULogoLight from "assets/College_Logos/BYULight.png";
-import CaliforniaLogo from "assets/College_Logos/California.png";
-import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLight.png";
-import CampbellLogo from "assets/College_Logos/Campbell.png";
-import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticut.png";
-import CentralMichiganLogo from "assets/College_Logos/CentralMichigan.png";
-import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLight.png";
-import CentralWashingtonLogo from "assets/College_Logos/CentralWashington.png";
-import CharlestonSouthernLogo from "assets/College_Logos/CharlestonSouthern.png";
-import CharlotteLogo from "assets/College_Logos/Charlotte.png";
-import CharlotteLogoLight from "assets/College_Logos/CharlotteLight.png";
-import ChattanoogaLogo from "assets/College_Logos/Chattanooga.png";
-import CincinnatiLogo from "assets/College_Logos/Cincinnati.png";
-import CincinnatiLogoLight from "assets/College_Logos/CincinnatiLight.png";
-import ClemsonLogo from "assets/College_Logos/Clemson.png";
-import ClemsonLogoLight from "assets/College_Logos/ClemsonLight.png";
-import CoastalCarolinaLogo from "assets/College_Logos/CoastalCarolina.png";
-import ColgateLogo from "assets/College_Logos/Colgate.png";
-import ColgateLogoLight from "assets/College_Logos/ColgateLight.png";
-import ColoradoLogo from "assets/College_Logos/Colorado.png";
-import ColoradoStateLogo from "assets/College_Logos/ColoradoState.png";
-import DelawareLogo from "assets/College_Logos/Delaware.png";
-import DelawareStateLogo from "assets/College_Logos/DelawareState.png";
-import DukeLogo from "assets/College_Logos/Duke.png";
-import DukeLogoLight from "assets/College_Logos/DukeLight.png";
-import DuquesneLogo from "assets/College_Logos/Duquesne.png";
-import DuquesneLogoLight from "assets/College_Logos/DuquesneLight.png";
-import EasternKentuckyLogo from "assets/College_Logos/EasternKentucky.png";
-import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLight.png";
-import EasternMichiganLogo from "assets/College_Logos/EasternMichigan.png";
-import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLight.png";
-import FAULogo from "assets/College_Logos/FAU.png";
-import FIULogo from "assets/College_Logos/FIU.png";
-import FloridaLogo from "assets/College_Logos/Florida.png";
-import FloridaStateLogo from "assets/College_Logos/FSU.png";
-import GeorgetownLogo from "assets/College_Logos/Georgetown.png";
-import GeorgiaLogo from "assets/College_Logos/Georgia.png";
-import GeorgiaSouthernLogo from "assets/College_Logos/GeorgiaSouthern.png";
-import HawaiiLogo from "assets/College_Logos/Hawaii.png";
-import HolyCrossLogo from "assets/College_Logos/HolyCross.png";
-import HoustonLogo from "assets/College_Logos/Houston.png";
-import IdahoStateLogo from "assets/College_Logos/IdahoState.png";
-import IllinoisLogo from "assets/College_Logos/Illinois.png";
-import IllinoisStateLogo from "assets/College_Logos/IllinoisState.png";
-import IndianaLogo from "assets/College_Logos/Indiana.png";
-import IndianaLogoLight from "assets/College_Logos/IndianaLight.png";
-import IowaLogo from "assets/College_Logos/Iowa.png";
-import IowaLogoLight from "assets/College_Logos/IowaLight.png";
-import KansasLogo from "assets/College_Logos/Kansas.png";
-import KansasStLogo from "assets/College_Logos/KansasSt.png";
-import KansasStLogoLight from "assets/College_Logos/KansasStLight.png";
-import KentuckyLogo from "assets/College_Logos/Kentucky.png";
-import KentuckyLogoLight from "assets/College_Logos/KentuckyLight.png";
-import LATechLogo from "assets/College_Logos/LATech.png";
-import LindenwoodLogo from "assets/College_Logos/Lindenwood.png";
-import LIULogo from "assets/College_Logos/LIU.png";
-import LSULogo from "assets/College_Logos/LSU.png";
-import LSULogoLight from "assets/College_Logos/LSULight.png";
-import MarshallLogo from "assets/College_Logos/Marshall.png";
-import MarylandLogo from "assets/College_Logos/Maryland.png";
-import MiamiOHLogo from "assets/College_Logos/Miami(OH).png";
-import MiamiLogo from "assets/College_Logos/Miami.png";
-import MichiganLogo from "assets/College_Logos/Michigan.png";
-import MichiganStateLogo from "assets/College_Logos/MichiganState.png";
-import MichiganStateLogoLight from "assets/College_Logos/MichiganStateLight.png";
-import MinnesotaLogo from "assets/College_Logos/Minnesota.png";
-import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLight.png";
-import MissouriLogo from "assets/College_Logos/Missouri.png";
-import MissStLogo from "assets/College_Logos/MissSt.png";
-import MiddleTennesseeLogo from "assets/College_Logos/MTSU.png";
-import NavyLogo from "assets/College_Logos/Navy.png";
-import NCStateLogo from "assets/College_Logos/NCState.png";
-import NebraskaLogo from "assets/College_Logos/Nebraska.png";
-import NebraskaLogoLight from "assets/College_Logos/NebraskaLight.png";
-import NevadaLogo from "assets/College_Logos/Nevada.png";
-import NevadaLogoLight from "assets/College_Logos/NevadaLight.png";
-import NichollsLogo from "assets/College_Logos/Nicholls.png";
-import NorthernArizonaLogo from "assets/College_Logos/NorthernArizona.png";
-import NorthernArizonaLogoLight from "assets/College_Logos/NorthernArizonaLight.png";
-import NorthernIllinoisLogo from "assets/College_Logos/NorthernIllinois.png";
-import NorthTexasLogo from "assets/College_Logos/NorthTexas.png";
-import NorthwesternLogo from "assets/College_Logos/Northwestern.png";
-import NotreDameLogo from "assets/College_Logos/NotreDame.png";
-import NotreDameLogoLight from "assets/College_Logos/NotreDameLight.png";
-import OhioLogo from "assets/College_Logos/Ohio.png";
-import OhioStLogo from "assets/College_Logos/OhioState.png";
-import OhioStLogoLight from "assets/College_Logos/OhioStateLight.png";
-import OklahomaLogo from "assets/College_Logos/Oklahoma.png";
-import OklahomaLogoLight from "assets/College_Logos/OklahomaLight.png";
-import OKStateLogo from "assets/College_Logos/OklahomaState.png";
-import ODULogo from "assets/College_Logos/OldDominion.png";
-import OleMissLogo from "assets/College_Logos/OleMiss.png";
-import OleMissLogoLight from "assets/College_Logos/OleMissLight.png";
-import OregonLogo from "assets/College_Logos/Oregon.png";
-import OregonLogoLight from "assets/College_Logos/OregonLight.png";
-import OregonStateLogo from "assets/College_Logos/OregonState.png";
-import PennLogo from "assets/College_Logos/Penn.png";
-import PennStateLogo from "assets/College_Logos/PennState.png";
-import PittsburghLogo from "assets/College_Logos/Pittsburgh.png";
-import PittsburghLogoLight from "assets/College_Logos/PittsburghLight.png";
-import PrincetonLogo from "assets/College_Logos/Princeton.png";
-import PurdueLogo from "assets/College_Logos/Purdue.png";
-import RiceLogo from "assets/College_Logos/Rice.png";
-import RiceLogoLight from "assets/College_Logos/RiceLight.png";
-import RichmondLogo from "assets/College_Logos/Richmond.png";
-import RichmondLogoLight from "assets/College_Logos/RichmondLight.png";
-import RutgersLogo from "assets/College_Logos/Rutgers.png";
-import SamHoustonLogo from "assets/College_Logos/SamHouston.png";
-import SanDiegoStLogo from "assets/College_Logos/SanDiegoSt..png";
-import SouthDakotaStateLogo from "assets/College_Logos/SDST.png";
-import SouthAlabamaLogo from "assets/College_Logos/SouthAlabama.png";
-import StonehillLogo from "assets/College_Logos/Stonehill.png";
-import TCULogo from "assets/College_Logos/TCU.png";
-import TCULogoLight from "assets/College_Logos/TCULight.png";
-import TempleLogo from "assets/College_Logos/Temple.png";
-import TempleLogoLight from "assets/College_Logos/TempleLight.png";
-import TennesseeLogo from "assets/College_Logos/Tennessee.png";
-import TennesseeLogoLight from "assets/College_Logos/TennesseeLight.png";
-import TennesseeTechLogo from "assets/College_Logos/TennesseeTech.png";
-import TexasLogo from "assets/College_Logos/Texas.png";
-import TexasAMLogo from "assets/College_Logos/TexasA&M.png";
-import TexasAMLogoLight from "assets/College_Logos/TexasA&MLight.png";
-import TexasLogoLight from "assets/College_Logos/TexasLight.png";
-import TroyLogo from "assets/College_Logos/Troy.png";
-import TulsaLogo from "assets/College_Logos/Tulsa.png";
-import TulsaLogoLight from "assets/College_Logos/TulsaLight.png";
-import UCFLogo from "assets/College_Logos/UCF.png";
-import UConnLogo from "assets/College_Logos/UCONN.png";
-import UNCLogo from "assets/College_Logos/UNC.png";
-import UNLVLogo from "assets/College_Logos/UNLV.png";
-import UNLVLogoLight from "assets/College_Logos/UNLVLight.png";
-import USCLogo from "assets/College_Logos/USC.png";
-import USFLogo from "assets/College_Logos/USF.png";
-import UtahLogo from "assets/College_Logos/Utah.png";
-import UtahStateLogo from "assets/College_Logos/UtahState.png";
-import UTEPLogo from "assets/College_Logos/UTEP.png";
-import UTEPLogoLight from "assets/College_Logos/UTEPLight.png";
-import UTSALogo from "assets/College_Logos/UTSA.png";
-import VanderbiltLogo from "assets/College_Logos/Vanderbilt.png";
-import VirginiaLogo from "assets/College_Logos/Virginia.png";
-import VirginiaLogoLight from "assets/College_Logos/VirginiaLight.png";
-import VirginiaTechLogo from "assets/College_Logos/VirginiaTech.png";
-import VirginiaTechLogoLight from "assets/College_Logos/VirginiaTechLight.png";
-import WakeForestLogo from "assets/College_Logos/WakeForest.png";
-import WakeForestLogoLight from "assets/College_Logos/WakeForestLight.png";
-import WesternKentuckyLogo from "assets/College_Logos/WesternKentucky.png";
-import WesternMichiganLogo from "assets/College_Logos/WesternMichigan.png";
-import WestVirginiaLogo from "assets/College_Logos/WestVirginia.png";
-import WestVirginiaLogoLight from "assets/College_Logos/WestVirginiaLight.png";
-import WestFloridaLogo from "assets/College_Logos/WestFlorida.png";
-import WisconsinLogo from "assets/College_Logos/Wisconsin.png";
-import WyomingLogo from "assets/College_Logos/Wyoming.png";
-import WyomingLogoLight from "assets/College_Logos/WyomingLight.png";
-import AbileneChristianLogo from "assets/College_Logos/AbileneChristian.png";
-import ArkansasStateLogo from "assets/College_Logos/ArkansasState.png";
-import ArmyLogo from "assets/College_Logos/Army.png";
-import CalPolyLogo from "assets/College_Logos/CalPoly.png";
-import CentralArkansasLogo from "assets/College_Logos/CentralArkansas.png";
-import ColumbiaLogo from "assets/College_Logos/Columbia.png";
-import CornellLogo from "assets/College_Logos/Cornell.png";
-import DartmouthLogo from "assets/College_Logos/Dartmouth.png";
-import DavidsonLogo from "assets/College_Logos/Davidson.png";
-import DaytonLogo from "assets/College_Logos/Dayton.png";
-import DaytonLogoLight from "assets/College_Logos/DaytonLight.png";
-import DrakeLogo from "assets/College_Logos/Drake.png";
-import ECULogo from "assets/College_Logos/EastCarolina.png";
-import EasternIllinoisLogo from "assets/College_Logos/EasternIllinois.png";
-import EasternWashingtonLogo from "assets/College_Logos/EasternWashington.png";
-import EasternWashingtonLogoLight from "assets/College_Logos/EasternWashingtonLight.png";
-import EastTennesseeStateLogo from "assets/College_Logos/EastTennesseeState.png";
-import ElonLogo from "assets/College_Logos/Elon.png";
-import ETAMLogo from "assets/College_Logos/ETA&M.png";
-import FIULogoLight from "assets/College_Logos/FIULight.png";
-import FordhamLogo from "assets/College_Logos/Fordham.png";
-import FresnoStLogo from "assets/College_Logos/FresnoState.png";
-import FurmanLogo from "assets/College_Logos/Furman.png";
-import GardnerWebbLogo from "assets/College_Logos/Gardner-Webb.png";
-import GeorgiaStateLogo from "assets/College_Logos/GeorgiaState.png";
-import GramblingLogo from "assets/College_Logos/Grambling.png";
-import HamptonLogo from "assets/College_Logos/Hampton.png";
-import HarvardLogo from "assets/College_Logos/Harvard.png";
-import HoustonChristianLogo from "assets/College_Logos/HoustonChristian.png";
-import HowardLogo from "assets/College_Logos/Howard.png";
-import IdahoLogo from "assets/College_Logos/Idaho.png";
-import IncarnateWordLogo from "assets/College_Logos/IncarnateWord.png";
-import IndianaStateLogo from "assets/College_Logos/IndianaState.png";
-import IowaStateLogo from "assets/College_Logos/IowaState.png";
-import JacksonStateLogo from "assets/College_Logos/JacksonState.png";
-import JamesMadisonLogo from "assets/College_Logos/JamesMadison.png";
-import JaxStateLogo from "assets/College_Logos/JaxState.png";
-import KennesawStateLogo from "assets/College_Logos/KennesawState.png";
-import KentStateLogo from "assets/College_Logos/KentState.png";
-import LafayetteLogo from "assets/College_Logos/Lafayette.png";
-import LamarLogo from "assets/College_Logos/Lamar.png";
-import LehighLogo from "assets/College_Logos/Lehigh.png";
-import LibertyLogo from "assets/College_Logos/Liberty.png";
-import LouisianaLogo from "assets/College_Logos/Louisiana.png";
-import LouisvilleLogo from "assets/College_Logos/Louisville.png";
-import MaineLogo from "assets/College_Logos/Maine.png";
-import MaristLogo from "assets/College_Logos/Marist.png";
-import McNeeseLogo from "assets/College_Logos/McNeese.png";
-import MemphisLogo from "assets/College_Logos/Memphis.png";
-import MercerLogo from "assets/College_Logos/Mercer.png";
-import MercyhurstLogo from "assets/College_Logos/Mercyhurst.png";
-import MerrimackLogo from "assets/College_Logos/Merrimack.png";
-import MissouriStateLogo from "assets/College_Logos/MissouriState.png";
-import MonmouthLogo from "assets/College_Logos/Monmouth.png";
-import MontanaLogo from "assets/College_Logos/Montana.png";
-import MontanaLogoLight from "assets/College_Logos/MontanaLight.png";
-import MoreheadStateLogo from "assets/College_Logos/MoreheadState.png";
-import MountSaintMarysLogo from "assets/College_Logos/MountSt.Mary's.png";
-import MurrayStateLogo from "assets/College_Logos/MurrayState.png";
-import NewberryLogo from "assets/College_Logos/Newberry.png";
-import NewHampshireLogo from "assets/College_Logos/NewHampshire.png";
-import NewHavenLogo from "assets/College_Logos/NewHaven.png";
-import NewMexicoLogo from "assets/College_Logos/NewMexico.png";
-import NewMexicoStateLogo from "assets/College_Logos/NewMexicoState.png";
-import NorthAlabamaLogo from "assets/College_Logos/NorthAlabama.png";
-import NorthDakotaLogo from "assets/College_Logos/NorthDakota.png";
-import NorthDakotaStateLogo from "assets/College_Logos/NorthDakotaState.png";
-import NorthernIowaLogo from "assets/College_Logos/NorthernIowa.png";
-import NorthGreenvilleLogo from "assets/College_Logos/NorthGreenville.png";
-import NorthwesternStateLogo from "assets/College_Logos/NorthwesternState.png";
-import NorthwoodLogo from "assets/College_Logos/Northwood.png";
-import PepperdineLogo from "assets/College_Logos/Pepperdine.png";
-import PortlandStateLogo from "assets/College_Logos/PortlandState.png";
-import PrairieViewAMLogo from "assets/College_Logos/PrairieViewA&M.png";
-import PresbyterianLogo from "assets/College_Logos/Presbyterian.png";
-import RhodeIslandLogo from "assets/College_Logos/RhodeIsland.png";
-import RobertMorrisLogo from "assets/College_Logos/RobertMorris.png";
-import SacramentoStateLogo from "assets/College_Logos/SacramentoState.png";
-import SacredHeartLogo from "assets/College_Logos/SacredHeart.png";
-import SamfordLogo from "assets/College_Logos/Samford.png";
-import SanDiegoLogo from "assets/College_Logos/SanDiego.png";
-import SanJoseStateLogo from "assets/College_Logos/SanJoseState.png";
-import SELouisianaLogo from "assets/College_Logos/SELouisiana.png";
-import SMULogo from "assets/College_Logos/SMU.png";
-import SouthCarolinaLogo from "assets/College_Logos/SouthCarolina.png";
-import SouthCarolinaLogoLight from "assets/College_Logos/SouthCarolinaLight.png";
-import SouthCarolinaStateLogo from "assets/College_Logos/SouthCarolinaState.png";
-import SouthDakotaLogo from "assets/College_Logos/SouthDakota.png";
-import SoutheastMissouriStateLogo from "assets/College_Logos/SoutheastMissouriState.png";
-import SouthernLogo from "assets/College_Logos/Southern.png";
-import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinois.png";
-import SouthernMissLogo from "assets/College_Logos/SouthernMiss.png";
-import SouthernUtahLogo from "assets/College_Logos/SouthernUtah.png";
-import StanfordLogo from "assets/College_Logos/Stanford.png";
-import StephenFAustinLogo from "assets/College_Logos/StephenFAustin.png";
-import StetsonLogo from "assets/College_Logos/Stetson.png";
-import StonyBrookLogo from "assets/College_Logos/StonyBrook.png";
-import SyracuseLogo from "assets/College_Logos/Syracuse.png";
-import SyracuseLogoLight from "assets/College_Logos/SyracuseLight.png";
-import TarletonStateLogo from "assets/College_Logos/TarletonState.png";
-import TexasSouthernLogo from "assets/College_Logos/TexasSouthern.png";
-import TexasStLogo from "assets/College_Logos/TexasSt.png";
-import TexasTechLogo from "assets/College_Logos/TexasTech.png";
-import TheCitadelLogo from "assets/College_Logos/TheCitadel.png";
-import TheCitadelLogoLight from "assets/College_Logos/TheCitadelLight.png";
-import ToledoLogo from "assets/College_Logos/Toledo.png";
-import ToledoLogoLight from "assets/College_Logos/ToledoLight.png";
-import TowsonLogo from "assets/College_Logos/Towson.png";
-import UABLogo from "assets/College_Logos/UAB.png";
-import UAlbanyLogo from "assets/College_Logos/UAlbany.png";
-import UCDavisLogo from "assets/College_Logos/UCDavis.png";
-import UCDavisLogoLight from "assets/College_Logos/UCDavisLight.png";
-import UCLALogo from "assets/College_Logos/UCLA.png";
-import UCLALogoLight from "assets/College_Logos/UCLALight.png";
-import ULMLogo from "assets/College_Logos/ULM.png";
-import UmassLogo from "assets/College_Logos/Umass.png";
-import USCLogoLight from "assets/College_Logos/USCLight.png";
-import UtahLogoLight from "assets/College_Logos/UtahLight.png";
-import UtahStateLogoLight from "assets/College_Logos/UtahStateLight.png";
-import UtahTechLogo from "assets/College_Logos/UtahTech.png";
-import UTMartinLogo from "assets/College_Logos/UTMartin.png";
-import UTRioGrandeValleyLogo from "assets/College_Logos/UTRioGrandeValley.png";
-import ValparaisoLogo from "assets/College_Logos/Valparaiso.png";
-import VillanovaLogo from "assets/College_Logos/Villanova.png";
-import VMILogo from "assets/College_Logos/VMI.png";
-import WagnerLogo from "assets/College_Logos/Wagner.png";
-import WashingtonLogo from "assets/College_Logos/Washington.png";
-import WashingtonLogoLight from "assets/College_Logos/WashingtonLight.png";
-import WashingtonStateLogo from "assets/College_Logos/WashingtonState.png";
-import WashingtonStateLogoLight from "assets/College_Logos/WashingtonStateLight.png";
-import WCarolinaLogo from "assets/College_Logos/WCarolina.png";
-import WeberStateLogo from "assets/College_Logos/WeberState.png";
-import WestGeorgiaLogo from "assets/College_Logos/WestGeorgia.png";
-import WilliamMaryLogo from "assets/College_Logos/WilliamMary.png";
-import WIllinoisLogo from "assets/College_Logos/WIllinois.png";
-import WoffordLogo from "assets/College_Logos/Wofford.png";
-import YaleLogo from "assets/College_Logos/Yale.png";
-import YoungstownStateLogo from "assets/College_Logos/YoungstownState.png";
-import AmericanUniversityLogo from "assets/College_Logos/AmericanUniversity.png";
-import HighPointLogo from "assets/College_Logos/HighPoint.png";
-import HighPointLogoLight from "assets/College_Logos/HighPointLight.png";
-import OralRobertsLogo from "assets/College_Logos/OralRoberts.png";
-import OralRobertsLogoLight from "assets/College_Logos/OralRobertsLight.png";
-import UtahValleyLogo from "assets/College_Logos/UtahValley.png";
-import BellarmineLogo from "assets/College_Logos/Bellarmine.png";
-import BelmontLogo from "assets/College_Logos/Belmont.png";
-import BinghamtonLogo from "assets/College_Logos/Binghamton.png";
-import BobJonesLogo from "assets/College_Logos/BobJones.png";
-import BostonUniversityLogo from "assets/College_Logos/BostonUniversity.png";
-import BradleyLogo from "assets/College_Logos/Bradley.png";
-import BrownLogo from "assets/College_Logos/Brown.png";
-import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptist.png";
-import CalStateNorthridgeLogo from "assets/College_Logos/CalStateNorthridge.png";
-import CanisiusLogo from "assets/College_Logos/Canisius.png";
-import CharlestonLogo from "assets/College_Logos/Charleston.png";
-import ChicagoStateLogo from "assets/College_Logos/ChicagoState.png";
-import ClevelandStateLogo from "assets/College_Logos/ClevelandState.png";
-import CreightonLogo from "assets/College_Logos/Creighton.png";
-import CSFullertonLogo from "assets/College_Logos/CSFullerton.png";
-import CSUBakersfieldLogo from "assets/College_Logos/CSUBakersfield.png";
-import DenverLogo from "assets/College_Logos/Denver.png";
-import DenverLogoLight from "assets/College_Logos/DenverLight.png";
-import DepaulLogo from "assets/College_Logos/Depaul.png";
-import DetroitLogo from "assets/College_Logos/Detroit.png";
-import DrexelLogo from "assets/College_Logos/Drexel.png";
-import EvansvilleLogo from "assets/College_Logos/Evansville.png";
-import FairfieldLogo from "assets/College_Logos/Fairfield.png";
-import FairleighDickinsonLogo from "assets/College_Logos/FairleighDickinson.png";
-import FGCULogo from "assets/College_Logos/FGCU.png";
-import FisherLogo from "assets/College_Logos/Fisher.png";
-import GeorgeMasonLogo from "assets/College_Logos/GeorgeMason.png";
-import GeorgeWashingtonLogo from "assets/College_Logos/GeorgeWashington.png";
-import GonzagaLogo from "assets/College_Logos/Gonzaga.png";
-import GrandCanyonLogo from "assets/College_Logos/GrandCanyon.png";
-import GrandCanyonLogoLight from "assets/College_Logos/GrandCanyonLight.png";
-import HofstraLogo from "assets/College_Logos/Hofstra.png";
-import HofstraLogoLight from "assets/College_Logos/HofstraLight.png";
-import IonaLogo from "assets/College_Logos/Iona.png";
-import IUIndianapolisLogo from "assets/College_Logos/IUIndianapolis.png";
-import JacksonvilleLogo from "assets/College_Logos/Jacksonville.png";
-import JacksonvilleLogoLight from "assets/College_Logos/JacksonvilleLight.png";
-import KansasCityLogo from "assets/College_Logos/KansasCity.png";
-import LaSalleLogo from "assets/College_Logos/LaSalle.png";
-import LeMoyneLogo from "assets/College_Logos/LeMoyne.png";
-import LipscombLogo from "assets/College_Logos/Lipscomb.png";
-import LittleRockLogo from "assets/College_Logos/LittleRock.png";
-import LittleRockLogoLight from "assets/College_Logos/LittleRockLight.png";
-import LongBeachStateLogo from "assets/College_Logos/LongBeachState.png";
-import LongBeachStateLogoLight from "assets/College_Logos/LongBeachStateLight.png";
-import LongwoodLogo from "assets/College_Logos/Longwood.png";
-import LouisianaChristianLogo from "assets/College_Logos/LouisianaChristian.png";
-import LoyolaChicagoLogo from "assets/College_Logos/LoyolaChicago.png";
-import LoyolaMarylandLogo from "assets/College_Logos/LoyolaMaryland.png";
-import LoyolaMarymountLogo from "assets/College_Logos/LoyolaMarymount.png";
-import ManhattanLogo from "assets/College_Logos/Manhattan.png";
-import ManhattanLogoLight from "assets/College_Logos/ManhattanLight.png";
-import MarquetteLogo from "assets/College_Logos/Marquette.png";
-import MilwaukeeLogo from "assets/College_Logos/Milwaukee.png";
-import NiagaraLogo from "assets/College_Logos/Niagara.png";
-import NJITLogo from "assets/College_Logos/NJIT.png";
-import NorthFloridaLogo from "assets/College_Logos/NorhFlorida.png";
-import NortheasternLogo from "assets/College_Logos/Northeastern.png";
-import NorhternColoradoLogo from "assets/College_Logos/NorthernColorado.png";
-import NorthernKentuckyLogo from "assets/College_Logos/NorthernKentucky.png";
-import OaklandLogo from "assets/College_Logos/Oakland.png";
-import OmahaLogo from "assets/College_Logos/Omaha.png";
-import PacificLogo from "assets/College_Logos/Pacific.png";
-import PortlandLogo from "assets/College_Logos/Portland.png";
-import ProvidenceLogo from "assets/College_Logos/Providence.png";
-import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayne.png";
-import QueensLogo from "assets/College_Logos/Queens.png";
-import QuinnipiacLogo from "assets/College_Logos/Quinnipiac.png";
-import RadfordLogo from "assets/College_Logos/Radford.png";
-import RiderLogo from "assets/College_Logos/Rider.png";
-import SaintJosephsLogo from "assets/College_Logos/SaintJosephs.png";
-import SaintLouisLogo from "assets/College_Logos/SaintLouis.png";
-import SaintMaryLogo from "assets/College_Logos/SaintMary.png";
-import SaintMaryLogoLight from "assets/College_Logos/SaintMaryLight.png";
-import SaintPetersLogo from "assets/College_Logos/SaintPeters.png";
-import SanFranciscoLogo from "assets/College_Logos/SanFrancisco.png";
-import SanFranciscoLogoLight from "assets/College_Logos/SanFranciscoLight.png";
-import SantaClaraLogo from "assets/College_Logos/SantaClara.png";
-import SCUpstateLogo from "assets/College_Logos/SCUpstate.png";
-import SeattleLogo from "assets/College_Logos/Seattle.png";
-import SetonHallLogo from "assets/College_Logos/SetonHall.png";
-import SienaLogo from "assets/College_Logos/Siena.png";
-import SIUELogo from "assets/College_Logos/SIUEdwardsville.png";
-import SIUELogoLight from "assets/College_Logos/SIUEdwardsvilleLight.png";
-import SouthernIndianaLogo from "assets/College_Logos/SouthernIndiana.png";
-import SpringHillLogo from "assets/College_Logos/SpringHill.png";
-import StJohnsLogo from "assets/College_Logos/St.Johns.png";
-import StJohnsLogoLight from "assets/College_Logos/St.JohnsLight.png";
-import StBonaventureLogo from "assets/College_Logos/StBonaventure.png";
-import StBonaventureLogoLight from "assets/College_Logos/StBonaventureLight.png";
-import StThomasMinnesotaLogo from "assets/College_Logos/StThomasMinnesota.png";
-import TexasAMCCLogo from "assets/College_Logos/TexasA&M-CorpusChristi.png";
-import UCIrvineLogo from "assets/College_Logos/UCIrvine.png";
-import UCRiversideLogo from "assets/College_Logos/UCRiverside.png";
-import UCSanDiegoLogo from "assets/College_Logos/UCSanDiego.png";
-import UCSantaBarbaraLogo from "assets/College_Logos/UCSantaBarbara.png";
-import UICLOGO from "assets/College_Logos/UIC.png";
-import UMassLowellLogo from "assets/College_Logos/UMassLowell.png";
-import UMBCLogo from "assets/College_Logos/UMBC.png";
-import UNCAshevilleLogo from "assets/College_Logos/UNCAsheville.png";
-import UNCGreensboroLogo from "assets/College_Logos/UNCGreensboro.png";
-import UNCWilmingtonLogo from "assets/College_Logos/UNCWilmington.png";
-import VCULogo from "assets/College_Logos/VCU.png";
-import VermontLogo from "assets/College_Logos/Vermont.png";
-import WinthropLogo from "assets/College_Logos/Winthrop.png";
-import WisconsinGreenBayLogo from "assets/College_Logos/WisconsinGreenBay.png";
-import WisconsinGreenBayLogoLight from "assets/College_Logos/WisconsinGreenBayLight.png";
-import WrightStateLogo from "assets/College_Logos/WrightState.png";
-import XavierLogo from "assets/College_Logos/Xavier.png";
-import XavierLogoLight from "assets/College_Logos/XavierLight.png";
 
 export const soccerTeams: Team[] = [
   {
@@ -788,7 +788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3,
@@ -805,7 +805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4,
@@ -822,7 +822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5,
@@ -839,7 +839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6,
@@ -856,7 +856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7,
@@ -873,7 +873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8,
@@ -890,7 +890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9,
@@ -907,7 +907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10,
@@ -924,7 +924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11,
@@ -941,7 +941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12,
@@ -958,7 +958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13,
@@ -975,7 +975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14,
@@ -992,7 +992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15,
@@ -1009,7 +1009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16,
@@ -1026,7 +1026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17,
@@ -1043,7 +1043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18,
@@ -1060,7 +1060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19,
@@ -1077,7 +1077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20,
@@ -1094,7 +1094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21,
@@ -1111,7 +1111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 83,
@@ -1128,7 +1128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 84,
@@ -1145,7 +1145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 85,
@@ -1162,7 +1162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 86,
@@ -1179,7 +1179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 87,
@@ -1196,7 +1196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 88,
@@ -1213,7 +1213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 89,
@@ -1230,7 +1230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 90,
@@ -1247,7 +1247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 91,
@@ -1264,7 +1264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 92,
@@ -1281,7 +1281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 93,
@@ -1298,7 +1298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 94,
@@ -1315,7 +1315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 95,
@@ -1332,7 +1332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 96,
@@ -1349,7 +1349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 97,
@@ -1366,7 +1366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 98,
@@ -1383,7 +1383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 99,
@@ -1400,7 +1400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 100,
@@ -1417,7 +1417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 101,
@@ -1434,7 +1434,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 102,
@@ -1451,7 +1451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 103,
@@ -1468,7 +1468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 104,
@@ -1485,7 +1485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 105,
@@ -1502,7 +1502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 107,
@@ -1519,7 +1519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 109,
@@ -1536,7 +1536,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 110,
@@ -1553,7 +1553,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 111,
@@ -1570,7 +1570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 112,
@@ -1587,7 +1587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 113,
@@ -1604,7 +1604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 114,
@@ -1621,7 +1621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 115,
@@ -1638,7 +1638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 118,
@@ -1655,7 +1655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 119,
@@ -1672,7 +1672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 120,
@@ -1689,7 +1689,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 121,
@@ -1706,7 +1706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 122,
@@ -1723,7 +1723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 123,
@@ -1740,7 +1740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 124,
@@ -1757,7 +1757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 125,
@@ -1774,7 +1774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 126,
@@ -1791,7 +1791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 127,
@@ -1808,7 +1808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 128,
@@ -1825,7 +1825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 129,
@@ -1842,7 +1842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130,
@@ -1859,7 +1859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131,
@@ -1876,7 +1876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132,
@@ -1893,7 +1893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 133,
@@ -1910,7 +1910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 134,
@@ -1927,7 +1927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 135,
@@ -1944,7 +1944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 137,
@@ -1961,7 +1961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 138,
@@ -1978,7 +1978,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 139,
@@ -1995,7 +1995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 140,
@@ -2012,7 +2012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 141,
@@ -2029,7 +2029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 142,
@@ -2046,7 +2046,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 143,
@@ -2063,7 +2063,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 144,
@@ -2080,7 +2080,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 145,
@@ -2097,7 +2097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 146,
@@ -2114,7 +2114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 147,
@@ -2131,7 +2131,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 148,
@@ -2148,7 +2148,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 149,
@@ -2165,7 +2165,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 151,
@@ -2182,7 +2182,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 152,
@@ -2199,7 +2199,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 153,
@@ -2216,7 +2216,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 154,
@@ -2233,7 +2233,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 155,
@@ -2250,7 +2250,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 156,
@@ -2267,7 +2267,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 159,
@@ -2284,7 +2284,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 160,
@@ -2301,7 +2301,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 162,
@@ -2318,7 +2318,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 164,
@@ -2335,7 +2335,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 165,
@@ -2352,7 +2352,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 166,
@@ -2369,7 +2369,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 167,
@@ -2386,7 +2386,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 169,
@@ -2403,7 +2403,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 170,
@@ -2420,7 +2420,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 171,
@@ -2437,7 +2437,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 172,
@@ -2454,7 +2454,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 173,
@@ -2471,7 +2471,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 174,
@@ -2488,7 +2488,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 175,
@@ -2505,7 +2505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 176,
@@ -2522,7 +2522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 177,
@@ -2539,7 +2539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 178,
@@ -2556,7 +2556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 179,
@@ -2573,7 +2573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 180,
@@ -2590,7 +2590,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 182,
@@ -2607,7 +2607,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 183,
@@ -2624,7 +2624,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 184,
@@ -2641,7 +2641,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 185,
@@ -2658,7 +2658,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 186,
@@ -2675,7 +2675,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 187,
@@ -2692,7 +2692,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 189,
@@ -2709,7 +2709,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 190,
@@ -2726,7 +2726,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 191,
@@ -2743,7 +2743,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 193,
@@ -2760,7 +2760,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 202,
@@ -2777,7 +2777,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 203,
@@ -2794,7 +2794,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 204,
@@ -2811,7 +2811,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 205,
@@ -2828,7 +2828,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 206,
@@ -2845,7 +2845,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 207,
@@ -2862,7 +2862,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 208,
@@ -2879,7 +2879,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 209,
@@ -2896,7 +2896,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 210,
@@ -2913,7 +2913,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 211,
@@ -2930,7 +2930,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 212,
@@ -2947,7 +2947,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 213,
@@ -2964,7 +2964,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 214,
@@ -2981,7 +2981,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 215,
@@ -2998,7 +2998,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 216,
@@ -3015,7 +3015,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 218,
@@ -3032,7 +3032,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 219,
@@ -3049,7 +3049,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 220,
@@ -3066,7 +3066,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 221,
@@ -3083,7 +3083,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 222,
@@ -3100,7 +3100,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 223,
@@ -3117,7 +3117,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 225,
@@ -3134,7 +3134,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 226,
@@ -3151,7 +3151,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 227,
@@ -3168,7 +3168,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 228,
@@ -3185,7 +3185,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 229,
@@ -3202,7 +3202,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 231,
@@ -3219,7 +3219,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 232,
@@ -3236,7 +3236,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 233,
@@ -3253,7 +3253,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 234,
@@ -3270,7 +3270,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 235,
@@ -3287,7 +3287,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 236,
@@ -3304,7 +3304,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 239,
@@ -3321,7 +3321,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 243,
@@ -3338,7 +3338,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 244,
@@ -3355,7 +3355,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 245,
@@ -3372,7 +3372,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 247,
@@ -3389,7 +3389,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 248,
@@ -3406,7 +3406,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 249,
@@ -3423,7 +3423,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 250,
@@ -3440,7 +3440,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 251,
@@ -3457,7 +3457,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 252,
@@ -3474,7 +3474,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 253,
@@ -3491,7 +3491,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 254,
@@ -3508,7 +3508,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 255,
@@ -3525,7 +3525,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 256,
@@ -3542,7 +3542,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 257,
@@ -3559,7 +3559,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 258,
@@ -3576,7 +3576,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 259,
@@ -3593,7 +3593,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 260,
@@ -3610,7 +3610,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 261,
@@ -3627,7 +3627,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 262,
@@ -3644,7 +3644,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 263,
@@ -3661,7 +3661,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 264,
@@ -3678,7 +3678,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 265,
@@ -3695,7 +3695,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 266,
@@ -3712,7 +3712,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 267,
@@ -3729,7 +3729,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 268,
@@ -3746,7 +3746,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 269,
@@ -3763,7 +3763,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 270,
@@ -3780,7 +3780,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 271,
@@ -3797,7 +3797,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 272,
@@ -3814,7 +3814,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 273,
@@ -3831,7 +3831,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 274,
@@ -3848,7 +3848,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 279,
@@ -3865,7 +3865,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 280,
@@ -3882,7 +3882,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 282,
@@ -3899,7 +3899,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 283,
@@ -3916,7 +3916,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 284,
@@ -3933,7 +3933,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 285,
@@ -3950,7 +3950,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 288,
@@ -3967,7 +3967,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 290,
@@ -3984,7 +3984,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 292,
@@ -4001,7 +4001,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 301,
@@ -4018,7 +4018,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 302,
@@ -4035,7 +4035,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 303,
@@ -4052,7 +4052,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 304,
@@ -4069,7 +4069,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 306,
@@ -4086,7 +4086,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 307,
@@ -4103,7 +4103,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 308,
@@ -4120,7 +4120,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 309,
@@ -4137,7 +4137,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 310,
@@ -4154,7 +4154,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 311,
@@ -4171,7 +4171,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 312,
@@ -4188,7 +4188,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 313,
@@ -4205,7 +4205,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 314,
@@ -4222,7 +4222,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 315,
@@ -4239,7 +4239,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 318,
@@ -4256,7 +4256,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 319,
@@ -4273,7 +4273,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 320,
@@ -4290,7 +4290,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 322,
@@ -4307,7 +4307,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 323,
@@ -4324,7 +4324,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 324,
@@ -4341,7 +4341,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 331,
@@ -4358,7 +4358,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 332,
@@ -4375,7 +4375,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 333,
@@ -4392,7 +4392,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 334,
@@ -4409,7 +4409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 335,
@@ -4426,7 +4426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 336,
@@ -4443,7 +4443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 337,
@@ -4460,7 +4460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 338,
@@ -4477,7 +4477,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 339,
@@ -4494,7 +4494,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 340,
@@ -4511,7 +4511,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 341,
@@ -4528,7 +4528,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 342,
@@ -4545,7 +4545,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 343,
@@ -4562,7 +4562,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 344,
@@ -4579,7 +4579,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 345,
@@ -4596,7 +4596,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 346,
@@ -4613,7 +4613,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 347,
@@ -4630,7 +4630,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 348,
@@ -4647,7 +4647,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 349,
@@ -4664,7 +4664,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 350,
@@ -4681,7 +4681,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 351,
@@ -4698,7 +4698,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 352,
@@ -4715,7 +4715,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 353,
@@ -4732,7 +4732,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 357,
@@ -4749,7 +4749,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 358,
@@ -4766,7 +4766,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 359,
@@ -4783,7 +4783,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 360,
@@ -4800,7 +4800,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 361,
@@ -4817,7 +4817,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 362,
@@ -4834,7 +4834,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 363,
@@ -4851,7 +4851,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 364,
@@ -4868,7 +4868,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 365,
@@ -4885,7 +4885,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 366,
@@ -4902,7 +4902,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 367,
@@ -4919,7 +4919,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 368,
@@ -4936,7 +4936,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 369,
@@ -4953,7 +4953,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 370,
@@ -4970,7 +4970,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 371,
@@ -4987,7 +4987,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 372,
@@ -5004,7 +5004,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 373,
@@ -5021,7 +5021,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 374,
@@ -5038,7 +5038,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 375,
@@ -5055,7 +5055,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 376,
@@ -5072,7 +5072,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 379,
@@ -5089,7 +5089,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 380,
@@ -5106,7 +5106,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 381,
@@ -5123,7 +5123,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 382,
@@ -5140,7 +5140,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 383,
@@ -5157,7 +5157,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 384,
@@ -5174,7 +5174,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 385,
@@ -5191,7 +5191,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 386,
@@ -5208,7 +5208,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 387,
@@ -5225,7 +5225,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 388,
@@ -5242,7 +5242,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 389,
@@ -5259,7 +5259,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 390,
@@ -5276,7 +5276,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 391,
@@ -5293,7 +5293,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 392,
@@ -5310,7 +5310,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 393,
@@ -5327,7 +5327,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 394,
@@ -5344,7 +5344,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 395,
@@ -5361,7 +5361,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 396,
@@ -5378,7 +5378,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 397,
@@ -5395,7 +5395,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 398,
@@ -5412,7 +5412,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 399,
@@ -5429,7 +5429,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 400,
@@ -5446,7 +5446,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 401,
@@ -5463,7 +5463,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 402,
@@ -5480,7 +5480,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 403,
@@ -5497,7 +5497,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 404,
@@ -5514,7 +5514,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 405,
@@ -5531,7 +5531,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 406,
@@ -5548,7 +5548,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 407,
@@ -5565,7 +5565,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 408,
@@ -5582,7 +5582,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 409,
@@ -5599,7 +5599,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 410,
@@ -5616,7 +5616,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 411,
@@ -5633,7 +5633,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 412,
@@ -5650,7 +5650,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 413,
@@ -5667,7 +5667,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 414,
@@ -5684,7 +5684,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 415,
@@ -5701,7 +5701,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 416,
@@ -5718,7 +5718,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 417,
@@ -5735,7 +5735,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 418,
@@ -5752,7 +5752,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 419,
@@ -5769,7 +5769,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 420,
@@ -5786,7 +5786,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 421,
@@ -5803,7 +5803,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 422,
@@ -5820,7 +5820,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 432,
@@ -5837,7 +5837,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 433,
@@ -5854,7 +5854,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 435,
@@ -5871,7 +5871,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 436,
@@ -5888,7 +5888,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 437,
@@ -5905,7 +5905,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 438,
@@ -5922,7 +5922,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 440,
@@ -5939,7 +5939,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 441,
@@ -5956,7 +5956,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 442,
@@ -5973,7 +5973,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 443,
@@ -5990,7 +5990,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 444,
@@ -6007,7 +6007,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 445,
@@ -6024,7 +6024,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 447,
@@ -6041,7 +6041,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 448,
@@ -6058,7 +6058,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 449,
@@ -6075,7 +6075,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 450,
@@ -6092,7 +6092,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 451,
@@ -6109,7 +6109,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 452,
@@ -6126,7 +6126,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 453,
@@ -6143,7 +6143,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 454,
@@ -6160,7 +6160,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 455,
@@ -6177,7 +6177,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 456,
@@ -6194,7 +6194,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 457,
@@ -6211,7 +6211,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 458,
@@ -6228,7 +6228,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 459,
@@ -6245,7 +6245,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 460,
@@ -6262,7 +6262,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 461,
@@ -6279,7 +6279,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 462,
@@ -6296,7 +6296,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 463,
@@ -6313,7 +6313,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 464,
@@ -6330,7 +6330,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 465,
@@ -6347,7 +6347,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 466,
@@ -6364,7 +6364,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 467,
@@ -6381,7 +6381,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 468,
@@ -6398,7 +6398,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 469,
@@ -6415,7 +6415,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 470,
@@ -6432,7 +6432,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 471,
@@ -6449,7 +6449,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 472,
@@ -6466,7 +6466,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 473,
@@ -6483,7 +6483,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 474,
@@ -6500,7 +6500,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 475,
@@ -6517,7 +6517,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 476,
@@ -6534,7 +6534,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 477,
@@ -6551,7 +6551,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 478,
@@ -6568,7 +6568,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 479,
@@ -6585,7 +6585,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 480,
@@ -6602,7 +6602,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 481,
@@ -6619,7 +6619,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 482,
@@ -6636,7 +6636,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 483,
@@ -6653,7 +6653,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 484,
@@ -6670,7 +6670,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 489,
@@ -6687,7 +6687,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 490,
@@ -6704,7 +6704,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 493,
@@ -6721,7 +6721,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 494,
@@ -6738,7 +6738,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 497,
@@ -6755,7 +6755,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 498,
@@ -6772,7 +6772,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 502,
@@ -6789,7 +6789,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 504,
@@ -6806,7 +6806,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 510,
@@ -6823,7 +6823,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 511,
@@ -6840,7 +6840,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 515,
@@ -6857,7 +6857,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 519,
@@ -6874,7 +6874,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 521,
@@ -6891,7 +6891,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 523,
@@ -6908,7 +6908,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 524,
@@ -6925,7 +6925,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 525,
@@ -6942,7 +6942,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 529,
@@ -6959,7 +6959,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 532,
@@ -6976,7 +6976,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 540,
@@ -6993,7 +6993,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 541,
@@ -7010,7 +7010,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 542,
@@ -7027,7 +7027,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 551,
@@ -7044,7 +7044,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 552,
@@ -7061,7 +7061,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 555,
@@ -7078,7 +7078,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 557,
@@ -7095,7 +7095,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 559,
@@ -7112,7 +7112,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 560,
@@ -7129,7 +7129,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 561,
@@ -7146,7 +7146,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 562,
@@ -7163,7 +7163,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 566,
@@ -7180,7 +7180,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 570,
@@ -7197,7 +7197,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 571,
@@ -7214,7 +7214,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 572,
@@ -7231,7 +7231,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 575,
@@ -7248,7 +7248,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 576,
@@ -7265,7 +7265,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 578,
@@ -7282,7 +7282,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 579,
@@ -7293,13 +7293,14 @@ export const soccerTeams: Team[] = [
     color: "#DE2400",
     secondaryColor: "#FFFFFF",
     logo: "https://a.espncdn.com/i/teamlogos/countries/500/fifa.armenia.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/fifa.armenia.png",
+    logoLight:
+      "https://a.espncdn.com/i/teamlogos/countries/500-dark/fifa.armenia.png",
     isActive: true,
     isAllStar: false,
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 580,
@@ -7316,7 +7317,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 581,
@@ -7333,7 +7334,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 582,
@@ -7350,7 +7351,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 583,
@@ -7367,7 +7368,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 584,
@@ -7384,7 +7385,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 585,
@@ -7401,7 +7402,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 586,
@@ -7418,7 +7419,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 587,
@@ -7435,7 +7436,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 588,
@@ -7452,7 +7453,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 589,
@@ -7469,7 +7470,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 596,
@@ -7486,7 +7487,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 597,
@@ -7503,7 +7504,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 598,
@@ -7520,7 +7521,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 605,
@@ -7537,7 +7538,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 606,
@@ -7554,7 +7555,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 607,
@@ -7571,7 +7572,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 609,
@@ -7588,7 +7589,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 612,
@@ -7605,7 +7606,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 614,
@@ -7622,7 +7623,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 615,
@@ -7639,7 +7640,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 617,
@@ -7656,7 +7657,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 620,
@@ -7673,7 +7674,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 622,
@@ -7690,7 +7691,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 624,
@@ -7707,7 +7708,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 627,
@@ -7724,7 +7725,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 628,
@@ -7741,7 +7742,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 632,
@@ -7758,7 +7759,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 633,
@@ -7775,7 +7776,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 635,
@@ -7792,7 +7793,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 637,
@@ -7809,7 +7810,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 638,
@@ -7826,7 +7827,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 640,
@@ -7843,7 +7844,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 642,
@@ -7860,7 +7861,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 645,
@@ -7877,7 +7878,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 650,
@@ -7894,7 +7895,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 651,
@@ -7911,7 +7912,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 652,
@@ -7928,7 +7929,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 653,
@@ -7945,7 +7946,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 654,
@@ -7962,7 +7963,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 655,
@@ -7979,7 +7980,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 656,
@@ -7996,7 +7997,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 657,
@@ -8013,7 +8014,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 658,
@@ -8030,7 +8031,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 659,
@@ -8047,7 +8048,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 660,
@@ -8064,7 +8065,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 661,
@@ -8081,7 +8082,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 663,
@@ -8098,7 +8099,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 664,
@@ -8115,7 +8116,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 789,
@@ -8132,7 +8133,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 790,
@@ -8149,7 +8150,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 793,
@@ -8166,7 +8167,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 817,
@@ -8183,7 +8184,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 819,
@@ -8200,7 +8201,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 841,
@@ -8217,7 +8218,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 858,
@@ -8234,7 +8235,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 859,
@@ -8251,7 +8252,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 862,
@@ -8268,7 +8269,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 874,
@@ -8285,7 +8286,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 884,
@@ -8302,7 +8303,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 885,
@@ -8319,7 +8320,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 887,
@@ -8336,7 +8337,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 900,
@@ -8353,7 +8354,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 909,
@@ -8370,7 +8371,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 929,
@@ -8387,7 +8388,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 936,
@@ -8404,7 +8405,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 938,
@@ -8421,7 +8422,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 977,
@@ -8438,7 +8439,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 987,
@@ -8455,7 +8456,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 989,
@@ -8472,7 +8473,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 994,
@@ -8489,7 +8490,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 995,
@@ -8506,7 +8507,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 996,
@@ -8523,7 +8524,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 997,
@@ -8540,7 +8541,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1007,
@@ -8557,7 +8558,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1010,
@@ -8574,7 +8575,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1011,
@@ -8591,7 +8592,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1037,
@@ -8608,7 +8609,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1038,
@@ -8625,7 +8626,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1068,
@@ -8642,7 +8643,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1382,
@@ -8659,7 +8660,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1538,
@@ -8676,7 +8677,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1895,
@@ -8693,7 +8694,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1928,
@@ -8710,7 +8711,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1929,
@@ -8727,7 +8728,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1936,
@@ -8744,7 +8745,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1941,
@@ -8761,7 +8762,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 1963,
@@ -8778,7 +8779,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2022,
@@ -8795,7 +8796,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2026,
@@ -8812,7 +8813,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2029,
@@ -8829,7 +8830,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2052,
@@ -8846,7 +8847,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2057,
@@ -8863,7 +8864,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2250,
@@ -8880,7 +8881,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2276,
@@ -8897,7 +8898,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2290,
@@ -8914,7 +8915,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2339,
@@ -8931,7 +8932,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2405,
@@ -8948,7 +8949,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2428,
@@ -8965,7 +8966,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2491,
@@ -8982,7 +8983,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2493,
@@ -8999,7 +9000,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2495,
@@ -9016,7 +9017,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2500,
@@ -9033,7 +9034,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2502,
@@ -9050,7 +9051,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2506,
@@ -9067,7 +9068,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2528,
@@ -9084,7 +9085,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2533,
@@ -9101,7 +9102,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2539,
@@ -9118,7 +9119,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2540,
@@ -9135,7 +9136,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2543,
@@ -9152,7 +9153,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2547,
@@ -9169,7 +9170,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2555,
@@ -9186,7 +9187,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2556,
@@ -9203,7 +9204,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2564,
@@ -9220,7 +9221,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2565,
@@ -9237,7 +9238,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2566,
@@ -9254,7 +9255,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2567,
@@ -9271,7 +9272,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2570,
@@ -9288,7 +9289,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2572,
@@ -9305,7 +9306,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2573,
@@ -9322,7 +9323,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2574,
@@ -9339,7 +9340,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2575,
@@ -9356,7 +9357,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2583,
@@ -9373,7 +9374,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2589,
@@ -9390,7 +9391,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2594,
@@ -9407,7 +9408,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2595,
@@ -9424,7 +9425,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2597,
@@ -9441,7 +9442,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2608,
@@ -9458,7 +9459,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2611,
@@ -9475,7 +9476,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2613,
@@ -9492,7 +9493,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2614,
@@ -9509,7 +9510,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2619,
@@ -9526,7 +9527,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2620,
@@ -9543,7 +9544,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2621,
@@ -9560,7 +9561,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2627,
@@ -9577,7 +9578,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2635,
@@ -9594,7 +9595,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2636,
@@ -9611,7 +9612,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2637,
@@ -9628,7 +9629,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2638,
@@ -9645,7 +9646,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2640,
@@ -9662,7 +9663,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2641,
@@ -9679,7 +9680,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2642,
@@ -9696,7 +9697,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2643,
@@ -9713,7 +9714,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2644,
@@ -9730,7 +9731,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2645,
@@ -9747,7 +9748,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2646,
@@ -9764,7 +9765,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2647,
@@ -9781,7 +9782,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2649,
@@ -9798,7 +9799,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2650,
@@ -9815,7 +9816,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2651,
@@ -9832,7 +9833,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2652,
@@ -9849,7 +9850,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2653,
@@ -9866,7 +9867,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2654,
@@ -9883,7 +9884,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2655,
@@ -9900,7 +9901,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2658,
@@ -9917,7 +9918,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2659,
@@ -9934,7 +9935,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2661,
@@ -9951,7 +9952,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2662,
@@ -9968,7 +9969,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2664,
@@ -9985,7 +9986,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2665,
@@ -10002,7 +10003,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2666,
@@ -10019,7 +10020,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2668,
@@ -10036,7 +10037,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2670,
@@ -10053,7 +10054,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2671,
@@ -10070,7 +10071,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2672,
@@ -10087,7 +10088,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2673,
@@ -10104,7 +10105,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2674,
@@ -10121,7 +10122,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2675,
@@ -10138,7 +10139,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2678,
@@ -10155,7 +10156,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2680,
@@ -10172,7 +10173,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2681,
@@ -10189,7 +10190,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2682,
@@ -10206,7 +10207,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2683,
@@ -10223,7 +10224,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2684,
@@ -10240,7 +10241,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2685,
@@ -10257,7 +10258,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2686,
@@ -10274,7 +10275,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2687,
@@ -10291,7 +10292,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2688,
@@ -10308,7 +10309,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2690,
@@ -10325,7 +10326,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2697,
@@ -10342,7 +10343,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2698,
@@ -10359,7 +10360,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2710,
@@ -10376,7 +10377,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2712,
@@ -10393,7 +10394,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2715,
@@ -10410,7 +10411,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2716,
@@ -10427,7 +10428,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2720,
@@ -10444,7 +10445,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2722,
@@ -10461,7 +10462,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2723,
@@ -10478,7 +10479,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2724,
@@ -10495,7 +10496,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2726,
@@ -10512,7 +10513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2727,
@@ -10529,7 +10530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2728,
@@ -10546,7 +10547,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2731,
@@ -10563,7 +10564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2734,
@@ -10580,7 +10581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2737,
@@ -10597,7 +10598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2738,
@@ -10614,7 +10615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2741,
@@ -10631,7 +10632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2750,
@@ -10648,7 +10649,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2751,
@@ -10665,7 +10666,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2752,
@@ -10682,7 +10683,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2753,
@@ -10699,7 +10700,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2754,
@@ -10716,7 +10717,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2755,
@@ -10733,7 +10734,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2756,
@@ -10750,7 +10751,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2757,
@@ -10767,7 +10768,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2758,
@@ -10784,7 +10785,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2759,
@@ -10801,7 +10802,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2761,
@@ -10818,7 +10819,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2762,
@@ -10835,7 +10836,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2763,
@@ -10852,7 +10853,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2764,
@@ -10869,7 +10870,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2765,
@@ -10886,7 +10887,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2790,
@@ -10903,7 +10904,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2791,
@@ -10920,7 +10921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2792,
@@ -10937,7 +10938,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2802,
@@ -10954,7 +10955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2804,
@@ -10971,7 +10972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2812,
@@ -10988,7 +10989,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2829,
@@ -11005,7 +11006,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2831,
@@ -11022,7 +11023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2832,
@@ -11039,7 +11040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2833,
@@ -11056,7 +11057,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2836,
@@ -11073,7 +11074,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2839,
@@ -11090,7 +11091,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2840,
@@ -11107,7 +11108,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2841,
@@ -11124,7 +11125,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2844,
@@ -11141,7 +11142,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2845,
@@ -11158,7 +11159,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2847,
@@ -11175,7 +11176,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2848,
@@ -11192,7 +11193,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2849,
@@ -11209,7 +11210,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2850,
@@ -11226,7 +11227,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2851,
@@ -11243,7 +11244,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2869,
@@ -11260,7 +11261,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2873,
@@ -11277,7 +11278,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2874,
@@ -11294,7 +11295,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2875,
@@ -11311,7 +11312,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2888,
@@ -11328,7 +11329,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2891,
@@ -11345,7 +11346,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2893,
@@ -11362,7 +11363,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2894,
@@ -11379,7 +11380,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2895,
@@ -11396,7 +11397,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2896,
@@ -11413,7 +11414,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2917,
@@ -11430,7 +11431,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2918,
@@ -11447,7 +11448,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2919,
@@ -11464,7 +11465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2922,
@@ -11481,7 +11482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2923,
@@ -11498,7 +11499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2925,
@@ -11515,7 +11516,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2940,
@@ -11532,7 +11533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2948,
@@ -11549,7 +11550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2950,
@@ -11566,7 +11567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2975,
@@ -11583,7 +11584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2976,
@@ -11600,7 +11601,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2980,
@@ -11617,7 +11618,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2988,
@@ -11634,7 +11635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2990,
@@ -11651,7 +11652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2991,
@@ -11668,7 +11669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 2994,
@@ -11685,7 +11686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3017,
@@ -11702,7 +11703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3024,
@@ -11719,7 +11720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3039,
@@ -11736,7 +11737,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3052,
@@ -11753,7 +11754,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3067,
@@ -11770,7 +11771,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3070,
@@ -11787,7 +11788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3076,
@@ -11804,7 +11805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3101,
@@ -11821,7 +11822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3109,
@@ -11838,7 +11839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3129,
@@ -11855,7 +11856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3132,
@@ -11872,7 +11873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3138,
@@ -11889,7 +11890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3153,
@@ -11906,7 +11907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3163,
@@ -11923,7 +11924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3170,
@@ -11940,7 +11941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3171,
@@ -11957,7 +11958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3207,
@@ -11974,7 +11975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3231,
@@ -11991,7 +11992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3236,
@@ -12008,7 +12009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3243,
@@ -12025,7 +12026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3256,
@@ -12042,7 +12043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3257,
@@ -12059,7 +12060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3258,
@@ -12076,7 +12077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3263,
@@ -12093,7 +12094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3266,
@@ -12110,7 +12111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3267,
@@ -12127,7 +12128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3278,
@@ -12144,7 +12145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3279,
@@ -12161,7 +12162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3307,
@@ -12178,7 +12179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3308,
@@ -12195,7 +12196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3335,
@@ -12212,7 +12213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3337,
@@ -12229,7 +12230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3345,
@@ -12246,7 +12247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3346,
@@ -12263,7 +12264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3362,
@@ -12280,7 +12281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3364,
@@ -12297,7 +12298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3372,
@@ -12314,7 +12315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3384,
@@ -12331,7 +12332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3385,
@@ -12348,7 +12349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3393,
@@ -12365,7 +12366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3395,
@@ -12382,7 +12383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3432,
@@ -12399,7 +12400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3445,
@@ -12416,7 +12417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3448,
@@ -12433,7 +12434,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3454,
@@ -12450,7 +12451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3456,
@@ -12467,7 +12468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3457,
@@ -12484,7 +12485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3458,
@@ -12501,7 +12502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3459,
@@ -12518,7 +12519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3461,
@@ -12535,7 +12536,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3472,
@@ -12552,7 +12553,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3535,
@@ -12569,7 +12570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3547,
@@ -12586,7 +12587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3552,
@@ -12603,7 +12604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3585,
@@ -12620,7 +12621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3610,
@@ -12637,7 +12638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3611,
@@ -12654,7 +12655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3616,
@@ -12671,7 +12672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3683,
@@ -12688,7 +12689,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3696,
@@ -12705,7 +12706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3699,
@@ -12722,7 +12723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3706,
@@ -12739,7 +12740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3707,
@@ -12756,7 +12757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3708,
@@ -12773,7 +12774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3713,
@@ -12790,7 +12791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3719,
@@ -12807,7 +12808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3726,
@@ -12824,7 +12825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3728,
@@ -12841,7 +12842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3730,
@@ -12858,7 +12859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3731,
@@ -12875,7 +12876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3732,
@@ -12892,7 +12893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3735,
@@ -12909,7 +12910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3736,
@@ -12926,7 +12927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3746,
@@ -12943,7 +12944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3747,
@@ -12960,7 +12961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3748,
@@ -12977,7 +12978,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3751,
@@ -12994,7 +12995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3752,
@@ -13011,7 +13012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3759,
@@ -13028,7 +13029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3769,
@@ -13045,7 +13046,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3775,
@@ -13062,7 +13063,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3788,
@@ -13079,7 +13080,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3802,
@@ -13096,7 +13097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3806,
@@ -13113,7 +13114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3812,
@@ -13130,7 +13131,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3822,
@@ -13147,7 +13148,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3828,
@@ -13164,7 +13165,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3841,
@@ -13181,7 +13182,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3842,
@@ -13198,7 +13199,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3849,
@@ -13215,7 +13216,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3850,
@@ -13232,7 +13233,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3851,
@@ -13249,7 +13250,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3852,
@@ -13266,7 +13267,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3857,
@@ -13283,7 +13284,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3887,
@@ -13300,7 +13301,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3891,
@@ -13317,7 +13318,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3897,
@@ -13334,7 +13335,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3915,
@@ -13351,7 +13352,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3929,
@@ -13368,7 +13369,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3952,
@@ -13385,7 +13386,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3956,
@@ -13402,7 +13403,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3975,
@@ -13419,7 +13420,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3988,
@@ -13436,7 +13437,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3991,
@@ -13453,7 +13454,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 3997,
@@ -13470,7 +13471,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4002,
@@ -13487,7 +13488,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4007,
@@ -13504,7 +13505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4039,
@@ -13521,7 +13522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4050,
@@ -13538,7 +13539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4055,
@@ -13555,7 +13556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4057,
@@ -13572,7 +13573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4059,
@@ -13589,7 +13590,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4128,
@@ -13606,7 +13607,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4129,
@@ -13623,7 +13624,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4130,
@@ -13640,7 +13641,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4132,
@@ -13657,7 +13658,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4133,
@@ -13674,7 +13675,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4134,
@@ -13691,7 +13692,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4135,
@@ -13708,7 +13709,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4137,
@@ -13725,7 +13726,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4138,
@@ -13742,7 +13743,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4139,
@@ -13759,7 +13760,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4149,
@@ -13776,7 +13777,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4150,
@@ -13793,7 +13794,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4153,
@@ -13810,7 +13811,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4178,
@@ -13827,7 +13828,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4205,
@@ -13844,7 +13845,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4207,
@@ -13861,7 +13862,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4209,
@@ -13878,7 +13879,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4211,
@@ -13895,7 +13896,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4214,
@@ -13912,7 +13913,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4227,
@@ -13929,7 +13930,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4229,
@@ -13946,7 +13947,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4231,
@@ -13963,7 +13964,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4243,
@@ -13980,7 +13981,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4245,
@@ -13997,7 +13998,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4257,
@@ -14014,7 +14015,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4276,
@@ -14031,7 +14032,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4277,
@@ -14048,7 +14049,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4282,
@@ -14065,7 +14066,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4319,
@@ -14082,7 +14083,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4325,
@@ -14099,7 +14100,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4347,
@@ -14116,7 +14117,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4356,
@@ -14133,7 +14134,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4365,
@@ -14150,7 +14151,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4366,
@@ -14167,7 +14168,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4371,
@@ -14184,7 +14185,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4375,
@@ -14201,7 +14202,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4379,
@@ -14218,7 +14219,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4380,
@@ -14235,7 +14236,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4381,
@@ -14252,7 +14253,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4384,
@@ -14269,7 +14270,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4385,
@@ -14286,7 +14287,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4388,
@@ -14303,7 +14304,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4390,
@@ -14320,7 +14321,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4396,
@@ -14337,7 +14338,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4397,
@@ -14354,7 +14355,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4398,
@@ -14371,7 +14372,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4405,
@@ -14388,7 +14389,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4411,
@@ -14405,7 +14406,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4422,
@@ -14422,7 +14423,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4423,
@@ -14439,7 +14440,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4426,
@@ -14456,7 +14457,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4438,
@@ -14473,7 +14474,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4469,
@@ -14490,7 +14491,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4471,
@@ -14507,7 +14508,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4484,
@@ -14524,7 +14525,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4492,
@@ -14541,7 +14542,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4515,
@@ -14558,7 +14559,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4629,
@@ -14575,7 +14576,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4641,
@@ -14592,7 +14593,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4691,
@@ -14609,7 +14610,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4703,
@@ -14626,7 +14627,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4718,
@@ -14643,7 +14644,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4726,
@@ -14660,7 +14661,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4771,
@@ -14677,7 +14678,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4773,
@@ -14694,7 +14695,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4786,
@@ -14711,7 +14712,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4789,
@@ -14728,7 +14729,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4806,
@@ -14745,7 +14746,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4811,
@@ -14762,7 +14763,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4812,
@@ -14779,7 +14780,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4815,
@@ -14796,7 +14797,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4816,
@@ -14813,7 +14814,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4817,
@@ -14830,7 +14831,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4818,
@@ -14847,7 +14848,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4860,
@@ -14864,7 +14865,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4861,
@@ -14881,7 +14882,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4862,
@@ -14898,7 +14899,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4863,
@@ -14915,7 +14916,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4864,
@@ -14932,7 +14933,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4875,
@@ -14949,7 +14950,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4883,
@@ -14966,7 +14967,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4884,
@@ -14983,7 +14984,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4885,
@@ -15000,7 +15001,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4886,
@@ -15017,7 +15018,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4887,
@@ -15034,7 +15035,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4888,
@@ -15051,7 +15052,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4895,
@@ -15068,7 +15069,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4909,
@@ -15085,7 +15086,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4928,
@@ -15102,7 +15103,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4929,
@@ -15119,7 +15120,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4935,
@@ -15136,7 +15137,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4936,
@@ -15153,7 +15154,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4939,
@@ -15170,7 +15171,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 4956,
@@ -15187,7 +15188,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5002,
@@ -15204,7 +15205,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5159,
@@ -15221,7 +15222,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5171,
@@ -15238,7 +15239,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5172,
@@ -15255,7 +15256,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5194,
@@ -15272,7 +15273,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5195,
@@ -15289,7 +15290,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5203,
@@ -15306,7 +15307,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5204,
@@ -15323,7 +15324,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5209,
@@ -15340,7 +15341,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5210,
@@ -15357,7 +15358,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5212,
@@ -15374,7 +15375,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5218,
@@ -15391,7 +15392,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5239,
@@ -15408,7 +15409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5260,
@@ -15425,7 +15426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5263,
@@ -15442,7 +15443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5264,
@@ -15459,7 +15460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5267,
@@ -15476,7 +15477,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5268,
@@ -15493,7 +15494,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5270,
@@ -15510,7 +15511,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5276,
@@ -15527,7 +15528,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5291,
@@ -15544,7 +15545,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5309,
@@ -15561,7 +15562,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5321,
@@ -15578,7 +15579,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5322,
@@ -15595,7 +15596,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5323,
@@ -15612,7 +15613,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5325,
@@ -15629,7 +15630,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5326,
@@ -15646,7 +15647,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5327,
@@ -15663,7 +15664,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5328,
@@ -15680,7 +15681,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5351,
@@ -15697,7 +15698,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5362,
@@ -15714,7 +15715,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5377,
@@ -15731,7 +15732,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5379,
@@ -15748,7 +15749,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5389,
@@ -15765,7 +15766,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5401,
@@ -15782,7 +15783,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5404,
@@ -15799,7 +15800,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5413,
@@ -15816,7 +15817,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5419,
@@ -15833,7 +15834,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5424,
@@ -15850,7 +15851,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5428,
@@ -15867,7 +15868,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5462,
@@ -15884,7 +15885,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5463,
@@ -15901,7 +15902,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5464,
@@ -15918,7 +15919,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5479,
@@ -15935,7 +15936,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5480,
@@ -15952,7 +15953,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5481,
@@ -15969,7 +15970,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5484,
@@ -15986,7 +15987,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5485,
@@ -16003,7 +16004,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5486,
@@ -16020,7 +16021,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5487,
@@ -16037,7 +16038,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5488,
@@ -16054,7 +16055,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5489,
@@ -16071,7 +16072,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5490,
@@ -16088,7 +16089,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5492,
@@ -16105,7 +16106,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5495,
@@ -16122,7 +16123,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5497,
@@ -16139,7 +16140,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5499,
@@ -16156,7 +16157,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5501,
@@ -16173,7 +16174,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5518,
@@ -16190,7 +16191,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5528,
@@ -16207,7 +16208,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5533,
@@ -16224,7 +16225,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5534,
@@ -16241,7 +16242,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5570,
@@ -16258,7 +16259,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5579,
@@ -16275,7 +16276,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5583,
@@ -16292,7 +16293,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5584,
@@ -16309,7 +16310,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5585,
@@ -16326,7 +16327,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5586,
@@ -16343,7 +16344,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5587,
@@ -16360,7 +16361,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5588,
@@ -16377,7 +16378,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5589,
@@ -16394,7 +16395,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5590,
@@ -16411,7 +16412,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5591,
@@ -16428,7 +16429,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5592,
@@ -16445,7 +16446,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5593,
@@ -16462,7 +16463,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5594,
@@ -16479,7 +16480,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5595,
@@ -16496,7 +16497,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5596,
@@ -16513,7 +16514,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5598,
@@ -16530,7 +16531,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5599,
@@ -16547,7 +16548,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5601,
@@ -16564,7 +16565,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5602,
@@ -16581,7 +16582,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5603,
@@ -16598,7 +16599,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5604,
@@ -16615,7 +16616,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5605,
@@ -16632,7 +16633,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5606,
@@ -16649,7 +16650,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5607,
@@ -16666,7 +16667,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5608,
@@ -16683,7 +16684,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5609,
@@ -16700,7 +16701,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5610,
@@ -16717,7 +16718,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5611,
@@ -16734,7 +16735,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5612,
@@ -16751,7 +16752,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5613,
@@ -16768,7 +16769,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5614,
@@ -16785,7 +16786,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5615,
@@ -16802,7 +16803,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5616,
@@ -16819,7 +16820,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5617,
@@ -16836,7 +16837,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5618,
@@ -16853,7 +16854,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5619,
@@ -16870,7 +16871,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5620,
@@ -16887,7 +16888,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5623,
@@ -16904,7 +16905,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5624,
@@ -16921,7 +16922,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5626,
@@ -16938,7 +16939,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5627,
@@ -16955,7 +16956,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5628,
@@ -16972,7 +16973,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5629,
@@ -16989,7 +16990,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5630,
@@ -17006,7 +17007,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5631,
@@ -17023,7 +17024,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5633,
@@ -17040,7 +17041,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5634,
@@ -17057,7 +17058,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5635,
@@ -17074,7 +17075,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5636,
@@ -17091,7 +17092,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5637,
@@ -17108,7 +17109,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5638,
@@ -17125,7 +17126,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5639,
@@ -17142,7 +17143,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5640,
@@ -17159,7 +17160,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5641,
@@ -17176,7 +17177,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5642,
@@ -17193,7 +17194,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5643,
@@ -17210,7 +17211,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5644,
@@ -17227,7 +17228,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5645,
@@ -17244,7 +17245,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5647,
@@ -17261,7 +17262,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5648,
@@ -17278,7 +17279,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5649,
@@ -17295,7 +17296,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5650,
@@ -17312,7 +17313,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5651,
@@ -17329,7 +17330,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5653,
@@ -17346,7 +17347,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5654,
@@ -17363,7 +17364,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5655,
@@ -17380,7 +17381,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5656,
@@ -17397,7 +17398,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5657,
@@ -17414,7 +17415,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5658,
@@ -17431,7 +17432,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5659,
@@ -17448,7 +17449,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5660,
@@ -17465,7 +17466,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5661,
@@ -17482,7 +17483,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5662,
@@ -17499,7 +17500,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5663,
@@ -17516,7 +17517,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5664,
@@ -17533,7 +17534,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5665,
@@ -17550,7 +17551,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5666,
@@ -17567,7 +17568,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5667,
@@ -17584,7 +17585,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5669,
@@ -17601,7 +17602,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5670,
@@ -17618,7 +17619,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5671,
@@ -17635,7 +17636,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5672,
@@ -17652,7 +17653,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5673,
@@ -17669,7 +17670,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5674,
@@ -17686,7 +17687,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5675,
@@ -17703,7 +17704,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5676,
@@ -17720,7 +17721,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5677,
@@ -17737,7 +17738,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5678,
@@ -17754,7 +17755,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5679,
@@ -17771,7 +17772,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5681,
@@ -17788,7 +17789,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5682,
@@ -17805,7 +17806,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5684,
@@ -17822,7 +17823,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5685,
@@ -17839,7 +17840,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5686,
@@ -17856,7 +17857,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5687,
@@ -17873,7 +17874,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5688,
@@ -17890,7 +17891,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5689,
@@ -17907,7 +17908,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5690,
@@ -17924,7 +17925,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5691,
@@ -17941,7 +17942,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5693,
@@ -17958,7 +17959,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5694,
@@ -17975,7 +17976,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5695,
@@ -17992,7 +17993,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5696,
@@ -18009,7 +18010,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5697,
@@ -18026,7 +18027,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5698,
@@ -18043,7 +18044,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5699,
@@ -18060,7 +18061,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5700,
@@ -18077,7 +18078,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5701,
@@ -18094,7 +18095,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5702,
@@ -18111,7 +18112,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5703,
@@ -18128,7 +18129,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5704,
@@ -18145,7 +18146,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5705,
@@ -18162,7 +18163,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5706,
@@ -18179,7 +18180,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5707,
@@ -18196,7 +18197,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5708,
@@ -18213,7 +18214,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5709,
@@ -18230,7 +18231,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5710,
@@ -18247,7 +18248,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5711,
@@ -18264,7 +18265,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5712,
@@ -18281,7 +18282,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5715,
@@ -18298,7 +18299,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5716,
@@ -18315,7 +18316,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5717,
@@ -18332,7 +18333,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5718,
@@ -18349,7 +18350,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5719,
@@ -18366,7 +18367,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5720,
@@ -18383,7 +18384,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5721,
@@ -18400,7 +18401,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5724,
@@ -18417,7 +18418,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5726,
@@ -18434,7 +18435,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5727,
@@ -18451,7 +18452,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5729,
@@ -18468,7 +18469,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5730,
@@ -18485,7 +18486,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5731,
@@ -18502,7 +18503,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5732,
@@ -18519,7 +18520,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5733,
@@ -18536,7 +18537,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5734,
@@ -18553,7 +18554,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5735,
@@ -18570,7 +18571,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5736,
@@ -18587,7 +18588,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5737,
@@ -18604,7 +18605,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5739,
@@ -18621,7 +18622,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5740,
@@ -18638,7 +18639,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5741,
@@ -18655,7 +18656,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5742,
@@ -18672,7 +18673,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5743,
@@ -18689,7 +18690,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5744,
@@ -18706,7 +18707,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5745,
@@ -18723,7 +18724,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5746,
@@ -18740,7 +18741,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5748,
@@ -18757,7 +18758,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5749,
@@ -18774,7 +18775,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5751,
@@ -18791,7 +18792,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5752,
@@ -18808,7 +18809,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5753,
@@ -18825,7 +18826,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5754,
@@ -18842,7 +18843,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5755,
@@ -18859,7 +18860,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5757,
@@ -18876,7 +18877,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5758,
@@ -18893,7 +18894,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5759,
@@ -18910,7 +18911,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5760,
@@ -18927,7 +18928,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5761,
@@ -18944,7 +18945,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5763,
@@ -18961,7 +18962,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5764,
@@ -18978,7 +18979,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5765,
@@ -18995,7 +18996,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5766,
@@ -19012,7 +19013,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5767,
@@ -19029,7 +19030,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5774,
@@ -19046,7 +19047,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5775,
@@ -19063,7 +19064,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5776,
@@ -19080,7 +19081,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5777,
@@ -19097,7 +19098,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5778,
@@ -19114,7 +19115,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5779,
@@ -19131,7 +19132,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5780,
@@ -19148,7 +19149,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5781,
@@ -19165,7 +19166,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5782,
@@ -19182,7 +19183,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5783,
@@ -19199,7 +19200,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5784,
@@ -19216,7 +19217,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5785,
@@ -19233,7 +19234,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5786,
@@ -19250,7 +19251,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5807,
@@ -19267,7 +19268,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5826,
@@ -19284,7 +19285,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5830,
@@ -19301,7 +19302,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5838,
@@ -19318,7 +19319,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5840,
@@ -19335,7 +19336,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5847,
@@ -19352,7 +19353,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 5869,
@@ -19369,7 +19370,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6014,
@@ -19386,7 +19387,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6017,
@@ -19403,7 +19404,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6037,
@@ -19420,7 +19421,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6038,
@@ -19437,7 +19438,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6041,
@@ -19454,7 +19455,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6046,
@@ -19471,7 +19472,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6047,
@@ -19488,7 +19489,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6051,
@@ -19505,7 +19506,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6071,
@@ -19522,7 +19523,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6072,
@@ -19539,7 +19540,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6077,
@@ -19556,7 +19557,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6079,
@@ -19573,7 +19574,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6086,
@@ -19590,7 +19591,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6087,
@@ -19607,7 +19608,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6097,
@@ -19624,7 +19625,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6101,
@@ -19641,7 +19642,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6137,
@@ -19658,7 +19659,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6154,
@@ -19675,7 +19676,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6167,
@@ -19692,7 +19693,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6195,
@@ -19709,7 +19710,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6196,
@@ -19726,7 +19727,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6214,
@@ -19743,7 +19744,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6219,
@@ -19760,7 +19761,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6270,
@@ -19777,7 +19778,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6272,
@@ -19794,7 +19795,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6273,
@@ -19811,7 +19812,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6277,
@@ -19828,7 +19829,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6318,
@@ -19845,7 +19846,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6325,
@@ -19862,7 +19863,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6418,
@@ -19879,7 +19880,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6517,
@@ -19896,7 +19897,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6610,
@@ -19913,7 +19914,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6631,
@@ -19930,7 +19931,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6640,
@@ -19947,7 +19948,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6649,
@@ -19964,7 +19965,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6672,
@@ -19981,7 +19982,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6686,
@@ -19998,7 +19999,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6722,
@@ -20015,7 +20016,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6723,
@@ -20032,7 +20033,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6724,
@@ -20049,7 +20050,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6725,
@@ -20066,7 +20067,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6726,
@@ -20083,7 +20084,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6742,
@@ -20100,7 +20101,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6748,
@@ -20117,7 +20118,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6750,
@@ -20134,7 +20135,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6756,
@@ -20151,7 +20152,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6757,
@@ -20168,7 +20169,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6762,
@@ -20185,7 +20186,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6763,
@@ -20202,7 +20203,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6770,
@@ -20219,7 +20220,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6775,
@@ -20236,7 +20237,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6790,
@@ -20253,7 +20254,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6800,
@@ -20270,7 +20271,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6802,
@@ -20287,7 +20288,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6804,
@@ -20304,7 +20305,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6812,
@@ -20321,7 +20322,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6814,
@@ -20338,7 +20339,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6816,
@@ -20355,7 +20356,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6818,
@@ -20372,7 +20373,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6820,
@@ -20389,7 +20390,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6821,
@@ -20406,7 +20407,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6822,
@@ -20423,7 +20424,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6832,
@@ -20440,7 +20441,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6851,
@@ -20457,7 +20458,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6866,
@@ -20474,7 +20475,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6870,
@@ -20491,7 +20492,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6907,
@@ -20508,7 +20509,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6927,
@@ -20525,7 +20526,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6946,
@@ -20542,7 +20543,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6972,
@@ -20559,7 +20560,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6978,
@@ -20576,7 +20577,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6994,
@@ -20593,7 +20594,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 6997,
@@ -20610,7 +20611,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7012,
@@ -20627,7 +20628,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7013,
@@ -20644,7 +20645,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7017,
@@ -20661,7 +20662,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7043,
@@ -20678,7 +20679,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7044,
@@ -20695,7 +20696,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7046,
@@ -20712,7 +20713,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7047,
@@ -20729,7 +20730,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7048,
@@ -20746,7 +20747,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7051,
@@ -20763,7 +20764,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7057,
@@ -20780,7 +20781,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7069,
@@ -20797,7 +20798,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7077,
@@ -20814,7 +20815,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7079,
@@ -20831,7 +20832,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7081,
@@ -20848,7 +20849,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7084,
@@ -20865,7 +20866,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7085,
@@ -20882,7 +20883,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7099,
@@ -20899,7 +20900,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7102,
@@ -20916,7 +20917,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7104,
@@ -20933,7 +20934,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7107,
@@ -20950,7 +20951,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7108,
@@ -20967,7 +20968,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7109,
@@ -20984,7 +20985,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7111,
@@ -21001,7 +21002,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7112,
@@ -21018,7 +21019,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7114,
@@ -21035,7 +21036,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7115,
@@ -21052,7 +21053,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7116,
@@ -21069,7 +21070,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7120,
@@ -21086,7 +21087,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7128,
@@ -21103,7 +21104,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7129,
@@ -21114,13 +21115,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#000000",
     logo: "https://a.espncdn.com/guid/a0ee48aa-0d67-c802-ac49-7492db10d894/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/a0ee48aa-0d67-c802-ac49-7492db10d894/logos/default.png",
+    logoLight:
+      "https://a.espncdn.com/guid/a0ee48aa-0d67-c802-ac49-7492db10d894/logos/default.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7134,
@@ -21137,7 +21139,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7135,
@@ -21154,7 +21156,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7138,
@@ -21171,7 +21173,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7151,
@@ -21188,7 +21190,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7155,
@@ -21205,7 +21207,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7165,
@@ -21222,7 +21224,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7166,
@@ -21239,7 +21241,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7170,
@@ -21256,7 +21258,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7206,
@@ -21273,7 +21275,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7224,
@@ -21290,7 +21292,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7225,
@@ -21307,7 +21309,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7226,
@@ -21324,7 +21326,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7229,
@@ -21341,7 +21343,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7231,
@@ -21358,7 +21360,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7232,
@@ -21375,7 +21377,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7234,
@@ -21392,7 +21394,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7237,
@@ -21409,7 +21411,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7239,
@@ -21426,7 +21428,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7242,
@@ -21443,7 +21445,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7243,
@@ -21460,7 +21462,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7245,
@@ -21477,7 +21479,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7249,
@@ -21494,7 +21496,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7251,
@@ -21511,7 +21513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7252,
@@ -21528,7 +21530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7253,
@@ -21545,7 +21547,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7254,
@@ -21562,7 +21564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7257,
@@ -21579,7 +21581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7258,
@@ -21596,7 +21598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7259,
@@ -21613,7 +21615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7264,
@@ -21630,7 +21632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7268,
@@ -21647,7 +21649,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7277,
@@ -21664,7 +21666,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7279,
@@ -21681,7 +21683,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7302,
@@ -21698,7 +21700,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7312,
@@ -21715,7 +21717,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7314,
@@ -21732,7 +21734,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7318,
@@ -21749,7 +21751,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7320,
@@ -21766,7 +21768,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7339,
@@ -21783,7 +21785,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7347,
@@ -21800,7 +21802,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7348,
@@ -21817,7 +21819,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7349,
@@ -21834,7 +21836,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7368,
@@ -21851,7 +21853,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7369,
@@ -21868,7 +21870,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7385,
@@ -21885,7 +21887,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7388,
@@ -21902,7 +21904,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7389,
@@ -21919,7 +21921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7391,
@@ -21936,7 +21938,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7427,
@@ -21953,7 +21955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7445,
@@ -21970,7 +21972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7466,
@@ -21987,7 +21989,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7476,
@@ -22004,7 +22006,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7477,
@@ -22021,7 +22023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7501,
@@ -22038,7 +22040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7507,
@@ -22055,7 +22057,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7517,
@@ -22072,7 +22074,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7521,
@@ -22089,7 +22091,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7522,
@@ -22106,7 +22108,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7525,
@@ -22123,7 +22125,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7526,
@@ -22140,7 +22142,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7528,
@@ -22157,7 +22159,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7531,
@@ -22174,7 +22176,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7536,
@@ -22191,7 +22193,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7590,
@@ -22208,7 +22210,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7591,
@@ -22225,7 +22227,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7632,
@@ -22242,7 +22244,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7633,
@@ -22259,7 +22261,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7634,
@@ -22276,7 +22278,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7635,
@@ -22293,7 +22295,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7648,
@@ -22310,7 +22312,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7656,
@@ -22327,7 +22329,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7657,
@@ -22344,7 +22346,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7672,
@@ -22361,7 +22363,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7718,
@@ -22378,7 +22380,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7719,
@@ -22395,7 +22397,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7723,
@@ -22412,7 +22414,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7732,
@@ -22429,7 +22431,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7754,
@@ -22446,7 +22448,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7759,
@@ -22463,7 +22465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7764,
@@ -22480,7 +22482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7767,
@@ -22497,7 +22499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7790,
@@ -22514,7 +22516,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7825,
@@ -22531,7 +22533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7834,
@@ -22548,7 +22550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7845,
@@ -22565,7 +22567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7853,
@@ -22582,7 +22584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7857,
@@ -22599,7 +22601,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7858,
@@ -22616,7 +22618,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7860,
@@ -22633,7 +22635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7868,
@@ -22650,7 +22652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7869,
@@ -22667,7 +22669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7870,
@@ -22684,7 +22686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7878,
@@ -22701,7 +22703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7879,
@@ -22718,7 +22720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7884,
@@ -22735,7 +22737,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7891,
@@ -22752,7 +22754,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7911,
@@ -22769,7 +22771,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7914,
@@ -22786,7 +22788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7915,
@@ -22803,7 +22805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7922,
@@ -22820,7 +22822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7949,
@@ -22837,7 +22839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 7998,
@@ -22854,7 +22856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8040,
@@ -22871,7 +22873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8054,
@@ -22888,7 +22890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8063,
@@ -22905,7 +22907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8070,
@@ -22922,7 +22924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8089,
@@ -22939,7 +22941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8091,
@@ -22956,7 +22958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8109,
@@ -22973,7 +22975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8110,
@@ -22990,7 +22992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8118,
@@ -23007,7 +23009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8151,
@@ -23024,7 +23026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8169,
@@ -23041,7 +23043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8180,
@@ -23058,7 +23060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8186,
@@ -23075,7 +23077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8217,
@@ -23092,7 +23094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8221,
@@ -23109,7 +23111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8222,
@@ -23126,7 +23128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8235,
@@ -23143,7 +23145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8239,
@@ -23160,7 +23162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8240,
@@ -23177,7 +23179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8249,
@@ -23194,7 +23196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8250,
@@ -23211,7 +23213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8281,
@@ -23228,7 +23230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8284,
@@ -23245,7 +23247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8293,
@@ -23262,7 +23264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8317,
@@ -23279,7 +23281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8346,
@@ -23296,7 +23298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8352,
@@ -23313,7 +23315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8354,
@@ -23330,7 +23332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8363,
@@ -23347,7 +23349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8365,
@@ -23364,7 +23366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8371,
@@ -23381,7 +23383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8377,
@@ -23398,7 +23400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8392,
@@ -23415,7 +23417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8412,
@@ -23432,7 +23434,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8414,
@@ -23449,7 +23451,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8415,
@@ -23466,7 +23468,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8416,
@@ -23483,7 +23485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8419,
@@ -23500,7 +23502,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8420,
@@ -23517,7 +23519,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8422,
@@ -23534,7 +23536,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8425,
@@ -23551,7 +23553,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8447,
@@ -23568,7 +23570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8448,
@@ -23585,7 +23587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8451,
@@ -23602,7 +23604,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8490,
@@ -23619,7 +23621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8491,
@@ -23636,7 +23638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8493,
@@ -23653,7 +23655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8497,
@@ -23670,7 +23672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8499,
@@ -23687,7 +23689,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8506,
@@ -23704,7 +23706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8507,
@@ -23721,7 +23723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8519,
@@ -23738,7 +23740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8544,
@@ -23755,7 +23757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8547,
@@ -23772,7 +23774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8558,
@@ -23789,7 +23791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8559,
@@ -23806,7 +23808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8560,
@@ -23823,7 +23825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8561,
@@ -23840,7 +23842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8562,
@@ -23857,7 +23859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8565,
@@ -23874,7 +23876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8566,
@@ -23891,7 +23893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8567,
@@ -23908,7 +23910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8569,
@@ -23925,7 +23927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8571,
@@ -23942,7 +23944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8572,
@@ -23959,7 +23961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8580,
@@ -23976,7 +23978,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8591,
@@ -23993,7 +23995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8594,
@@ -24010,7 +24012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8599,
@@ -24027,7 +24029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8600,
@@ -24044,7 +24046,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8601,
@@ -24061,7 +24063,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8602,
@@ -24078,7 +24080,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8609,
@@ -24095,7 +24097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8625,
@@ -24112,7 +24114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8663,
@@ -24129,7 +24131,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8664,
@@ -24146,7 +24148,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8667,
@@ -24163,7 +24165,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8726,
@@ -24180,7 +24182,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8807,
@@ -24197,7 +24199,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8897,
@@ -24214,7 +24216,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8931,
@@ -24231,7 +24233,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8937,
@@ -24248,7 +24250,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8938,
@@ -24265,7 +24267,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8939,
@@ -24282,7 +24284,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8940,
@@ -24299,7 +24301,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8941,
@@ -24316,7 +24318,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8942,
@@ -24333,7 +24335,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8950,
@@ -24350,7 +24352,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 8991,
@@ -24367,7 +24369,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9017,
@@ -24384,7 +24386,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9023,
@@ -24401,7 +24403,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9028,
@@ -24418,7 +24420,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9078,
@@ -24435,7 +24437,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9136,
@@ -24452,7 +24454,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9138,
@@ -24469,7 +24471,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9169,
@@ -24486,7 +24488,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9283,
@@ -24503,7 +24505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9292,
@@ -24520,7 +24522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9303,
@@ -24537,7 +24539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9318,
@@ -24554,7 +24556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9371,
@@ -24571,7 +24573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9414,
@@ -24588,7 +24590,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9449,
@@ -24605,7 +24607,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9460,
@@ -24622,7 +24624,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9497,
@@ -24639,7 +24641,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9531,
@@ -24656,7 +24658,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9553,
@@ -24673,7 +24675,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9631,
@@ -24690,7 +24692,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9632,
@@ -24707,7 +24709,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9655,
@@ -24724,7 +24726,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9693,
@@ -24741,7 +24743,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9705,
@@ -24758,7 +24760,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9707,
@@ -24775,7 +24777,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9720,
@@ -24792,7 +24794,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9723,
@@ -24809,7 +24811,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9726,
@@ -24826,7 +24828,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9727,
@@ -24843,7 +24845,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9729,
@@ -24860,7 +24862,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9739,
@@ -24877,7 +24879,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9740,
@@ -24894,7 +24896,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9743,
@@ -24911,7 +24913,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9744,
@@ -24928,7 +24930,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9747,
@@ -24945,7 +24947,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9761,
@@ -24962,7 +24964,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9762,
@@ -24979,7 +24981,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9769,
@@ -24996,7 +24998,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9770,
@@ -25013,7 +25015,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9773,
@@ -25030,7 +25032,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9774,
@@ -25047,7 +25049,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9779,
@@ -25064,7 +25066,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9780,
@@ -25081,7 +25083,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9785,
@@ -25098,7 +25100,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9786,
@@ -25115,7 +25117,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9812,
@@ -25132,7 +25134,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9817,
@@ -25149,7 +25151,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9865,
@@ -25166,7 +25168,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9867,
@@ -25183,7 +25185,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9902,
@@ -25200,7 +25202,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9903,
@@ -25217,7 +25219,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9943,
@@ -25234,7 +25236,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9945,
@@ -25251,7 +25253,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9965,
@@ -25268,7 +25270,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9966,
@@ -25285,7 +25287,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9967,
@@ -25302,7 +25304,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9969,
@@ -25319,7 +25321,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9970,
@@ -25336,7 +25338,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9971,
@@ -25353,7 +25355,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9973,
@@ -25370,7 +25372,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9980,
@@ -25387,7 +25389,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9983,
@@ -25404,7 +25406,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9984,
@@ -25421,7 +25423,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9987,
@@ -25438,7 +25440,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9997,
@@ -25455,7 +25457,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 9999,
@@ -25472,7 +25474,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10000,
@@ -25489,7 +25491,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10001,
@@ -25506,7 +25508,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10005,
@@ -25523,7 +25525,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10052,
@@ -25540,7 +25542,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10054,
@@ -25557,7 +25559,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10058,
@@ -25574,7 +25576,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10060,
@@ -25591,7 +25593,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10064,
@@ -25608,7 +25610,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10080,
@@ -25625,7 +25627,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10094,
@@ -25642,7 +25644,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10102,
@@ -25659,7 +25661,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10103,
@@ -25676,7 +25678,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10105,
@@ -25693,7 +25695,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10107,
@@ -25710,7 +25712,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10109,
@@ -25727,7 +25729,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10122,
@@ -25744,7 +25746,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10124,
@@ -25761,7 +25763,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10125,
@@ -25778,7 +25780,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10129,
@@ -25795,7 +25797,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10131,
@@ -25812,7 +25814,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10138,
@@ -25829,7 +25831,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10139,
@@ -25846,7 +25848,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10142,
@@ -25863,7 +25865,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10143,
@@ -25880,7 +25882,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10144,
@@ -25897,7 +25899,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10145,
@@ -25914,7 +25916,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10146,
@@ -25931,7 +25933,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10147,
@@ -25948,7 +25950,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10149,
@@ -25965,7 +25967,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10151,
@@ -25982,7 +25984,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10152,
@@ -25999,7 +26001,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10154,
@@ -26016,7 +26018,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10156,
@@ -26033,7 +26035,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10157,
@@ -26050,7 +26052,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10158,
@@ -26067,7 +26069,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10161,
@@ -26084,7 +26086,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10162,
@@ -26101,7 +26103,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10163,
@@ -26118,7 +26120,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10167,
@@ -26135,7 +26137,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10183,
@@ -26152,7 +26154,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10207,
@@ -26169,7 +26171,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10265,
@@ -26186,7 +26188,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10266,
@@ -26203,7 +26205,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10281,
@@ -26220,7 +26222,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10296,
@@ -26237,7 +26239,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10307,
@@ -26254,7 +26256,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10309,
@@ -26271,7 +26273,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10311,
@@ -26288,7 +26290,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10318,
@@ -26305,7 +26307,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10343,
@@ -26322,7 +26324,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10357,
@@ -26339,7 +26341,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10374,
@@ -26356,7 +26358,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10376,
@@ -26373,7 +26375,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10381,
@@ -26390,7 +26392,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10382,
@@ -26407,7 +26409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10388,
@@ -26424,7 +26426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10411,
@@ -26441,7 +26443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10414,
@@ -26458,7 +26460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10525,
@@ -26475,7 +26477,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10528,
@@ -26492,7 +26494,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10529,
@@ -26509,7 +26511,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10532,
@@ -26526,7 +26528,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10596,
@@ -26543,7 +26545,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10597,
@@ -26560,7 +26562,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10603,
@@ -26577,7 +26579,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10605,
@@ -26594,7 +26596,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10606,
@@ -26611,7 +26613,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10615,
@@ -26628,7 +26630,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10618,
@@ -26645,7 +26647,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10629,
@@ -26662,7 +26664,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10678,
@@ -26679,7 +26681,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10691,
@@ -26696,7 +26698,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10739,
@@ -26713,7 +26715,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10743,
@@ -26730,7 +26732,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 10834,
@@ -26747,7 +26749,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11124,
@@ -26764,7 +26766,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11137,
@@ -26781,7 +26783,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11139,
@@ -26798,7 +26800,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11143,
@@ -26815,7 +26817,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11170,
@@ -26832,7 +26834,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11192,
@@ -26849,7 +26851,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11199,
@@ -26866,7 +26868,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11209,
@@ -26883,7 +26885,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11268,
@@ -26900,7 +26902,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11305,
@@ -26917,7 +26919,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11313,
@@ -26934,7 +26936,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11336,
@@ -26951,7 +26953,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11337,
@@ -26968,7 +26970,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11399,
@@ -26985,7 +26987,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11420,
@@ -27002,7 +27004,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11429,
@@ -27019,7 +27021,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11431,
@@ -27036,7 +27038,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11440,
@@ -27053,7 +27055,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11484,
@@ -27070,7 +27072,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11485,
@@ -27087,7 +27089,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11487,
@@ -27104,7 +27106,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11505,
@@ -27121,7 +27123,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11523,
@@ -27138,7 +27140,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11550,
@@ -27155,7 +27157,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11551,
@@ -27172,7 +27174,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11553,
@@ -27189,7 +27191,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11627,
@@ -27206,7 +27208,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11653,
@@ -27223,7 +27225,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11669,
@@ -27240,7 +27242,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11676,
@@ -27257,7 +27259,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11677,
@@ -27274,7 +27276,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11678,
@@ -27291,7 +27293,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11692,
@@ -27308,7 +27310,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11706,
@@ -27325,7 +27327,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11766,
@@ -27342,7 +27344,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11790,
@@ -27359,7 +27361,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11808,
@@ -27376,7 +27378,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11883,
@@ -27393,7 +27395,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11884,
@@ -27410,7 +27412,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11895,
@@ -27427,7 +27429,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11913,
@@ -27444,7 +27446,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11963,
@@ -27461,7 +27463,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11972,
@@ -27478,7 +27480,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11978,
@@ -27495,7 +27497,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11989,
@@ -27512,7 +27514,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11990,
@@ -27529,7 +27531,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11991,
@@ -27546,7 +27548,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11993,
@@ -27563,7 +27565,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 11995,
@@ -27580,7 +27582,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12008,
@@ -27597,7 +27599,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12011,
@@ -27614,7 +27616,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12030,
@@ -27631,7 +27633,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12062,
@@ -27648,7 +27650,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12124,
@@ -27665,7 +27667,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12146,
@@ -27682,7 +27684,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12215,
@@ -27699,7 +27701,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12216,
@@ -27716,7 +27718,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12271,
@@ -27733,7 +27735,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12367,
@@ -27750,7 +27752,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12594,
@@ -27767,7 +27769,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12597,
@@ -27784,7 +27786,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12633,
@@ -27801,7 +27803,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12634,
@@ -27818,7 +27820,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12698,
@@ -27835,7 +27837,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12705,
@@ -27852,7 +27854,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 12706,
@@ -27869,7 +27871,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13018,
@@ -27886,7 +27888,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13033,
@@ -27903,7 +27905,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13061,
@@ -27920,7 +27922,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13083,
@@ -27937,7 +27939,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13143,
@@ -27954,7 +27956,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13238,
@@ -27971,7 +27973,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13294,
@@ -27988,7 +27990,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13310,
@@ -28005,7 +28007,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13313,
@@ -28022,7 +28024,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13317,
@@ -28039,7 +28041,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13397,
@@ -28056,7 +28058,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13400,
@@ -28073,7 +28075,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13450,
@@ -28090,7 +28092,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13481,
@@ -28107,7 +28109,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13582,
@@ -28124,7 +28126,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13584,
@@ -28141,7 +28143,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13696,
@@ -28158,7 +28160,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13783,
@@ -28175,7 +28177,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13884,
@@ -28192,7 +28194,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 13913,
@@ -28209,7 +28211,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14074,
@@ -28226,7 +28228,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14075,
@@ -28243,7 +28245,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14253,
@@ -28260,7 +28262,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14257,
@@ -28277,7 +28279,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14263,
@@ -28294,7 +28296,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14290,
@@ -28311,7 +28313,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14445,
@@ -28328,7 +28330,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 14561,
@@ -28345,7 +28347,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15107,
@@ -28362,7 +28364,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15114,
@@ -28379,7 +28381,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15360,
@@ -28396,7 +28398,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15362,
@@ -28413,7 +28415,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15363,
@@ -28430,7 +28432,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15364,
@@ -28447,7 +28449,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15365,
@@ -28464,7 +28466,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15366,
@@ -28481,7 +28483,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15424,
@@ -28498,7 +28500,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15515,
@@ -28515,7 +28517,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15557,
@@ -28532,7 +28534,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15559,
@@ -28549,7 +28551,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15561,
@@ -28566,7 +28568,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15562,
@@ -28583,7 +28585,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15582,
@@ -28600,7 +28602,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15682,
@@ -28617,7 +28619,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15683,
@@ -28634,7 +28636,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15720,
@@ -28651,7 +28653,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 15784,
@@ -28668,7 +28670,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16218,
@@ -28685,7 +28687,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16287,
@@ -28702,7 +28704,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16295,
@@ -28719,7 +28721,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16301,
@@ -28736,7 +28738,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16306,
@@ -28753,7 +28755,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16445,
@@ -28770,7 +28772,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16569,
@@ -28787,7 +28789,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16721,
@@ -28804,7 +28806,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16728,
@@ -28821,7 +28823,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16913,
@@ -28838,7 +28840,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 16916,
@@ -28855,7 +28857,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17086,
@@ -28872,7 +28874,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17090,
@@ -28889,7 +28891,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17131,
@@ -28906,7 +28908,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17176,
@@ -28923,7 +28925,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17233,
@@ -28940,7 +28942,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17313,
@@ -28957,7 +28959,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17317,
@@ -28974,7 +28976,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17325,
@@ -28991,7 +28993,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17326,
@@ -29008,7 +29010,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17332,
@@ -29025,7 +29027,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17333,
@@ -29042,7 +29044,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17339,
@@ -29059,7 +29061,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17346,
@@ -29076,7 +29078,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17352,
@@ -29093,7 +29095,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17360,
@@ -29110,7 +29112,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17361,
@@ -29127,7 +29129,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17362,
@@ -29144,7 +29146,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17363,
@@ -29161,7 +29163,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17365,
@@ -29178,7 +29180,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17370,
@@ -29195,7 +29197,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17371,
@@ -29212,7 +29214,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17372,
@@ -29229,7 +29231,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17373,
@@ -29246,7 +29248,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17374,
@@ -29263,7 +29265,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17380,
@@ -29280,7 +29282,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17386,
@@ -29297,7 +29299,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17390,
@@ -29314,7 +29316,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17392,
@@ -29331,7 +29333,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17393,
@@ -29348,7 +29350,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17407,
@@ -29365,7 +29367,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17409,
@@ -29382,7 +29384,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17411,
@@ -29399,7 +29401,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17412,
@@ -29416,7 +29418,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17425,
@@ -29433,7 +29435,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17483,
@@ -29450,7 +29452,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17491,
@@ -29467,7 +29469,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17492,
@@ -29484,7 +29486,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17503,
@@ -29501,7 +29503,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17514,
@@ -29518,7 +29520,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17516,
@@ -29535,7 +29537,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17530,
@@ -29552,7 +29554,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17534,
@@ -29569,7 +29571,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17544,
@@ -29586,7 +29588,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17545,
@@ -29603,7 +29605,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17564,
@@ -29620,7 +29622,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17567,
@@ -29637,7 +29639,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17579,
@@ -29654,7 +29656,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17580,
@@ -29671,7 +29673,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17581,
@@ -29688,7 +29690,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17582,
@@ -29705,7 +29707,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17590,
@@ -29722,7 +29724,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17606,
@@ -29739,7 +29741,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17635,
@@ -29756,7 +29758,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17637,
@@ -29773,7 +29775,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17639,
@@ -29790,7 +29792,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17640,
@@ -29807,7 +29809,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17641,
@@ -29824,7 +29826,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17642,
@@ -29841,7 +29843,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17655,
@@ -29858,7 +29860,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17671,
@@ -29875,7 +29877,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17689,
@@ -29892,7 +29894,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17692,
@@ -29909,7 +29911,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17693,
@@ -29926,7 +29928,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17695,
@@ -29943,7 +29945,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17697,
@@ -29960,7 +29962,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17700,
@@ -29977,7 +29979,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17702,
@@ -29994,7 +29996,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17703,
@@ -30011,7 +30013,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17704,
@@ -30028,7 +30030,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17705,
@@ -30045,7 +30047,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17706,
@@ -30062,7 +30064,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17710,
@@ -30079,7 +30081,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17713,
@@ -30096,7 +30098,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17715,
@@ -30113,7 +30115,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17739,
@@ -30130,7 +30132,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17760,
@@ -30147,7 +30149,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17795,
@@ -30164,7 +30166,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17814,
@@ -30181,7 +30183,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17815,
@@ -30198,7 +30200,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17826,
@@ -30215,7 +30217,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17827,
@@ -30232,7 +30234,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17828,
@@ -30249,7 +30251,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17830,
@@ -30266,7 +30268,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17832,
@@ -30283,7 +30285,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17850,
@@ -30300,7 +30302,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17851,
@@ -30317,7 +30319,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17856,
@@ -30334,7 +30336,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17858,
@@ -30351,7 +30353,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17865,
@@ -30368,7 +30370,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17886,
@@ -30385,7 +30387,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17890,
@@ -30402,7 +30404,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17939,
@@ -30419,7 +30421,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17972,
@@ -30436,7 +30438,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17973,
@@ -30453,7 +30455,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17974,
@@ -30470,7 +30472,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17975,
@@ -30487,7 +30489,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17976,
@@ -30504,7 +30506,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17992,
@@ -30521,7 +30523,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17997,
@@ -30538,7 +30540,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 17998,
@@ -30555,7 +30557,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18000,
@@ -30572,7 +30574,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18002,
@@ -30589,7 +30591,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18003,
@@ -30606,7 +30608,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18004,
@@ -30623,7 +30625,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18009,
@@ -30640,7 +30642,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18010,
@@ -30657,7 +30659,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18012,
@@ -30674,7 +30676,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18013,
@@ -30691,7 +30693,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18015,
@@ -30708,7 +30710,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18016,
@@ -30725,7 +30727,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18017,
@@ -30742,7 +30744,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18018,
@@ -30759,7 +30761,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18019,
@@ -30776,7 +30778,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18020,
@@ -30793,7 +30795,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18023,
@@ -30810,7 +30812,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18032,
@@ -30827,7 +30829,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18033,
@@ -30844,7 +30846,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18035,
@@ -30861,7 +30863,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18066,
@@ -30878,7 +30880,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18101,
@@ -30895,7 +30897,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18127,
@@ -30912,7 +30914,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18134,
@@ -30929,7 +30931,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18153,
@@ -30946,7 +30948,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18156,
@@ -30963,7 +30965,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18159,
@@ -30980,7 +30982,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18187,
@@ -30997,7 +30999,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18190,
@@ -31014,7 +31016,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18191,
@@ -31031,7 +31033,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18192,
@@ -31048,7 +31050,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18195,
@@ -31065,7 +31067,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18198,
@@ -31082,7 +31084,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18203,
@@ -31099,7 +31101,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18206,
@@ -31116,7 +31118,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18210,
@@ -31133,7 +31135,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18212,
@@ -31150,7 +31152,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18214,
@@ -31167,7 +31169,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18216,
@@ -31184,7 +31186,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18220,
@@ -31201,7 +31203,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18221,
@@ -31218,7 +31220,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18224,
@@ -31235,7 +31237,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18227,
@@ -31252,7 +31254,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18232,
@@ -31269,7 +31271,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18243,
@@ -31286,7 +31288,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18260,
@@ -31303,7 +31305,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18264,
@@ -31320,7 +31322,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18265,
@@ -31337,7 +31339,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18267,
@@ -31354,7 +31356,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18268,
@@ -31371,7 +31373,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18272,
@@ -31382,13 +31384,14 @@ export const soccerTeams: Team[] = [
     color: "#0000CD",
     secondaryColor: "#FFEC00",
     logo: "https://a.espncdn.com/i/teamlogos/countries/500/kosovo.png",
-    logoLight: "https://a.espncdn.com/i/teamlogos/countries/500-dark/kosovo.png",
+    logoLight:
+      "https://a.espncdn.com/i/teamlogos/countries/500-dark/kosovo.png",
     isActive: true,
     isAllStar: false,
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18278,
@@ -31405,7 +31408,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18283,
@@ -31422,7 +31425,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18284,
@@ -31439,7 +31442,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18285,
@@ -31456,7 +31459,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18305,
@@ -31473,7 +31476,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18312,
@@ -31490,7 +31493,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18328,
@@ -31507,7 +31510,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18337,
@@ -31524,7 +31527,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18357,
@@ -31541,7 +31544,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18358,
@@ -31558,7 +31561,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18380,
@@ -31575,7 +31578,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18388,
@@ -31592,7 +31595,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18390,
@@ -31609,7 +31612,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18391,
@@ -31626,7 +31629,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18392,
@@ -31643,7 +31646,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18393,
@@ -31660,7 +31663,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18395,
@@ -31677,7 +31680,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18396,
@@ -31694,7 +31697,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18399,
@@ -31711,7 +31714,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18403,
@@ -31728,7 +31731,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18406,
@@ -31745,7 +31748,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18413,
@@ -31762,7 +31765,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18414,
@@ -31779,7 +31782,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18415,
@@ -31796,7 +31799,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18418,
@@ -31813,7 +31816,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18424,
@@ -31830,7 +31833,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18433,
@@ -31847,7 +31850,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18439,
@@ -31864,7 +31867,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18444,
@@ -31881,7 +31884,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18446,
@@ -31898,7 +31901,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18455,
@@ -31915,7 +31918,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18459,
@@ -31932,7 +31935,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18460,
@@ -31949,7 +31952,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18615,
@@ -31966,7 +31969,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18662,
@@ -31983,7 +31986,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18683,
@@ -32000,7 +32003,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18691,
@@ -32017,7 +32020,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18696,
@@ -32034,7 +32037,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18699,
@@ -32051,7 +32054,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18716,
@@ -32068,7 +32071,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18721,
@@ -32085,7 +32088,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18736,
@@ -32102,7 +32105,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18741,
@@ -32119,7 +32122,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18747,
@@ -32136,7 +32139,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18748,
@@ -32153,7 +32156,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18751,
@@ -32170,7 +32173,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18754,
@@ -32187,7 +32190,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18765,
@@ -32204,7 +32207,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18767,
@@ -32221,7 +32224,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18768,
@@ -32238,7 +32241,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18772,
@@ -32255,7 +32258,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18774,
@@ -32272,7 +32275,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18775,
@@ -32289,7 +32292,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18776,
@@ -32306,7 +32309,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18777,
@@ -32323,7 +32326,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18779,
@@ -32340,7 +32343,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18781,
@@ -32357,7 +32360,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18787,
@@ -32374,7 +32377,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18789,
@@ -32391,7 +32394,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18794,
@@ -32408,7 +32411,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18808,
@@ -32425,7 +32428,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18809,
@@ -32442,7 +32445,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18825,
@@ -32459,7 +32462,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18832,
@@ -32476,7 +32479,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18834,
@@ -32493,7 +32496,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18836,
@@ -32510,7 +32513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18844,
@@ -32527,7 +32530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18846,
@@ -32544,7 +32547,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18847,
@@ -32561,7 +32564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18848,
@@ -32578,7 +32581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18849,
@@ -32595,7 +32598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18850,
@@ -32612,7 +32615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18851,
@@ -32629,7 +32632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18889,
@@ -32646,7 +32649,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18894,
@@ -32663,7 +32666,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18895,
@@ -32680,7 +32683,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18896,
@@ -32697,7 +32700,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18898,
@@ -32714,7 +32717,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18901,
@@ -32731,7 +32734,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18906,
@@ -32748,7 +32751,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18909,
@@ -32765,7 +32768,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18959,
@@ -32782,7 +32785,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18966,
@@ -32799,7 +32802,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18977,
@@ -32816,7 +32819,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18986,
@@ -32833,7 +32836,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18987,
@@ -32850,7 +32853,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 18995,
@@ -32867,7 +32870,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19001,
@@ -32884,7 +32887,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19002,
@@ -32901,7 +32904,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19139,
@@ -32918,7 +32921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19141,
@@ -32935,7 +32938,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19144,
@@ -32952,7 +32955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19145,
@@ -32969,7 +32972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19156,
@@ -32986,7 +32989,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19179,
@@ -33003,7 +33006,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19181,
@@ -33020,7 +33023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19195,
@@ -33037,7 +33040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19197,
@@ -33054,7 +33057,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19198,
@@ -33071,7 +33074,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19208,
@@ -33088,7 +33091,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19213,
@@ -33105,7 +33108,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19220,
@@ -33122,7 +33125,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19221,
@@ -33139,7 +33142,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19223,
@@ -33156,7 +33159,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19231,
@@ -33173,7 +33176,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19233,
@@ -33190,7 +33193,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19243,
@@ -33207,7 +33210,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19246,
@@ -33224,7 +33227,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19247,
@@ -33241,7 +33244,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19248,
@@ -33258,7 +33261,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19250,
@@ -33275,7 +33278,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19256,
@@ -33292,7 +33295,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19257,
@@ -33309,7 +33312,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19258,
@@ -33326,7 +33329,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19262,
@@ -33343,7 +33346,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19267,
@@ -33360,7 +33363,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19286,
@@ -33377,7 +33380,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19288,
@@ -33394,7 +33397,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19290,
@@ -33411,7 +33414,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19292,
@@ -33428,7 +33431,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19298,
@@ -33445,7 +33448,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19299,
@@ -33462,7 +33465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19300,
@@ -33479,7 +33482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19302,
@@ -33496,7 +33499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19305,
@@ -33513,7 +33516,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19306,
@@ -33530,7 +33533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19307,
@@ -33547,7 +33550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19309,
@@ -33564,7 +33567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19311,
@@ -33581,7 +33584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19313,
@@ -33598,7 +33601,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19314,
@@ -33615,7 +33618,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19318,
@@ -33632,7 +33635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19333,
@@ -33649,7 +33652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19340,
@@ -33666,7 +33669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19341,
@@ -33683,7 +33686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19342,
@@ -33700,7 +33703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19344,
@@ -33717,7 +33720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19345,
@@ -33734,7 +33737,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19348,
@@ -33751,7 +33754,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19349,
@@ -33768,7 +33771,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19350,
@@ -33785,7 +33788,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19392,
@@ -33802,7 +33805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19393,
@@ -33819,7 +33822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19398,
@@ -33836,7 +33839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19400,
@@ -33853,7 +33856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19405,
@@ -33870,7 +33873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19407,
@@ -33887,7 +33890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19408,
@@ -33904,7 +33907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19410,
@@ -33921,7 +33924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19411,
@@ -33938,7 +33941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19414,
@@ -33955,7 +33958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19425,
@@ -33972,7 +33975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19436,
@@ -33989,7 +33992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19437,
@@ -34006,7 +34009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19685,
@@ -34023,7 +34026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19960,
@@ -34040,7 +34043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19962,
@@ -34057,7 +34060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19964,
@@ -34074,7 +34077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19966,
@@ -34091,7 +34094,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19968,
@@ -34108,7 +34111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19970,
@@ -34125,7 +34128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19971,
@@ -34142,7 +34145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19972,
@@ -34159,7 +34162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19973,
@@ -34176,7 +34179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19974,
@@ -34193,7 +34196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19975,
@@ -34210,7 +34213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19976,
@@ -34227,7 +34230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19985,
@@ -34244,7 +34247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19987,
@@ -34261,7 +34264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19995,
@@ -34278,7 +34281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 19999,
@@ -34295,7 +34298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20000,
@@ -34312,7 +34315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20003,
@@ -34329,7 +34332,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20024,
@@ -34346,7 +34349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20025,
@@ -34363,7 +34366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20026,
@@ -34380,7 +34383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20028,
@@ -34397,7 +34400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20036,
@@ -34414,7 +34417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20038,
@@ -34431,7 +34434,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20039,
@@ -34448,7 +34451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20041,
@@ -34465,7 +34468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20043,
@@ -34482,7 +34485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20061,
@@ -34499,7 +34502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20062,
@@ -34516,7 +34519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20063,
@@ -34533,7 +34536,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20064,
@@ -34550,7 +34553,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20066,
@@ -34567,7 +34570,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20070,
@@ -34584,7 +34587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20075,
@@ -34601,7 +34604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20077,
@@ -34618,7 +34621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20088,
@@ -34635,7 +34638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20091,
@@ -34652,7 +34655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20092,
@@ -34669,7 +34672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20093,
@@ -34686,7 +34689,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20096,
@@ -34703,7 +34706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20098,
@@ -34720,7 +34723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20103,
@@ -34737,7 +34740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20105,
@@ -34754,7 +34757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20107,
@@ -34771,7 +34774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20108,
@@ -34788,7 +34791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20109,
@@ -34805,7 +34808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20112,
@@ -34822,7 +34825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20113,
@@ -34839,7 +34842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20114,
@@ -34856,7 +34859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20115,
@@ -34873,7 +34876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20116,
@@ -34890,7 +34893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20117,
@@ -34907,7 +34910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20123,
@@ -34924,7 +34927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20124,
@@ -34941,7 +34944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20125,
@@ -34958,7 +34961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20126,
@@ -34975,7 +34978,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20179,
@@ -34992,7 +34995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20181,
@@ -35009,7 +35012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20198,
@@ -35026,7 +35029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20210,
@@ -35043,7 +35046,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20216,
@@ -35060,7 +35063,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20220,
@@ -35077,7 +35080,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20229,
@@ -35094,7 +35097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20232,
@@ -35111,7 +35114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20279,
@@ -35128,7 +35131,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20280,
@@ -35145,7 +35148,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20281,
@@ -35162,7 +35165,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20282,
@@ -35179,7 +35182,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20283,
@@ -35196,7 +35199,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20284,
@@ -35213,7 +35216,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20285,
@@ -35230,7 +35233,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20286,
@@ -35247,7 +35250,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20287,
@@ -35264,7 +35267,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20288,
@@ -35281,7 +35284,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20293,
@@ -35298,7 +35301,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20297,
@@ -35315,7 +35318,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20301,
@@ -35332,7 +35335,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20302,
@@ -35349,7 +35352,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20303,
@@ -35366,7 +35369,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20307,
@@ -35383,7 +35386,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20309,
@@ -35400,7 +35403,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20310,
@@ -35417,7 +35420,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20311,
@@ -35434,7 +35437,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20312,
@@ -35451,7 +35454,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20313,
@@ -35468,7 +35471,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20314,
@@ -35485,7 +35488,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20315,
@@ -35502,7 +35505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20316,
@@ -35519,7 +35522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20317,
@@ -35536,7 +35539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20318,
@@ -35553,7 +35556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20319,
@@ -35570,7 +35573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20320,
@@ -35587,7 +35590,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20321,
@@ -35604,7 +35607,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20322,
@@ -35621,7 +35624,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20323,
@@ -35638,7 +35641,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20324,
@@ -35655,7 +35658,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20325,
@@ -35672,7 +35675,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20326,
@@ -35689,7 +35692,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20327,
@@ -35706,7 +35709,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20328,
@@ -35723,7 +35726,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20329,
@@ -35740,7 +35743,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20330,
@@ -35757,7 +35760,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20331,
@@ -35774,7 +35777,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20332,
@@ -35791,7 +35794,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20333,
@@ -35808,7 +35811,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20334,
@@ -35825,7 +35828,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20335,
@@ -35842,7 +35845,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20336,
@@ -35859,7 +35862,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20337,
@@ -35876,7 +35879,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20338,
@@ -35893,7 +35896,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20339,
@@ -35910,7 +35913,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20340,
@@ -35927,7 +35930,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20341,
@@ -35944,7 +35947,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20342,
@@ -35961,7 +35964,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20343,
@@ -35978,7 +35981,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20344,
@@ -35995,7 +35998,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20345,
@@ -36012,7 +36015,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20347,
@@ -36029,7 +36032,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20348,
@@ -36046,7 +36049,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20350,
@@ -36063,7 +36066,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20351,
@@ -36080,7 +36083,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20352,
@@ -36097,7 +36100,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20353,
@@ -36114,7 +36117,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20354,
@@ -36131,7 +36134,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20355,
@@ -36148,7 +36151,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20356,
@@ -36165,7 +36168,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20357,
@@ -36182,7 +36185,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20358,
@@ -36199,7 +36202,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20359,
@@ -36216,7 +36219,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20360,
@@ -36233,7 +36236,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20361,
@@ -36250,7 +36253,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20362,
@@ -36267,7 +36270,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20363,
@@ -36284,7 +36287,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20364,
@@ -36301,7 +36304,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20365,
@@ -36318,7 +36321,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20366,
@@ -36335,7 +36338,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20367,
@@ -36352,7 +36355,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20368,
@@ -36369,7 +36372,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20369,
@@ -36386,7 +36389,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20370,
@@ -36403,7 +36406,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20372,
@@ -36420,7 +36423,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20373,
@@ -36437,7 +36440,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20374,
@@ -36454,7 +36457,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20375,
@@ -36471,7 +36474,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20377,
@@ -36488,7 +36491,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20378,
@@ -36505,7 +36508,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20379,
@@ -36522,7 +36525,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20380,
@@ -36539,7 +36542,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20381,
@@ -36556,7 +36559,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20382,
@@ -36573,7 +36576,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20383,
@@ -36590,7 +36593,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20384,
@@ -36607,7 +36610,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20386,
@@ -36624,7 +36627,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20387,
@@ -36641,7 +36644,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20388,
@@ -36658,7 +36661,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20389,
@@ -36675,7 +36678,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20390,
@@ -36692,7 +36695,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20391,
@@ -36709,7 +36712,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20392,
@@ -36726,7 +36729,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20393,
@@ -36743,7 +36746,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20394,
@@ -36760,7 +36763,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20395,
@@ -36777,7 +36780,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20396,
@@ -36794,7 +36797,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20397,
@@ -36811,7 +36814,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20398,
@@ -36828,7 +36831,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20399,
@@ -36845,7 +36848,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20400,
@@ -36862,7 +36865,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20401,
@@ -36879,7 +36882,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20402,
@@ -36896,7 +36899,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20403,
@@ -36913,7 +36916,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20405,
@@ -36930,7 +36933,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20406,
@@ -36947,7 +36950,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20408,
@@ -36964,7 +36967,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20409,
@@ -36981,7 +36984,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20410,
@@ -36998,7 +37001,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20411,
@@ -37015,7 +37018,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20412,
@@ -37032,7 +37035,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20413,
@@ -37049,7 +37052,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20414,
@@ -37066,7 +37069,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20415,
@@ -37083,7 +37086,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20416,
@@ -37100,7 +37103,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20417,
@@ -37117,7 +37120,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20418,
@@ -37134,7 +37137,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20419,
@@ -37151,7 +37154,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20420,
@@ -37168,7 +37171,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20421,
@@ -37185,7 +37188,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20422,
@@ -37202,7 +37205,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20423,
@@ -37219,7 +37222,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20424,
@@ -37236,7 +37239,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20425,
@@ -37253,7 +37256,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20426,
@@ -37270,7 +37273,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20427,
@@ -37287,7 +37290,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20428,
@@ -37304,7 +37307,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20429,
@@ -37321,7 +37324,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20430,
@@ -37338,7 +37341,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20431,
@@ -37355,7 +37358,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20432,
@@ -37372,7 +37375,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20433,
@@ -37389,7 +37392,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20434,
@@ -37406,7 +37409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20435,
@@ -37423,7 +37426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20436,
@@ -37440,7 +37443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20437,
@@ -37457,7 +37460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20438,
@@ -37474,7 +37477,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20439,
@@ -37491,7 +37494,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20440,
@@ -37508,7 +37511,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20442,
@@ -37525,7 +37528,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20443,
@@ -37542,7 +37545,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20444,
@@ -37559,7 +37562,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20445,
@@ -37576,7 +37579,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20446,
@@ -37593,7 +37596,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20449,
@@ -37610,7 +37613,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20450,
@@ -37627,7 +37630,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20451,
@@ -37644,7 +37647,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20452,
@@ -37661,7 +37664,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20453,
@@ -37678,7 +37681,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20454,
@@ -37695,7 +37698,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20455,
@@ -37712,7 +37715,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20456,
@@ -37729,7 +37732,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20457,
@@ -37746,7 +37749,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20458,
@@ -37763,7 +37766,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20459,
@@ -37780,7 +37783,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20460,
@@ -37797,7 +37800,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20461,
@@ -37814,7 +37817,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20463,
@@ -37831,7 +37834,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20464,
@@ -37848,7 +37851,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20465,
@@ -37865,7 +37868,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20466,
@@ -37882,7 +37885,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20467,
@@ -37899,7 +37902,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20468,
@@ -37916,7 +37919,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20469,
@@ -37933,7 +37936,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20470,
@@ -37950,7 +37953,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20472,
@@ -37967,7 +37970,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20473,
@@ -37984,7 +37987,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20474,
@@ -38001,7 +38004,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20475,
@@ -38018,7 +38021,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20476,
@@ -38035,7 +38038,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20477,
@@ -38052,7 +38055,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20479,
@@ -38069,7 +38072,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20480,
@@ -38086,7 +38089,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20481,
@@ -38103,7 +38106,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20482,
@@ -38120,7 +38123,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20483,
@@ -38137,7 +38140,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20484,
@@ -38154,7 +38157,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20486,
@@ -38171,7 +38174,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20487,
@@ -38188,7 +38191,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20488,
@@ -38205,7 +38208,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20489,
@@ -38222,7 +38225,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20490,
@@ -38239,7 +38242,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20491,
@@ -38256,7 +38259,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20492,
@@ -38273,7 +38276,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20493,
@@ -38290,7 +38293,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20494,
@@ -38307,7 +38310,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20495,
@@ -38324,7 +38327,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20496,
@@ -38341,7 +38344,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20497,
@@ -38358,7 +38361,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20498,
@@ -38375,13 +38378,12 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20499,
     name: "Florida",
     fullName: "Florida Gators",
-    shortName: "Florida",
     code: "FLA",
     color: "#0021A5",
     secondaryColor: "#FA4616",
@@ -38392,7 +38394,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20500,
@@ -38409,7 +38411,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20501,
@@ -38426,7 +38428,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20502,
@@ -38443,7 +38445,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20503,
@@ -38460,7 +38462,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20504,
@@ -38477,7 +38479,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20505,
@@ -38494,7 +38496,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20506,
@@ -38511,7 +38513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20507,
@@ -38528,7 +38530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20508,
@@ -38545,7 +38547,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20509,
@@ -38562,7 +38564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20510,
@@ -38579,7 +38581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20511,
@@ -38596,7 +38598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20512,
@@ -38613,7 +38615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20513,
@@ -38630,7 +38632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20514,
@@ -38647,7 +38649,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20515,
@@ -38664,7 +38666,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20516,
@@ -38681,7 +38683,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20517,
@@ -38698,7 +38700,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20518,
@@ -38715,7 +38717,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20519,
@@ -38732,7 +38734,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20520,
@@ -38749,7 +38751,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20521,
@@ -38766,7 +38768,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20522,
@@ -38783,7 +38785,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20523,
@@ -38800,7 +38802,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20524,
@@ -38817,7 +38819,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20525,
@@ -38834,7 +38836,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20526,
@@ -38851,7 +38853,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20527,
@@ -38868,7 +38870,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20528,
@@ -38885,7 +38887,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20529,
@@ -38902,7 +38904,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20530,
@@ -38919,7 +38921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20531,
@@ -38936,7 +38938,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20532,
@@ -38953,7 +38955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20533,
@@ -38970,7 +38972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20534,
@@ -38987,7 +38989,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20535,
@@ -39004,7 +39006,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20536,
@@ -39021,7 +39023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20537,
@@ -39038,7 +39040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20538,
@@ -39055,7 +39057,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20539,
@@ -39072,7 +39074,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20540,
@@ -39089,7 +39091,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20541,
@@ -39106,7 +39108,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20542,
@@ -39123,7 +39125,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20543,
@@ -39140,7 +39142,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20544,
@@ -39157,7 +39159,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20545,
@@ -39174,7 +39176,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20546,
@@ -39191,7 +39193,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20547,
@@ -39208,7 +39210,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20548,
@@ -39225,7 +39227,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20550,
@@ -39242,7 +39244,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20551,
@@ -39259,7 +39261,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20552,
@@ -39276,7 +39278,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20553,
@@ -39293,7 +39295,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20554,
@@ -39310,7 +39312,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20555,
@@ -39327,7 +39329,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20556,
@@ -39344,7 +39346,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20557,
@@ -39361,7 +39363,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20558,
@@ -39378,7 +39380,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20559,
@@ -39395,7 +39397,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20562,
@@ -39412,7 +39414,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20563,
@@ -39429,7 +39431,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20564,
@@ -39446,7 +39448,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20565,
@@ -39463,7 +39465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20566,
@@ -39480,7 +39482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20567,
@@ -39497,7 +39499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20568,
@@ -39514,7 +39516,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20569,
@@ -39531,7 +39533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20570,
@@ -39548,7 +39550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20571,
@@ -39565,7 +39567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20572,
@@ -39582,7 +39584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20573,
@@ -39599,7 +39601,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20574,
@@ -39616,7 +39618,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20575,
@@ -39633,7 +39635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20576,
@@ -39650,7 +39652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20577,
@@ -39667,7 +39669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20578,
@@ -39684,7 +39686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20580,
@@ -39701,7 +39703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20581,
@@ -39718,7 +39720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20582,
@@ -39735,7 +39737,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20583,
@@ -39752,7 +39754,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20584,
@@ -39769,7 +39771,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20585,
@@ -39786,7 +39788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20586,
@@ -39803,7 +39805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20587,
@@ -39820,7 +39822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20589,
@@ -39837,7 +39839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20590,
@@ -39854,7 +39856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20591,
@@ -39871,7 +39873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20592,
@@ -39888,7 +39890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20593,
@@ -39905,7 +39907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20594,
@@ -39922,7 +39924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20595,
@@ -39939,7 +39941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20596,
@@ -39956,7 +39958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20597,
@@ -39973,7 +39975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20598,
@@ -39990,7 +39992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20599,
@@ -40007,7 +40009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20600,
@@ -40024,7 +40026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20601,
@@ -40041,7 +40043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20602,
@@ -40058,7 +40060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20603,
@@ -40075,7 +40077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20604,
@@ -40092,7 +40094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20605,
@@ -40109,7 +40111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20606,
@@ -40126,7 +40128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20607,
@@ -40143,7 +40145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20608,
@@ -40160,7 +40162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20609,
@@ -40177,7 +40179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20610,
@@ -40194,7 +40196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20611,
@@ -40211,7 +40213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20612,
@@ -40228,7 +40230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20613,
@@ -40245,7 +40247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20614,
@@ -40262,7 +40264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20615,
@@ -40279,7 +40281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20616,
@@ -40296,7 +40298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20617,
@@ -40313,7 +40315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20618,
@@ -40330,7 +40332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20619,
@@ -40347,7 +40349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20620,
@@ -40364,7 +40366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20621,
@@ -40381,7 +40383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20622,
@@ -40398,7 +40400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20623,
@@ -40415,7 +40417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20624,
@@ -40432,7 +40434,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20625,
@@ -40449,7 +40451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20626,
@@ -40466,7 +40468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20627,
@@ -40483,7 +40485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20628,
@@ -40500,7 +40502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20629,
@@ -40517,7 +40519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20630,
@@ -40534,7 +40536,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20631,
@@ -40551,7 +40553,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20632,
@@ -40568,7 +40570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20633,
@@ -40585,7 +40587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20634,
@@ -40602,7 +40604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20635,
@@ -40619,7 +40621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20636,
@@ -40636,7 +40638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20637,
@@ -40653,7 +40655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20638,
@@ -40670,7 +40672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20639,
@@ -40687,7 +40689,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20640,
@@ -40704,7 +40706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20641,
@@ -40721,7 +40723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20642,
@@ -40738,7 +40740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20643,
@@ -40755,7 +40757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20644,
@@ -40772,7 +40774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20646,
@@ -40789,7 +40791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20647,
@@ -40806,7 +40808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20648,
@@ -40823,7 +40825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20649,
@@ -40840,7 +40842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20650,
@@ -40857,7 +40859,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20651,
@@ -40874,7 +40876,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20671,
@@ -40891,7 +40893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20681,
@@ -40908,7 +40910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20684,
@@ -40925,7 +40927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20687,
@@ -40942,7 +40944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20695,
@@ -40959,7 +40961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20698,
@@ -40976,7 +40978,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20699,
@@ -40993,7 +40995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20703,
@@ -41010,7 +41012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20704,
@@ -41027,7 +41029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20705,
@@ -41044,7 +41046,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20707,
@@ -41061,7 +41063,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20710,
@@ -41078,7 +41080,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20712,
@@ -41095,7 +41097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20718,
@@ -41112,7 +41114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20720,
@@ -41129,7 +41131,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20721,
@@ -41140,13 +41142,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/763ce445-4f2c-3dc4-bb2a-a682c33f108c/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/763ce445-4f2c-3dc4-bb2a-a682c33f108c/logos/default.png",
+    logoLight:
+      "https://a.espncdn.com/guid/763ce445-4f2c-3dc4-bb2a-a682c33f108c/logos/default.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20722,
@@ -41157,13 +41160,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/ad1afdd8-e4fd-3c4b-9a80-4b80924bed85/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/ad1afdd8-e4fd-3c4b-9a80-4b80924bed85/logos/default.png",
+    logoLight:
+      "https://a.espncdn.com/guid/ad1afdd8-e4fd-3c4b-9a80-4b80924bed85/logos/default.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20724,
@@ -41180,7 +41184,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20728,
@@ -41197,7 +41201,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20729,
@@ -41214,7 +41218,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20735,
@@ -41231,7 +41235,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20738,
@@ -41248,7 +41252,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20740,
@@ -41265,7 +41269,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20774,
@@ -41282,7 +41286,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20795,
@@ -41299,7 +41303,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20796,
@@ -41316,7 +41320,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20797,
@@ -41333,7 +41337,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20798,
@@ -41350,7 +41354,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20799,
@@ -41367,7 +41371,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20800,
@@ -41384,7 +41388,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20802,
@@ -41401,7 +41405,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20814,
@@ -41418,7 +41422,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20817,
@@ -41435,7 +41439,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20825,
@@ -41452,7 +41456,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20827,
@@ -41469,7 +41473,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20830,
@@ -41486,7 +41490,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20835,
@@ -41503,7 +41507,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20836,
@@ -41520,7 +41524,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20842,
@@ -41537,7 +41541,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20843,
@@ -41554,7 +41558,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20844,
@@ -41571,7 +41575,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20845,
@@ -41588,7 +41592,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20846,
@@ -41605,7 +41609,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20847,
@@ -41622,7 +41626,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20848,
@@ -41639,7 +41643,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20849,
@@ -41656,7 +41660,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20850,
@@ -41673,7 +41677,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20851,
@@ -41690,7 +41694,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20852,
@@ -41707,7 +41711,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20853,
@@ -41724,7 +41728,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20855,
@@ -41741,7 +41745,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20856,
@@ -41758,7 +41762,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20860,
@@ -41775,7 +41779,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20861,
@@ -41792,7 +41796,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20864,
@@ -41809,7 +41813,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20865,
@@ -41826,7 +41830,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20883,
@@ -41843,7 +41847,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20884,
@@ -41860,7 +41864,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20885,
@@ -41877,7 +41881,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20886,
@@ -41894,7 +41898,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20889,
@@ -41911,7 +41915,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20890,
@@ -41928,7 +41932,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20896,
@@ -41945,7 +41949,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20897,
@@ -41962,7 +41966,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20903,
@@ -41979,7 +41983,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20905,
@@ -41996,7 +42000,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20906,
@@ -42013,7 +42017,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20907,
@@ -42030,7 +42034,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20908,
@@ -42047,7 +42051,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20909,
@@ -42064,7 +42068,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20910,
@@ -42081,7 +42085,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20914,
@@ -42098,7 +42102,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20919,
@@ -42115,7 +42119,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20920,
@@ -42132,7 +42136,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20921,
@@ -42149,7 +42153,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20922,
@@ -42166,7 +42170,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20923,
@@ -42183,7 +42187,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20924,
@@ -42200,7 +42204,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20925,
@@ -42217,7 +42221,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20926,
@@ -42234,7 +42238,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20927,
@@ -42251,7 +42255,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20928,
@@ -42268,7 +42272,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20929,
@@ -42285,7 +42289,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20930,
@@ -42302,7 +42306,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20931,
@@ -42319,7 +42323,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20932,
@@ -42336,7 +42340,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20933,
@@ -42353,7 +42357,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20934,
@@ -42370,7 +42374,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20935,
@@ -42387,7 +42391,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20936,
@@ -42404,7 +42408,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20937,
@@ -42421,7 +42425,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20938,
@@ -42438,7 +42442,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20939,
@@ -42455,7 +42459,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20940,
@@ -42472,7 +42476,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20941,
@@ -42489,7 +42493,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20943,
@@ -42506,7 +42510,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20944,
@@ -42523,7 +42527,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20945,
@@ -42540,7 +42544,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20946,
@@ -42557,7 +42561,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20947,
@@ -42574,7 +42578,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20956,
@@ -42591,7 +42595,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20965,
@@ -42608,7 +42612,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20967,
@@ -42625,7 +42629,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20971,
@@ -42642,7 +42646,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20972,
@@ -42659,7 +42663,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20973,
@@ -42676,7 +42680,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20974,
@@ -42693,7 +42697,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20980,
@@ -42710,7 +42714,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20983,
@@ -42727,7 +42731,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20984,
@@ -42744,7 +42748,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20991,
@@ -42761,7 +42765,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20992,
@@ -42778,7 +42782,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 20993,
@@ -42795,7 +42799,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21001,
@@ -42812,7 +42816,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21004,
@@ -42829,7 +42833,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21005,
@@ -42846,7 +42850,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21006,
@@ -42863,7 +42867,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21010,
@@ -42880,7 +42884,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21030,
@@ -42897,7 +42901,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21033,
@@ -42914,7 +42918,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21035,
@@ -42931,7 +42935,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21036,
@@ -42948,7 +42952,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21037,
@@ -42965,7 +42969,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21038,
@@ -42982,7 +42986,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21039,
@@ -42999,7 +43003,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21040,
@@ -43016,7 +43020,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21041,
@@ -43033,7 +43037,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21042,
@@ -43050,7 +43054,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21043,
@@ -43067,7 +43071,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21044,
@@ -43084,7 +43088,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21045,
@@ -43101,7 +43105,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21047,
@@ -43118,7 +43122,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21048,
@@ -43135,7 +43139,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21049,
@@ -43152,7 +43156,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21050,
@@ -43169,7 +43173,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21053,
@@ -43186,7 +43190,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21054,
@@ -43203,7 +43207,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21055,
@@ -43220,7 +43224,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21057,
@@ -43237,7 +43241,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21058,
@@ -43254,7 +43258,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21059,
@@ -43271,7 +43275,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21060,
@@ -43288,7 +43292,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21063,
@@ -43305,7 +43309,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21064,
@@ -43322,7 +43326,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21066,
@@ -43339,7 +43343,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21068,
@@ -43356,7 +43360,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21070,
@@ -43373,7 +43377,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21071,
@@ -43390,7 +43394,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21072,
@@ -43407,7 +43411,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21073,
@@ -43424,7 +43428,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21076,
@@ -43441,7 +43445,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21078,
@@ -43458,7 +43462,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21080,
@@ -43475,7 +43479,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21081,
@@ -43492,7 +43496,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21082,
@@ -43509,7 +43513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21083,
@@ -43526,7 +43530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21086,
@@ -43543,7 +43547,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21087,
@@ -43560,7 +43564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21091,
@@ -43577,7 +43581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21092,
@@ -43594,7 +43598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21101,
@@ -43611,7 +43615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21102,
@@ -43628,7 +43632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21110,
@@ -43645,7 +43649,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21111,
@@ -43662,7 +43666,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21112,
@@ -43679,7 +43683,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21113,
@@ -43696,7 +43700,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21114,
@@ -43713,7 +43717,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21115,
@@ -43730,7 +43734,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21116,
@@ -43747,7 +43751,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21117,
@@ -43764,7 +43768,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21119,
@@ -43781,7 +43785,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21120,
@@ -43798,7 +43802,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21121,
@@ -43815,7 +43819,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21123,
@@ -43832,7 +43836,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21124,
@@ -43849,7 +43853,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21127,
@@ -43866,7 +43870,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21128,
@@ -43883,7 +43887,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21129,
@@ -43900,7 +43904,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21130,
@@ -43917,7 +43921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21133,
@@ -43934,7 +43938,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21134,
@@ -43951,7 +43955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21135,
@@ -43968,7 +43972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21136,
@@ -43985,7 +43989,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21137,
@@ -44002,7 +44006,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21138,
@@ -44019,7 +44023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21139,
@@ -44036,7 +44040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21140,
@@ -44053,7 +44057,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21143,
@@ -44070,7 +44074,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21144,
@@ -44087,7 +44091,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21145,
@@ -44104,7 +44108,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21147,
@@ -44121,7 +44125,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21148,
@@ -44138,7 +44142,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21149,
@@ -44155,7 +44159,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21151,
@@ -44172,7 +44176,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21152,
@@ -44189,7 +44193,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21154,
@@ -44206,7 +44210,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21156,
@@ -44223,7 +44227,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21157,
@@ -44240,7 +44244,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21160,
@@ -44257,7 +44261,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21165,
@@ -44274,7 +44278,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21173,
@@ -44291,7 +44295,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21175,
@@ -44308,7 +44312,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21177,
@@ -44325,7 +44329,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21181,
@@ -44342,7 +44346,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21209,
@@ -44359,7 +44363,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21210,
@@ -44376,7 +44380,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21212,
@@ -44393,7 +44397,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21214,
@@ -44410,7 +44414,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21215,
@@ -44427,7 +44431,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21217,
@@ -44444,7 +44448,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21218,
@@ -44461,7 +44465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21222,
@@ -44478,7 +44482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21225,
@@ -44495,7 +44499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21226,
@@ -44512,7 +44516,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21228,
@@ -44529,7 +44533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21229,
@@ -44546,7 +44550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21232,
@@ -44563,7 +44567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21234,
@@ -44580,7 +44584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21238,
@@ -44597,7 +44601,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21248,
@@ -44614,7 +44618,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21249,
@@ -44631,7 +44635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21251,
@@ -44648,7 +44652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21252,
@@ -44665,7 +44669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21253,
@@ -44682,7 +44686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21259,
@@ -44699,7 +44703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21261,
@@ -44716,7 +44720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21262,
@@ -44733,7 +44737,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21264,
@@ -44750,7 +44754,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21270,
@@ -44767,7 +44771,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21272,
@@ -44784,7 +44788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21275,
@@ -44801,7 +44805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21277,
@@ -44818,7 +44822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21279,
@@ -44835,7 +44839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21281,
@@ -44852,7 +44856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21282,
@@ -44869,7 +44873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21284,
@@ -44886,7 +44890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21290,
@@ -44903,7 +44907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21295,
@@ -44920,7 +44924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21300,
@@ -44937,7 +44941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21302,
@@ -44954,7 +44958,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21306,
@@ -44971,7 +44975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21307,
@@ -44988,7 +44992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21311,
@@ -45005,7 +45009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21312,
@@ -45022,7 +45026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21313,
@@ -45039,7 +45043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21314,
@@ -45056,7 +45060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21316,
@@ -45073,7 +45077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21355,
@@ -45090,7 +45094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21357,
@@ -45107,7 +45111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21359,
@@ -45124,7 +45128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21360,
@@ -45141,7 +45145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21361,
@@ -45158,7 +45162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21369,
@@ -45175,7 +45179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21370,
@@ -45192,7 +45196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21371,
@@ -45209,7 +45213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21372,
@@ -45226,7 +45230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21373,
@@ -45243,7 +45247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21374,
@@ -45260,7 +45264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21375,
@@ -45277,7 +45281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21376,
@@ -45294,7 +45298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21377,
@@ -45311,7 +45315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21378,
@@ -45328,7 +45332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21379,
@@ -45345,7 +45349,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21380,
@@ -45362,7 +45366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21384,
@@ -45379,7 +45383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21387,
@@ -45396,7 +45400,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21389,
@@ -45413,7 +45417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21395,
@@ -45430,7 +45434,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21396,
@@ -45447,7 +45451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21401,
@@ -45464,7 +45468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21403,
@@ -45481,7 +45485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21416,
@@ -45498,7 +45502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21422,
@@ -45515,7 +45519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21423,
@@ -45532,7 +45536,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21424,
@@ -45549,7 +45553,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21425,
@@ -45566,7 +45570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21426,
@@ -45583,7 +45587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21428,
@@ -45600,7 +45604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21437,
@@ -45617,7 +45621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21446,
@@ -45634,7 +45638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21471,
@@ -45651,7 +45655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21476,
@@ -45668,7 +45672,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21478,
@@ -45685,7 +45689,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21479,
@@ -45702,7 +45706,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21480,
@@ -45719,7 +45723,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21481,
@@ -45736,7 +45740,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21482,
@@ -45753,7 +45757,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21483,
@@ -45770,7 +45774,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21484,
@@ -45787,7 +45791,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21485,
@@ -45804,7 +45808,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21486,
@@ -45821,7 +45825,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21506,
@@ -45838,7 +45842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21508,
@@ -45855,7 +45859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21516,
@@ -45872,7 +45876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21518,
@@ -45889,7 +45893,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21520,
@@ -45906,7 +45910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21522,
@@ -45923,7 +45927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21526,
@@ -45940,7 +45944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21528,
@@ -45957,7 +45961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21533,
@@ -45968,13 +45972,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/c6a0e36d-c3f5-3f04-93d8-1436cb1f6e9c/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/c6a0e36d-c3f5-3f04-93d8-1436cb1f6e9c/logos/default.png",
+    logoLight:
+      "https://a.espncdn.com/guid/c6a0e36d-c3f5-3f04-93d8-1436cb1f6e9c/logos/default.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21534,
@@ -45991,7 +45996,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21537,
@@ -46008,7 +46013,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21539,
@@ -46025,7 +46030,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21540,
@@ -46042,7 +46047,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21542,
@@ -46059,7 +46064,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21546,
@@ -46076,7 +46081,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21548,
@@ -46093,7 +46098,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21550,
@@ -46110,7 +46115,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21551,
@@ -46127,7 +46132,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21553,
@@ -46144,7 +46149,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21555,
@@ -46161,7 +46166,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21556,
@@ -46178,7 +46183,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21557,
@@ -46195,7 +46200,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21558,
@@ -46212,7 +46217,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21559,
@@ -46229,7 +46234,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21560,
@@ -46246,7 +46251,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21561,
@@ -46263,7 +46268,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21562,
@@ -46280,7 +46285,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21563,
@@ -46297,7 +46302,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21565,
@@ -46314,7 +46319,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21566,
@@ -46331,7 +46336,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21567,
@@ -46348,7 +46353,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21568,
@@ -46365,7 +46370,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21569,
@@ -46382,7 +46387,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21570,
@@ -46399,7 +46404,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21572,
@@ -46416,7 +46421,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21579,
@@ -46433,7 +46438,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21581,
@@ -46450,7 +46455,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21583,
@@ -46467,7 +46472,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21593,
@@ -46484,7 +46489,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21595,
@@ -46501,7 +46506,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21596,
@@ -46518,7 +46523,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21599,
@@ -46535,7 +46540,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21600,
@@ -46552,7 +46557,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21607,
@@ -46569,7 +46574,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21609,
@@ -46586,7 +46591,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21610,
@@ -46603,7 +46608,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21613,
@@ -46620,7 +46625,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21614,
@@ -46637,7 +46642,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21615,
@@ -46654,7 +46659,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21616,
@@ -46671,7 +46676,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21618,
@@ -46688,7 +46693,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21625,
@@ -46705,7 +46710,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21626,
@@ -46722,7 +46727,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21628,
@@ -46739,7 +46744,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21635,
@@ -46756,7 +46761,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21637,
@@ -46773,7 +46778,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21638,
@@ -46790,7 +46795,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21640,
@@ -46807,7 +46812,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21653,
@@ -46824,7 +46829,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21654,
@@ -46841,7 +46846,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21656,
@@ -46858,7 +46863,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21658,
@@ -46875,7 +46880,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21662,
@@ -46892,7 +46897,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21663,
@@ -46909,7 +46914,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21664,
@@ -46926,7 +46931,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21665,
@@ -46943,7 +46948,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21667,
@@ -46960,7 +46965,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21681,
@@ -46977,7 +46982,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21685,
@@ -46994,7 +46999,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21687,
@@ -47011,7 +47016,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21692,
@@ -47028,7 +47033,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21700,
@@ -47045,7 +47050,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21705,
@@ -47062,7 +47067,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21706,
@@ -47079,7 +47084,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21707,
@@ -47096,7 +47101,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21712,
@@ -47113,7 +47118,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21721,
@@ -47130,7 +47135,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21723,
@@ -47147,7 +47152,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21726,
@@ -47164,7 +47169,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21727,
@@ -47181,7 +47186,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21728,
@@ -47198,7 +47203,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21734,
@@ -47215,7 +47220,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21735,
@@ -47232,7 +47237,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21738,
@@ -47249,7 +47254,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21740,
@@ -47266,7 +47271,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21741,
@@ -47283,7 +47288,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21743,
@@ -47300,7 +47305,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21749,
@@ -47317,7 +47322,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21751,
@@ -47334,7 +47339,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21752,
@@ -47351,7 +47356,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21753,
@@ -47368,7 +47373,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21764,
@@ -47385,7 +47390,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21799,
@@ -47402,7 +47407,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21801,
@@ -47419,7 +47424,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21805,
@@ -47436,7 +47441,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21812,
@@ -47453,7 +47458,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21815,
@@ -47470,7 +47475,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21816,
@@ -47487,7 +47492,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21819,
@@ -47504,7 +47509,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21821,
@@ -47521,7 +47526,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21822,
@@ -47538,7 +47543,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21823,
@@ -47555,7 +47560,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21824,
@@ -47572,7 +47577,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21827,
@@ -47589,7 +47594,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21828,
@@ -47606,7 +47611,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21829,
@@ -47623,7 +47628,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21830,
@@ -47640,7 +47645,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21831,
@@ -47657,7 +47662,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21833,
@@ -47674,7 +47679,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21834,
@@ -47691,7 +47696,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21835,
@@ -47708,7 +47713,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21843,
@@ -47725,7 +47730,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21846,
@@ -47742,7 +47747,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21850,
@@ -47759,7 +47764,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21857,
@@ -47776,7 +47781,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21888,
@@ -47793,7 +47798,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21910,
@@ -47810,7 +47815,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21911,
@@ -47827,7 +47832,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21922,
@@ -47844,7 +47849,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21927,
@@ -47861,7 +47866,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21931,
@@ -47878,7 +47883,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21943,
@@ -47895,7 +47900,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21944,
@@ -47912,7 +47917,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21945,
@@ -47929,7 +47934,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21947,
@@ -47946,7 +47951,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21948,
@@ -47963,7 +47968,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21949,
@@ -47980,7 +47985,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21957,
@@ -47997,7 +48002,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21964,
@@ -48014,7 +48019,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21965,
@@ -48031,7 +48036,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21966,
@@ -48048,7 +48053,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21967,
@@ -48065,7 +48070,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21969,
@@ -48082,7 +48087,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21976,
@@ -48099,7 +48104,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21977,
@@ -48116,7 +48121,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21978,
@@ -48133,7 +48138,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21979,
@@ -48150,7 +48155,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21981,
@@ -48167,7 +48172,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21987,
@@ -48184,7 +48189,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21990,
@@ -48201,7 +48206,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 21991,
@@ -48218,7 +48223,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22009,
@@ -48235,7 +48240,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22010,
@@ -48252,7 +48257,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22012,
@@ -48269,7 +48274,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22013,
@@ -48286,7 +48291,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22016,
@@ -48303,7 +48308,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22017,
@@ -48320,7 +48325,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22020,
@@ -48337,7 +48342,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22021,
@@ -48354,7 +48359,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22022,
@@ -48371,7 +48376,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22023,
@@ -48388,7 +48393,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22024,
@@ -48405,7 +48410,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22028,
@@ -48422,7 +48427,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22029,
@@ -48439,7 +48444,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22038,
@@ -48456,7 +48461,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22050,
@@ -48473,7 +48478,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22051,
@@ -48490,7 +48495,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22053,
@@ -48507,7 +48512,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22054,
@@ -48524,7 +48529,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22055,
@@ -48541,7 +48546,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22056,
@@ -48558,7 +48563,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22058,
@@ -48575,7 +48580,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22060,
@@ -48592,7 +48597,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22063,
@@ -48609,7 +48614,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22064,
@@ -48626,7 +48631,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22068,
@@ -48643,7 +48648,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22069,
@@ -48660,7 +48665,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22071,
@@ -48677,7 +48682,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22077,
@@ -48694,7 +48699,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22082,
@@ -48711,7 +48716,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22088,
@@ -48728,7 +48733,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22091,
@@ -48745,7 +48750,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22092,
@@ -48762,7 +48767,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22093,
@@ -48779,7 +48784,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22099,
@@ -48796,7 +48801,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22100,
@@ -48813,7 +48818,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22101,
@@ -48830,7 +48835,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22104,
@@ -48847,7 +48852,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22109,
@@ -48864,7 +48869,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22112,
@@ -48881,7 +48886,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22113,
@@ -48898,7 +48903,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22114,
@@ -48915,7 +48920,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22115,
@@ -48932,7 +48937,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22116,
@@ -48949,7 +48954,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22119,
@@ -48966,7 +48971,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22120,
@@ -48983,7 +48988,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22130,
@@ -49000,7 +49005,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22137,
@@ -49017,7 +49022,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22142,
@@ -49034,7 +49039,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22163,
@@ -49051,7 +49056,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22164,
@@ -49068,7 +49073,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22165,
@@ -49085,7 +49090,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22166,
@@ -49102,7 +49107,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22167,
@@ -49119,7 +49124,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22168,
@@ -49136,7 +49141,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22174,
@@ -49153,7 +49158,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22184,
@@ -49170,7 +49175,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22187,
@@ -49187,7 +49192,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22188,
@@ -49204,7 +49209,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22189,
@@ -49221,7 +49226,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22190,
@@ -49238,7 +49243,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22191,
@@ -49255,7 +49260,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22193,
@@ -49272,7 +49277,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22194,
@@ -49289,7 +49294,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22197,
@@ -49306,7 +49311,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22198,
@@ -49323,7 +49328,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22199,
@@ -49340,7 +49345,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22210,
@@ -49357,7 +49362,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22212,
@@ -49374,7 +49379,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22213,
@@ -49391,7 +49396,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22219,
@@ -49408,7 +49413,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22226,
@@ -49425,7 +49430,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22233,
@@ -49442,7 +49447,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22239,
@@ -49459,7 +49464,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22240,
@@ -49476,7 +49481,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22241,
@@ -49493,7 +49498,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22257,
@@ -49510,7 +49515,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22266,
@@ -49527,7 +49532,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22267,
@@ -49544,7 +49549,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22269,
@@ -49561,7 +49566,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22271,
@@ -49578,7 +49583,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22272,
@@ -49595,7 +49600,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22279,
@@ -49612,7 +49617,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22281,
@@ -49629,7 +49634,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22287,
@@ -49646,7 +49651,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22288,
@@ -49663,7 +49668,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22290,
@@ -49680,7 +49685,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22291,
@@ -49697,7 +49702,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22292,
@@ -49714,7 +49719,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22294,
@@ -49731,7 +49736,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22298,
@@ -49748,7 +49753,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22300,
@@ -49765,7 +49770,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22303,
@@ -49782,7 +49787,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22306,
@@ -49799,7 +49804,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22307,
@@ -49816,7 +49821,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22309,
@@ -49833,7 +49838,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22313,
@@ -49850,7 +49855,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22319,
@@ -49867,7 +49872,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22328,
@@ -49884,7 +49889,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22329,
@@ -49901,7 +49906,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22330,
@@ -49918,7 +49923,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22335,
@@ -49935,7 +49940,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22337,
@@ -49952,7 +49957,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22344,
@@ -49969,7 +49974,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22346,
@@ -49986,7 +49991,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22348,
@@ -50003,7 +50008,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22350,
@@ -50020,7 +50025,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22352,
@@ -50037,7 +50042,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22354,
@@ -50054,7 +50059,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22355,
@@ -50071,7 +50076,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22363,
@@ -50088,7 +50093,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22364,
@@ -50105,7 +50110,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22366,
@@ -50122,7 +50127,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22367,
@@ -50139,7 +50144,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22375,
@@ -50156,7 +50161,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22395,
@@ -50173,7 +50178,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22402,
@@ -50190,7 +50195,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22408,
@@ -50207,7 +50212,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22414,
@@ -50224,7 +50229,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22415,
@@ -50241,7 +50246,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22418,
@@ -50258,7 +50263,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22420,
@@ -50275,7 +50280,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22429,
@@ -50292,7 +50297,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22430,
@@ -50309,7 +50314,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22434,
@@ -50326,7 +50331,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22439,
@@ -50343,7 +50348,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22441,
@@ -50360,7 +50365,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22442,
@@ -50377,7 +50382,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22446,
@@ -50394,7 +50399,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22450,
@@ -50411,7 +50416,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22451,
@@ -50428,7 +50433,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22462,
@@ -50445,7 +50450,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22463,
@@ -50462,7 +50467,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22465,
@@ -50479,7 +50484,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22467,
@@ -50496,7 +50501,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22473,
@@ -50513,7 +50518,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22485,
@@ -50530,7 +50535,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22486,
@@ -50547,7 +50552,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22487,
@@ -50564,7 +50569,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22488,
@@ -50581,7 +50586,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22489,
@@ -50598,7 +50603,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22517,
@@ -50615,7 +50620,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22520,
@@ -50632,7 +50637,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22521,
@@ -50649,7 +50654,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22522,
@@ -50666,7 +50671,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22523,
@@ -50683,7 +50688,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22524,
@@ -50700,7 +50705,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22525,
@@ -50717,7 +50722,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22526,
@@ -50734,7 +50739,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22528,
@@ -50751,7 +50756,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22529,
@@ -50768,7 +50773,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22530,
@@ -50785,7 +50790,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22534,
@@ -50802,7 +50807,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22536,
@@ -50819,7 +50824,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22537,
@@ -50836,7 +50841,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22538,
@@ -50853,7 +50858,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22539,
@@ -50870,7 +50875,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22542,
@@ -50887,7 +50892,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22544,
@@ -50904,7 +50909,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22546,
@@ -50921,7 +50926,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22547,
@@ -50938,7 +50943,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22548,
@@ -50955,7 +50960,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22550,
@@ -50972,7 +50977,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22557,
@@ -50989,7 +50994,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22559,
@@ -51006,7 +51011,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 22561,
@@ -51023,7 +51028,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 111140,
@@ -51040,7 +51045,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 122813,
@@ -51057,7 +51062,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 124510,
@@ -51074,7 +51079,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 126595,
@@ -51091,7 +51096,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 126601,
@@ -51108,7 +51113,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 126699,
@@ -51125,7 +51130,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 127922,
@@ -51142,7 +51147,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 128250,
@@ -51159,7 +51164,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 128663,
@@ -51176,7 +51181,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130875,
@@ -51193,7 +51198,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130883,
@@ -51210,7 +51215,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130885,
@@ -51227,7 +51232,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130886,
@@ -51244,7 +51249,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130889,
@@ -51261,7 +51266,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130890,
@@ -51278,7 +51283,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130891,
@@ -51295,7 +51300,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130894,
@@ -51312,7 +51317,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130895,
@@ -51329,7 +51334,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130896,
@@ -51346,7 +51351,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130897,
@@ -51363,7 +51368,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130899,
@@ -51380,7 +51385,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130901,
@@ -51397,7 +51402,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130906,
@@ -51414,7 +51419,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130909,
@@ -51431,7 +51436,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130910,
@@ -51448,7 +51453,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130911,
@@ -51465,7 +51470,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130913,
@@ -51476,13 +51481,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/f4df7f3d-3406-35fa-a3ee-7d6384fc42c3/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/f4df7f3d-3406-35fa-a3ee-7d6384fc42c3/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/f4df7f3d-3406-35fa-a3ee-7d6384fc42c3/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130916,
@@ -51499,7 +51505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 130919,
@@ -51516,7 +51522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131209,
@@ -51533,7 +51539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131210,
@@ -51550,7 +51556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131213,
@@ -51567,7 +51573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131215,
@@ -51578,13 +51584,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/e34d03ad-5e93-3a42-bea3-96b06df889be/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/e34d03ad-5e93-3a42-bea3-96b06df889be/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/e34d03ad-5e93-3a42-bea3-96b06df889be/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131216,
@@ -51601,7 +51608,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131217,
@@ -51618,7 +51625,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131218,
@@ -51635,7 +51642,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131220,
@@ -51652,7 +51659,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131221,
@@ -51669,7 +51676,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131224,
@@ -51686,7 +51693,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131235,
@@ -51703,7 +51710,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131236,
@@ -51720,7 +51727,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131239,
@@ -51737,7 +51744,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131242,
@@ -51754,7 +51761,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131243,
@@ -51771,7 +51778,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131245,
@@ -51788,7 +51795,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131247,
@@ -51805,7 +51812,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131256,
@@ -51822,7 +51829,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131257,
@@ -51839,7 +51846,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131258,
@@ -51856,7 +51863,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131259,
@@ -51873,7 +51880,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131260,
@@ -51890,7 +51897,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131261,
@@ -51907,7 +51914,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131262,
@@ -51924,7 +51931,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131265,
@@ -51941,7 +51948,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131266,
@@ -51958,7 +51965,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131270,
@@ -51975,7 +51982,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131273,
@@ -51992,7 +51999,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131274,
@@ -52009,7 +52016,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131275,
@@ -52026,7 +52033,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131276,
@@ -52043,7 +52050,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131277,
@@ -52060,7 +52067,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131279,
@@ -52071,13 +52078,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/ca3f2c66-5241-3255-9f12-e72845b90cec/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/ca3f2c66-5241-3255-9f12-e72845b90cec/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/ca3f2c66-5241-3255-9f12-e72845b90cec/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131282,
@@ -52094,7 +52102,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131284,
@@ -52111,7 +52119,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131285,
@@ -52128,7 +52136,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131287,
@@ -52145,7 +52153,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131288,
@@ -52162,7 +52170,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131291,
@@ -52179,7 +52187,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131295,
@@ -52196,7 +52204,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131297,
@@ -52213,7 +52221,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131298,
@@ -52230,7 +52238,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131300,
@@ -52247,7 +52255,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131303,
@@ -52264,7 +52272,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131307,
@@ -52281,7 +52289,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131310,
@@ -52298,7 +52306,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131311,
@@ -52315,7 +52323,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131314,
@@ -52332,7 +52340,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131316,
@@ -52349,7 +52357,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131317,
@@ -52366,7 +52374,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131320,
@@ -52377,13 +52385,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/24c45b7e-0343-3cd6-a84b-921f21f6ec2f/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/24c45b7e-0343-3cd6-a84b-921f21f6ec2f/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/24c45b7e-0343-3cd6-a84b-921f21f6ec2f/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131322,
@@ -52400,7 +52409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131323,
@@ -52417,7 +52426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131325,
@@ -52434,7 +52443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131327,
@@ -52451,7 +52460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131330,
@@ -52462,13 +52471,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/3697511f-3405-3f5c-8795-0d3a3952d0f5/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/3697511f-3405-3f5c-8795-0d3a3952d0f5/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/3697511f-3405-3f5c-8795-0d3a3952d0f5/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131335,
@@ -52479,13 +52489,14 @@ export const soccerTeams: Team[] = [
     color: "#000000",
     secondaryColor: "#C60000",
     logo: "https://a.espncdn.com/guid/39fa2417-ad4b-3e20-b598-e5bf880cb1d9/logos/default.png",
-    logoLight: "https://a.espncdn.com/guid/39fa2417-ad4b-3e20-b598-e5bf880cb1d9/logos/default-dark.png",
+    logoLight:
+      "https://a.espncdn.com/guid/39fa2417-ad4b-3e20-b598-e5bf880cb1d9/logos/default-dark.png",
     isActive: true,
     isAllStar: false,
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131341,
@@ -52502,7 +52513,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131360,
@@ -52519,7 +52530,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131361,
@@ -52536,7 +52547,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131373,
@@ -52553,7 +52564,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131374,
@@ -52570,7 +52581,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131375,
@@ -52587,7 +52598,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131376,
@@ -52604,7 +52615,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131377,
@@ -52621,7 +52632,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131378,
@@ -52638,7 +52649,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131381,
@@ -52655,7 +52666,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131382,
@@ -52672,7 +52683,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131383,
@@ -52689,7 +52700,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131384,
@@ -52706,7 +52717,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131385,
@@ -52723,7 +52734,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131386,
@@ -52740,7 +52751,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131393,
@@ -52757,7 +52768,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131394,
@@ -52774,7 +52785,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131395,
@@ -52791,7 +52802,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131396,
@@ -52808,7 +52819,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131397,
@@ -52825,7 +52836,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131402,
@@ -52842,7 +52853,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131403,
@@ -52859,7 +52870,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131404,
@@ -52876,7 +52887,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131405,
@@ -52893,7 +52904,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131406,
@@ -52910,7 +52921,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131407,
@@ -52927,7 +52938,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131408,
@@ -52944,7 +52955,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131409,
@@ -52961,7 +52972,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131410,
@@ -52978,7 +52989,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131411,
@@ -52995,7 +53006,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131412,
@@ -53012,7 +53023,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131413,
@@ -53029,7 +53040,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131414,
@@ -53046,7 +53057,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131415,
@@ -53063,7 +53074,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131416,
@@ -53080,7 +53091,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131417,
@@ -53097,7 +53108,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131418,
@@ -53114,7 +53125,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131419,
@@ -53131,7 +53142,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131423,
@@ -53148,7 +53159,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131425,
@@ -53165,7 +53176,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131426,
@@ -53182,7 +53193,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131427,
@@ -53199,7 +53210,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131428,
@@ -53216,7 +53227,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131429,
@@ -53233,7 +53244,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131430,
@@ -53250,7 +53261,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131431,
@@ -53267,7 +53278,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131432,
@@ -53284,7 +53295,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131433,
@@ -53301,7 +53312,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131434,
@@ -53318,7 +53329,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131435,
@@ -53335,7 +53346,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131436,
@@ -53352,7 +53363,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131437,
@@ -53369,7 +53380,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131438,
@@ -53386,7 +53397,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131439,
@@ -53403,7 +53414,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131440,
@@ -53420,7 +53431,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131441,
@@ -53437,7 +53448,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131442,
@@ -53454,7 +53465,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131443,
@@ -53471,7 +53482,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131444,
@@ -53488,7 +53499,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131445,
@@ -53505,7 +53516,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131446,
@@ -53522,7 +53533,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131447,
@@ -53539,7 +53550,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131449,
@@ -53556,7 +53567,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131450,
@@ -53573,7 +53584,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131451,
@@ -53590,7 +53601,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131452,
@@ -53607,7 +53618,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131453,
@@ -53624,7 +53635,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131454,
@@ -53641,7 +53652,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131455,
@@ -53658,7 +53669,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131458,
@@ -53675,7 +53686,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131462,
@@ -53692,7 +53703,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131463,
@@ -53709,7 +53720,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131464,
@@ -53726,7 +53737,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131465,
@@ -53743,7 +53754,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131466,
@@ -53760,7 +53771,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131467,
@@ -53777,7 +53788,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131468,
@@ -53794,7 +53805,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131469,
@@ -53811,7 +53822,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131470,
@@ -53828,7 +53839,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131471,
@@ -53845,7 +53856,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131472,
@@ -53862,7 +53873,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131473,
@@ -53879,7 +53890,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131474,
@@ -53896,7 +53907,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131475,
@@ -53913,7 +53924,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131476,
@@ -53930,7 +53941,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131477,
@@ -53947,7 +53958,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131478,
@@ -53964,7 +53975,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131479,
@@ -53981,7 +53992,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131480,
@@ -53998,7 +54009,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131481,
@@ -54015,7 +54026,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131482,
@@ -54032,7 +54043,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131483,
@@ -54049,7 +54060,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131484,
@@ -54066,7 +54077,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131485,
@@ -54083,7 +54094,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131486,
@@ -54100,7 +54111,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131487,
@@ -54117,7 +54128,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131489,
@@ -54134,7 +54145,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131490,
@@ -54151,7 +54162,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131491,
@@ -54168,7 +54179,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131492,
@@ -54185,7 +54196,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131493,
@@ -54202,7 +54213,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131494,
@@ -54219,7 +54230,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131495,
@@ -54236,7 +54247,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131496,
@@ -54253,7 +54264,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131549,
@@ -54270,7 +54281,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131550,
@@ -54287,7 +54298,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131551,
@@ -54304,7 +54315,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131552,
@@ -54321,7 +54332,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131553,
@@ -54338,7 +54349,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131554,
@@ -54355,7 +54366,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131559,
@@ -54372,7 +54383,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131561,
@@ -54389,7 +54400,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131562,
@@ -54406,7 +54417,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131563,
@@ -54423,7 +54434,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131564,
@@ -54440,7 +54451,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131565,
@@ -54457,7 +54468,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131567,
@@ -54474,7 +54485,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131568,
@@ -54491,7 +54502,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131569,
@@ -54508,7 +54519,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131570,
@@ -54525,7 +54536,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131571,
@@ -54542,7 +54553,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131572,
@@ -54559,7 +54570,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131573,
@@ -54576,7 +54587,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131576,
@@ -54593,7 +54604,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131577,
@@ -54610,7 +54621,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131578,
@@ -54627,7 +54638,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131579,
@@ -54644,7 +54655,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131580,
@@ -54661,7 +54672,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131581,
@@ -54678,7 +54689,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131582,
@@ -54695,7 +54706,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131583,
@@ -54712,7 +54723,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131584,
@@ -54729,7 +54740,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131585,
@@ -54746,7 +54757,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131586,
@@ -54763,7 +54774,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131587,
@@ -54780,7 +54791,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131618,
@@ -54797,7 +54808,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131619,
@@ -54814,7 +54825,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131620,
@@ -54831,7 +54842,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131621,
@@ -54848,7 +54859,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131622,
@@ -54865,7 +54876,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131626,
@@ -54882,7 +54893,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131627,
@@ -54899,7 +54910,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131635,
@@ -54916,7 +54927,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131638,
@@ -54933,7 +54944,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131639,
@@ -54950,7 +54961,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131642,
@@ -54967,7 +54978,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131643,
@@ -54984,7 +54995,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131644,
@@ -55001,7 +55012,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131645,
@@ -55018,7 +55029,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131648,
@@ -55035,7 +55046,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131650,
@@ -55052,7 +55063,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131651,
@@ -55069,7 +55080,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131652,
@@ -55086,7 +55097,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131654,
@@ -55103,7 +55114,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131655,
@@ -55120,7 +55131,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131656,
@@ -55137,7 +55148,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131657,
@@ -55154,7 +55165,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131659,
@@ -55171,7 +55182,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131660,
@@ -55188,7 +55199,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131661,
@@ -55205,7 +55216,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131662,
@@ -55222,7 +55233,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131663,
@@ -55239,7 +55250,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131664,
@@ -55256,7 +55267,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131665,
@@ -55273,7 +55284,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131666,
@@ -55290,7 +55301,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131667,
@@ -55307,7 +55318,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131668,
@@ -55324,7 +55335,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131669,
@@ -55341,7 +55352,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131670,
@@ -55358,7 +55369,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131671,
@@ -55375,7 +55386,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131672,
@@ -55392,7 +55403,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131673,
@@ -55409,7 +55420,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131674,
@@ -55426,7 +55437,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131676,
@@ -55443,7 +55454,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131677,
@@ -55460,7 +55471,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131678,
@@ -55477,7 +55488,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131679,
@@ -55494,7 +55505,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131680,
@@ -55511,7 +55522,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131681,
@@ -55528,7 +55539,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131682,
@@ -55545,7 +55556,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131683,
@@ -55562,7 +55573,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131684,
@@ -55579,7 +55590,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131685,
@@ -55596,7 +55607,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131686,
@@ -55613,7 +55624,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131687,
@@ -55630,7 +55641,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131688,
@@ -55647,7 +55658,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131701,
@@ -55664,7 +55675,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131702,
@@ -55681,7 +55692,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131703,
@@ -55698,7 +55709,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131704,
@@ -55715,7 +55726,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131705,
@@ -55732,7 +55743,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131706,
@@ -55749,7 +55760,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131707,
@@ -55766,7 +55777,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131708,
@@ -55783,7 +55794,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131718,
@@ -55800,7 +55811,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131719,
@@ -55817,7 +55828,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131723,
@@ -55834,7 +55845,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131725,
@@ -55851,7 +55862,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131734,
@@ -55868,7 +55879,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131735,
@@ -55885,7 +55896,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131736,
@@ -55902,7 +55913,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131737,
@@ -55919,7 +55930,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131738,
@@ -55936,7 +55947,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131739,
@@ -55953,7 +55964,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131740,
@@ -55970,7 +55981,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131741,
@@ -55987,7 +55998,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131742,
@@ -56004,7 +56015,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131743,
@@ -56021,7 +56032,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131744,
@@ -56038,7 +56049,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131745,
@@ -56055,7 +56066,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131746,
@@ -56072,7 +56083,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131747,
@@ -56089,7 +56100,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131748,
@@ -56106,7 +56117,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131749,
@@ -56123,7 +56134,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131750,
@@ -56140,7 +56151,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131751,
@@ -56157,7 +56168,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131752,
@@ -56174,7 +56185,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131753,
@@ -56191,7 +56202,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131783,
@@ -56208,7 +56219,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131785,
@@ -56225,7 +56236,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131786,
@@ -56242,7 +56253,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131787,
@@ -56259,7 +56270,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131788,
@@ -56276,7 +56287,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131790,
@@ -56293,7 +56304,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131792,
@@ -56310,7 +56321,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131793,
@@ -56327,7 +56338,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131794,
@@ -56344,7 +56355,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131795,
@@ -56361,7 +56372,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131796,
@@ -56378,7 +56389,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131797,
@@ -56395,7 +56406,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131798,
@@ -56412,7 +56423,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131799,
@@ -56429,7 +56440,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131800,
@@ -56446,7 +56457,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131805,
@@ -56463,7 +56474,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131806,
@@ -56480,7 +56491,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131807,
@@ -56497,7 +56508,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131808,
@@ -56514,7 +56525,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131809,
@@ -56531,7 +56542,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131810,
@@ -56548,7 +56559,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131811,
@@ -56565,7 +56576,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131812,
@@ -56582,7 +56593,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131813,
@@ -56599,7 +56610,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131814,
@@ -56616,7 +56627,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131815,
@@ -56633,7 +56644,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131816,
@@ -56650,7 +56661,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131817,
@@ -56667,7 +56678,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131818,
@@ -56684,7 +56695,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131819,
@@ -56701,7 +56712,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131820,
@@ -56718,7 +56729,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131821,
@@ -56735,7 +56746,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131822,
@@ -56752,7 +56763,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131823,
@@ -56769,7 +56780,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131824,
@@ -56786,7 +56797,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131825,
@@ -56803,7 +56814,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131826,
@@ -56820,7 +56831,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131827,
@@ -56837,7 +56848,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131828,
@@ -56854,7 +56865,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131829,
@@ -56871,7 +56882,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131830,
@@ -56888,7 +56899,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131831,
@@ -56905,7 +56916,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131832,
@@ -56922,7 +56933,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131833,
@@ -56939,7 +56950,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131834,
@@ -56956,7 +56967,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131835,
@@ -56973,7 +56984,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131836,
@@ -56990,7 +57001,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131840,
@@ -57007,7 +57018,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131841,
@@ -57024,7 +57035,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131842,
@@ -57041,7 +57052,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131843,
@@ -57058,7 +57069,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131844,
@@ -57075,7 +57086,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131845,
@@ -57092,7 +57103,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131852,
@@ -57109,7 +57120,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131853,
@@ -57126,7 +57137,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131854,
@@ -57143,7 +57154,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131856,
@@ -57160,7 +57171,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131857,
@@ -57177,7 +57188,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131858,
@@ -57194,7 +57205,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131859,
@@ -57211,7 +57222,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131860,
@@ -57228,7 +57239,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131862,
@@ -57245,7 +57256,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131875,
@@ -57262,7 +57273,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131876,
@@ -57279,7 +57290,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131878,
@@ -57296,7 +57307,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131879,
@@ -57313,7 +57324,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131880,
@@ -57330,7 +57341,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131881,
@@ -57347,7 +57358,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131882,
@@ -57364,7 +57375,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131883,
@@ -57381,7 +57392,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131884,
@@ -57398,7 +57409,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131885,
@@ -57415,7 +57426,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131886,
@@ -57432,7 +57443,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131887,
@@ -57449,7 +57460,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131888,
@@ -57466,7 +57477,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131889,
@@ -57483,7 +57494,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131890,
@@ -57500,7 +57511,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131891,
@@ -57517,7 +57528,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131892,
@@ -57534,7 +57545,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131893,
@@ -57551,7 +57562,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131894,
@@ -57568,7 +57579,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131895,
@@ -57585,7 +57596,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131896,
@@ -57602,7 +57613,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131897,
@@ -57619,7 +57630,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131898,
@@ -57636,7 +57647,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131899,
@@ -57653,7 +57664,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131900,
@@ -57670,7 +57681,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131901,
@@ -57687,7 +57698,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131902,
@@ -57704,7 +57715,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131903,
@@ -57721,7 +57732,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131904,
@@ -57738,7 +57749,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131905,
@@ -57755,7 +57766,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131906,
@@ -57772,7 +57783,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131907,
@@ -57789,7 +57800,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131908,
@@ -57806,7 +57817,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131909,
@@ -57823,7 +57834,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131910,
@@ -57840,7 +57851,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131911,
@@ -57857,7 +57868,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131912,
@@ -57874,7 +57885,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131913,
@@ -57891,7 +57902,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131914,
@@ -57908,7 +57919,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131915,
@@ -57925,7 +57936,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131916,
@@ -57942,7 +57953,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131917,
@@ -57959,7 +57970,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131918,
@@ -57976,7 +57987,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131919,
@@ -57993,7 +58004,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131920,
@@ -58010,7 +58021,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131921,
@@ -58027,7 +58038,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131922,
@@ -58044,7 +58055,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131923,
@@ -58061,7 +58072,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131924,
@@ -58078,7 +58089,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131925,
@@ -58095,7 +58106,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131926,
@@ -58112,7 +58123,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131927,
@@ -58129,7 +58140,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131928,
@@ -58146,7 +58157,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131929,
@@ -58163,7 +58174,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131930,
@@ -58180,7 +58191,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131932,
@@ -58197,7 +58208,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131933,
@@ -58214,7 +58225,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131934,
@@ -58231,7 +58242,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131935,
@@ -58248,7 +58259,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131936,
@@ -58265,7 +58276,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131937,
@@ -58282,7 +58293,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131938,
@@ -58299,7 +58310,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131939,
@@ -58316,7 +58327,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131940,
@@ -58333,7 +58344,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131941,
@@ -58350,7 +58361,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131942,
@@ -58367,7 +58378,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131943,
@@ -58384,7 +58395,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131944,
@@ -58401,7 +58412,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131945,
@@ -58418,7 +58429,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131946,
@@ -58435,7 +58446,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131947,
@@ -58452,7 +58463,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131948,
@@ -58469,7 +58480,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131949,
@@ -58486,7 +58497,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131950,
@@ -58503,7 +58514,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131951,
@@ -58520,7 +58531,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131952,
@@ -58537,7 +58548,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131953,
@@ -58554,7 +58565,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131954,
@@ -58571,7 +58582,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131955,
@@ -58588,7 +58599,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131956,
@@ -58605,7 +58616,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131957,
@@ -58622,7 +58633,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131958,
@@ -58639,7 +58650,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131959,
@@ -58656,7 +58667,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131960,
@@ -58673,7 +58684,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131961,
@@ -58690,7 +58701,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131962,
@@ -58707,7 +58718,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131963,
@@ -58724,7 +58735,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131964,
@@ -58741,7 +58752,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131965,
@@ -58758,7 +58769,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131966,
@@ -58775,7 +58786,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131967,
@@ -58792,7 +58803,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131968,
@@ -58809,7 +58820,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131969,
@@ -58826,7 +58837,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131970,
@@ -58843,7 +58854,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131971,
@@ -58860,7 +58871,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131972,
@@ -58877,7 +58888,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131973,
@@ -58894,7 +58905,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131974,
@@ -58911,7 +58922,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131975,
@@ -58928,7 +58939,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131976,
@@ -58945,7 +58956,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131977,
@@ -58962,7 +58973,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131978,
@@ -58979,7 +58990,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131979,
@@ -58996,7 +59007,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131980,
@@ -59013,7 +59024,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131981,
@@ -59030,7 +59041,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131982,
@@ -59047,7 +59058,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131983,
@@ -59064,7 +59075,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131984,
@@ -59081,7 +59092,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131985,
@@ -59098,7 +59109,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131986,
@@ -59115,7 +59126,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131987,
@@ -59132,7 +59143,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131988,
@@ -59149,7 +59160,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131989,
@@ -59166,7 +59177,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131990,
@@ -59183,7 +59194,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131991,
@@ -59200,7 +59211,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131992,
@@ -59217,7 +59228,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131993,
@@ -59234,7 +59245,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131994,
@@ -59251,7 +59262,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131995,
@@ -59268,7 +59279,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131996,
@@ -59285,7 +59296,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131997,
@@ -59302,7 +59313,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131998,
@@ -59319,7 +59330,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 131999,
@@ -59336,7 +59347,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132000,
@@ -59353,7 +59364,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132001,
@@ -59370,7 +59381,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132002,
@@ -59387,7 +59398,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132003,
@@ -59404,7 +59415,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132004,
@@ -59421,7 +59432,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132005,
@@ -59438,7 +59449,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132006,
@@ -59455,7 +59466,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132007,
@@ -59472,7 +59483,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132008,
@@ -59489,7 +59500,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132009,
@@ -59506,7 +59517,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132010,
@@ -59523,7 +59534,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132011,
@@ -59540,7 +59551,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132012,
@@ -59557,7 +59568,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132013,
@@ -59574,7 +59585,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132014,
@@ -59591,7 +59602,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132015,
@@ -59608,7 +59619,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132016,
@@ -59625,7 +59636,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132017,
@@ -59642,7 +59653,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132019,
@@ -59659,7 +59670,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132020,
@@ -59676,7 +59687,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132021,
@@ -59693,7 +59704,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132022,
@@ -59710,7 +59721,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132023,
@@ -59727,7 +59738,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132024,
@@ -59744,7 +59755,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132025,
@@ -59761,7 +59772,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132026,
@@ -59778,7 +59789,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132027,
@@ -59795,7 +59806,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132028,
@@ -59812,7 +59823,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132029,
@@ -59829,7 +59840,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132030,
@@ -59846,7 +59857,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132031,
@@ -59863,7 +59874,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132032,
@@ -59880,7 +59891,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132033,
@@ -59897,7 +59908,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132034,
@@ -59914,7 +59925,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132035,
@@ -59931,7 +59942,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132036,
@@ -59948,7 +59959,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132037,
@@ -59965,7 +59976,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132038,
@@ -59982,7 +59993,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132039,
@@ -59999,7 +60010,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132040,
@@ -60016,7 +60027,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132041,
@@ -60033,7 +60044,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132042,
@@ -60050,7 +60061,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132043,
@@ -60067,7 +60078,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132044,
@@ -60084,7 +60095,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132045,
@@ -60101,7 +60112,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132046,
@@ -60118,7 +60129,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132047,
@@ -60135,7 +60146,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132048,
@@ -60152,7 +60163,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132049,
@@ -60169,7 +60180,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132050,
@@ -60186,7 +60197,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132051,
@@ -60203,7 +60214,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132052,
@@ -60220,7 +60231,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132053,
@@ -60237,7 +60248,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132054,
@@ -60254,7 +60265,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132055,
@@ -60271,7 +60282,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132056,
@@ -60288,7 +60299,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132057,
@@ -60305,7 +60316,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132058,
@@ -60322,7 +60333,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132059,
@@ -60339,7 +60350,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132060,
@@ -60356,7 +60367,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132061,
@@ -60373,7 +60384,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132062,
@@ -60390,7 +60401,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132063,
@@ -60407,7 +60418,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132064,
@@ -60424,7 +60435,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132065,
@@ -60441,7 +60452,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132066,
@@ -60458,7 +60469,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132067,
@@ -60475,7 +60486,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132068,
@@ -60492,7 +60503,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132069,
@@ -60509,7 +60520,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132070,
@@ -60526,7 +60537,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132071,
@@ -60543,7 +60554,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132072,
@@ -60560,7 +60571,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132073,
@@ -60577,7 +60588,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132074,
@@ -60594,7 +60605,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132075,
@@ -60611,7 +60622,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132076,
@@ -60628,7 +60639,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132077,
@@ -60645,7 +60656,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132078,
@@ -60662,7 +60673,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132079,
@@ -60679,7 +60690,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132080,
@@ -60696,7 +60707,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132081,
@@ -60713,7 +60724,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132082,
@@ -60730,7 +60741,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132083,
@@ -60747,7 +60758,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132084,
@@ -60764,7 +60775,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132085,
@@ -60781,7 +60792,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132086,
@@ -60798,7 +60809,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132087,
@@ -60815,7 +60826,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132088,
@@ -60832,7 +60843,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132089,
@@ -60849,7 +60860,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132090,
@@ -60866,7 +60877,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132091,
@@ -60883,7 +60894,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132092,
@@ -60900,7 +60911,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132093,
@@ -60917,7 +60928,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132094,
@@ -60934,7 +60945,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132095,
@@ -60951,7 +60962,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132096,
@@ -60968,7 +60979,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132097,
@@ -60985,7 +60996,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132098,
@@ -61002,7 +61013,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132099,
@@ -61019,7 +61030,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132100,
@@ -61036,7 +61047,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132101,
@@ -61053,7 +61064,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132102,
@@ -61070,7 +61081,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132103,
@@ -61087,7 +61098,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132104,
@@ -61104,7 +61115,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132105,
@@ -61121,7 +61132,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132106,
@@ -61138,7 +61149,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132107,
@@ -61155,7 +61166,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132108,
@@ -61172,7 +61183,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132109,
@@ -61189,7 +61200,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132110,
@@ -61206,7 +61217,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132111,
@@ -61223,7 +61234,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132112,
@@ -61240,7 +61251,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132113,
@@ -61257,7 +61268,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132114,
@@ -61274,7 +61285,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132115,
@@ -61291,7 +61302,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132116,
@@ -61308,7 +61319,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132117,
@@ -61325,7 +61336,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132118,
@@ -61342,7 +61353,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132119,
@@ -61359,7 +61370,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132120,
@@ -61376,7 +61387,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132121,
@@ -61393,7 +61404,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132122,
@@ -61410,7 +61421,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132123,
@@ -61427,7 +61438,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132124,
@@ -61444,7 +61455,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132125,
@@ -61461,7 +61472,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132126,
@@ -61478,7 +61489,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132127,
@@ -61495,7 +61506,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132128,
@@ -61512,7 +61523,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132163,
@@ -61529,7 +61540,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132165,
@@ -61546,7 +61557,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132166,
@@ -61563,7 +61574,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132167,
@@ -61580,7 +61591,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132168,
@@ -61597,7 +61608,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132169,
@@ -61614,7 +61625,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132170,
@@ -61631,7 +61642,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132171,
@@ -61648,7 +61659,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132172,
@@ -61665,7 +61676,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132173,
@@ -61682,7 +61693,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132174,
@@ -61699,7 +61710,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132175,
@@ -61716,7 +61727,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132176,
@@ -61733,7 +61744,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132177,
@@ -61750,7 +61761,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132178,
@@ -61767,7 +61778,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132179,
@@ -61784,7 +61795,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132180,
@@ -61801,7 +61812,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132181,
@@ -61818,7 +61829,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132182,
@@ -61835,7 +61846,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132183,
@@ -61852,7 +61863,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132184,
@@ -61869,7 +61880,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132185,
@@ -61886,7 +61897,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132186,
@@ -61903,7 +61914,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132187,
@@ -61920,7 +61931,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132188,
@@ -61937,7 +61948,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132189,
@@ -61954,7 +61965,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132190,
@@ -61971,7 +61982,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132191,
@@ -61988,7 +61999,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132192,
@@ -62005,7 +62016,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132193,
@@ -62022,7 +62033,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132194,
@@ -62039,7 +62050,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132195,
@@ -62056,7 +62067,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132196,
@@ -62073,7 +62084,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132197,
@@ -62090,7 +62101,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132198,
@@ -62107,7 +62118,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132199,
@@ -62124,7 +62135,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132200,
@@ -62141,7 +62152,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132201,
@@ -62158,7 +62169,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132202,
@@ -62175,7 +62186,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132203,
@@ -62192,7 +62203,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132204,
@@ -62209,7 +62220,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132205,
@@ -62226,7 +62237,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132206,
@@ -62243,7 +62254,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132207,
@@ -62260,7 +62271,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132208,
@@ -62277,7 +62288,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132209,
@@ -62294,7 +62305,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132210,
@@ -62311,7 +62322,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132211,
@@ -62328,7 +62339,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132212,
@@ -62345,7 +62356,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132213,
@@ -62362,7 +62373,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132214,
@@ -62379,7 +62390,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132215,
@@ -62396,7 +62407,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132216,
@@ -62413,7 +62424,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132217,
@@ -62430,7 +62441,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132218,
@@ -62447,7 +62458,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132219,
@@ -62464,7 +62475,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132220,
@@ -62481,7 +62492,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132221,
@@ -62498,7 +62509,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132222,
@@ -62515,7 +62526,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132223,
@@ -62532,7 +62543,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132224,
@@ -62549,7 +62560,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132225,
@@ -62566,7 +62577,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132226,
@@ -62583,7 +62594,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132227,
@@ -62600,7 +62611,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132228,
@@ -62617,7 +62628,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132229,
@@ -62634,7 +62645,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132230,
@@ -62651,7 +62662,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132231,
@@ -62668,7 +62679,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132232,
@@ -62685,7 +62696,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132233,
@@ -62702,7 +62713,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132234,
@@ -62719,7 +62730,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132235,
@@ -62736,7 +62747,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132236,
@@ -62753,7 +62764,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132237,
@@ -62770,7 +62781,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132238,
@@ -62787,7 +62798,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132239,
@@ -62804,7 +62815,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132240,
@@ -62821,7 +62832,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132241,
@@ -62838,7 +62849,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132242,
@@ -62855,7 +62866,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132243,
@@ -62872,7 +62883,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132244,
@@ -62889,7 +62900,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132245,
@@ -62906,7 +62917,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132246,
@@ -62923,7 +62934,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132247,
@@ -62940,7 +62951,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132248,
@@ -62957,7 +62968,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132249,
@@ -62974,7 +62985,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132250,
@@ -62991,7 +63002,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132251,
@@ -63008,7 +63019,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132252,
@@ -63025,7 +63036,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132253,
@@ -63042,7 +63053,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132254,
@@ -63059,7 +63070,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132255,
@@ -63076,7 +63087,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132256,
@@ -63093,7 +63104,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132257,
@@ -63110,7 +63121,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132258,
@@ -63127,7 +63138,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132259,
@@ -63144,7 +63155,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132260,
@@ -63161,7 +63172,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132261,
@@ -63178,7 +63189,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132262,
@@ -63195,7 +63206,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132263,
@@ -63212,7 +63223,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132264,
@@ -63229,7 +63240,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132265,
@@ -63246,7 +63257,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132266,
@@ -63263,7 +63274,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132267,
@@ -63280,7 +63291,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132268,
@@ -63297,7 +63308,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132269,
@@ -63314,7 +63325,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132270,
@@ -63331,7 +63342,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132271,
@@ -63348,7 +63359,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132272,
@@ -63365,7 +63376,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132273,
@@ -63382,7 +63393,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132274,
@@ -63399,7 +63410,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132275,
@@ -63416,7 +63427,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132276,
@@ -63433,7 +63444,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132277,
@@ -63450,7 +63461,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132278,
@@ -63467,7 +63478,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132279,
@@ -63484,7 +63495,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132280,
@@ -63501,7 +63512,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132281,
@@ -63518,7 +63529,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132282,
@@ -63535,7 +63546,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132283,
@@ -63552,7 +63563,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132284,
@@ -63569,7 +63580,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132285,
@@ -63586,7 +63597,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132286,
@@ -63603,7 +63614,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132287,
@@ -63620,7 +63631,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132288,
@@ -63637,7 +63648,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132289,
@@ -63654,7 +63665,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132290,
@@ -63671,7 +63682,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132291,
@@ -63688,7 +63699,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132292,
@@ -63705,7 +63716,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132293,
@@ -63722,7 +63733,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132294,
@@ -63739,7 +63750,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132295,
@@ -63756,7 +63767,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132296,
@@ -63773,7 +63784,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132297,
@@ -63790,7 +63801,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132298,
@@ -63807,7 +63818,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132299,
@@ -63824,7 +63835,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132300,
@@ -63841,7 +63852,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132301,
@@ -63858,7 +63869,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132302,
@@ -63875,7 +63886,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132303,
@@ -63892,7 +63903,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132305,
@@ -63909,7 +63920,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132306,
@@ -63926,7 +63937,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132307,
@@ -63943,7 +63954,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132308,
@@ -63960,7 +63971,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132309,
@@ -63977,7 +63988,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132310,
@@ -63994,7 +64005,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132311,
@@ -64011,7 +64022,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132312,
@@ -64028,7 +64039,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132313,
@@ -64045,7 +64056,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132314,
@@ -64062,7 +64073,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132315,
@@ -64079,7 +64090,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132316,
@@ -64096,7 +64107,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132317,
@@ -64113,7 +64124,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132318,
@@ -64130,7 +64141,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132319,
@@ -64147,7 +64158,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132320,
@@ -64164,7 +64175,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132321,
@@ -64181,7 +64192,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132322,
@@ -64198,7 +64209,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132323,
@@ -64215,7 +64226,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132324,
@@ -64232,7 +64243,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132325,
@@ -64249,7 +64260,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132326,
@@ -64266,7 +64277,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132327,
@@ -64283,7 +64294,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132330,
@@ -64300,7 +64311,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132331,
@@ -64317,7 +64328,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132334,
@@ -64334,7 +64345,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132335,
@@ -64351,7 +64362,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132360,
@@ -64368,7 +64379,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132362,
@@ -64385,7 +64396,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132376,
@@ -64402,7 +64413,7 @@ export const soccerTeams: Team[] = [
     isNational: true,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132404,
@@ -64419,7 +64430,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132407,
@@ -64436,7 +64447,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132409,
@@ -64453,7 +64464,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132410,
@@ -64470,7 +64481,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132411,
@@ -64487,7 +64498,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132413,
@@ -64504,7 +64515,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132414,
@@ -64521,7 +64532,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132415,
@@ -64538,7 +64549,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132416,
@@ -64555,7 +64566,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132417,
@@ -64572,7 +64583,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132424,
@@ -64589,7 +64600,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132427,
@@ -64606,7 +64617,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132429,
@@ -64623,7 +64634,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132441,
@@ -64640,7 +64651,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132442,
@@ -64657,7 +64668,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132443,
@@ -64674,7 +64685,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132447,
@@ -64691,7 +64702,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132448,
@@ -64708,7 +64719,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132449,
@@ -64725,7 +64736,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132451,
@@ -64742,7 +64753,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132476,
@@ -64759,7 +64770,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132477,
@@ -64776,7 +64787,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132478,
@@ -64793,7 +64804,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132480,
@@ -64810,7 +64821,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132481,
@@ -64827,7 +64838,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132483,
@@ -64844,7 +64855,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132484,
@@ -64861,7 +64872,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132485,
@@ -64878,7 +64889,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132486,
@@ -64895,7 +64906,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132487,
@@ -64912,7 +64923,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132488,
@@ -64929,7 +64940,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132489,
@@ -64946,7 +64957,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132490,
@@ -64963,7 +64974,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132491,
@@ -64980,7 +64991,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132551,
@@ -64997,7 +65008,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132552,
@@ -65014,7 +65025,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132553,
@@ -65031,7 +65042,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132601,
@@ -65048,7 +65059,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132602,
@@ -65065,7 +65076,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132608,
@@ -65082,7 +65093,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132613,
@@ -65099,7 +65110,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132614,
@@ -65116,7 +65127,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132644,
@@ -65133,7 +65144,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132645,
@@ -65150,7 +65161,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132648,
@@ -65167,7 +65178,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132651,
@@ -65184,7 +65195,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132652,
@@ -65201,7 +65212,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132653,
@@ -65218,7 +65229,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132654,
@@ -65235,7 +65246,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132655,
@@ -65252,7 +65263,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132656,
@@ -65269,7 +65280,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132657,
@@ -65286,7 +65297,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132658,
@@ -65303,7 +65314,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132659,
@@ -65320,7 +65331,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132660,
@@ -65337,7 +65348,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132661,
@@ -65354,7 +65365,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132662,
@@ -65371,7 +65382,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132663,
@@ -65388,7 +65399,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132664,
@@ -65405,7 +65416,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132665,
@@ -65422,7 +65433,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132666,
@@ -65439,7 +65450,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132667,
@@ -65456,7 +65467,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132668,
@@ -65473,7 +65484,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132669,
@@ -65490,7 +65501,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132670,
@@ -65507,7 +65518,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
   {
     id: 132771,
@@ -65524,7 +65535,7 @@ export const soccerTeams: Team[] = [
     isNational: false,
     city: null,
     location: null,
-    established: 0
+    established: 0,
   },
 ];
 

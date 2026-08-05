@@ -10,13 +10,13 @@ import {
   getWidgetSizeOptions,
   isGameWidgetType,
 } from "constants/exploreWidgets";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors } from "constants/styles";
 import { useExploreWidgetGames } from "hooks/WidgetHooks/useExploreWidgetGames";
 import type { ReactNode } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
-  PanResponder,
   StyleProp,
   StyleSheet,
   Text,
@@ -25,6 +25,11 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import DraggableFlatList, {
+  RenderItemParams,
+  ScaleDecorator,
+  ShadowDecorator,
+} from "react-native-draggable-flatlist";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import { widgetDashboardStyles } from "styles/ExploreStyles/WidgetDashboardStyles";
 import {
@@ -34,8 +39,6 @@ import {
 } from "types/widgets";
 import { buildWidgetRows, DashboardWidgetRow } from "utils/exploreWidgetLayout";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
-import NewsWidget from "./Widgets/NewsWidget";
-import StandingsWidget from "./Widgets/StandingsWidget";
 import WidgetSlider, {
   WidgetEditControls,
   WidgetSlide,
@@ -48,6 +51,7 @@ type ExploreWidgetDashboardProps = {
   onRemoveWidget: (widgetId: string) => void;
   onResizeWidget: (widgetId: string, size: ExploreWidgetSize) => void;
   onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
+  onReorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
 };
 
 type GameWidgetSection = {
@@ -60,7 +64,7 @@ type WidgetEditProps = {
   widgetId: string;
   widgetSize: ExploreWidgetSize;
   isEditing: boolean;
-  availableSizeOptions: ExploreWidgetSize[];
+  availableSizeOptions: readonly ExploreWidgetSize[];
   onResizeWidget: (widgetId: string, size: ExploreWidgetSize) => void;
   onRemoveWidget: (widgetId: string) => void;
   onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
@@ -69,85 +73,54 @@ type WidgetEditProps = {
   placeholderHeight?: number;
 };
 
-type DraggableWidgetFrameProps = {
+type WidgetFrameProps = {
   children: ReactNode;
-  dragEnabled: boolean;
   style: StyleProp<ViewStyle>;
-  widgetId: string;
-  canMoveUp: boolean;
-  canMoveDown: boolean;
-  onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
+  isEditing: boolean;
+  isActive?: boolean;
+  onDrag?: () => void;
+  isDark: boolean;
 };
 
-const WIDGET_FRAME_DRAG_THRESHOLD = 44;
-
-function DraggableWidgetFrame({
+function WidgetFrame({
   children,
-  dragEnabled,
   style,
-  widgetId,
-  canMoveUp,
-  canMoveDown,
-  onMoveWidget,
-}: DraggableWidgetFrameProps) {
-  const dragOffsetRef = useRef(0);
-  const canMoveUpRef = useRef(canMoveUp);
-  const canMoveDownRef = useRef(canMoveDown);
-  const onMoveWidgetRef = useRef(onMoveWidget);
-
-  canMoveUpRef.current = canMoveUp;
-  canMoveDownRef.current = canMoveDown;
-  onMoveWidgetRef.current = onMoveWidget;
-
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponderCapture: (_, gestureState) =>
-          dragEnabled &&
-          Math.abs(gestureState.dy) > 8 &&
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx),
-        onStartShouldSetPanResponder: () => false,
-        onMoveShouldSetPanResponder: (_, gestureState) =>
-          dragEnabled &&
-          Math.abs(gestureState.dy) > 8 &&
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx),
-        onPanResponderTerminationRequest: () => false,
-        onPanResponderGrant: () => {
-          dragOffsetRef.current = 0;
-        },
-        onPanResponderMove: (_, gestureState) => {
-          const delta = gestureState.dy - dragOffsetRef.current;
-
-          if (delta <= -WIDGET_FRAME_DRAG_THRESHOLD && canMoveUpRef.current) {
-            onMoveWidgetRef.current(widgetId, -1);
-            dragOffsetRef.current = gestureState.dy;
-          }
-
-          if (delta >= WIDGET_FRAME_DRAG_THRESHOLD && canMoveDownRef.current) {
-            onMoveWidgetRef.current(widgetId, 1);
-            dragOffsetRef.current = gestureState.dy;
-          }
-        },
-        onPanResponderRelease: () => {
-          dragOffsetRef.current = 0;
-        },
-        onPanResponderTerminate: () => {
-          dragOffsetRef.current = 0;
-        },
-        onShouldBlockNativeResponder: () => true,
-      }),
-    [dragEnabled, widgetId],
-  );
-
+  isEditing,
+  isActive = false,
+  onDrag,
+  isDark,
+}: WidgetFrameProps) {
   return (
     <View
-      style={[style, dragEnabled && draggableFrameStyles.dragEnabled]}
-      {...(dragEnabled ? panResponder.panHandlers : {})}
+      style={[
+        style,
+        isEditing && draggableFrameStyles.dragEnabled,
+        isActive && draggableFrameStyles.dragActive,
+      ]}
       accessibilityHint={
-        dragEnabled ? "Drag up or down to reposition this widget" : undefined
+        isEditing ? "Long press the reorder handle to move this widget" : undefined
       }
     >
       {children}
+
+      {isEditing && onDrag && (
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          onLongPress={onDrag}
+          delayLongPress={120}
+          style={draggableFrameStyles.dragHandle}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Reorder widget"
+          accessibilityHint="Long press and drag to change this widget's position"
+        >
+          <Ionicons
+            name="reorder-three-outline"
+            size={20}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -159,6 +132,7 @@ export default function ExploreWidgetDashboard({
   onRemoveWidget,
   onResizeWidget,
   onMoveWidget,
+  onReorderWidgets,
 }: ExploreWidgetDashboardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const { width: screenWidth } = useWindowDimensions();
@@ -188,7 +162,7 @@ export default function ExploreWidgetDashboard({
     nflGames,
     cfbGames,
     nhlGames,
-    favoriteTeams,
+    loading: gameWidgetsLoading,
     error,
     refresh,
   } = useExploreWidgetGames({
@@ -281,10 +255,6 @@ export default function ExploreWidgetDashboard({
     () => buildWidgetRows(visibleWidgets),
     [visibleWidgets],
   );
-  const favoriteLeagues = useMemo(
-    () => Array.from(new Set(favoriteTeams.map((team) => team.league))),
-    [favoriteTeams],
-  );
   const hasSelectedGameWidget = selectedGameWidgetTypes.length > 0;
 
   const renderEmptyBoard = () => (
@@ -298,7 +268,7 @@ export default function ExploreWidgetDashboard({
       </View>
       <Text style={dashboardStyles.emptyTitle}>Build your Explore board</Text>
       <Text style={dashboardStyles.emptyText}>
-        Add game cards, team shortcuts, news, leaders, and standings.
+        Add game cards and favorite-team shortcuts.
       </Text>
       <TouchableOpacity
         activeOpacity={activeOpacity}
@@ -352,7 +322,13 @@ export default function ExploreWidgetDashboard({
     </View>
   );
 
-  if (selectedWidgets.length === 0) {
+  const renderLoadingCard = (height: number) => (
+    <View style={[dashboardStyles.loadingCard, { height }]}>
+      <CustomActivityIndicator />
+    </View>
+  );
+
+  if (visibleWidgets.length === 0) {
     return renderEmptyBoard();
   }
 
@@ -385,7 +361,9 @@ export default function ExploreWidgetDashboard({
     if (gameSection) {
       return (
         <View style={dashboardStyles.section}>
-          {gameSection.slides.length > 0 ? (
+          {gameWidgetsLoading ? (
+            renderLoadingCard(widgetHeight)
+          ) : gameSection.slides.length > 0 ? (
             <WidgetSlider
               games={gameSection.slides}
               initialHeight={widgetHeight}
@@ -421,31 +399,6 @@ export default function ExploreWidgetDashboard({
       );
     }
 
-    if (widget.type === "trending_news") {
-      return (
-        <NewsWidget
-          isDark={isDark}
-          size={widget.size}
-          containerWidth={widgetWidth}
-          containerHeight={widgetHeight}
-          {...editProps}
-        />
-      );
-    }
-
-    if (widget.type === "standings") {
-      return (
-        <StandingsWidget
-          isDark={isDark}
-          size={widget.size}
-          containerWidth={widgetWidth}
-          containerHeight={widgetHeight}
-          favoriteLeagues={favoriteLeagues}
-          {...editProps}
-        />
-      );
-    }
-
     return renderEmptyCard(widget.type, widget.title, {
       ...editProps,
       placeholderHeight: widgetHeight,
@@ -462,13 +415,10 @@ export default function ExploreWidgetDashboard({
           const widgetHeight = EXPLORE_WIDGET_HEIGHTS[cell.widget.size];
 
           return (
-            <DraggableWidgetFrame
+            <WidgetFrame
               key={cell.widget.id}
-              dragEnabled={isEditMode}
-              widgetId={cell.widget.id}
-              canMoveUp={cell.index > 0}
-              canMoveDown={cell.index < visibleWidgets.length - 1}
-              onMoveWidget={onMoveWidget}
+              isEditing={false}
+              isDark={isDark}
               style={[
                 dashboardStyles.gridCell,
                 isSmallRow
@@ -487,7 +437,7 @@ export default function ExploreWidgetDashboard({
                 widgetWidth,
                 widgetHeight,
               })}
-            </DraggableWidgetFrame>
+            </WidgetFrame>
           );
         })}
 
@@ -497,6 +447,64 @@ export default function ExploreWidgetDashboard({
       </View>
     );
   };
+
+  const renderDraggableWidget = ({
+    item: widget,
+    drag,
+    isActive,
+    getIndex,
+  }: RenderItemParams<ExploreWidgetConfig>) => {
+    const index = getIndex() ?? 0;
+    const widgetHeight = EXPLORE_WIDGET_HEIGHTS[widget.size];
+
+    return (
+      <ScaleDecorator activeScale={1.015}>
+        <ShadowDecorator>
+          <WidgetFrame
+            isEditing
+            isActive={isActive}
+            onDrag={drag}
+            isDark={isDark}
+            style={[
+              dashboardStyles.gridCell,
+              dashboardStyles.gridCellFull,
+              dashboardStyles.draggableCell,
+              {
+                height: widgetHeight,
+                minHeight: EXPLORE_WIDGET_MIN_HEIGHTS[widget.size],
+                maxHeight: EXPLORE_WIDGET_MAX_HEIGHTS[widget.size],
+              },
+            ]}
+          >
+            {renderWidget({
+              widget,
+              index,
+              widgetWidth: dashboardWidth,
+              widgetHeight,
+            })}
+          </WidgetFrame>
+        </ShadowDecorator>
+      </ScaleDecorator>
+    );
+  };
+
+  const renderDragPlaceholder = ({ item }: { item: ExploreWidgetConfig }) => (
+    <View
+      style={[
+        dashboardStyles.dropPlaceholder,
+        { height: EXPLORE_WIDGET_HEIGHTS[item.size] },
+      ]}
+    >
+      <Ionicons
+        name="download-outline"
+        size={18}
+        color={isDark ? Colors.dark.leafGreen : Colors.light.green}
+      />
+      <Text style={dashboardStyles.dropPlaceholderText}>
+        Drop widget here
+      </Text>
+    </View>
+  );
 
   const renderDashboardHeader = () => (
     <>
@@ -569,6 +577,29 @@ export default function ExploreWidgetDashboard({
     </>
   );
 
+  if (isEditMode) {
+    return (
+      <DraggableFlatList
+        data={visibleWidgets}
+        keyExtractor={(widget) => widget.id}
+        style={dashboardStyles.scroll}
+        containerStyle={dashboardStyles.scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={dashboardStyles.content}
+        renderItem={renderDraggableWidget}
+        renderPlaceholder={renderDragPlaceholder}
+        ListHeaderComponent={renderDashboardHeader}
+        activationDistance={8}
+        autoscrollThreshold={96}
+        autoscrollSpeed={160}
+        dragItemOverflow
+        onDragEnd={({ data }) => {
+          onReorderWidgets(data);
+        }}
+      />
+    );
+  }
+
   return (
     <FlatList
       data={widgetRows}
@@ -578,7 +609,6 @@ export default function ExploreWidgetDashboard({
       contentContainerStyle={dashboardStyles.content}
       renderItem={renderWidgetRow}
       ListHeaderComponent={renderDashboardHeader}
-      scrollEnabled={!isEditMode}
     />
   );
 }
@@ -586,5 +616,20 @@ export default function ExploreWidgetDashboard({
 const draggableFrameStyles = StyleSheet.create({
   dragEnabled: {
     zIndex: 20,
+  },
+  dragActive: {
+    opacity: 0.94,
+  },
+  dragHandle: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 40,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(127,127,127,0.18)",
   },
 });
