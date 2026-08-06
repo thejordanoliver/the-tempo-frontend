@@ -29,7 +29,7 @@ import {
   getFirstSeasonGame,
   isSameCalendarMonth,
 } from "utils/seasonGames";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../../components/CustomHeader";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 function getMonthKeyFromDate(date: Date | null) {
@@ -192,7 +192,7 @@ export default function TeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}

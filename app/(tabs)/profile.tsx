@@ -8,7 +8,7 @@ import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
 import BioSection from "../../components/Profile/BioSection";
 import FollowStats from "../../components/Profile/FollowStats";
@@ -271,7 +271,7 @@ export default function ProfileScreen() {
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           title={headerTitle}
           tabName="Profile"
           onLogout={() => {

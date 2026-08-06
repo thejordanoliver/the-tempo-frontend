@@ -13,7 +13,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import CustomActivityIndicator from "../../../components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../../components/CustomHeader";
 import GameHeader from "../../../components/Sports/Baseball/GameDetails/GameHeader";
 import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
@@ -277,7 +277,7 @@ export default function GameDetailsScreen(
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Game"
           onBack={goBack}
           homeLogo={homeHeaderLogo}

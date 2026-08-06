@@ -3,8 +3,7 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { getBroadcastDisplay } from "@/utils/games";
 import displayeValue from "@/utils/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { Image, Text, View } from "react-native";
 import {
@@ -31,15 +30,6 @@ export default function BaseballGameWidget({
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
-  const global = globalStyles(isDark);
-
-  if (loading || !game) {
-    return (
-      <View style={global.emptyContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
 
   const gameDateObj = new Date(game.date);
   const formattedDate = gameDateObj.toLocaleDateString([], {
@@ -78,11 +68,12 @@ export default function BaseballGameWidget({
 
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
+  const state = game.status.state ?? "";
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const isScheduled = state === "pre";
+  const isFinal = state === "post";
   const inProgress = gameStatusDescription === "In Progress";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -212,8 +203,11 @@ export default function BaseballGameWidget({
           </Text>
         </View>
       )}
+
       <View style={styles.basesContainer}>
-        <BasesIndicator bases={bases} isDark={isDark} size={8} />
+        {inProgress && (
+          <BasesIndicator bases={bases} isDark={isDark} size={8} />
+        )}
       </View>
 
       <View style={styles.wrapper}>

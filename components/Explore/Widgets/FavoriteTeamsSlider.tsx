@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM } from "constants/exploreWidgetSizes";
 import { Colors, Fonts } from "constants/styles";
 import { useRouter } from "expo-router";
 import { ExploreFavoriteTeam } from "hooks/WidgetHooks/useExploreWidgetGames";
@@ -189,7 +190,7 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
     },
     dots: {
       position: "absolute",
-      bottom: 12,
+      bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
       alignSelf: "center",
       flexDirection: "row",
       gap: 5,

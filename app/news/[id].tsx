@@ -1,6 +1,6 @@
 import AppVideo from "@/components/AppVideo";
+import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -69,7 +69,7 @@ export default function ArticleScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle title="" onBack={() => navigation.goBack?.()} />
+        <CustomHeader title="" onBack={() => navigation.goBack?.()} />
       ),
     });
   }, [navigation]);

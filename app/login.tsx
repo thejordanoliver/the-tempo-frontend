@@ -5,7 +5,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import ConfirmModal from "../components/ConfirmModal";
 import CropEditorModal from "../components/CropEditorModal";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { CustomHeader } from "../components/CustomHeader";
 import SignInForm from "../components/Forms/SignInForm";
 import SignUpForm from "../components/Forms/SignUpForm";
 import TabBar from "../components/TabBars/TabBar";
@@ -251,7 +251,7 @@ export default function LoginScreen() {
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           title={headerTitle}
           tabName="Login"
           onBack={() => {

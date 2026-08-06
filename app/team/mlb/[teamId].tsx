@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -9,7 +10,6 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
@@ -218,7 +218,7 @@ export default function TeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}

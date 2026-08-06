@@ -13,7 +13,7 @@ import * as React from "react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import SportsListModal, {
   SportsListModalRef,
 } from "../../components/League/SportsListModal";
@@ -158,7 +158,7 @@ export default function NFLLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={league}
           modalVisible={leagueModalVisible}

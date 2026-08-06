@@ -1,4 +1,4 @@
-import { CustomHeaderTitle } from "@/components/CustomHeaderTitle";
+import { CustomHeader } from "@/components/CustomHeader";
 import BadgeCard from "@/components/Profile/Badges/BadgeCard";
 import PillTabs from "@/components/TabBars/PillTabs";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
@@ -89,7 +89,7 @@ export default function BadgesScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle title="Badges" tabName="Badges" onBack={goBack} />
+        <CustomHeader title="Badges" tabName="Badges" onBack={goBack} />
       ),
     });
   }, [goBack, navigation]);

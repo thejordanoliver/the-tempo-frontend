@@ -2,8 +2,7 @@ import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGame } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { Image, Text, View } from "react-native";
@@ -37,7 +36,6 @@ export default function FootballGameWidget({
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
-  const global = globalStyles(isDark);
 
   const gameDateObj = new Date(game.date);
   const formattedDate = gameDateObj.toLocaleDateString([], {
@@ -82,12 +80,13 @@ export default function FootballGameWidget({
   const awayName = awayTeam?.code;
   const homeName = homeTeam?.code;
 
-  const gameStatusDescription = game?.status.description ?? "";
-  const gameStatusDetail = game?.status.shortDetail ?? "";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const state = game.status.state ?? "";
+  const gameStatusDescription = game.status.description ?? "";
+  const gameStatusDetail = game.status.shortDetail ?? "";
+  const isScheduled = state === "pre";
+  const isFinal = state === "post";
   const inProgress = gameStatusDescription === "In Progress";
   const isHalftime = gameStatusDescription === "Halftime";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -143,17 +142,6 @@ export default function FootballGameWidget({
     height,
     width,
   );
-
-  // -------------------------
-  // Loading state
-  // -------------------------
-  if (loading) {
-    return (
-      <View style={global.emptyContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
 
   const awayTeamContent = (
     <View style={styles.teamWrapper}>

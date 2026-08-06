@@ -1,6 +1,6 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TextInputComponent from "components/TextInput";
 import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -134,7 +134,7 @@ export default function SettingsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeaderTitle title="Settings" onBack={goBack} />,
+      header: () => <CustomHeader title="Settings" onBack={goBack} />,
     });
   }, [navigation]);
 

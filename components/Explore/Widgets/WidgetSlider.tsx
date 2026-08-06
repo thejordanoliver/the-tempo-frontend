@@ -3,6 +3,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
 import { Ionicons } from "@expo/vector-icons";
+import { EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM } from "constants/exploreWidgetSizes";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors, activeOpacity } from "constants/styles";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -711,7 +712,7 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
     },
     dots: {
       position: "absolute",
-      bottom: 10,
+      bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
       alignSelf: "center",
       flexDirection: "row",
       gap: 5,

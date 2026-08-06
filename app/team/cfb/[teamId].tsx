@@ -28,7 +28,7 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getFirstSeasonGame } from "utils/seasonGames";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../../components/CustomHeader";
 
 export default function TeamDetailScreen() {
   const league = "CFB";
@@ -126,7 +126,7 @@ export default function TeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={team?.id}
           logo={teamLogo}
           teamColor={teamColor}

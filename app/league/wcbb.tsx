@@ -17,7 +17,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
@@ -111,7 +111,7 @@ export default function WCBBLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={"Women's College Basketball" as "WCBB"}
           modalVisible={isDropdownOpen}

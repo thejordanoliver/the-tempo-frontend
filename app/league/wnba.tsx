@@ -11,7 +11,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
@@ -83,7 +83,7 @@ export default function WNBALeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={league}
           modalVisible={leagueModalVisible}

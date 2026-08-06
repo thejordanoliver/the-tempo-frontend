@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { CustomHeader } from "../../components/CustomHeader";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
 import LeagueGamesList from "../../components/League/LeagueGamesList";
 import NewsList from "../../components/News/NewsList";
@@ -12,18 +12,15 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useHomeData } from "../../hooks/useHomeData";
 import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 
-type HomeTab = "scores" | "news";
-
 export default function HomeScreen() {
   const { resolvedColorScheme, viewMode } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
   const styles = homeStyles(isDark);
-
-  const [isDraggingFavorites, setIsDraggingFavorites] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<HomeTab>("scores");
+  const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
+  const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
+    "scores",
+  );
 
   const pagerRef = useRef<PagerView>(null);
 
@@ -40,16 +37,16 @@ export default function HomeScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => null,
+      header: () => <CustomHeader tabName="Home" />,
     });
   }, [navigation]);
 
-  const handleTabPress = useCallback((tab: HomeTab) => {
+  const handleTabPress = useCallback((tab: "scores" | "news") => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
   }, []);
 
-  const renderRefreshControl = useCallback(
+  const refreshControl = useCallback(
     () => (
       <RefreshControl
         refreshing={refreshing}
@@ -58,18 +55,11 @@ export default function HomeScreen() {
         colors={[isDark ? Colors.white : Colors.black]}
       />
     ),
-    [handleRefresh, isDark, refreshing],
+    [refreshing, handleRefresh, isDark],
   );
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
-    >
+    <View style={styles.container}>
       <View style={styles.contentArea}>
         <View style={styles.tabBarWrapper}>
           <TabBar
@@ -85,16 +75,16 @@ export default function HomeScreen() {
           style={{ flex: 1 }}
           initialPage={0}
           scrollEnabled={!isDraggingFavorites}
-          onPageSelected={(event) => {
-            const index = event.nativeEvent.position;
+          onPageSelected={(e) => {
+            const index = e.nativeEvent.position;
             setSelectedTab(index === 0 ? "scores" : "news");
           }}
         >
+          {/* SCORES PAGE */}
           <View key="scores" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              refreshControl={renderRefreshControl()}
-              contentInsetAdjustmentBehavior="never"
+              refreshControl={refreshControl()}
             >
               <FavoritesScroll
                 favoriteTeamIds={favorites}
@@ -115,11 +105,11 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
+          {/* NEWS */}
           <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
-              refreshControl={renderRefreshControl()}
-              contentInsetAdjustmentBehavior="never"
+              refreshControl={refreshControl()}
             >
               <NewsList
                 items={articles}

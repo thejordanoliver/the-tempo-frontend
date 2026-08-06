@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import {
   GameHeader,
@@ -26,7 +27,6 @@ import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -270,7 +270,7 @@ export default function GameDetailsScreen(
     }
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Game"
           onBack={goBack}
           homeLogo={homeHeaderLogo}

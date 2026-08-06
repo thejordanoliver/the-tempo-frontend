@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
@@ -9,7 +10,6 @@ import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors, globalStyles } from "constants/styles";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -70,7 +70,7 @@ export default function PlayerDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           logo={teamLogo}
           teamColor={teamColor}
           onBack={() => navigation.goBack()}
@@ -124,7 +124,7 @@ export default function PlayerDetailScreen() {
         error={seasonsError}
         league={league}
       />
-      
+
       <PlayerAwardList player={player} />
     </ScrollView>
   );

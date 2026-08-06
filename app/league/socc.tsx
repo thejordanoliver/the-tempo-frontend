@@ -11,7 +11,7 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
 import CalendarModal from "../../components/CalendarModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import SportsListModal, {
@@ -123,7 +123,7 @@ export default function SoccerLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={leagueLabel}
           modalVisible={leagueModalVisible}

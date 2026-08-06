@@ -107,7 +107,7 @@ const resolveRacingLeague = (
 const FALLBACK_MESSAGE_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
 
-type CustomHeaderTitleProps = {
+type CustomHeaderProps = {
   title?: string;
   playerName?: string;
   tabName?: string;
@@ -1130,7 +1130,7 @@ const GameHeader = ({
 
 // ---------- MAIN COMPONENT ----------
 
-export function CustomHeaderTitle({
+export function CustomHeader({
   title,
   tabName,
   onLogout,
@@ -1175,7 +1175,7 @@ export function CustomHeaderTitle({
   messageFullName,
   messageIsOnline,
   messageIsVerified,
-}: CustomHeaderTitleProps) {
+}: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";

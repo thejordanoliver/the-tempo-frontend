@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
 import Button from "../components/Button";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { CustomHeader } from "../components/CustomHeader";
 import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../contexts/PreferencesContext";
@@ -50,7 +50,7 @@ export default function EditFavoritesScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           title="Edit Favorites"
           onBack={() => router.back()}
           onToggleLayout={toggleLayout}
@@ -63,7 +63,6 @@ export default function EditFavoritesScreen() {
   const handleSave = useCallback(async () => {
     const success = await saveFavorites();
     if (success) router.back();
-  
   }, [router, saveFavorites]);
 
   return (

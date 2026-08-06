@@ -21,7 +21,7 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getFootballSeason } from "utils/dateUtils";
 import { getFirstSeasonGame } from "utils/seasonGames";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../../components/CustomHeader";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
@@ -91,7 +91,7 @@ export default function TeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}

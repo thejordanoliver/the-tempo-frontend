@@ -1,6 +1,4 @@
 import { HockeyGame } from "@/types/hockey/hockey";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { globalStyles } from "constants/styles";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { Image, Text, View } from "react-native";
 import {
@@ -29,7 +27,6 @@ export default function HockeyGameWidget({
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
-  const global = globalStyles(isDark);
 
   const home = game.home;
   const away = game.away;
@@ -51,15 +48,16 @@ export default function HockeyGameWidget({
   const gameDate = safeDate(game?.date);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const isLoading = !game;
   const period = formatPeriod({ period: game.status.period, isNHL: true });
   const displayClock = game?.status.clock;
   const homeScore = game?.home.score;
   const awayScore = game?.away.score;
-  const gameStatusDescription = game?.status.description;
-  const gameStatusDetail = game?.status.shortDetail;
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
+
+  const state = game.status.state ?? "";
+  const gameStatusDescription = game.status.description ?? "";
+  const gameStatusDetail = game.status.shortDetail ?? "";
+  const isScheduled = state === "pre";
+  const isFinal = state === "post";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -119,17 +117,6 @@ export default function HockeyGameWidget({
     height,
     width,
   );
-
-  // -------------------------
-  // Loading state
-  // -------------------------
-  if (loading || isLoading) {
-    return (
-      <View style={global.emptyContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
 
   const awayTeamContent = (
     <View style={styles.teamWrapper}>

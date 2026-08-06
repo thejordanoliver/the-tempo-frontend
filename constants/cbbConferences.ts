@@ -1,14 +1,23 @@
 import MWCLogo from "assets/College_Logos/Conference_Logos/MWC.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+import A10Logo from "../assets/College_Logos/Conference_Logos/A10.png";
 import ACCLogo from "../assets/College_Logos/Conference_Logos/ACC.png";
+import WACLogo from "../assets/College_Logos/Conference_Logos/WAC.png";
+import MAACLogo from "../assets/College_Logos/Conference_Logos/MAAC.png";
+import ACCLogoLight from "../assets/College_Logos/Conference_Logos/ACCLight.png";
 import AMEastLogo from "../assets/College_Logos/Conference_Logos/AmericaEast.png";
 import AACLogo from "../assets/College_Logos/Conference_Logos/American.png";
 import BIG12Logo from "../assets/College_Logos/Conference_Logos/Big12.png";
 import BIG12Logolight from "../assets/College_Logos/Conference_Logos/BIG12Light.png";
+import BigEastLogo from "../assets/College_Logos/Conference_Logos/BigEast.png";
+import BigSkyLogo from "../assets/College_Logos/Conference_Logos/BigSky.png";
+import BigSouthLogo from "../assets/College_Logos/Conference_Logos/BigSouth.png";
 import BIG10Logo from "../assets/College_Logos/Conference_Logos/BigTen.png";
 import BIG10Logolight from "../assets/College_Logos/Conference_Logos/BIGTenLight.png";
+import BigWestLogo from "../assets/College_Logos/Conference_Logos/BigWest.png";
 import CAALogo from "../assets/College_Logos/Conference_Logos/CAA.png";
 import CUSALogo from "../assets/College_Logos/Conference_Logos/CUSA.png";
+import CUSALogoLight from "../assets/College_Logos/Conference_Logos/CUSALight.png";
 import IvyLeagueLogo from "../assets/College_Logos/Conference_Logos/IvyLeague.png";
 import MACLogo from "../assets/College_Logos/Conference_Logos/MAC.png";
 import MEACLogo from "../assets/College_Logos/Conference_Logos/MEAC.png";
@@ -19,7 +28,9 @@ import PatriotLeagueLogo from "../assets/College_Logos/Conference_Logos/PatriotL
 import SECLogo from "../assets/College_Logos/Conference_Logos/SEC.png";
 import SLCLogo from "../assets/College_Logos/Conference_Logos/SLC.png";
 import SoConLogo from "../assets/College_Logos/Conference_Logos/SoCon.png";
+import SunBeltLogo from "../assets/College_Logos/Conference_Logos/SunBelt.png";
 import SWACLogo from "../assets/College_Logos/Conference_Logos/SWAC.png";
+
 import { Conference } from "./cfbConferences";
 
 export const cbbConferences: Conference[] = [
@@ -30,10 +41,10 @@ export const cbbConferences: Conference[] = [
     name: "Atlantic 10 Conference",
     shortName: "A-10",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/atlantic_10.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: A10Logo,
+    logoLight: A10Logo,
+    color: "#E12726",
+    secondaryColor: "#231F20",
   },
   {
     id: 2,
@@ -43,7 +54,7 @@ export const cbbConferences: Conference[] = [
     shortName: "ACC",
     parentGroupId: 50,
     logo: ACCLogo,
-    logoLight: ACCLogo,
+    logoLight: ACCLogoLight,
     color: "#013CA6",
     secondaryColor: "#A5A9AB",
   },
@@ -56,8 +67,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: AMEastLogo,
     logoLight: AMEastLogo,
-    color: null,
-    secondaryColor: null,
+    color: "#201646",
+    secondaryColor: "#ff4438",
   },
   {
     id: 4,
@@ -68,8 +79,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: AACLogo,
     logoLight: AACLogo,
-    color: null,
-    secondaryColor: null,
+    color: "#041E41",
+    secondaryColor: "#EE2231",
   },
   {
     id: 5,
@@ -80,8 +91,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: null,
     logoLight: null,
-    color: null,
-    secondaryColor: null,
+    color: "#4E5055",
+    secondaryColor: "#F3E503",
   },
   {
     id: 6,
@@ -102,10 +113,10 @@ export const cbbConferences: Conference[] = [
     name: "Big East Conference",
     shortName: "Big East",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/big_east.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: BigEastLogo,
+    logoLight: BigEastLogo,
+    color: "#ED1A39",
+    secondaryColor: "#003E7E",
   },
   {
     id: 8,
@@ -114,10 +125,10 @@ export const cbbConferences: Conference[] = [
     name: "Big Sky Conference",
     shortName: "Big Sky",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/big_sky.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: BigSkyLogo,
+    logoLight: BigSkyLogo,
+    color: "#005DAA",
+    secondaryColor: "#70CDE3",
   },
   {
     id: 9,
@@ -126,10 +137,10 @@ export const cbbConferences: Conference[] = [
     name: "Big South Conference",
     shortName: "Big South",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/big_south.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: BigSouthLogo,
+    logoLight: BigSouthLogo,
+    color: "#0079C7",
+    secondaryColor: "#ffffff",
   },
   {
     id: 10,
@@ -150,10 +161,10 @@ export const cbbConferences: Conference[] = [
     name: "Big West Conference",
     shortName: "Big West",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/big_west.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: BigWestLogo,
+    logoLight: BigWestLogo,
+    color: "#A2AAAD",
+    secondaryColor: "#ffffff",
   },
   {
     id: 12,
@@ -164,8 +175,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: CAALogo,
     logoLight: CAALogo,
-    color: null,
-    secondaryColor: null,
+    color: "#002263",
+    secondaryColor: "#2C6ABB",
   },
   {
     id: 13,
@@ -175,7 +186,7 @@ export const cbbConferences: Conference[] = [
     shortName: "CUSA",
     parentGroupId: 50,
     logo: CUSALogo,
-    logoLight: CUSALogo,
+    logoLight: CUSALogoLight,
     color: "#003865",
     secondaryColor: "#A6192E",
   },
@@ -188,8 +199,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: null,
     logoLight: null,
-    color: null,
-    secondaryColor: null,
+    color: "#FFA400",
+    secondaryColor: "#D7D2CB",
   },
   {
     id: 15,
@@ -200,8 +211,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: IvyLeagueLogo,
     logoLight: IvyLeagueLogo,
-    color: null,
-    secondaryColor: null,
+    color: "#026937",
+    secondaryColor: "#FFFFFF",
   },
   {
     id: 16,
@@ -210,10 +221,10 @@ export const cbbConferences: Conference[] = [
     name: "Metro Atlantic Athletic Conference",
     shortName: "MAAC",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/maac.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: MAACLogo,
+    logoLight: MAACLogo,
+    color: "#E03A3E",
+    secondaryColor: "#004FA3",
   },
   {
     id: 17,
@@ -236,8 +247,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: MEACLogo,
     logoLight: MEACLogo,
-    color: null,
-    secondaryColor: null,
+    color: "#342A7A",
+    secondaryColor: "#FDBF57",
   },
   {
     id: 19,
@@ -284,8 +295,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: OVCLogo,
     logoLight: OVCLogo,
-    color: null,
-    secondaryColor: null,
+    color: "#9D2440",
+    secondaryColor: "#D1AD85",
   },
   {
     id: 23,
@@ -344,8 +355,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: null,
     logoLight: null,
-    color: null,
-    secondaryColor: null,
+    color: "#7E868C",
+    secondaryColor: "#003494",
   },
   {
     id: 28,
@@ -354,10 +365,10 @@ export const cbbConferences: Conference[] = [
     name: "Sun Belt Conference",
     shortName: "Sun Belt",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/sun_belt.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: SunBeltLogo,
+    logoLight: SunBeltLogo,
+    color: "#F6A800",
+    secondaryColor: "#0A2240",
   },
   {
     id: 29,
@@ -378,10 +389,10 @@ export const cbbConferences: Conference[] = [
     name: "Western Athletic Conference",
     shortName: "WAC",
     parentGroupId: 50,
-    logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/wac.gif",
-    logoLight: null,
-    color: null,
-    secondaryColor: null,
+    logo: WACLogo,
+    logoLight: WACLogo,
+    color: "#98002E",
+    secondaryColor: "#D9D4CC",
   },
   {
     id: 31,
@@ -392,8 +403,8 @@ export const cbbConferences: Conference[] = [
     parentGroupId: 50,
     logo: "https://a.espncdn.com/i/teamlogos/ncaa_conf/sml/trans/west_coast.gif",
     logoLight: null,
-    color: null,
-    secondaryColor: null,
+    color: "#000000",
+    secondaryColor: "#ffffff",
   },
 ];
 

@@ -1,6 +1,6 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { useNavigation } from "@react-navigation/native";
 import Button from "components/Button";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -35,9 +35,7 @@ export default function AccountDetailsScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle title="Account Details" onBack={goBack} />
-      ),
+      header: () => <CustomHeader title="Account Details" onBack={goBack} />,
     });
   }, [navigation, isDark]);
 

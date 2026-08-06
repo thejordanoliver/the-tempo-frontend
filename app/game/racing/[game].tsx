@@ -14,7 +14,7 @@ import { useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import CustomActivityIndicator from "../../../components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "../../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../../components/CustomHeader";
 import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
@@ -131,7 +131,7 @@ export default function GameDetailsScreen(
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName={league}
           title={game.name ?? ""}
           onBack={goBack}

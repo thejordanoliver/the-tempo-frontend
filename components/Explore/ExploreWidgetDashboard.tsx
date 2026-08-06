@@ -455,6 +455,8 @@ export default function ExploreWidgetDashboard({
     getIndex,
   }: RenderItemParams<ExploreWidgetConfig>) => {
     const index = getIndex() ?? 0;
+    const isSmallWidget = widget.size === "small";
+    const widgetWidth = isSmallWidget ? smallWidgetWidth : dashboardWidth;
     const widgetHeight = EXPLORE_WIDGET_HEIGHTS[widget.size];
 
     return (
@@ -467,7 +469,9 @@ export default function ExploreWidgetDashboard({
             isDark={isDark}
             style={[
               dashboardStyles.gridCell,
-              dashboardStyles.gridCellFull,
+              isSmallWidget
+                ? { width: smallWidgetWidth }
+                : dashboardStyles.gridCellFull,
               dashboardStyles.draggableCell,
               {
                 height: widgetHeight,
@@ -479,7 +483,7 @@ export default function ExploreWidgetDashboard({
             {renderWidget({
               widget,
               index,
-              widgetWidth: dashboardWidth,
+              widgetWidth,
               widgetHeight,
             })}
           </WidgetFrame>
@@ -488,23 +492,30 @@ export default function ExploreWidgetDashboard({
     );
   };
 
-  const renderDragPlaceholder = ({ item }: { item: ExploreWidgetConfig }) => (
-    <View
-      style={[
-        dashboardStyles.dropPlaceholder,
-        { height: EXPLORE_WIDGET_HEIGHTS[item.size] },
-      ]}
-    >
-      <Ionicons
-        name="download-outline"
-        size={18}
-        color={isDark ? Colors.dark.leafGreen : Colors.light.green}
-      />
-      <Text style={dashboardStyles.dropPlaceholderText}>
-        Drop widget here
-      </Text>
-    </View>
-  );
+  const renderDragPlaceholder = ({ item }: { item: ExploreWidgetConfig }) => {
+    const isSmallWidget = item.size === "small";
+
+    return (
+      <View
+        style={[
+          dashboardStyles.dropPlaceholder,
+          isSmallWidget
+            ? { width: smallWidgetWidth }
+            : dashboardStyles.gridCellFull,
+          { height: EXPLORE_WIDGET_HEIGHTS[item.size] },
+        ]}
+      >
+        <Ionicons
+          name="download-outline"
+          size={18}
+          color={isDark ? Colors.dark.leafGreen : Colors.light.green}
+        />
+        <Text style={dashboardStyles.dropPlaceholderText}>
+          Drop widget here
+        </Text>
+      </View>
+    );
+  };
 
   const renderDashboardHeader = () => (
     <>

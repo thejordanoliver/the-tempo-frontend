@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import PredictionRing from "@/components/League/Recruiting/PredictionRing";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
@@ -5,7 +6,6 @@ import StarRating from "@/components/League/Recruiting/StarRating";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -56,7 +56,7 @@ export default function RecruitDetailScreen() {
         }
 
         return (
-          <CustomHeaderTitle
+          <CustomHeader
             logo={teamLogo}
             teamColor={teamColor}
             onBack={() => router.back()}

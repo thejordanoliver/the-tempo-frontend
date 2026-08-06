@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -8,7 +9,6 @@ import useTeamDetails from "@/hooks/useTeams";
 import { getWNBASeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
@@ -189,7 +189,7 @@ export default function SoftballTeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={team?.id}
           logo={teamLogo}
           teamColor={teamColor}

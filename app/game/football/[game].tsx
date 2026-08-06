@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import {
   FanPredictionVote,
@@ -22,7 +23,6 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import NFLGameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -259,7 +259,7 @@ export default function GameDetailsScreen(
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Game"
           onBack={goBack}
           homeLogo={homeHeaderLogo}

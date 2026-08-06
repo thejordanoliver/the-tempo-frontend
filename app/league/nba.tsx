@@ -18,7 +18,7 @@ import PagerView from "react-native-pager-view";
 
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import CalendarModal from "../../components/CalendarModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
@@ -195,7 +195,7 @@ export default function NBALeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={league}
           modalVisible={leagueModalVisible}

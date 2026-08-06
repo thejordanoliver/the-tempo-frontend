@@ -1,6 +1,6 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
 import { Ionicons } from "@expo/vector-icons";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import MessageThemeSettingsModal from "components/Messages/MessageThemeSettingsModal";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
@@ -457,7 +457,7 @@ export default function MessageDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Message"
           title={displayUsername}
           messageAvatar={displayAvatar}

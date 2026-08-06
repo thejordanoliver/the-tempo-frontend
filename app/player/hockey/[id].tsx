@@ -1,10 +1,10 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerStatTable from "@/components/Sports/Hockey/Player/PlayerStatTable";
 import { usePlayerSeasons } from "@/hooks/HockeyHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/HockeyHooks/useTeamLatestGame";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/Baseball/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -51,7 +51,7 @@ export default function PlayerDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           logo={teamLogo}
           teamColor={teamColor}
           onBack={() => navigation.goBack()}

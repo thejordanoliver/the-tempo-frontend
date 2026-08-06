@@ -74,10 +74,8 @@ export default function FavoriteTeamsWidget({
     1,
   );
   const compact = size === "small" || resolvedWidth < 240;
-  const verticalPadding = compact ? 10 : 14;
-  const horizontalPadding = compact ? 10 : 14;
-  const bodyWidth = Math.max(resolvedWidth - horizontalPadding * 2, 1);
-  const bodyHeight = Math.max(resolvedHeight - verticalPadding * 2, 1);
+  const bodyWidth = resolvedWidth;
+  const bodyHeight = resolvedHeight;
   const styles = favoriteTeamsWidgetStyles(isDark, compact);
   const showActions = isEditing && widgetId != null;
 
@@ -145,8 +143,6 @@ export default function FavoriteTeamsWidget({
         {
           width: resolvedWidth,
           height: resolvedHeight,
-          paddingVertical: verticalPadding,
-          paddingHorizontal: horizontalPadding,
         },
       ]}
     >

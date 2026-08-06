@@ -1,6 +1,6 @@
 // hooks/UserHooks/useFollowersScreen.tsx
 
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import {
@@ -142,11 +142,7 @@ export function useFollowersScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
-          title={headerTitle}
-          tabName="User"
-          onBack={handleBack}
-        />
+        <CustomHeader title={headerTitle} tabName="User" onBack={handleBack} />
       ),
     });
   }, [navigation, headerTitle, handleBack]);

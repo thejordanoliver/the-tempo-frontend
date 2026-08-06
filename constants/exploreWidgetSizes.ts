@@ -17,3 +17,5 @@ export const EXPLORE_WIDGET_MAX_HEIGHTS: Record<ExploreWidgetSize, number> = {
   medium: 300,
   large: 420,
 };
+
+export const EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM = 10;

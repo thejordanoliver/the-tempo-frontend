@@ -20,7 +20,7 @@ import {
 import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import CropEditorModal from "../components/CropEditorModal";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { CustomHeader } from "../components/CustomHeader";
 import LabeledInput from "../components/LabeledInput";
 import ProfileBanner from "../components/Profile/ProfileBanner";
 import { usePreferences } from "../contexts/PreferencesContext";
@@ -309,9 +309,7 @@ export default function EditProfileScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <CustomHeaderTitle title="Edit Profile" onBack={handleBack} />
-      ),
+      header: () => <CustomHeader title="Edit Profile" onBack={handleBack} />,
     });
   }, [handleBack, navigation]);
 

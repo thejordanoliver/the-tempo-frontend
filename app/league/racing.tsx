@@ -17,7 +17,7 @@ import {
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
@@ -182,7 +182,7 @@ export default function RacingLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={leagueLabel}
           modalVisible={leagueModalVisible}
@@ -192,12 +192,7 @@ export default function RacingLeagueScreen() {
         />
       ),
     });
-  }, [
-    navigation,
-    leagueModalVisible,
-    leagueLabel,
-    openLeagueModal,
-  ]);
+  }, [navigation, leagueModalVisible, leagueLabel, openLeagueModal]);
 
   return (
     <>

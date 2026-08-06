@@ -1,5 +1,3 @@
-import { NBATeam } from "./basketball/basketball";
-
 export type Team = {
   id: number | null;
   wid?: number | null;
@@ -220,8 +218,8 @@ export type AwardSeason = {
   summary: string;
   coach?: string;
   school: string;
-  award_team?: NBATeam | Team;
-  current_team?: NBATeam | Team;
+  award_team?: Team;
+  current_team?: Team;
   current_team_id?: number | null;
   created_at: string;
 };

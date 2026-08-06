@@ -1,10 +1,10 @@
 // post/[postId].tsx
 
+import { CustomHeader } from "@/components/CustomHeader";
 import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { CommentItem } from "components/Forum/CommentItem";
 import { Post, PostItem } from "components/Forum/PostItem";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
@@ -393,7 +393,7 @@ export default function CommentThreadScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle title="Comments" onBack={() => router.back()} />
+        <CustomHeader title="Comments" onBack={() => router.back()} />
       ),
     });
   }, [navigation]);

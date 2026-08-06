@@ -1,4 +1,4 @@
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import { CustomHeader } from "@/components/CustomHeader";
 import MessageList from "components/Messages/MessageList";
 import NewMessageModal from "components/Messages/NewMessageModal";
 import { Colors } from "constants/styles";
@@ -215,7 +215,7 @@ export default function MessageScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           title="Messages"
           tabName="Messages"
           onBack={handleBack}

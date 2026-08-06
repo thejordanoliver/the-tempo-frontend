@@ -1,7 +1,7 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import TabBar from "@/components/TabBars/TabBar";
 import { globalStyles } from "@/constants/styles";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
 import BioSection from "components/Profile/BioSection";
@@ -112,11 +112,7 @@ export default function UserProfileScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
-          title={headerTitle}
-          tabName="User"
-          onBack={handleBack}
-        />
+        <CustomHeader title={headerTitle} tabName="User" onBack={handleBack} />
       ),
     });
   }, [navigation, headerTitle, handleBack]);

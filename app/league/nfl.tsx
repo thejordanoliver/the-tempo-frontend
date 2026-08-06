@@ -19,7 +19,7 @@ import {
 } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
 import Draft, {
@@ -202,7 +202,7 @@ export default function NFLLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={league}
           modalVisible={leagueModalVisible}

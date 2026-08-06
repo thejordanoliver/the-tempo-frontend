@@ -5,6 +5,7 @@ import {
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 
+import { CustomHeader } from "@/components/CustomHeader";
 import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import {
   formatDate,
@@ -14,7 +15,6 @@ import {
   shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -199,7 +199,7 @@ export default function GameDetailsScreen(
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Game"
           onBack={goBack}
           awayTeamCode={secondFighterLastName}

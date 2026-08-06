@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
@@ -15,7 +16,6 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
 import { getCBBSeason } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
@@ -215,7 +215,7 @@ export default function TeamDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}

@@ -8,7 +8,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import LeagueForum from "../../components/Forum/LeagueForum";
 import SportsListModal, {
   SportsListModalRef,
@@ -94,7 +94,7 @@ export default function UFCLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           league={league}
           modalVisible={leagueModalVisible}

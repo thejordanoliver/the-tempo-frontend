@@ -1,10 +1,10 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Soccer/Player/PlayerStatTable";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import { usePlayerSeasons } from "@/hooks/SoccerHooks/usePlayerSeasons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -51,12 +51,17 @@ export default function PlayerDetailScreen() {
   const teamLogo = getSOCCTeamLogo(headerTeamId ?? undefined, true);
   const teamColor = team?.color ?? Colors.midTone;
 
-  const { seasons, teamOptions, selectedFilters, seasonsLoading, seasonsError } =
-    usePlayerSeasons(playerId, {
-      teamId: selectedTeamId,
-      competition: selectedCompetition,
-      enabled: Boolean(playerId),
-    });
+  const {
+    seasons,
+    teamOptions,
+    selectedFilters,
+    seasonsLoading,
+    seasonsError,
+  } = usePlayerSeasons(playerId, {
+    teamId: selectedTeamId,
+    competition: selectedCompetition,
+    enabled: Boolean(playerId),
+  });
 
   const effectiveSelectedTeamId =
     selectedTeamId ?? selectedFilters?.teamId ?? playerTeamId;
@@ -66,12 +71,9 @@ export default function PlayerDetailScreen() {
     setSelectedCompetition(null);
   }, []);
 
-  const handleCompetitionChange = useCallback(
-    (competition: string | null) => {
-      setSelectedCompetition(competition);
-    },
-    [],
-  );
+  const handleCompetitionChange = useCallback((competition: string | null) => {
+    setSelectedCompetition(competition);
+  }, []);
 
   // -------------------------
   // Header
@@ -79,7 +81,7 @@ export default function PlayerDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           logo={teamLogo}
           teamColor={teamColor}
           onBack={() => navigation.goBack()}

@@ -19,7 +19,7 @@ import Button from "../components/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import CropEditorModal from "../components/CropEditorModal";
 import CustomActivityIndicator from "../components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { CustomHeader } from "../components/CustomHeader";
 import PollEditorModal, { PollData } from "../components/Forum/PollEditorModal";
 import VideoEditorModal from "../components/Forum/VideoEditorModal";
 import { GiphySearchModal } from "../components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
@@ -84,7 +84,7 @@ export default function CreatePostScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle title="New post" onBack={() => router.back()} />
+        <CustomHeader title="New post" onBack={() => router.back()} />
       ),
     });
   }, [navigation, router, createPost, loading, newPostText, poll, media]);

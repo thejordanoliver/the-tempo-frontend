@@ -20,7 +20,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { CustomHeaderTitle } from "../components/CustomHeaderTitle";
+import { CustomHeader } from "../components/CustomHeader";
 import CustomTabBar from "../components/CustomTabBar";
 import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
@@ -198,7 +198,7 @@ function AppLayout() {
             headerShown: !isSplashScreen && !isTabScreen,
             header: !isSplashScreen
               ? () => (
-                  <CustomHeaderTitle
+                  <CustomHeader
                     title={route.name}
                     onBack={
                       navigation.canGoBack() ? navigation.goBack : undefined

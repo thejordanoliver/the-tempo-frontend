@@ -1,6 +1,4 @@
 import { BasketballGame } from "@/types/basketball/basketball";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
@@ -37,7 +35,6 @@ export default function BasketballGameWidget({
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
-  const global = globalStyles(isDark);
 
   const home = game.home;
   const away = game.away;
@@ -104,10 +101,11 @@ export default function BasketballGameWidget({
   const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
   const clock = game?.status.clock;
 
+  const state = game.status.state ?? "";
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status?.shortDetail;
-  const isFinal = gameStatusDescription === "Final";
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const isScheduled = state === "pre";
+  const isFinal = state === "post";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -163,17 +161,6 @@ export default function BasketballGameWidget({
     height,
     width,
   );
-
-  // -------------------------
-  // Loading state
-  // -------------------------
-  if (loading) {
-    return (
-      <View style={global.emptyContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
 
   const awayTeamContent = (
     <View style={styles.teamWrapper}>

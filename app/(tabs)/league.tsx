@@ -6,7 +6,7 @@ import utc from "dayjs/plugin/utc";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import CalendarModal from "../../components/CalendarModal";
-import { CustomHeaderTitle } from "../../components/CustomHeaderTitle";
+import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import LeagueGamesList from "../../components/League/LeagueGamesList";
 import SportsListModal, {
@@ -52,7 +52,7 @@ export default function LeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="League"
           modalVisible={leagueModalVisible}
           setModalVisible={setLeagueModalVisible}

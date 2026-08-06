@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import {
   GameLocation,
   GameTeamStats,
@@ -26,7 +27,6 @@ import {
   shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -212,7 +212,7 @@ export default function GameDetailsScreen(
 
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           tabName="Game"
           onBack={goBack}
           homeLogo={homeHeaderLogo}

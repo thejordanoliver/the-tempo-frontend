@@ -1,4 +1,4 @@
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
+import { CustomHeader } from "@/components/CustomHeader";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation, useRouter } from "expo-router";
@@ -16,7 +16,7 @@ export default function DeleteAccountSplashScreen() {
   const styles = deleteAccountStyles(isDark);
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeaderTitle title="" />,
+      header: () => <CustomHeader title="" />,
     });
   }, [navigation, isDark]);
 

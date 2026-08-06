@@ -1,5 +1,5 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -27,7 +27,7 @@ const PreferencesScreen = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeaderTitle title="Preferences" onBack={goBack} />,
+      header: () => <CustomHeader title="Preferences" onBack={goBack} />,
     });
   }, [navigation, isDark]);
 

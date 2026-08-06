@@ -1,6 +1,6 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import { useMMAFighter } from "@/hooks/MMAHooks/useMMAFighter";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { CustomHeaderTitle } from "components/CustomHeaderTitle";
 import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -26,7 +26,7 @@ export default function PlayerDetailScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeaderTitle
+        <CustomHeader
           logo={flag}
           teamColor={color}
           onBack={() => navigation.goBack()}
