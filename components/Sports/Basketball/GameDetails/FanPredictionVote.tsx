@@ -33,8 +33,6 @@ type Props = {
   state: string | null; // "pre" | "in" | "post"
 };
 
-
-
 function isSameTeamId(
   first: string | number | null,
   second: string | number | null,
@@ -78,7 +76,7 @@ function PollRow({
 }: PollRowProps) {
   const rowStyles = pollRowStyles(isDark);
   const label = name || code;
-  const SELECTED_TEAM_COLOR = isDark ? Colors.dark.green : Colors.light.green ;
+  const SELECTED_TEAM_COLOR = isDark ? Colors.dark.green : Colors.light.green;
   const fillColor = isSelected ? SELECTED_TEAM_COLOR : color;
 
   return (
@@ -402,14 +400,13 @@ const fanPredictionVoteStyles = (isDark: boolean) =>
       marginBottom: 2,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: isDark ? Colors.darkGray : Colors.lightGray,
+      color: Colors.midTone,
     },
     totalVotesText: {
       marginTop: 4,
-      marginBottom: 2,
       fontFamily: Fonts.OSREGULAR,
       fontSize: 14,
-      color: isDark ? Colors.darkGray : Colors.lightGray,
+      color: Colors.midTone,
     },
     skeletonRow: {
       height: 60,
@@ -418,37 +415,18 @@ const fanPredictionVoteStyles = (isDark: boolean) =>
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     skeletonSubtitle: {
+      marginTop: 4,
+      marginBottom: 2,
       width: 60,
       height: 14,
       borderRadius: 12,
-      marginBottom: 8,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     skeletonTotalVotesText: {
+      marginTop: 4,
       width: 40,
       height: 14,
       borderRadius: 12,
-      marginBottom: 8,
       color: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    errorBox: {
-      alignItems: "flex-start",
-    },
-    retryButton: {
-      marginTop: 8,
-      alignSelf: "flex-start",
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-      borderRadius: 8,
-      backgroundColor: Colors.midTone,
-    },
-    retryText: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 13,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    inlineError: {
-      marginTop: 6,
-      fontSize: 12,
     },
   });
