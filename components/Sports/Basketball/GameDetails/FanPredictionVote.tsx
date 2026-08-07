@@ -1,3 +1,4 @@
+import { SkeletonBlock } from "@/components/Skeletons/primitives";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
@@ -9,7 +10,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
-  LayoutChangeEvent,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -20,24 +21,123 @@ type Props = {
   gameId: string;
   awayId: string | number;
   awayCode?: string;
+  awayName?: string; // optional — used for row labels & "you picked X" copy
   awayLogo: any;
   awayColor?: string | null;
   homeId: string | number;
   homeCode?: string;
+  homeName?: string;
   homeLogo: any;
   homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
-  state: string | null;
+  state: string | null; // "pre" | "in" | "post"
 };
+
+
+
+function isSameTeamId(
+  first: string | number | null,
+  second: string | number | null,
+) {
+  return first !== null && second !== null && String(first) === String(second);
+}
+
+// Extracted so each team's row is one readable, testable unit — matches the
+// component-extraction pattern used elsewhere in the app.
+type PollRowProps = {
+  teamId: string | number;
+  code?: string;
+  name?: string;
+  logo: any;
+  color: string;
+  fillAnim: Animated.Value;
+  onPress: () => void;
+  disabled: boolean;
+  isSubmitting: boolean;
+  isSelected: boolean;
+  showPercent: boolean;
+  percentText: string;
+  isDark: boolean;
+  style?: object;
+};
+
+function PollRow({
+  code,
+  name,
+  logo,
+  color,
+  fillAnim,
+  onPress,
+  disabled,
+  isSubmitting,
+  isSelected,
+  showPercent,
+  percentText,
+  isDark,
+  style,
+}: PollRowProps) {
+  const rowStyles = pollRowStyles(isDark);
+  const label = name || code;
+  const SELECTED_TEAM_COLOR = isDark ? Colors.dark.green : Colors.light.green ;
+  const fillColor = isSelected ? SELECTED_TEAM_COLOR : color;
+
+  return (
+    <View style={[rowStyles.row, isSelected && rowStyles.rowSelected, style]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          rowStyles.fill,
+          {
+            backgroundColor: fillColor,
+            width: fillAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ["0%", "100%"],
+            }),
+          },
+        ]}
+      />
+
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={disabled}
+        activeOpacity={disabled ? 1 : 0.7}
+        style={rowStyles.touchArea}
+        accessibilityRole="button"
+        accessibilityLabel={
+          showPercent
+            ? `${label}, ${percentText} of the vote`
+            : `Vote for ${label}`
+        }
+        accessibilityState={{ disabled, selected: isSelected }}
+      >
+        <View style={[rowStyles.badge, { backgroundColor: color }]}>
+          <Image
+            source={typeof logo === "string" ? { uri: logo } : logo}
+            style={rowStyles.badgeLogo}
+            resizeMode="contain"
+          />
+        </View>
+
+        <Text numberOfLines={1} style={rowStyles.label}>
+          {label}
+        </Text>
+
+        {showPercent && <Text style={rowStyles.percent}>{percentText}</Text>}
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 export default function FanPredictionVote({
   gameId,
   awayId,
   awayCode,
+  awayName,
   awayLogo,
   awayColor,
   homeId,
   homeCode,
+  homeName,
   homeLogo,
   homeColor,
   onVoteCast,
@@ -48,80 +148,77 @@ export default function FanPredictionVote({
   const styles = fanPredictionVoteStyles(isDark);
   const global = globalStyles(isDark);
 
-  const [, setLoading] = useState(true);
   const { votes: liveVotes, emitVote } = useLiveVotes(gameId);
-  const [results, setResults] = useState<PollResult[]>([]);
+
+  const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [userVote, setUserVote] = useState<string | number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [barWidth, setBarWidth] = useState(0);
+  const [results, setResults] = useState<PollResult[]>([]);
   const [resultsRevealed, setResultsRevealed] = useState(false);
+  const [submittingTeamId, setSubmittingTeamId] = useState<
+    string | number | null
+  >(null);
 
-  const animPctAway = useRef(new Animated.Value(0.5)).current;
-  const animPctHome = useRef(new Animated.Value(0.5)).current;
-  const animOpacityAway = useRef(new Animated.Value(1)).current;
-  const animOpacityHome = useRef(new Animated.Value(1)).current;
-  const animScaleAway = useRef(new Animated.Value(1)).current;
-  const animScaleHome = useRef(new Animated.Value(1)).current;
-  const animTranslateAway = useRef(new Animated.Value(0)).current;
-  const animTranslateHome = useRef(new Animated.Value(0)).current;
+  const animFillAway = useRef(new Animated.Value(0)).current;
+  const animFillHome = useRef(new Animated.Value(0)).current;
 
-  const fetchUserVoteOnly = useCallback(async () => {
+  const canVote = state === "pre" || state === "in";
+  const isVisible = state === "pre" || state === "in" || state === "post";
+
+  // Single request on mount instead of the original's two sequential fetches.
+  // fetchVoteResults already returns both the user's vote and the tallies, so
+  // one call covers it. Results are revealed if the user voted OR the game has
+  // ended, so someone who never voted still gets to see the final read once
+  // it's over instead of a poll that's permanently locked at nothing shown.
+  const loadVoteState = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
+      setPhase("loading");
+      setErrorMessage(null);
       const data = await fetchVoteResults(gameId);
-      setUserVote(data.userVote);
+      setUserVote(data.userVote ?? null);
+      if (data.userVote != null || !canVote) {
+        setResults(data.votes);
+        setResultsRevealed(true);
+      }
+      setPhase("ready");
     } catch (err: any) {
       console.warn("Vote fetch error", err);
-      setError(err.message || "Error loading vote");
-    } finally {
-      setLoading(false);
+      setErrorMessage(err?.message || "We couldn't load this poll.");
+      setPhase("error");
     }
-  }, [gameId]);
-
-  const fetchResultsIfVoted = useCallback(async () => {
-    if (!userVote) return;
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await fetchVoteResults(gameId);
-      setResults(data.votes);
-      setResultsRevealed(true);
-    } catch (err: any) {
-      console.warn("Vote fetch error", err);
-      setError(err.message || "Error loading vote results");
-    } finally {
-      setLoading(false);
-    }
-  }, [gameId, userVote]);
+  }, [gameId, canVote]);
 
   useEffect(() => {
-    fetchUserVoteOnly();
-  }, [fetchUserVoteOnly]);
-
-  useEffect(() => {
-    fetchResultsIfVoted();
-  }, [fetchResultsIfVoted]);
+    loadVoteState();
+  }, [loadVoteState]);
 
   const castVote = async (teamId: string | number) => {
-    if (submitting || userVote) return;
-    setSubmitting(true);
+    if (!canVote || submittingTeamId != null || userVote != null) return;
+    setSubmittingTeamId(teamId);
+    setErrorMessage(null);
     try {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await castVoteApi(String(gameId), String(teamId));
       setUserVote(teamId);
-      if (onVoteCast) onVoteCast(teamId);
+      onVoteCast?.(teamId);
       const data = await fetchVoteResults(gameId);
       setResults(data.votes);
       setResultsRevealed(true);
       const userId = await AsyncStorage.getItem("userId");
       emitVote(teamId, userId || "anonymous");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+        () => {},
+      );
     } catch (err: any) {
       console.warn("Vote error", err);
-      setError(err.message || "Error submitting vote");
+      setErrorMessage(
+        err?.message || "Your vote didn't go through — try again.",
+      );
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(
+        () => {},
+      );
     } finally {
-      setSubmitting(false);
+      setSubmittingTeamId(null);
     }
   };
 
@@ -137,91 +234,65 @@ export default function FanPredictionVote({
       activeVotes.find((r) => String(r.team_id) === String(homeId))?.votes,
     ) || 0;
 
-  const pctAway = totalVotes > 0 ? votesAway / totalVotes : 0;
-  const pctHome = totalVotes > 0 ? votesHome / totalVotes : 0;
+  const rawPctAway = totalVotes > 0 ? votesAway / totalVotes : 0;
+  const rawPctHome = totalVotes > 0 ? votesHome / totalVotes : 0;
 
-  const displayPctAway = resultsRevealed ? pctAway : 0.5;
-  const displayPctHome = resultsRevealed ? pctHome : 0.5;
-
+  // Each row fills independently, so — unlike a single shared bar — neither
+  // team's badge or name can ever be crowded out by a lopsided vote. No
+  // minimum-width clamp needed here.
   useEffect(() => {
-    const isAwayVoted = resultsRevealed && userVote === awayId;
-    const isHomeVoted = resultsRevealed && userVote === homeId;
-
-    let awayOffset = 0;
-    let homeOffset = 0;
-
-    if (isAwayVoted) {
-      awayOffset = (barWidth * displayPctHome) / 2;
-      homeOffset = displayPctHome === 0 ? barWidth : 0;
-    } else if (isHomeVoted) {
-      homeOffset = -(barWidth * displayPctAway) / 2;
-      awayOffset = displayPctAway === 0 ? -barWidth : 0;
-    }
-
-    const awayOpacity =
-      !resultsRevealed || isAwayVoted || displayPctAway > 0 ? 1 : 0;
-    const homeOpacity =
-      !resultsRevealed || isHomeVoted || displayPctHome > 0 ? 1 : 0;
-
     Animated.parallel([
-      Animated.timing(animPctAway, {
-        toValue: displayPctAway,
-        duration: 650,
-        easing: Easing.inOut(Easing.ease),
+      Animated.timing(animFillAway, {
+        toValue: resultsRevealed ? rawPctAway : 0,
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
       }),
-      Animated.timing(animPctHome, {
-        toValue: displayPctHome,
-        duration: 650,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.timing(animTranslateAway, {
-        toValue: awayOffset,
-        duration: 650,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.timing(animTranslateHome, {
-        toValue: homeOffset,
-        duration: 650,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: false,
-      }),
-      Animated.timing(animOpacityAway, {
-        toValue: awayOpacity,
-        duration: 450,
-        useNativeDriver: false,
-      }),
-      Animated.timing(animOpacityHome, {
-        toValue: homeOpacity,
-        duration: 450,
-        useNativeDriver: false,
-      }),
-      Animated.timing(animScaleAway, {
-        toValue:
-          !resultsRevealed || displayPctAway >= displayPctHome ? 1.05 : 0.85,
-        duration: 450,
-        useNativeDriver: false,
-      }),
-      Animated.timing(animScaleHome, {
-        toValue:
-          !resultsRevealed || displayPctHome > displayPctAway ? 1.05 : 0.85,
-        duration: 450,
+      Animated.timing(animFillHome, {
+        toValue: resultsRevealed ? rawPctHome : 0,
+        duration: 600,
+        easing: Easing.out(Easing.cubic),
         useNativeDriver: false,
       }),
     ]).start();
-  }, [displayPctAway, displayPctHome, resultsRevealed, userVote, barWidth, awayId, homeId, animPctAway, animPctHome, animTranslateAway, animTranslateHome, animOpacityAway, animOpacityHome, animScaleAway, animScaleHome]);
+  }, [resultsRevealed, rawPctAway, rawPctHome, animFillAway, animFillHome]);
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  if ((state !== "in" && state !== "pre" )) return null;
+  if (!isVisible) return null;
 
-  if (error)
+  const pickedName = isSameTeamId(userVote, awayId)
+    ? awayName || awayCode
+    : homeName || homeCode;
+  const subtitle =
+    phase === "loading"
+      ? "Loading poll…"
+      : phase === "error"
+        ? null
+        : !canVote
+          ? userVote
+            ? `Final results — you picked ${pickedName}`
+            : "Final results"
+          : userVote
+            ? `You picked ${pickedName}`
+            : "Tap a team to cast your prediction";
+
+  if (phase === "loading")
     return (
       <View>
         <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
-        <Text style={global.errorText}>{error}</Text>
+        <SkeletonBlock style={styles.skeletonRow} />
+        <SkeletonBlock style={styles.skeletonRow} />
+        <SkeletonBlock style={styles.skeletonSubtitle} />
+        <SkeletonBlock style={styles.skeletonTotalVotesText} />
+      </View>
+    );
+
+  if (phase === "error")
+    return (
+      <View style={global.emptyContainer}>
+        <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
+        <Text style={global.errorText}>{errorMessage}</Text>
       </View>
     );
 
@@ -229,190 +300,155 @@ export default function FanPredictionVote({
     <View>
       <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
 
-      <View
-        style={styles.barContainer}
-        onLayout={(e: LayoutChangeEvent) =>
-          setBarWidth(e.nativeEvent.layout.width)
-        }
-      >
-        <View style={styles.barInner}>
-          {/* Away */}
-          <Animated.View style={[styles.halfBar, { flex: animPctAway }]}>
-            <Animated.View
-              style={[
-                styles.fillAway,
-                {
-                  backgroundColor: awayColor || Colors.darkGray,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => castVote(awayId)}
-                disabled={!!userVote || submitting}
-                activeOpacity={userVote ? 1 : 0.7}
-                style={{ alignItems: "center", justifyContent: "center" }}
-              >
-                <Animated.View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: animOpacityAway,
-                    transform: [
-                      { scale: animScaleAway },
-                      { translateX: animTranslateAway },
-                    ],
-                  }}
-                >
-                  <Animated.Image
-                    source={
-                      typeof awayLogo === "string"
-                        ? { uri: awayLogo }
-                        : awayLogo
-                    }
-                    style={styles.teamLogo}
-                    resizeMode="cover"
-                  />
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={styles.teamName}
-                  >
-                    {awayCode}
-                  </Text>
-                </Animated.View>
-              </TouchableOpacity>
-            </Animated.View>
-          </Animated.View>
+      <PollRow
+        teamId={awayId}
+        code={awayCode}
+        name={awayName}
+        logo={awayLogo}
+        color={awayColor || Colors.darkGray}
+        fillAnim={animFillAway}
+        onPress={() => castVote(awayId)}
+        disabled={!canVote || userVote != null || submittingTeamId != null}
+        isSubmitting={isSameTeamId(submittingTeamId, awayId)}
+        isSelected={isSameTeamId(userVote, awayId)}
+        showPercent={resultsRevealed}
+        percentText={formatPercentage(rawPctAway)}
+        isDark={isDark}
+        style={{ marginBottom: 8 }}
+      />
+      <PollRow
+        teamId={homeId}
+        code={homeCode}
+        name={homeName}
+        logo={homeLogo}
+        color={homeColor || Colors.lightGray}
+        fillAnim={animFillHome}
+        onPress={() => castVote(homeId)}
+        disabled={!canVote || userVote != null || submittingTeamId != null}
+        isSubmitting={isSameTeamId(submittingTeamId, homeId)}
+        isSelected={isSameTeamId(userVote, homeId)}
+        showPercent={resultsRevealed}
+        percentText={formatPercentage(rawPctHome)}
+        isDark={isDark}
+      />
 
-          {/* Home */}
-          <Animated.View style={[styles.halfBar, { flex: animPctHome }]}>
-            <Animated.View
-              style={[
-                styles.fillHome,
-                {
-                  backgroundColor: homeColor || Colors.lightGray,
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <TouchableOpacity
-                onPress={() => castVote(homeId)}
-                disabled={!!userVote || submitting}
-                activeOpacity={userVote ? 1 : 0.7}
-                style={{ alignItems: "center", justifyContent: "center" }}
-              >
-                <Animated.View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: animOpacityHome,
-                    transform: [
-                      { scale: animScaleHome },
-                      { translateX: animTranslateHome },
-                    ],
-                  }}
-                >
-                  <Animated.Image
-                    source={
-                      typeof homeLogo === "string"
-                        ? { uri: homeLogo }
-                        : homeLogo
-                    }
-                    style={styles.teamLogo}
-                    resizeMode="cover"
-                  />
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={styles.teamName}
-                  >
-                    {homeCode}
-                  </Text>
-                </Animated.View>
-              </TouchableOpacity>
-            </Animated.View>
-          </Animated.View>
-        </View>
-      </View>
-
-      {/* Percent labels */}
-      <View style={styles.percentRow}>
-        <Text style={styles.percentText}>
-          {formatPercentage(displayPctAway)}
-        </Text>
-        <Text style={styles.percentText}>
-          {formatPercentage(displayPctHome)}
-        </Text>
-      </View>
-
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       <Text style={styles.totalVotesText}>
         {resultsRevealed
-          ? `${totalVotes} total ${totalVotes === 1 ? "vote" : "votes"}`
-          : ""}
+          ? `${totalVotes.toLocaleString()} ${totalVotes === 1 ? "vote" : "votes"}`
+          : " "}
       </Text>
     </View>
   );
 }
 
-const fanPredictionVoteStyles = (isDark: boolean, LOGO_SIZE = 150) =>
+const pollRowStyles = (isDark: boolean) =>
   StyleSheet.create({
-    barContainer: {
-      height: 50,
-      width: "100%",
+    row: {
+      height: 60,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
       overflow: "hidden",
       position: "relative",
       justifyContent: "center",
-      borderRadius: 8,
     },
-    barInner: { flexDirection: "row", height: "100%", overflow: "hidden" },
-    halfBar: {
-      justifyContent: "center",
-      alignItems: "center",
-      position: "relative",
+    rowSelected: {
+      borderColor: isDark ? Colors.white : Colors.black,
     },
-    fillAway: {
-      ...StyleSheet.absoluteFillObject,
-      borderTopLeftRadius: 8,
-      borderBottomLeftRadius: 8,
+    fill: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      bottom: 0,
+      opacity: 0.26,
     },
-    fillHome: {
-      ...StyleSheet.absoluteFillObject,
-      borderTopRightRadius: 8,
-      borderBottomRightRadius: 8,
-    },
-    teamLogo: { width: LOGO_SIZE, height: LOGO_SIZE, opacity: 0.2 },
-    percentRow: {
-      marginTop: 8,
+    touchArea: {
       flexDirection: "row",
-      justifyContent: "space-between",
+      alignItems: "center",
+      height: "100%",
+      paddingHorizontal: 12,
+      gap: 10,
     },
-    percentText: {
+    badge: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    },
+    badgeLogo: {
+      width: 24,
+      height: 24,
+    },
+    label: {
+      flex: 1,
       fontFamily: Fonts.OSBOLD,
+      fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
-      textAlign: "center",
     },
-    errorText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 14,
-      textAlign: "center",
+    percent: {
+      fontFamily: Fonts.OSBOLD,
+      fontSize: 15,
+      color: isDark ? Colors.white : Colors.black,
     },
-    totalVotesText: {
-      fontSize: 14,
+  });
+
+const fanPredictionVoteStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    subtitle: {
+      marginTop: 4,
+      marginBottom: 2,
       fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    teamName: {
-      position: "absolute",
-      flexWrap: "nowrap",
-      color: Colors.white,
+    totalVotesText: {
+      marginTop: 4,
+      marginBottom: 2,
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    skeletonRow: {
+      height: 60,
+      borderRadius: 12,
+      marginBottom: 8,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    skeletonSubtitle: {
+      width: 60,
+      height: 14,
+      borderRadius: 12,
+      marginBottom: 8,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    skeletonTotalVotesText: {
+      width: 40,
+      height: 14,
+      borderRadius: 12,
+      marginBottom: 8,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    errorBox: {
+      alignItems: "flex-start",
+    },
+    retryButton: {
+      marginTop: 8,
+      alignSelf: "flex-start",
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 8,
+      backgroundColor: Colors.midTone,
+    },
+    retryText: {
       fontFamily: Fonts.OSBOLD,
-      fontSize: 24,
-      flexShrink: 1,
-      maxWidth: "90%",
-      textAlign: "center",
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    inlineError: {
+      marginTop: 6,
+      fontSize: 12,
     },
   });
