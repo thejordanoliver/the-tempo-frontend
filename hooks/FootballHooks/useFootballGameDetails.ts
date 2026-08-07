@@ -122,11 +122,6 @@ export type TeamLeaders = {
   leaders: LeaderCategory[];
 };
 
-type RawTeamLeaders = {
-  team?: Partial<Team> | null;
-  leaders?: LeaderCategory[] | null;
-};
-
 /* ---------------------------------- */
 /* PLAY TYPES                         */
 /* ---------------------------------- */
@@ -341,10 +336,6 @@ export type Score = {
   };
 };
 
-type RawScore = Omit<Score, "leaders"> & {
-  leaders?: RawTeamLeaders[] | null;
-};
-
 export type TeamRecords = {
   overall?: string;
   home?: string;
@@ -378,158 +369,36 @@ export type Details = {
   predictor?: Predictor | null;
 };
 
-type RequestError = {
-  code?: string;
-  name?: string;
-  message?: string;
+export type FootballGameDetailsResponse = {
+  score: Score;
+  details: Details;
 };
 
 /* ---------------------------------- */
-/* NORMALIZATION HELPERS              */
-/* ---------------------------------- */
-
-function normalizeId(value: unknown): string | null {
-  if (value === null || value === undefined) {
-    return null;
-  }
-
-  const normalizedValue = String(value).trim();
-
-  return normalizedValue || null;
-}
-
-function teamsMatch(
-  firstTeam?: Partial<Team> | null,
-  secondTeam?: Partial<Team> | null,
-): boolean {
-  if (!firstTeam || !secondTeam) {
-    return false;
-  }
-
-  const firstTeamIds = [
-    normalizeId(firstTeam.id),
-    normalizeId(firstTeam.espnId),
-  ].filter((id): id is string => Boolean(id));
-
-  const secondTeamIds = [
-    normalizeId(secondTeam.id),
-    normalizeId(secondTeam.espnId),
-  ].filter((id): id is string => Boolean(id));
-
-  return firstTeamIds.some((id) => secondTeamIds.includes(id));
-}
-
-function normalizeLeaderEntries(entries?: LeaderEntry[] | null): LeaderEntry[] {
-  if (!Array.isArray(entries)) {
-    return [];
-  }
-
-  return entries.map((entry) => ({
-    ...entry,
-    athlete: entry.athlete ?? {},
-    stats: Array.isArray(entry.stats) ? entry.stats : [],
-  }));
-}
-
-function normalizeLeaderCategories(
-  categories?: LeaderCategory[] | null,
-): LeaderCategory[] {
-  if (!Array.isArray(categories)) {
-    return [];
-  }
-
-  return categories.map((category) => ({
-    ...category,
-    leaders: normalizeLeaderEntries(category.leaders),
-  }));
-}
-
-function normalizeLeaders(score: RawScore): TeamLeaders[] {
-  if (!Array.isArray(score.leaders)) {
-    return [];
-  }
-
-  return score.leaders.map((teamLeaders, index) => {
-    const responseTeam = teamLeaders.team;
-
-    const matchedTeam = [score.away, score.home].find((gameTeam) =>
-      teamsMatch(responseTeam, gameTeam),
-    );
-
-    /*
-     * Football leader groups normally return the away team first
-     * and the home team second. This fallback fills an empty team
-     * object using the corresponding team from the score.
-     */
-    const orderedTeam = index === 0 ? score.away : score.home;
-    const fallbackTeam = matchedTeam ?? orderedTeam;
-
-    return {
-      team: {
-        ...fallbackTeam,
-        ...responseTeam,
-      },
-      leaders: normalizeLeaderCategories(teamLeaders.leaders),
-    };
-  });
-}
-
-function normalizeDetails(details?: Partial<Details> | null): Details | null {
-  if (!details) {
-    return null;
-  }
-
-  return {
-    ...details,
-    broadcasts: Array.isArray(details.broadcasts) ? details.broadcasts : [],
-    officials: Array.isArray(details.officials) ? details.officials : [],
-    injuries: Array.isArray(details.injuries) ? details.injuries : [],
-    highlights: Array.isArray(details.highlights) ? details.highlights : [],
-    neutralSite: Boolean(details.neutralSite),
-    venue: details.venue ?? null,
-    attendance: details.attendance ?? null,
-  };
-}
-
-/* ---------------------------------- */
-/* HOOK                               */
+/* Hook                               */
 /* ---------------------------------- */
 
 export const useFootballGameDetails = (
-  league: string,
+  league: string | undefined,
   gameId?: string | number | null,
 ) => {
-  const [score, setScore] = useState<Score | null>(null);
-  const [details, setDetails] = useState<Details | null>(null);
+  const [score, setScore] = useState<Score | undefined>();
+  const [details, setDetails] = useState<Details | undefined>();
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
 
-  const skipFetch =
-    !league.trim() || gameId === null || gameId === undefined || gameId === "";
+  const skipFetch = !league || !gameId;
 
-  const clearPolling = useCallback(() => {
-    if (!intervalRef.current) {
-      return;
-    }
-
-    clearInterval(intervalRef.current);
-    intervalRef.current = null;
-  }, []);
+  /* ---------------------------------- */
+  /* Fetch from /api/basketball/details */
+  /* ---------------------------------- */
 
   const fetchDetails = useCallback(
     async (silent = false) => {
-      if (skipFetch) {
-        return;
-      }
-
-      abortRef.current?.abort();
-
-      const controller = new AbortController();
-      abortRef.current = controller;
+      if (skipFetch) return;
 
       try {
         if (!silent) {
@@ -538,108 +407,83 @@ export const useFootballGameDetails = (
 
         setWarning(null);
 
-        const { data } = await apiClient.get<{
-          score: RawScore;
-          details?: Partial<Details> | null;
-        }>("api/football/details", {
-          params: {
-            league,
-            gameId,
+        const params = {
+          league,
+          gameId,
+        };
+
+        const { data } = await apiClient.get<FootballGameDetailsResponse>(
+          "api/football/details",
+          {
+            params,
           },
-          signal: controller.signal,
-        });
+        );
 
         if (!data?.score) {
-          setScore(null);
-          setDetails(null);
           setWarning("Game data unavailable");
           return;
         }
 
-        const normalizedScore: Score = {
-          ...data.score,
-          leaders: normalizeLeaders(data.score),
-        };
-
-        setScore(normalizedScore);
-        setDetails(normalizeDetails(data.details));
+        setScore(data.score);
+        setDetails(data.details);
         setLastRefresh(new Date());
       } catch (error: unknown) {
-        const requestError = error as RequestError;
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Unable to refresh game data";
 
-        if (
-          requestError.code === "ERR_CANCELED" ||
-          requestError.name === "CanceledError"
-        ) {
-          return;
-        }
+        console.warn(`[${league}] game details fetch failed`, error);
 
-        console.warn(`[${league}] details fetch failed`, error);
-
-        setScore(null);
-        setDetails(null);
-        setWarning(requestError.message ?? "Unable to refresh game data");
+        setWarning(message);
       } finally {
         if (!silent) {
           setLoading(false);
         }
-
-        if (abortRef.current === controller) {
-          abortRef.current = null;
-        }
       }
     },
-    [league, gameId, skipFetch],
+    [gameId, league, skipFetch],
   );
 
+  /* ---------------------------------- */
+  /* Initial fetch                      */
+  /* ---------------------------------- */
+
   useEffect(() => {
-    if (skipFetch) {
-      clearPolling();
-      abortRef.current?.abort();
-      abortRef.current = null;
+    if (skipFetch) return;
 
-      setScore(null);
-      setDetails(null);
-      setLoading(false);
-      setWarning(null);
-      setLastRefresh(null);
+    fetchDetails(true);
+  }, [fetchDetails, skipFetch]);
 
-      return;
+  /* ---------------------------------- */
+  /* Poll live games only               */
+  /* ---------------------------------- */
+
+  useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
 
-    fetchDetails();
-
-    return () => {
-      abortRef.current?.abort();
-      abortRef.current = null;
-    };
-  }, [skipFetch, fetchDetails, clearPolling]);
-
-  useEffect(() => {
-    clearPolling();
-
-    if (skipFetch || score?.status.state !== "in") {
+    if (score?.status?.state !== "in") {
       return;
     }
 
     intervalRef.current = setInterval(() => {
       fetchDetails(true);
-    }, 15_000);
+    }, 10_000);
 
-    return clearPolling;
-  }, [skipFetch, score?.status.state, fetchDetails, clearPolling]);
-
-  useEffect(() => {
     return () => {
-      clearPolling();
-      abortRef.current?.abort();
-      abortRef.current = null;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
-  }, [clearPolling]);
+  }, [fetchDetails, score?.status?.state]);
 
   const refresh = useCallback(() => {
     if (!skipFetch) {
-      fetchDetails();
+      fetchDetails(false);
     }
   }, [fetchDetails, skipFetch]);
 
@@ -649,8 +493,7 @@ export const useFootballGameDetails = (
     loading,
     warning,
     refresh,
-    isLive: score?.status.state === "in",
+    isLive: score?.status?.state === "in",
     lastRefresh,
-    hasData: Boolean(score),
   };
 };

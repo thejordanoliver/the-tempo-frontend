@@ -14,9 +14,13 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors } from "constants/styles";
 import { useExploreWidgetGames } from "hooks/WidgetHooks/useExploreWidgetGames";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
+  Animated,
   FlatList,
+  type GestureResponderHandlers,
+  PanResponder,
+  type PanResponderGestureState,
   StyleProp,
   StyleSheet,
   Text,
@@ -31,7 +35,11 @@ import DraggableFlatList, {
   ShadowDecorator,
 } from "react-native-draggable-flatlist";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import { widgetDashboardStyles } from "styles/ExploreStyles/WidgetDashboardStyles";
+import {
+  EXPLORE_WIDGET_GRID_GAP,
+  EXPLORE_WIDGET_ROW_GAP,
+  widgetDashboardStyles,
+} from "styles/ExploreStyles/WidgetDashboardStyles";
 import {
   ExploreWidgetConfig,
   ExploreWidgetSize,
@@ -79,8 +87,24 @@ type WidgetFrameProps = {
   isEditing: boolean;
   isActive?: boolean;
   onDrag?: () => void;
+  dragHandlePanHandlers?: GestureResponderHandlers;
   isDark: boolean;
 };
+
+type RenderWidgetGridRowOptions = {
+  isEditing: boolean;
+  drag?: () => void;
+  isActive?: boolean;
+};
+
+type SmallGridDragState = {
+  widgetId: string;
+  fromIndex: number;
+  targetIndex: number;
+};
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
 
 function WidgetFrame({
   children,
@@ -88,6 +112,7 @@ function WidgetFrame({
   isEditing,
   isActive = false,
   onDrag,
+  dragHandlePanHandlers,
   isDark,
 }: WidgetFrameProps) {
   return (
@@ -98,12 +123,29 @@ function WidgetFrame({
         isActive && draggableFrameStyles.dragActive,
       ]}
       accessibilityHint={
-        isEditing ? "Long press the reorder handle to move this widget" : undefined
+        isEditing ? "Use the reorder handle to move this widget" : undefined
       }
     >
       {children}
 
-      {isEditing && onDrag && (
+      {isEditing && dragHandlePanHandlers && (
+        <View
+          {...dragHandlePanHandlers}
+          accessible
+          style={draggableFrameStyles.dragHandle}
+          accessibilityRole="button"
+          accessibilityLabel="Reorder widget"
+          accessibilityHint="Drag to change this widget's position"
+        >
+          <Ionicons
+            name="reorder-three-outline"
+            size={20}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </View>
+      )}
+
+      {isEditing && !dragHandlePanHandlers && onDrag && (
         <TouchableOpacity
           activeOpacity={activeOpacity}
           onLongPress={onDrag}
@@ -135,11 +177,16 @@ export default function ExploreWidgetDashboard({
   onReorderWidgets,
 }: ExploreWidgetDashboardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [smallGridDragState, setSmallGridDragState] =
+    useState<SmallGridDragState | null>(null);
+  const smallGridDragStateRef = useRef<SmallGridDragState | null>(null);
+  const smallGridDragOffset = useRef(new Animated.ValueXY()).current;
   const { width: screenWidth } = useWindowDimensions();
   const styles = exploreStyles(isDark);
   const dashboardStyles = widgetDashboardStyles(isDark);
   const dashboardWidth = Math.max(screenWidth - 24, 1);
-  const gridGap = 12;
+  const gridGap = EXPLORE_WIDGET_GRID_GAP;
+  const rowGap = EXPLORE_WIDGET_ROW_GAP;
   const smallWidgetWidth = Math.max((dashboardWidth - gridGap) / 2, 1);
   const visibleWidgets = useMemo(
     () =>
@@ -256,6 +303,114 @@ export default function ExploreWidgetDashboard({
     [visibleWidgets],
   );
   const hasSelectedGameWidget = selectedGameWidgetTypes.length > 0;
+  const canUseSmallWidgetGridDrag = visibleWidgets.every(
+    (widget) => widget.size === "small",
+  );
+
+  const updateSmallGridDragState = useCallback(
+    (nextState: SmallGridDragState | null) => {
+      smallGridDragStateRef.current = nextState;
+      setSmallGridDragState(nextState);
+    },
+    [],
+  );
+
+  const getSmallGridTargetIndex = useCallback(
+    (fromIndex: number, gestureState: PanResponderGestureState) => {
+      const rowCount = Math.max(Math.ceil(visibleWidgets.length / 2), 1);
+      const rowStride = EXPLORE_WIDGET_HEIGHTS.small + rowGap;
+      const startRow = Math.floor(fromIndex / 2);
+      const startColumn = fromIndex % 2;
+      const startCenterX =
+        startColumn === 0
+          ? smallWidgetWidth / 2
+          : smallWidgetWidth + gridGap + smallWidgetWidth / 2;
+      const startCenterY =
+        startRow * rowStride + EXPLORE_WIDGET_HEIGHTS.small / 2;
+      const movedCenterX = startCenterX + gestureState.dx;
+      const movedCenterY = startCenterY + gestureState.dy;
+      const targetRow = clamp(
+        Math.floor(Math.max(movedCenterY, 0) / rowStride),
+        0,
+        rowCount - 1,
+      );
+      const targetColumn = movedCenterX < dashboardWidth / 2 ? 0 : 1;
+
+      return Math.min(targetRow * 2 + targetColumn, visibleWidgets.length - 1);
+    },
+    [dashboardWidth, gridGap, rowGap, smallWidgetWidth, visibleWidgets.length],
+  );
+
+  const finishSmallGridDrag = useCallback(() => {
+    const dragState = smallGridDragStateRef.current;
+
+    updateSmallGridDragState(null);
+    smallGridDragOffset.setValue({ x: 0, y: 0 });
+
+    if (!dragState || dragState.targetIndex === dragState.fromIndex) return;
+
+    const nextWidgets = visibleWidgets.slice();
+    const [movedWidget] = nextWidgets.splice(dragState.fromIndex, 1);
+
+    if (!movedWidget) return;
+
+    nextWidgets.splice(dragState.targetIndex, 0, movedWidget);
+    onReorderWidgets(nextWidgets);
+  }, [
+    onReorderWidgets,
+    smallGridDragOffset,
+    updateSmallGridDragState,
+    visibleWidgets,
+  ]);
+
+  const createSmallGridDragHandlers = useCallback(
+    (widgetId: string, fromIndex: number) =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+          Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2,
+        onPanResponderGrant: () => {
+          smallGridDragOffset.stopAnimation();
+          smallGridDragOffset.setValue({ x: 0, y: 0 });
+          updateSmallGridDragState({
+            widgetId,
+            fromIndex,
+            targetIndex: fromIndex,
+          });
+        },
+        onPanResponderMove: (_, gestureState) => {
+          const currentDragState = smallGridDragStateRef.current;
+
+          if (!currentDragState) return;
+
+          smallGridDragOffset.setValue({
+            x: gestureState.dx,
+            y: gestureState.dy,
+          });
+
+          const targetIndex = getSmallGridTargetIndex(
+            currentDragState.fromIndex,
+            gestureState,
+          );
+
+          if (targetIndex === currentDragState.targetIndex) return;
+
+          updateSmallGridDragState({
+            ...currentDragState,
+            targetIndex,
+          });
+        },
+        onPanResponderRelease: finishSmallGridDrag,
+        onPanResponderTerminate: finishSmallGridDrag,
+        onPanResponderTerminationRequest: () => false,
+      }).panHandlers,
+    [
+      finishSmallGridDrag,
+      getSmallGridTargetIndex,
+      smallGridDragOffset,
+      updateSmallGridDragState,
+    ],
+  );
 
   const renderEmptyBoard = () => (
     <View style={[styles.centerPrompt, dashboardStyles.emptyWrap]}>
@@ -405,7 +560,10 @@ export default function ExploreWidgetDashboard({
     });
   };
 
-  const renderWidgetRow = ({ item: row }: { item: DashboardWidgetRow }) => {
+  const renderWidgetGridRow = (
+    row: DashboardWidgetRow,
+    { isEditing, drag, isActive }: RenderWidgetGridRowOptions,
+  ) => {
     const isSmallRow = row.cells.every((cell) => cell.widget.size === "small");
 
     return (
@@ -417,13 +575,16 @@ export default function ExploreWidgetDashboard({
           return (
             <WidgetFrame
               key={cell.widget.id}
-              isEditing={false}
+              isEditing={isEditing}
+              isActive={isActive}
+              onDrag={drag}
               isDark={isDark}
               style={[
                 dashboardStyles.gridCell,
                 isSmallRow
                   ? { width: smallWidgetWidth }
                   : dashboardStyles.gridCellFull,
+                isEditing && dashboardStyles.draggableCell,
                 {
                   height: widgetHeight,
                   minHeight: EXPLORE_WIDGET_MIN_HEIGHTS[cell.widget.size],
@@ -448,71 +609,118 @@ export default function ExploreWidgetDashboard({
     );
   };
 
-  const renderDraggableWidget = ({
-    item: widget,
-    drag,
-    isActive,
-    getIndex,
-  }: RenderItemParams<ExploreWidgetConfig>) => {
-    const index = getIndex() ?? 0;
-    const isSmallWidget = widget.size === "small";
-    const widgetWidth = isSmallWidget ? smallWidgetWidth : dashboardWidth;
-    const widgetHeight = EXPLORE_WIDGET_HEIGHTS[widget.size];
+  const renderWidgetRow = ({ item: row }: { item: DashboardWidgetRow }) =>
+    renderWidgetGridRow(row, { isEditing: false });
+
+  const renderSmallManualGridRow = ({
+    item: row,
+  }: {
+    item: DashboardWidgetRow;
+  }) => {
+    const isSmallRow = row.cells.every((cell) => cell.widget.size === "small");
 
     return (
-      <ScaleDecorator activeScale={1.015}>
-        <ShadowDecorator>
-          <WidgetFrame
-            isEditing
-            isActive={isActive}
-            onDrag={drag}
-            isDark={isDark}
-            style={[
-              dashboardStyles.gridCell,
-              isSmallWidget
-                ? { width: smallWidgetWidth }
-                : dashboardStyles.gridCellFull,
-              dashboardStyles.draggableCell,
-              {
-                height: widgetHeight,
-                minHeight: EXPLORE_WIDGET_MIN_HEIGHTS[widget.size],
-                maxHeight: EXPLORE_WIDGET_MAX_HEIGHTS[widget.size],
-              },
-            ]}
-          >
-            {renderWidget({
-              widget,
-              index,
-              widgetWidth,
-              widgetHeight,
-            })}
-          </WidgetFrame>
-        </ShadowDecorator>
-      </ScaleDecorator>
+      <View style={dashboardStyles.gridRow}>
+        {row.cells.map((cell) => {
+          const isActive = smallGridDragState?.widgetId === cell.widget.id;
+          const isDropTarget =
+            smallGridDragState?.targetIndex === cell.index && !isActive;
+          const widgetHeight = EXPLORE_WIDGET_HEIGHTS[cell.widget.size];
+          const frame = (
+            <WidgetFrame
+              key={cell.widget.id}
+              isEditing
+              isActive={isActive}
+              dragHandlePanHandlers={createSmallGridDragHandlers(
+                cell.widget.id,
+                cell.index,
+              )}
+              isDark={isDark}
+              style={[
+                dashboardStyles.gridCell,
+                { width: smallWidgetWidth },
+                dashboardStyles.draggableCell,
+                isDropTarget && draggableFrameStyles.manualDropTarget,
+                {
+                  height: widgetHeight,
+                  minHeight: EXPLORE_WIDGET_MIN_HEIGHTS[cell.widget.size],
+                  maxHeight: EXPLORE_WIDGET_MAX_HEIGHTS[cell.widget.size],
+                },
+              ]}
+            >
+              {renderWidget({
+                widget: cell.widget,
+                index: cell.index,
+                widgetWidth: smallWidgetWidth,
+                widgetHeight,
+              })}
+            </WidgetFrame>
+          );
+
+          if (!isActive) return frame;
+
+          return (
+            <Animated.View
+              key={cell.widget.id}
+              style={[
+                draggableFrameStyles.manualDragItem,
+                { transform: smallGridDragOffset.getTranslateTransform() },
+              ]}
+            >
+              {frame}
+            </Animated.View>
+          );
+        })}
+
+        {isSmallRow && row.cells.length === 1 && (
+          <View style={{ width: smallWidgetWidth }} />
+        )}
+      </View>
     );
   };
 
-  const renderDragPlaceholder = ({ item }: { item: ExploreWidgetConfig }) => {
-    const isSmallWidget = item.size === "small";
+  const renderDraggableWidgetRow = ({
+    item: row,
+    drag,
+    isActive,
+  }: RenderItemParams<DashboardWidgetRow>) => (
+    <ScaleDecorator activeScale={1.015}>
+      <ShadowDecorator>
+        {renderWidgetGridRow(row, { isEditing: true, drag, isActive })}
+      </ShadowDecorator>
+    </ScaleDecorator>
+  );
+
+  const renderDragPlaceholder = ({ item: row }: { item: DashboardWidgetRow }) => {
+    const isSmallRow = row.cells.every((cell) => cell.widget.size === "small");
 
     return (
-      <View
-        style={[
-          dashboardStyles.dropPlaceholder,
-          isSmallWidget
-            ? { width: smallWidgetWidth }
-            : dashboardStyles.gridCellFull,
-          { height: EXPLORE_WIDGET_HEIGHTS[item.size] },
-        ]}
-      >
-        <Ionicons
-          name="download-outline"
-          size={18}
-          color={isDark ? Colors.dark.leafGreen : Colors.light.green}
-        />
-        <Text style={dashboardStyles.dropPlaceholderText}>
-          Drop widget here
-        </Text>
+      <View style={dashboardStyles.gridRow}>
+        {row.cells.map((cell) => (
+          <View
+            key={cell.widget.id}
+            style={[
+              dashboardStyles.dropPlaceholder,
+              isSmallRow
+                ? { width: smallWidgetWidth }
+                : dashboardStyles.gridCellFull,
+              { height: EXPLORE_WIDGET_HEIGHTS[cell.widget.size] },
+            ]}
+          >
+            <Ionicons
+              name="download-outline"
+              size={18}
+              color={isDark ? Colors.dark.leafGreen : Colors.light.green}
+            />
+            <Text style={dashboardStyles.dropPlaceholderText}>
+              {isSmallRow ? "Drop here" : "Drop widget here"}
+            </Text>
+          </View>
+        ))}
+
+        {isSmallRow && row.cells.length === 1 && (
+          <View style={{ width: smallWidgetWidth }} />
+        )}
       </View>
     );
   };
@@ -589,23 +797,44 @@ export default function ExploreWidgetDashboard({
   );
 
   if (isEditMode) {
+    if (canUseSmallWidgetGridDrag) {
+      return (
+        <FlatList
+          key="small-widget-grid"
+          data={widgetRows}
+          keyExtractor={(row) => row.id}
+          style={dashboardStyles.scroll}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={dashboardStyles.content}
+          renderItem={renderSmallManualGridRow}
+          ListHeaderComponent={renderDashboardHeader}
+          scrollEnabled={!smallGridDragState}
+        />
+      );
+    }
+
     return (
       <DraggableFlatList
-        data={visibleWidgets}
-        keyExtractor={(widget) => widget.id}
+        key="widget-row-grid"
+        data={widgetRows}
+        keyExtractor={(row) => row.id}
         style={dashboardStyles.scroll}
         containerStyle={dashboardStyles.scroll}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={dashboardStyles.content}
-        renderItem={renderDraggableWidget}
+        renderItem={renderDraggableWidgetRow}
         renderPlaceholder={renderDragPlaceholder}
         ListHeaderComponent={renderDashboardHeader}
         activationDistance={8}
         autoscrollThreshold={96}
         autoscrollSpeed={160}
         dragItemOverflow
-        onDragEnd={({ data }) => {
-          onReorderWidgets(data);
+        onDragEnd={({ data, from, to }) => {
+          if (from === to) return;
+
+          onReorderWidgets(
+            data.flatMap((row) => row.cells.map((cell) => cell.widget)),
+          );
         }}
       />
     );
@@ -630,6 +859,12 @@ const draggableFrameStyles = StyleSheet.create({
   },
   dragActive: {
     opacity: 0.94,
+  },
+  manualDragItem: {
+    zIndex: 80,
+  },
+  manualDropTarget: {
+    opacity: 0.48,
   },
   dragHandle: {
     position: "absolute",

@@ -93,8 +93,10 @@ export function CenterInfo({
         </View>
       )}
 
-      {/* Broadcast */}
-      {broadcast && <Text style={styles.broadcasts}>{broadcast}</Text>}
+      {/* 📺 Broadcast */}
+      {broadcast && (inProgress || isScheduled) && (
+        <Text style={styles.broadcasts}>{broadcast}</Text>
+      )}
     </View>
   );
 }

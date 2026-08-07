@@ -1,11 +1,14 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
+export const EXPLORE_WIDGET_GRID_GAP = 12;
+export const EXPLORE_WIDGET_ROW_GAP = 16;
+
 export const widgetDashboardStyles = (isDark: boolean) =>
   StyleSheet.create({
     content: {
       flexGrow: 1,
-      gap: 16,
+      gap: EXPLORE_WIDGET_ROW_GAP,
       paddingBottom: 96,
     },
     scroll: {
@@ -13,7 +16,7 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     },
     gridRow: {
       flexDirection: "row",
-      gap: 12,
+      gap: EXPLORE_WIDGET_GRID_GAP,
       width: "100%",
       alignItems: "flex-start",
     },

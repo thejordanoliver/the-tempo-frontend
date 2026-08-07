@@ -298,6 +298,8 @@ export const useBaseballGameDetails = (
           params,
         });
 
+        
+
         if (!data?.score) {
           setScore(null);
           setDetails(null);

@@ -23,7 +23,7 @@ import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import NFLGameHeader from "components/Sports/Football/GameDetails/GameHeader";
+import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
@@ -170,9 +170,9 @@ export default function GameDetailsScreen(
   const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
-  const { score, details } = useFootballGameDetails(LEAGUE, gameId);
+  const { score, details, loading } = useFootballGameDetails(LEAGUE, gameId);
 
-  const isLoading = !score || !details || !homeLastGames || !awayLastGames;
+  const isLoading = loading || !game || !home || !away || !score || !details;
 
   const state = score?.status.state ?? "pre";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
@@ -224,6 +224,7 @@ export default function GameDetailsScreen(
   const teamStats = score?.teamStats ?? [];
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
+  const baseVenue = details?.venue;
   const { venue } = useVenue({ sport: "football", id: venueId });
   const { weather } = useWeather({
     lat: Number(venue?.latitude),
@@ -231,19 +232,16 @@ export default function GameDetailsScreen(
     location: venue?.city,
     date: gameDateObj,
   });
-  const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
-
   const venueName = venue?.name ?? baseVenue?.fullName ?? null;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
   const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
-
-  const venueAttendance = game?.attendance ?? null;
+  const venueAttendance = details?.attendance ?? null;
+  const venueSurface = baseVenue?.grass;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
-
   const venueLocation =
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
@@ -308,7 +306,7 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
-        <NFLGameHeader
+        <GameHeader
           headline={headline}
           homeId={homeId}
           awayId={awayId}
@@ -483,7 +481,7 @@ export default function GameDetailsScreen(
               venueCapacity={venueCapacity}
               venueAttendance={venueAttendance}
               weather={weather}
-              grass={baseVenue?.grass}
+              grass={venueSurface}
               surface={"football"}
               isDark={isDark}
             />

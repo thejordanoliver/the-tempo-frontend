@@ -21,7 +21,7 @@ type Props = {
   location: string | null | undefined;
   address: string | null | undefined;
   venueCapacity: number | null | undefined;
-  venueAttendance: number | string | null | undefined;
+  venueAttendance: number | null | undefined;
   isDark: boolean;
   circuitLength?: number | string | undefined;
   circuitLaps?: number | string | undefined;
@@ -85,7 +85,6 @@ const GameLocation: React.FC<Props> = ({
   const formattedAttendance =
     venueAttendance !== null &&
     venueAttendance !== undefined &&
-    venueAttendance !== "" &&
     !Number.isNaN(Number(venueAttendance))
       ? Intl.NumberFormat("en-US").format(Number(venueAttendance))
       : null;

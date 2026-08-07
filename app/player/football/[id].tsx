@@ -82,6 +82,8 @@ export default function PlayerDetailScreen() {
     error: gameError,
   } = useTeamLatestGame(league, teamId);
 
+ 
+
   const {
     data: seasons,
     loading: seasonsLoading,

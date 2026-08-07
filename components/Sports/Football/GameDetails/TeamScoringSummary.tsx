@@ -5,7 +5,7 @@ import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { formatPeriod } from "@/utils/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useMemo, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 
 type Props = {
@@ -105,7 +105,7 @@ export default function TeamScoringSummary({
             </Text>
           </View>
         ) : (
-          <View style={styles.listContainer}>
+          <ScrollView style={styles.listContainer}>
             {filteredPlays.map((play, index) => {
               const period = formatPeriod({
                 period: play.period?.number,
@@ -143,7 +143,7 @@ export default function TeamScoringSummary({
                 </View>
               );
             })}
-          </View>
+          </ScrollView>
         )}
       </View>
     </View>
@@ -154,6 +154,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       overflow: "hidden",
+      maxHeight: 400,
       borderWidth: 1,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderRadius: 8,
