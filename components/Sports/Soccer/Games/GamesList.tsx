@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
-import GamePreviewModal from "../GamePreview/GamePreviewModal";
+import GamePreviewModal from "../GamePreview/SoccerGamePreviewModal";
 import SoccerGameCard from "./SoccerGameCard";
 import SoccerSquareGameCard from "./SoccerSquareGameCard";
 import SoccerStackedGameCard from "./SoccerStackedGameCard";

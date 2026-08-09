@@ -28,7 +28,7 @@ type Props = {
   isDark: boolean;
   loading?: boolean;
   league?: string;
-  state: string | null;
+  state?: string | null;
 
   homeRuns?: ScoreValue;
   awayRuns?: ScoreValue;

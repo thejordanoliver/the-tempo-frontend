@@ -26,9 +26,8 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import CenterInfo from "./CenterInfo";
+import { CenterInfo, TeamRow } from "../GameDetails";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   visible: boolean;
@@ -132,7 +131,7 @@ export default function GamePreviewModal({
   const clock = game.status.clock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
-  const state = game.status.state;
+  const state = score?.status?.state;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -153,6 +152,9 @@ export default function GamePreviewModal({
 
   const homeScore = score?.home.score;
   const awayScore = score?.away.score;
+
+  const homeWins = score?.home.winner ?? false;
+  const awayWins = score?.away.winner ?? false;
 
   const homeBonus = score?.home?.fouls?.bonusState;
   const awayBonus = score?.away?.fouls?.bonusState;
@@ -248,40 +250,50 @@ export default function GamePreviewModal({
 
               {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
-                  logo={awayLogo}
+                {/* Away Team Row */}
+                <TeamRow
+                  id={awayId}
                   name={awayCode}
+                  logo={awayLogo}
+                  bonusState={awayBonus}
                   rank={awayRank}
                   score={awayScore}
-                  opponentScore={homeScore}
                   record={awayRecord}
+                  isWinner={awayWins}
                   timeouts={awayTimeouts}
                   gameStatusDescription={gameStatusDescription}
-                  bonusState={awayBonus}
+                  isHome={false}
+                  league={LEAGUE}
+                  isDark
                 />
 
+                {/* Game Info */}
                 <CenterInfo
-                  gameStatusDescription={gameStatusDescription}
-                  gameStatusDetail={gameStatusDetail}
-                  broadcast={broadcast}
-                  period={period}
-                  clock={clock}
-                  time={formattedTime}
                   date={formattedDate}
+                  time={formattedTime}
+                  clock={clock}
+                  period={period}
+                  broadcast={broadcast}
+                  gameStatusShortDescription={gameStatusDetail}
+                  gameStatusDescription={gameStatusDescription}
+                  isDark
                 />
 
-                <TeamInfo
-                  side="home"
-                  logo={homeLogo}
+                {/* Home Team Row */}
+                <TeamRow
+                  id={homeId}
                   name={homeCode}
+                  logo={homeLogo}
                   rank={homeRank}
                   score={homeScore}
-                  opponentScore={awayScore}
                   record={homeRecord}
+                  bonusState={homeBonus}
+                  isWinner={homeWins}
                   timeouts={homeTimeouts}
                   gameStatusDescription={gameStatusDescription}
-                  bonusState={homeBonus}
+                  isHome={true}
+                  league={LEAGUE}
+                  isDark
                 />
               </View>
 

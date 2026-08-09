@@ -13,6 +13,8 @@ import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
+import { View } from "react-native";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 
 type GamePreviewContentProps = {
   homeId: any;
@@ -46,7 +48,7 @@ type GamePreviewContentProps = {
   venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
-  state: string;
+  state?: string | null;
   league: string;
 };
 
@@ -81,99 +83,102 @@ export default function GamePreviewContent({
   state,
   league,
 }: GamePreviewContentProps) {
+  const styles = gamePreviewModalStyle();
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
+      contentContainerStyle={styles.contentContainerStyle}
     >
-      <LineScore
-        linescore={lineScore}
-        awayCode={awayCode}
-        homeCode={homeCode}
-        league={league}
-        isDark={true}
-        state={state}
-      />
+      <View style={styles.bottomSheetScrollViewWrapper}>
+        <LineScore
+          linescore={lineScore}
+          awayCode={awayCode}
+          homeCode={homeCode}
+          league={league}
+          isDark={true}
+          state={state}
+        />
 
-      <MatchupPredictor
-        homeCode={homeCode}
-        homeLogo={homeLogo}
-        homeChance={homeChance}
-        homeColor={homeColor}
-        awayCode={awayCode}
-        awayLogo={awayLogo}
-        awayChance={awayChance}
-        awayColor={awayColor}
-        size={180}
-        isDark={true}
-        state={state}
-      />
+        <MatchupPredictor
+          homeCode={homeCode}
+          homeLogo={homeLogo}
+          homeChance={homeChance}
+          homeColor={homeColor}
+          awayCode={awayCode}
+          awayLogo={awayLogo}
+          awayChance={awayChance}
+          awayColor={awayColor}
+          size={180}
+          isDark={true}
+          state={state}
+        />
 
-      <GameLeaders
-        leaders={leaders}
-        homeId={homeId}
-        homeLogo={homeLogo}
-        awayId={awayId}
-        awayLogo={awayLogo}
-        state={state}
-        isDark={true}
-      />
+        <GameLeaders
+          leaders={leaders}
+          homeId={homeId}
+          homeLogo={homeLogo}
+          awayId={awayId}
+          awayLogo={awayLogo}
+          state={state}
+          isDark={true}
+        />
 
-      <BoxScore
-        playerStats={playerStats}
-        homeId={homeId}
-        homeName={homeName}
-        homeLogo={homeLogo}
-        awayId={awayId}
-        awayName={awayName}
-        awayLogo={awayLogo}
-        isDark={true}
-        league={league}
-        state={state}
-      />
+        <BoxScore
+          playerStats={playerStats}
+          homeId={homeId}
+          homeName={homeName}
+          homeLogo={homeLogo}
+          awayId={awayId}
+          awayName={awayName}
+          awayLogo={awayLogo}
+          isDark={true}
+          league={league}
+          state={state}
+        />
 
-      <GameTeamStats
-        stats={teamStats}
-        awayName={awayCode}
-        awayLogo={awayLogo}
-        awayColor={awayColor}
-        homeName={homeCode}
-        homeLogo={homeLogo}
-        homeColor={homeColor}
-        state={state}
-        isDark={true}
-      />
+        <GameTeamStats
+          stats={teamStats}
+          awayName={awayCode}
+          awayLogo={awayLogo}
+          awayColor={awayColor}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeColor={homeColor}
+          state={state}
+          isDark={true}
+        />
 
-      <LastFiveGames
-        home={{
-          teamId: homeId,
-          teamCode: homeCode,
-          games: homeLastGames.games,
-        }}
-        away={{
-          teamId: awayId,
-          teamCode: awayCode,
-          games: awayLastGames.games,
-        }}
-        league={league}
-        state={state}
-        isDark={true}
-      />
+        <LastFiveGames
+          home={{
+            teamId: homeId,
+            teamCode: homeCode,
+            games: homeLastGames.games,
+          }}
+          away={{
+            teamId: awayId,
+            teamCode: awayCode,
+            games: awayLastGames.games,
+          }}
+          league={league}
+          state={state}
+          isDark={true}
+        />
 
-      <HighlightVideoList highlights={highlights} isDark={true} />
+        <HighlightVideoList highlights={highlights} isDark={true} />
 
-      <Officials officials={officials} isDark={true} state={state} />
+        <Officials officials={officials} isDark={true} state={state} />
 
-      <GameLocation
-        venueImage={venueImage}
-        venueName={venueName}
-        location={venueLocation}
-        address={venueAddress}
-        venueCapacity={venueCapacity}
-        venueAttendance={venueAttendance}
-        weather={weather}
-        isDark={true}
-      />
+        <GameLocation
+          venueImage={venueImage}
+          venueName={venueName}
+          location={venueLocation}
+          address={venueAddress}
+          venueCapacity={venueCapacity}
+          venueAttendance={venueAttendance}
+          weather={weather}
+          isDark={true}
+        />
+      </View>
     </BottomSheetScrollView>
   );
 }

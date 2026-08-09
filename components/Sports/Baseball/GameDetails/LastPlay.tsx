@@ -10,7 +10,7 @@ type LastPlayProps = {
   lastPlay?: Play;
   homeId: number;
   awayId: number;
-  state: string | null;
+  state?: string | null;
   league: string;
 };
 

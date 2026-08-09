@@ -30,7 +30,7 @@ type Props = {
   homeLogo: any;
   homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
-  state: string | null; // "pre" | "in" | "post"
+  state?: string | null;
 };
 
 function isSameTeamId(
@@ -161,7 +161,6 @@ export default function FanPredictionVote({
   const animFillHome = useRef(new Animated.Value(0)).current;
 
   const canVote = state === "pre" || state === "in";
-  const isVisible = state === "pre" || state === "in" || state === "post";
 
   // Single request on mount instead of the original's two sequential fetches.
   // fetchVoteResults already returns both the user's vote and the tallies, so
@@ -257,8 +256,6 @@ export default function FanPredictionVote({
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  if (!isVisible) return null;
-
   const pickedName = isSameTeamId(userVote, awayId)
     ? awayName || awayCode
     : homeName || homeCode;
@@ -274,6 +271,8 @@ export default function FanPredictionVote({
           : userVote
             ? `You picked ${pickedName}`
             : "Tap a team to cast your prediction";
+
+  if (state === "post") return null;
 
   if (phase === "loading")
     return (

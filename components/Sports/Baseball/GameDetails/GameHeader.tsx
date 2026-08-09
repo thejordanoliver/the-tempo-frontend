@@ -4,7 +4,7 @@ import { CenterInfo } from "./CenterInfo";
 import { TeamRow } from "./TeamRow";
 
 type Props = {
-  state: "pre" | "in" | "post" | null;
+  state?: "pre" | "in" | "post" | null;
   homeRank: number | undefined | null;
   awayRank: number | undefined | null;
   homeName: string;
@@ -77,6 +77,7 @@ export default function GameHeader({
       <View style={styles.teamsContainer}>
         {/* Away Team Row */}
         <TeamRow
+          state={state}
           id={awayId}
           logo={awayLogo}
           name={awayName}
@@ -105,6 +106,7 @@ export default function GameHeader({
         />
 
         <TeamRow
+          state={state}
           id={homeId}
           logo={homeLogo}
           name={homeName}

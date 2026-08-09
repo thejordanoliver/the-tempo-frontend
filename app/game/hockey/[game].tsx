@@ -5,6 +5,7 @@ import {
   LastFiveGames,
   LastPlay,
   LineScore,
+  TeamInjuries
 } from "@/components/Sports/Basketball/GameDetails";
 import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
 import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
@@ -12,7 +13,6 @@ import { HighlightVideoList } from "@/components/Sports/Basketball/GameDetails/H
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
-import NHLInjuries from "@/components/Sports/Hockey/GameDetails/NHLInjuries";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
@@ -141,9 +141,9 @@ export default function GameDetailsScreen(
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
-  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
-  const state = score?.status.state ?? null;
+  const gameStatusDescription = score?.status?.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status?.gameStatusDetail ?? "";
+  const state = score?.status?.state ?? null;
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
   // const playerStats = score?.playerStats ?? [];
@@ -164,8 +164,8 @@ export default function GameDetailsScreen(
   const awayScore = score?.away?.score ?? 0;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
-  const homeRecord = score?.home.records[0].summary ?? "0-0";
-  const awayRecord = score?.away.records[0].summary ?? "0-0";
+  const homeRecord = score?.home?.records[0]?.summary ?? "0-0";
+  const awayRecord = score?.away?.records[0]?.summary ?? "0-0";
   const homeTimeouts = score?.home?.timeouts ?? 0;
   const awayTimeouts = score?.away.timeouts ?? 0;
   const officials = details?.officials ?? [];
@@ -349,13 +349,17 @@ export default function GameDetailsScreen(
 
             <GameSummary plays={plays ?? []} isDark={isDark} />
 
-            <NHLInjuries
+            <TeamInjuries
               injuries={injuries}
-              loading={isLoading}
-              error={null}
-              homeTeamId={String(homeEspnId)}
-              awayTeamId={String(awayEspnId)}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
               isDark={isDark}
+              state={state}
+              league={LEAGUE}
             />
 
             <LastFiveGames

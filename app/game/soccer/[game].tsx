@@ -131,14 +131,14 @@ export default function GameDetailsScreen() {
   const broadcasts = getBroadcastDisplay(details?.broadcasts);
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
-  const state = score?.status.state ?? "";
+  const state = score?.status?.state ?? "";
   const homeScore = score?.home?.score ?? 0;
   const awayScore = score?.away?.score ?? 0;
   const homeRecord = home?.record ?? "0—0-0";
   const awayRecord = away?.record ?? "0—0-0";
   const homeWins = score?.home?.winner;
   const awayWins = score?.away?.winner;
-  const isTie = score?.away.winner === score?.home.winner;
+  const isTie = awayWins === homeWins;
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -285,7 +285,10 @@ export default function GameDetailsScreen() {
           <View style={styles.innerContainer}>
             <LastPlay
               lastPlay={lastPlay}
-              gameStatusDescription={gameStatusDescription}
+              homeId={homeId}
+              awayId={awayId}
+              state={state}
+              league={LEAGUE}
             />
 
             <FanPredictionVote

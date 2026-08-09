@@ -10,7 +10,6 @@ import {
   safeDate,
 } from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import TeamInfo from "components/Sports/Baseball/GamePreview/TeamInfo";
 import { Colors } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -23,7 +22,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { CenterInfo } from "./CenterInfo";
+import { CenterInfo } from "../GameDetails/CenterInfo";
+import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";
 
 type BaseballGameCardProps = {
@@ -110,10 +110,11 @@ export default function BaseballGamePreviewModal({
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
-  const state = score?.status.state ?? "";
+  const state = score?.status?.state;
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
   const isTopInning = gameStatusDetail.includes("Top");
+  const isBottomInning = gameStatusDetail.includes("Bottom");
 
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
@@ -121,13 +122,12 @@ export default function BaseballGamePreviewModal({
   const awayWins = score?.away?.winner ?? false;
 
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
 
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
@@ -236,44 +236,55 @@ export default function BaseballGamePreviewModal({
             </View>
           ) : (
             <>
-              {/* ================= HEADLINE ================= */}
               {headline && <Text style={styles.headlineText}>{headline}</Text>}
 
-              {/* ================= GAME HEADER ================= */}
+              {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
+                {/* Away Team Row */}
+                <TeamRow
+                  state={state}
+                  id={awayId}
                   logo={awayLogo}
                   name={awayCode}
                   score={awayScore}
-                  winner={awayWins}
-                  record={awayRecord}
                   rank={awayRank}
+                  isWinner={awayWins}
+                  record={awayRecord}
                   gameStatusDescription={gameStatusDescription}
-                  state={state}
+                  isHome={false}
+                  isDark
+                  league={LEAGUE}
                 />
 
+                {/* Game Info */}
                 <CenterInfo
-                  broadcast={broadcast}
-                  time={formattedTime}
-                  isTopInning={isTopInning}
-                  date={formattedDate}
-                  outs={outs}
-                  bases={bases}
+                  state={state}
                   gameStatusDescription={gameStatusDescription}
                   gameStatusDetail={gameStatusDetail}
+                  date={formattedDate}
+                  time={formattedTime}
+                  broadcast={broadcast}
+                  isTopInning={isTopInning}
+                  isBottomInning={isBottomInning}
+                  outs={outs}
+                  bases={bases}
+                  isDark
                 />
 
-                <TeamInfo
-                  side="home"
+                {/* Home Team Row */}
+                <TeamRow
+                  state={state}
+                  id={homeId}
                   logo={homeLogo}
                   name={homeCode}
-                  score={homeScore}
-                  winner={homeWins}
-                  record={homeRecord}
                   rank={homeRank}
+                  score={homeScore}
+                  isWinner={homeWins}
+                  record={homeRecord}
                   gameStatusDescription={gameStatusDescription}
-                  state={state}
+                  isHome={true}
+                  isDark
+                  league={LEAGUE}
                 />
               </View>
 

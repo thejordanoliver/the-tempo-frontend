@@ -17,7 +17,7 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { getBroadcastDisplay } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
 function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
@@ -81,7 +81,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
-  const period = formatPeriod({ period: game.status.period });
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -89,7 +88,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const endOfInning = gameStatusDescription === "End of Inning";
   const isDelayed =
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Rain Delay";
@@ -157,53 +155,89 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   };
 
   const renderStatus = () => {
-    if (inProgress)
-      return (
-        <>
-          <View style={styles.infoWrapper}>
-            {isTopInning && (
-              <Ionicons
-                name={"caret-up"}
-                size={10}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            )}
-            {isBottomInning && (
-              <Ionicons
-                name={"caret-down"}
-                size={10}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            )}
-            <Text style={styles.period}>{gameStatusDetail}</Text>
-            <View style={styles.statusDivider} />
-            <View style={styles.outsContainer}>{getOuts}</View>
-          </View>
-          <View style={styles.basesContainer}>
-            <BasesIndicator bases={bases} isDark={isDark} size={8} />
-          </View>
-        </>
-      );
-
-    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
-      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
-    if (endOfInning)
-      return <Text style={styles.clock}>{gameStatusDetail}</Text>;
-
-    if (isFinal)
-      return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.finalText}>{gameStatusDetail}</Text>
-          <View style={styles.finalStatusDivider} />
-          <Text style={styles.finalText}>{formattedDate}</Text>
-        </View>
-      );
-
     return (
-      <View style={styles.infoWrapper}>
-        <Text style={styles.date}>{formattedDate}</Text>
-        <View style={styles.statusDivider} />
-        <Text style={styles.date}>{formattedTime}</Text>
+      <View>
+        {/* ⚾ Scheduled */}
+        {isScheduled && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.date}>{formattedDate}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.date}>{formattedTime}</Text>
+          </View>
+        )}
+
+        {/* 🕒 In Progress */}
+        {inProgress && !isDelayed && (
+          <View>
+            <View style={styles.infoWrapper}>
+              {isTopInning && (
+                <Ionicons
+                  name={"caret-up"}
+                  size={10}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              )}
+              {isBottomInning && (
+                <Ionicons
+                  name={"caret-down"}
+                  size={10}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              )}
+              <Text style={styles.date}>{gameStatusDetail}</Text>
+
+              <View style={styles.statusDivider} />
+              <View style={styles.outsContainer}>{getOuts}</View>
+            </View>
+            <View style={styles.basesContainer}>
+              <BasesIndicator size={8} bases={bases} isDark={isDark} />
+            </View>
+          </View>
+        )}
+
+        {/* 🏁 Final */}
+        {isFinal && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>{gameStatusDetail}</Text>
+            <View style={styles.finalStatusDivider} />
+            <Text style={styles.finalText}>{formattedDate}</Text>
+          </View>
+        )}
+
+        {/* ❌ Canceled */}
+        {isCanceled && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>Canceled</Text>
+          </View>
+        )}
+
+        {/* ❌ Forfeited */}
+        {isForfeited && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>Forfeited</Text>
+          </View>
+        )}
+
+        {/* ⏸️ Suspended */}
+        {isSuspended && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>Suspended</Text>
+          </View>
+        )}
+
+        {/* ⏸️ Postponed */}
+        {isPostponed && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>Postponed</Text>
+          </View>
+        )}
+
+        {/* ⏸️ Delayed */}
+        {isDelayed && (
+          <View style={styles.infoWrapper}>
+            <Text style={styles.finalText}>Delayed</Text>
+          </View>
+        )}
       </View>
     );
   };

@@ -8,7 +8,7 @@ import { officialsStyles } from "styles/GameDetailStyles/OfficialsStyles";
 type Props = {
   officials: Official[];
   isDark: boolean;
-  state: string | null;
+  state?: string | null;
 };
 
 export default function Officials({ officials, isDark, state }: Props) {

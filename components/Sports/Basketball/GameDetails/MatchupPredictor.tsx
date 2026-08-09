@@ -21,7 +21,7 @@ interface Props {
   awayChance: number;
   size?: number;
   isDark: boolean;
-  state: string | null;
+  state?: string | null;
 }
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);

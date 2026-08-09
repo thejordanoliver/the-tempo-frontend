@@ -17,7 +17,6 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         borderColor: Colors.midTone,
         borderWidth: 1,
         borderRadius: 8,
-        paddingTop: 12,
         overflow: "hidden",
       },
       tabLabel: {

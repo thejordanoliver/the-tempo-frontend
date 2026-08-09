@@ -25,9 +25,9 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import CenterInfo from "../../Basketball/GamePreview/CenterInfo";
+import { CenterInfo } from "../GameDetails/CenterInfo";
+import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: HockeyGame;
@@ -87,6 +87,7 @@ export default function HockeyGamePreviewModal({
   const isChampionship = headline?.includes("Stanley Cup Final");
   const styles = gamePreviewModalStyle(isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
+  const state = score?.status?.state;
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -95,8 +96,14 @@ export default function HockeyGamePreviewModal({
   const isForfeited = gameStatusDescription === "Forfeited";
   const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
   const period = formatPeriod({ period: game.status.period, isNHL: true });
-  const homeScore = score?.home.total ?? 0;
-  const awayScore = score?.away.total ?? 0;
+  const homeScore = score?.home?.score ?? 0;
+  const awayScore = score?.away?.score ?? 0;
+  const homeRank = score?.home?.rank;
+  const awayRank = score?.away?.rank;
+  const homeTimeouts = score?.home?.timeouts ?? 0;
+  const awayTimeouts = score?.away?.timeouts ?? 0;
+  const homeWins = homeScore > awayScore;
+  const awayWins = awayScore > homeScore;
   const homeRecord = game?.home?.record ?? "0-0";
   const awayRecord = game?.away?.record ?? "0-0";
   const clock = game.status?.clock;
@@ -120,7 +127,7 @@ export default function HockeyGamePreviewModal({
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image ?? baseVenue?.images[0]?.href;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href;
   const venueAttendance = game?.attendance || null;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
@@ -179,36 +186,51 @@ export default function HockeyGamePreviewModal({
           ) : (
             <>
               {headline && <Text style={styles.headlineText}>{headline}</Text>}
+
+              {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
-                  logo={awayLogo}
+                {/* Away Team Row */}
+                <TeamRow
+                  id={awayId}
                   name={awayCode}
-                  rank={null}
+                  logo={awayLogo}
+                  rank={awayRank}
                   score={awayScore}
-                  opponentScore={homeScore}
                   record={awayRecord}
+                  isWinner={awayWins}
+                  timeouts={awayTimeouts}
                   gameStatusDescription={gameStatusDescription}
+                  isHome={false}
+                  league={LEAGUE}
+                  isDark
                 />
 
+                {/* Game Info */}
                 <CenterInfo
-                  gameStatusDescription={gameStatusDescription}
-                  gameStatusDetail={gameStatusDetail}
-                  broadcast={broadcast}
-                  period={period}
-                  clock={clock}
-                  time={formattedTime}
                   date={formattedDate}
-                />
-                <TeamInfo
-                  side="home"
-                  logo={homeLogo}
-                  name={homeCode}
-                  rank={null}
-                  score={homeScore}
-                  opponentScore={awayScore}
-                  record={homeRecord}
+                  time={formattedTime}
+                  clock={clock}
+                  period={period}
+                  broadcast={broadcast}
+                  gameStatusShortDescription={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
+                  isDark
+                />
+
+                {/* Home Team Row */}
+                <TeamRow
+                  id={homeId}
+                  name={homeCode}
+                  logo={homeLogo}
+                  rank={homeRank}
+                  score={homeScore}
+                  record={homeRecord}
+                  isWinner={homeWins}
+                  timeouts={homeTimeouts}
+                  gameStatusDescription={gameStatusDescription}
+                  isHome={true}
+                  league={LEAGUE}
+                  isDark
                 />
               </View>
 
@@ -217,7 +239,7 @@ export default function HockeyGamePreviewModal({
                 <GamePreviewContent
                   homeColor={homeColor}
                   gameStatusDescription={gameStatusDescription}
-                  gameState={game.status.state}
+                  state={state}
                   awayCode={awayCode}
                   homeCode={homeCode}
                   awayColor={awayColor}

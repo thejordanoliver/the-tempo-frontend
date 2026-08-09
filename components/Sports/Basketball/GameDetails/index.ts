@@ -12,7 +12,7 @@ export { default as GameTeamStats } from "./GameTeamStats";
 export { default as GameUniforms } from "./GameUniforms";
 export { default as HeadToHeadGames } from "./HeadToHead/HeadToHeadGames";
 export { HighlightVideoList } from "./Highlights/HighlightVideoList";
-export { default as TeamInjuries } from "./InjuryReport/TeamInjuries";
+export { default as TeamInjuries } from "components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 export { default as LastFiveGames } from "./LastFiveGames";
 export { default as LastPlay } from "./LastPlay";
 export { default as LineScore } from "./LineScore";

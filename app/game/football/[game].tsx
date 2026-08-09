@@ -1,5 +1,4 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import {
   FanPredictionVote,
   GameLocation,
@@ -9,6 +8,7 @@ import {
   LineScore,
   MatchupPredictor,
   Officials,
+  TeamInjuries
 } from "@/components/Sports/Basketball/GameDetails";
 import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -136,9 +136,6 @@ export default function GameDetailsScreen(
     : isCFB
       ? getCFBTeam(awayId)
       : getNFLTeam(awayId);
-
-  const homeEspnId = homeTeam?.espnId ?? 0;
-  const awayEspnId = awayTeam?.espnId ?? 0;
 
   const homeLogo = isUFL
     ? getUFLTeamLogo(homeId, isDark)
@@ -460,8 +457,8 @@ export default function GameDetailsScreen(
 
             <TeamInjuries
               injuries={injuries}
-              homeId={homeEspnId}
-              awayId={awayEspnId}
+              homeId={homeId}
+              awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}

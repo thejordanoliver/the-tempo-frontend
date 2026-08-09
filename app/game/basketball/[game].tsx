@@ -1,11 +1,11 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import {
   GameHeader,
   GameLocation,
   GameTeamStats,
   LastPlay,
   LineScore,
+  TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";

@@ -1,8 +1,10 @@
 // ---- LastFiveGames.tsx ----
+import HomeAwayTabBar, {
+  HomeAwayTabValue,
+} from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import FixedWidthTabBar from "components/TabBars/FixedWidthTabBar";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
@@ -41,7 +43,7 @@ type Props = {
   home: TeamData;
   away: TeamData;
   league: string;
-  state: string | null;
+  state?: string | null;
 };
 
 export default function LastFiveGames({
@@ -51,8 +53,8 @@ export default function LastFiveGames({
   league,
   state,
 }: Props) {
-  const [selected, setSelected] = useState<"home" | "away">("away");
-  const team = selected === "home" ? home : away;
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("all");
+  const team = selectedTab === "home" ? home : away;
 
   const styles = lastFiveGameStyles(isDark);
 
@@ -204,8 +206,6 @@ export default function LastFiveGames({
     );
   };
 
-  const tabs: readonly ("away" | "home")[] = ["away", "home"];
-
   const hasHomeGames = home?.games?.length > 0;
   const hasAwayGames = away?.games?.length > 0;
 
@@ -218,36 +218,21 @@ export default function LastFiveGames({
       <HeadingTwo isDark={isDark}>Last Five Games</HeadingTwo>
 
       <View style={styles.wrapper}>
-        <FixedWidthTabBar
-          tabs={tabs}
-          isDark={isDark}
-          selected={selected}
-          onTabPress={(tab) => setSelected(tab as "home" | "away")}
-          renderLabel={(tab, isSelected, tabStyles) => {
-            const teamData = tab === "home" ? home : away;
-            const teamLogo = resolveLogo(teamData.teamId);
-
-            return (
-              <View style={styles.tabLabel}>
-                {teamLogo && (
-                  <Image
-                    source={
-                      typeof teamLogo === "string"
-                        ? { uri: teamLogo }
-                        : teamLogo
-                    }
-                    style={[styles.tabLogo, { opacity: isSelected ? 1 : 0.5 }]}
-                  />
-                )}
-
-                <Text
-                  style={[tabStyles.tab, isSelected && tabStyles.tabSelected]}
-                >
-                  {teamData.teamCode}
-                </Text>
-              </View>
-            );
+        <HomeAwayTabBar
+          awayTeam={{
+            id: away.teamId ?? 0,
+            name: away.teamCode || "AWAY",
+            logo: resolveLogo(away.teamId),
           }}
+          homeTeam={{
+            id: home.teamId ?? 0,
+            name: home.teamCode || "HOME",
+            logo: resolveLogo(home.teamId),
+          }}
+          selected={selectedTab}
+          onTabPress={setSelectedTab}
+          isDark={isDark}
+          showAllTab={false}
         />
 
         <FlatList

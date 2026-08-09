@@ -7,7 +7,7 @@ type CenterInfoProps = {
   clock?: string;
   isDark: boolean;
   broadcast: string | undefined;
-  state: string;
+  state?: string | null;
   gameStatusDescription: string;
   gameStatusDetail: string;
 };

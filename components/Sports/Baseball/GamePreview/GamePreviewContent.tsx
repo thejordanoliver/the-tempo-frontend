@@ -63,7 +63,7 @@ type GamePreviewContentProps = {
   weather?: any;
   gameStatusDescription: string;
   league: string;
-  state: string;
+  state?: "pre" | "in"| "post" | null;
   isChampionship: boolean;
   highlights: Highlight[];
   isMLB: boolean;

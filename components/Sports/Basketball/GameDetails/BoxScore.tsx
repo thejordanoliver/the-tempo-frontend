@@ -51,10 +51,6 @@ const DEFAULT_KEYS = [
   "plusMinus",
 ];
 
-/*
- * PlayerStats is currently declared as an array in the hook.
- * PlayerStats[number] gives us one team box-score block.
- */
 type TeamBlock = PlayerStats[number];
 type TeamInfo = TeamBlock["team"];
 
@@ -93,19 +89,12 @@ type Props = {
   awayName: string;
   homeLogo: any;
   awayLogo: any;
-
-  /*
-   * The union temporarily supports both:
-   * - the actual API array
-   * - the nested array caused by PlayerStats[] in the hook
-   */
   playerStats: PlayerStats | PlayerStats[];
-
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;
   league: string;
-  state: string | null;
+  state?: string | null;
 };
 
 const normalizeIdentifier = (value: unknown): string => {
@@ -447,7 +436,11 @@ export default function BoxScore({
                   <TouchableOpacity
                     activeOpacity={activeOpacity}
                     onPress={() =>
-                      handlePlayerPress(playerId, playerTeamId, league.toUpperCase())
+                      handlePlayerPress(
+                        playerId,
+                        playerTeamId,
+                        league.toUpperCase(),
+                      )
                     }
                   >
                     <Text style={styles.cellName} numberOfLines={1}>

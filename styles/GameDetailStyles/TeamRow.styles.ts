@@ -107,6 +107,7 @@ export type BaseballProps = {
   score?: number;
   isWinner: boolean;
   hideRecord?: boolean;
+  state?: string | null;
   gameStatusDescription?: string;
   league: string;
 };
@@ -124,7 +125,7 @@ export type SoccerProps = {
   isTie?: boolean | undefined | null;
   isWinner?: boolean | undefined | null;
   hideRecord?: boolean;
-  state: string;
+  state?: string | null;
   gameStatusDescription?: string;
   league: string;
   isNational: boolean | undefined | null;

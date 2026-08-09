@@ -6,7 +6,7 @@ type CenterInfoProps = {
   date: string;
   time: string;
   period?: number | string | null;
-  clock: string;
+  clock?: string | null;
   downDistance: string | undefined | null;
   isDark: boolean;
   broadcast?: string;

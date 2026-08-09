@@ -87,7 +87,9 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
+  const isDelayed =
+    gameStatusDescription === "Delayed" ||
+    gameStatusDescription === "Rain Delay";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";

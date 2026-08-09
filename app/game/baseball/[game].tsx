@@ -1,5 +1,4 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
-import TeamInjuries from "@/components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { useVenue } from "@/hooks/useVenue";
 import {
   formatDate,
@@ -24,7 +23,7 @@ import {
   LastFiveGames,
   LineScore,
   MatchupPredictor,
-  Officials,
+  Officials, TeamInjuries
 } from "../../../components/Sports/Basketball/GameDetails";
 import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
@@ -120,8 +119,6 @@ export default function GameDetailsScreen(
 
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
-  const homeEspnId = home?.espnId ?? 0;
-  const awayEspnId = away?.espnId ?? 0;
 
   const homeTeam = isSB
     ? getSBTeam(homeId)
@@ -198,12 +195,11 @@ export default function GameDetailsScreen(
   const awayWins = score?.away?.winner ?? false;
 
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
 
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
@@ -456,8 +452,8 @@ export default function GameDetailsScreen(
 
             <TeamInjuries
               injuries={injuries}
-              homeId={homeEspnId}
-              awayId={awayEspnId}
+              homeId={homeId}
+              awayId={awayId}
               homeCode={homeCode}
               awayCode={awayCode}
               homeLogo={homeLogo}

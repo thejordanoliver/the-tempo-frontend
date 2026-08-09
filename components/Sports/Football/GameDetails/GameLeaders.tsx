@@ -45,7 +45,7 @@ type Props = {
   awayId: string | number;
   isDark: boolean;
   league: string;
-  state?: string;
+  state?: "pre" | "in" | "post" | null;
   loading?: boolean;
   error?: boolean;
 };

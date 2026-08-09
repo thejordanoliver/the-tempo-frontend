@@ -46,7 +46,7 @@ import MMAGamePreviewModal from "../Sports/MMA/GamePreview/MMAGamePreviewModal";
 import MMAGameCard from "../Sports/MMA/Games/MMAGameCard";
 import MMASquareGameCard from "../Sports/MMA/Games/MMASquareGameCard";
 import MMAStackedGameCard from "../Sports/MMA/Games/MMAStackedGameCard";
-import SoccerGamePreviewModal from "../Sports/Soccer/GamePreview/GamePreviewModal";
+import SoccerGamePreviewModal from "../Sports/Soccer/GamePreview/SoccerGamePreviewModal";
 import SoccerGameCard from "../Sports/Soccer/Games/SoccerGameCard";
 import SoccerSquareGameCard from "../Sports/Soccer/Games/SoccerSquareGameCard";
 import SoccerStackedGameCard from "../Sports/Soccer/Games/SoccerStackedGameCard";

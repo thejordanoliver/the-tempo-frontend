@@ -10,7 +10,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import {
   formatDate,
@@ -24,9 +24,9 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import { CenterInfo } from "./CenterInfo";
+import { CenterInfo } from "../GameDetails/CenterInfo";
+import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   visible: boolean;
@@ -61,22 +61,44 @@ export default function SoccerGamePreviewModal({
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
 
-  const homeId = Number(game.home?.id);
-  const awayId = Number(game.away?.id);
+  const home = score?.home;
+  const away = score?.away;
+
+  const homeId = Number(home?.id ?? 0);
+  const awayId = Number(away?.id ?? 0);
 
   const homeTeam = getSOCCTeam(homeId);
   const awayTeam = getSOCCTeam(awayId);
 
-  const homeCode = homeTeam?.code || game.home?.name;
-  const awayCode = awayTeam?.code || game.away?.name;
-  const homeName = homeTeam?.fullName ?? "";
-  const awayName = awayTeam?.fullName ?? "";
+  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+
+  const awayName = useMemo(() => awayTeam?.name ?? "", [awayTeam?.name]);
+  const homeName = useMemo(() => homeTeam?.name ?? "", [homeTeam?.name]);
+
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+
+  const isHomeNational = useMemo(
+    () => homeTeam?.isNational,
+    [homeTeam?.isNational],
+  );
+  const isHomeAllStar = useMemo(
+    () => homeTeam?.isAllStar,
+    [homeTeam?.isAllStar],
+  );
+
+  const isAwayNational = useMemo(
+    () => awayTeam?.isNational,
+    [awayTeam?.isNational],
+  );
+  const isAwayAllStar = useMemo(
+    () => awayTeam?.isAllStar,
+    [awayTeam?.isAllStar],
+  );
 
   const homeLogo = getSOCCTeamLogo(homeId, true);
   const awayLogo = getSOCCTeamLogo(awayId, true);
-
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
 
   const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
@@ -103,6 +125,7 @@ export default function SoccerGamePreviewModal({
   const awayRecord = score?.away?.record ?? "0—0-0";
   const homeWins = score?.home?.winner;
   const awayWins = score?.away?.winner;
+  const isTie = awayWins === homeWins;
   const teamStats = score?.teamStats ?? [];
   const officials = details?.officials ?? [];
 
@@ -172,13 +195,6 @@ export default function SoccerGamePreviewModal({
           end={{ x: 0.5, y: 0 }}
           style={StyleSheet.absoluteFill}
         />
-        <LinearGradient
-          colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-
         <BlurView
           intensity={100}
           tint={"systemUltraThinMaterialDark"}
@@ -194,39 +210,51 @@ export default function SoccerGamePreviewModal({
 
               {/* --- Header Section --- */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
+                <TeamRow
+                  id={awayId}
                   logo={awayLogo}
                   name={awayCode}
                   rank={null}
                   score={awayScore}
-                  winner={awayWins}
+                  isTie={isTie}
+                  isWinner={awayWins}
                   record={awayRecord}
-                  gameStatusDescription={gameStatusDescription}
+                  isDark
+                  isHome={false}
+                  league={LEAGUE}
                   state={state}
+                  gameStatusDescription={gameStatusDescription}
+                  isNational={isAwayNational}
+                  isAllStar={isAwayAllStar}
                 />
-
                 <CenterInfo
                   gameStatusDescription={gameStatusDescription}
-                  gameStatusShortDescription={gameStatusDetail}
+                  gameStatusDetail={gameStatusDetail}
                   state={state}
                   broadcast={broadcast}
                   period={period}
                   clock={clock}
                   time={formattedTime}
                   date={formattedDate}
+                  isDark
                 />
 
-                <TeamInfo
-                  side="home"
+                <TeamRow
+                  id={homeId}
                   logo={homeLogo}
                   name={homeCode}
                   rank={null}
                   score={homeScore}
-                  winner={homeWins}
+                  isTie={isTie}
+                  isWinner={homeWins}
                   record={homeRecord}
-                  gameStatusDescription={gameStatusDescription}
+                  isHome={true}
+                  isDark
+                  league={LEAGUE}
                   state={state}
+                  gameStatusDescription={gameStatusDescription}
+                  isNational={isHomeNational}
+                  isAllStar={isHomeAllStar}
                 />
               </View>
 

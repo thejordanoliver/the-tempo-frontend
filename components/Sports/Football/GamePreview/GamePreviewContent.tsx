@@ -53,7 +53,7 @@ type GamePreviewContentProps = {
   venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
-  state: string;
+  state?: "pre" | "in" | "post" | null;
   league: string;
   isChampionship: boolean;
 };

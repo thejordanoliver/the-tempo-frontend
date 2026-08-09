@@ -66,8 +66,8 @@ export default function BasketballSquareGameCard({
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
 
-  const homeName = homeTeam?.fullName || game.home?.name;
-  const awayName = awayTeam?.fullName || game.away?.name;
+  const homeName = homeTeam?.code || game.home?.code;
+  const awayName = awayTeam?.code || game.away?.code;
 
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)

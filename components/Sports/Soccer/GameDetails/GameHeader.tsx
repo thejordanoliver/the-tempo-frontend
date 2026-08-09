@@ -31,7 +31,7 @@ type Props = {
   homeRecord: string;
   awayRecord: string;
   gameStatusDescription: string;
-  state: string;
+  state?: string | null;
   gameStatusDetail: string;
   league: string;
 };
@@ -89,11 +89,11 @@ export default function GameHeader({
           record={awayRecord}
           isHome={false}
           isDark={isDark}
-          isNational={isAwayNational}
-          isAllStar={isAwayAllStar}
           league={league}
           state={state}
           gameStatusDescription={gameStatusDescription}
+          isNational={isAwayNational}
+          isAllStar={isAwayAllStar}
         />
 
         <CenterInfo
@@ -119,11 +119,11 @@ export default function GameHeader({
           record={homeRecord}
           isHome={true}
           isDark={isDark}
-          isNational={isHomeNational}
-          isAllStar={isHomeAllStar}
           league={league}
           state={state}
           gameStatusDescription={gameStatusDescription}
+          isNational={isHomeNational}
+          isAllStar={isHomeAllStar}
         />
       </View>
     </View>

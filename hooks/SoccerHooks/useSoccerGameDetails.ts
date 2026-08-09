@@ -200,7 +200,7 @@ export type Score = {
   status: {
     id: string;
     name: "STATUS_SCHEDULED" | "STATUS_FULL_TIME" | "STATUS_FINAL_PEN";
-    state: "pre" | "in" | "post";
+    state?:string | null;
     completed: boolean;
     gameStatusDescription: string;
     gameStatusDetail: string;

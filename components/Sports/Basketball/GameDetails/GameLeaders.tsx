@@ -54,7 +54,7 @@ type Props = {
   homeLogo: ImageSourcePropType | string | null;
   isDark: boolean;
   error?: boolean;
-  state: string | null;
+  state?: string | null;
 };
 
 type StatProps = {

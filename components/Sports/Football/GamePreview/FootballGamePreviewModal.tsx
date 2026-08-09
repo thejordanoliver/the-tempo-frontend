@@ -14,7 +14,6 @@ import {
   getBroadcastDisplay,
 } from "@/utils/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { CenterInfo } from "components/Sports/Football/GamePreview/CenterInfo";
 import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
@@ -29,8 +28,9 @@ import {
   safeDate,
 } from "utils/dateUtils";
 import { snapPoints } from "utils/modalUtils";
+import { CenterInfo } from "../GameDetails/CenterInfo";
+import { TeamRow } from "../GameDetails/TeamRow";
 import GamePreviewContent from "./GamePreviewContent";
-import TeamInfo from "./TeamInfo";
 
 type Props = {
   game: FootballGame;
@@ -104,26 +104,26 @@ export default function FootballGamePreviewModal({
   const { score, details } = useFootballGameDetails(LEAGUE, gameId);
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
-  const gameStatusDescription = game?.status.description ?? "";
-  const gameStatusDetail = game?.status.shortDetail ?? "";
-  const state = game?.status.state ?? "";
+  const state = score?.status?.state;
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const inProgress = gameStatusDescription === "In Progress";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isDelayed = gameStatusDescription === "Delayed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
-  const clock = game.status?.displayClock;
+  const clock = score?.status?.displayClock;
   const period = formatPeriod({ period: game.status.period });
   const isRedzone = game?.situation.isRedZone;
-  const broadcasts = game?.broadcasts;
+  const broadcasts = details?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
   const possessionTeamId = game.situation.possession;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
-  const homeTimeouts = score?.home.timeouts;
-  const awayTimeouts = score?.away.timeouts;
+  const homeTimeouts = score?.home.timeouts ?? 0;
+  const awayTimeouts = score?.away.timeouts ?? 0;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const officials = details?.officials ?? [];
@@ -230,44 +230,51 @@ export default function FootballGamePreviewModal({
 
               {/* HEADER */}
               <View style={styles.gameHeaderContainer}>
-                <TeamInfo
-                  side="away"
-                  logo={awayLogo}
+                <TeamRow
+                  id={awayId}
                   name={awayCode}
+                  logo={awayLogo}
                   rank={awayRank}
                   score={awayScore}
+                  record={awayRecord}
                   isWinner={awayWins}
                   isTie={isTie}
-                  record={awayRecord}
-                  hasPossession={awayHasPossession}
-                  gameStatusDescription={gameStatusDescription}
                   timeouts={awayTimeouts}
+                  gameStatusDescription={gameStatusDescription}
+                  hasPossession={awayHasPossession}
+                  league={LEAGUE}
+                  isHome={false}
+                  isDark
                 />
 
                 <CenterInfo
-                  broadcast={broadcast}
-                  period={period}
-                  clock={clock}
                   date={formattedDate}
                   time={formattedTime}
-                  downAndDistance={downDistanceText}
+                  period={period}
+                  clock={clock}
+                  broadcast={broadcast}
+                  downDistance={downDistanceText}
+                  gameStatusShortDetail={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
-                  gameStatusDetail={gameStatusDetail}
                   redzone={isRedzone}
+                  isDark
                 />
 
-                <TeamInfo
-                  side="home"
-                  logo={homeLogo}
+                <TeamRow
+                  id={homeId}
                   name={homeCode}
+                  logo={homeLogo}
                   rank={homeRank}
                   score={homeScore}
+                  record={homeRecord}
                   isWinner={homeWins}
                   isTie={isTie}
-                  record={homeRecord}
-                  hasPossession={homeHasPossession}
-                  gameStatusDescription={gameStatusDescription}
                   timeouts={homeTimeouts}
+                  gameStatusDescription={gameStatusDescription}
+                  hasPossession={homeHasPossession}
+                  league={LEAGUE}
+                  isHome={true}
+                  isDark
                 />
               </View>
 

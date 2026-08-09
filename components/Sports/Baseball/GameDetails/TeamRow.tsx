@@ -18,17 +18,14 @@ export const TeamRow = ({
   isWinner,
   league,
   gameStatusDescription,
+  state,
 }: BaseballProps) => {
   const router = useRouter();
   const styles = teamRowStyles(isDark);
 
-  const isScheduled = gameStatusDescription === "Scheduled";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const inProgress = gameStatusDescription === "In Progress";
+  const inProgress = state === "in";
   const isFinal = gameStatusDescription === "Final";
+
 
   const getScoreStyle = () => {
     if (score == null) {
@@ -58,13 +55,7 @@ export const TeamRow = ({
     if (id && league === "sb") router.push(`/team/mlb/${id}`);
   };
 
-  const showRecordInsteadOfScore =
-    isScheduled ||
-    isPostponed ||
-    isForfeited ||
-    isCanceled ||
-    isDelayed ||
-    score == null;
+  const showRecordInsteadOfScore = state === "pre";
 
   return (
     <View style={styles.row}>

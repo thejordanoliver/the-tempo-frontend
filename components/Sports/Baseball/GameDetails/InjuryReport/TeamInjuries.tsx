@@ -20,7 +20,7 @@ type Props = {
   awayCode: string;
   homeId: string | number;
   awayId: string | number;
-  state: string | null;
+  state?: string | null;
 };
 
 const matchesTeam = (
@@ -57,7 +57,11 @@ export default function TeamInjuries({
   }
 
   if (
-    (league !== "mlb" && league !== "nfl") ||
+    (league !== "mlb" &&
+      league !== "nfl" &&
+      league !== "nhl" &&
+      league !== "nba" &&
+      league !== "wnba") ||
     state === "post" ||
     !hasInjuries
   ) {
