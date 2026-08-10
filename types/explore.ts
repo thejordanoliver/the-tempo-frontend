@@ -22,10 +22,16 @@ export type PlayerResult = {
 
 export type TeamResult = {
   id: number;
+  /** @deprecated WCBB team routes now use id, not wid. */
   wid?: number;
   name: string;
   full_name: string;
   short_name: string;
+  logo?: string | null;
+  logoLight?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  league?: string;
   isNFL?: boolean;
   isMLB?: boolean;
   isNHL?: boolean;

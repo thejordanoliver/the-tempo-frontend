@@ -1,6 +1,10 @@
 import { BasketballGame } from "@/types/basketball/basketball";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import {
+  getWCBBTeamLogoFromGameTeam,
+  resolveWCBBTeamFromGameTeam,
+} from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { Image, Text, View } from "react-native";
 import {
@@ -39,17 +43,15 @@ export default function BasketballGameWidget({
   const home = game.home;
   const away = game.away;
 
-  const homeId = isWCBB
-    ? ((home as typeof home & { wid?: string | number }).wid ?? home?.id ?? 0)
-    : home?.id;
-  const awayId = isWCBB
-    ? ((away as typeof away & { wid?: string | number }).wid ?? away?.id ?? 0)
-    : away?.id;
+  const homeId = home?.id;
+  const awayId = away?.id;
+  const homeWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(home) : undefined;
+  const awayWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(away) : undefined;
 
   const homeTeam = isCBB
     ? getCBBTeam(homeId, false)
     : isWCBB
-      ? getCBBTeam(homeId, true)
+      ? homeWCBBTeam
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
@@ -57,7 +59,7 @@ export default function BasketballGameWidget({
   const awayTeam = isCBB
     ? getCBBTeam(awayId, false)
     : isWCBB
-      ? getCBBTeam(awayId, true)
+      ? awayWCBBTeam
       : isWNBA
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
@@ -67,7 +69,7 @@ export default function BasketballGameWidget({
     : isCBB
       ? getCBBTeamLogo(homeId, isDark, false)
       : isWCBB
-        ? getCBBTeamLogo(homeId, isDark, true)
+        ? getWCBBTeamLogoFromGameTeam(home, isDark)
         : getTeamLogo(homeId, isDark);
 
   const awayLogo = isWNBA
@@ -75,11 +77,11 @@ export default function BasketballGameWidget({
     : isCBB
       ? getCBBTeamLogo(awayId, isDark, false)
       : isWCBB
-        ? getCBBTeamLogo(awayId, isDark, true)
+        ? getWCBBTeamLogoFromGameTeam(away, isDark)
         : getTeamLogo(awayId, isDark);
 
-  const homeName = homeTeam?.code;
-  const awayName = awayTeam?.code;
+  const homeName = homeTeam?.code ?? home?.code;
+  const awayName = awayTeam?.code ?? away?.code;
 
   const homeRank = home?.rank;
   const awayRank = away?.rank;
@@ -98,7 +100,10 @@ export default function BasketballGameWidget({
   const gameDate = safeDate(game?.date);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
+  const period = formatPeriod({
+    period: game.status.period,
+    isCBB: isCBB || isWCBB,
+  });
   const clock = game?.status.clock;
 
   const state = game.status.state ?? "";

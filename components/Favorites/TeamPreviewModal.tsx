@@ -1,3 +1,5 @@
+import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { Team } from "@/types/types";
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
@@ -12,14 +14,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { Animated, Easing, Image, Modal, Pressable, Text } from "react-native";
 import { teamPreviewModalStyles } from "styles/TeamStyles/TeamPreviewModalStyles";
-import { LeagueTeam } from "types/types";
 
 type Props = {
   visible: boolean;
-  team: LeagueTeam;
+  team: Team;
   onClose: () => void;
   onGo: () => void;
-  onRemove?: (team: LeagueTeam) => void;
+  onRemove?: (team: Team) => void;
   currentUser?: boolean;
 };
 
@@ -61,9 +62,9 @@ export default function TeamPreviewModal({
     team.id == null
       ? null
       : isCBB
-        ? getCBBTeamLogo(team.id, isDark, false)
+        ? getCBBTeamLogo(team.id, isDark)
         : isWCBB
-          ? getCBBTeamLogo(team.wid ?? undefined, isDark, true)
+          ? getWCBBTeamLogo(team.id, isDark)
           : isNBA
             ? getTeamLogo(team.id, isDark)
             : isWNBA
@@ -82,7 +83,10 @@ export default function TeamPreviewModal({
     ? team?.secondaryColor || Colors.midTone
     : team?.color || Colors.midTone;
 
-  const est = team.established ?? "—";
+  const est =
+    typeof team.established === "string" || typeof team.established === "number"
+      ? team.established
+      : "-";
 
   return (
     <Modal animationType="fade" transparent visible={visible}>
@@ -120,7 +124,9 @@ export default function TeamPreviewModal({
                   />
                 )}
 
-                <Text style={styles.teamName}>{team.fullName}</Text>
+                <Text style={styles.teamName}>
+                  {team.fullName ?? team.name ?? team.shortName}
+                </Text>
 
                 <Text style={styles.establishedText}>EST. {est}</Text>
 

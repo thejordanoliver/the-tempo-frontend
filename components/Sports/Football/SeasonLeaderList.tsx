@@ -7,11 +7,14 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { getWCBBTeamByESPNId } from "constants/teamsWCBB";
 import { Leader } from "hooks/FootballHooks/useSeasonLeaders";
+import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import { useEffect, useRef } from "react";
 import { FlatList, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
+import type { WCBBTeam } from "types/types";
 import HeadingTwo from "../../Headings/HeadingTwo";
 
 interface Category {
@@ -38,6 +41,7 @@ export default function SeasonLeadersList({
   const isDark = resolvedColorScheme === "dark";
   const styles = leadersListStyles(isDark);
   const global = globalStyles(isDark);
+  const { teams: wcbbTeams } = useLeagueTeams("WCBB");
   const cacheRef = useRef<
     Partial<Record<SeasonLeadersListProps["league"], Category[]>>
   >({});
@@ -54,11 +58,57 @@ export default function SeasonLeadersList({
     CFB: cfbTeams,
     MLB: mlbTeams,
     CBB: cbbTeams,
-    WCBB: cbbTeams,
+    WCBB: wcbbTeams as WCBBTeam[],
   };
 
   const teamList = leagueTeamsMap[league];
   const isMLB = league === "MLB";
+  const getTeamId = (player: Leader) => {
+    if (league !== "WCBB") {
+      const teamObj = teamList.find(
+        (t) => Number(t.espnId) === Number(player.teamId),
+      );
+
+      return teamObj?.id ?? 0;
+    }
+
+    const playerRecord = player as Leader & {
+      databaseId?: string | number | null;
+      database_id?: string | number | null;
+      teamDatabaseId?: string | number | null;
+      team_database_id?: string | number | null;
+      wcbbTeamId?: string | number | null;
+      wcbb_team_id?: string | number | null;
+      teamEspnId?: string | number | null;
+      team_espn_id?: string | number | null;
+      espnTeamId?: string | number | null;
+      espn_team_id?: string | number | null;
+    };
+    const explicitESPNId =
+      playerRecord.teamEspnId ??
+      playerRecord.team_espn_id ??
+      playerRecord.espnTeamId ??
+      playerRecord.espn_team_id;
+    const teamByESPN = getWCBBTeamByESPNId(explicitESPNId);
+
+    if (teamByESPN) return teamByESPN.id;
+
+    const canonicalTeamId =
+      playerRecord.databaseId ??
+      playerRecord.database_id ??
+      playerRecord.teamDatabaseId ??
+      playerRecord.team_database_id ??
+      playerRecord.wcbbTeamId ??
+      playerRecord.wcbb_team_id ??
+      player.teamId;
+
+    return (
+      (wcbbTeams as WCBBTeam[]).find(
+        (team) => String(team.id) === String(canonicalTeamId),
+      )?.id ?? 0
+    );
+  };
+
   if (loading) {
     return (
       <ScrollView contentContainerStyle={styles.skeletonList}>
@@ -93,10 +143,6 @@ export default function SeasonLeadersList({
 
             <View style={styles.playersList}>
               {item.leaders.slice(0, 5).map((player) => {
-                const teamObj = teamList.find(
-                  (t) => Number(t.espnId) === Number(player.teamId),
-                );
-
                 return (
                   <PlayerCard
                     key={player.playerId ?? player.athleteId}
@@ -107,7 +153,7 @@ export default function SeasonLeadersList({
                     headshot={player.headshot}
                     statNumber={isMLB ? player.value : player.displayValue}
                     league={league}
-                    teamId={teamObj?.id ?? 0}
+                    teamId={getTeamId(player)}
                   />
                 );
               })}

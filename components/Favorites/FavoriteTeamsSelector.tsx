@@ -1,14 +1,14 @@
 import SearchBar from "components/SearchBars/SearchBar";
 import React, { useCallback, useDeferredValue, useMemo } from "react";
 import { Animated, FlatList, StyleSheet } from "react-native";
-import type { LeagueTeam, LeagueType } from "types/types";
+import type { LeagueType, Team } from "types/types";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
 
-type LeagueTeamWithId = LeagueTeam & { id: number };
+type LeagueTeamWithId = Team & { id: number };
 
 type Props = {
-  teams: LeagueTeam[];
+  teams: Team[];
   favorites: string[];
   toggleFavorite: (league: LeagueType, id: string) => void;
   isGridView: boolean;
@@ -46,18 +46,14 @@ const FavoriteTeamsSelector = ({
     if (!query) return teamsWithIds;
 
     return teamsWithIds.filter((team) => {
-      const name = (
-        team.fullName ||
-        team.name ||
-        ""
-      ).toLowerCase();
+      const name = (team.fullName || team.name || "").toLowerCase();
 
-      const league = team.league.toLowerCase();
+      const league = team?.league?.toLowerCase();
       const searchTerms = ((team as any).searchTerms ?? "").toLowerCase();
 
       return (
         name.includes(query) ||
-        league.includes(query) ||
+        league?.includes(query) ||
         searchTerms.includes(query)
       );
     });

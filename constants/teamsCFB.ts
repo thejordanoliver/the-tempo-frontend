@@ -1,5 +1,4 @@
 // constants/cfbTeams.ts
-import { Team } from "@/types/football/football";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
 //Team Logos
@@ -365,6 +364,7 @@ import WisconsinRiverFallsLogo from "../assets/College_Logos/WisconsinRiverFalls
 import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
+import { Team } from "@/types/types";
 
 export const cfbTeams: Team[] = [
   {

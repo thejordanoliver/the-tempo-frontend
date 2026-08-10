@@ -1,9 +1,9 @@
 // hooks/TeamHooks/useTeams.ts
-import { apiClient } from "utils/apiClient";
+import { LeagueType, WCBBTeam } from "@/types/types";
 import { useCallback, useEffect, useState } from "react";
-import { LeagueType } from "@/types/types";
+import { apiClient } from "utils/apiClient";
 
-export type Team = {
+export type BaseTeam = {
   id: number;
   wid?: number | null;
   espnId?: number | null;
@@ -20,6 +20,8 @@ export type Team = {
   logo?: string | null;
   [key: string]: unknown;
 };
+
+export type Team = BaseTeam | WCBBTeam;
 
 type TeamsResponse = {
   success: boolean;
@@ -82,10 +84,12 @@ export function useTeams(
 
         if (teamId) {
           const data = response.data as TeamResponse;
+
           setTeam(data.team);
           setTeams([]);
         } else {
           const data = response.data as TeamsResponse;
+
           setTeams(data.teams || []);
           setTeam(null);
         }
@@ -93,9 +97,7 @@ export function useTeams(
         console.error("useTeams error:", err?.response?.data || err.message);
 
         setError(
-          err?.response?.data?.error ||
-            err?.message ||
-            "Failed to fetch teams",
+          err?.response?.data?.error || err?.message || "Failed to fetch teams",
         );
       } finally {
         setLoading(false);

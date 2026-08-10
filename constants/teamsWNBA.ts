@@ -1,7 +1,9 @@
-import { Team } from "@/types/football/football";
+import { Team } from "@/types/team";
 
 // Logos
+import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 import AcesLogo from "../assets/WNBA/Logos/Aces.png";
+import CoopLogo from "../assets/WNBA/Logos/Coop.png";
 import DreamLogo from "../assets/WNBA/Logos/Dream.png";
 import FeverLogo from "../assets/WNBA/Logos/Fever.png";
 import FireLogo from "../assets/WNBA/Logos/Fire.png";
@@ -12,15 +14,13 @@ import MercuryLogo from "../assets/WNBA/Logos/Mercury.png";
 import MysticsLogo from "../assets/WNBA/Logos/Mystics.png";
 import SkyLogo from "../assets/WNBA/Logos/Sky.png";
 import SparksLogo from "../assets/WNBA/Logos/Sparks.png";
+import SpoonLogo from "../assets/WNBA/Logos/Spoon.png";
 import StormLogo from "../assets/WNBA/Logos/Storm.png";
 import SunLogo from "../assets/WNBA/Logos/Sun.png";
 import TempoLogo from "../assets/WNBA/Logos/Tempo.png";
 import TempoLogoLight from "../assets/WNBA/Logos/TempoLight.png";
 import ValkyrieLogo from "../assets/WNBA/Logos/Valkyrie.png";
 import WingsLogo from "../assets/WNBA/Logos/Wings.png";
-import CoopLogo from "../assets/WNBA/Logos/Coop.png";
-import SpoonLogo from "../assets/WNBA/Logos/Spoon.png";
-import PlaceholderLogo from "../assets/Placeholders/teamPlaceholder.png";
 
 export const wnbaTeams: Team[] = [
   {
@@ -39,6 +39,8 @@ export const wnbaTeams: Team[] = [
     established: 2008,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 163,
@@ -56,6 +58,8 @@ export const wnbaTeams: Team[] = [
     established: 2006,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 164,
@@ -73,6 +77,8 @@ export const wnbaTeams: Team[] = [
     established: 1999,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 165,
@@ -90,6 +96,8 @@ export const wnbaTeams: Team[] = [
     established: 1998,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 7326,
@@ -107,6 +115,8 @@ export const wnbaTeams: Team[] = [
     established: 2023,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 166,
@@ -124,6 +134,8 @@ export const wnbaTeams: Team[] = [
     established: 2000,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 167,
@@ -141,6 +153,8 @@ export const wnbaTeams: Team[] = [
     established: 1997,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 168,
@@ -158,6 +172,8 @@ export const wnbaTeams: Team[] = [
     established: 1997,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 169,
@@ -175,6 +191,8 @@ export const wnbaTeams: Team[] = [
     established: 1999,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 170,
@@ -192,6 +210,8 @@ export const wnbaTeams: Team[] = [
     established: 1997,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 171,
@@ -209,6 +229,8 @@ export const wnbaTeams: Team[] = [
     established: 1997,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 7100,
@@ -226,6 +248,8 @@ export const wnbaTeams: Team[] = [
     established: 2000,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 172,
@@ -243,6 +267,8 @@ export const wnbaTeams: Team[] = [
     established: 2000,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 7870,
@@ -260,6 +286,8 @@ export const wnbaTeams: Team[] = [
     established: 2023,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 175,
@@ -277,6 +305,8 @@ export const wnbaTeams: Team[] = [
     established: 1998,
     isAllStar: false,
     isActive: true,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 3807,
@@ -294,6 +324,8 @@ export const wnbaTeams: Team[] = [
     established: 1961,
     isAllStar: false,
     isActive: false,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 133384,
@@ -311,6 +343,8 @@ export const wnbaTeams: Team[] = [
     established: 1961,
     isAllStar: true,
     isActive: false,
+    isNational: false,
+    league: "WNBA",
   },
   {
     id: 133383,
@@ -328,6 +362,8 @@ export const wnbaTeams: Team[] = [
     established: 1961,
     isAllStar: true,
     isActive: false,
+    isNational: false,
+    league: "WNBA",
   },
 ];
 

@@ -6,16 +6,11 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { getTeamByESPNId, getTeamLogo } from "constants/teams";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useMemo, useState } from "react";
-import {
-  Image,
-  LayoutChangeEvent,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
 interface ShotChartProps {
@@ -85,11 +80,14 @@ export default function ShotChart({
     height: 0,
   });
 
-  const [selectedPeriod, setSelectedPeriod] =
-    useState<ShotChartTab>("All");
+  const [selectedPeriod, setSelectedPeriod] = useState<ShotChartTab>("All");
 
   const homeTeam = useMemo(() => {
-    if (isCollegeBasketball) {
+    if (isWCBB) {
+      return getWCBBTeamByESPNId(homeEspnId);
+    }
+
+    if (isMensCBB) {
       return getCBBTeamByESPNId(homeEspnId);
     }
 
@@ -98,10 +96,14 @@ export default function ShotChart({
     }
 
     return getTeamByESPNId(homeEspnId);
-  }, [homeEspnId, isCollegeBasketball, isWNBA]);
+  }, [homeEspnId, isMensCBB, isWCBB, isWNBA]);
 
   const awayTeam = useMemo(() => {
-    if (isCollegeBasketball) {
+    if (isWCBB) {
+      return getWCBBTeamByESPNId(awayEspnId);
+    }
+
+    if (isMensCBB) {
       return getCBBTeamByESPNId(awayEspnId);
     }
 
@@ -110,11 +112,15 @@ export default function ShotChart({
     }
 
     return getTeamByESPNId(awayEspnId);
-  }, [awayEspnId, isCollegeBasketball, isWNBA]);
+  }, [awayEspnId, isMensCBB, isWCBB, isWNBA]);
 
   const courtLogo = useMemo(() => {
-    if (isCollegeBasketball) {
-      return getCBBTeamLogo(homeId, false, isWCBB);
+    if (isWCBB) {
+      return getWCBBTeamLogo(homeId, false);
+    }
+
+    if (isMensCBB) {
+      return getCBBTeamLogo(homeId, false);
     }
 
     if (isWNBA) {
@@ -122,11 +128,9 @@ export default function ShotChart({
     }
 
     return getTeamLogo(homeId, false);
-  }, [homeId, isCollegeBasketball, isWCBB, isWNBA]);
+  }, [homeId, isMensCBB, isWCBB, isWNBA]);
 
-  const courtImage = isCollegeBasketball
-    ? CBBCourtImage
-    : CourtImage;
+  const courtImage = isCollegeBasketball ? CBBCourtImage : CourtImage;
 
   const tabs: ShotChartTab[] = isCollegeBasketball
     ? ["All", "1st Half", "2nd Half"]
@@ -138,18 +142,17 @@ export default function ShotChart({
   }));
 
   const filteredPlays = useMemo(() => {
-    const periodMap: Partial<Record<ShotChartTab, number>> =
-      isCollegeBasketball
-        ? {
-            "1st Half": 1,
-            "2nd Half": 2,
-          }
-        : {
-            "1st": 1,
-            "2nd": 2,
-            "3rd": 3,
-            "4th": 4,
-          };
+    const periodMap: Partial<Record<ShotChartTab, number>> = isCollegeBasketball
+      ? {
+          "1st Half": 1,
+          "2nd Half": 2,
+        }
+      : {
+          "1st": 1,
+          "2nd": 2,
+          "3rd": 3,
+          "4th": 4,
+        };
 
     return plays.filter((play) => {
       if (!play.coordinate || !play.shootingPlay) {
@@ -195,14 +198,11 @@ export default function ShotChart({
      * the play response has already been converted to internal IDs.
      */
     const isHomeShot =
-      matchesHomeEspnId ||
-      (!matchesAwayEspnId && matchesHomeDatabaseId);
+      matchesHomeEspnId || (!matchesAwayEspnId && matchesHomeDatabaseId);
 
     const isAwayShot =
       matchesAwayEspnId ||
-      (!matchesHomeEspnId &&
-        !isHomeShot &&
-        matchesAwayDatabaseId);
+      (!matchesHomeEspnId && !isHomeShot && matchesAwayDatabaseId);
 
     /*
      * ESPN coordinates are represented as:

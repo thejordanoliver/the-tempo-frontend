@@ -1,3 +1,4 @@
+import { wcbbTeams } from "@/constants/teamsWCBB";
 import { teams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
 import { cbbTeams } from "constants/teamsCBB";
@@ -7,7 +8,7 @@ import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
-import { LeagueTeam, LeagueType } from "types/types";
+import { Team, LeagueType } from "types/types";
 
 type Config<T> = {
   teams: T[];
@@ -23,7 +24,7 @@ export function buildLeagueTeams<T>({
   sportTerms,
   getId,
   extraFilter,
-}: Config<T>): LeagueTeam[] {
+}: Config<T>): Team[] {
   return teams
     .filter(
       (t: any) =>
@@ -70,7 +71,7 @@ export function getTeamRoute(league: LeagueType): string {
   }
 }
 
-export const favoriteTeamsList = [
+const staticFavoriteTeamsList = [
   ...buildLeagueTeams({
     teams,
     league: "NBA",
@@ -124,13 +125,17 @@ export const favoriteTeamsList = [
     league: "CBB",
     sportTerms: "CBB college basketball NCAA",
   }),
-
-  // WCBB special case
   ...buildLeagueTeams({
-    teams: cbbTeams,
+    teams: wcbbTeams,
     league: "WCBB",
-    sportTerms: "WCBB women's college basketball NCAA",
-    getId: (t) => t.wid,
-    extraFilter: (t) => t.wid != null,
+    sportTerms: "WCBB college basketball NCAA",
   }),
-].sort((a, b) => a.name.localeCompare(b.fullName ?? ""));
+];
+
+export function getFavoriteTeamsList(): Team[] {
+  return [...staticFavoriteTeamsList].sort((a, b) =>
+    String(a.name ?? "").localeCompare(String(b.fullName ?? b.name ?? "")),
+  );
+}
+
+export const favoriteTeamsList = getFavoriteTeamsList();

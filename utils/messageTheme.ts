@@ -1,4 +1,5 @@
 import { Colors } from "constants/styles";
+import { getWCBBTeam } from "constants/teamsWCBB";
 import type { MessageAccent, MessageThemePreference } from "types/messages";
 import { favoriteTeamsList } from "utils/teams";
 
@@ -94,6 +95,10 @@ const findThemeTeam = (
   teamId: string | number | null,
 ) => {
   if (!league || teamId == null) return null;
+
+  if (String(league).toUpperCase() === "WCBB") {
+    return getWCBBTeam(teamId) ?? null;
+  }
 
   return (
     favoriteTeamsList.find(

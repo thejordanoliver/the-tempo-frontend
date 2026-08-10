@@ -4,6 +4,7 @@ import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
 import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWCBBTeamLogo, wcbbTeams } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -181,11 +182,13 @@ export default function GameSummary({
             const playTeamId = play.team?.id;
 
             const allTeams: Team[] =
-              league === "CBB" || league === "WCBB"
+              league === "CBB"
                 ? cbbTeams
-                : league === "WNBA"
-                  ? wnbaTeams
-                  : nbaTeams;
+                : league === "WCBB"
+                  ? wcbbTeams
+                  : league === "WNBA"
+                    ? wnbaTeams
+                    : nbaTeams;
 
             const teamObj = allTeams.find(
               (team) => String(team.espnId) === playTeamId,
@@ -200,19 +203,20 @@ export default function GameSummary({
             const team =
               league === "WNBA"
                 ? getWNBATeam(teamObj?.id ?? 0)
-                : getNBATeam(teamObj?.id ?? 0);
-            const cbbTeam = getCBBTeam(teamObj?.id ?? 0);
+                : league === "NBA"
+                  ? getNBATeam(teamObj?.id ?? 0)
+                  : null;
+            const cbbTeam =
+              league === "CBB" ? getCBBTeam(teamObj?.id ?? 0) : null;
 
             const teamLogo =
               league === "NBA"
                 ? getTeamLogo(team?.id, isDark)
                 : league === "WNBA"
                   ? getWNBATeamLogo(team?.id, isDark)
-                  : getCBBTeamLogo(
-                      (league === "WCBB" ? cbbTeam?.wid : cbbTeam?.id) ??
-                        undefined,
-                      isDark,
-                    );
+                  : league === "WCBB"
+                    ? getWCBBTeamLogo(teamObj?.id, isDark)
+                    : getCBBTeamLogo(cbbTeam?.id ?? undefined, isDark);
 
             const isLatest = play.id === latestPlayId;
 

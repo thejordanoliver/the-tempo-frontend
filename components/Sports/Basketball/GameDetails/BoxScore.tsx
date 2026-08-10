@@ -195,7 +195,12 @@ const getAthleteId = (player: AthleteRecord): number | string | null => {
 const getAthleteTeamId = (
   player: AthleteRecord,
   fallbackTeamId: number | string,
+  league: string,
 ): number | string => {
+  if (String(league).toUpperCase() === "WCBB") {
+    return fallbackTeamId;
+  }
+
   return (
     player.teamId ??
     player.team?.id ??
@@ -390,7 +395,10 @@ export default function BoxScore({
 
     const labels = getStatLabels(teamBlock);
     const statKeys = getStatKeys(teamBlock);
-    const resolvedTeamId = teamBlock?.team?.id ?? teamId;
+    const resolvedTeamId =
+      String(league).toUpperCase() === "WCBB"
+        ? teamId
+        : teamBlock?.team?.id ?? teamId;
     const isExpanded = expandedTeams[sectionKey] ?? false;
 
     const visiblePlayers = isExpanded
@@ -420,7 +428,11 @@ export default function BoxScore({
             {visiblePlayers.map((player, index) => {
               const athlete = player as AthleteRecord;
               const playerId = getAthleteId(athlete);
-              const playerTeamId = getAthleteTeamId(athlete, resolvedTeamId);
+              const playerTeamId = getAthleteTeamId(
+                athlete,
+                resolvedTeamId,
+                league,
+              );
               const playerName = getAthleteName(athlete);
 
               return (

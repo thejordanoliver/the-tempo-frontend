@@ -132,6 +132,11 @@ function BracketMatchupComponent({
   onPress,
 }: BracketMatchupProps) {
   const handlePress = () => {
+    if (onPress) {
+      onPress(game);
+      return;
+    }
+
     router.push({
       pathname: "/game/basketball/[game]",
       params: {

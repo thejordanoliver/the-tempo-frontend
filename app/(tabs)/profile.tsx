@@ -15,13 +15,6 @@ import FollowStats from "../../components/Profile/FollowStats";
 import ProfileBanner from "../../components/Profile/ProfileBanner";
 import ProfileHeader from "../../components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "../../components/Skeletons/SkeletonProfileScreen";
-import { teams } from "../../constants/teams";
-import { cbbTeams } from "../../constants/teamsCBB";
-import { cfbTeams } from "../../constants/teamsCFB";
-import { mlbTeams } from "../../constants/teamsMLB";
-import { nflTeams } from "../../constants/teamsNFL";
-import { nhlTeams } from "../../constants/teamsNHL";
-import { wnbaTeams } from "../../constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "../../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useAuth } from "../../hooks/UserHooks/useAuth";
@@ -55,7 +48,7 @@ export default function ProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = profileStyles(isDark);
-  const { favorites, loadFavorites, clearFavorites } =
+  const { favorites, loadFavorites, clearFavorites, allTeams } =
     useFavoriteTeamsContext();
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
@@ -309,39 +302,9 @@ export default function ProfileScreen() {
       .map((favorite) => {
         const [league, id] = favorite.split(":");
 
-        let team;
-
-        if (league === "NBA") {
-          team = teams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "WNBA") {
-          team = wnbaTeams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "NFL") {
-          team = nflTeams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "CFB") {
-          team = cfbTeams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "CBB") {
-          team = cbbTeams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "WCBB") {
-          team = cbbTeams.find((item) => String(item.wid) === id);
-        }
-
-        if (league === "MLB") {
-          team = mlbTeams.find((item) => String(item.id) === id);
-        }
-
-        if (league === "NHL") {
-          team = nhlTeams.find((item) => String(item.id) === id);
-        }
+        const team = allTeams.find(
+          (item) => item.league === league && String(item.id) === id,
+        );
 
         if (!team) {
           return null;
@@ -353,7 +316,7 @@ export default function ProfileScreen() {
         };
       })
       .filter((team): team is NonNullable<typeof team> => team !== null);
-  }, [favorites]);
+  }, [allTeams, favorites]);
 
   const onFollowersPress = useCallback(() => {
     if (!currentUserId) {

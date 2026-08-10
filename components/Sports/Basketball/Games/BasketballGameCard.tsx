@@ -3,6 +3,11 @@ import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
+import {
+  getWCBBTeam,
+  getWCBBTeamLogo,
+
+} from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -54,7 +59,7 @@ export default function BasketballGameCard({
   const homeTeam = isCBB
     ? getCBBTeam(homeId)
     : isWCBB
-      ? getCBBTeam(homeId, isWCBB)
+      ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : isSL
@@ -64,7 +69,7 @@ export default function BasketballGameCard({
   const awayTeam = isCBB
     ? getCBBTeam(awayId)
     : isWCBB
-      ? getCBBTeam(awayId, isWCBB)
+      ? getWCBBTeam(awayId)
       : isWNBA
         ? getWNBATeam(awayId)
         : isSL
@@ -77,7 +82,7 @@ export default function BasketballGameCard({
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(homeId, isDark, true)
+      ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getTeamLogo(homeId, isDark);
@@ -85,7 +90,7 @@ export default function BasketballGameCard({
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(awayId, isDark, true)
+      ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
@@ -106,7 +111,10 @@ export default function BasketballGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
 
-  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
+  const period = formatPeriod({
+    period: game.status.period,
+    isCBB: isCBB || isWCBB,
+  });
   const clock = game.status.clock;
 
   const gameStatusDescription = game.status?.description;

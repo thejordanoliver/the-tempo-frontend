@@ -35,7 +35,7 @@ interface CBBConferenceStandingsResponse {
   conferences: Partial<CBBStandingConference>[];
 }
 
-export const useCBBConferenceStandings = () => {
+export const useCBBConferenceStandings = (league: "CBB" | "WCBB" = "CBB") => {
   const [conferences, setConferences] = useState<CBBStandingConference[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -52,7 +52,7 @@ export const useCBBConferenceStandings = () => {
       setError(null);
 
       const response = await apiClient.get<CBBConferenceStandingsResponse>(
-        "api/standings/cbb/conference",
+        `api/standings/${league.toLowerCase()}/conference`,
       );
 
       const rawConferences = response.data?.conferences ?? [];
@@ -71,14 +71,14 @@ export const useCBBConferenceStandings = () => {
 
       setConferences(cleanedConferences);
     } catch (err) {
-      console.error("🔥 CBB CONFERENCE STANDINGS ERROR:", err);
-      setError("Failed to load CBB conference standings");
+      console.error(`🔥 ${league} CONFERENCE STANDINGS ERROR:`, err);
+      setError(`Failed to load ${league} conference standings`);
       setConferences([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [league]);
 
   useEffect(() => {
     fetchStandings();

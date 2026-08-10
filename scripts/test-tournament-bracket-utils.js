@@ -20,7 +20,7 @@ require.extensions[".ts"] = (module, filename) => {
 
 const utils = require(path.join(
   __dirname,
-  "../components/Sports/Basketball/TournamentBracket/tournamentBracket.utils.ts",
+  "../components/Sports/Basketball/CBBTournament/tournamentBracket.utils.ts",
 ));
 
 const {

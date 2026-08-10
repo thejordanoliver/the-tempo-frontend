@@ -22,13 +22,13 @@ import { CustomHeader } from "../../../components/CustomHeader";
 import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
   FanPredictionVote,
+  GameLiveChatOverlay,
   GameLocation,
-  HighlightVideoList,
+  Highlights,
   LastFiveGames,
   LineScore,
   Officials,
 } from "../../../components/Sports/Basketball/GameDetails";
-import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import { useScrollFade } from "../../../hooks/useScrollFade";
@@ -350,7 +350,7 @@ export default function GameDetailsScreen() {
               gameStatusDescription={gameStatusDescription}
             />
 
-            <HighlightVideoList highlights={highlights} isDark={isDark} />
+            <Highlights highlights={highlights} isDark={isDark} />
 
             <Officials
               officials={officials ?? []}

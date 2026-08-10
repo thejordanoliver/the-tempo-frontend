@@ -11,8 +11,7 @@ import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LeagueType } from "types/types";
-import TeamInfoCard from "./TeamInfoCard";
+import TeamInfo from "./TeamInfo";
 
 type Props = {
   teamDetails: TeamDetails | null;
@@ -22,7 +21,7 @@ type Props = {
   teamHistory?: string;
   teamId?: string | number;
   teamLogo?: any;
-  league: LeagueType;
+  league: string;
   isDark: boolean;
 };
 
@@ -113,7 +112,7 @@ export default function TeamInfoModal({
               isDark={isDark}
             />
 
-            <TeamInfoCard
+            <TeamInfo
               teamId={teamId}
               teamDetails={teamDetails ?? null}
               league={league}

@@ -1,8 +1,10 @@
 import { Colors } from "constants/styles";
+import { getWCBBTeam, getWCBBTeamByESPNId } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { RefreshControl, ScrollView } from "react-native";
+import type { WCBBTeam } from "types/types";
 import { OpeningRoundSection } from "./OpeningRoundSection";
 import { TournamentBracketCanvas } from "./TournamentBracketCanvas";
 import { TournamentBracketEmptyState } from "./TournamentBracketEmptyState";
@@ -26,7 +28,7 @@ import {
 
 type RouteTeamPayload = {
   id: number;
-  wid: number | null;
+  databaseId: number | null;
   espnId: number;
   uid: string;
   name: string;
@@ -145,6 +147,81 @@ function toNumber(value: string | number | null | undefined): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function getImageUri(value: unknown): string {
+  if (typeof value === "string") return value;
+
+  if (value && typeof value === "object" && "uri" in value) {
+    const uri = (value as { uri?: unknown }).uri;
+    return typeof uri === "string" ? uri : "";
+  }
+
+  return "";
+}
+
+function getExplicitWCBBDatabaseId(team: BracketTeam | null): number | null {
+  if (!team) return null;
+
+  const record = team as BracketTeam & {
+    databaseId?: string | number | null;
+    database_id?: string | number | null;
+    dbId?: string | number | null;
+    db_id?: string | number | null;
+    teamDatabaseId?: string | number | null;
+    team_database_id?: string | number | null;
+    wcbbTeamId?: string | number | null;
+    wcbb_team_id?: string | number | null;
+  };
+
+  const value =
+    record.databaseId ??
+    record.database_id ??
+    record.dbId ??
+    record.db_id ??
+    record.teamDatabaseId ??
+    record.team_database_id ??
+    record.wcbbTeamId ??
+    record.wcbb_team_id;
+
+  const parsed = toNumber(value);
+
+  return parsed > 0 ? parsed : null;
+}
+
+function getExplicitWCBBESPNId(team: BracketTeam | null): number | null {
+  if (!team) return null;
+
+  const record = team as BracketTeam & {
+    espn_id?: string | number | null;
+    espnTeamId?: string | number | null;
+    espn_team_id?: string | number | null;
+  };
+  const value =
+    record.espnId ?? record.espn_id ?? record.espnTeamId ?? record.espn_team_id;
+  const parsed = toNumber(value);
+
+  return parsed > 0 ? parsed : null;
+}
+
+function resolveWCBBBracketTeam(team: BracketTeam | null): {
+  databaseId: number | null;
+  espnId: number;
+  team: WCBBTeam | undefined;
+} {
+  const explicitDatabaseId = getExplicitWCBBDatabaseId(team);
+  const explicitESPNId = getExplicitWCBBESPNId(team);
+  const resolvedTeam = explicitDatabaseId
+    ? getWCBBTeam(explicitDatabaseId)
+    : explicitESPNId
+      ? getWCBBTeamByESPNId(explicitESPNId)
+      : undefined;
+
+  return {
+    databaseId: resolvedTeam?.id ?? explicitDatabaseId,
+    espnId: resolvedTeam?.espnId ?? explicitESPNId ?? 0,
+    team: resolvedTeam,
+  };
+}
+
 function getRouteTeamName(
   team: BracketTeam | null,
   fallbackName: string,
@@ -162,27 +239,37 @@ function getRouteTeamName(
 function toRouteTeam(
   team: BracketTeam | null,
   fallbackName: string,
+  competition: TournamentBracketCompetition,
 ): RouteTeamPayload {
   const displayTeam = getRenderableBracketTeam(team);
   const displayName = getRouteTeamName(displayTeam, fallbackName);
 
-  const id = toNumber(displayTeam?.id);
-  const espnId = toNumber(displayTeam?.espnId) || id;
+  const isWCBB = competition === "WCBB";
+  const wcbbTeam = isWCBB ? resolveWCBBBracketTeam(displayTeam) : null;
+  const id = isWCBB ? (wcbbTeam?.databaseId ?? 0) : toNumber(displayTeam?.id);
+  const espnId = isWCBB
+    ? (wcbbTeam?.espnId ?? 0)
+    : toNumber(displayTeam?.espnId) || id;
+  const resolvedTeam = wcbbTeam?.team;
 
   return {
     id,
-    wid: id || null,
+    databaseId: isWCBB ? (wcbbTeam?.databaseId ?? null) : null,
     espnId,
-    uid: String(displayTeam?.espnId ?? displayTeam?.id ?? ""),
-    name: displayTeam?.name || displayName,
-    shortName: displayName,
-    code: displayTeam?.abbreviation || "TBD",
-    city: "",
-    state: "",
-    location: "",
-    logo: displayTeam?.logo ?? "",
-    primaryColor: "",
-    secondaryColor: "",
+    uid: String(espnId || displayTeam?.id || ""),
+    name:
+      resolvedTeam?.fullName ??
+      resolvedTeam?.name ??
+      displayTeam?.name ??
+      displayName,
+    shortName: resolvedTeam?.shortName ?? displayName,
+    code: resolvedTeam?.code ?? displayTeam?.abbreviation ?? "TBD",
+    city: resolvedTeam?.city ?? "",
+    state: resolvedTeam?.state ?? "",
+    location: resolvedTeam?.location ?? "",
+    logo: getImageUri(resolvedTeam?.logo) || displayTeam?.logo || "",
+    primaryColor: resolvedTeam?.primaryColor ?? "",
+    secondaryColor: resolvedTeam?.secondaryColor ?? "",
     nbaAPIID: 0,
     rank: displayTeam?.seed ?? 0,
     score: toNumber(displayTeam?.score),
@@ -291,9 +378,9 @@ function createRoutePayload(
      * Continue mapping bottom to home and top to away so the
      * existing game details route receives its expected shape.
      */
-    home: toRouteTeam(bottomTeam, "Home Team"),
+    home: toRouteTeam(bottomTeam, "Home Team", competition),
 
-    away: toRouteTeam(topTeam, "Away Team"),
+    away: toRouteTeam(topTeam, "Away Team", competition),
 
     isConferenceGame: false,
     isNeutralSite: true,

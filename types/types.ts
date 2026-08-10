@@ -1,6 +1,6 @@
 export type Team = {
   id: number | null;
-  wid?: number | null;
+  league?: string | null;
   espnId: number | null;
   summerLeagueId?: number | null;
   name: string;
@@ -16,12 +16,11 @@ export type Team = {
   established?: number;
   logo: any;
   logoLight?: any;
-  wLogo?: any;
   color: string | null;
   secondaryColor: string | null;
-  championships?: number[];
   isAllStar: boolean;
   isActive: boolean;
+  isNational: boolean;
 };
 
 export type LeagueType =
@@ -45,9 +44,36 @@ export type LeagueType =
   | "NHL"
   | "UFC"
   | "F1"
+  | "SOCCER"
   | "NASCARPREMIER";
 
-export type LeagueTeam = Team & { league: LeagueType };
+export type WCBBTeam = {
+  id: number;
+  espnId?: number | null;
+  /** @deprecated Compatibility only for converting old WCBB favorite keys. */
+  wid?: number | null;
+  league: "WCBB";
+  name: string | null;
+  shortName: string;
+  fullName?: string | null;
+  code: string | null;
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  color: string | null;
+  city: string | null;
+  state: string | null;
+  location: string | null;
+  conferenceId: number | null;
+  venueId: number | null;
+  venueLeagueKey: "wcbb";
+  logo?: any;
+  logoLight?: any;
+  wLogo?: any;
+  isAllStar: boolean;
+  isActive: boolean;
+  searchTerms?: string;
+  [key: string]: unknown;
+};
 
 export type Venue = {
   id: string;

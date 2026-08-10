@@ -1,5 +1,6 @@
-// components/FavoriteTeamsList.tsx
+// components/Favorites/FavoriteTeamsList.tsx
 
+import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "components/Button";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
@@ -17,25 +18,23 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
-import { LongPressGestureHandler, State } from "react-native-gesture-handler";
+import {
+  LongPressGestureHandler,
+  State,
+} from "react-native-gesture-handler";
 import { favoriteTeamsListStyles } from "styles/FavorieTeamsListStyles";
-import { isFavoriteLeague } from "types/favorites";
 import type { LeagueType, Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
-type TeamWithLeague = Team & { league: LeagueType };
+
+type FavoriteTeam = Team & {
+  league: LeagueType;
+};
 
 type Props = {
-  favoriteTeams: TeamWithLeague[];
+  favoriteTeams: FavoriteTeam[];
   isGridView: boolean;
   itemWidth?: number;
   isCurrentUser: boolean;
-};
-
-/* ---------------- TEAM HELPERS ---------------- */
-
-const getTeamId = (team: TeamWithLeague) => {
-  if (team.league === "WCBB") return (team as any).wid;
-  return team.id;
 };
 
 const getLeagueBadgeColor = (league: LeagueType) => {
@@ -54,8 +53,6 @@ const getLeagueBadgeColor = (league: LeagueType) => {
       return "transparent";
   }
 };
-
-/* ---------------- COMPONENT ---------------- */
 
 const FavoriteTeamsList = ({
   favoriteTeams,
@@ -76,8 +73,6 @@ const FavoriteTeamsList = ({
     handleRemoveFavorite,
   } = useFavoriteTeamsContext();
 
-  /* ---------------- RENDER ---------------- */
-
   return (
     <>
       {previewTeam && (
@@ -91,65 +86,72 @@ const FavoriteTeamsList = ({
         />
       )}
 
-      <View style={[isGridView ? styles.teamGrid : {}, styles.gridContainer]}>
+      <View
+        style={[
+          isGridView ? styles.teamGrid : undefined,
+          styles.gridContainer,
+        ]}
+      >
         {favoriteTeams.map((team) => {
-          const id = getTeamId(team);
+          const id = team.id;
+          const { league } = team;
           const teamBackgroundColor = team.color ?? Colors.midTone;
 
           let logo;
-          switch (team.league) {
+
+          switch (league) {
             case "NFL":
-              logo = getNFLTeamLogo(Number(team.id), true);
+              logo = getNFLTeamLogo(Number(id), true);
               break;
             case "NBA":
-              logo = getTeamLogo(Number(team.id), true);
+              logo = getTeamLogo(Number(id), true);
               break;
             case "WNBA":
-              logo = getWNBATeamLogo(Number(team.id), true);
+              logo = getWNBATeamLogo(Number(id), true);
               break;
             case "CFB":
-              logo = getCFBTeamLogo(Number(team.id), true);
+              logo = getCFBTeamLogo(Number(id), true);
               break;
             case "CBB":
-              logo = getCBBTeamLogo(Number(team.id), true, false);
+              logo = getCBBTeamLogo(Number(id), true);
               break;
             case "WCBB":
-              logo = getCBBTeamLogo(Number(team.id), true, true);
+              logo = getWCBBTeamLogo(Number(id), true);
               break;
             case "NHL":
-              logo = getNHLTeamLogo(Number(team.id), true);
+              logo = getNHLTeamLogo(Number(id), true);
               break;
             case "MLB":
-              logo = getMLBTeamLogo(Number(team.id), true);
+              logo = getMLBTeamLogo(Number(id), true);
               break;
             case "CB":
-              logo = getCBTeamLogo(Number(team.id), true);
+              logo = getCBTeamLogo(Number(id), true);
               break;
             case "SB":
-              logo = getSBTeamLogo(Number(team.id), true);
+              logo = getSBTeamLogo(Number(id), true);
               break;
             default:
               logo = null;
           }
-          const isCollege =
-            team.league === "CFB" ||
-            team.league === "CBB" ||
-            team.league === "WCBB" ||
-            team.league === "CB" ||
-            team.league === "SB";
-          const showLeagueBadge = isCollege;
 
-          const teamName = team.name;
-          const favoriteLeague = isFavoriteLeague(team.league)
-            ? team.league
-            : null;
+          const showLeagueBadge = [
+            "CFB",
+            "CBB",
+            "WCBB",
+            "CB",
+            "SB",
+          ].includes(league);
+
+          const teamName = team.name ?? team.shortName ?? String(id);
 
           return (
             <LongPressGestureHandler
-              key={`${team.league}:${id}`}
+              key={`${league}:${id}`}
               minDurationMs={300}
               onHandlerStateChange={({ nativeEvent }) => {
-                if (nativeEvent.state === State.ACTIVE) handleLongPress(team);
+                if (nativeEvent.state === State.ACTIVE) {
+                  handleLongPress(team);
+                }
               }}
             >
               <Pressable
@@ -158,11 +160,12 @@ const FavoriteTeamsList = ({
                   isGridView ? styles.gridItem : styles.listItem,
                 ]}
                 onPress={() => {
-                  if (!favoriteLeague) return;
-
                   router.push({
-                    pathname: getFavoriteTeamRoute(favoriteLeague),
-                    params: { teamId: String(id), league: favoriteLeague },
+                    pathname: getFavoriteTeamRoute(league),
+                    params: {
+                      teamId: String(id),
+                      league,
+                    },
                   });
                 }}
               >
@@ -181,10 +184,12 @@ const FavoriteTeamsList = ({
                     <View
                       style={[
                         styles.leagueBadge,
-                        { backgroundColor: getLeagueBadgeColor(team.league) },
+                        {
+                          backgroundColor: getLeagueBadgeColor(league),
+                        },
                       ]}
                     >
-                      <Text style={styles.leagueBadgeText}>{team.league}</Text>
+                      <Text style={styles.leagueBadgeText}>{league}</Text>
                     </View>
                   )}
 

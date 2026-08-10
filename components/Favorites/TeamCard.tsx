@@ -7,14 +7,15 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeamLogo } from "constants/teamsSB";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useCallback, useMemo } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
-import type { LeagueType, Team } from "types/types";
+import type { LeagueTeam, LeagueType } from "types/types";
 
-type TeamWithLeague = Omit<Team, "id"> & { id: number; league: LeagueType };
+type TeamWithLeague = LeagueTeam & { id: number };
 
 type Props = {
   item: TeamWithLeague;
@@ -49,7 +50,9 @@ function TeamCard({
     if (item.league === "CBB")
       return getCBBTeamLogo(item.id, useAltLogo, false);
     if (item.league === "WCBB")
-      return getCBBTeamLogo(item.id, useAltLogo, true);
+      return (
+        item.logoLight ?? item.logo ?? getWCBBTeamLogo(item.id, useAltLogo)
+      );
     if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
     if (item.league === "CB") return getCBTeamLogo(item.id, useAltLogo);
     if (item.league === "SB") return getSBTeamLogo(item.id, useAltLogo);
@@ -57,13 +60,19 @@ function TeamCard({
     if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
     if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
     return getNHLTeamLogo(item.id, useAltLogo);
-  }, [item.id, item.league, useAltLogo]);
+  }, [item.id, item.league, item.logo, item.logoLight, useAltLogo]);
 
   const handlePress = useCallback(() => {
     onPress(item.league, item.id.toString());
   }, [item.id, item.league, onPress]);
 
   const logoSize = isGridView ? 50 : 40;
+  const displayName =
+    item.name ??
+    item.fullName ??
+    item.shortName ??
+    item.code ??
+    String(item.id);
   const backgroundColor = isSelected
     ? selectedColor
     : isDark
@@ -151,7 +160,7 @@ function TeamCard({
           }}
         >
           <Text style={[styles.teamName, { color: textColor }]}>
-            {isGridView ? item.name : item.fullName}
+            {isGridView ? displayName : (item.fullName ?? displayName)}
           </Text>
         </View>
       </View>

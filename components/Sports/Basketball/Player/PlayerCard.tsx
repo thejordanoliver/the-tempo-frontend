@@ -1,4 +1,5 @@
 import { activeOpacity } from "@/constants/styles";
+import { getWCBBTeam } from "@/constants/teamsWCBB";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
 import { getNBATeam } from "constants/teams";
 import { getCBBTeam } from "constants/teamsCBB";
@@ -21,7 +22,7 @@ export interface PlayerCardProps {
   headshot?: string | null;
   rank?: number | null;
   number?: string | number | null;
-  league?: LeagueType;
+  league?: string;
   statNumber?: string | number | null;
 }
 
@@ -31,7 +32,8 @@ type PlayerRoutePathname =
   | "/player/mma/[id]"
   | "/player/hockey/[id]"
   | "/player/football/[id]"
-  | "/player/basketball/[id]";
+  | "/player/basketball/[id]"
+  | "/player/soccer/[id]";
 
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   NBA: "/player/basketball/[id]",
@@ -45,6 +47,7 @@ const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   CFB: "/player/football/[id]",
   UFC: "/player/mma/[id]",
   NHL: "/player/hockey/[id]",
+  SOCCER: "/player/soccer/[id]",
 };
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({
@@ -84,9 +87,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
             : isWNBA
               ? getWNBATeam(teamId)
               : isCBB
-                ? getCBBTeam(teamId, false)
+                ? getCBBTeam(teamId)
                 : isWCBB
-                  ? getCBBTeam(teamId, true)
+                  ? getWCBBTeam(teamId)
                   : null;
 
   const teamName = team?.name;
@@ -98,7 +101,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
         ? `#${number}`
         : null;
 
-  const route = LEAGUE_ROUTES[league];
+  const typedLeague = league as LeagueType;
+  const route = LEAGUE_ROUTES[typedLeague];
 
   const handlePress = () => {
     if (!route) {
@@ -116,7 +120,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       params: {
         id: String(id),
         teamId: String(teamId),
-        league,
+        league: typedLeague,
       },
     });
   };

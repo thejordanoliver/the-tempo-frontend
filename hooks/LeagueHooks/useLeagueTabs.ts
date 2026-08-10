@@ -1,26 +1,41 @@
-import { useEffect, useState } from "react";
-import {
-  LEAGUE_TABS,
-  League,
-  LeagueTab,
-  TEAM_TABS,
-  Team,
-  TeamTab,
-} from "utils/tabs";
+import { useEffect, useMemo, useState } from "react";
 
-const FALLBACK_LEAGUE_TABS = ["scores", "news", "standings", "forum"] as const;
+import { LEAGUE_TABS, TEAM_TABS } from "utils/tabs";
 
-export function useLeagueTabs<L extends League>(league: L) {
-  const tabs = (LEAGUE_TABS[league] ??
-    FALLBACK_LEAGUE_TABS) as readonly LeagueTab<L>[];
+const FALLBACK_LEAGUE_TABS = [
+  "scores",
+  "news",
+  "standings",
+  "forum",
+] as const;
 
-  const [selectedTab, setSelectedTab] = useState<LeagueTab<L>>(
+const FALLBACK_TEAM_TABS = [
+  "schedule",
+  "news",
+  "roster",
+  "stats",
+  "standings",
+  "forum",
+] as const;
+
+export function useLeagueTabs(league: string) {
+  const normalizedLeague = league.toUpperCase();
+
+  const tabs = useMemo<readonly string[]>(() => {
+    return (
+      LEAGUE_TABS[
+        normalizedLeague as keyof typeof LEAGUE_TABS
+      ] ?? FALLBACK_LEAGUE_TABS
+    );
+  }, [normalizedLeague]);
+
+  const [selectedTab, setSelectedTab] = useState<string>(
     tabs[0],
   );
 
   useEffect(() => {
     setSelectedTab(tabs[0]);
-  }, [league, tabs]);
+  }, [tabs]);
 
   return {
     tabs,
@@ -29,16 +44,24 @@ export function useLeagueTabs<L extends League>(league: L) {
   };
 }
 
-export function useTeamTabs<T extends Team>(team: T) {
-  const tabs = TEAM_TABS[team] as readonly TeamTab<T>[];
+export function useTeamTabs(team: string) {
+  const normalizedTeam = team.toUpperCase();
 
-  const [selectedTab, setSelectedTab] = useState<TeamTab<T>>(
+  const tabs = useMemo<readonly string[]>(() => {
+    return (
+      TEAM_TABS[
+        normalizedTeam as keyof typeof TEAM_TABS
+      ] ?? FALLBACK_TEAM_TABS
+    );
+  }, [normalizedTeam]);
+
+  const [selectedTab, setSelectedTab] = useState<string>(
     tabs[0],
   );
 
   useEffect(() => {
     setSelectedTab(tabs[0]);
-  }, [team, tabs]);
+  }, [tabs]);
 
   return {
     tabs,

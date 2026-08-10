@@ -1,4 +1,5 @@
 import InfoCard from "@/components/Sports/Basketball/Team/InfoCard";
+import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { TeamDetails } from "@/hooks/useTeams";
 import { Team } from "@/types/football/football";
 import { getNBATeam } from "constants/teams";
@@ -10,17 +11,16 @@ import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LeagueType } from "types/types";
 import { TeamInfoModalStyles } from "./TeamInfoModal";
 
 type Props = {
   teamId?: string | number;
   teamDetails: TeamDetails | null;
-  league: LeagueType;
+  league: string;
   isDark: boolean;
 };
 
-export default function TeamInfoCard({
+export default function TeamInfo({
   teamId,
   teamDetails,
   league,
@@ -47,7 +47,7 @@ export default function TeamInfoCard({
         return getCBBTeam(teamId);
 
       case "WCBB":
-        return getCBBTeam(teamId, true);
+        return getWCBBTeam(teamId);
 
       case "NFL":
         return getNFLTeam(teamId);

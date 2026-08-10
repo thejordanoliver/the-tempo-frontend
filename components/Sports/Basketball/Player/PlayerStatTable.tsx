@@ -6,6 +6,7 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkeleton";
 import { globalStyles } from "constants/styles";
+import { getWCBBTeamByESPNId } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Season, StatValue } from "hooks/NBAHooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
@@ -362,7 +363,13 @@ const getRowDisplaySeason = (
 };
 
 const getTeamCodeFromSeason = (season: Season, league: LeagueType) => {
-  const rawTeamId = season.team_id;
+  const rawTeamId =
+    league === "WCBB"
+      ? ((season as any).teamEspnId ??
+        (season as any).team_espn_id ??
+        (season as any).espnTeamId ??
+        (season as any).espn_team_id)
+      : season.team_id;
   const teamId = Number(rawTeamId);
 
   const fallbackTeamCode = !isMissing(season.team_slug)
@@ -376,7 +383,9 @@ const getTeamCodeFromSeason = (season: Season, league: LeagueType) => {
       ? getTeamByESPNId(teamId)
       : league === "WNBA"
         ? getWNBATeamByESPNId(teamId)
-        : getCBBTeamByESPNId(teamId);
+        : league === "WCBB"
+          ? getWCBBTeamByESPNId(teamId)
+          : getCBBTeamByESPNId(teamId);
 
   return team?.code ?? fallbackTeamCode;
 };

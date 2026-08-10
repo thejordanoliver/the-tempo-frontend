@@ -15,14 +15,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { LeagueType } from "types/types";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import { Post, PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
 interface TeamForumProps {
   teamId: string;
-  league?: LeagueType;
+  league?: string;
 }
 
 interface AlertConfig {

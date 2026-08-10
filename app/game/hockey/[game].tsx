@@ -1,15 +1,16 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
+  GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
+  HeadCoaches,
+  Highlights,
   LastFiveGames,
   LastPlay,
   LineScore,
-  TeamInjuries
+  TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
 import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
-import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
-import { HighlightVideoList } from "@/components/Sports/Basketball/GameDetails/Highlights/HighlightVideoList";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
@@ -17,6 +18,7 @@ import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
@@ -132,9 +134,23 @@ export default function GameDetailsScreen(
   const awayHeaderLogo = getNHLTeamLogo(awayId, true);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
+  const homeName = useMemo(
+    () => homeTeam?.fullName ?? "",
+    [homeTeam?.fullName],
+  );
+  const awayName = useMemo(
+    () => awayTeam?.fullName ?? "",
+    [awayTeam?.fullName],
+  );
 
   const awayColor = awayTeam?.color ?? Colors.midTone;
   const homeColor = homeTeam?.color ?? Colors.midTone;
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE);
@@ -349,19 +365,6 @@ export default function GameDetailsScreen(
 
             <GameSummary plays={plays ?? []} isDark={isDark} />
 
-            <TeamInjuries
-              injuries={injuries}
-              homeId={homeId}
-              awayId={awayId}
-              homeCode={homeCode}
-              awayCode={awayCode}
-              homeLogo={homeLogo}
-              awayLogo={awayLogo}
-              isDark={isDark}
-              state={state}
-              league={LEAGUE}
-            />
-
             <LastFiveGames
               home={{
                 teamId: homeId,
@@ -378,7 +381,30 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <HighlightVideoList highlights={highlights} isDark={isDark} />
+            <Highlights highlights={highlights} isDark={isDark} />
+
+            <TeamInjuries
+              injuries={injuries}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              isDark={isDark}
+              state={state}
+              league={LEAGUE}
+            />
+
+            <HeadCoaches
+              homeName={homeName}
+              awayName={awayName}
+              homeCoach={homeCoach}
+              awayCoach={awayCoach}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              isDark={isDark}
+            />
 
             <Officials officials={officials} isDark={isDark} state={state} />
 

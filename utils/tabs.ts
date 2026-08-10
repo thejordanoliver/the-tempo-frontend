@@ -52,7 +52,15 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  WCBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
+  WCBB: [
+    "scores",
+    "news",
+    "standings",
+    "stats",
+    "bracket",
+    "awards",
+    "forum",
+  ],
   CB: ["scores", "news", "standings", "forum"],
   SB: ["scores", "news", "standings", "forum"],
   UFC: ["fights", "news", "champions"],
@@ -82,10 +90,22 @@ export const TEAM_TABS = {
   UFL: ["schedule", "news", "standings", "forum"],
   CBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
   WCBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  SOCC: ["schedule", "news", "roster"],
 } as const;
 
 export type League = keyof typeof LEAGUE_TABS;
 export type Team = keyof typeof TEAM_TABS;
 
-export type LeagueTab<L extends League> = (typeof LEAGUE_TABS)[L][number];
-export type TeamTab<T extends Team> = (typeof TEAM_TABS)[T][number];
+export type LeagueTab<L extends League> =
+  (typeof LEAGUE_TABS)[L][number];
+
+export type TeamTab<T extends Team> =
+  (typeof TEAM_TABS)[T][number];
+
+export function isLeague(value: string): value is League {
+  return value in LEAGUE_TABS;
+}
+
+export function isTeam(value: string): value is Team {
+  return value in TEAM_TABS;
+}

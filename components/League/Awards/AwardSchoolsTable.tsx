@@ -2,6 +2,7 @@ import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkele
 import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -129,13 +130,15 @@ export default function AwardSchoolsTable({
 
   const renderItem: ListRenderItem<AwardSchoolRow> = useCallback(
     ({ item, index }) => {
-      const isWomen = league === "wcbb";
       const isLastRow = index === visibleRows.length - 1;
+      const wcbbLogo = item.team.logo ? { uri: item.team.logo } : null;
 
       const logo =
         league === "cfb"
           ? getCFBTeamLogo(item.team.id, useLightLogo)
-          : getCBBTeamLogo(item.team.id, useLightLogo, isWomen);
+          : league === "wcbb"
+            ? (wcbbLogo ?? getWCBBTeamLogo(item.team.id, useLightLogo))
+            : getCBBTeamLogo(item.team.id, useLightLogo);
 
       const teamName = item.team.name ?? item.team.short_name ?? "Unknown Team";
 

@@ -47,16 +47,20 @@ export const TeamRow = ({
    * Routing
    * --------------------------------------------------- */
   const handleTeamPress = () => {
-    if (league === "nba") {
+    if (id === null || id === undefined) return;
+
+    const normalizedLeague = String(league ?? "").toLowerCase();
+
+    if (normalizedLeague === "nba") {
       router.push(`/team/${id}`);
     }
-    if (league === "wnba") {
+    if (normalizedLeague === "wnba") {
       router.push(`/team/wnba/${id}`);
     }
-    if (league === "cbb") {
+    if (normalizedLeague === "cbb") {
       router.push(`/team/cbb/${id}`);
     }
-    if (league === "wcbb") {
+    if (normalizedLeague === "wcbb") {
       router.push(`/team/wcbb/${id}`);
     }
   };

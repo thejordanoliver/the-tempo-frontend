@@ -21,6 +21,7 @@ export const TeamRow = ({
   isNational,
   state,
   gameStatusDescription,
+  league,
 }: SoccerProps) => {
   const router = useRouter();
   const styles = teamRowStyles(isDark);
@@ -60,9 +61,16 @@ export const TeamRow = ({
   };
 
   const handleTeamPress = () => {
-    if (id && !isNational && !isAllStar) router.push(`/team/soccer/${id}`);
-  };
+    if (!id || isNational || isAllStar) return;
 
+    router.push({
+      pathname: "/team/soccer/[teamId]",
+      params: {
+        teamId: id,
+        league,
+      },
+    });
+  };
   const showRecordInsteadOfScore =
     isScheduled ||
     isPostponed ||

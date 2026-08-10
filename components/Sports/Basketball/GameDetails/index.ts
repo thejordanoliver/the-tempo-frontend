@@ -1,4 +1,5 @@
 // components/GameDetails/index.ts
+export { default as TeamInjuries } from "components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 export { default as BoxScore } from "./BoxScore";
 export { CenterInfo } from "./CenterInfo";
 export { default as FanPredictionVote } from "./FanPredictionVote";
@@ -6,13 +7,14 @@ export { default as ChatButton } from "./GameChat/ChatButton";
 export { default as LiveChat } from "./GameChat/LiveChat";
 export { default as GameHeader } from "./GameHeader";
 export { default as GameLeaders } from "./GameLeaders";
+export { default as GameLiveChatOverlay } from "./GameChat/GameLiveChatOverlay";
 export { default as GameLocation } from "./GameLocation";
 export { default as GameSummary } from "./GameSummary";
 export { default as GameTeamStats } from "./GameTeamStats";
 export { default as GameUniforms } from "./GameUniforms";
+export { default as HeadCoaches } from "./HeadCoaches";
 export { default as HeadToHeadGames } from "./HeadToHead/HeadToHeadGames";
-export { HighlightVideoList } from "./Highlights/HighlightVideoList";
-export { default as TeamInjuries } from "components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
+export { Highlights } from "./Highlights/Highlights";
 export { default as LastFiveGames } from "./LastFiveGames";
 export { default as LastPlay } from "./LastPlay";
 export { default as LineScore } from "./LineScore";

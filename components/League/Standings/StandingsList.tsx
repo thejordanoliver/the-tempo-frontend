@@ -41,7 +41,7 @@ type SectionType = {
 type Props = {
   year?: string;
   onYearChange?: (year: string) => void;
-  league: PlayoffLeague;
+  league: string;
   isGameDetailScreen?: boolean;
 };
 

@@ -5,7 +5,7 @@ import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
@@ -63,11 +63,10 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const team = getCBBTeam(teamIdNum, true);
+  const team = getWCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
-  const teamLogo = getCBBTeamLogo(teamIdNum, true, true);
-  const wcbbTeamId = team?.wid ?? teamIdNum;
+  const teamLogo = getWCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -116,7 +115,7 @@ export default function TeamDetailScreen() {
     error: playersError,
   } = useRoster(teamIdNum, league);
 
-  const favorited = team ? isFavorite(league, wcbbTeamId) : false;
+  const favorited = team ? isFavorite(league, team.id ?? 0) : false;
 
   const {
     games,
@@ -126,7 +125,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("wcbb", espnId, currentSeason);
+  } = useBasketballTeamGames("wcbb", teamIdNum, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months
@@ -222,7 +221,7 @@ export default function TeamDetailScreen() {
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, wcbbTeamId)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -236,7 +235,6 @@ export default function TeamDetailScreen() {
     favorited,
     toggleFavorite,
     teamIdNum,
-    wcbbTeamId,
   ]);
 
   if (!team) {

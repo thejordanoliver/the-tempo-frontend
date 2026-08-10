@@ -1,3 +1,4 @@
+import { wcbbTeams } from "@/constants/teamsWCBB";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { teams as nbaTeams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
@@ -10,20 +11,14 @@ import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
 import { usePathname, useRouter } from "expo-router";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import type { LeagueType, Team } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
 
 export type TeamWithLeague = Team & {
-  league: LeagueType;
+  league: string;
 };
 
 const LEGACY_STORAGE_KEY = "favorites";
@@ -41,8 +36,7 @@ export function useFavoriteTeams() {
   const [isGridView, setIsGridView] = useState(true);
   const [ready, setReady] = useState(false);
 
-  const [previewTeam, setPreviewTeam] =
-    useState<TeamWithLeague | null>(null);
+  const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -54,10 +48,6 @@ export function useFavoriteTeams() {
   /* ---------------- TEAM ID HELPER ---------------- */
 
   const getTeamId = (team: TeamWithLeague) => {
-    if (team.league === "WCBB") {
-      return (team as TeamWithLeague & { wid?: string | number }).wid;
-    }
-
     return team.id;
   };
 
@@ -70,6 +60,7 @@ export function useFavoriteTeams() {
       ...nflTeams,
       ...cfbTeams,
       ...cbbTeams,
+      ...wcbbTeams,
       ...cbTeams,
       ...sbTeams,
       ...mlbTeams,
@@ -196,11 +187,10 @@ export function useFavoriteTeams() {
 
   /* ---------------- FAVORITE HELPERS ---------------- */
 
-  const buildKey = (league: LeagueType, id: string | number) =>
-    `${league}:${id}`;
+  const buildKey = (league: string, id: string | number) => `${league}:${id}`;
 
   const isFavorite = useCallback(
-    (league: LeagueType, id: string | number) =>
+    (league: string, id: string | number) =>
       favorites.includes(buildKey(league, id)),
     [favorites],
   );
@@ -212,10 +202,7 @@ export function useFavoriteTeams() {
    * should not be included in the URL.
    */
   const syncFavoritesToServer = useCallback(
-    async (
-      nextFavorites: string[],
-      action: string,
-    ): Promise<boolean> => {
+    async (nextFavorites: string[], action: string): Promise<boolean> => {
       if (!userId) {
         console.warn(`Unable to ${action}: no user ID is available.`);
         return false;
@@ -260,10 +247,7 @@ export function useFavoriteTeams() {
 
         const storageKey = getFavoritesStorageKey(userId);
 
-        AsyncStorage.setItem(
-          storageKey,
-          JSON.stringify(nextFavorites),
-        )
+        AsyncStorage.setItem(storageKey, JSON.stringify(nextFavorites))
           .then(async () => {
             await syncFavoritesToServer(
               nextFavorites,
@@ -271,10 +255,7 @@ export function useFavoriteTeams() {
             );
           })
           .catch((error) => {
-            console.error(
-              "Failed to persist favorites after toggle:",
-              error,
-            );
+            console.error("Failed to persist favorites after toggle:", error);
           });
 
         return nextFavorites;
@@ -333,12 +314,7 @@ export function useFavoriteTeams() {
       console.error("Failed to save favorites locally:", error);
       return false;
     }
-  }, [
-    favorites,
-    ready,
-    syncFavoritesToServer,
-    userId,
-  ]);
+  }, [favorites, ready, syncFavoritesToServer, userId]);
 
   /* ---------------- SYNC FAVORITES ---------------- */
 
@@ -360,10 +336,7 @@ export function useFavoriteTeams() {
           JSON.stringify(normalizedFavorites),
         );
       } catch (error) {
-        console.error(
-          "Failed to save reordered favorites locally:",
-          error,
-        );
+        console.error("Failed to save reordered favorites locally:", error);
 
         return false;
       }
@@ -385,9 +358,7 @@ export function useFavoriteTeams() {
   /* ---------------- TEAM PREVIEW ---------------- */
 
   const handleLongPress = useCallback((team: TeamWithLeague) => {
-    Haptics.impactAsync(
-      Haptics.ImpactFeedbackStyle.Heavy,
-    ).catch((error) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch((error) => {
       console.warn("Failed to trigger haptic feedback:", error);
     });
 
@@ -458,9 +429,7 @@ export function useFavoriteTeams() {
 
       const key = buildKey(team.league, id);
 
-      const updatedFavorites = favorites.filter(
-        (favorite) => favorite !== key,
-      );
+      const updatedFavorites = favorites.filter((favorite) => favorite !== key);
 
       setFavorites(updatedFavorites);
       setModalVisible(false);
@@ -476,10 +445,7 @@ export function useFavoriteTeams() {
           JSON.stringify(updatedFavorites),
         );
       } catch (error) {
-        console.error(
-          "Failed to remove favorite from local storage:",
-          error,
-        );
+        console.error("Failed to remove favorite from local storage:", error);
 
         return false;
       }
@@ -495,11 +461,7 @@ export function useFavoriteTeams() {
 
       return synced;
     },
-    [
-      favorites,
-      syncFavoritesToServer,
-      userId,
-    ],
+    [favorites, syncFavoritesToServer, userId],
   );
 
   /* ---------------- RETURN ---------------- */
@@ -526,6 +488,7 @@ export function useFavoriteTeams() {
     loadFavorites,
     clearFavorites,
 
+    allTeams,
     filteredTeams,
 
     previewTeam,

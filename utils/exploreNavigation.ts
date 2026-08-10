@@ -10,7 +10,7 @@ export type ExploreRoute =
 type TeamLeagueRoute = {
   flag: keyof Extract<ResultItem, { type: "team" }>;
   routePrefix: string;
-  idField?: "id" | "wid";
+  includeLeagueParam?: boolean;
 };
 
 type PlayerLeagueRoute = {
@@ -26,23 +26,73 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
   { flag: "isNHL", routePrefix: "/team/nhl" },
   { flag: "isCFB", routePrefix: "/team/cfb" },
   { flag: "isCBB", routePrefix: "/team/cbb" },
-  { flag: "isWCBB", routePrefix: "/team/wcbb", idField: "wid" },
+  {
+    flag: "isSOCC",
+    routePrefix: "/team/soccer",
+    includeLeagueParam: true,
+  },
+  {
+    flag: "isWCBB",
+    routePrefix: "/team/wcbb",
+  },
 ];
 
 const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
-  { flag: "isNFL", pathname: "/player/football/[id]", league: "NFL" },
-  { flag: "isCFB", pathname: "/player/football/[id]", league: "CFB" },
-  { flag: "isMMA", pathname: "/player/mma/[id]", league: "MMA" },
-  { flag: "isMLB", pathname: "/player/baseball/[id]", league: "MLB" },
-  { flag: "isNHL", pathname: "/player/nhl/[id]", league: "NHL" },
-  { flag: "isNBA", pathname: "/player/basketball/[id]", league: "NBA" },
-  { flag: "isCBB", pathname: "/player/basketball/[id]", league: "CBB" },
-  { flag: "isWCBB", pathname: "/player/basketball/[id]", league: "WCBB" },
-  { flag: "isWNBA", pathname: "/player/basketball/[id]", league: "WNBA" },
-  { flag: "isSOCC", pathname: "/player/soccer/[id]", league: "SOCC" },
+  {
+    flag: "isNFL",
+    pathname: "/player/football/[id]",
+    league: "NFL",
+  },
+  {
+    flag: "isCFB",
+    pathname: "/player/football/[id]",
+    league: "CFB",
+  },
+  {
+    flag: "isMMA",
+    pathname: "/player/mma/[id]",
+    league: "MMA",
+  },
+  {
+    flag: "isMLB",
+    pathname: "/player/baseball/[id]",
+    league: "MLB",
+  },
+  {
+    flag: "isNHL",
+    pathname: "/player/nhl/[id]",
+    league: "NHL",
+  },
+  {
+    flag: "isNBA",
+    pathname: "/player/basketball/[id]",
+    league: "NBA",
+  },
+  {
+    flag: "isCBB",
+    pathname: "/player/basketball/[id]",
+    league: "CBB",
+  },
+  {
+    flag: "isWCBB",
+    pathname: "/player/basketball/[id]",
+    league: "WCBB",
+  },
+  {
+    flag: "isWNBA",
+    pathname: "/player/basketball/[id]",
+    league: "WNBA",
+  },
+  {
+    flag: "isSOCC",
+    pathname: "/player/soccer/[id]",
+    league: "SOCC",
+  },
 ];
 
-export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
+export function getExploreRouteForResult(
+  item: ResultItem,
+): ExploreRoute {
   if (item.type === "user") {
     return `/user/${item.id}`;
   }
@@ -56,8 +106,17 @@ export function getExploreRouteForResult(item: ResultItem): ExploreRoute {
       return `/team/${item.id}`;
     }
 
-    const idField = teamRoute.idField ?? "id";
-    const routeId = item[idField] ?? item.id;
+    const routeId = item.id;
+
+    if (teamRoute.includeLeagueParam) {
+      return {
+        pathname: `${teamRoute.routePrefix}/[id]`,
+        params: {
+          id: String(routeId),
+          league: String(item.league ?? "SOCC"),
+        },
+      };
+    }
 
     return `${teamRoute.routePrefix}/${routeId}`;
   }

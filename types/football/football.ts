@@ -6,7 +6,7 @@ import type { ImageSourcePropType } from "react-native";
 
 export type Team = {
   id: number;
-  wid?: number;
+  league: string
   espnId?: number | null;
   summerLeagueId?: number;
   name: string;
@@ -22,7 +22,6 @@ export type Team = {
   established: number;
   logo: any;
   logoLight?: any;
-  wLogo?: any;
   color: string | null;
   secondaryColor: string | null;
   championships?: number[];

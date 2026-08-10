@@ -20,8 +20,6 @@ import {
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
-type BasketballRosterLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
-
 type StatValue = string | number | null | undefined;
 type StatMap = Record<string, StatValue>;
 
@@ -78,7 +76,7 @@ type RosterStatsComponentProps = {
   error: Error | null;
   refreshing?: boolean;
   onRefresh?: () => void;
-  league?: BasketballRosterLeague;
+  league?: string;
 };
 
 const STAT_TABS = ["Player Stats", "Team Stats"] as const;

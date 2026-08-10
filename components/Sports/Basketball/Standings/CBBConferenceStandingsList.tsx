@@ -1,6 +1,7 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -16,6 +17,7 @@ import {
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
+  league?: "CBB" | "WCBB";
   selectedConference?: string;
   onlyTeamConference?: boolean;
   teamName?: string;
@@ -105,11 +107,12 @@ function findTeamConferenceId(
 }
 
 export const CBBConferenceStandingsList = ({
+  league = "CBB",
   selectedConference,
   teamName,
   onlyTeamConference = false,
 }: Props) => {
-  const { conferences, loading, error } = useCBBConferenceStandings();
+  const { conferences, loading, error } = useCBBConferenceStandings(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -117,6 +120,9 @@ export const CBBConferenceStandingsList = ({
   const global = globalStyles(isDark);
   const router = useRouter();
   const { isFavorite } = useFavoriteTeamsContext();
+  const isWCBB = league === "WCBB";
+  const getStandingTeam = (espnId?: string | number | null) =>
+    isWCBB ? getWCBBTeamByESPNId(espnId ?? 0) : getCBBTeamByESPNId(espnId ?? 0);
 
   const safeConferences = Array.isArray(conferences)
     ? (conferences as ConferenceStanding[])
@@ -181,19 +187,23 @@ export const CBBConferenceStandingsList = ({
     isLastRow: boolean;
   }) => {
     const espnId = item.teamId;
-    const team = getCBBTeamByESPNId(espnId ?? 0);
+    const team = getStandingTeam(espnId);
     const teamId = team?.id;
     const teamLogo =
-      espnId && teamId != null ? getCBBTeamLogo(Number(teamId), isDark) : null;
+      espnId && teamId != null
+        ? isWCBB
+          ? getWCBBTeamLogo(teamId, isDark)
+          : getCBBTeamLogo(Number(teamId), isDark)
+        : null;
     const teamCode = item.abbreviation || "-";
     const favorited =
-      teamId != null ? isFavorite("CBB", String(teamId)) : false;
+      teamId != null ? isFavorite(league, String(teamId)) : false;
 
     const handleTeamPress = () => {
       if (teamId == null) return;
 
       router.push({
-        pathname: "/team/cbb/[teamId]",
+        pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/cbb/[teamId]",
         params: { teamId: String(teamId) },
       });
     };
@@ -240,10 +250,10 @@ export const CBBConferenceStandingsList = ({
     showDivision: boolean;
   }) => {
     const espnId = item.teamId;
-    const team = getCBBTeamByESPNId(espnId ?? 0);
+    const team = getStandingTeam(espnId);
     const teamId = team?.id;
     const favorited =
-      teamId != null ? isFavorite("CBB", String(teamId)) : false;
+      teamId != null ? isFavorite(league, String(teamId)) : false;
     const streakText = getStreakText(item.streak);
 
     const streakColor = streakText.startsWith("W")

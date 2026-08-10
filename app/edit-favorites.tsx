@@ -8,7 +8,6 @@ import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
-import { favoriteTeamsList } from "../utils/teams";
 
 export default function EditFavoritesScreen() {
   const {
@@ -21,6 +20,7 @@ export default function EditFavoritesScreen() {
     fadeAnim,
     saveFavorites,
     isLoading,
+    filteredTeams,
   } = useFavoriteTeamsContext();
 
   const { width: screenWidth } = useWindowDimensions();
@@ -68,7 +68,7 @@ export default function EditFavoritesScreen() {
   return (
     <View style={styles.container}>
       <FavoriteTeamsSelector
-        teams={favoriteTeamsList}
+        teams={filteredTeams}
         favorites={favorites}
         toggleFavorite={toggleFavorite}
         isGridView={isGridView}

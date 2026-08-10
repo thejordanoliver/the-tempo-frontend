@@ -1,12 +1,11 @@
 import {
   FanPredictionVote,
+  GameLiveChatOverlay,
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-
 import { CustomHeader } from "@/components/CustomHeader";
-import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import {
   formatDate,
   formatTime,

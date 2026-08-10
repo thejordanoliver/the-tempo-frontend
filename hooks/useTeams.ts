@@ -50,14 +50,16 @@ export type Conference = {
 
 export type Coach = {
   id: string;
+  firstName: string;
+  lastName: string;
   role: string;
   season: number;
   espnId: number;
   teamId: number;
   isActive: boolean;
-  lastName: string;
   experience: number;
-  firstName: string;
+  record: string;
+  birthDate: string;
 };
 
 export type Championships = {
@@ -143,6 +145,7 @@ export default function useTeamDetails(
       );
 
       setTeamDetails(response.data.team);
+
       setLeagueName(response.data.league);
     } catch (requestError: any) {
       const responseData = requestError?.response?.data as

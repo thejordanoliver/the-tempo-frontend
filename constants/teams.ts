@@ -1,5 +1,5 @@
 // Logos
-import { Team } from "@/types/football/football";
+import { Team } from "@/types/team";
 import SixersLogo from "../assets/NBA/Logos/76ers.png";
 import SixersLogoLight from "../assets/NBA/Logos/76ersLight.png";
 import BucksLogo from "../assets/NBA/Logos/Bucks.png";
@@ -57,7 +57,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 2,
@@ -77,7 +78,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 4,
@@ -97,7 +99,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 5,
@@ -117,7 +120,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 6,
@@ -137,7 +141,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 7,
@@ -157,7 +162,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 8,
@@ -177,7 +183,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 9,
@@ -197,7 +204,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 10,
@@ -217,7 +225,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 11,
@@ -237,7 +246,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
    {
      id: 132761,
@@ -257,7 +267,8 @@ export const teams: Team[] = [
      conference: "Western",
      isAllStar: false,
      isActive: true,
-     isNational: false
+     isNational: false,
+     league: "NBA"
    },
   {
     id: 14,
@@ -277,7 +288,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 15,
@@ -297,7 +309,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 16,
@@ -317,7 +330,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 17,
@@ -337,7 +351,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 19,
@@ -357,7 +372,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 20,
@@ -377,7 +393,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 21,
@@ -397,7 +414,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 22,
@@ -417,7 +435,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
 
   {
@@ -438,7 +457,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 24,
@@ -458,7 +478,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 25,
@@ -478,7 +499,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
 
   {
@@ -499,7 +521,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 27,
@@ -519,7 +542,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 28,
@@ -539,7 +563,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 29,
@@ -559,7 +584,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 30,
@@ -579,7 +605,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 31,
@@ -599,7 +626,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 38,
@@ -619,7 +647,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 40,
@@ -639,7 +668,8 @@ export const teams: Team[] = [
     conference: "Western",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
   {
     id: 41,
@@ -659,7 +689,8 @@ export const teams: Team[] = [
     conference: "Eastern",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NBA"
   },
 ];
 
@@ -699,48 +730,3 @@ export function getTeamLogo(
     ? team.logoLight ?? team.logo ?? placeholderLogo
     : team.logo ?? placeholderLogo;
 }
-
-export const nbaDivisionsById = {
-  Atlantic: [
-    2, // Boston Celtics
-    17, // Brooklyn Nets
-    18, // New York Knicks
-    20, // Philadelphia 76ers
-    28, // Toronto Raptors
-  ],
-  Central: [
-    4, // Chicago Bulls
-    5, // Cleveland Cavaliers
-    8, // Detroit Pistons
-    11, // Indiana Pacers
-    15, // Milwaukee Bucks
-  ],
-  Southeast: [
-    1, // Atlanta Hawks
-    30, // Charlotte Hornets
-    14, // Miami Heat
-    19, // Orlando Magic
-    27, // Washington Wizards
-  ],
-  Northwest: [
-    7, // Denver Nuggets
-    16, // Minnesota Timberwolves
-    25, // Oklahoma City Thunder
-    22, // Portland Trail Blazers
-    26, // Utah Jazz
-  ],
-  Pacific: [
-    9, // Golden State Warriors
-    12, // LA Clippers
-    13, // Los Angeles Lakers
-    21, // Phoenix Suns
-    23, // Sacramento Kings
-  ],
-  Southwest: [
-    6, // Dallas Mavericks
-    10, // Houston Rockets
-    29, // Memphis Grizzlies
-    3, // New Orleans Pelicans
-    24, // San Antonio Spurs
-  ],
-};

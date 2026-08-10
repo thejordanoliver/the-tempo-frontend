@@ -9,10 +9,12 @@ import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
+import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import type { FavoriteLeague } from "types/favorites";
+import type { WCBBTeam } from "types/types";
 import { isFavoriteLeague } from "types/favorites";
 import { apiClient } from "utils/apiClient";
 import {
@@ -26,7 +28,6 @@ import {
 
 type TeamLookupItem = {
   id: number | string | null;
-  wid?: number | string | null;
 };
 
 type FavoriteTeamWithLeague = TeamLookupItem & {
@@ -64,31 +65,17 @@ type DisplayProfile = {
 
 const createTeamLookup = <T extends TeamLookupItem>(
   teamList: readonly T[],
-  idKey: "id" | "wid" = "id",
 ) => {
   const lookup = new Map<string, T>();
 
   teamList.forEach((team) => {
-    const id = team[idKey];
+    const id = team.id;
     if (id !== undefined && id !== null) {
       lookup.set(String(id), team);
     }
   });
 
   return lookup;
-};
-
-const teamLookups: Record<FavoriteLeague, Map<string, TeamLookupItem>> = {
-  NBA: createTeamLookup(teams),
-  WNBA: createTeamLookup(wnbaTeams),
-  NFL: createTeamLookup(nflTeams),
-  CFB: createTeamLookup(cfbTeams),
-  CBB: createTeamLookup(cbbTeams),
-  WCBB: createTeamLookup(cbbTeams, "wid"),
-  MLB: createTeamLookup(mlbTeams),
-  CB: createTeamLookup(cbTeams),
-  SB: createTeamLookup(sbTeams),
-  NHL: createTeamLookup(nhlTeams),
 };
 
 function parseString(value: unknown): string | null {
@@ -226,6 +213,23 @@ export function useUserProfile(userId?: string) {
 
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersStore();
+  const { teams: wcbbTeams } = useLeagueTeams("WCBB");
+
+  const teamLookups = useMemo<Record<FavoriteLeague, Map<string, TeamLookupItem>>>(
+    () => ({
+      NBA: createTeamLookup(teams),
+      WNBA: createTeamLookup(wnbaTeams),
+      NFL: createTeamLookup(nflTeams),
+      CFB: createTeamLookup(cfbTeams),
+      CBB: createTeamLookup(cbbTeams),
+      WCBB: createTeamLookup(wcbbTeams as WCBBTeam[]),
+      MLB: createTeamLookup(mlbTeams),
+      CB: createTeamLookup(cbTeams),
+      SB: createTeamLookup(sbTeams),
+      NHL: createTeamLookup(nhlTeams),
+    }),
+    [wcbbTeams],
+  );
 
   activeProfileKeyRef.current =
     userId && hasLoadedCurrentUserId

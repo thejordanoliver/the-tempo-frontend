@@ -19,6 +19,7 @@ import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
 import ChampionsTable from "./ChampionsTable";
 import TopThreeTeams from "./TopThreeTeams";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
 type ViewMode = "champions" | "players" | "teams";
 
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
@@ -203,7 +204,7 @@ export default function AwardSeasons({ league }: Props) {
                     : league === "CBB"
                       ? getCBBTeamLogo(t.team.id, isDark)
                       : league === "WCBB"
-                        ? getCBBTeamLogo(t.team.id, isDark, true)
+                        ? getWCBBTeamLogo(t.team.id, isDark)
                         : league === "MLB"
                           ? getMLBTeamLogo(t.team.id, isDark)
                           : league === "NHL"
@@ -226,7 +227,9 @@ export default function AwardSeasons({ league }: Props) {
             logo:
               league === "CFB"
                 ? getCFBTeamLogo(t.team.id, isDark)
-                : getCBBTeamLogo(t.team.id, isDark, league === "WCBB"),
+                : league === "WCBB"
+                  ? getWCBBTeamLogo(t.team.id, isDark)
+                  : getCBBTeamLogo(t.team.id, isDark),
           }))}
         />
       )}

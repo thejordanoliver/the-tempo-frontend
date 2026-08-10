@@ -8,6 +8,7 @@ import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts } from "constants/styles";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -24,10 +25,9 @@ import {
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
 type Props = {
   league: "CBB" | "WCBB";
-  isWomen?: boolean;
 };
 
-export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
+export const CBBStandingsList = ({ league = "CBB" }: Props) => {
   const { rankings, loading, error, refresh } = useCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -36,6 +36,13 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
   const { isFavorite } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
+  const isWCBB = league === "WCBB";
+  const getRankedTeam = (espnId?: string | number | null) =>
+    isWCBB ? getWCBBTeamByESPNId(espnId) : getCBBTeamByESPNId(espnId ?? "");
+  const getRankedTeamLogo = (teamId?: string | number | null) =>
+    isWCBB
+      ? getWCBBTeamLogo(teamId, isDark)
+      : getCBBTeamLogo(teamId ?? undefined, isDark, false);
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
@@ -76,9 +83,9 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCBBTeamByESPNId(item.team?.id ?? "");
+    const team = getRankedTeam(item.team?.espnId ?? item.team?.id ?? "");
     const teamId = team?.id;
-    const teamLogo = getCBBTeamLogo(teamId ?? undefined, isDark, isWomen);
+    const teamLogo = getRankedTeamLogo(teamId);
     const teamcode = team?.code || "N/A";
     const trendNum = Number(item.trend);
     const isUp = trendNum > 0;
@@ -108,7 +115,7 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
             onPress={() => {
               if (!teamId) return;
               router.push({
-                pathname: "/team/cbb/[teamId]",
+                pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/cbb/[teamId]",
                 params: { teamId },
               });
             }}
@@ -171,7 +178,7 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCBBTeamByESPNId(item.team?.id ?? "");
+    const team = getRankedTeam(item.team?.espnId ?? item.team?.id ?? "");
     const favorited = team?.id != null ? isFavorite(league, team.id) : false;
     return (
       <View
@@ -262,7 +269,9 @@ export const CBBStandingsList = ({ league = "CBB", isWomen }: Props) => {
         </View>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {droppedOutTeams.map((item) => {
-            const team = getCBBTeamByESPNId(item.team?.id ?? "");
+            const team = getRankedTeam(
+              item.team?.espnId ?? item.team?.id ?? "",
+            );
             const teamName = team?.shortName || team?.name || "N/A";
             return (
               <Text

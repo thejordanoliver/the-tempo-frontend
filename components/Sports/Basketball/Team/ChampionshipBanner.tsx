@@ -1,3 +1,4 @@
+import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { Championships } from "@/hooks/useTeams";
 import Fill from "assets/banners/Fill.png";
 import Outline from "assets/banners/Outline.png";
@@ -12,7 +13,6 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { LeagueType } from "types/types";
 
 type Props = {
   isDark: boolean;
@@ -21,7 +21,7 @@ type Props = {
   teamId?: string | number;
   teamName?: string;
   teamLogo?: any;
-  league?: LeagueType;
+  league?: string;
 };
 
 function isColorDark(hex: string | undefined): boolean {
@@ -38,7 +38,7 @@ function isColorDark(hex: string | undefined): boolean {
   return luminance < 140;
 }
 
-function getTeamByLeague(league: LeagueType, teamId?: string | number) {
+function getTeamByLeague(league: string, teamId?: string | number) {
   if (!teamId) return undefined;
 
   switch (league) {
@@ -51,7 +51,7 @@ function getTeamByLeague(league: LeagueType, teamId?: string | number) {
     case "CBB":
       return getCBBTeam(teamId);
     case "WCBB":
-      return getCBBTeam(teamId, true);
+      return getWCBBTeam(teamId);
 
     case "MLB":
       return getMLBTeam(teamId);

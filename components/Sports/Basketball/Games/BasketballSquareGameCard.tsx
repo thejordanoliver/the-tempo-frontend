@@ -4,6 +4,10 @@ import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyl
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
+import {
+  getWCBBTeamLogo,
+  getWCBBTeam,
+} from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -53,7 +57,7 @@ export default function BasketballSquareGameCard({
   const homeTeam = isCBB
     ? getCBBTeam(homeId)
     : isWCBB
-      ? getCBBTeam(homeId, isWCBB)
+      ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
@@ -61,7 +65,7 @@ export default function BasketballSquareGameCard({
   const awayTeam = isCBB
     ? getCBBTeam(awayId)
     : isWCBB
-      ? getCBBTeam(awayId, isWCBB)
+      ? getWCBBTeam(awayId)
       : isWNBA
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
@@ -72,7 +76,7 @@ export default function BasketballSquareGameCard({
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(homeId, isDark, true)
+      ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getTeamLogo(homeId, isDark);
@@ -80,7 +84,7 @@ export default function BasketballSquareGameCard({
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(awayId, isDark, true)
+      ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
@@ -101,7 +105,10 @@ export default function BasketballSquareGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
 
-  const period = formatPeriod({ period: game.status.period, isCBB: isCBB });
+  const period = formatPeriod({
+    period: game.status.period,
+    isCBB: isCBB || isWCBB,
+  });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;

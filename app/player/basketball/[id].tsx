@@ -5,6 +5,7 @@ import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { getNBATeam, getTeamLogo } from "@/constants/teams";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { useTeamLatestGame } from "@/hooks/BasketballHooks/useTeamLatestGame";
@@ -41,15 +42,17 @@ export default function PlayerDetailScreen() {
       : teamId && isWNBA
         ? getWNBATeam(teamId)
         : teamId && isCBB
-          ? getCBBTeam(teamId, false)
+          ? getCBBTeam(teamId)
           : teamId && isWCBB
-            ? getCBBTeam(teamId, true)
+            ? getWCBBTeam(teamId)
             : null;
   const teamLogo = isNBA
     ? getTeamLogo(teamId, true)
     : isWNBA
       ? getWNBATeamLogo(teamId, true)
-      : getCBBTeamLogo(teamId, true, isWCBB);
+      : isWCBB
+        ? getWCBBTeamLogo(teamId, true)
+        : getCBBTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
   const isActive = player?.active;
 

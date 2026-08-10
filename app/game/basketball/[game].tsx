@@ -3,15 +3,16 @@ import {
   GameHeader,
   GameLocation,
   GameTeamStats,
+  HeadCoaches,
   LastPlay,
   LineScore,
   TeamInjuries,
+  GameLiveChatOverlay
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
-import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import { HighlightVideoList } from "@/components/Sports/Basketball/GameDetails/Highlights/HighlightVideoList";
+import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
 import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
 import MatchupPredictor from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
@@ -20,9 +21,11 @@ import PlayersOnCourt from "@/components/Sports/Basketball/GameDetails/PlayersOn
 import ShotChart from "@/components/Sports/Basketball/GameDetails/ShotChart";
 import { getNBATeam, getTeamLogo } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import type { BasketballGameCardProps } from "@/types/basketball/basketball";
@@ -117,7 +120,7 @@ export default function GameDetailsScreen(
 
   const LEAGUE = game?.league?.code ?? "";
   const isWNBA = leagueId === 59;
-  const isWCBB = leagueId === 14;
+  const isWCBB = leagueId === 54;
   const isCBB = leagueId === 10;
 
   const gameDateObj = game?.date ? new Date(game.date) : null;
@@ -138,28 +141,50 @@ export default function GameDetailsScreen(
 
   const homeTeam = isWNBA
     ? getWNBATeam(homeId)
-    : isCBB
-      ? getCBBTeam(homeId, isWCBB)
-      : getNBATeam(homeId);
+    : isWCBB
+      ? getWCBBTeam(homeId)
+      : isCBB
+        ? getCBBTeam(homeId)
+        : getNBATeam(homeId);
   const awayTeam = isWNBA
     ? getWNBATeam(awayId)
-    : isCBB
-      ? getCBBTeam(awayId, isWCBB)
-      : getNBATeam(awayId);
+    : isWCBB
+      ? getWCBBTeam(awayId)
+      : isCBB
+        ? getCBBTeam(awayId)
+        : getNBATeam(awayId);
 
-  const homeCode = homeTeam?.code ?? "";
-  const awayCode = awayTeam?.code ?? "";
+  const homeCode = homeTeam?.code ?? home?.code ?? "";
+  const awayCode = awayTeam?.code ?? away?.code ?? "";
   const homeEspnId = homeTeam?.espnId ?? 0;
   const awayEspnId = awayTeam?.espnId ?? 0;
-  const awayName = awayTeam?.fullName ?? awayTeam?.name ?? "Away Team";
-  const homeName = homeTeam?.fullName ?? homeTeam?.name ?? "Home Team";
-  const awayColor = awayTeam?.color ?? Colors.midTone;
-  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayName =
+    awayTeam?.fullName ?? awayTeam?.name ?? away?.name ?? "Away Team";
+  const homeName =
+    homeTeam?.fullName ?? homeTeam?.name ?? home?.name ?? "Home Team";
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
+
+  const awayColor =
+    awayTeam?.color ??
+    away?.primaryColor ??
+    away?.secondaryColor ??
+    Colors.midTone;
+
+  const homeColor =
+    homeTeam?.color ??
+    home?.primaryColor ??
+    home?.secondaryColor ??
+    Colors.midTone;
 
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(homeId, isDark, true)
+      ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getTeamLogo(homeId, isDark);
@@ -167,7 +192,7 @@ export default function GameDetailsScreen(
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
     : isWCBB
-      ? getCBBTeamLogo(awayId, isDark, true)
+      ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
@@ -175,14 +200,14 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = isCBB
     ? getCBBTeamLogo(homeId, true)
     : isWCBB
-      ? getCBBTeamLogo(homeId, true, true)
+      ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
         : getTeamLogo(homeId, true);
   const awayHeaderLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
     : isWCBB
-      ? getCBBTeamLogo(awayId, true, true)
+      ? getWNBATeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
         : getTeamLogo(awayId, true);
@@ -203,7 +228,7 @@ export default function GameDetailsScreen(
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const period = formatPeriod({
     period: score?.status.period ?? 0,
-    isCBB: isCBB,
+    isCBB: isCBB || isWCBB,
   });
   const clock = score?.status.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -505,7 +530,17 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
-              <HighlightVideoList highlights={highlights} isDark={isDark} />
+              <Highlights highlights={highlights} isDark={isDark} />
+
+              <HeadCoaches
+                homeName={homeName}
+                awayName={awayName}
+                homeCoach={homeCoach}
+                awayCoach={awayCoach}
+                homeLogo={homeLogo}
+                awayLogo={awayLogo}
+                isDark={isDark}
+              />
 
               <Officials officials={officials} isDark={isDark} state={state} />
 

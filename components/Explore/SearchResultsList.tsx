@@ -35,6 +35,7 @@ function getTeamLeagueKey(item: any) {
   if (item.isCBB) return "cbb";
   if (item.isWCBB) return "wcbb";
   if (item.isNBA) return "nba";
+  if (item.isSOCC) return "mls";
 
   return item.leagueKey ?? item.league ?? null;
 }
@@ -48,11 +49,9 @@ function getResultKey(item: ResultItem, index: number) {
     const teamKey =
       result.id != null
         ? String(result.id)
-        : result.wid != null
-          ? String(result.wid)
-          : result.slug != null
-            ? String(result.slug)
-            : `idx-${index}`;
+        : result.slug != null
+          ? String(result.slug)
+          : `idx-${index}`;
 
     return `team-${league}-${teamKey}`;
   }

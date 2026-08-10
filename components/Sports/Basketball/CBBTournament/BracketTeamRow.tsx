@@ -4,6 +4,11 @@ import {
   getCBBTeamByESPNId,
   getCBBTeamLogo,
 } from "constants/teamsCBB";
+import {
+  getWCBBTeamLogo,
+  getWCBBTeamLogoFromGameTeam,
+  resolveWCBBTeamFromGameTeam,
+} from "constants/teamsWCBB";
 import React, { memo, useMemo } from "react";
 import type { ImageSourcePropType, StyleProp, TextStyle } from "react-native";
 import { Image, Text, View } from "react-native";
@@ -39,8 +44,18 @@ export const getBracketTeamLogoSource = (
   const displayTeam = getRenderableBracketTeam(team);
   if (!displayTeam) return PlaceholderLogo;
 
-  const isWomen = competition === "WCBB";
-  const teamByLocalId = getCBBTeam(displayTeam.id, isWomen);
+  const isWCBB = competition === "WCBB";
+  if (isWCBB) {
+    const localTeam = resolveWCBBTeamFromGameTeam(displayTeam);
+
+    if (localTeam) {
+      return getWCBBTeamLogo(localTeam, isDark);
+    }
+
+    return getWCBBTeamLogoFromGameTeam(displayTeam, isDark);
+  }
+
+  const teamByLocalId = getCBBTeam(displayTeam.id, false);
 
   const teamByEspnId =
     displayTeam.espnId != null
@@ -49,9 +64,9 @@ export const getBracketTeamLogoSource = (
   const teamByIdAsEspn =
     displayTeam.id != null ? getCBBTeamByESPNId(displayTeam.id) : undefined;
   const localTeam = teamByLocalId ?? teamByEspnId ?? teamByIdAsEspn;
-  const localId = isWomen ? (localTeam?.wid ?? localTeam?.id) : localTeam?.id;
+  const localId = localTeam?.id;
 
-  return getCBBTeamLogo(localId ?? displayTeam.id, isDark, isWomen);
+  return getCBBTeamLogo(localId ?? displayTeam.id, isDark, false);
 };
 
 const getScoreText = (team: BracketTeam | null) => {

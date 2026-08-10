@@ -1,3 +1,5 @@
+import { Team } from "@/types/team";
+
 //Logos
 import AviatorsLogo from "assets/Football/UFL_Logos/Aviators.png";
 import BattlehawksLogo from "assets/Football/UFL_Logos/Battlehawks.png";
@@ -9,7 +11,6 @@ import StallionsLogo from "assets/Football/UFL_Logos/Stallions.png";
 import StormLogo from "assets/Football/UFL_Logos/Storm.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
-import { Team } from "@/types/football/football";
 
 export const uflTeams: Team[] = [
   {
@@ -28,7 +29,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 132261,
@@ -46,7 +48,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 112646,
@@ -64,7 +67,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 112647,
@@ -82,7 +86,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 126075,
@@ -100,7 +105,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 132262,
@@ -118,7 +124,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 132263,
@@ -136,7 +143,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
   {
     id: 112651,
@@ -154,7 +162,8 @@ export const uflTeams: Team[] = [
     established: 0,
     isAllStar: false,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "UFL"
   },
 ];
 

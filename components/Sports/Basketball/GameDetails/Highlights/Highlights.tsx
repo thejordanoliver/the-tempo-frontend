@@ -34,7 +34,7 @@ const getPlayableUrl = (item: Highlight) => {
   );
 };
 
-export const HighlightVideoList: React.FC<HighlightVideoProps> = ({
+export const Highlights: React.FC<HighlightVideoProps> = ({
   highlights,
   isDark,
 }) => {

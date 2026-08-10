@@ -2,7 +2,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
-
 import { CustomHeader } from "../../components/CustomHeader";
 import AddWidgetModal from "../../components/Explore/AddWidgetModal";
 import EmptyState from "../../components/Explore/EmptyState";

@@ -9,7 +9,7 @@ import { PlayerCard } from "../Player/PlayerCard";
 
 interface RosterProps {
   players: Player[];
-  league?: "NBA" | "CBB" | "WCBB" | "WNBA" | "NHL";
+  league?: string;
   loading: boolean;
   error?: string | null;
   refreshing: boolean;

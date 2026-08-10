@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
@@ -75,7 +74,7 @@ type UseLeagueStandingsOptions = {
 };
 
 export function useLeagueStandings(
-  league: LeagueType,
+  league: string,
   year?: string,
   options?: UseLeagueStandingsOptions,
 ) {

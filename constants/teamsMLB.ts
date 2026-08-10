@@ -102,7 +102,8 @@ export const mlbTeams: Team[] = [
     location: "Phoenix",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 963,
@@ -120,7 +121,8 @@ export const mlbTeams: Team[] = [
     location: "Oakland",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 3,
@@ -138,7 +140,8 @@ export const mlbTeams: Team[] = [
     location: "Atlanta",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 4,
@@ -156,7 +159,8 @@ export const mlbTeams: Team[] = [
     location: "Baltimore",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 5,
@@ -174,7 +178,8 @@ export const mlbTeams: Team[] = [
     location: "Boston",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 6,
@@ -192,7 +197,8 @@ export const mlbTeams: Team[] = [
     location: "Chicago",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 7,
@@ -210,7 +216,8 @@ export const mlbTeams: Team[] = [
     location: "Chicago",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 8,
@@ -228,7 +235,8 @@ export const mlbTeams: Team[] = [
     location: "Cincinnati",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 9,
@@ -246,7 +254,8 @@ export const mlbTeams: Team[] = [
     location: "Cleveland",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 10,
@@ -264,7 +273,8 @@ export const mlbTeams: Team[] = [
     location: "Denver",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 12,
@@ -282,7 +292,8 @@ export const mlbTeams: Team[] = [
     location: "Detroit",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 15,
@@ -300,7 +311,8 @@ export const mlbTeams: Team[] = [
     location: "Houston",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 16,
@@ -318,7 +330,8 @@ export const mlbTeams: Team[] = [
     location: "Kansas",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 17,
@@ -336,7 +349,8 @@ export const mlbTeams: Team[] = [
     location: "Anaheim",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 18,
@@ -354,7 +368,8 @@ export const mlbTeams: Team[] = [
     location: "Los Angeles",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 19,
@@ -372,7 +387,8 @@ export const mlbTeams: Team[] = [
     location: "Miami",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 20,
@@ -390,7 +406,8 @@ export const mlbTeams: Team[] = [
     location: "Milwaukee",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 22,
@@ -408,7 +425,8 @@ export const mlbTeams: Team[] = [
     location: "Minneapolis",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 24,
@@ -426,7 +444,8 @@ export const mlbTeams: Team[] = [
     location: "Queens",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 25,
@@ -444,7 +463,8 @@ export const mlbTeams: Team[] = [
     location: "Bronx",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 27,
@@ -462,7 +482,8 @@ export const mlbTeams: Team[] = [
     location: "Philadelphia",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 28,
@@ -480,7 +501,8 @@ export const mlbTeams: Team[] = [
     location: "Pittsburgh",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 30,
@@ -498,7 +520,8 @@ export const mlbTeams: Team[] = [
     location: "San Diego",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 31,
@@ -516,7 +539,8 @@ export const mlbTeams: Team[] = [
     location: "San Francisco",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 32,
@@ -534,7 +558,8 @@ export const mlbTeams: Team[] = [
     location: "Seattle",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 33,
@@ -552,7 +577,8 @@ export const mlbTeams: Team[] = [
     location: "St. Louis",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 34,
@@ -570,7 +596,8 @@ export const mlbTeams: Team[] = [
     location: "St. Petersburg",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 35,
@@ -588,7 +615,8 @@ export const mlbTeams: Team[] = [
     location: "Arlington",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 36,
@@ -606,7 +634,8 @@ export const mlbTeams: Team[] = [
     location: "Toronto",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
   {
     id: 37,
@@ -624,7 +653,8 @@ export const mlbTeams: Team[] = [
     location: "Washington",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "MLB"
   },
 ];
 

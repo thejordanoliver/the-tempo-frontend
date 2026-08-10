@@ -59,15 +59,16 @@ const getObjectFavoriteId = (
   favorite: Record<string, unknown>,
   league: SupportedGameLeague | null,
 ) => {
-  if (league === "WCBB" && favorite.wid != null) return favorite.wid;
+  if (league === "WCBB") {
+    return favorite.id ?? favorite.team_id ?? favorite.teamId;
+  }
 
   return (
     favorite.id ??
     favorite.team_id ??
     favorite.teamId ??
     favorite.espnId ??
-    favorite.espn_id ??
-    favorite.wid
+    favorite.espn_id
   );
 };
 

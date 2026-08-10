@@ -1,5 +1,6 @@
 import { cfbConferences } from "@/constants/cfbConferences";
 import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
+import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
 import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
@@ -1267,10 +1268,10 @@ export function CustomHeader({
         return getCFBTeam(teamId ?? 0);
 
       case "CBB":
-        return getCBBTeam(teamId ?? 0, false);
+        return getCBBTeam(teamId ?? 0);
 
       case "WCBB":
-        return getCBBTeam(teamId ?? 0, true);
+        return getWCBBTeam(teamId ?? 0);
 
       case "MLB":
         return getMLBTeam(teamId ?? 0);
@@ -1293,8 +1294,10 @@ export function CustomHeader({
         return cfbTeams;
 
       case "CBB":
-      case "WCBB":
         return cbbTeams;
+
+      case "WCBB":
+        return wcbbTeams;
 
       case "MLB":
         return mlbTeams;
@@ -1318,15 +1321,9 @@ export function CustomHeader({
   }, [league]);
 
   const homeTeam = useMemo(() => {
-    const team =
-      league === "WCBB"
-        ? teamsForLeague.find(
-            (currentTeam: any) =>
-              String(currentTeam.wid) === String(homeTeamId),
-          )
-        : teamsForLeague.find(
-            (currentTeam: any) => String(currentTeam.id) === String(homeTeamId),
-          );
+    const team = teamsForLeague.find(
+      (currentTeam: any) => String(currentTeam.id) === String(homeTeamId),
+    );
 
     return (
       team ?? {
@@ -1335,18 +1332,12 @@ export function CustomHeader({
         color: Colors.lightGray,
       }
     );
-  }, [homeTeamCode, homeTeamId, league, teamsForLeague]);
+  }, [homeTeamCode, homeTeamId, teamsForLeague]);
 
   const awayTeam = useMemo(() => {
-    const team =
-      league === "WCBB"
-        ? teamsForLeague.find(
-            (currentTeam: any) =>
-              String(currentTeam.wid) === String(awayTeamId),
-          )
-        : teamsForLeague.find(
-            (currentTeam: any) => String(currentTeam.id) === String(awayTeamId),
-          );
+    const team = teamsForLeague.find(
+      (currentTeam: any) => String(currentTeam.id) === String(awayTeamId),
+    );
 
     return (
       team ?? {
@@ -1355,7 +1346,7 @@ export function CustomHeader({
         color: Colors.midTone,
       }
     );
-  }, [awayTeamCode, awayTeamId, league, teamsForLeague]);
+  }, [awayTeamCode, awayTeamId, teamsForLeague]);
 
   const resolvedRacingLeague = useMemo(
     () => resolveRacingLeague(racingLeague, tabName, league),
@@ -1466,7 +1457,7 @@ export function CustomHeader({
             onPress={onBack}
             hitSlop={8}
           >
-            <Ionicons  name="arrow-back" size={24} color={headerIconColor} />
+            <Ionicons name="arrow-back" size={24} color={headerIconColor} />
           </TouchableOpacity>
         ) : tabName === "Explore" && onAddWidget ? (
           <TouchableOpacity
@@ -1656,7 +1647,7 @@ export function CustomHeader({
             onPress={onSearchToggle}
             hitSlop={8}
           >
-       <Search size={20} color={isDark ? Colors.white : Colors.black} />
+            <Search size={20} color={isDark ? Colors.white : Colors.black} />
           </TouchableOpacity>
         ) : isMessagesListScreen && onCreateMessage ? (
           <Pressable

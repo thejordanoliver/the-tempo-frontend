@@ -25,7 +25,7 @@ type Props = {
   loading: boolean;
   refreshing: boolean;
   onRefresh: () => void;
-  error: Error | null;
+  error: Error | string | null;
   expectedCount?: number;
   day?: "todayTomorrow";
   showHeaders?: boolean;
@@ -189,7 +189,7 @@ export default function GamesList({
 
   if (!loading && games.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
+      <View style={global.emptyContainer}>
         <Text style={global.emptyText}>
           {day === "todayTomorrow"
             ? "No games found for today or tomorrow."

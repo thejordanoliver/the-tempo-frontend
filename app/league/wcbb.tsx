@@ -226,6 +226,7 @@ export default function WCBBLeagueScreen() {
                 selectedConference === "NCAA Tournament" ||
                 (!selectedConference && (
                   <CBBConferenceStandingsList
+                    league={league}
                     selectedConference={String(selectedConferenceGroupId)}
                   />
                 ))}

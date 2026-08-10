@@ -7,10 +7,16 @@ import {
   normalizeExploreFavoriteTeam,
 } from "hooks/WidgetHooks/useExploreWidgetGames";
 import { useMemo } from "react";
-import { ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import {
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { ExploreWidgetSize } from "types/widgets";
-import { favoriteTeamsList } from "utils/teams";
-import FavoriteTeamsSlider, { FavoriteTeamSlide } from "./FavoriteTeamsSlider";
+import FavoriteTeamsSlider, {
+  FavoriteTeamSlide,
+} from "./FavoriteTeamsSlider";
 import { WidgetEditControls } from "./WidgetSlider";
 
 type FavoriteTeamsWidgetProps = {
@@ -24,27 +30,50 @@ type FavoriteTeamsWidgetProps = {
   widgetSize?: ExploreWidgetSize;
   isEditing?: boolean;
   availableSizeOptions?: readonly ExploreWidgetSize[];
-  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
+  onResizeWidget?: (
+    widgetId: string,
+    size: ExploreWidgetSize,
+  ) => void;
   onRemoveWidget?: (widgetId: string) => void;
-  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
+  onMoveWidget?: (
+    widgetId: string,
+    direction: -1 | 1,
+  ) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
 };
+
+type FavoriteTeamsCatalog =
+  ReturnType<typeof useFavoriteTeamsContext>["allTeams"];
 
 const sizeFallback: Record<ExploreWidgetSize, number> = {
   ...EXPLORE_WIDGET_HEIGHTS,
 };
 
-const resolveTeamLogo = (
+const findFavoriteTeam = (
   favorite: ExploreFavoriteTeam,
-  isDark: boolean,
-): ImageSourcePropType | undefined => {
-  const team = favoriteTeamsList.find(
-    (item) =>
-      item.league === favorite.league && String(item.id) === favorite.id,
+  allTeams: FavoriteTeamsCatalog,
+) =>
+  allTeams.find(
+    (team) =>
+      team.league === favorite.league &&
+      String(team.id) === favorite.id,
   );
 
-  return isDark ? team?.logoLight || team?.logo : team?.logo;
+const resolveTeamLogo = (
+  favorite: ExploreFavoriteTeam,
+  allTeams: FavoriteTeamsCatalog,
+  isDark: boolean,
+): ImageSourcePropType | undefined => {
+  const team = findFavoriteTeam(favorite, allTeams);
+
+  if (!team) {
+    return undefined;
+  }
+
+  return isDark
+    ? team.logoLight ?? team.logo
+    : team.logo;
 };
 
 export default function FavoriteTeamsWidget({
@@ -64,43 +93,59 @@ export default function FavoriteTeamsWidget({
   canMoveUp,
   canMoveDown,
 }: FavoriteTeamsWidgetProps) {
-  const { favorites, isLoading, ready } = useFavoriteTeamsContext();
+  const {
+    favorites,
+    isLoading,
+    ready,
+    allTeams,
+  } = useFavoriteTeamsContext();
+
   const resolvedWidth = Math.max(
     width ?? containerWidth ?? sizeFallback[size],
     1,
   );
+
   const resolvedHeight = Math.max(
     height ?? containerHeight ?? sizeFallback[size],
     1,
   );
+
   const compact = size === "small" || resolvedWidth < 240;
-  const bodyWidth = resolvedWidth;
-  const bodyHeight = resolvedHeight;
   const styles = favoriteTeamsWidgetStyles(isDark, compact);
-  const showActions = isEditing && widgetId != null;
+  const showActions = isEditing && Boolean(widgetId);
 
   const slides = useMemo<FavoriteTeamSlide[]>(
     () =>
       favorites
-        .map((favorite) => normalizeExploreFavoriteTeam(favorite))
-        .filter((favorite): favorite is ExploreFavoriteTeam =>
-          Boolean(favorite),
+        .map(normalizeExploreFavoriteTeam)
+        .filter(
+          (
+            favorite,
+          ): favorite is ExploreFavoriteTeam =>
+            favorite !== null,
         )
         .map((favorite) => {
-          const team = favoriteTeamsList.find(
-            (item) =>
-              item.league === favorite.league &&
-              String(item.id) === favorite.id,
-          );
+          const team = findFavoriteTeam(favorite, allTeams);
 
           return {
             favorite,
-            name: team?.name ?? favorite.id,
-            fullName: team?.fullName,
-            logo: resolveTeamLogo(favorite, isDark),
+            name:
+              team?.name ??
+              team?.shortName ??
+              favorite.id,
+            fullName:
+              team?.fullName ??
+              team?.name ??
+              team?.shortName ??
+              favorite.id,
+            logo: resolveTeamLogo(
+              favorite,
+              allTeams,
+              isDark,
+            ),
           };
         }),
-    [favorites, isDark],
+    [allTeams, favorites, isDark],
   );
 
   const renderContent = () => {
@@ -118,6 +163,7 @@ export default function FavoriteTeamsWidget({
           <Text style={styles.stateTitle} numberOfLines={1}>
             No teams saved
           </Text>
+
           <Text style={styles.stateText}>
             Add favorite teams to show shortcuts here.
           </Text>
@@ -128,8 +174,8 @@ export default function FavoriteTeamsWidget({
     return (
       <FavoriteTeamsSlider
         teams={slides}
-        width={bodyWidth}
-        height={bodyHeight}
+        width={resolvedWidth}
+        height={resolvedHeight}
         isDark={isDark}
         compact={compact}
       />
@@ -146,29 +192,40 @@ export default function FavoriteTeamsWidget({
         },
       ]}
     >
-      <View style={[styles.body, { width: bodyWidth, height: bodyHeight }]}>
+      <View
+        style={[
+          styles.body,
+          {
+            width: resolvedWidth,
+            height: resolvedHeight,
+          },
+        ]}
+      >
         {renderContent()}
-      </View>
 
-      {showActions && widgetId && (
-        <WidgetEditControls
-          isDark={isDark}
-          widgetId={widgetId}
-          widgetSize={widgetSize}
-          availableSizeOptions={availableSizeOptions}
-          onResizeWidget={onResizeWidget}
-          onRemoveWidget={onRemoveWidget}
-          onMoveWidget={onMoveWidget}
-          canMoveUp={canMoveUp}
-          canMoveDown={canMoveDown}
-          compact={compact}
-        />
-      )}
+        {showActions && widgetId && (
+          <WidgetEditControls
+            isDark={isDark}
+            widgetId={widgetId}
+            widgetSize={widgetSize}
+            availableSizeOptions={availableSizeOptions}
+            onResizeWidget={onResizeWidget}
+            onRemoveWidget={onRemoveWidget}
+            onMoveWidget={onMoveWidget}
+            canMoveUp={canMoveUp}
+            canMoveDown={canMoveDown}
+            compact={compact}
+          />
+        )}
+      </View>
     </View>
   );
 }
 
-const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
+const favoriteTeamsWidgetStyles = (
+  isDark: boolean,
+  compact: boolean,
+) =>
   StyleSheet.create({
     card: {
       borderRadius: 8,

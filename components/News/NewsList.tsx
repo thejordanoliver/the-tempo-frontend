@@ -1,8 +1,8 @@
+import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import React from "react";
 import { FlatList, RefreshControl, ScrollView, Text, View } from "react-native";
-import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import NewsCard from "./NewsCard";
 
@@ -27,7 +27,12 @@ export default function NewsList({
   const styles = newsListStyles(isDark);
   const global = globalStyles(isDark);
 
-  if (error) return <Text style={global.errorText}>Failed to load news</Text>;
+  if (error)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load news</Text>
+      </View>
+    );
 
   if (loading) {
     return (
@@ -54,7 +59,9 @@ export default function NewsList({
         contentContainerStyle={styles.container}
         renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
         ListEmptyComponent={
-          <Text style={global.emptyText}>No news or highlights found.</Text>
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyText}>No news or highlights found.</Text>
+          </View>
         }
       />
     </ScrollView>

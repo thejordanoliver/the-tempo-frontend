@@ -1,6 +1,11 @@
 // components/TeamPlayerList.tsx
 import { useMemo } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
@@ -10,7 +15,12 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { rosterStyles } from "styles/TeamStyles/RosterStyles";
 
-type SupportedRosterLeague = "MLB" | "NHL" | "NFL" | "CFB";
+type SupportedRosterLeague =
+  | "MLB"
+  | "NHL"
+  | "NFL"
+  | "CFB"
+  | "SOCCER";
 
 interface RosterProps {
   players: Player[];
@@ -54,9 +64,27 @@ const FOOTBALL_POSITION_ORDER = [
   "Other",
 ];
 
-const NHL_GROUP_ORDER = ["Forwards", "Defensemen", "Goalies", "Other"];
+const NHL_GROUP_ORDER = [
+  "Forwards",
+  "Defensemen",
+  "Goalies",
+  "Other",
+];
 
-const DEFAULT_GROUP_ORDER = ["Guards", "Forwards", "Centers", "Other"];
+const SOCCER_GROUP_ORDER = [
+  "Forwards",
+  "Midfielders",
+  "Defenders",
+  "Goalkeepers",
+  "Other",
+];
+
+const DEFAULT_GROUP_ORDER = [
+  "Guards",
+  "Forwards",
+  "Centers",
+  "Other",
+];
 
 function getPositionGroup(
   position?: string | null,
@@ -86,11 +114,23 @@ function getPositionGroup(
       return "Catchers";
     }
 
-    if (["1B", "2B", "3B", "SS", "IF", "INF", "INFIELDER"].includes(pos)) {
+    if (
+      [
+        "1B",
+        "2B",
+        "3B",
+        "SS",
+        "IF",
+        "INF",
+        "INFIELDER",
+      ].includes(pos)
+    ) {
       return "Infielders";
     }
 
-    if (["LF", "CF", "RF", "OF", "OUTFIELDER"].includes(pos)) {
+    if (
+      ["LF", "CF", "RF", "OF", "OUTFIELDER"].includes(pos)
+    ) {
       return "Outfielders";
     }
 
@@ -98,7 +138,9 @@ function getPositionGroup(
       return "Designated Hitters";
     }
 
-    if (["TWP", "TWO-WAY PLAYER", "TWO WAY PLAYER"].includes(pos)) {
+    if (
+      ["TWP", "TWO-WAY PLAYER", "TWO WAY PLAYER"].includes(pos)
+    ) {
       return "Two-Way Players";
     }
 
@@ -144,64 +186,85 @@ function getPositionGroup(
   }
 
   if (league === "NFL" || league === "CFB") {
-    if (["QB"].includes(pos)) {
-      return "QB";
-    }
-    if (["FB"].includes(pos)) {
-      return "FB";
-    }
+    if (pos === "QB") return "QB";
+    if (pos === "RB") return "RB";
+    if (pos === "FB") return "FB";
+    if (pos === "WR") return "WR";
+    if (pos === "TE") return "TE";
 
-    if (["RB"].includes(pos)) {
-      return "RB";
-    }
+    if (["G", "OG"].includes(pos)) return "G";
+    if (pos === "C") return "C";
+    if (pos === "OT") return "OT";
+    if (pos === "OL") return "OL";
 
-    if (["WR"].includes(pos)) {
-      return "WR";
-    }
-    if (["TE"].includes(pos)) {
-      return "TE";
-    }
+    if (["DT", "DL", "NT"].includes(pos)) return "DT";
+    if (pos === "DE") return "DE";
+    if (pos === "EDGE") return "EDGE";
 
-    if (["TE"].includes(pos)) {
-      return "TE";
-    }
-
-    if (["G"].includes(pos)) {
-      return "G";
-    }
-    if (["C"].includes(pos)) {
-      return "C";
-    }
-    if (["OT", "OL"].includes(pos)) {
-      return "OL";
-    }
-    if (["DT", "DL"].includes(pos)) {
-      return "DL";
-    }
-    if (["DE"].includes(pos)) {
-      return "DE";
-    }
-    if (["LB"].includes(pos)) {
+    if (["LB", "ILB", "OLB", "MLB"].includes(pos)) {
       return "LB";
     }
-    if (["CB", "DB"].includes(pos)) {
-      return "CB";
+
+    if (pos === "CB") return "CB";
+    if (pos === "DB") return "DB";
+
+    if (["S", "FS", "SS"].includes(pos)) return "S";
+
+    if (["K", "PK"].includes(pos)) return "K";
+    if (pos === "P") return "P";
+    if (pos === "LS") return "LS";
+
+    return "Other";
+  }
+
+  // This must come before basketball grouping because soccer uses
+  // overlapping abbreviations such as G and F.
+  if (league === "SOCCER") {
+    if (
+      ["F", "FW", "FORWARD", "ST", "STRIKER"].includes(pos)
+    ) {
+      return "Forwards";
     }
 
-    if (["EDGE"].includes(pos)) {
-      return "EDGE";
+    if (
+      [
+        "M",
+        "MF",
+        "MIDFIELDER",
+        "AM",
+        "AMF",
+        "CAM",
+        "CM",
+        "CMF",
+        "DM",
+        "DMF",
+        "CDM",
+        "LM",
+        "RM",
+      ].includes(pos)
+    ) {
+      return "Midfielders";
     }
-    if (["S"].includes(pos)) {
-      return "S";
+
+    if (
+      [
+        "D",
+        "DF",
+        "DEFENDER",
+        "CB",
+        "LB",
+        "RB",
+        "LWB",
+        "RWB",
+      ].includes(pos)
+    ) {
+      return "Defenders";
     }
-    if (["K", "PK"].includes(pos)) {
-      return "K";
-    }
-    if (["P"].includes(pos)) {
-      return "P";
-    }
-    if (["LS"].includes(pos)) {
-      return "LS";
+
+    if (
+      ["G", "GK", "GOALKEEPER", "GOALIE"].includes(pos)
+    ) {
+      return "Goalkeepers";
     }
 
     return "Other";
@@ -223,8 +286,14 @@ function getPositionGroup(
 }
 
 function getJerseySortValue(player: Player) {
-  const jersey = Number.parseInt(player.jersey_number ?? "", 10);
-  return Number.isFinite(jersey) ? jersey : Number.MAX_SAFE_INTEGER;
+  const jersey = Number.parseInt(
+    String(player.jersey_number ?? ""),
+    10,
+  );
+
+  return Number.isFinite(jersey)
+    ? jersey
+    : Number.MAX_SAFE_INTEGER;
 }
 
 function sortPlayers(players: Player[]) {
@@ -236,15 +305,23 @@ function sortPlayers(players: Player[]) {
       return jerseyA - jerseyB;
     }
 
-    return (a.full_name ?? "").localeCompare(b.full_name ?? "");
+    return (a.full_name ?? "").localeCompare(
+      b.full_name ?? "",
+    );
   });
 }
 
 function getGroupOrder(league?: SupportedRosterLeague) {
   if (league === "MLB") return MLB_GROUP_ORDER;
   if (league === "NHL") return NHL_GROUP_ORDER;
-  if (league === "NFL") return FOOTBALL_POSITION_ORDER;
-  if (league === "CFB") return FOOTBALL_POSITION_ORDER;
+
+  if (league === "NFL" || league === "CFB") {
+    return FOOTBALL_POSITION_ORDER;
+  }
+
+  if (league === "SOCCER") {
+    return SOCCER_GROUP_ORDER;
+  }
 
   return DEFAULT_GROUP_ORDER;
 }
@@ -266,10 +343,13 @@ export default function Roster({
   const groupedPlayers = useMemo(() => {
     const groupOrder = getGroupOrder(league);
 
-    const groups = groupOrder.reduce<Record<string, Player[]>>((acc, group) => {
-      acc[group] = [];
-      return acc;
-    }, {});
+    const groups = groupOrder.reduce<Record<string, Player[]>>(
+      (accumulator, group) => {
+        accumulator[group] = [];
+        return accumulator;
+      },
+      {},
+    );
 
     players.forEach((player) => {
       const group = getPositionGroup(player.position, league);
@@ -290,12 +370,12 @@ export default function Roster({
   }, [players, league]);
 
   if (loading) {
-    return <PlayerCardSkeletonList count={15} showHeader={false} />;
+    return <PlayerCardSkeletonList />;
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <View style={styles.contentContainer}>
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
@@ -303,8 +383,10 @@ export default function Roster({
 
   if (players.length === 0) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No players found.</Text>
+      <View style={styles.contentContainer}>
+        <Text style={global.emptyText}>
+          No players found.
+        </Text>
       </View>
     );
   }
@@ -317,12 +399,15 @@ export default function Roster({
           refreshing={refreshing}
           onRefresh={onRefresh}
           tintColor={tintColor}
+          colors={[tintColor]}
         />
       }
     >
       {groupedPlayers.map((group) => (
         <View key={group.title}>
-          <HeadingTwo isDark={isDark}>{group.title}</HeadingTwo>
+          <HeadingTwo isDark={isDark}>
+            {group.title}
+          </HeadingTwo>
 
           <View style={styles.playerList}>
             {group.data.map((player) => (

@@ -8,6 +8,7 @@ import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -43,7 +44,7 @@ export default function ResultItemRow({
   // -------------------------
   const renderTeam = (team: TeamResult) => {
     if (team.is_active === false) return null;
-    let teamLogo: string | undefined;
+    let teamLogo: any;
 
     if (team.isNFL && team.id != null)
       teamLogo = getNFLTeamLogo(team.id, isDark);
@@ -59,8 +60,10 @@ export default function ResultItemRow({
       teamLogo = getCFBTeamLogo(team.id, isDark);
     else if (team.isCBB && team.id != null)
       teamLogo = getCBBTeamLogo(team.id, isDark);
-    else if (team.isWCBB && team.wid != null)
-      teamLogo = getCBBTeamLogo(team.wid, isDark, true); // WCBB uses wid
+    else if (team.isWCBB && team.id != null)
+      teamLogo = team.logo
+        ? { uri: team.logo }
+        : getWCBBTeamLogo(team.id, isDark);
     else if (team.id != null) teamLogo = getTeamLogo(team.id, isDark);
 
     return (
@@ -114,7 +117,7 @@ export default function ResultItemRow({
           : teamId && player.isCBB
             ? getCBBTeam(teamId)
             : teamId && player.isWCBB
-              ? getCBBTeam(teamId, true)
+              ? getWCBBTeam(teamId)
               : teamId && player.isNFL
                 ? getNFLTeam(teamId)
                 : teamId && player.isCFB
@@ -123,9 +126,9 @@ export default function ResultItemRow({
                     ? getMLBTeam(teamId)
                     : teamId && player.isNHL
                       ? getNHLTeam(teamId)
-                    : teamId && player.isSOCC
-                      ? getSOCCTeam(teamId)
-                      : null;
+                      : teamId && player.isSOCC
+                        ? getSOCCTeam(teamId)
+                        : null;
 
     return (
       <View style={styles.itemRow}>

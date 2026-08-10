@@ -12,7 +12,18 @@ export type TournamentLeagueInfo = {
 
 export type TournamentTeam = {
   id?: string | number;
+  databaseId?: string | number | null;
+  database_id?: string | number | null;
+  dbId?: string | number | null;
+  db_id?: string | number | null;
+  teamDatabaseId?: string | number | null;
+  team_database_id?: string | number | null;
+  wcbbTeamId?: string | number | null;
+  wcbb_team_id?: string | number | null;
   espnId?: string | number | null;
+  espn_id?: string | number | null;
+  espnTeamId?: string | number | null;
+  espn_team_id?: string | number | null;
   name?: string;
   shortName?: string;
   abbreviation?: string;

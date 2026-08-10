@@ -1,4 +1,3 @@
-import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const newsListStyles = (isDark: boolean) =>
@@ -7,12 +6,5 @@ export const newsListStyles = (isDark: boolean) =>
       gap: 12,
       paddingHorizontal: 12,
       paddingBottom: 100,
-    },
-    emptyText: {
-      fontFamily: Fonts.OSLIGHT,
-      fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

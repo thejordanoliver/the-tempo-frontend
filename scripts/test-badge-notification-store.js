@@ -449,31 +449,34 @@ function testNotificationSocketSingleton() {
 
 async function testRealtimeHelpers() {
   const store = loadBadgeStore();
-  const realtime = loadTranspiledModule("hooks/useBadgeRealtimeNotifications.ts", {
-    react: {
-      useEffect() {},
-      useRef: (initialValue) => ({ current: initialValue }),
-    },
-    "react-native": {
-      AppState: {
-        currentState: "active",
-        addEventListener: () => ({ remove() {} }),
+  const realtime = loadTranspiledModule(
+    "hooks/ForumHooks/useBadgeRealtimeNotifications.ts",
+    {
+      react: {
+        useEffect() {},
+        useRef: (initialValue) => ({ current: initialValue }),
+      },
+      "react-native": {
+        AppState: {
+          currentState: "active",
+          addEventListener: () => ({ remove() {} }),
+        },
+      },
+      "@/services/badgeApi": {
+        getPendingBadgeNotifications: async () => [
+          createBadgeNotification("pending-1"),
+        ],
+        markBadgeNotificationsRead: async (ids) => ids,
+      },
+      "@/services/notificationSocket": {
+        disconnectNotificationSocket() {},
+        getNotificationSocket: () => null,
+      },
+      "@/store/badgeNotificationStore": {
+        useBadgeNotificationStore: store,
       },
     },
-    "@/services/badgeApi": {
-      getPendingBadgeNotifications: async () => [
-        createBadgeNotification("pending-1"),
-      ],
-      markBadgeNotificationsRead: async (ids) => ids,
-    },
-    "@/services/notificationSocket": {
-      disconnectNotificationSocket() {},
-      getNotificationSocket: () => null,
-    },
-    "@/store/badgeNotificationStore": {
-      useBadgeNotificationStore: store,
-    },
-  });
+  );
 
   const enqueued = [];
   const accepted = realtime.handleBadgeEarnedSocketPayload(
@@ -563,19 +566,22 @@ async function testRealtimeHelpers() {
 
 function testBadgeAwardResponsesOnlyRefresh() {
   let refreshCount = 0;
-  const badgeNotifications = loadTranspiledModule("hooks/useBadgeNotifications.ts", {
-    react: {
-      useCallback: (callback) => callback,
+  const badgeNotifications = loadTranspiledModule(
+    "hooks/ForumHooks/useBadgeNotifications.ts",
+    {
+      react: {
+        useCallback: (callback) => callback,
+      },
+      "@/store/badgeNotificationStore": {
+        useBadgeNotificationStore: (selector) =>
+          selector({
+            requestBadgeRefresh: () => {
+              refreshCount += 1;
+            },
+          }),
+      },
     },
-    "@/store/badgeNotificationStore": {
-      useBadgeNotificationStore: (selector) =>
-        selector({
-          requestBadgeRefresh: () => {
-            refreshCount += 1;
-          },
-        }),
-    },
-  });
+  );
 
   const { handleBadgeAwards, requestBadgeDataRefresh } =
     badgeNotifications.useBadgeNotifications();

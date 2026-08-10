@@ -1,5 +1,5 @@
 //Logos
-import { Team } from "@/types/football/football";
+import { Team } from "@/types/team";
 import NinersLogo from "assets/Football/NFL_Logos/49ers.png";
 import AFCLogo from "assets/Football/NFL_Logos/AFC.png";
 import BearsLogo from "assets/Football/NFL_Logos/Bears.png";
@@ -57,7 +57,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#a5acaf",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 2,
@@ -76,7 +77,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#d7a22a",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 3,
@@ -95,7 +97,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#c60c30",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 4,
@@ -114,7 +117,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#c9243f",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 5,
@@ -133,7 +137,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 6,
@@ -152,7 +157,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#002a5c",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 7,
@@ -171,7 +177,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#bbbbbb",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
 
   {
@@ -191,7 +198,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 9,
@@ -210,7 +218,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ff3c00",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 10,
@@ -229,7 +238,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 11,
@@ -248,7 +258,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffffff",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 12,
@@ -267,7 +278,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 13,
@@ -286,7 +298,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffffff",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 14,
@@ -305,7 +318,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#b3995d",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 15,
@@ -326,7 +340,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffb612",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 16,
@@ -345,7 +360,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#e64100",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 17,
@@ -364,7 +380,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffb612",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 18,
@@ -383,7 +400,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffb612",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 19,
@@ -402,7 +420,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 20,
@@ -421,7 +440,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#d50a0a",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 21,
@@ -440,7 +460,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffffff",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 22,
@@ -459,7 +480,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffb612",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 23,
@@ -478,7 +500,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#69be28",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 24,
@@ -497,7 +520,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#3e3a35",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 25,
@@ -516,7 +540,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#fc4c02",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 26,
@@ -535,7 +560,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#c41230",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 27,
@@ -554,7 +580,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#000000",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 28,
@@ -573,7 +600,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#fc4c02",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 29,
@@ -592,7 +620,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#b0b7bc",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 30,
@@ -611,7 +640,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffc20e",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 31,
@@ -630,7 +660,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffd100",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 32,
@@ -649,7 +680,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#ffc62f",
     isAllStar: false,
     isActive: true,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
   {
     id: 34,
@@ -667,7 +699,8 @@ export const nflTeams: Team[] = [
     secondaryColor: "#002A5C",
     isAllStar: true,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
 
   {
@@ -686,7 +719,8 @@ export const nflTeams: Team[] = [
     coach: "null",
     isAllStar: true,
     isActive: false,
-    isNational: false
+    isNational: false,
+    league: "NFL",
   },
 ];
 
@@ -714,8 +748,8 @@ export function getNFLTeamLogo(
   }
 
   return isDark
-    ? team.logoLight ?? team.logo ?? placeholderLogo
-    : team.logo ?? placeholderLogo;
+    ? (team.logoLight ?? team.logo ?? placeholderLogo)
+    : (team.logo ?? placeholderLogo);
 }
 export const getNFLTeamByESPNId = (espnId: number | string) => {
   return nflTeams.find((t) => t.espnId?.toString() === espnId?.toString());

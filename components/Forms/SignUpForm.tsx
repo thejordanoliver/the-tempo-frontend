@@ -1,17 +1,11 @@
 // components/SignupSteps.tsx
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Colors, globalStyles } from "constants/styles";
-import { teams } from "constants/teams";
-import { cbbTeams } from "constants/teamsCBB";
 import { useEffect, useRef, useState } from "react";
 
 import Button from "components/Button";
-import { cfbTeams } from "constants/teamsCFB";
-import { mlbTeams } from "constants/teamsMLB";
-import { nflTeams } from "constants/teamsNFL";
-import { nhlTeams } from "constants/teamsNHL";
-import { wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import {
   Animated,
   Easing,
@@ -24,8 +18,8 @@ import {
   View,
 } from "react-native";
 import { formStyles } from "styles/FormStyles";
-import type { LeagueType } from "types/types";
-import { favoriteTeamsList } from "utils/teams";
+import type { LeagueType, WCBBTeam } from "types/types";
+import { getFavoriteTeamsList } from "utils/teams";
 
 type SignupData = {
   fullName: string;
@@ -98,6 +92,14 @@ export default function SignUpForm({
 
   const isSignUp = selectedTab === "sign up";
   const showProgress = isSignUp && signupStep > 0;
+  const { teams: wcbbTeams, loading: wcbbTeamsLoading } =
+    useLeagueTeams("WCBB");
+  const favoriteTeamsList = getFavoriteTeamsList(wcbbTeams as WCBBTeam[]);
+  const findFavoriteTeam = (league: LeagueType | null, id: string) =>
+    favoriteTeamsList.find((team) => {
+      const leagueMatches = league ? team.league === league : true;
+      return leagueMatches && String(team.id) === id;
+    });
 
   return (
     <View style={styles.sectionContainer}>
@@ -188,6 +190,7 @@ export default function SignUpForm({
                   search={search}
                   itemWidth={itemWidth}
                   setSearch={setSearch}
+                  loading={wcbbTeamsLoading}
                 />
               </View>
             );
@@ -290,46 +293,7 @@ export default function SignUpForm({
                         id = parts[1];
                       }
 
-                      let team;
-
-                      switch (league) {
-                        case "WCBB":
-                          team = cbbTeams.find((t) => String(t.wid) === id);
-                          break;
-
-                        case "CBB":
-                          team = cbbTeams.find((t) => String(t.id) === id);
-                          break;
-
-                        case "NFL":
-                          team = nflTeams.find((t) => String(t.id) === id);
-                          break;
-
-                        case "CFB":
-                          team = cfbTeams.find((t) => String(t.id) === id);
-                          break;
-
-                        case "NHL":
-                          team = nhlTeams.find((t) => String(t.id) === id);
-                          break;
-
-                        case "MLB":
-                          team = mlbTeams.find((t) => String(t.id) === id);
-                          break;
-                        case "WNBA":
-                          team = wnbaTeams.find((t) => String(t.id) === id);
-                          break;
-
-                        default:
-                          team =
-                            teams.find((t) => String(t.id) === id) ||
-                            cbbTeams.find((t) => String(t.wid) === id) ||
-                            nflTeams.find((t) => String(t.id) === id) ||
-                            cfbTeams.find((t) => String(t.id) === id) ||
-                            nhlTeams.find((t) => String(t.id) === id) ||
-                            mlbTeams.find((t) => String(t.id) === id) ||
-                            wnbaTeams.find((t) => String(t.id) === id);
-                      }
+                      const team = findFavoriteTeam(league, id);
 
                       if (!team) return null;
 
@@ -338,14 +302,22 @@ export default function SignUpForm({
                           key={favId}
                           style={[
                             styles.teamCardList,
-                            { backgroundColor: team.color || "#007AFF" },
+                            {
+                              backgroundColor:
+                                team.color ??
+                                (team as { primaryColor?: string | null })
+                                  .primaryColor ??
+                                "#007AFF",
+                            },
                           ]}
                         >
                           <Image
                             source={team.logoLight ? team.logoLight : team.logo}
                             style={styles.logo}
                           />
-                          <Text style={styles.teamName}>{team.fullName}</Text>
+                          <Text style={styles.teamName}>
+                            {team.fullName ?? team.name ?? team.shortName}
+                          </Text>
                         </View>
                       );
                     })}

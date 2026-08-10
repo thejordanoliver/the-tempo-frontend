@@ -67,10 +67,7 @@ const normalizeRosterStatsResponse = (
 
   return {
     teamId: String(data?.teamId ?? teamId),
-    count:
-      typeof data?.count === "number"
-        ? data.count
-        : players.length,
+    count: typeof data?.count === "number" ? data.count : players.length,
     players,
   };
 };
@@ -83,7 +80,7 @@ const getErrorObject = (err: unknown) => {
 
 export function useRosterStats(
   teamId: string | number | null | undefined,
-  league: BasketballRosterLeague,
+  league: string,
 ) {
   const normalizedTeamId = useMemo(() => {
     if (teamId === null || teamId === undefined) return "";

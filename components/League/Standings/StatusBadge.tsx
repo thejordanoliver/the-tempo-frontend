@@ -2,14 +2,13 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
 import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
-import { PlayoffLeague } from "./StatusLegend";
 
 type StatusConfig = {
   colors: Record<string, string>;
   labels: Record<string, string>;
 };
 
-export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
+export const statusConfigs: Record<string, StatusConfig> = {
   MLB: {
     colors: {
       "*": Colors.dark.leafGreen,
@@ -111,7 +110,7 @@ export const statusConfigs: Record<PlayoffLeague, StatusConfig> = {
 
 interface StatusBadgeProps {
   code?: string | null;
-  league: PlayoffLeague;
+  league: string;
 }
 
 export const StatusBadge = ({ code, league }: StatusBadgeProps) => {

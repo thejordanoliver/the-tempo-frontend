@@ -20,7 +20,6 @@ import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
   normalizeMessageThemePreference,
 } from "utils/messageTheme";
-import { favoriteTeamsList } from "utils/teams";
 
 type MessageThemeSettingsModalProps = {
   visible: boolean;
@@ -70,7 +69,7 @@ export default function MessageThemeSettingsModal({
   onSave,
 }: MessageThemeSettingsModalProps) {
   const styles = useMemo(() => messageThemeModalStyles(isDark), [isDark]);
-  const { favorites, isLoading, ready } = useFavoriteTeamsContext();
+  const { favorites, isLoading, ready, allTeams } = useFavoriteTeamsContext();
   const [draftPreference, setDraftPreference] =
     useState<MessageThemePreference>(DEFAULT_MESSAGE_THEME_PREFERENCE);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -84,7 +83,7 @@ export default function MessageThemeSettingsModal({
           if (!league || id == null) return null;
 
           return (
-            favoriteTeamsList.find(
+            allTeams.find(
               (team) =>
                 String(team.league).toUpperCase() ===
                   String(league).toUpperCase() && String(team.id) === id,
@@ -92,7 +91,7 @@ export default function MessageThemeSettingsModal({
           );
         })
         .filter((team): team is LeagueTeam => Boolean(team)),
-    [favorites],
+    [allTeams, favorites],
   );
 
   const selectedTeamKey = getPreferenceTeamKey(draftPreference);

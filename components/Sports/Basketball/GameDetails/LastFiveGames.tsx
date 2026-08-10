@@ -4,6 +4,7 @@ import HomeAwayTabBar, {
 } from "@/components/TabBars/HomeAwayTabBar";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
@@ -53,8 +54,8 @@ export default function LastFiveGames({
   league,
   state,
 }: Props) {
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("all");
-  const team = selectedTab === "home" ? home : away;
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
+  const team = selectedTab === "away" ? home : away;
 
   const styles = lastFiveGameStyles(isDark);
 
@@ -81,9 +82,9 @@ export default function LastFiveGames({
       case "sb":
         return getSBTeam(teamId);
       case "cbb":
-        return getCBBTeam(teamId, false);
+        return getCBBTeam(teamId);
       case "wcbb":
-        return getCBBTeam(teamId, true);
+        return getWCBBTeam(teamId);
       case "cfb":
         return getCFBTeam(teamId);
       case "socc":
@@ -122,9 +123,9 @@ export default function LastFiveGames({
       case "sb":
         return getSBTeamLogo(teamId, isDark);
       case "cbb":
-        return getCBBTeamLogo(teamId, isDark, false);
+        return getCBBTeamLogo(teamId, isDark);
       case "wcbb":
-        return getCBBTeamLogo(teamId, isDark, true);
+        return getWCBBTeamLogo(teamId, isDark);
       case "cfb":
         return getCFBTeamLogo(teamId, isDark);
       case "socc":
@@ -164,6 +165,7 @@ export default function LastFiveGames({
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
     const opponentId = getOpponentId(item);
+
     const opponent = resolveTeam(opponentId);
     const opponentLogo = resolveLogo(opponentId);
     const opponentCode = getOpponentCode(item, opponent);

@@ -47,7 +47,7 @@ type TeamStatsApiResponse = {
 type UseTeamStatsOptions = {
   teamId: number;
   season?: string | number;
-  league?: "NBA" | "CBB" | "WCBB" | "WNBA";
+  league?: string;
 };
 
 type StatMap = Record<string, StatItem>;
@@ -158,19 +158,18 @@ export function useTeamStats({
         ]);
 
         const totalPoints = getValue([off, gen], ["points"]);
-        const totalRebounds = getValue([off, gen, def], [
-          "totalRebounds",
-          "rebounds",
-        ]);
+        const totalRebounds = getValue(
+          [off, gen, def],
+          ["totalRebounds", "rebounds"],
+        );
         const totalAssists = getValue([off, gen], ["assists"]);
         const totalSteals = getValue([def, off, gen], ["steals"]);
         const totalBlocks = getValue([def, off, gen], ["blocks"]);
         const totalTurnovers = getValue([off, gen], ["turnovers"]);
-        const totalFouls = getValue([gen, def, off], [
-          "fouls",
-          "personalFouls",
-          "totalFouls",
-        ]);
+        const totalFouls = getValue(
+          [gen, def, off],
+          ["fouls", "personalFouls", "totalFouls"],
+        );
 
         const aggregated: TeamStats = {
           team: {
@@ -249,22 +248,21 @@ export function useTeamStats({
             getValue([off, gen], ["freeThrowPct", "freeThrowPercentage"]),
           ),
           tpPercent: format(
-            getValue([off, gen], [
-              "threePointFieldGoalPct",
-              "threePointPct",
-              "threePointFieldGoalPercentage",
-            ]),
+            getValue(
+              [off, gen],
+              [
+                "threePointFieldGoalPct",
+                "threePointPct",
+                "threePointFieldGoalPercentage",
+              ],
+            ),
           ),
         };
-
-
 
         setTeamStats(aggregated);
       } catch (err: unknown) {
         const normalizedError =
-          err instanceof Error
-            ? err
-            : new Error("Failed to load team stats");
+          err instanceof Error ? err : new Error("Failed to load team stats");
 
         console.error("❌ Error fetching team stats:", normalizedError.message);
 

@@ -1,4 +1,5 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import {
   formatDate,
@@ -17,15 +18,17 @@ import GameHeader from "../../../components/Sports/Baseball/GameDetails/GameHead
 import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
   FanPredictionVote,
+  GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
-  HighlightVideoList,
+  HeadCoaches,
+  Highlights,
   LastFiveGames,
   LineScore,
   MatchupPredictor,
-  Officials, TeamInjuries
+  Officials,
+  TeamInjuries,
 } from "../../../components/Sports/Basketball/GameDetails";
-import GameLiveChatOverlay from "../../../components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import { Colors } from "../../../constants/styles";
 import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
@@ -177,6 +180,12 @@ export default function GameDetailsScreen(
     : isCB
       ? getCBTeamLogo(awayId, true)
       : getMLBTeamLogo(awayId, true);
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
 
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
@@ -426,13 +435,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <HighlightVideoList highlights={highlights} isDark={isDark} />
-
-            <Officials
-              officials={officials ?? []}
-              isDark={isDark}
-              state={state}
-            />
+            <Highlights highlights={highlights} isDark={isDark} />
 
             <LastFiveGames
               home={{
@@ -461,6 +464,22 @@ export default function GameDetailsScreen(
               isDark={isDark}
               state={state}
               league={LEAGUE}
+            />
+
+            <HeadCoaches
+              homeName={homeName}
+              awayName={awayName}
+              homeCoach={homeCoach}
+              awayCoach={awayCoach}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              isDark={isDark}
+            />
+
+            <Officials
+              officials={officials ?? []}
+              isDark={isDark}
+              state={state}
             />
 
             <GameLocation

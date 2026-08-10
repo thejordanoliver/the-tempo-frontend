@@ -1,16 +1,4 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import {
-  FanPredictionVote,
-  GameLocation,
-  GameTeamStats,
-  HighlightVideoList,
-  LastFiveGames,
-  LineScore,
-  MatchupPredictor,
-  Officials,
-  TeamInjuries
-} from "@/components/Sports/Basketball/GameDetails";
-import GameLiveChatOverlay from "@/components/Sports/Basketball/GameDetails/GameChat/GameLiveChatOverlay";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
@@ -18,6 +6,7 @@ import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamSco
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
 import { formatPeriod, formatVenueAddress } from "@/utils/games";
@@ -42,6 +31,19 @@ import {
   safeDate,
   shouldShowGameChat,
 } from "utils/dateUtils";
+import {
+  FanPredictionVote,
+  GameLiveChatOverlay,
+  GameLocation,
+  GameTeamStats,
+  HeadCoaches,
+  Highlights,
+  LastFiveGames,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+  TeamInjuries,
+} from "../../../components/Sports/Basketball/GameDetails";
 
 type RouteParams = {
   game?: string | string[];
@@ -163,8 +165,22 @@ export default function GameDetailsScreen(
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
+  const homeName = useMemo(
+    () => homeTeam?.fullName ?? "",
+    [homeTeam?.fullName],
+  );
+  const awayName = useMemo(
+    () => awayTeam?.fullName ?? "",
+    [awayTeam?.fullName],
+  );
   const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
   const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
+
   const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
   const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
   const { score, details, loading } = useFootballGameDetails(LEAGUE, gameId);
@@ -183,7 +199,6 @@ export default function GameDetailsScreen(
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-
   const redzone = score?.possession?.isRedZone;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = details?.broadcast ?? "";
@@ -453,7 +468,7 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
 
-            <HighlightVideoList highlights={highlights} isDark={isDark} />
+            <Highlights highlights={highlights} isDark={isDark} />
 
             <TeamInjuries
               injuries={injuries}
@@ -466,6 +481,16 @@ export default function GameDetailsScreen(
               isDark={isDark}
               state={state}
               league={LEAGUE}
+            />
+
+            <HeadCoaches
+              homeName={homeName}
+              awayName={awayName}
+              homeCoach={homeCoach}
+              awayCoach={awayCoach}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              isDark={isDark}
             />
 
             <Officials officials={officials} isDark={isDark} state={state} />

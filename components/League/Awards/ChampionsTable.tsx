@@ -6,6 +6,7 @@ import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useChampions } from "hooks/LeagueHooks/useChampions";
@@ -72,7 +73,7 @@ export default function ChampionsTable({
                       : row.team && league === "CBB"
                         ? getCBBTeamLogo(row.team.id, isDark)
                         : row.team && league === "WCBB"
-                          ? getCBBTeamLogo(row.team.id, isDark, true)
+                          ? getWCBBTeamLogo(row.team.id, isDark)
                           : getNFLTeamLogo(row.team?.id ?? 0, isDark);
 
           const isSuperBowl = league === "NFL";
