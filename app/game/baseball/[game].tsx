@@ -187,8 +187,8 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE).games;
 
   const broadcast = getBroadcastDisplay(details?.broadcasts);
 
@@ -438,16 +438,12 @@ export default function GameDetailsScreen(
             <Highlights highlights={highlights} isDark={isDark} />
 
             <LastFiveGames
-              home={{
-                teamId: homeId,
-                teamCode: homeCode,
-                games: homeLastGames.games,
-              }}
-              away={{
-                teamId: awayId,
-                teamCode: awayCode,
-                games: awayLastGames.games,
-              }}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeGames={homeLastGames}
+              awayGames={awayLastGames}
               league={LEAGUE}
               state={state}
               isDark={isDark}

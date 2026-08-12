@@ -1,22 +1,20 @@
-import {
-  BadgeCategory,
-  BadgeDefinition,
-  BadgeTier,
-} from "@/types/badges";
+import { BadgeCategory, BadgeDefinition, BadgeTier } from "@/types/badges";
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "./styles";
 
 export const BADGE_TIER_COLORS: Record<BadgeTier, string> = {
-  bronze: "#B87333",
-  silver: "#A7B0BE",
-  gold: "#F2B84B",
-  platinum: "#8B6CFF",
+  bronze: Colors.bronze,
+  silver: Colors.silver,
+  gold: Colors.gold,
+  platinum: Colors.platinum,
 };
 
 export const BADGE_CATEGORY_COLORS: Record<BadgeCategory, string> = {
-  posting: "#346BFF",
-  likes: "#E7476E",
-  comments: "#28A879",
-  shares: "#9B5DE5",
-  community: "#F18F01",
+  posting: Colors.light.blue,
+  likes: Colors.dark.lightRed,
+  comments: Colors.dark.green,
+  shares: Colors.light.purple,
+  community: Colors.dark.orange,
 };
 
 export const BADGE_CATEGORY_LABELS: Record<BadgeCategory, string> = {
@@ -36,7 +34,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "postsCreated",
     tier: "bronze",
     threshold: 1,
-    symbol: "✍️",
+    symbol: <Ionicons name={"pencil"} size={24} color={Colors.white} />,
     sortOrder: 1,
   },
   {
@@ -47,7 +45,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "postsCreated",
     tier: "silver",
     threshold: 10,
-    symbol: "✍️",
+    symbol: <Ionicons name={"pencil"} size={24} color={Colors.white} />,
     sortOrder: 2,
   },
   {
@@ -58,7 +56,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "postsCreated",
     tier: "gold",
     threshold: 50,
-    symbol: "📰",
+    symbol: <Ionicons name={"newspaper"} size={24} color={Colors.white} />,
     sortOrder: 3,
   },
   {
@@ -69,7 +67,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "postsCreated",
     tier: "platinum",
     threshold: 250,
-    symbol: "🎙️",
+    symbol: <Ionicons name={"mic"} size={24} color={Colors.white} />,
     sortOrder: 4,
   },
 
@@ -81,7 +79,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "likesReceived",
     tier: "bronze",
     threshold: 10,
-    symbol: "❤️",
+    symbol: <Ionicons name={"heart"} size={24} color={Colors.white} />,
     sortOrder: 5,
   },
   {
@@ -92,7 +90,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "likesReceived",
     tier: "silver",
     threshold: 100,
-    symbol: "❤️",
+    symbol: <Ionicons name={"heart"} size={24} color={Colors.white} />,
     sortOrder: 6,
   },
   {
@@ -103,7 +101,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "likesReceived",
     tier: "gold",
     threshold: 500,
-    symbol: "🌟",
+    symbol: <Ionicons name={"heart"} size={24} color={Colors.white} />,
     sortOrder: 7,
   },
   {
@@ -114,7 +112,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "likesReceived",
     tier: "platinum",
     threshold: 2000,
-    symbol: "👑",
+    symbol: <Ionicons name={"heart"} size={24} color={Colors.white} />,
     sortOrder: 8,
   },
 
@@ -126,7 +124,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "commentsReceived",
     tier: "bronze",
     threshold: 10,
-    symbol: "💬",
+    symbol: <Ionicons name={"chatbubble"} size={24} color={Colors.white} />,
     sortOrder: 9,
   },
   {
@@ -137,7 +135,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "commentsReceived",
     tier: "silver",
     threshold: 100,
-    symbol: "🗣️",
+    symbol: <Ionicons name={"chatbubble"} size={24} color={Colors.white} />,
     sortOrder: 10,
   },
   {
@@ -148,7 +146,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "commentsReceived",
     tier: "gold",
     threshold: 500,
-    symbol: "📊",
+    symbol: <Ionicons name={"chatbubble"} size={24} color={Colors.white} />,
     sortOrder: 11,
   },
   {
@@ -159,7 +157,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "commentsReceived",
     tier: "platinum",
     threshold: 2000,
-    symbol: "🏀",
+    symbol: <Ionicons name={"chatbubble"} size={24} color={Colors.white} />,
     sortOrder: 12,
   },
 
@@ -171,7 +169,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "sharesReceived",
     tier: "bronze",
     threshold: 5,
-    symbol: "🔁",
+    symbol: <Ionicons name={"share-social"} size={24} color={Colors.white} />,
     sortOrder: 13,
   },
   {
@@ -182,7 +180,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "sharesReceived",
     tier: "silver",
     threshold: 50,
-    symbol: "⚡",
+    symbol: <Ionicons name={"flash"} size={24} color={Colors.white} />,
     sortOrder: 14,
   },
   {
@@ -193,7 +191,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "sharesReceived",
     tier: "gold",
     threshold: 250,
-    symbol: "📈",
+    symbol: <Ionicons name={"flash"} size={24} color={Colors.white} />,
     sortOrder: 15,
   },
   {
@@ -204,7 +202,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "sharesReceived",
     tier: "platinum",
     threshold: 1000,
-    symbol: "📡",
+    symbol: <Ionicons name={"flash"} size={24} color={Colors.white} />,
     sortOrder: 16,
   },
 
@@ -216,7 +214,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "totalEngagement",
     tier: "bronze",
     threshold: 50,
-    symbol: "🔥",
+    symbol: <Ionicons name={"flame"} size={24} color={Colors.white} />,
     sortOrder: 17,
   },
   {
@@ -227,7 +225,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "totalEngagement",
     tier: "silver",
     threshold: 500,
-    symbol: "⭐",
+    symbol: <Ionicons name={"star"} size={24} color={Colors.white} />,
     sortOrder: 18,
   },
   {
@@ -238,7 +236,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "totalEngagement",
     tier: "gold",
     threshold: 2500,
-    symbol: "🏆",
+    symbol: <Ionicons name={"trophy"} size={24} color={Colors.white} />,
     sortOrder: 19,
   },
   {
@@ -249,7 +247,7 @@ export const BADGE_DEFINITIONS: BadgeDefinition[] = [
     metric: "totalEngagement",
     tier: "platinum",
     threshold: 10000,
-    symbol: "💎",
+    symbol: <Ionicons name={"diamond"} size={24} color={Colors.white} />,
     sortOrder: 20,
   },
 ];

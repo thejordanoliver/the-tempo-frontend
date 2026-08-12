@@ -4,11 +4,10 @@ import React, { useEffect, useMemo } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
-  useAnimatedProps,
+  useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import Svg, { Circle, Defs, Path, Pattern, Rect } from "react-native-svg";
 
 interface Props {
   homeCode: string;
@@ -24,10 +23,8 @@ interface Props {
   state?: string | null;
 }
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const ANIMATION_DURATION = 850;
-const GAP_DEGREES = 2.5;
-const FULL_CIRCLE_DEGREES = 360;
+const AWAY_STRIPES = Array.from({ length: 80 }, (_, index) => index);
 
 const clampPercentage = (percentage: number) => {
   "worklet";
@@ -37,11 +34,8 @@ const clampPercentage = (percentage: number) => {
   return Math.max(0, Math.min(safePercentage, 100));
 };
 
-const getArcLength = (percentage: number, usableArcLength: number) => {
-  "worklet";
-
-  return (clampPercentage(percentage) / 100) * usableArcLength;
-};
+const getLogoSource = (logo: any) =>
+  typeof logo === "string" ? { uri: logo } : logo;
 
 const MatchupPredictor: React.FC<Props> = ({
   homeCode,
@@ -50,63 +44,42 @@ const MatchupPredictor: React.FC<Props> = ({
   homeChance,
   awayCode,
   awayLogo,
+  awayColor,
   awayChance,
-  size = 184,
   isDark,
   state,
 }) => {
   const styles = useMemo(() => matchupPredictorStyles(isDark), [isDark]);
+  const animatedSplitPercent = useSharedValue(50);
 
-  const strokeWidth = 10;
-  const homeBorderThickness = 0.5;
-  const homeBorderWidth = strokeWidth + homeBorderThickness * 2;
-  const homeBorderColor = isDark ? Colors.white : Colors.black;
-
-  const svgCenter = 50;
-  const svgPadding = 1.5;
-
-  const radius = svgCenter - homeBorderWidth / 2 - svgPadding;
-  const circumference = 2 * Math.PI * radius;
-  const usableArcLength =
-    (circumference * (FULL_CIRCLE_DEGREES - GAP_DEGREES * 2)) /
-    FULL_CIRCLE_DEGREES;
-  const strokeDasharray = `${circumference} ${circumference}`;
-  const halfGapDegrees = GAP_DEGREES / 2;
-
-  const animatedHomePercent = useSharedValue(0);
-  const animatedAwayPercent = useSharedValue(0);
+  const homePct = clampPercentage(homeChance);
+  const awayPct = clampPercentage(awayChance);
+  const totalChance = homePct + awayPct;
+  const awayTrackPct = totalChance > 0 ? (awayPct / totalChance) * 100 : 50;
+  const isHomeFavorite = homePct >= awayPct;
+  const favoriteCode = isHomeFavorite ? homeCode : awayCode;
+  const favoriteLogo = isHomeFavorite ? homeLogo : awayLogo;
+  const favoriteColor = isHomeFavorite ? homeColor : awayColor;
+  const edge = Math.abs(homePct - awayPct);
 
   useEffect(() => {
-    animatedHomePercent.value = withTiming(clampPercentage(homeChance), {
+    animatedSplitPercent.value = withTiming(awayTrackPct, {
       duration: ANIMATION_DURATION,
       easing: Easing.out(Easing.cubic),
     });
+  }, [animatedSplitPercent, awayTrackPct]);
 
-    animatedAwayPercent.value = withTiming(clampPercentage(awayChance), {
-      duration: ANIMATION_DURATION,
-      easing: Easing.out(Easing.cubic),
-    });
-  }, [animatedAwayPercent, animatedHomePercent, awayChance, homeChance]);
+  const awayMeterStyle = useAnimatedStyle(() => ({
+    width: `${animatedSplitPercent.value}%`,
+  }));
 
-  const homeRingProps = useAnimatedProps(() => {
-    const arcLength = getArcLength(animatedHomePercent.value, usableArcLength);
+  const homeMeterStyle = useAnimatedStyle(() => ({
+    left: `${animatedSplitPercent.value}%`,
+  }));
 
-    return {
-      strokeDashoffset: circumference - arcLength,
-    };
-  });
-
-  const awayRingProps = useAnimatedProps(() => {
-    const arcLength = getArcLength(animatedAwayPercent.value, usableArcLength);
-
-    return {
-      strokeDashoffset: circumference + arcLength,
-    };
-  });
-
-  const dividerHeight = radius + 20;
-  const dividerTop = svgCenter - dividerHeight / 2;
-  const dividerBottom = svgCenter + dividerHeight / 2;
+  const markerStyle = useAnimatedStyle(() => ({
+    left: `${animatedSplitPercent.value}%`,
+  }));
 
   if (state !== "pre") return null;
   if (!homeChance || !awayChance) return null;
@@ -115,157 +88,100 @@ const MatchupPredictor: React.FC<Props> = ({
     <View style={styles.outerContainer}>
       <HeadingTwo isDark={isDark}>Matchup Predictor</HeadingTwo>
 
-      <View style={styles.wrapper}>
-        <View style={[styles.container, { width: size, height: size }]}>
-          <Svg width={size} height={size} viewBox="0 0 100 100">
-            <Defs>
-              <Pattern
-                id="awayPattern"
-                patternUnits="userSpaceOnUse"
-                width="1.5"
-                height="1"
-                patternTransform="rotate(20)"
-              >
-                <Path
-                  d="M 0 0 L 0 4"
-                  stroke={isDark ? Colors.white : Colors.black}
-                  strokeWidth={1.5}
-                />
-              </Pattern>
-            </Defs>
-
-            <Circle
-              cx={svgCenter}
-              cy={svgCenter}
-              r={radius}
-              stroke={
-                isDark
-                  ? Colors.dark.transparentItemBackground
-                  : Colors.light.transparentItemBackground
-              }
-              strokeWidth={strokeWidth}
-              fill="none"
-            />
-
-            {/* Away ring */}
-            <AnimatedCircle
-              animatedProps={awayRingProps}
-              cx={svgCenter}
-              cy={svgCenter}
-              r={radius}
-              stroke="url(#awayPattern)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="butt"
-              strokeDasharray={strokeDasharray}
-              fill="none"
-              rotation={-90 - halfGapDegrees}
-              origin={`${svgCenter}, ${svgCenter}`}
-            />
-
-            {/* Home border ring */}
-            <AnimatedCircle
-              animatedProps={homeRingProps}
-              cx={svgCenter}
-              cy={svgCenter}
-              r={radius}
-              stroke={homeBorderColor}
-              strokeWidth={homeBorderWidth}
-              strokeLinecap="butt"
-              strokeDasharray={strokeDasharray}
-              fill="none"
-              rotation={-90 + halfGapDegrees}
-              origin={`${svgCenter}, ${svgCenter}`}
-            />
-
-            {/* Home color ring */}
-            <AnimatedCircle
-              animatedProps={homeRingProps}
-              cx={svgCenter}
-              cy={svgCenter}
-              r={radius}
-              stroke={homeColor}
-              strokeWidth={strokeWidth}
-              strokeLinecap="butt"
-              strokeDasharray={strokeDasharray}
-              fill="none"
-              rotation={-90 + halfGapDegrees}
-              origin={`${svgCenter}, ${svgCenter}`}
-            />
-
-            {/* Center divider */}
-            <Path
-              d={`M ${svgCenter} ${dividerTop} L ${svgCenter} ${dividerBottom}`}
-              stroke={isDark ? Colors.white : Colors.black}
-              strokeWidth={0.6}
-              strokeDasharray="1,1"
-            />
-          </Svg>
-
-          <View style={styles.innerContent}>
-            <View style={styles.teamContainer}>
-              <Image source={awayLogo} style={styles.logo} />
+      <View
+        style={styles.wrapper}
+        accessible
+        accessibilityLabel={`${awayCode} ${awayPct.toFixed(1)} percent, ${homeCode} ${homePct.toFixed(1)} percent. ${favoriteCode} has a ${edge.toFixed(1)} point edge.`}
+      >
+        <View style={styles.headerRow}>
+          <View style={styles.teamHeader}>
+            <View style={[styles.logoBadge, { backgroundColor: awayColor }]}>
+              <Image
+                source={getLogoSource(awayLogo)}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
+            <View style={styles.teamCopy}>
+              <Text style={styles.teamCode} numberOfLines={1}>
+                {awayCode}
+              </Text>
+            </View>
+          </View>
 
-            <View style={styles.teamContainer}>
-              <Image source={homeLogo} style={styles.logo} />
+          <View style={[styles.teamHeader, styles.homeHeader]}>
+            <View style={[styles.teamCopy, styles.homeCopy]}>
+              <Text style={styles.teamCode} numberOfLines={1}>
+                {homeCode}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.logoBadge,
+                styles.homeLogoBadge,
+                { backgroundColor: homeColor },
+              ]}
+            >
+              <Image
+                source={getLogoSource(homeLogo)}
+                style={styles.logo}
+                resizeMode="contain"
+              />
             </View>
           </View>
         </View>
 
-        <View style={styles.legendContainer}>
-          <View>
-            <View style={styles.legendItem}>
-              <Svg width={30} height={20} viewBox="0 0 30 20">
-                <Defs>
-                  <Pattern
-                    id="legendAwayPattern"
-                    patternUnits="userSpaceOnUse"
-                    width="2.5"
-                    height="1"
-                    patternTransform="rotate(45)"
-                  >
-                    <Path
-                      d="M 0 0 L 0 4"
-                      stroke={isDark ? Colors.white : Colors.black}
-                      strokeWidth={8}
-                    />
-                  </Pattern>
-                </Defs>
+        <View style={styles.trackArea}>
+          <Animated.View
+            style={[
+              styles.logoMarker,
+              { backgroundColor: favoriteColor },
+              isHomeFavorite && styles.homeLogoMarker,
+              markerStyle,
+            ]}
+          >
+            <Image
+              source={getLogoSource(favoriteLogo)}
+              style={styles.markerLogo}
+              resizeMode="contain"
+            />
+          </Animated.View>
 
-                <Rect
-                  x="0"
-                  y="0"
-                  width="30"
-                  height="20"
-                  rx="6"
-                  ry="6"
-                  fill="url(#legendAwayPattern)"
-                />
-              </Svg>
-
-              <Text style={styles.legendText}>{awayCode}</Text>
-            </View>
-
-            <Text style={styles.chanceText}>{awayChance.toFixed(1)}%</Text>
+          <View style={styles.track}>
+            <Animated.View style={[styles.awayMeter, awayMeterStyle]}>
+              <View style={styles.awayStripeRow}>
+                {AWAY_STRIPES.map((stripe) => (
+                  <View key={stripe} style={styles.awayStripe} />
+                ))}
+              </View>
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.homeMeter,
+                { backgroundColor: homeColor },
+                homeMeterStyle,
+              ]}
+            />
+            <View style={styles.centerLine} />
           </View>
+        </View>
 
+        <View style={styles.percentRow}>
           <View>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendSwatch,
-                  {
-                    backgroundColor: homeColor,
-                    borderWidth: 1,
-                    borderColor: isDark ? Colors.white : "transparent",
-                  },
-                ]}
-              />
-
-              <Text style={styles.legendText}>{homeCode}</Text>
-            </View>
-
-            <Text style={styles.chanceText}>{homeChance.toFixed(1)}%</Text>
+            <Text style={styles.chanceText}>{awayPct.toFixed(1)}%</Text>
+            <Text style={styles.percentLabel}>{awayCode}</Text>
+          </View>
+          <Text
+            style={[
+              styles.edgeLabel,
+              { borderColor: isHomeFavorite ? homeColor : awayColor },
+            ]}
+          >
+            {favoriteCode} +{edge.toFixed(1)}
+          </Text>
+          <View style={styles.homePercent}>
+            <Text style={styles.chanceText}>{homePct.toFixed(1)}%</Text>
+            <Text style={styles.percentLabel}>{homeCode}</Text>
           </View>
         </View>
       </View>
@@ -285,56 +201,159 @@ const matchupPredictorStyles = (isDark: boolean) =>
       borderRadius: 8,
       padding: 12,
       justifyContent: "center",
-      alignItems: "center",
+      gap: 12,
     },
-    container: {
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    innerContent: {
-      position: "absolute",
-      flexDirection: "row",
-      justifyContent: "space-evenly",
-      width: "100%",
-      height: "100%",
-      alignItems: "center",
-    },
-    teamContainer: {
-      alignItems: "center",
-    },
-    logo: {
-      width: 42,
-      height: 42,
-    },
-    chanceText: {
-      fontFamily: Fonts.OSSEMIBOLD,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-      marginTop: 4,
-    },
-    legendContainer: {
-      position: "absolute",
-      top: 0,
+    headerRow: {
       flexDirection: "row",
       justifyContent: "space-between",
-      marginTop: 16,
-      width: "100%",
+      alignItems: "center",
+      gap: 12,
     },
-    legendItem: {
+    teamHeader: {
+      flex: 1,
+      minWidth: 0,
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
     },
-    legendSwatch: {
-      width: 30,
-      height: 20,
-      borderRadius: 6,
+    homeHeader: {
+      justifyContent: "flex-end",
     },
-    legendText: {
+    teamCopy: {
+      flex: 1,
+      minWidth: 0,
+    },
+    homeCopy: {
+      alignItems: "flex-end",
+    },
+    logoBadge: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: Colors.white,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    },
+    homeLogoBadge: {
+      borderColor: Colors.white,
+    },
+    logo: {
+      width: 28,
+      height: 28,
+    },
+    teamCode: {
       fontFamily: Fonts.OSSEMIBOLD,
       fontSize: 16,
+      lineHeight: 20,
       color: isDark ? Colors.white : Colors.black,
+    },
+
+    trackArea: {
+      height: 58,
+      justifyContent: "center",
+      position: "relative",
+    },
+    logoMarker: {
+      position: "absolute",
+      top: 6,
+      alignItems: "center",
+      justifyContent: "center",
+      transform: [{ translateX: -23 }],
+      width: 46,
+      height: 46,
+      borderRadius: 23,
+      borderWidth: 2,
+      borderColor: Colors.midTone,
+      overflow: "hidden",
+      zIndex: 2,
+    },
+    homeLogoMarker: {
+      borderColor: Colors.white,
+    },
+    markerLogo: {
+      width: 32,
+      height: 32,
+    },
+    track: {
+      height: 8,
+      borderRadius: 999,
+      overflow: "hidden",
+      backgroundColor: isDark
+        ? Colors.dark.transparentItemBackground
+        : Colors.light.transparentItemBackground,
+      position: "relative",
+    },
+    awayMeter: {
+      position: "absolute",
+      top: 0,
+      bottom: 0,
+      left: 0,
+      overflow: "hidden",
+    },
+    awayStripeRow: {
+      minWidth: 360,
+      height: "100%",
+      flexDirection: "row",
+      gap: 3,
+    },
+    awayStripe: {
+      width: 2,
+      height: "100%",
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      opacity: 0.75,
+      transform: [{ skewX: "-18deg" }],
+    },
+    homeMeter: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.92,
+      borderColor: isDark? Colors.white : "transparent",
+      borderWidth : 1.5,
+    },
+    centerLine: {
+      position: "absolute",
+      top: -4,
+      bottom: -4,
+      left: "50%",
+      width: 1,
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      opacity: 0.7,
+    },
+    percentRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 10,
+    },
+    homePercent: {
+      alignItems: "flex-end",
+    },
+    chanceText: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 22,
+      lineHeight: 27,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    percentLabel: {
+      fontFamily: Fonts.OSREGULAR,
+      fontSize: 12,
+      lineHeight: 15,
+      color: Colors.midTone,
+    },
+    edgeLabel: {
+      fontFamily: Fonts.OSSEMIBOLD,
+      fontSize: 11,
+      lineHeight: 14,
+      color: isDark ? Colors.white : Colors.black,
+      borderWidth: 1,
+      borderRadius: 999,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      overflow: "hidden",
     },
   });
 

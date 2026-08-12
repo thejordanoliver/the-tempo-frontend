@@ -123,8 +123,8 @@ export default function GameDetailsScreen() {
   const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
   const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
 
-  const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
   const headline = details?.headline ?? holidayLabel;
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
@@ -359,21 +359,16 @@ export default function GameDetailsScreen() {
             />
 
             <LastFiveGames
-              home={{
-                teamId: homeId,
-                teamCode: homeCode,
-                games: homeLastGames.games,
-              }}
-              away={{
-                teamId: awayId,
-                teamCode: awayCode,
-                games: awayLastGames.games,
-              }}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeGames={homeLastGames}
+              awayGames={awayLastGames}
+              league={"socc"}
               state={state}
               isDark={isDark}
-              league={"socc"}
             />
-
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}

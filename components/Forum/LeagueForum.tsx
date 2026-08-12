@@ -33,6 +33,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
     loadMore,
     deletePost,
     editPost,
+    updatePost,
   } = useLeagueForum(league);
 
   const setGlobalImage = useImagePreviewStore((s) => s.setImages);
@@ -78,6 +79,7 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
             currentUserId={currentUserId}
             deletePost={deletePost}
             editPost={editPost}
+            onBookmarkChange={updatePost}
             onImagePress={(imgUri) => {
               setGlobalImage([], 0);
               setGlobalImage([imgUri], 0);

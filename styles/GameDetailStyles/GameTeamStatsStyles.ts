@@ -31,8 +31,8 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
       gap: 4,
     },
     logo: {
-      width: 28,
-      height: 28,
+      width: 32,
+      height: 32,
       resizeMode: "contain",
     },
     teamLabel: {

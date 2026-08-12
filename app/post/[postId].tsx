@@ -111,6 +111,7 @@ export default function CommentThreadScreen() {
     editComment,
     deleteComment,
     deletePost,
+    updatePost,
   } = useCommentThread(postId);
 
   const commentItems = useMemo(
@@ -429,6 +430,7 @@ export default function CommentThreadScreen() {
               currentUserId={currentUserId}
               deletePost={handleDeletePostFromThread}
               editPost={() => {}}
+              onBookmarkChange={updatePost}
               onImagePress={() => {}}
               disableCommentNavigation
             />

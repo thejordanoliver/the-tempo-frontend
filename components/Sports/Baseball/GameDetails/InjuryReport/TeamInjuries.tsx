@@ -29,7 +29,7 @@ const matchesTeam = (
 ) => {
   if (!team) return false;
 
-  return [team.espnId].some(
+  return [team.id].some(
     (id) =>
       id !== null && id !== undefined && String(id) === String(selectedTeamId),
   );

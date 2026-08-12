@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import {
   Animated,
   Easing,
@@ -11,7 +11,8 @@ import {
 
 type PercentWidth = `${number}%`;
 
-type SkeletonBlockProps = {
+export type SkeletonBlockProps = {
+  children?: ReactNode;
   width?: number | PercentWidth;
   height?: number;
   radius?: number;
@@ -19,6 +20,7 @@ type SkeletonBlockProps = {
 };
 
 export default function SkeletonBlock({
+  children,
   width = "100%",
   height = 12,
   radius = 6,
@@ -47,7 +49,11 @@ export default function SkeletonBlock({
     );
 
     animation.start();
-    return () => animation.stop();
+
+    return () => {
+      animation.stop();
+      opacity.stopAnimation();
+    };
   }, [opacity]);
 
   return (
@@ -63,7 +69,9 @@ export default function SkeletonBlock({
         },
         style,
       ]}
-    />
+    >
+      {children}
+    </Animated.View>
   );
 }
 

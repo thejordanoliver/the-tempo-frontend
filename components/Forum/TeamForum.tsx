@@ -56,6 +56,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     loadMore,
     deletePost,
     editPost,
+    updatePost,
   } = useTeamForum(teamId, league);
 
   const showAlert = useCallback((config: AlertConfig) => {
@@ -126,13 +127,21 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         currentUserId={currentUserId}
         deletePost={handleDeletePost}
         editPost={handleEditPost}
+        onBookmarkChange={updatePost}
         onImagePress={(imgUri) => {
           setGlobalImage([], 0);
           setGlobalImage([imgUri], 0);
         }}
       />
     ),
-    [isDark, currentUserId, handleDeletePost, handleEditPost, setGlobalImage],
+    [
+      isDark,
+      currentUserId,
+      handleDeletePost,
+      handleEditPost,
+      updatePost,
+      setGlobalImage,
+    ],
   );
 
   if (loading)

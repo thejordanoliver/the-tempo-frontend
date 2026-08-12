@@ -1,10 +1,7 @@
 import { BasketballGame } from "@/types/basketball/basketball";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
-import {
-  getWCBBTeamLogoFromGameTeam,
-  resolveWCBBTeamFromGameTeam,
-} from "constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { Image, Text, View } from "react-native";
 import {
@@ -30,7 +27,6 @@ export default function BasketballGameWidget({
   game,
   height = 150,
   width = 150,
-  loading = false,
   isDark,
   isCBB,
   isWCBB,
@@ -45,43 +41,41 @@ export default function BasketballGameWidget({
 
   const homeId = home?.id;
   const awayId = away?.id;
-  const homeWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(home) : undefined;
-  const awayWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(away) : undefined;
 
   const homeTeam = isCBB
-    ? getCBBTeam(homeId, false)
+    ? getCBBTeam(homeId)
     : isWCBB
-      ? homeWCBBTeam
+      ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
 
   const awayTeam = isCBB
-    ? getCBBTeam(awayId, false)
+    ? getCBBTeam(awayId)
     : isWCBB
-      ? awayWCBBTeam
+      ? getWCBBTeam(awayId)
       : isWNBA
         ? getWNBATeam(awayId)
         : getNBATeam(awayId);
 
-  const homeLogo = isWNBA
-    ? getWNBATeamLogo(homeId, isDark)
-    : isCBB
-      ? getCBBTeamLogo(homeId, isDark, false)
-      : isWCBB
-        ? getWCBBTeamLogoFromGameTeam(home, isDark)
+  const homeName = homeTeam?.code || game.home?.code;
+  const awayName = awayTeam?.code || game.away?.code;
+
+  const homeLogo = isCBB
+    ? getCBBTeamLogo(homeId, isDark)
+    : isWCBB
+      ? getWCBBTeamLogo(homeId, isDark)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, isDark)
         : getTeamLogo(homeId, isDark);
 
-  const awayLogo = isWNBA
-    ? getWNBATeamLogo(awayId, isDark)
-    : isCBB
-      ? getCBBTeamLogo(awayId, isDark, false)
-      : isWCBB
-        ? getWCBBTeamLogoFromGameTeam(away, isDark)
+  const awayLogo = isCBB
+    ? getCBBTeamLogo(awayId, isDark)
+    : isWCBB
+      ? getWCBBTeamLogo(awayId, isDark)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, isDark)
         : getTeamLogo(awayId, isDark);
-
-  const homeName = homeTeam?.code ?? home?.code;
-  const awayName = awayTeam?.code ?? away?.code;
 
   const homeRank = home?.rank;
   const awayRank = away?.rank;

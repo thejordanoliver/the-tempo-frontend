@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export type BadgeTier = "bronze" | "silver" | "gold" | "platinum";
 
 export type BadgeCategory =
@@ -24,7 +26,7 @@ export type BadgeDefinition = {
   metric: BadgeMetric;
   tier: BadgeTier;
   threshold: number;
-  symbol: string;
+  symbol: ReactNode;
   sortOrder: number;
 };
 

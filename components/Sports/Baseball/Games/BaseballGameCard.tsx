@@ -1,4 +1,3 @@
-import { useBaseballGameDetails } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -72,8 +71,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
       : getMLBTeamLogo(awayId, isDark);
 
   const league = game?.league?.code ?? "mlb";
-  const gameId = game?.id;
-  const { score } = useBaseballGameDetails(league, gameId);
 
   const isChampionship = game?.season.slug === "championship-series";
   const styles = gameCardStyles(isDark, isChampionship);
@@ -91,8 +88,9 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const isDelayed =
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Rain Delay";
-  const homeScore = score?.home.score ?? home?.score ?? 0;
-  const awayScore = score?.away.score ?? away?.score ?? 0;
+  const isEndOfInning = gameStatusDetail.includes("End");
+  const homeScore = home?.score ?? 0;
+  const awayScore = away?.score ?? 0;
   const homeRecord = home?.record;
   const awayRecord = away?.record;
   const homeRank = home?.homeRank;
@@ -167,7 +165,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
         )}
 
         {/* 🕒 In Progress */}
-        {inProgress && !isDelayed && (
+        {inProgress && !isDelayed && !isEndOfInning && (
           <View>
             <View style={styles.infoWrapper}>
               {isTopInning && (
@@ -191,6 +189,15 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
             </View>
             <View style={styles.basesContainer}>
               <BasesIndicator size={8} bases={bases} isDark={isDark} />
+            </View>
+          </View>
+        )}
+
+        {/* 🕒 In Progress */}
+        {isEndOfInning && (
+          <View>
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
           </View>
         )}

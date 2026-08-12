@@ -2,7 +2,8 @@ import { BADGE_CATEGORY_COLORS, BADGE_TIER_COLORS } from "@/constants/badges";
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { BadgeProgress } from "@/types/badges";
-import { StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
 
 type BadgeEmblemProps = {
   badge: BadgeProgress;
@@ -60,17 +61,15 @@ export default function BadgeEmblem({
           },
         ]}
       >
-        <Text
-          selectable
-          style={[
-            styles.symbol,
-            {
-              fontSize: size * 0.35,
-            },
-          ]}
-        >
-          {isLocked ? "🔒" : badge.symbol || "🏆"}
-        </Text>
+        {isLocked ? (
+          <Ionicons
+            name={"lock-closed-outline"}
+            size={24}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        ) : (
+          badge.symbol
+        )}
       </View>
     </View>
   );
@@ -80,7 +79,6 @@ const styles = StyleSheet.create({
   outerBadge: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.white,
   },
 
   innerBadge: {

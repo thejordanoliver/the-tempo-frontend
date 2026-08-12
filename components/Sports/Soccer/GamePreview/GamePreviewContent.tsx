@@ -9,14 +9,15 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import GameTeamStats from "../GameDetails/GameTeamStats";
+import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 
 type GamePreviewContentProps = {
-  homeTeamId: any;
+  homeId: any;
   homeColor: string;
   homeName: string;
   homeCode: string;
   homeLogo: any;
-  awayTeamId: number;
+  awayId: number;
   awayColor: string;
   awayName: string;
   awayCode: string;
@@ -25,8 +26,8 @@ type GamePreviewContentProps = {
     home: string[];
     away: string[];
   };
-  homeLastGames: { games: any[] };
-  awayLastGames: { games: any[] };
+  homeLastGames: LastFiveGame[];
+  awayLastGames: LastFiveGame[];
   teamStats: any[];
   officials: any[];
   venueImage?: any;
@@ -41,10 +42,10 @@ type GamePreviewContentProps = {
 };
 
 export default function GamePreviewContent({
-  homeTeamId,
+  homeId,
   homeCode,
   homeLogo,
-  awayTeamId,
+  awayId,
   awayCode,
   awayLogo,
   homeColor,
@@ -93,21 +94,16 @@ export default function GamePreviewContent({
         />
 
         <LastFiveGames
-          home={{
-            teamId: homeTeamId,
-            teamCode: homeCode,
-            games: homeLastGames.games,
-          }}
-          away={{
-            teamId: awayTeamId,
-            teamCode: awayCode,
-            games: awayLastGames.games,
-          }}
+          homeId={homeId}
+          awayId={awayId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeGames={homeLastGames}
+          awayGames={awayLastGames}
           league={"SOCC"}
           state={state}
           isDark
         />
-
         <Officials officials={officials} state={state} isDark />
 
         <GameLocation

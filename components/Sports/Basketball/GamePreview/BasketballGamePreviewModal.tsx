@@ -2,6 +2,7 @@ import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
@@ -10,12 +11,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
-import {
-  getWCBBESPNIdFromGameTeam,
-  getWCBBTeamLogoFromGameTeam,
-  getWCBBTeamPageIdFromGameTeam,
-  resolveWCBBTeamFromGameTeam,
-} from "constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
@@ -81,43 +77,41 @@ export default function GamePreviewModal({
   const away = game?.away;
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
-  const homeWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(home) : undefined;
-  const awayWCBBTeam = isWCBB ? resolveWCBBTeamFromGameTeam(away) : undefined;
-  const homeTeamPageId = isWCBB ? getWCBBTeamPageIdFromGameTeam(home) : homeId;
-  const awayTeamPageId = isWCBB ? getWCBBTeamPageIdFromGameTeam(away) : awayId;
-  const homeEspnId = isWCBB ? (getWCBBESPNIdFromGameTeam(home) ?? 0) : homeId;
-  const awayEspnId = isWCBB ? (getWCBBESPNIdFromGameTeam(away) ?? 0) : awayId;
 
   const homeTeam = isWNBA
     ? getWNBATeam(homeId)
     : isWCBB
-      ? homeWCBBTeam
+      ? getWCBBTeam(homeId)
       : isCBB
-        ? getCBBTeam(homeId, false)
+        ? getCBBTeam(homeId)
         : isSL
           ? getTeamBySummerId(homeId)
           : getNBATeam(homeId);
+
   const awayTeam = isWNBA
     ? getWNBATeam(awayId)
     : isWCBB
-      ? awayWCBBTeam
+      ? getWCBBTeam(awayId)
       : isCBB
-        ? getCBBTeam(awayId, false)
+        ? getCBBTeam(awayId)
         : isSL
           ? getTeamBySummerId(awayId)
           : getNBATeam(awayId);
 
   const homeCode = homeTeam?.code ?? home?.code ?? "";
   const awayCode = awayTeam?.code ?? away?.code ?? "";
+
   const awayName =
     awayTeam?.fullName ?? awayTeam?.name ?? away?.name ?? "Away Team";
   const homeName =
     homeTeam?.fullName ?? homeTeam?.name ?? home?.name ?? "Home Team";
+
   const awayColor =
     awayTeam?.color ??
     away?.primaryColor ??
     away?.secondaryColor ??
     Colors.midTone;
+
   const homeColor =
     homeTeam?.color ??
     home?.primaryColor ??
@@ -127,7 +121,7 @@ export default function GamePreviewModal({
   const homeLogo = isCBB
     ? getCBBTeamLogo(homeId, true)
     : isWCBB
-      ? getWCBBTeamLogoFromGameTeam(home, true)
+      ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
         : getTeamLogo(homeId, true);
@@ -135,7 +129,7 @@ export default function GamePreviewModal({
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
     : isWCBB
-      ? getWCBBTeamLogoFromGameTeam(away, true)
+      ? getWCBBTeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
         : getTeamLogo(awayId, true);
@@ -157,10 +151,10 @@ export default function GamePreviewModal({
     period: game.status.period,
     isCBB: isCBB || isWCBB,
   });
-  const clock = game.status.clock;
-  const gameStatusDescription = game.status?.description;
-  const gameStatusDetail = game.status.shortDetail;
-  const state = score?.status?.state;
+  const clock = score?.status?.displayClock ?? "0:00";
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const state = score?.status.state ?? null;
+  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -198,8 +192,14 @@ export default function GamePreviewModal({
       }
     : undefined;
 
-  const homeLastGames = useLastFiveGames(homeEspnId, "basketball", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayEspnId, "basketball", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
 
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "basketball", id: venueId });
@@ -281,7 +281,7 @@ export default function GamePreviewModal({
               <View style={styles.gameHeaderContainer}>
                 {/* Away Team Row */}
                 <TeamRow
-                  id={awayTeamPageId}
+                  id={awayId}
                   name={awayCode}
                   logo={awayLogo}
                   bonusState={awayBonus}
@@ -310,7 +310,7 @@ export default function GamePreviewModal({
 
                 {/* Home Team Row */}
                 <TeamRow
-                  id={homeTeamPageId}
+                  id={homeId}
                   name={homeCode}
                   logo={homeLogo}
                   rank={homeRank}
@@ -330,8 +330,8 @@ export default function GamePreviewModal({
               {!dontShowDetails && (
                 <GamePreviewContent
                   state={state}
-                  homeId={homeTeamPageId ?? homeId}
-                  awayId={awayTeamPageId ?? awayId}
+                  homeId={homeId}
+                  awayId={awayId}
                   homeColor={homeColor}
                   homeName={homeName}
                   homeLogo={homeLogo}
@@ -342,6 +342,8 @@ export default function GamePreviewModal({
                   homeCode={homeCode}
                   homeChance={homeChance}
                   awayChance={awayChance}
+                  homeCoach={homeCoach}
+                  awayCoach={awayCoach}
                   lineScore={lineScore}
                   teamStats={teamStats}
                   playerStats={playerStats}

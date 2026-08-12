@@ -1,6 +1,6 @@
 import { CalendarModalProps, CalendarMonth } from "@/types/date";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -183,24 +183,20 @@ export default function CalendarModal({
       >
         <View style={styles.calendarWrapper}>
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={activeOpacity}
             style={styles.closeButton}
             onPress={onClose}
           >
-            <Ionicons
-              name="close"
-              size={28}
-              color={isDark ? Colors.white : Colors.black}
-            />
+            <Ionicons name={"close"} size={28} color={isDark ? Colors.white : Colors.black} />
           </TouchableOpacity>
 
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={activeOpacity}
             style={styles.todayButton}
             onPress={goToToday}
           >
             <Ionicons
-              name="calendar"
+              name={"calendar"}
               size={18}
               color={isDark ? Colors.white : Colors.black}
               style={styles.todayIcon}
@@ -228,35 +224,20 @@ export default function CalendarModal({
             hideExtraDays={false}
             theme={{
               backgroundColor: "transparent",
-
               calendarBackground: "transparent",
-
               textSectionTitleColor: isDark ? Colors.white : Colors.black,
-
               todayTextColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-
               dayTextColor: isDark ? Colors.white : Colors.black,
-
               textDisabledColor: isDark ? Colors.darkGray : Colors.lightGray,
-
               dotColor: isDark ? Colors.white : Colors.black,
-
               selectedDotColor: isDark ? Colors.white : Colors.black,
-
               selectedDayBackgroundColor: "transparent",
-
               selectedDayTextColor: Colors.dark.limeGreen,
-
               monthTextColor: isDark ? Colors.white : Colors.black,
-
               arrowColor: isDark ? Colors.white : Colors.black,
-
               textDayFontFamily: Fonts.OSBOLD,
-
               textMonthFontFamily: Fonts.OSBOLD,
-
               textDayHeaderFontFamily: Fonts.OSBOLD,
-
               textMonthFontSize: 24,
               textDayFontSize: 20,
               textDayHeaderFontSize: 18,

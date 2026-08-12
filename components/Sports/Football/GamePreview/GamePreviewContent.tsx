@@ -1,6 +1,9 @@
 import {
   GameLocation,
   GameTeamStats,
+  HeadCoaches,
+  Highlights,
+  LastFiveGames,
   LineScore,
   MatchupPredictor,
   Officials,
@@ -11,11 +14,14 @@ import {
   TeamInjury,
   TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Coach } from "@/hooks/useTeams";
+import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
+import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import GameLeaders from "../GameDetails/GameLeaders";
 
 type GamePreviewContentProps = {
@@ -26,8 +32,8 @@ type GamePreviewContentProps = {
   awayCode: string;
   homeId: number;
   awayId: number;
-  homeEspnId: number;
-  awayEspnId: number;
+  homeName: string;
+  awayName: string;
   awayLogo: any;
   homeChance: number;
   awayChance: number;
@@ -41,8 +47,10 @@ type GamePreviewContentProps = {
   }[];
   leaders: TeamLeaders[];
   injuries: TeamInjury[];
-  homeLastGames: { games: any[] };
-  awayLastGames: { games: any[] };
+  homeLastGames: LastFiveGame[];
+  awayLastGames: LastFiveGame[];
+  homeCoach: Coach | undefined | null;
+  awayCoach: Coach | undefined | null;
   officials: any[];
   error?: string | null;
   venueImage?: any;
@@ -50,6 +58,7 @@ type GamePreviewContentProps = {
   venueLocation?: string;
   venueSurface?: boolean;
   venueAddress?: string;
+  highlights: Highlight[];
   venueCapacity?: number | null;
   venueAttendance?: number | null;
   weather?: any;
@@ -61,12 +70,10 @@ type GamePreviewContentProps = {
 export default function GamePreviewContent({
   homeColor,
   homeId,
-  homeEspnId,
   homeCode,
   homeLogo,
   awayColor,
   awayId,
-  awayEspnId,
   awayCode,
   awayLogo,
   lineScore,
@@ -74,6 +81,12 @@ export default function GamePreviewContent({
   leaders,
   injuries,
   officials,
+  homeName,
+  awayName,
+  homeCoach,
+  awayCoach,
+  homeLastGames,
+  awayLastGames,
   homeChance,
   awayChance,
   venueImage,
@@ -83,6 +96,7 @@ export default function GamePreviewContent({
   venueAddress,
   venueCapacity,
   venueAttendance,
+  highlights,
   weather,
   isChampionship,
   state,
@@ -145,16 +159,40 @@ export default function GamePreviewContent({
           isDark
         />
 
+        <LastFiveGames
+          homeId={homeId}
+          awayId={awayId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeGames={homeLastGames}
+          awayGames={awayLastGames}
+          league={league}
+          state={state}
+          isDark
+        />
+
+        <Highlights highlights={highlights} isDark />
+
         <TeamInjuries
           injuries={injuries}
-          awayId={awayEspnId}
-          homeId={homeEspnId}
+          awayId={awayId}
+          homeId={homeId}
           homeCode={homeCode}
           awayCode={awayCode}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
           state={state}
           league={league}
+          isDark
+        />
+
+        <HeadCoaches
+          homeName={homeName}
+          awayName={awayName}
+          homeCoach={homeCoach}
+          awayCoach={awayCoach}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           isDark
         />
 

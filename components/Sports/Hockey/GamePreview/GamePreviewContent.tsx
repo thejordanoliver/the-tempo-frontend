@@ -7,21 +7,22 @@ import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/G
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
+import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 
 type GamePreviewContentProps = {
-  homeTeamId: number;
+  homeId: number;
+  awayId: number;
   homeColor: string;
   homeName: string;
   homeCode: string;
   homeLogo: any;
-  awayTeamId: number;
   awayColor: string;
   awayName: string;
   awayCode: string;
   awayLogo: any;
   lineScore: any;
-  homeLastGames: { games: any[] };
-  awayLastGames: { games: any[] };
+  homeLastGames: LastFiveGame[];
+  awayLastGames: LastFiveGame[];
   venueImage?: any;
   venueName?: string;
   venueLocation?: string;
@@ -36,8 +37,8 @@ type GamePreviewContentProps = {
 };
 
 export default function GamePreviewContent({
-  homeTeamId,
-  awayTeamId,
+  homeId,
+  awayId,
   homeCode,
   awayCode,
   homeName,
@@ -72,21 +73,16 @@ export default function GamePreviewContent({
         />
 
         <LastFiveGames
-          away={{
-            teamId: awayTeamId,
-            teamCode: awayCode,
-            games: awayLastGames.games,
-          }}
-          home={{
-            teamId: homeTeamId,
-            teamCode: homeCode,
-            games: homeLastGames.games,
-          }}
-          isDark
+          homeId={homeId}
+          awayId={awayId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeGames={homeLastGames}
+          awayGames={awayLastGames}
           league={league}
           state={state}
+          isDark
         />
-
         <GameLocation
           venueImage={venueImage}
           venueName={venueName}

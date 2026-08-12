@@ -1,4 +1,5 @@
 // ---- LastFiveGames.tsx ----
+
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
@@ -16,10 +17,30 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { lastFiveGameStyles } from "styles/GameDetailStyles/LastFiveGames.styles";
 
-type LastFiveGame = {
+type Opponent = {
+  id?: number | string;
+  name?: string;
+  code?: string;
+  abbreviation?: string;
+};
+
+type ResolvedTeam = {
+  name?: string;
+  code?: string;
+  abbreviation?: string;
+};
+
+export type LastFiveGame = {
   id: number;
   date: string;
   homeTeam?: string;
@@ -29,128 +50,183 @@ type LastFiveGame = {
   isHome: boolean;
   won: boolean;
   opponentId?: number | null;
-  opponent?: string | { id?: number; name?: string; code?: string };
-  opponentLogo?: any;
-};
-
-type TeamData = {
-  teamId?: number;
-  teamCode: string | undefined;
-  games: LastFiveGame[];
+  opponent?: string | Opponent | null;
+  opponentLogo?: ImageSourcePropType | string | null;
 };
 
 type Props = {
   isDark: boolean;
-  home: TeamData;
-  away: TeamData;
+  homeId: number;
+  awayId: number;
+  homeCode: string;
+  awayCode: string;
+  homeGames: LastFiveGame[];
+  awayGames: LastFiveGame[];
   league: string;
   state?: string | null;
 };
 
 export default function LastFiveGames({
   isDark,
-  home,
-  away,
+  homeId,
+  awayId,
+  homeCode,
+  awayCode,
+  homeGames,
+  awayGames,
   league,
   state,
 }: Props) {
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
-  const team = selectedTab === "away" ? home : away;
-
   const styles = lastFiveGameStyles(isDark);
 
-  const resolveTeam = (teamId?: number | null) => {
-    if (!teamId) return undefined;
+  const hasHomeGames = homeGames.length > 0;
+  const hasAwayGames = awayGames.length > 0;
+
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>(
+    hasAwayGames ? "away" : "home",
+  );
+
+  const selectedGames = selectedTab === "away" ? awayGames : homeGames;
+
+  const resolveTeam = (teamId?: number | null): ResolvedTeam | undefined => {
+    if (teamId == null) {
+      return undefined;
+    }
 
     switch (league) {
       case "nba":
         return getNBATeam(teamId);
+
       case "summercalifornia":
+      case "summervegas":
+      case "summerutah":
         return getTeamBySummerId(teamId);
+
       case "wnba":
         return getWNBATeam(teamId);
+
       case "nfl":
         return getNFLTeam(teamId);
+
       case "ufl":
         return getUFLTeam(teamId);
+
       case "nhl":
         return getNHLTeam(teamId);
+
       case "mlb":
         return getMLBTeam(teamId);
+
       case "cb":
         return getCBTeam(teamId);
+
       case "sb":
         return getSBTeam(teamId);
+
       case "cbb":
         return getCBBTeam(teamId);
+
       case "wcbb":
         return getWCBBTeam(teamId);
+
       case "cfb":
         return getCFBTeam(teamId);
+
       case "socc":
+      case "soccer":
         return getSOCCTeam(teamId);
+
       default:
         return undefined;
     }
   };
 
   const resolveLogo = (teamId?: number | null) => {
-    if (!teamId) return undefined;
+    if (teamId == null) {
+      return undefined;
+    }
 
     switch (league) {
       case "nba":
-        return getTeamLogo(teamId, isDark);
       case "summercalifornia":
-        return getTeamLogo(teamId, isDark);
       case "summervegas":
-        return getTeamLogo(teamId, isDark);
       case "summerutah":
         return getTeamLogo(teamId, isDark);
+
       case "wnba":
         return getWNBATeamLogo(teamId, isDark);
+
       case "nfl":
         return getNFLTeamLogo(teamId, isDark);
+
       case "ufl":
         return getUFLTeamLogo(teamId, isDark);
+
       case "nhl":
         return getNHLTeamLogo(teamId, isDark);
+
       case "mlb": {
-        const mlbTeam = getMLBTeam(teamId);
-        return getMLBTeamLogo(mlbTeam?.id ?? teamId, isDark);
+        return getMLBTeamLogo(teamId, isDark);
       }
+
       case "cb":
         return getCBTeamLogo(teamId, isDark);
+
       case "sb":
         return getSBTeamLogo(teamId, isDark);
+
       case "cbb":
         return getCBBTeamLogo(teamId, isDark);
+
       case "wcbb":
         return getWCBBTeamLogo(teamId, isDark);
+
       case "cfb":
         return getCFBTeamLogo(teamId, isDark);
+
       case "socc":
+      case "soccer":
         return getSOCCTeamLogo(teamId, isDark);
+
       default:
         return undefined;
     }
   };
 
-  const getOpponentId = (item: LastFiveGame) => {
-    if (item.opponentId) return item.opponentId;
+  const getOpponentId = (item: LastFiveGame): number | null => {
+    if (item.opponentId != null) {
+      return item.opponentId;
+    }
 
-    if (typeof item.opponent === "object" && item.opponent?.id) {
-      return Number(item.opponent.id);
+    if (typeof item.opponent === "object" && item.opponent?.id != null) {
+      const parsedId = Number(item.opponent.id);
+
+      return Number.isFinite(parsedId) ? parsedId : null;
     }
 
     return null;
   };
 
-  const getOpponentCode = (item: LastFiveGame, fallbackTeam?: any) => {
-    if (fallbackTeam?.code) return fallbackTeam.code;
+  const getOpponentCode = (item: LastFiveGame, fallbackTeam?: ResolvedTeam) => {
+    if (fallbackTeam?.code) {
+      return fallbackTeam.code;
+    }
 
-    if (typeof item.opponent === "string") return item.opponent;
+    if (fallbackTeam?.abbreviation) {
+      return fallbackTeam.abbreviation;
+    }
 
-    return item.opponent?.code || item.opponent?.name || "TBD";
+    if (typeof item.opponent === "string") {
+      return item.opponent;
+    }
+
+    return (
+      item.opponent?.code ??
+      item.opponent?.abbreviation ??
+      item.opponent?.name ??
+      fallbackTeam?.name ??
+      "TBD"
+    );
   };
 
   const renderRow = ({
@@ -165,10 +241,14 @@ export default function LastFiveGames({
     const resultColor = item.won ? styles.colors.win : styles.colors.loss;
 
     const opponentId = getOpponentId(item);
-
     const opponent = resolveTeam(opponentId);
-    const opponentLogo = resolveLogo(opponentId);
+    const resolvedOpponentLogo = resolveLogo(opponentId);
+    const opponentLogo = resolvedOpponentLogo ?? item.opponentLogo;
     const opponentCode = getOpponentCode(item, opponent);
+
+    const selectedTeamScore = item.isHome ? item.homeScore : item.awayScore;
+
+    const opponentScore = item.isHome ? item.awayScore : item.homeScore;
 
     return (
       <View
@@ -176,18 +256,18 @@ export default function LastFiveGames({
           styles.row,
           {
             borderBottomWidth:
-              index === team.games.length - 1 ? 0 : StyleSheet.hairlineWidth,
+              index === selectedGames.length - 1 ? 0 : StyleSheet.hairlineWidth,
           },
         ]}
       >
         <Text style={[styles.cell, styles.date]}>{item.date}</Text>
 
         <View style={[styles.cell, styles.teamWithLogo]}>
-          <Text style={styles.matchupText}>
+          <Text style={styles.matchupText} numberOfLines={1}>
             {matchupSymbol} {opponentCode}
           </Text>
 
-          {opponentLogo && (
+          {opponentLogo ? (
             <Image
               source={
                 typeof opponentLogo === "string"
@@ -197,23 +277,23 @@ export default function LastFiveGames({
               style={styles.opponentLogo}
               resizeMode="contain"
             />
-          )}
+          ) : null}
         </View>
 
         <Text style={[styles.cell, { color: resultColor }]}>
-          {resultSymbol} {item.isHome ? item.homeScore : item.awayScore} -{" "}
-          {item.isHome ? item.awayScore : item.homeScore}
+          {resultSymbol} {selectedTeamScore} - {opponentScore}
         </Text>
       </View>
     );
   };
 
-  const hasHomeGames = home?.games?.length > 0;
-  const hasAwayGames = away?.games?.length > 0;
+  if (!hasHomeGames && !hasAwayGames) {
+    return null;
+  }
 
-  if (!hasHomeGames && !hasAwayGames) return null;
-
-  if (state === "post") return null;
+  if (state === "post") {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -222,14 +302,14 @@ export default function LastFiveGames({
       <View style={styles.wrapper}>
         <HomeAwayTabBar
           awayTeam={{
-            id: away.teamId ?? 0,
-            name: away.teamCode || "AWAY",
-            logo: resolveLogo(away.teamId),
+            id: awayId,
+            name: awayCode || "AWAY",
+            logo: resolveLogo(awayId),
           }}
           homeTeam={{
-            id: home.teamId ?? 0,
-            name: home.teamCode || "HOME",
-            logo: resolveLogo(home.teamId),
+            id: homeId,
+            name: homeCode || "HOME",
+            logo: resolveLogo(homeId),
           }}
           selected={selectedTab}
           onTabPress={setSelectedTab}
@@ -238,20 +318,23 @@ export default function LastFiveGames({
         />
 
         <FlatList
-          data={team.games}
-          keyExtractor={(item) => item.id.toString()}
+          data={selectedGames}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={renderRow}
           scrollEnabled={false}
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.empty}>No recent games.</Text>
-            </View>
-          }
+          showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <View style={styles.headerRow}>
               <Text style={[styles.cell, styles.date]}>Date</Text>
+
               <Text style={[styles.cell, styles.teamHeader]}>Matchup</Text>
+
               <Text style={styles.cell}>Result</Text>
+            </View>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.empty}>No recent games.</Text>
             </View>
           }
         />

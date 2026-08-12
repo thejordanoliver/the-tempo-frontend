@@ -13,7 +13,7 @@ import * as Haptics from "expo-haptics";
 import { usePathname, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
-import type { LeagueType, Team } from "types/types";
+import type { Team } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
 
@@ -35,13 +35,10 @@ export function useFavoriteTeams() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGridView, setIsGridView] = useState(true);
   const [ready, setReady] = useState(false);
-
   const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const loadRequestId = useRef(0);
-
   const router = useRouter();
   const pathname = usePathname();
 
@@ -69,18 +66,29 @@ export function useFavoriteTeams() {
     [],
   );
 
-  const filteredTeams = useMemo(() => {
-    const query = search.trim().toLowerCase();
+const filteredTeams = useMemo(() => {
+  const query = search.trim().toLowerCase();
 
-    if (!query) {
-      return allTeams;
+  return allTeams.filter((team) => {
+    const isEligible =
+      team.isAllStar !== true &&
+      team.isNational !== true &&
+      team.isActive !== false;
+
+    if (!isEligible) {
+      return false;
     }
 
-    return allTeams.filter((team) =>
-      (team.fullName ?? team.name ?? "").toLowerCase().includes(query),
-    );
-  }, [allTeams, search]);
+    if (!query) {
+      return true;
+    }
 
+    const teamName = team.fullName ?? team.name ?? "";
+    const teamLeague = team.league
+
+    return teamName.toLowerCase().includes(query) || teamLeague.toLowerCase().includes(query);
+  });
+}, [allTeams, search]);
   /* ---------------- CLEAR FAVORITES ---------------- */
 
   const clearFavorites = useCallback(() => {
@@ -233,7 +241,7 @@ export function useFavoriteTeams() {
   /* ---------------- TOGGLE FAVORITE ---------------- */
 
   const toggleFavorite = useCallback(
-    (league: LeagueType, id: string | number) => {
+    (league: string, id: string | number) => {
       const key = buildKey(league, id);
 
       setFavorites((previousFavorites) => {

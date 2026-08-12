@@ -61,7 +61,7 @@ const HeaderWithSeeAllStyles = (isDark: boolean) =>
       gap: 2,
     },
     seeAll: {
-      color: isDark ? Colors.dark.blue : Colors.light.blue,
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 14,
       fontFamily: Fonts.OSBOLD,
     },

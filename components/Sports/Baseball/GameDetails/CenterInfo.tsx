@@ -44,7 +44,7 @@ export function CenterInfo({
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const endOfInning = gameStatusDescription === "End of Inning";
+  const endOfInning = gameStatusDetail.includes("End");
   const isDelayed =
     gameStatusDescription === "Delayed" ||
     gameStatusDescription === "Rain Delay";
@@ -101,10 +101,10 @@ export function CenterInfo({
         )}
 
         {/* 🕒 In Progress */}
-        {endOfInning && !inProgress && !isDelayed && (
+        {endOfInning && (
           <View>
             <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>{gameStatusDescription}</Text>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
             </View>
           </View>
         )}

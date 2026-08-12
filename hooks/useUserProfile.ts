@@ -8,22 +8,21 @@ import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
+import { wcbbTeams } from "constants/teamsWCBB";
 import { wnbaTeams } from "constants/teamsWNBA";
-import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import type { FavoriteLeague } from "types/favorites";
-import type { WCBBTeam } from "types/types";
 import { isFavoriteLeague } from "types/favorites";
 import { apiClient } from "utils/apiClient";
 import {
   clearExpiredUserProfileCache,
   getCachedUserProfile,
   setCachedUserProfile,
+  USER_PROFILE_CACHE_VERSION,
   type CachedUserProfilePayload,
   type UserProfileCacheState,
-  USER_PROFILE_CACHE_VERSION,
 } from "utils/userProfileCache";
 
 type TeamLookupItem = {
@@ -63,9 +62,7 @@ type DisplayProfile = {
   updatedAt: string | null;
 };
 
-const createTeamLookup = <T extends TeamLookupItem>(
-  teamList: readonly T[],
-) => {
+const createTeamLookup = <T extends TeamLookupItem>(teamList: readonly T[]) => {
   const lookup = new Map<string, T>();
 
   teamList.forEach((team) => {
@@ -186,8 +183,7 @@ export function useUserProfile(userId?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasCachedProfile, setHasCachedProfile] = useState(false);
-  const [cacheState, setCacheState] =
-    useState<UserProfileCacheState>("none");
+  const [cacheState, setCacheState] = useState<UserProfileCacheState>("none");
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [hasLoadedCurrentUserId, setHasLoadedCurrentUserId] = useState(false);
 
@@ -213,22 +209,23 @@ export function useUserProfile(userId?: string) {
 
   const { shouldRestore, targetUserId, type, openModal, clearRestore } =
     useFollowersStore();
-  const { teams: wcbbTeams } = useLeagueTeams("WCBB");
 
-  const teamLookups = useMemo<Record<FavoriteLeague, Map<string, TeamLookupItem>>>(
+  const teamLookups = useMemo<
+    Record<FavoriteLeague, Map<string, TeamLookupItem>>
+  >(
     () => ({
       NBA: createTeamLookup(teams),
       WNBA: createTeamLookup(wnbaTeams),
       NFL: createTeamLookup(nflTeams),
       CFB: createTeamLookup(cfbTeams),
       CBB: createTeamLookup(cbbTeams),
-      WCBB: createTeamLookup(wcbbTeams as WCBBTeam[]),
+      WCBB: createTeamLookup(wcbbTeams),
       MLB: createTeamLookup(mlbTeams),
       CB: createTeamLookup(cbTeams),
       SB: createTeamLookup(sbTeams),
       NHL: createTeamLookup(nhlTeams),
     }),
-    [wcbbTeams],
+    [],
   );
 
   activeProfileKeyRef.current =
@@ -532,10 +529,8 @@ export function useUserProfile(userId?: string) {
           const team = teamLookups[league].get(id);
           return team ? { ...team, league } : null;
         })
-        .filter(
-          (team): team is FavoriteTeamWithLeague => team !== null,
-        ),
-    [favorites],
+        .filter((team): team is FavoriteTeamWithLeague => team !== null),
+    [favorites, teamLookups],
   );
 
   const refreshProfile = useCallback(

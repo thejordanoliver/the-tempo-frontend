@@ -4,6 +4,7 @@ import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
@@ -70,8 +71,6 @@ export default function FootballGamePreviewModal({
 
   const homeId = game?.home?.id ?? 0;
   const awayId = game?.away?.id ?? 0;
-  const homeEspnId = game?.home?.espnId ?? 0;
-  const awayEspnId = game?.away?.espnId ?? 0;
 
   const homeTeam = isNFL
     ? getNFLTeam(homeId)
@@ -101,9 +100,19 @@ export default function FootballGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
+  const homeName = homeTeam?.fullName ?? "";
+  const awayName = awayTeam?.fullName ?? "";
+
   const { score, details } = useFootballGameDetails(LEAGUE, gameId);
-  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
-  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
+  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
+  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
+
   const state = score?.status?.state;
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
@@ -148,6 +157,7 @@ export default function FootballGamePreviewModal({
     : undefined;
   const teamStats = score?.teamStats ?? [];
   const leaders = score?.leaders ?? [];
+  const highlights = details?.highlights ?? [];
   const injuries = details?.injuries ?? [];
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "football", id: venueId });
@@ -278,38 +288,42 @@ export default function FootballGamePreviewModal({
                 />
               </View>
 
+              {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
+                  state={state}
                   homeId={homeId}
-                  homeEspnId={homeEspnId}
-                  awayEspnId={awayEspnId}
-                  homeLogo={homeLogo}
-                  homeCode={homeCode}
-                  homeColor={homeColor}
-                  homeLastGames={homeLastGames}
                   awayId={awayId}
+                  homeColor={homeColor}
+                  homeName={homeName}
+                  homeLogo={homeLogo}
                   awayLogo={awayLogo}
                   awayCode={awayCode}
                   awayColor={awayColor}
-                  awayLastGames={awayLastGames}
+                  awayName={awayName}
+                  homeCode={homeCode}
                   homeChance={homeChance}
                   awayChance={awayChance}
+                  homeCoach={homeCoach}
+                  awayCoach={awayCoach}
                   lineScore={lineScore}
                   teamStats={teamStats}
-                  leaders={leaders}
                   injuries={injuries}
-                  weather={weather}
-                  venueImage={venueImage}
-                  venueCapacity={venueCapacity}
-                  venueName={venueName}
-                  venueLocation={venueLocation}
-                  venueSurface={venueSurface}
-                  venueAddress={venueAddress}
-                  venueAttendance={venueAttendance}
-                  state={state}
+                  homeLastGames={homeLastGames}
+                  awayLastGames={awayLastGames}
                   officials={officials}
-                  isChampionship={isChampionship}
+                  highlights={highlights}
+                  venueImage={venueImage}
+                  venueLocation={venueLocation}
+                  venueName={venueName}
+                  venueAddress={venueAddress}
+                  venueCapacity={venueCapacity}
+                  venueAttendance={venueAttendance}
+                  venueSurface={venueSurface}
+                  leaders={leaders}
+                  weather={weather}
                   league={LEAGUE}
+                  isChampionship={isChampionship}
                 />
               )}
             </>

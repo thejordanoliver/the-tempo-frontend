@@ -10,23 +10,23 @@ import {
   PlayerStatsByTeam,
   TeamStat,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
+import { Coach } from "@/hooks/useTeams";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import BoxScore from "../GameDetails/BoxScore";
 import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
 
 type GamePreviewContentProps = {
   homeId: number;
-  homeEspnId: number;
   homeColor: string;
   homeCode: string;
   homeName: string;
   homeLogo: any;
   awayId: number;
-  awayEspnId: number;
   awayColor: string;
   awayCode: string;
   awayName: string;
@@ -37,8 +37,10 @@ type GamePreviewContentProps = {
     home: string[];
     away: string[];
   };
-  homeLastGames: { games: any[] };
-  awayLastGames: { games: any[] };
+  homeLastGames: LastFiveGame[];
+  awayLastGames: LastFiveGame[];
+  homeCoach: Coach | undefined | null;
+  awayCoach: Coach | undefined | null;
   homeHits: number | null;
   awayHits: number | null;
   homeRuns: number | null;
@@ -63,7 +65,7 @@ type GamePreviewContentProps = {
   weather?: any;
   gameStatusDescription: string;
   league: string;
-  state?: "pre" | "in"| "post" | null;
+  state?: "pre" | "in" | "post" | null;
   isChampionship: boolean;
   highlights: Highlight[];
   isMLB: boolean;
@@ -71,13 +73,11 @@ type GamePreviewContentProps = {
 
 export default function GamePreviewContent({
   homeId,
-  homeEspnId,
   homeColor,
   homeCode,
   homeName,
   homeLogo,
   awayId,
-  awayEspnId,
   awayColor,
   awayCode,
   awayName,
@@ -174,16 +174,12 @@ export default function GamePreviewContent({
         <Officials officials={officials ?? []} isDark state={state} />
 
         <LastFiveGames
-          home={{
-            teamId: homeId,
-            teamCode: homeCode,
-            games: homeLastGames.games,
-          }}
-          away={{
-            teamId: awayId,
-            teamCode: awayCode,
-            games: awayLastGames.games,
-          }}
+          homeId={homeId}
+          awayId={awayId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeGames={homeLastGames}
+          awayGames={awayLastGames}
           league={league}
           state={state}
           isDark
@@ -191,17 +187,16 @@ export default function GamePreviewContent({
 
         <TeamInjuries
           injuries={injuries}
-          homeId={homeEspnId}
-          awayId={awayEspnId}
+          homeId={homeId}
+          awayId={awayId}
           homeCode={homeCode}
           awayCode={awayCode}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
-          isDark
           state={state}
           league={league}
+          isDark
         />
-
         <GameLocation
           venueImage={venueImage}
           venueName={venueName}

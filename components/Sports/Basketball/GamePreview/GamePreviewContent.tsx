@@ -1,15 +1,19 @@
 import {
   GameLocation,
   GameTeamStats,
-  HighlightVideoList,
+  HeadCoaches,
+  Highlights,
   LineScore,
   MatchupPredictor,
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+import LastFiveGames, {
+  LastFiveGame,
+} from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { Coach } from "@/hooks/useTeams";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
@@ -33,12 +37,14 @@ type GamePreviewContentProps = {
     home: string[];
     away: string[];
   };
-  homeLastGames: { games: any[] };
-  awayLastGames: { games: any[] };
+  homeLastGames: LastFiveGame[];
+  awayLastGames: LastFiveGame[];
   playerStats: any[];
   teamStats: any[];
   officials: Official[];
   highlights: Highlight[];
+  homeCoach: Coach | undefined | null;
+  awayCoach: Coach | undefined | null;
   error?: string | null;
   leaders: any;
   venueImage?: any;
@@ -67,6 +73,8 @@ export default function GamePreviewContent({
   awayChance,
   lineScore,
   highlights,
+  homeCoach,
+  awayCoach,
   homeLastGames,
   awayLastGames,
   playerStats,
@@ -95,7 +103,7 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeCode={homeCode}
           league={league}
-          isDark={true}
+          isDark
           state={state}
         />
 
@@ -109,7 +117,7 @@ export default function GamePreviewContent({
           awayChance={awayChance}
           awayColor={awayColor}
           size={180}
-          isDark={true}
+          isDark
           state={state}
         />
 
@@ -120,7 +128,7 @@ export default function GamePreviewContent({
           awayId={awayId}
           awayLogo={awayLogo}
           state={state}
-          isDark={true}
+          isDark
         />
 
         <BoxScore
@@ -131,7 +139,7 @@ export default function GamePreviewContent({
           awayId={awayId}
           awayName={awayName}
           awayLogo={awayLogo}
-          isDark={true}
+          isDark
           league={league}
           state={state}
         />
@@ -145,28 +153,33 @@ export default function GamePreviewContent({
           homeLogo={homeLogo}
           homeColor={homeColor}
           state={state}
-          isDark={true}
+          isDark
         />
 
         <LastFiveGames
-          home={{
-            teamId: homeId,
-            teamCode: homeCode,
-            games: homeLastGames.games,
-          }}
-          away={{
-            teamId: awayId,
-            teamCode: awayCode,
-            games: awayLastGames.games,
-          }}
+          homeId={homeId}
+          awayId={awayId}
+          homeCode={homeCode}
+          awayCode={awayCode}
+          homeGames={homeLastGames}
+          awayGames={awayLastGames}
           league={league}
           state={state}
-          isDark={true}
+          isDark
+        />
+        <Highlights highlights={highlights} isDark />
+
+        <HeadCoaches
+          homeName={homeName}
+          awayName={awayName}
+          homeCoach={homeCoach}
+          awayCoach={awayCoach}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
+          isDark
         />
 
-        <HighlightVideoList highlights={highlights} isDark={true} />
-
-        <Officials officials={officials} isDark={true} state={state} />
+        <Officials officials={officials} isDark state={state} />
 
         <GameLocation
           venueImage={venueImage}
@@ -176,7 +189,7 @@ export default function GamePreviewContent({
           venueCapacity={venueCapacity}
           venueAttendance={venueAttendance}
           weather={weather}
-          isDark={true}
+          isDark
         />
       </View>
     </BottomSheetScrollView>

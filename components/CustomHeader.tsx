@@ -1629,18 +1629,6 @@ export function CustomHeader({
               />
             </TouchableOpacity>
           </View>
-        ) : tabName === "League" && onCalendarPress ? (
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            onPress={onCalendarPress}
-            hitSlop={8}
-          >
-            <Ionicons
-              name="calendar-outline"
-              size={24}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
         ) : tabName === "Explore" && onSearchToggle ? (
           <TouchableOpacity
             activeOpacity={activeOpacity}

@@ -158,6 +158,10 @@ export const profileStyles = (
       paddingHorizontal: 12,
       paddingBottom: 100,
     },
+    bookmarkContainer: {
+      marginTop: 20,
+      paddingBottom: 100,
+    },
     favoritesHeader: { flexDirection: "row", justifyContent: "space-between" },
   });
 };

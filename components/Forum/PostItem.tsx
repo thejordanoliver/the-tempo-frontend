@@ -1,5 +1,4 @@
 // components/Forum/PostItem.tsx
-
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
@@ -34,11 +33,14 @@ export interface Post {
   profile_image: string | null;
   text: string;
   likes: number;
+  bookmarks?: number;
   shares: number;
   comments_count: number;
   created_at: string;
   user_id: string | number;
   liked_by_current_user: boolean;
+  bookmarked_by_current_user?: boolean;
+  bookmarked?: boolean;
   images?: string[];
   videos?: string[];
   video_thumbnails?: (string | null)[];
@@ -51,8 +53,14 @@ interface PostItemProps {
   deletePost: (postId: string) => void;
   editPost: (postId: string, newText: string) => void;
   onImagePress: (uri: string, caption?: string) => void;
+  onBookmarkChange?: (post: Post, bookmarked: boolean) => void;
   disableCommentNavigation?: boolean;
 }
+
+type ForumBookmarkMutationResponse<TPost = unknown> = {
+  post?: TPost;
+  didChangeBookmark?: boolean;
+};
 
 type PostSubmenuProps = {
   visible: boolean;
@@ -188,6 +196,7 @@ export const PostItem = memo(function PostItem({
   currentUserId,
   deletePost,
   editPost,
+  onBookmarkChange,
   disableCommentNavigation,
 }: PostItemProps) {
   const { likes, setLike } = useLikesStore();
@@ -202,7 +211,12 @@ export const PostItem = memo(function PostItem({
   } | null>(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
   const [likePending, setLikePending] = useState(false);
+  const [bookmarkPending, setBookmarkPending] = useState(false);
   const [sharePending, setSharePending] = useState(false);
+  const [bookmarked, setBookmarked] = useState(
+    Boolean(item.bookmarked_by_current_user ?? item.bookmarked),
+  );
+  const [bookmarkCount, setBookmarkCount] = useState(item.bookmarks ?? 0);
   const [shareCount, setShareCount] = useState(item.shares ?? 0);
 
   const router = useRouter();
@@ -243,6 +257,11 @@ export const PostItem = memo(function PostItem({
   useEffect(() => {
     setShareCount(item.shares ?? 0);
   }, [item.shares]);
+
+  useEffect(() => {
+    setBookmarked(Boolean(item.bookmarked_by_current_user ?? item.bookmarked));
+    setBookmarkCount(item.bookmarks ?? 0);
+  }, [item.bookmarked, item.bookmarked_by_current_user, item.bookmarks]);
 
   const likeState = useLikesStore((state) => state.likes[item.id]);
   const liked = likeState?.liked ?? item.liked_by_current_user;
@@ -321,6 +340,69 @@ export const PostItem = memo(function PostItem({
       });
     } finally {
       setLikePending(false);
+    }
+  };
+
+  const handleBookmarkPress = async () => {
+    if (bookmarkPending) return;
+
+    const previousBookmarked = bookmarked;
+    const previousCount = bookmarkCount;
+    const nextBookmarked = !previousBookmarked;
+    const optimisticCount = Math.max(
+      previousCount + (nextBookmarked ? 1 : -1),
+      0,
+    );
+
+    setBookmarked(nextBookmarked);
+    setBookmarkCount(optimisticCount);
+    setBookmarkPending(true);
+
+    try {
+      const response = await apiClient.patch<
+        ForumBookmarkMutationResponse<Partial<Post>>
+      >(`/api/forum/post/${item.id}/bookmark`, {
+        bookmark: nextBookmarked,
+      });
+
+      const serverPost = response.data.post;
+      const serverBookmarked =
+        typeof serverPost?.bookmarked_by_current_user === "boolean"
+          ? serverPost.bookmarked_by_current_user
+          : nextBookmarked;
+      const serverBookmarkCount =
+        typeof serverPost?.bookmarks === "number"
+          ? serverPost.bookmarks
+          : optimisticCount;
+
+      setBookmarked(serverBookmarked);
+      setBookmarkCount(serverBookmarkCount);
+
+      onBookmarkChange?.(
+        {
+          ...item,
+          ...serverPost,
+          bookmarked_by_current_user: serverBookmarked,
+          bookmarks: serverBookmarkCount,
+        },
+        serverBookmarked,
+      );
+    } catch (err: unknown) {
+      setBookmarked(previousBookmarked);
+      setBookmarkCount(previousCount);
+
+      const message = isAxiosError<{ error?: string }>(err)
+        ? err.response?.data?.error || err.message || "Failed to bookmark post"
+        : err instanceof Error
+          ? err.message
+          : "Failed to bookmark post";
+
+      setFeedbackModal({
+        title: "Bookmark failed",
+        message,
+      });
+    } finally {
+      setBookmarkPending(false);
     }
   };
 
@@ -560,13 +642,21 @@ export const PostItem = memo(function PostItem({
                 </View>
 
                 <View style={styles.rightSide}>
-                  <TouchableOpacity style={styles.likeButtonContainer}>
-                    <Text style={styles.count}>0</Text>
+                  <TouchableOpacity
+                    onPress={handleBookmarkPress}
+                    disabled={bookmarkPending}
+                    style={[
+                      styles.likeButtonContainer,
+                      bookmarkPending && { opacity: 0.6 },
+                    ]}
+                  >
+                    <Text style={styles.count}>{bookmarkCount}</Text>
 
                     <Ionicons
                       name="bookmark-outline"
                       size={28}
                       color={isDark ? Colors.white : Colors.black}
+                      weight={bookmarked ? "Filled" : "Outline"}
                     />
                   </TouchableOpacity>
 

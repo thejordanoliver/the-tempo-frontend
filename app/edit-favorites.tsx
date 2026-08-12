@@ -1,3 +1,4 @@
+import FavoriteTeamsSelectorSkeleton from "@/components/Skeletons/FavoriteTeamsSelectorSkeleton";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
@@ -8,7 +9,6 @@ import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
-
 export default function EditFavoritesScreen() {
   const {
     search,
@@ -65,6 +65,21 @@ export default function EditFavoritesScreen() {
     if (success) router.back();
   }, [router, saveFavorites]);
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <FavoriteTeamsSelectorSkeleton
+          isGridView={isGridView}
+          itemWidth={itemWidth}
+          fadeAnim={fadeAnim}
+        />
+        <View style={styles.buttonContainer}>
+          <Button onPress={handleSave} isDark={isDark} disabled />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FavoriteTeamsSelector
@@ -76,7 +91,6 @@ export default function EditFavoritesScreen() {
         search={search}
         itemWidth={itemWidth}
         setSearch={setSearch}
-        loading={isLoading}
       />
 
       <View style={styles.buttonContainer}>

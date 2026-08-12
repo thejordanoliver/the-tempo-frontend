@@ -72,6 +72,7 @@ export default function PlayersOnCourt({
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
   const router = useRouter();
+  const leagueId = league.toUpperCase();
 
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
@@ -126,7 +127,7 @@ export default function PlayersOnCourt({
                     params: {
                       id: String(playerId),
                       teamId: teamId != null ? String(teamId) : undefined,
-                      league,
+                      leagueId,
                     },
                   });
                 }}

@@ -364,7 +364,7 @@ import WisconsinRiverFallsLogo from "../assets/College_Logos/WisconsinRiverFalls
 import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
-import { Team } from "@/types/types";
+import { Team } from "@/types/team";
 
 export const cfbTeams: Team[] = [
   {
@@ -383,6 +383,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -401,6 +402,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -419,6 +421,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -437,6 +440,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -455,6 +459,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 221,
@@ -473,6 +478,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -492,6 +498,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -511,6 +518,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -529,6 +537,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -548,6 +557,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -566,6 +576,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -585,6 +596,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -604,6 +616,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -622,6 +635,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -640,6 +654,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -658,6 +673,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -676,6 +692,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -695,6 +712,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -713,6 +731,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -731,6 +750,7 @@ export const cfbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -750,6 +770,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -769,6 +790,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -787,6 +809,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -805,6 +828,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -823,6 +847,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -841,6 +866,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -859,6 +885,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -877,6 +904,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -895,6 +923,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -913,6 +942,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -931,6 +961,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -949,6 +980,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -967,6 +999,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -986,6 +1019,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1004,6 +1038,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1023,6 +1058,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1041,6 +1077,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1059,6 +1096,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1077,6 +1115,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1095,6 +1134,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1113,6 +1153,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1131,6 +1172,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1149,6 +1191,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1167,6 +1210,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1185,6 +1229,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1203,6 +1248,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1222,6 +1268,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1240,6 +1287,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1258,6 +1306,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1276,6 +1325,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1294,6 +1344,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1312,6 +1363,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1330,6 +1382,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1349,6 +1402,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1368,6 +1422,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1386,6 +1441,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1404,6 +1460,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1422,6 +1479,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1440,6 +1498,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1459,6 +1518,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1477,6 +1537,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1495,6 +1556,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1513,6 +1575,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1532,6 +1595,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1551,6 +1615,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1569,6 +1634,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1587,6 +1653,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1605,6 +1672,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1623,6 +1691,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1641,6 +1710,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1660,6 +1730,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1678,6 +1749,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1697,6 +1769,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1716,6 +1789,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1734,6 +1808,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1752,6 +1827,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1770,6 +1846,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1788,6 +1865,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1806,6 +1884,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1825,6 +1904,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1843,6 +1923,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1861,6 +1942,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1880,6 +1962,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1898,6 +1981,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1916,6 +2000,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1934,6 +2019,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1953,6 +2039,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1971,6 +2058,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -1989,6 +2077,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2007,6 +2096,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2025,6 +2115,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2043,6 +2134,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2062,6 +2154,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2080,6 +2173,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2099,6 +2193,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2117,6 +2212,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2135,6 +2231,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2154,6 +2251,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2172,6 +2270,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2191,6 +2290,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2209,6 +2309,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2228,6 +2329,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2246,6 +2348,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2264,6 +2367,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2283,6 +2387,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2302,6 +2407,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2321,6 +2427,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2339,6 +2446,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2358,6 +2466,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2376,6 +2485,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2394,6 +2504,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2412,6 +2523,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2430,6 +2542,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2448,6 +2561,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2466,6 +2580,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2484,6 +2599,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2502,6 +2618,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2520,6 +2637,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2538,6 +2656,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2556,6 +2675,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2574,6 +2694,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2592,6 +2713,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2610,6 +2732,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2628,6 +2751,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2646,6 +2770,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2664,6 +2789,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2682,6 +2808,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2700,6 +2827,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2718,6 +2846,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2736,6 +2865,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2754,6 +2884,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2773,6 +2904,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2791,6 +2923,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2809,6 +2942,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2828,6 +2962,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2847,6 +2982,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2865,6 +3001,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2884,6 +3021,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2902,6 +3040,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2920,6 +3059,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2939,6 +3079,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2958,6 +3099,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2977,6 +3119,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -2996,6 +3139,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3014,6 +3158,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3033,6 +3178,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3051,6 +3197,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3069,6 +3216,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3087,6 +3235,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3105,6 +3254,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3123,6 +3273,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3142,6 +3293,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 164,
@@ -3159,6 +3311,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 393,
@@ -3176,6 +3329,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3195,6 +3349,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3213,6 +3368,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3231,6 +3387,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3250,6 +3407,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3269,6 +3427,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 454,
@@ -3287,6 +3446,7 @@ export const cfbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 302,
@@ -3305,6 +3465,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 731,
@@ -3323,6 +3484,7 @@ export const cfbTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 518,
@@ -3341,6 +3503,7 @@ export const cfbTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 678,
@@ -3359,6 +3522,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 860,
@@ -3377,6 +3541,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3396,6 +3561,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 157,
@@ -3413,6 +3579,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 652,
@@ -3431,6 +3598,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 254,
@@ -3449,6 +3617,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3467,6 +3636,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 58,
@@ -3484,6 +3654,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3502,6 +3673,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3520,6 +3692,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3538,6 +3711,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3556,6 +3730,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3574,6 +3749,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3593,6 +3769,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3612,6 +3789,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3630,6 +3808,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3648,6 +3827,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3666,6 +3846,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3684,6 +3865,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3702,6 +3884,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3720,6 +3903,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3738,6 +3922,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3756,6 +3941,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3774,6 +3960,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3792,6 +3979,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3810,6 +3998,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3829,6 +4018,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3847,6 +4037,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3865,6 +4056,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3883,6 +4075,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3901,6 +4094,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3919,6 +4113,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3937,6 +4132,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3955,6 +4151,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3973,6 +4170,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -3991,6 +4189,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4009,6 +4208,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4027,6 +4227,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4045,6 +4246,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4063,6 +4265,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4081,6 +4284,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4100,6 +4304,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4118,6 +4323,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4136,6 +4342,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4154,6 +4361,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4172,6 +4380,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4190,6 +4399,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4209,6 +4419,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4227,6 +4438,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4245,6 +4457,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4263,6 +4476,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4282,6 +4496,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4300,6 +4515,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 600,
@@ -4318,6 +4534,7 @@ export const cfbTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4336,6 +4553,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4354,6 +4572,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4372,6 +4591,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4390,6 +4610,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4408,6 +4629,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4426,6 +4648,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4444,6 +4667,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4462,6 +4686,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4480,6 +4705,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4498,6 +4724,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4516,6 +4743,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4535,6 +4763,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4553,6 +4782,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4571,6 +4801,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4589,6 +4820,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4607,6 +4839,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4625,6 +4858,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4643,6 +4877,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4661,6 +4896,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4679,6 +4915,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4697,6 +4934,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4715,6 +4953,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4733,6 +4972,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4751,6 +4991,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4769,6 +5010,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4787,6 +5029,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4806,6 +5049,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4824,6 +5068,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4842,6 +5087,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4860,6 +5106,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4878,6 +5125,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4896,6 +5144,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4914,6 +5163,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4932,6 +5182,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4950,6 +5201,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4968,6 +5220,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -4986,6 +5239,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5004,6 +5258,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5022,6 +5277,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5040,6 +5296,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5058,6 +5315,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5076,6 +5334,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5094,6 +5353,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5112,6 +5372,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5130,6 +5391,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5148,6 +5410,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5166,6 +5429,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5184,6 +5448,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5202,6 +5467,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5220,6 +5486,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5238,6 +5505,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5256,6 +5524,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5274,6 +5543,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5292,6 +5562,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 205,
@@ -5309,6 +5580,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 201,
@@ -5327,6 +5599,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 227,
@@ -5344,6 +5617,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5362,6 +5636,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5380,6 +5655,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5398,6 +5674,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5416,6 +5693,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5434,6 +5712,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5452,6 +5731,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5470,6 +5750,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5488,6 +5769,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5506,6 +5788,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5524,6 +5807,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5542,6 +5826,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5560,6 +5845,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5578,6 +5864,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 
   {
@@ -5596,6 +5883,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 482,
@@ -5613,6 +5901,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 381,
@@ -5630,6 +5919,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
   {
     id: 238,
@@ -5648,6 +5938,7 @@ export const cfbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
+    league: "CFB"
   },
 ];
 

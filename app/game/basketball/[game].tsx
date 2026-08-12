@@ -1,13 +1,13 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   GameHeader,
+  GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
   HeadCoaches,
   LastPlay,
   LineScore,
   TeamInjuries,
-  GameLiveChatOverlay
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
 import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
@@ -207,13 +207,13 @@ export default function GameDetailsScreen(
   const awayHeaderLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
     : isWCBB
-      ? getWNBATeamLogo(awayId, true)
+      ? getWCBBTeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
         : getTeamLogo(awayId, true);
 
-  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
@@ -502,16 +502,12 @@ export default function GameDetailsScreen(
               />
 
               <LastFiveGames
-                home={{
-                  teamId: homeId,
-                  teamCode: homeCode,
-                  games: homeLastGames.games,
-                }}
-                away={{
-                  teamId: awayId,
-                  teamCode: awayCode,
-                  games: awayLastGames.games,
-                }}
+                homeId={homeId}
+                awayId={awayId}
+                homeCode={homeCode}
+                awayCode={awayCode}
+                homeGames={homeLastGames}
+                awayGames={awayLastGames}
                 league={LEAGUE}
                 state={state}
                 isDark={isDark}

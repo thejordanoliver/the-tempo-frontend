@@ -1,88 +1,35 @@
+import { Colors } from "@/constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { useCallback, useMemo } from "react";
+import { Animated, FlatList, StyleSheet } from "react-native";
+import SearchBar from "../SearchBars/SearchBar";
+import { SkeletonBlock, SkeletonCircle } from "./primitives";
 
 type Props = {
   isGridView: boolean;
   itemWidth: number;
   count?: number;
+  fadeAnim: Animated.Value;
 };
 
 export default function FavoriteTeamsSelectorSkeleton({
   isGridView,
   itemWidth,
+  fadeAnim,
   count = 30,
 }: Props) {
   const skeletons = Array.from({ length: count });
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
-  const textWidth1 = isGridView ? itemWidth * 0.6 : itemWidth * 0.4;
-  const textWidth2 = isGridView ? itemWidth * 0.4 : 0;
+  const styles = useMemo(
+    () => favoriteTeamsSelectorSkeletonStyles(isDark, isGridView, itemWidth),
+    [isDark, isGridView, itemWidth],
+  );
 
-  const shimmerLogo = useRef(new Animated.Value(-80)).current;
-  const shimmerText1 = useRef(new Animated.Value(-80)).current;
-  const shimmerText2 = useRef(new Animated.Value(-80)).current;
-  const shimmerOpacity = useRef(new Animated.Value(0.5)).current;
-
-  const animateBackAndForth = (val: Animated.Value, width: number) => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(val, {
-          toValue: width + 80,
-          duration: 1000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(val, {
-          toValue: -80,
-          duration: 1000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  };
-
-  useEffect(() => {
-    animateBackAndForth(shimmerLogo, 50);
-    animateBackAndForth(shimmerText1, textWidth1);
-    if (isGridView) animateBackAndForth(shimmerText2, textWidth2);
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmerOpacity, {
-          toValue: 1,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(shimmerOpacity, {
-          toValue: 0.5,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, [
-    shimmerLogo,
-    shimmerText1,
-    shimmerText2,
-    shimmerOpacity,
-    textWidth1,
-    textWidth2,
-    isGridView,
-  ]);
-
-  return (
-    <View
-      style={[
-        styles.container,
-        isGridView ? styles.gridContainer : styles.listContainer,
-      ]}
-    >
-      {skeletons.map((_, index) => (
-        <View
-          key={index}
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => {
+      return (
+        <SkeletonBlock
           style={[
             styles.skeletonCard,
             {
@@ -92,130 +39,99 @@ export default function FavoriteTeamsSelectorSkeleton({
             },
           ]}
         >
-          {/* Logo shimmer */}
-          <View
-            style={[
-              styles.shimmerClipper,
-              { width: 50, height: 50, borderRadius: 25 },
-            ]}
-          >
-            <View style={styles.skeletonLogo} />
-            <Animated.View
-              style={[
-                styles.shimmer,
-                {
-                  width: 30,
-                  height: 50,
-                  transform: [{ translateX: shimmerLogo }],
-                  opacity: shimmerOpacity,
-                },
-              ]}
-            />
-          </View>
+          <SkeletonCircle size={40} style={styles.logoSkeleton} />
+          <SkeletonBlock style={styles.nameSkeleton} />
+        </SkeletonBlock>
+      );
+    },
+    [styles, isGridView, itemWidth],
+  );
 
-          {/* Text line 1 shimmer */}
-          <View
-            style={[
-              styles.shimmerClipper,
-              {
-                width: textWidth1,
-                height: 12,
-                marginTop: 8,
-                borderRadius: 6,
-              },
-            ]}
-          >
-            <View style={styles.skeletonText} />
-            <Animated.View
-              style={[
-                styles.shimmer,
-                {
-                  width: 60,
-                  height: 12,
-                  borderRadius: 6,
-                  transform: [{ translateX: shimmerText1 }],
-                  opacity: shimmerOpacity,
-                },
-              ]}
-            />
-          </View>
+  const getItemLayout = useCallback(
+    (_: any | null | undefined, index: number) => {
+      const itemHeight = 76;
+      const separatorHeight = 12;
 
-          {/* Text line 2 shimmer */}
-          {isGridView && (
-            <View
-              style={[
-                styles.shimmerClipper,
-                {
-                  width: textWidth2,
-                  height: 12,
-                  marginTop: 4,
-                  borderRadius: 6,
-                },
-              ]}
-            >
-              <View style={styles.skeletonText} />
-              <Animated.View
-                style={[
-                  styles.shimmer,
-                  {
-                    width: 60,
-                    height: 12,
-                    borderRadius: 6,
-                    transform: [{ translateX: shimmerText2 }],
-                    opacity: shimmerOpacity,
-                  },
-                ]}
-              />
-            </View>
-          )}
-        </View>
-      ))}
-    </View>
+      return {
+        length: itemHeight + separatorHeight,
+        offset: (itemHeight + separatorHeight) * index,
+        index,
+      };
+    },
+    [],
+  );
+
+  return (
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+      <SearchBar
+        placeholder="Search teams or leagues..."
+        value={""}
+        onChangeText={() => {}}
+      />
+      <FlatList
+        key={isGridView ? "grid" : "list"}
+        data={skeletons}
+        renderItem={renderItem}
+        numColumns={isGridView ? 3 : 1}
+        contentContainerStyle={styles.contentContainer}
+        columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
+        showsVerticalScrollIndicator={false}
+        removeClippedSubviews
+        windowSize={5}
+        initialNumToRender={12}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={50}
+        getItemLayout={isGridView ? undefined : getItemLayout}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      />
+    </Animated.View>
   );
 }
 
-const getStyles = (isDark: boolean) =>
-  StyleSheet.create({
+const favoriteTeamsSelectorSkeletonStyles = (
+  isDark: boolean,
+  isGridView: boolean,
+  itemWidth: number,
+) => {
+  const skeletonColor = isDark ? Colors.darkGray : Colors.lightGray;
+
+  return StyleSheet.create({
     container: {
-      flexWrap: "wrap",
+      flex: 1,
+      gap: 12,
     },
-    gridContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
+    contentContainer: {
+      flexGrow: 1,
+      alignItems: isGridView ? "center" : "stretch",
+      paddingBottom: 20,
     },
-    listContainer: {
-      flexDirection: "column",
+    columnWrapper: {
+      width: itemWidth * 3 + 24,
+      justifyContent: "flex-start",
+      gap: 12,
     },
     skeletonCard: {
-      backgroundColor: isDark ? "#444" : "#ddd",
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
       padding: 12,
       alignItems: "center",
       justifyContent: "center",
       overflow: "hidden",
     },
-    shimmerClipper: {
-      position: "relative",
-      overflow: "hidden",
+
+    logoSkeleton: {
+      width: 40,
+      height: 40,
+      borderRadius: 100,
+      backgroundColor: skeletonColor,
     },
-    skeletonLogo: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      backgroundColor: isDark ? "#666" : "#bbb",
-    },
-    skeletonText: {
-      flex: 1,
+    nameSkeleton: {
+      width: 60, // ✅ closer to real teamName width feel
       height: 12,
-      borderRadius: 6,
-      backgroundColor: isDark ? "#666" : "#bbb",
-    },
-    shimmer: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      backgroundColor: isDark
-        ? "rgba(255,255,255,0.15)"
-        : "rgba(255,255,255,0.4)",
+      borderRadius: 4,
+      backgroundColor: skeletonColor,
+      marginTop: 6, // ✅ match spacing from logo → name
     },
   });
+};

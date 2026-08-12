@@ -146,6 +146,16 @@ export function useTeamForum(teamId: string, league?: string) {
     setPosts((prev) => [newPost, ...prev]);
   }, []);
 
+  const updatePost = useCallback((updatedPost: Post) => {
+    setPosts((prev) =>
+      prev.map((post) =>
+        String(post.id) === String(updatedPost.id)
+          ? { ...post, ...updatedPost }
+          : post,
+      ),
+    );
+  }, []);
+
   /*
   -----------------------------
   RETURN HOOK DATA
@@ -163,5 +173,6 @@ export function useTeamForum(teamId: string, league?: string) {
     deletePost,
     editPost,
     prependPost,
+    updatePost,
   };
 }

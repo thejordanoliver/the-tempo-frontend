@@ -32,6 +32,9 @@ export const Colors = {
     blue: "#007AFF",
     transparentBlue: "#007AFF50",
 
+    purple: "#9b5de5",
+    transparentPurple: "#9b5de550",
+
     black: "#1d1d1d",
     transparentBlack: "#1d1d1d50",
 
@@ -124,6 +127,18 @@ export const Colors = {
 
   darkGray: "#555",
   transparentDarkGray: "#55555588",
+
+  bronze: "#b87333",
+  transparentBronze: "#b8733388",
+
+  silver: "#a7b0be",
+  transparentSilver: "#a7b0be88",
+
+  gold: "#dbb505",
+  transparentGold: "#dbb14550",
+
+  platinum: "#8b6cff",
+  transparentPlatinum: "#8b6cff88",
 };
 
 export const Fonts = {

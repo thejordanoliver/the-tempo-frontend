@@ -2,14 +2,21 @@
 import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
 import TabBar from "@/components/TabBars/TabBar";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
+import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Animated, ScrollView, View, useWindowDimensions } from "react-native";
+import {
+  Animated,
+  ScrollView,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
+import BookmarkedForumList from "../../components/Forum/BookmarkedForumList";
 import BioSection from "../../components/Profile/BioSection";
 import FollowStats from "../../components/Profile/FollowStats";
 import ProfileBanner from "../../components/Profile/ProfileBanner";
@@ -32,7 +39,7 @@ type CachedUser = {
   profileImage?: string;
 };
 
-export type ProfileTab = "favorite teams" | "badges";
+export type ProfileTab = "favorite teams" | "badges" | "bookmarks";
 
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
@@ -103,9 +110,27 @@ export default function ProfileScreen() {
     enabled: Boolean(currentUserId),
   });
 
+  const {
+    posts: bookmarkedPosts,
+    loading: bookmarksLoading,
+    refreshing: bookmarksRefreshing,
+    error: bookmarksError,
+    hasMore: hasMoreBookmarks,
+    refresh: refreshBookmarks,
+    loadMore: loadMoreBookmarks,
+    updatePost: updateBookmarkedPost,
+    removePost: removeBookmarkedPost,
+    deletePost: deleteBookmarkedPost,
+    editPost: editBookmarkedPost,
+  } = useBookmarkedPosts({
+    enabled: selectedTab === "bookmarks" && Boolean(currentUserId),
+  });
+
   const handleTabPress = useCallback((tab: ProfileTab) => {
     setSelectedTab(tab);
   }, []);
+
+  const handleBookmarkedImagePress = useCallback(() => {}, []);
 
   const toggleFavoriteTeamsView = useCallback(() => {
     Animated.timing(fadeAnim, {
@@ -253,6 +278,14 @@ export default function ProfileScreen() {
     ]),
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      if (selectedTab === "bookmarks" && currentUserId) {
+        refreshBookmarks();
+      }
+    }, [currentUserId, refreshBookmarks, selectedTab]),
+  );
+
   useLayoutEffect(() => {
     const safeUsername =
       normalizeCachedString(username) ||
@@ -389,7 +422,7 @@ export default function ProfileScreen() {
         <BioSection bio={bio} isDark={isDark} />
 
         <TabBar
-          tabs={["favorite teams", "badges"]}
+          tabs={["favorite teams", "badges", "bookmarks"] as const}
           selected={selectedTab}
           onTabPress={handleTabPress}
           isDark={isDark}
@@ -423,6 +456,26 @@ export default function ProfileScreen() {
               onPressSeeAll={() => {
                 router.push("/badges");
               }}
+            />
+          </View>
+        )}
+        {selectedTab === "bookmarks" && (
+          <View style={styles.bookmarkContainer}>
+            <BookmarkedForumList
+              posts={bookmarkedPosts}
+              currentUserId={currentUserId}
+              isDark={isDark}
+              loading={bookmarksLoading}
+              refreshing={bookmarksRefreshing}
+              error={bookmarksError}
+              hasMore={hasMoreBookmarks}
+              onRetry={refreshBookmarks}
+              onLoadMore={loadMoreBookmarks}
+              onUpdatePost={updateBookmarkedPost}
+              onRemovePost={removeBookmarkedPost}
+              onDeletePost={deleteBookmarkedPost}
+              onEditPost={editBookmarkedPost}
+              onImagePress={handleBookmarkedImagePress}
             />
           </View>
         )}

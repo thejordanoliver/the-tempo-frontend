@@ -337,6 +337,14 @@ export function useCommentThread(postId: string | null) {
     [requestBadgeDataRefresh],
   );
 
+  const updatePost = useCallback((updatedPost: Post) => {
+    setPost((currentPost) =>
+      currentPost && String(currentPost.id) === String(updatedPost.id)
+        ? { ...currentPost, ...updatedPost }
+        : currentPost,
+    );
+  }, []);
+
   return {
     currentUserId,
     post,
@@ -350,5 +358,6 @@ export function useCommentThread(postId: string | null) {
     editComment,
     deleteComment,
     deletePost,
+    updatePost,
   };
 }

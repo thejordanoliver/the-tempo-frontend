@@ -84,6 +84,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const broadcast = getBroadcastDisplay(broadcasts);
   const gameStatusDescription = game.status.description ?? "";
   const gameStatusDetail = game.status.shortDetail ?? "";
+  const isEndOfInning = gameStatusDetail.includes("End");
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";
@@ -166,7 +167,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
         )}
 
         {/* 🕒 In Progress */}
-        {inProgress && !isDelayed && (
+        {inProgress && !isDelayed && !isEndOfInning && (
           <>
             <View style={styles.infoWrapper}>
               {isTopInning && (
@@ -190,6 +191,15 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
             </View>
             <View style={styles.infoWrapper}>{getOuts}</View>
           </>
+        )}
+
+        {/* 🕒 In Progress */}
+        {isEndOfInning && (
+          <View>
+            <View style={styles.infoWrapper}>
+              <Text style={styles.finalText}>{gameStatusDetail}</Text>
+            </View>
+          </View>
         )}
 
         {/* 🏁 Final */}

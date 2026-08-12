@@ -330,11 +330,13 @@ export default function FanPredictionVote({
       />
 
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
-      <Text style={styles.totalVotesText}>
-        {resultsRevealed
-          ? `${totalVotes.toLocaleString()} ${totalVotes === 1 ? "vote" : "votes"}`
-          : " "}
-      </Text>
+      {resultsRevealed && (
+        <Text style={styles.totalVotesText}>
+          {resultsRevealed
+            ? `${totalVotes.toLocaleString()} ${totalVotes === 1 ? "vote" : "votes"}`
+            : " "}
+        </Text>
+      )}
     </View>
   );
 }

@@ -266,7 +266,7 @@ export const teams: Team[] = [
      established: 1946,
      conference: "Western",
      isAllStar: false,
-     isActive: true,
+     isActive: false,
      isNational: false,
      league: "NBA"
    },

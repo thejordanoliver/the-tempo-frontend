@@ -127,19 +127,27 @@ export default function TeamDetailScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          teamId={team?.id}
+          teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [navigation, team, teamColor, teamLogo, toggleFavorite, favorited]);
+  }, [
+    navigation,
+    team,
+    teamColor,
+    teamLogo,
+    toggleFavorite,
+    favorited,
+    teamIdNum,
+  ]);
 
   if (!team) {
     return (

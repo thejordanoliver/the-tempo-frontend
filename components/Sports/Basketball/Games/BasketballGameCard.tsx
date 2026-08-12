@@ -3,11 +3,7 @@ import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
 import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
-import {
-  getWCBBTeam,
-  getWCBBTeamLogo,
-
-} from "constants/teamsWCBB";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -115,8 +111,8 @@ export default function BasketballGameCard({
     period: game.status.period,
     isCBB: isCBB || isWCBB,
   });
-  const clock = game.status.clock;
 
+  const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
   const isFinal = gameStatusDescription === "Final";

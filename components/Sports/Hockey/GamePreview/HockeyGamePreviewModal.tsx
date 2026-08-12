@@ -78,8 +78,8 @@ export default function HockeyGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !!details;
@@ -246,8 +246,8 @@ export default function HockeyGamePreviewModal({
                   awayLogo={awayLogo}
                   awayName={awayName}
                   homeName={homeName}
-                  homeTeamId={homeId}
-                  awayTeamId={awayId}
+                  homeId={homeId}
+                  awayId={awayId}
                   homeLogo={homeLogo}
                   lineScore={lineScore}
                   homeLastGames={homeLastGames}

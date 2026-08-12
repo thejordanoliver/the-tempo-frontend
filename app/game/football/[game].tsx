@@ -181,8 +181,8 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason);
-  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason);
+  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
+  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
   const { score, details, loading } = useFootballGameDetails(LEAGUE, gameId);
 
   const isLoading = loading || !game || !home || !away || !score || !details;
@@ -373,7 +373,7 @@ export default function GameDetailsScreen(
             />
 
             <FanPredictionVote
-              gameId={String(gameId)}
+              gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
               awayLogo={awayHeaderLogo}
@@ -453,19 +453,15 @@ export default function GameDetailsScreen(
             />
 
             <LastFiveGames
-              home={{
-                teamId: homeId,
-                teamCode: homeCode,
-                games: homeLastGames.games,
-              }}
-              away={{
-                teamId: awayId,
-                teamCode: awayCode,
-                games: awayLastGames.games,
-              }}
-              isDark={isDark}
-              state={state}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeGames={homeLastGames}
+              awayGames={awayLastGames}
               league={LEAGUE}
+              state={state}
+              isDark={isDark}
             />
 
             <Highlights highlights={highlights} isDark={isDark} />

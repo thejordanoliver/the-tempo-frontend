@@ -1,5 +1,6 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { BaseballGame } from "@/types/baseball/baseball";
@@ -83,8 +84,7 @@ export default function BaseballGamePreviewModal({
 
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
-  const homeEspnId = homeTeam?.espnId ?? 0;
-  const awayEspnId = awayTeam?.espnId ?? 0;
+
   const homeCode = homeTeam?.code ?? homeTeam?.shortName ?? "";
   const awayCode = awayTeam?.code ?? awayTeam?.shortName ?? "";
   const homeName = homeTeam?.fullName ?? homeTeam?.shortName ?? "";
@@ -105,8 +105,15 @@ export default function BaseballGamePreviewModal({
   const homeColor = homeTeam?.color ?? "";
   const awayColor = awayTeam?.color ?? "";
 
-  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE).games;
+
+  const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
+  const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+
+  const homeCoach = homeTeamDetails?.coach;
+  const awayCoach = awayTeamDetails?.coach;
+
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
@@ -293,8 +300,6 @@ export default function BaseballGamePreviewModal({
                 <GamePreviewContent
                   homeId={homeId}
                   awayId={awayId}
-                  homeEspnId={homeEspnId}
-                  awayEspnId={awayEspnId}
                   homeLogo={homeLogo}
                   homeCode={homeCode}
                   homeName={homeName}
@@ -312,6 +317,8 @@ export default function BaseballGamePreviewModal({
                   awayHits={awayHits}
                   homeRuns={homeRuns}
                   awayRuns={awayRuns}
+                  homeCoach={homeCoach}
+                  awayCoach={awayCoach}
                   awayErrors={awayErrors}
                   homeErrors={homeErrors}
                   teamStats={teamStats}

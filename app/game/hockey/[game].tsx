@@ -152,8 +152,8 @@ export default function GameDetailsScreen(
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
@@ -366,16 +366,12 @@ export default function GameDetailsScreen(
             <GameSummary plays={plays ?? []} isDark={isDark} />
 
             <LastFiveGames
-              home={{
-                teamId: homeId,
-                teamCode: homeCode,
-                games: homeLastGames.games,
-              }}
-              away={{
-                teamId: awayId,
-                teamCode: awayCode,
-                games: awayLastGames.games,
-              }}
+              homeId={homeId}
+              awayId={awayId}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              homeGames={homeLastGames}
+              awayGames={awayLastGames}
               league={LEAGUE}
               state={state}
               isDark={isDark}

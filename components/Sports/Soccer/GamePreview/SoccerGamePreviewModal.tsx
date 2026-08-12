@@ -136,8 +136,8 @@ export default function SoccerGamePreviewModal({
       }
     : undefined;
 
-  const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "soccer", id: venueId });
@@ -261,8 +261,8 @@ export default function SoccerGamePreviewModal({
               {/* --- Scrollable Content --- */}
               {!dontShowDetails && (
                 <GamePreviewContent
-                  homeTeamId={homeId}
-                  awayTeamId={awayId}
+                  homeId={homeId}
+                  awayId={awayId}
                   homeColor={homeColor}
                   homeName={homeName}
                   homeLogo={homeLogo}

@@ -1,3 +1,4 @@
+import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
@@ -7,21 +8,20 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeamLogo } from "constants/teamsSB";
-import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useCallback, useMemo } from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
-import type { LeagueTeam, LeagueType } from "types/types";
+import { Team } from "types/team";
 
-type TeamWithLeague = LeagueTeam & { id: number };
+type TeamWithLeague = Team & { id: number };
 
 type Props = {
   item: TeamWithLeague;
   isSelected: boolean;
   isGridView: boolean;
-  onPress: (league: LeagueType, id: string) => void;
+  onPress: (league: string, id: string) => void;
   itemWidth: number;
   onImageLoad?: () => void;
 };
@@ -47,12 +47,8 @@ function TeamCard({
 
   const logo = useMemo(() => {
     if (item.league === "CFB") return getCFBTeamLogo(item.id, useAltLogo);
-    if (item.league === "CBB")
-      return getCBBTeamLogo(item.id, useAltLogo, false);
-    if (item.league === "WCBB")
-      return (
-        item.logoLight ?? item.logo ?? getWCBBTeamLogo(item.id, useAltLogo)
-      );
+    if (item.league === "CBB") return getCBBTeamLogo(item.id, useAltLogo);
+    if (item.league === "WCBB") return getWCBBTeamLogo(item.id, useAltLogo);
     if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
     if (item.league === "CB") return getCBTeamLogo(item.id, useAltLogo);
     if (item.league === "SB") return getSBTeamLogo(item.id, useAltLogo);
@@ -60,7 +56,7 @@ function TeamCard({
     if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
     if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
     return getNHLTeamLogo(item.id, useAltLogo);
-  }, [item.id, item.league, item.logo, item.logoLight, useAltLogo]);
+  }, [item.id, item.league, useAltLogo]);
 
   const handlePress = useCallback(() => {
     onPress(item.league, item.id.toString());
