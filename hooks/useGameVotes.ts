@@ -16,7 +16,7 @@ export type VoteResponse = {
 
 // Fetch vote results for a game
 export const fetchVoteResults = async (
-  gameId: string,
+  gameId: number,
 ): Promise<VoteResponse> => {
   const res = await apiClient.get(`/api/votes/${gameId}`);
   return {

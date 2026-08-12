@@ -129,8 +129,7 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const showGameChat = shouldShowGameChat(gameDateObj);
-
-  const gameId = game?.id ?? "";
+  const gameId = Number(game?.id) ?? 0;
 
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 

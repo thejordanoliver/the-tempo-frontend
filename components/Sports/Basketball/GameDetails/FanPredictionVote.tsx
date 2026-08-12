@@ -18,7 +18,7 @@ import {
 } from "react-native";
 
 type Props = {
-  gameId: string;
+  gameId: number;
   awayId: string | number;
   awayCode?: string;
   awayName?: string; // optional — used for row labels & "you picked X" copy

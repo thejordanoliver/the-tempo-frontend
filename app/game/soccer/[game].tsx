@@ -64,7 +64,7 @@ export default function GameDetailsScreen() {
   const routeLeague =
     getFirstParam(params.league) ?? getFirstParam(params.leagueId);
 
-  const gameId = routeGameId ?? "";
+  const gameId = Number(routeGameId) ?? 0;
   const LEAGUE = routeLeague ?? "epl";
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
@@ -292,7 +292,7 @@ export default function GameDetailsScreen() {
             />
 
             <FanPredictionVote
-              gameId={String(gameId)}
+              gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
               awayLogo={awayHeaderLogo}

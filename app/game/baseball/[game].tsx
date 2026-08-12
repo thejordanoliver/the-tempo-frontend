@@ -105,7 +105,7 @@ export default function GameDetailsScreen(
   const LEAGUE = game?.league?.code ?? "mlb";
   const isCB = LEAGUE === "cb";
   const isSB = LEAGUE === "sb";
-  const gameId = game?.id;
+  const gameId = Number(game?.id) ?? 0;
 
   const { details, score } = useBaseballGameDetails(LEAGUE, gameId);
 
@@ -369,7 +369,7 @@ export default function GameDetailsScreen(
             />
 
             <FanPredictionVote
-              gameId={String(gameId)}
+              gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
               awayLogo={awayHeaderLogo}

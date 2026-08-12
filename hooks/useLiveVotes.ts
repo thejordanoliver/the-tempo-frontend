@@ -4,7 +4,7 @@ import { io, Socket } from "socket.io-client";
 import { BASE_URL, getAccessToken } from "utils/apiClient";
 import { PollResult } from "./useGameVotes";
 
-export function useLiveVotes(gameId: string) {
+export function useLiveVotes(gameId: number) {
   const [votes, setVotes] = useState<PollResult[]>([]);
   const socketRef = useRef<Socket | null>(null);
 

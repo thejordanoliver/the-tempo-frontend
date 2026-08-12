@@ -115,7 +115,7 @@ export default function GameDetailsScreen(
   const showGameChat = shouldShowGameChat(gameDateObj);
 
   const LEAGUE = game?.league?.code ?? "nhl";
-  const gameId = game?.id;
+  const gameId = Number(game?.id) ?? 0;
 
   const home = game?.home;
   const away = game?.away;
@@ -315,7 +315,7 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
             <FanPredictionVote
-              gameId={String(gameId)}
+              gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
               awayLogo={awayHeaderLogo}

@@ -119,8 +119,8 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const showGameChat = shouldShowGameChat(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
-
   const gameId = game?.id ?? 0;
+
   const home = game?.home;
   const away = game?.away;
 
