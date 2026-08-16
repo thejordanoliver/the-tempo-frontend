@@ -50,7 +50,7 @@ export const statsTableStyles = (isDark: boolean) => {
 
     emptyText: {
       marginTop: 8,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: Colors.midTone,
     },
 
@@ -118,7 +118,7 @@ export const statsTableStyles = (isDark: boolean) => {
       textAlign: "center",
       alignItems: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
       color: Colors.white,
       includeFontPadding: false,
@@ -129,7 +129,7 @@ export const statsTableStyles = (isDark: boolean) => {
       textAlign: "center",
       textAlignVertical: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -157,7 +157,7 @@ export const statsTableStyles = (isDark: boolean) => {
       textAlign: "center",
       alignItems: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
       color: textColor,
       includeFontPadding: false,
@@ -167,14 +167,14 @@ export const statsTableStyles = (isDark: boolean) => {
       width: teamColumnWidth,
       textAlign: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
       color: textColor,
       includeFontPadding: false,
     },
 
     fixedHeaderCell: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: textColor,
       textTransform: "uppercase",
     },
@@ -188,14 +188,14 @@ export const statsTableStyles = (isDark: boolean) => {
       textAlign: "center",
       alignItems: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
       color: Colors.white,
       includeFontPadding: false,
     },
 
     headerCell: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: textColor,
       paddingHorizontal: 8,
       textTransform: "uppercase",
@@ -230,7 +230,7 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     tabLabel: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -240,7 +240,7 @@ export const statsTableStyles = (isDark: boolean) => {
 
     legendText: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     glossaryContainer: {
@@ -253,7 +253,7 @@ export const statsTableStyles = (isDark: boolean) => {
 
     headerName: {
       padding: 10,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: textColor,
       borderBottomWidth: 1,
@@ -283,13 +283,13 @@ export const statsTableStyles = (isDark: boolean) => {
     glossaryAbbr: {
       fontSize: 10,
       color: textColor,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     glossaryDisplayName: {
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
   });
 };

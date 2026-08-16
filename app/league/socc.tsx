@@ -61,6 +61,8 @@ export default function SoccerLeagueScreen() {
     ? normalizedParamLeague
     : "EPL";
 
+console.log(league)
+
   const leagueLabel = params.leagueLabel;
 
   const { calendar } = useLeagueCalendar(league);

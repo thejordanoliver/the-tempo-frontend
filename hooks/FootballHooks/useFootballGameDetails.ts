@@ -19,6 +19,8 @@ export type Athlete = {
   links?: unknown[];
 };
 
+export type FootballId = string | number | null | undefined;
+
 export type TeamRecord = {
   type: string;
   summary?: string;
@@ -26,40 +28,26 @@ export type TeamRecord = {
 };
 
 export type Team = {
-  id: string | number;
-  espnId?: string | number | null;
-  guid?: string;
-  uid?: string;
-  slug?: string;
-
-  location?: string;
-  city?: string;
-  name?: string;
-  fullName?: string;
-  displayName?: string;
-  shortName?: string;
-  shortDisplayName?: string;
-  code?: string;
-  abbreviation?: string;
-
-  homeAway?: string;
-  score?: number;
-  winner?: boolean;
-  record?: string;
-  records?: TeamRecord[];
-
-  possession?: boolean;
-  rank?: number | null;
-  timeouts?: number | null;
-
-  color?: string;
-  alternateColor?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
-  logo?: string | null;
-
-  owner?: string | null;
-  established?: number | null;
+  id: number;
+  espnId: number;
+  guid: string;
+  uid: string;
+  location: string;
+  name: string;
+  shortName: string;
+  code: string;
+  color: string;
+  secondaryColor: string;
+  logo: string | null;
+  homeAway: string;
+  score: number;
+  winner: boolean;
+  record: string;
+  records: TeamRecord[];
+  possession: boolean;
+  rank: number | null;
+  timeouts: number | null;
+  timeoutsUsed: number | null;
 };
 
 export type Injury = {
@@ -89,6 +77,29 @@ export type Injury = {
 export type TeamInjury = {
   team: Team;
   injuries: Injury[];
+};
+
+export type FootballTeamReference = {
+  id?: FootballId;
+  espnId?: FootballId;
+  uid?: string | null;
+  guid?: string | null;
+  location?: string | null;
+  name?: string | null;
+  shortName?: string | null;
+  displayName?: string | null;
+  abbreviation?: string | null;
+  code?: string | null;
+  color?: string | null;
+  secondaryColor?: string | null;
+  logo?: string | null;
+  homeAway?: string | null;
+};
+
+export type FootballPlayTeamParticipant = FootballTeamReference & {
+  team?: FootballTeamReference | null;
+  type?: string | null;
+  order?: number | string | null;
 };
 
 /* ---------------------------------- */
@@ -126,52 +137,123 @@ export type TeamLeaders = {
 /* PLAY TYPES                         */
 /* ---------------------------------- */
 
+export type FootballClock = {
+  value?: number | string | null;
+  displayValue?: string | null;
+};
+
+export type FootballPeriod = {
+  type?: string | null;
+  number?: number | string | null;
+};
+
+export type FootballPlayPosition = {
+  period?: FootballPeriod | null;
+  clock?: FootballClock | null;
+  yardLine?: number | null;
+  yardsToEndzone?: number | string | null;
+  text?: string | null;
+  possessionText?: string | null;
+  down?: number | string | null;
+  distance?: number | null;
+  downDistanceText?: string | null;
+  shortDownDistanceText?: string | null;
+  team?: FootballTeamReference | null;
+};
+
+export type FootballScoringType = {
+  name?: string | null;
+  displayName?: string | null;
+  abbreviation?: string | null;
+};
+
+export type FootballPlayAthlete = Omit<Athlete, "headshot" | "position"> & {
+  headshot?: string | { href?: string | null } | null;
+  position?:
+    | string
+    | {
+        abbreviation?: string | null;
+        displayName?: string | null;
+        name?: string | null;
+      }
+    | null;
+};
+
+export type FootballPlayParticipant = {
+  athlete?: FootballPlayAthlete | null;
+  teamId?: FootballId;
+  type?: string | null;
+  stats?: (string | number | null)[];
+  playStatistics?: {
+    $ref?: string | null;
+  } | null;
+};
+
 export type PlayObject = {
-  id: string;
-  text?: string;
+  id?: FootballId;
+  sequenceNumber?: FootballId;
+  sequence?: FootballId;
+  text?: string | null;
+  shortText?: string | null;
+
   type?: {
-    id?: string;
-    text?: string;
-    abbreviation?: string;
+    id?: FootballId;
+    text?: string | null;
+    abbreviation?: string | null;
   };
-  team?: {
-    id: string | number;
-  };
-  scoreValue?: number;
-  description?: string;
+
+  team?: FootballTeamReference | null;
+  teamParticipants?: FootballPlayTeamParticipant[];
+
+  scoreValue?: number | string | null;
+  scoringType?: FootballScoringType | null;
+  scoringPlay?: boolean | null;
+
+  description?: string | null;
   timeElapsed?: {
-    displayValue?: string;
+    displayValue?: string | null;
   };
-  statYardage?: number;
+
+  statYardage?: number | string | null;
+
+  // Add these:
+  yardsAfterCatch?: number | string | null;
+  isTurnover?: boolean | null;
+  isPenalty?: boolean | null;
+
   athletesInvolved?: Athlete[];
-  start?: {
-    period?: {
-      type?: "quarter";
-      number?: number;
-    };
-    clock?: {
-      displayValue?: string;
-    };
-    yardLine?: number;
-    text?: string;
+  participants?: FootballPlayParticipant[];
+  start?: FootballPlayPosition | null;
+  end?: FootballPlayPosition | null;
+  period?: FootballPeriod | null;
+  clock?: FootballClock | null;
+  result?: string | null;
+  shortDisplayResult?: string | null;
+  displayResult?: string | null;
+  yards?: number | string | null;
+  awayScore?: number | string | null;
+  homeScore?: number | string | null;
+};
+
+export type FootballDrive = {
+  id?: FootballId;
+  sequenceNumber?: FootballId;
+  sequence?: FootballId;
+  description?: string | null;
+  result?: string | null;
+  shortDisplayResult?: string | null;
+  displayResult?: string | null;
+  team?: FootballTeamReference | null;
+  teamParticipants?: FootballPlayTeamParticipant[];
+  start?: FootballPlayPosition | null;
+  end?: FootballPlayPosition | null;
+  timeElapsed?: {
+    displayValue?: string | null;
   };
-  end?: {
-    period?: {
-      type?: "quarter";
-      number?: number;
-    };
-    clock?: {
-      displayValue?: string;
-    };
-    yardLine?: number;
-    text?: string;
-  };
-  result?: string;
-  shortDisplayResult?: string;
-  displayResult?: string;
-  yards?: number;
-  isScore?: boolean;
-  offensivePlays?: number;
+  yards?: number | string | null;
+  isScore?: boolean | null;
+  offensivePlays?: number | string | null;
+  plays?: PlayObject[] | null;
 };
 
 /* ---------------------------------- */
@@ -272,6 +354,11 @@ export type GameStatus = {
   period: number | null;
 };
 
+export type FootballDrives = {
+  current?: FootballDrive[] | null;
+  previous?: FootballDrive[] | null;
+};
+
 export type Score = {
   gameId: string;
   uid: string;
@@ -288,29 +375,25 @@ export type Score = {
     home: number;
     away: number;
   }[];
-
   scoringPlays: ScoringPlays;
-
-  possession: {
-    teamId: number | string | null;
-    shortDownDistanceText: string | null;
-    downDistanceText: string | null;
-    yardLine: number | null;
-    down: number | null;
-    distance: number | null;
-    possessionText: string | null;
-    isRedZone: boolean;
-    homeTimeouts: number | null;
-    awayTimeouts: number | null;
-  };
-
-  plays: PlayObject[];
+  plays?: PlayObject[];
   lastPlay: PlayObject | null;
-  currentDrives: PlayObject[];
+  possession?: {
+    teamId?: FootballId;
+    teamEspnId?: FootballId;
+    team?: FootballTeamReference | null;
+    shortDownDistanceText?: string | null;
+    downDistanceText?: string | null;
+    yardLine?: number | string | null;
+    down?: number | string | null;
+    distance?: number | string | null;
+    possessionText?: string | null;
+    isRedZone?: boolean | null;
+  } | null;
 
   drives: {
-    previous: PlayObject[];
-    current: PlayObject[];
+    previous: FootballDrive[];
+    current: FootballDrive[];
   };
 
   boxScore?: BoxScore;
@@ -471,7 +554,7 @@ export const useFootballGameDetails = (
 
     intervalRef.current = setInterval(() => {
       fetchDetails(true);
-    }, 10_000);
+    }, 5_000);
 
     return () => {
       if (intervalRef.current) {

@@ -57,7 +57,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     initial: {
       fontSize: 42,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
 
@@ -75,7 +75,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     positionText: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
 
@@ -87,7 +87,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     name: {
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
       letterSpacing: 4,
       textTransform: "uppercase",
@@ -113,12 +113,12 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     statValue: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
     statLabel: {
       fontSize: 10,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: muted,
       letterSpacing: 1.8,
       marginTop: 3,
@@ -144,7 +144,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
     infoLabel: {
       fontSize: 10,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: muted,
       letterSpacing: 1.8,
       width: 80,
@@ -152,7 +152,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     infoValue: {
       flex: 1,
       fontSize: 14,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       color: text,
       textAlign: "right",
     },

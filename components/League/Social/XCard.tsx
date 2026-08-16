@@ -192,13 +192,13 @@ export const xCardStyles = (isDark: boolean) =>
     },
     name: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       flexShrink: 1,
     },
     username: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
     },
     verifiedIcon: {
@@ -206,7 +206,7 @@ export const xCardStyles = (isDark: boolean) =>
       height: 13,
     },
     text: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 18,
       color: isDark ? Colors.white : Colors.black,
@@ -221,7 +221,7 @@ export const xCardStyles = (isDark: boolean) =>
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     metric: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

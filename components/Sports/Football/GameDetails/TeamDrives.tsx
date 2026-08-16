@@ -1,9 +1,10 @@
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
-import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
+import type { FootballDrive } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Colors } from "constants/styles";
 import { useMemo, useState } from "react";
+import type { ImageSourcePropType } from "react-native";
 import { StyleSheet, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import DrivesList from "./DrivesList";
@@ -11,12 +12,12 @@ import DrivesList from "./DrivesList";
 type League = "nfl" | "cfb" | string;
 
 type Props = {
-  previousDrives?: PlayObject[] | null;
-  currentDrives?: PlayObject[] | null;
+  previousDrives?: FootballDrive[] | null;
+  currentDrives?: FootballDrive[] | null;
   loading?: boolean;
   error?: string | null;
-  awayLogo: any;
-  homeLogo: any;
+  awayLogo: ImageSourcePropType;
+  homeLogo: ImageSourcePropType;
   awayCode: string;
   homeCode: string;
   homeId: number;

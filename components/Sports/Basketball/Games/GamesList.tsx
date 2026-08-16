@@ -37,6 +37,10 @@ type Props = {
   isWNBA?: boolean;
   showCountdown?: boolean;
   countdownGame?: BasketballGame | null;
+  teamLogo?: any;
+  teamName?: string;
+  teamColor?: string;
+  teamSecondaryColor?: string;
 };
 
 type GameSection = {
@@ -63,6 +67,10 @@ export default function GamesList({
   scrollEnabled = true,
   showCountdown = false,
   countdownGame = null,
+  teamLogo,
+  teamName,
+  teamColor,
+  teamSecondaryColor,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -270,7 +278,14 @@ export default function GamesList({
           scrollEnabled={scrollEnabled}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
-              <CountdownClock game={countdownGame} loading={loading} />
+              <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
             ) : null
           }
           contentContainerStyle={styles.gridListContainer}
@@ -292,7 +307,14 @@ export default function GamesList({
           stickySectionHeadersEnabled={false}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
-              <CountdownClock game={countdownGame} loading={loading} />
+              <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
             ) : null
           }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}

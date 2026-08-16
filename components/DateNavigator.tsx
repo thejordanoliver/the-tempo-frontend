@@ -86,6 +86,6 @@ const getStyles = (isDark: boolean) =>
     dateNavText: {
       color: isDark ? Colors.black : Colors.white,
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
   });

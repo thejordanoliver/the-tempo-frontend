@@ -6,7 +6,7 @@ export const playerOnCourtStyles = (isDark: boolean) =>
     loading: {
       textAlign: "center",
       padding: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -42,7 +42,7 @@ export const playerOnCourtStyles = (isDark: boolean) =>
     },
     teamLabel: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       marginVertical: 10,
       marginRight: 5,
       color: isDark ? Colors.white : Colors.black,
@@ -66,18 +66,18 @@ export const playerOnCourtStyles = (isDark: boolean) =>
     nameWrapper: { flexDirection: "row", alignItems: "baseline" },
     playerName: {
       marginLeft: 8,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     jersey: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     posistion: {
       marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isDark ? Colors.midTone : Colors.black,
     },

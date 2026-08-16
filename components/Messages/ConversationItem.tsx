@@ -306,7 +306,7 @@ const conversationItemStyles = (isDark: boolean) =>
     username: {
       maxWidth: "82%",
       fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -317,14 +317,14 @@ const conversationItemStyles = (isDark: boolean) =>
     fullName: {
       marginTop: 2,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     lastMessage: {
       marginTop: 3,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       opacity: 0.72,
     },
@@ -338,7 +338,7 @@ const conversationItemStyles = (isDark: boolean) =>
 
     timestamp: {
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginBottom: 8,
     },
@@ -355,7 +355,7 @@ const conversationItemStyles = (isDark: boolean) =>
 
     unreadText: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.white,
     },
 
@@ -378,7 +378,7 @@ const conversationItemStyles = (isDark: boolean) =>
     actionText: {
       marginTop: 4,
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.white,
     },
   });

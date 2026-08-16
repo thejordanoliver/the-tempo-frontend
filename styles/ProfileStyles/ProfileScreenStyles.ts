@@ -62,12 +62,12 @@ export const profileStyles = (
     },
     fullNameText: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     usernameText: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     followContainer: {
@@ -120,24 +120,24 @@ export const profileStyles = (
           ? Colors.white
           : Colors.black,
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     followCount: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     followLabel: {
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     bioText: {
       marginVertical: 8,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       lineHeight: 22,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
     },
     editProfileBtn: {
       backgroundColor: isDark ? Colors.white : Colors.black,
@@ -151,7 +151,7 @@ export const profileStyles = (
     editProfileText: {
       color: isDark ? Colors.black : Colors.white,
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     favoritesContainer: {
       marginTop: 20,

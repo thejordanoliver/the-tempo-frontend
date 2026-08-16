@@ -55,7 +55,7 @@ export const sportsListModalStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
     },
@@ -83,6 +83,6 @@ export const sportsListModalStyles = (isDark: boolean) =>
     leagueText: {
       color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
   });

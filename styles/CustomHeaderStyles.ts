@@ -35,7 +35,7 @@ export const customHeaderStyles = StyleSheet.create({
   },
   teamCode: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 24,
     zIndex: 2,
   },
@@ -47,7 +47,7 @@ export const customHeaderStyles = StyleSheet.create({
   },
   dividerText: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 24,
   },
 });

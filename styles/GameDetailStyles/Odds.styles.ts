@@ -45,7 +45,7 @@ export const gameOddsStyles = (isDark: boolean) =>
       flex: 1,
       textAlign: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     divider: {
       borderBottomWidth: 1,
@@ -65,10 +65,10 @@ export const gameOddsStyles = (isDark: boolean) =>
     subtext: {
       color: Colors.midTone,
       fontSize: 12,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
     },
     errorText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,

@@ -58,6 +58,8 @@ export default function TeamDetailScreen() {
   const team = getNHLTeam(teamIdNum);
   const teamLogo = getNHLTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
+  const teamName = team?.name;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [standingsYear, setStandingsYear] = useState(getNHLSeason());
   const [refreshing, setRefreshing] = useState(false);
@@ -259,6 +261,10 @@ export default function TeamDetailScreen() {
             showCountdown={isSeasonOpeningMonth}
             countdownGame={firstSeasonGame}
             scrollEnabled
+            teamLogo={teamLogo}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+            teamName={teamName}
           />
         </View>
 

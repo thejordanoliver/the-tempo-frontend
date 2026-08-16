@@ -16,7 +16,7 @@ export const combinedGameListStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 20,
       fontSize: 20,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
     },
     itemSeparatorComponent: {
       height: 12,

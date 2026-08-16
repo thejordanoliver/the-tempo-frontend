@@ -29,7 +29,7 @@ export const playerCardStyles = (isDark: boolean) =>
     rank: {
       fontSize: 24,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       marginRight: 12,
     },
     info: {
@@ -46,18 +46,18 @@ export const playerCardStyles = (isDark: boolean) =>
     },
     name: {
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     jerseyNumber: {
       fontSize: 16,
       marginLeft: 6,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     position: {
       fontSize: 16,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
   });

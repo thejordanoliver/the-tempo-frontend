@@ -611,7 +611,7 @@ function depthChartStyles(isDark: boolean) {
 
     title: {
       color: theme.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 24,
     },
 
@@ -650,7 +650,7 @@ function depthChartStyles(isDark: boolean) {
 
     positionAbbr: {
       color: theme.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
     },
 
@@ -660,13 +660,13 @@ function depthChartStyles(isDark: boolean) {
 
     positionName: {
       color: theme.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
     },
 
     positionCount: {
       color: theme.icon,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 12,
       marginTop: 2,
     },
@@ -699,7 +699,7 @@ function depthChartStyles(isDark: boolean) {
 
     rankText: {
       color: theme.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
 
@@ -727,7 +727,7 @@ function depthChartStyles(isDark: boolean) {
 
     fallbackInitials: {
       color: theme.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
     },
 
@@ -746,7 +746,7 @@ function depthChartStyles(isDark: boolean) {
     playerName: {
       color: theme.text,
       flexShrink: 1,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
 
@@ -761,19 +761,19 @@ function depthChartStyles(isDark: boolean) {
 
     slotChipText: {
       color: theme.icon,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 10,
     },
 
     playerMeta: {
       color: theme.icon,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 12,
     },
 
     emptyText: {
       color: theme.icon,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 13,
       padding: 14,
     },
@@ -803,14 +803,14 @@ function depthChartStyles(isDark: boolean) {
 
     stateText: {
       color: theme.text,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       textAlign: "center",
     },
 
     stateHint: {
       color: theme.icon,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       textAlign: "center",
     },

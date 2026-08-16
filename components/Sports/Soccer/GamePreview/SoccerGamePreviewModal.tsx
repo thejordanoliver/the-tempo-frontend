@@ -60,10 +60,10 @@ export default function SoccerGamePreviewModal({
   const LEAGUE = game?.league?.code ?? "epl";
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
-
   const home = score?.home;
   const away = score?.away;
-
+  
+  
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
 

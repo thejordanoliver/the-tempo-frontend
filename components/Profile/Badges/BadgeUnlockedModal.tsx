@@ -23,16 +23,13 @@ import BadgeEmblem from "./BadgeEmblem";
 
 const FALLBACK_TIER: BadgeTier = "bronze";
 
-const buildUnlockedBadge = (
-  notification: BadgeNotification,
-): BadgeProgress => {
+const buildUnlockedBadge = (notification: BadgeNotification): BadgeProgress => {
   const { badge } = notification;
 
   return {
     id: badge.badgeId,
     name: badge.name || "New badge",
-    description:
-      badge.description || "You unlocked a new badge.",
+    description: badge.description || "You unlocked a new badge.",
     category: badge.category || "community",
     metric: badge.metric || "totalEngagement",
     tier: badge.tier ?? FALLBACK_TIER,
@@ -64,32 +61,21 @@ export default function BadgeUnlockedModal() {
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
 
-  const cardOpacity = useRef(
-    new Animated.Value(0),
-  ).current;
+  const cardOpacity = useRef(new Animated.Value(0)).current;
 
-  const cardScale = useRef(
-    new Animated.Value(0.92),
-  ).current;
+  const cardScale = useRef(new Animated.Value(0.92)).current;
 
-  const emblemScale = useRef(
-    new Animated.Value(0.82),
-  ).current;
+  const emblemScale = useRef(new Animated.Value(0.82)).current;
 
   const badge = useMemo(
     () =>
-      currentNotification
-        ? buildUnlockedBadge(currentNotification)
-        : null,
+      currentNotification ? buildUnlockedBadge(currentNotification) : null,
     [currentNotification],
   );
 
-  const notificationId =
-    currentNotification?.notificationId ?? null;
+  const notificationId = currentNotification?.notificationId ?? null;
 
-  const tierColor = badge
-    ? BADGE_TIER_COLORS[badge.tier]
-    : Colors.midTone;
+  const tierColor = badge ? BADGE_TIER_COLORS[badge.tier] : Colors.midTone;
 
   const styles = useMemo(
     () => badgeUnlockedModalStyles(isDark, tierColor),
@@ -99,24 +85,15 @@ export default function BadgeUnlockedModal() {
   const acknowledgeRead = useCallback(
     async (dismissedNotificationId: string) => {
       try {
-        const acknowledgedIds =
-          await markBadgeNotificationsRead([
-            dismissedNotificationId,
-          ]);
+        const acknowledgedIds = await markBadgeNotificationsRead([
+          dismissedNotificationId,
+        ]);
 
-        if (
-          !acknowledgedIds.includes(
-            dismissedNotificationId,
-          )
-        ) {
-          queueNotificationReadRetry(
-            dismissedNotificationId,
-          );
+        if (!acknowledgedIds.includes(dismissedNotificationId)) {
+          queueNotificationReadRetry(dismissedNotificationId);
         }
       } catch (error) {
-        queueNotificationReadRetry(
-          dismissedNotificationId,
-        );
+        queueNotificationReadRetry(dismissedNotificationId);
 
         if (__DEV__) {
           console.warn(
@@ -137,11 +114,7 @@ export default function BadgeUnlockedModal() {
     if (dismissedNotificationId) {
       void acknowledgeRead(dismissedNotificationId);
     }
-  }, [
-    acknowledgeRead,
-    dismissCurrentNotification,
-    notificationId,
-  ]);
+  }, [acknowledgeRead, dismissCurrentNotification, notificationId]);
 
   useEffect(() => {
     if (!badge) {
@@ -184,13 +157,7 @@ export default function BadgeUnlockedModal() {
         }),
       ]),
     ]).start();
-  }, [
-    badge,
-    cardOpacity,
-    cardScale,
-    emblemScale,
-    notificationId,
-  ]);
+  }, [badge, cardOpacity, cardScale, emblemScale, notificationId]);
 
   return (
     <Modal
@@ -249,11 +216,7 @@ export default function BadgeUnlockedModal() {
                   },
                 ]}
               >
-                <BadgeEmblem
-                  badge={badge}
-                  size={112}
-                  showLockedState={false}
-                />
+                <BadgeEmblem badge={badge} size={112} showLockedState={false} />
               </Animated.View>
 
               <View style={styles.textContainer}>
@@ -265,10 +228,7 @@ export default function BadgeUnlockedModal() {
                   {capitalizeBadgeTier(badge.tier)}
                 </Text>
 
-                <Text
-                  selectable
-                  style={styles.description}
-                >
+                <Text selectable style={styles.description}>
                   {badge.description}
                 </Text>
               </View>
@@ -282,9 +242,7 @@ export default function BadgeUnlockedModal() {
                   pressed && styles.buttonPressed,
                 ]}
               >
-                <Text style={styles.buttonText}>
-                  Awesome
-                </Text>
+                <Text style={styles.buttonText}>Awesome</Text>
               </Pressable>
             </>
           )}
@@ -294,19 +252,14 @@ export default function BadgeUnlockedModal() {
   );
 }
 
-const badgeUnlockedModalStyles = (
-  isDark: boolean,
-  tierColor: string,
-) =>
+const badgeUnlockedModalStyles = (isDark: boolean, tierColor: string) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 22,
-      backgroundColor: isDark
-        ? "rgba(0,0,0,0.72)"
-        : "rgba(0,0,0,0.46)",
+      backgroundColor: isDark ? "rgba(0,0,0,0.72)" : "rgba(0,0,0,0.46)",
     },
 
     card: {
@@ -320,9 +273,7 @@ const badgeUnlockedModalStyles = (
       paddingHorizontal: 22,
       paddingTop: 24,
       paddingBottom: 20,
-      backgroundColor: isDark
-        ? Colors.black
-        : Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       shadowColor: Colors.black,
       shadowOpacity: isDark ? 0.44 : 0.22,
       shadowRadius: 24,
@@ -345,7 +296,7 @@ const badgeUnlockedModalStyles = (
     heading: {
       textAlign: "center",
       fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textTransform: "uppercase",
       color: tierColor,
     },
@@ -363,16 +314,14 @@ const badgeUnlockedModalStyles = (
     name: {
       textAlign: "center",
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark
-        ? Colors.white
-        : Colors.black,
+      fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     tier: {
       textAlign: "center",
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textTransform: "uppercase",
       color: tierColor,
     },
@@ -382,10 +331,8 @@ const badgeUnlockedModalStyles = (
       textAlign: "center",
       fontSize: 15,
       lineHeight: 21,
-      fontFamily: Fonts.OSREGULAR,
-      color: isDark
-        ? Colors.lightGray
-        : Colors.darkGray,
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     button: {
@@ -404,7 +351,7 @@ const badgeUnlockedModalStyles = (
 
     buttonText: {
       fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.white,
     },
   });

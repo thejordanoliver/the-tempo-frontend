@@ -247,13 +247,13 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       zIndex: 2,
     },
     monthText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     monthTextSelected: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,

@@ -94,14 +94,14 @@ const getPillStyles = (isDark: boolean) =>
     },
     pillLabel: {
       fontSize: 10,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       letterSpacing: 0.8,
       textTransform: "uppercase",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     pillValue: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
   });
@@ -261,7 +261,7 @@ const getStyles = (isDark: boolean) =>
     },
     eyebrow: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       letterSpacing: 3,
       color: isDark ? Colors.dark.gold : Colors.light.gold,
       textTransform: "uppercase",
@@ -270,7 +270,7 @@ const getStyles = (isDark: boolean) =>
     title: {
       fontSize: 40,
       lineHeight: 44,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     headerDivider: {
@@ -296,7 +296,7 @@ const getStyles = (isDark: boolean) =>
       bottom: -8,
       right: -4,
       fontSize: 64,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.045)",
       letterSpacing: -1,
       // Prevent interaction / layout influence
@@ -313,7 +313,7 @@ const getStyles = (isDark: boolean) =>
     divisionLabel: {
       flex: 1,
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       letterSpacing: 0.4,
       textTransform: "uppercase",
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -329,7 +329,7 @@ const getStyles = (isDark: boolean) =>
     },
     badgeText: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       letterSpacing: 0.6,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -362,7 +362,7 @@ const getStyles = (isDark: boolean) =>
     },
     avatarInitial: {
       fontSize: 26,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     nameBlock: {
@@ -372,12 +372,12 @@ const getStyles = (isDark: boolean) =>
     fighterName: {
       fontSize: 22,
       lineHeight: 26,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     nickname: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 

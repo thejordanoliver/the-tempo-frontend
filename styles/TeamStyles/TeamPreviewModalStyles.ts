@@ -34,20 +34,20 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
 
     teamName: {
       fontSize: 20,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
 
     establishedText: {
       marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     subText: {
       marginVertical: 12,
-      fontFamily: Fonts.OSEXTRALIGHT,
+      fontFamily: Fonts.EXTRALIGHT,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -62,7 +62,7 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
 
     goText: {
       color: isDark ? Colors.black : Colors.white,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
     },
 
     removeButton: {
@@ -75,6 +75,6 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
 
     removeText: {
       color: Colors.white,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
     },
   });

@@ -24,6 +24,7 @@ export type LeagueCategory =
   | "UEFA Champions League"
   | "German Bundesliga"
   | "MLS"
+  | "Leagues Cup"
   | "FIFA World Cup"
   | "FIFA Women's World Cup"
   | "Favorites";
@@ -39,6 +40,7 @@ export type CombinedGamesSection =
   | { category: "UEFA Champions League"; data: SoccerGame[] }
   | { category: "UEFA Europa League"; data: SoccerGame[] }
   | { category: "English Premier League"; data: SoccerGame[] }
+  | { category: "Leagues Cup"; data: SoccerGame[] }
   | { category: "FIFA World Cup"; data: SoccerGame[] }
   | { category: "FIFA Women's World Cup"; data: SoccerGame[] }
   | { category: "German Bundesliga"; data: SoccerGame[] }

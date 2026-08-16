@@ -15,7 +15,7 @@ export const TeamInfoStyle = StyleSheet.create({
 
   teamName: {
     fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     color: Colors.white,
     textAlign: "center",
   },
@@ -41,13 +41,13 @@ export const TeamInfoStyle = StyleSheet.create({
   },
 
   teamRecord: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     color: Colors.white,
     opacity: 0.7,
   },
 
   teamValue: {
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     color: Colors.white,
   },
   bonus: {
@@ -55,7 +55,7 @@ export const TeamInfoStyle = StyleSheet.create({
     position: "absolute",
     bottom: -10,
     fontSize: 8,
-    fontFamily: Fonts.OSMEDIUM,
+    fontFamily: Fonts.MEDIUM,
     letterSpacing: 0.5,
     color: Colors.white,
     textAlign: "center",
@@ -99,7 +99,7 @@ export const TeamInfoStyle = StyleSheet.create({
   },
   fighterName: {
     fontSize: 14,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     color: Colors.white,
     textAlign: "center",
   },

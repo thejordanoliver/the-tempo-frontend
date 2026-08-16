@@ -24,18 +24,18 @@ export const getStyles = (isDark: boolean) =>
     },
     driveDescription: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     driveDetail: {
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     driveTeam: {
       fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     emptyText: {
@@ -43,7 +43,7 @@ export const getStyles = (isDark: boolean) =>
       color: Colors.midTone,
       textAlign: "center",
       marginTop: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       padding: 12,
     },
   });

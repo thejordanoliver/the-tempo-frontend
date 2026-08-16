@@ -1,4 +1,5 @@
 import { FootballGame } from "@/types/football/football";
+import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
@@ -18,6 +19,7 @@ type UseFootballGamesParams = {
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
+  silent?: boolean;
 };
 
 export type FootballGameGroup = {
@@ -126,60 +128,71 @@ export function useFootballGames({
     return groups.flatMap((group) => group.games);
   }, [groups]);
 
-  const fetchGames = useCallback(
-    async ({ forceRefresh = false }: FetchGamesOptions = {}) => {
-      const endpoint = getEndpoint(league);
+const fetchGames = useCallback(
+  async ({
+    forceRefresh = false,
+    silent = false,
+  }: FetchGamesOptions = {}) => {
+    const endpoint = getEndpoint(league);
+    const params: Record<string, string | number> = {};
 
-      const params: Record<string, string | number> = {};
+    if (week) {
+      params.week = week;
+      params.season = season || dayjs().year();
 
-      if (week) {
-        params.week = week;
-        params.season = season || dayjs().year();
+      if (seasontype) {
+        params.seasontype = seasontype;
+      }
+    } else if (date) {
+      params.date = dayjs(date).format("YYYYMMDD");
 
-        if (seasontype) {
-          params.seasontype = seasontype;
-        }
-      } else if (date) {
-        params.date = dayjs(date).format("YYYYMMDD");
-
-        if (season) {
-          params.season = season;
-        }
-
-        if (seasontype) {
-          params.seasontype = seasontype;
-        }
+      if (season) {
+        params.season = season;
       }
 
-      if (league === "cfb" && conferenceId) {
-        params.conferenceId = conferenceId;
+      if (seasontype) {
+        params.seasontype = seasontype;
+      }
+    }
+
+    if (league === "cfb" && conferenceId) {
+      params.conferenceId = conferenceId;
+    }
+
+    try {
+      setError(null);
+
+      if (forceRefresh) {
+        setRefreshing(true);
+      } else if (!silent) {
+        setLoading(true);
       }
 
-      try {
-        setError(null);
+      const { data } = await apiClient.get<FootballGamesResponse>(endpoint, {
+        params,
+      });
 
-        if (forceRefresh) {
-          setRefreshing(true);
-        } else {
-          setLoading(true);
-        }
+      setGroups(normalizeGroups(data));
+    } catch (err) {
+      console.error(err);
+      setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
 
-        const { data } = await apiClient.get<FootballGamesResponse>(endpoint, {
-          params,
-        });
-
-        setGroups(normalizeGroups(data));
-      } catch (err) {
-        console.error(err);
-        setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
+      // Preserve existing games if a background refresh temporarily fails.
+      if (!silent) {
         setGroups([]);
-      } finally {
-        setLoading(false);
+      }
+    } finally {
+      if (forceRefresh) {
         setRefreshing(false);
       }
-    },
-    [date, week, season, seasontype, league, conferenceId],
-  );
+
+      if (!silent) {
+        setLoading(false);
+      }
+    }
+  },
+  [date, week, season, seasontype, league, conferenceId],
+);
 
   const refreshGames = useCallback(async () => {
     await fetchGames({ forceRefresh: true });
@@ -188,6 +201,20 @@ export function useFootballGames({
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
+
+  const hasLiveGame = useMemo(() => {
+    return games.some(isGameLive);
+  }, [games]);
+
+  useEffect(() => {
+    if (!hasLiveGame) return;
+
+    const interval = setInterval(() => {
+      fetchGames({ silent: true });
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, [hasLiveGame, fetchGames]);
 
   return {
     games,

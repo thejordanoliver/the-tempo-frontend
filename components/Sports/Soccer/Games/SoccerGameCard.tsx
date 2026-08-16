@@ -27,7 +27,8 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
       pathname: "/game/soccer/[game]",
       params: {
         game: String(game.id),
-        league: String(league),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
       },
     });
   };
@@ -58,7 +59,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
-  const clock = game.status?.clock;
+  const clock = game.status?.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status?.shortDetail;
   const inProgress = game.status.state === "in";

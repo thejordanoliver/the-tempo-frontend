@@ -37,7 +37,7 @@ const searchBarStyles = (isDark: boolean) =>
       width: "100%",
       paddingHorizontal: 10,
       fontSize: 16,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

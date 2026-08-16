@@ -11,14 +11,14 @@ export const boxScoreStyles = (isDark: boolean) =>
     loading: {
       textAlign: "center",
       padding: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     error: {
       textAlign: "center",
       padding: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
@@ -30,7 +30,7 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     teamLabel: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       marginVertical: 10,
       paddingHorizontal: 12,
       color: isDark ? Colors.white : Colors.black,
@@ -54,7 +54,7 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     cellName: {
       width: NAME_COLUMN_WIDTH,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       paddingHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
@@ -65,7 +65,7 @@ export const boxScoreStyles = (isDark: boolean) =>
       textAlign: "center",
       paddingHorizontal: 4,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     didNotPlayerRow: {
       flex: 1,
@@ -77,7 +77,7 @@ export const boxScoreStyles = (isDark: boolean) =>
       fontSize: 12,
       textAlign: "center",
       color: Colors.midTone,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     cellHeader: {
       width: COLUMN_WIDTH,
@@ -85,7 +85,7 @@ export const boxScoreStyles = (isDark: boolean) =>
       textAlign: "center",
       paddingHorizontal: 4,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     cellContainer: { justifyContent: "center", alignItems: "center" },
     teamLogo: { width: 28, height: 28, resizeMode: "contain" },
@@ -96,7 +96,7 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     showMoreLess: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
     },
   });

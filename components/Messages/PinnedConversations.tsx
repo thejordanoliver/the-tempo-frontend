@@ -314,7 +314,7 @@ const pinnedConversationsStyles = (isDark: boolean) =>
     submenuText: {
       flex: 1,
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -354,7 +354,7 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       marginBottom: 7,
       textAlign: "center",
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -374,7 +374,7 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       textAlign: "center",
       fontSize: 11,
       lineHeight: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       opacity: 0.8,
     },

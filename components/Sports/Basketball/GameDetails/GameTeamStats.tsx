@@ -40,7 +40,7 @@ type StatGroup = {
   stats?: StatItem[];
 };
 
-type TeamStatsEntry = {
+export type TeamStatsEntry = {
   homeAway?: "home" | "away" | string;
   displayOrder?: number;
   team?: any;

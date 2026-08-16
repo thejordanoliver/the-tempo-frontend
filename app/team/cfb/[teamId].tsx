@@ -44,6 +44,8 @@ export default function TeamDetailScreen() {
   const conferenceId = teamDetails?.conferenceId;
   const espnId = team?.espnId ?? 0;
   const teamColor = team?.color ?? Colors.midTone;
+  const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
+  const teamName = team?.name;
   const teamLogo = getCFBTeamLogo(teamIdNum, true);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const favorited = team ? isFavorite(league, teamIdNum) : false;
@@ -184,6 +186,10 @@ export default function TeamDetailScreen() {
             showCountdown={true}
             countdownGame={firstSeasonGame}
             isCFB={true}
+            teamLogo={teamLogo}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+            teamName={teamName}
           />
         </View>
 

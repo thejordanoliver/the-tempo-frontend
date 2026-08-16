@@ -216,7 +216,7 @@ const FighterBioStyles = (isDark: boolean) =>
     },
     stanceFallbackText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 28,
     },
     badge: {
@@ -235,7 +235,7 @@ const FighterBioStyles = (isDark: boolean) =>
     },
     badgeText: {
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 9,
       lineHeight: 12,
       textAlign: "center",
@@ -250,7 +250,7 @@ const FighterBioStyles = (isDark: boolean) =>
     bottomInfoText: {
       fontSize: 12,
       textAlign: "center",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       lineHeight: 16,
     },
@@ -269,7 +269,7 @@ const FighterBioStyles = (isDark: boolean) =>
     recordText: {
       maxWidth: "75%",
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 11,
       textAlign: "center",
     },

@@ -148,14 +148,14 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
     },
 
     value: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize,
       color: isDark ? Colors.white : Colors.black,
       marginRight: 4,
     },
 
     label: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

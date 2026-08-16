@@ -36,7 +36,7 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
       resizeMode: "contain",
     },
     teamLabel: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -48,7 +48,7 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
     },
 
     statLabel: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -65,7 +65,7 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
       flex: 1,
       alignItems: "flex-start",
       marginLeft: 12,
-     backgroundColor: isDark
+      backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
@@ -84,7 +84,7 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
     },
 
     barText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 14,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -99,7 +99,7 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
     },
     showMoreLess: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
     },
   });

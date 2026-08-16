@@ -230,7 +230,6 @@ function findTeamLeaders(
 
     const teamCodes = [
       normalizeValue(team?.code),
-      normalizeValue(team?.abbreviation),
       normalizeValue(team?.shortName),
     ];
 
@@ -350,7 +349,7 @@ function Stat({
       <Text
         style={{
           color: Colors.midTone,
-          fontFamily: Fonts.OSMEDIUM,
+          fontFamily: Fonts.MEDIUM,
           fontSize: 11,
         }}
       >

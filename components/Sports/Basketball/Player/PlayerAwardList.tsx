@@ -71,7 +71,7 @@ export const playerAwardListStyles = (isDark: boolean) =>
       paddingVertical: 12,
     },
     awardText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },

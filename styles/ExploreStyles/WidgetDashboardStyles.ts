@@ -43,7 +43,7 @@ export const widgetDashboardStyles = (isDark: boolean) =>
         : "rgba(44, 156, 83, 0.1)",
     },
     dropPlaceholderText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 13,
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
@@ -71,7 +71,7 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.white : Colors.black,
     },
     toolbarButtonText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -97,14 +97,14 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     emptyTitle: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
     },
     emptyText: {
       maxWidth: 280,
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -120,7 +120,7 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     ctaText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 14,
       color: isDark ? Colors.black : Colors.white,
     },
@@ -158,12 +158,12 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     },
     placeholderTitle: {
       flex: 1,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     placeholderText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       lineHeight: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,

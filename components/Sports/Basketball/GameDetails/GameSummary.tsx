@@ -270,17 +270,17 @@ const gameSummaryStyles = (isDark: boolean) =>
       borderTopColor: Colors.midTone,
     },
     periodText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 60,
     },
     playDesc: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
     },
     clockText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       width: 45,
       textAlign: "right",

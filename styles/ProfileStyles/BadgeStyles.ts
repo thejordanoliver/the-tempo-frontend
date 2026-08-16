@@ -35,12 +35,12 @@ export const badgeCardStyles = (
 
     name: {
       fontSize: 17,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     tier: {
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textTransform: "uppercase",
       letterSpacing: 0.6,
     },
@@ -53,13 +53,13 @@ export const badgeCardStyles = (
 
     categoryText: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     description: {
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -75,13 +75,13 @@ export const badgeCardStyles = (
 
     progressText: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     statusText: {
       fontSize: 12,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isEarned ? tierColor : isDark ? Colors.lightGray : Colors.darkGray,
     },
 

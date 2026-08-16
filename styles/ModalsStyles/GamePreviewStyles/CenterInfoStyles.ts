@@ -8,35 +8,35 @@ export const centerInfoStyles = StyleSheet.create({
   },
   date: {
     fontSize: 16,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     color: Colors.dark.white,
   },
   period: {
-    fontFamily: Fonts.OSMEDIUM,
+    fontFamily: Fonts.MEDIUM,
     fontSize: 18,
     color: Colors.dark.white,
   },
   clock: {
-    fontFamily: Fonts.OSMEDIUM,
+    fontFamily: Fonts.MEDIUM,
     fontSize: 18,
     color: Colors.dark.white,
     textAlign: "center",
   },
   downAndDistance: {
-    fontFamily: Fonts.OSMEDIUM,
+    fontFamily: Fonts.MEDIUM,
     fontSize: 10,
     color: Colors.dark.white,
     marginTop: 2,
     textAlign: "center",
   },
   finalText: {
-    fontFamily: Fonts.OSMEDIUM,
+    fontFamily: Fonts.MEDIUM,
     fontSize: 18,
     color: Colors.dark.lightRed,
     textAlign: "center",
   },
   headlineText: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 10,
     color: Colors.midTone,
     textAlign: "center",
@@ -66,14 +66,14 @@ export const centerInfoStyles = StyleSheet.create({
 
   headline: {
     fontSize: 12,
-    fontFamily: Fonts.OSLIGHT,
+    fontFamily: Fonts.LIGHT,
     color: Colors.dark.white,
     position: "absolute",
     top: -48,
   },
   broadcast: {
     fontSize: 12,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     color: Colors.dark.white,
     textAlign: "center",
   },

@@ -13,13 +13,13 @@ export function postItemStyles(isDark: boolean) {
       paddingVertical: 10,
     },
     username: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     timeWrapper: { flex: 1, justifyContent: "flex-end" },
     timestamp: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
     },
@@ -30,7 +30,7 @@ export function postItemStyles(isDark: boolean) {
     postText: {
       marginTop: 12,
       marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -43,7 +43,7 @@ export function postItemStyles(isDark: boolean) {
       maxHeight: 280,
       marginTop: 12,
       marginBottom: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -84,7 +84,7 @@ export function postItemStyles(isDark: boolean) {
       color: isDark ? Colors.white : Colors.black,
       marginLeft: 4,
       marginRight: 4,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     interactionContainer: { flex: 1 },
     interactionWrapper: {
@@ -130,12 +130,12 @@ export function postItemStyles(isDark: boolean) {
     saveText: {
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     cancelText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     button: {
       padding: 10,
@@ -154,7 +154,7 @@ export function postItemStyles(isDark: boolean) {
 
     pollQuestion: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       marginBottom: 12,
     },
@@ -184,12 +184,12 @@ export function postItemStyles(isDark: boolean) {
     },
     percentageText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
     },
     footerText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       marginTop: 4,
     },
@@ -256,7 +256,7 @@ export function postItemStyles(isDark: boolean) {
     submenuText: {
       flex: 1,
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -328,7 +328,7 @@ export const commentItemStyles = (isDark: boolean) =>
 
     profileInitial: {
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
 
@@ -340,14 +340,14 @@ export const commentItemStyles = (isDark: boolean) =>
     },
 
     username: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
     },
 
     timestamp: {
       marginTop: 1,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: Colors.midTone,
     },
@@ -423,7 +423,7 @@ export const commentItemStyles = (isDark: boolean) =>
     submenuText: {
       flex: 1,
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -451,7 +451,7 @@ export const commentItemStyles = (isDark: boolean) =>
     commentText: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -462,7 +462,7 @@ export const commentItemStyles = (isDark: boolean) =>
 
     expandText: {
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.blue : Colors.light.blue,
     },
 
@@ -498,7 +498,7 @@ export const commentItemStyles = (isDark: boolean) =>
       paddingVertical: 8,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -521,12 +521,12 @@ export const commentItemStyles = (isDark: boolean) =>
     cancelText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 15,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     saveText: {
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
       fontSize: 15,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
   });

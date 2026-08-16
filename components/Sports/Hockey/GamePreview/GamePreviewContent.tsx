@@ -79,7 +79,7 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeGames={homeLastGames}
           awayGames={awayLastGames}
-          league={league}
+          league={"soccer"}
           state={state}
           isDark
         />

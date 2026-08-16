@@ -60,7 +60,7 @@ export const stackedGameCardStyles = (
     footballIcon: { width: 28, height: 28, resizeMode: "contain" },
     teamName: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       flexShrink: 1,
       color: textColor,
       textAlign: "left",
@@ -71,14 +71,14 @@ export const stackedGameCardStyles = (
     },
     teamScore: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "right",
       color: textColor,
       width: 40,
     },
     teamRecord: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "right",
       color: textColor,
     },
@@ -89,25 +89,25 @@ export const stackedGameCardStyles = (
       width: 100,
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
     date: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: textColor,
     },
     dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: subTextColor,
       fontSize: 12,
     },
     time: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: textColor,
     },
@@ -130,30 +130,30 @@ export const stackedGameCardStyles = (
     },
     period: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: textColor,
     },
     clock: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: accentRed,
     },
     outs: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: accentRed,
       textAlign: "center",
     },
     broadcast: {
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: subTextColor,
     },
     headlineText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 8,
       color: headlineColor,
       position: "absolute",
@@ -162,7 +162,7 @@ export const stackedGameCardStyles = (
     },
     downDistance: {
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isChampionship
         ? isDark
           ? Colors.white
@@ -186,7 +186,7 @@ export const stackedGameCardStyles = (
       top: 8,
       right: 4,
     },
-    footballPossesion: {
+    possession: {
       width: 25,
       height: 25,
       resizeMode: "contain",

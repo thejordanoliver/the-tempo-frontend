@@ -7,7 +7,7 @@ export const teamCardStyles = StyleSheet.create({
     overflow: "hidden",
   },
   teamName: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 12,
     textAlign: "center",
   },
@@ -36,6 +36,6 @@ export const teamCardStyles = StyleSheet.create({
   sportTagText: {
     color: Colors.white,
     fontSize: 11,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
   },
 });

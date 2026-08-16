@@ -52,7 +52,7 @@ const inputStyles = (isDark: boolean) =>
       borderRadius: 8,
       marginBottom: 12,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     bioInput: {

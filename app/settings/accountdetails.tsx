@@ -217,7 +217,7 @@ const accountDetailsStyles = (isDark: boolean) =>
       flex: 1,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     button: {
@@ -228,14 +228,14 @@ const accountDetailsStyles = (isDark: boolean) =>
     text: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       marginBottom: 10,
     },
     memberSince: {
       color: isDark ? Colors.darkGray : Colors.lightGray,
       fontSize: 16,
       marginTop: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
   });

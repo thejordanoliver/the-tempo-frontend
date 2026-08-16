@@ -231,7 +231,7 @@ const messageListStyles = (isDark: boolean) =>
       marginTop: 4,
       marginBottom: 10,
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -260,7 +260,7 @@ const messageListStyles = (isDark: boolean) =>
 
     emptyTitle: {
       fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
       marginBottom: 6,
@@ -268,7 +268,7 @@ const messageListStyles = (isDark: boolean) =>
 
     emptyText: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       lineHeight: 20,
@@ -284,7 +284,7 @@ const messageListStyles = (isDark: boolean) =>
 
     retryButtonText: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
   });

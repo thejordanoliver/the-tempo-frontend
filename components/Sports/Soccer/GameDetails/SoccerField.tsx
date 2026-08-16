@@ -39,6 +39,7 @@ type SoccerShotMapProps = {
   flipVerticalCoordinates?: boolean;
   height?: number;
   isDark?: boolean;
+  state: string;
 };
 
 type FilterOption = {
@@ -309,6 +310,7 @@ export default function SoccerShotMap({
   flipVerticalCoordinates = true,
   height,
   isDark = false,
+  state,
 }: SoccerShotMapProps) {
   const styles = shotMapStyles(isDark);
   const rawId = useId();
@@ -481,6 +483,8 @@ export default function SoccerShotMap({
         selectedShot.coordinates.endY,
       )
     : null;
+
+  if (state === "pre" || state === "post") return null;
 
   return (
     <View style={styles.container}>
@@ -880,7 +884,7 @@ const shotMapStyles = (isDark: boolean) =>
 
     playerName: {
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -939,14 +943,14 @@ const shotMapStyles = (isDark: boolean) =>
     legendText: {
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     legendTeamCode: {
       flexShrink: 1,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     legendLogo: {
@@ -956,21 +960,21 @@ const shotMapStyles = (isDark: boolean) =>
 
     shotMeta: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     shotText: {
       fontSize: 13,
       lineHeight: 19,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.midTone,
     },
 
     assistText: {
       fontSize: 12,
       lineHeight: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
   });

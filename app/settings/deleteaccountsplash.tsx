@@ -83,7 +83,7 @@ const deleteAccountStyles = (isDark: boolean) =>
     },
     text: {
       fontSize: 28,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
       paddingHorizontal: 20,
       color: isDark ? Colors.white : Colors.black,

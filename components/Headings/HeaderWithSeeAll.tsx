@@ -63,16 +63,16 @@ const HeaderWithSeeAllStyles = (isDark: boolean) =>
     seeAll: {
       color: isDark ? Colors.white : Colors.black,
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     heading: {
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
     subtitle: {
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

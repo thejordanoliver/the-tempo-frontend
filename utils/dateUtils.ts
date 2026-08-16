@@ -116,16 +116,15 @@ export function getCBBSeason(): number {
   const year = today.year();
   const month = today.month() + 1; // 1–12
 
-  // January–April belong to the season that started last year.
-  // January 2026–April 2026 represents the 2025–2026 season.
-  if (month <= 4) {
-    return year - 1;
+  // January–July use the season ending in the current year.
+  // Example: January–July 2026 returns 2026.
+  if (month <= 8) {
+    return year;
   }
 
-  // May–October represent the upcoming season.
-  // November–December represent the active season.
-  // May 2026–December 2026 represents the 2026–2027 season.
-  return year;
+  // August–December use the upcoming season's ending year.
+  // Example: August–December 2026 returns 2027.
+  return year + 1;
 }
 
 export function getMLBSeason(date: Date = new Date()): string {

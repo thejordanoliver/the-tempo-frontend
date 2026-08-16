@@ -32,12 +32,12 @@ export const lastPlayStyles = (isDark: boolean) =>
       marginVertical: 12,
     },
     simpleText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
     subText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -56,18 +56,18 @@ export const lastPlayStyles = (isDark: boolean) =>
       alignItems: "flex-end",
     },
     athleteName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     athleteMeta: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       marginLeft: 4,
       color: isDark ? Colors.midTone : Colors.midTone,
     },
     playText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       flex: 1,
     },
@@ -75,7 +75,7 @@ export const lastPlayStyles = (isDark: boolean) =>
       marginTop: 8,
     },
     description: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
       opacity: 0.7,

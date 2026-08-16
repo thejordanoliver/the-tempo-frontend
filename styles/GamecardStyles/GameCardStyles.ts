@@ -62,7 +62,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     teamName: {
       marginTop: 4,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: textColor,
       textAlign: "center",
@@ -76,14 +76,14 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     teamScore: {
       fontSize: 28,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
       width: 72,
     },
 
     teamRecord: {
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: textColor,
       textAlign: "center",
       width: 72,
@@ -130,26 +130,26 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🏈 GAME STATE / STATUS
     ========================= */
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       fontSize: 12,
     },
 
     period: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       fontSize: 12,
     },
 
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
 
     clock: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
@@ -163,7 +163,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     outs: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: accentRed,
       textAlign: "center",
     },
@@ -176,14 +176,14 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     downDistance: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: subTextColor,
       textAlign: "center",
     },
 
     broadcast: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: subTextColor,
@@ -217,7 +217,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     headlineText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 8,
       color: headlineColor,
       textAlign: "center",
@@ -232,15 +232,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     /* =========================
        ⚾ POSSESSION / EXTRAS
     ========================= */
-    awayPossession: {
-      width: 22,
-      height: 22,
-      resizeMode: "contain",
-      position: "absolute",
-      bottom: -14,
-    },
-
-    homePossession: {
+    possession: {
       width: 22,
       height: 22,
       resizeMode: "contain",
@@ -300,7 +292,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     metaText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: subTextColor,
       textAlign: "center",
@@ -332,25 +324,25 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🏁 EVENT / TRACK
     ========================= */
     eventName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: textColor,
     },
 
     trackName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: subTextColor,
     },
 
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       fontSize: 12,
     },
 
     lapInfo: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
@@ -366,7 +358,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     position: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: subTextColor,
     },
@@ -403,13 +395,13 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     driverName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       color: textColor,
     },
 
     teamName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: subTextColor,
     },
@@ -429,7 +421,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     carNumberText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: textColor,
     },
@@ -445,7 +437,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        ⏱️ TIMING / GAP
     ========================= */
     timeGap: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: textColor,
       textAlign: "right",
@@ -453,7 +445,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     interval: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: subTextColor,
       textAlign: "right",
@@ -468,28 +460,28 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🏆 STATUS
     ========================= */
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
 
     liveText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
 
     scheduledText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: subTextColor,
       textAlign: "center",
     },
 
     dnfText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: subTextColor,
       fontStyle: "italic",
@@ -519,7 +511,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     headlineText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 8,
       color: headlineColor,
       textAlign: "center",
@@ -529,7 +521,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        📡 BROADCAST / EXTRAS
     ========================= */
     broadcast: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: subTextColor,
@@ -542,7 +534,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     showMoreText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
     },

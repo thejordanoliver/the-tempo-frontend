@@ -214,9 +214,7 @@ export const CFBStandingsList = () => {
       ]}
     >
       <View style={styles.rankContainer}>
-        <Text style={[styles.rankText, { fontFamily: Fonts.OSSEMIBOLD }]}>
-          #
-        </Text>
+        <Text style={[styles.rankText, { fontFamily: Fonts.SEMIBOLD }]}>#</Text>
       </View>
       <Text style={[styles.teamHeaderText]}>Team</Text>
     </View>
@@ -239,7 +237,7 @@ export const CFBStandingsList = () => {
             style={[
               styles.statText,
               {
-                fontFamily: Fonts.OSSEMIBOLD,
+                fontFamily: Fonts.SEMIBOLD,
                 color: isDark ? Colors.white : Colors.black,
               },
             ]}
@@ -267,7 +265,7 @@ export const CFBStandingsList = () => {
                 key={item.team?.id || `dropped-${item.previous}-${item.date}`}
                 style={{
                   color: isDark ? Colors.white : Colors.black,
-                  fontFamily: Fonts.OSLIGHT,
+                  fontFamily: Fonts.LIGHT,
                   fontSize: 16,
                   marginVertical: 2,
                   marginRight: 8,

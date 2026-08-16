@@ -37,7 +37,7 @@ export const gameLeadersStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.white : Colors.black,
     },
     jersey: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       marginLeft: 4,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -48,7 +48,7 @@ export const gameLeadersStyles = (isDark: boolean) =>
     },
     infoSection: { flex: 1, marginLeft: 10, justifyContent: "flex-end" },
     playerName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -60,12 +60,12 @@ export const gameLeadersStyles = (isDark: boolean) =>
     },
     statBlock: { alignItems: "flex-start", flex: 1 },
     statLabel: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: isDark ? Colors.midTone : Colors.midTone,
     },
     statText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },

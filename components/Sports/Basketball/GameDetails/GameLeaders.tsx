@@ -367,7 +367,7 @@ export default function GameLeaders({
                     ? Colors.white
                     : Colors.black
                   : Colors.midTone,
-                fontFamily: Fonts.OSREGULAR,
+                fontFamily: Fonts.REGULAR,
               }}
             >
               {CATEGORY_CONFIG[tab as Category].label.toUpperCase()}

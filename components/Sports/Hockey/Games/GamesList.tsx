@@ -27,6 +27,10 @@ type GamesListProps = {
   scrollEnabled?: boolean;
   showCountdown?: boolean;
   countdownGame?: HockeyGame | null;
+  teamLogo?: any;
+  teamName?: string;
+  teamColor?: string;
+  teamSecondaryColor?: string;
 };
 type PlaceholderGame = { _isPlaceholder: true; id: string };
 type GameListItem = HockeyGame | PlaceholderGame;
@@ -47,6 +51,10 @@ export default function GamesList({
   scrollEnabled = true,
   showCountdown = false,
   countdownGame = null,
+  teamLogo,
+  teamName,
+  teamColor,
+  teamSecondaryColor,
 }: GamesListProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -183,7 +191,14 @@ export default function GamesList({
         ItemSeparatorComponent={viewMode !== "grid" ? ItemSeparator : undefined}
         ListHeaderComponent={
           showHeaders && showCountdown && countdownGame ? (
-            <CountdownClock game={countdownGame} loading={loading} />
+            <CountdownClock
+              game={countdownGame}
+              loading={loading}
+              teamLogo={teamLogo}
+              teamName={teamName}
+              teamColor={teamColor}
+              teamSecondaryColor={teamSecondaryColor}
+            />
           ) : null
         }
         contentContainerStyle={

@@ -17,6 +17,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+
   const handlePress = () => {
     router.push({
       pathname: "/game/soccer/[game]",
@@ -55,7 +56,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
 
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
-  const clock = game.status?.clock;
+  const clock = game.status?.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status?.shortDetail;
   const inProgress = game.status.state === "in";

@@ -14,7 +14,7 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
 
     seriesText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -56,20 +56,20 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
 
     teamName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
 
     teamScore: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
       flex: 1,
     },
     teamRecord: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -79,7 +79,7 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
     gameDate: {
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 16,
     },
@@ -90,29 +90,29 @@ export const headToHeadStyles = (isDark: boolean) =>
       gap: 4,
     },
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
     },
     period: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     clock: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     broadcast: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 10,
       textAlign: "center",

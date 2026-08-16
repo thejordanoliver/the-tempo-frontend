@@ -1,4 +1,5 @@
 import InfoCard from "@/components/Sports/Basketball/Team/InfoCard";
+import { getSOCCTeam } from "@/constants/teamsSOCC";
 import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { TeamDetails } from "@/hooks/useTeams";
 import { Team } from "@/types/football/football";
@@ -61,6 +62,9 @@ export default function TeamInfo({
       case "WNBA":
         return getWNBATeam(teamId);
 
+      case "SOCCER":
+        return getSOCCTeam(teamId);
+
       default:
         return null;
     }
@@ -81,6 +85,7 @@ export default function TeamInfo({
           <InfoCard
             label="Coach"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
 
@@ -103,6 +108,7 @@ export default function TeamInfo({
           <InfoCard
             label="Coach"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
 
@@ -131,6 +137,7 @@ export default function TeamInfo({
           <InfoCard
             label="Coach"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
 
@@ -158,6 +165,7 @@ export default function TeamInfo({
           <InfoCard
             label="Coach"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
           <InfoCard label="Location" value={teamDetails?.location} team={t} />
@@ -176,9 +184,10 @@ export default function TeamInfo({
 
       return (
         <View style={styles.infoCardContainer}>
-          <InfoCard
+         <InfoCard
             label="Manager"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
 
@@ -201,6 +210,7 @@ export default function TeamInfo({
           <InfoCard
             label="Coach"
             value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
+            image={teamDetails?.coach?.image}
             team={t}
           />
 

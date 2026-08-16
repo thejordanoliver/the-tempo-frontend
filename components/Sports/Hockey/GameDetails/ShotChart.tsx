@@ -56,8 +56,7 @@ const RINK_VIEWBOX_BOUNDS = {
 };
 const RINK_VIEWBOX_LENGTH =
   RINK_VIEWBOX_BOUNDS.right - RINK_VIEWBOX_BOUNDS.left;
-const RINK_VIEWBOX_WIDTH =
-  RINK_VIEWBOX_BOUNDS.bottom - RINK_VIEWBOX_BOUNDS.top;
+const RINK_VIEWBOX_WIDTH = RINK_VIEWBOX_BOUNDS.bottom - RINK_VIEWBOX_BOUNDS.top;
 const RINK_CENTER_LOGO_SIZE = 50;
 
 const normalizeId = (value: string | number | null | undefined) =>
@@ -480,7 +479,7 @@ export const shotChartStyles = (isDark: boolean) =>
     legendText: {
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     legendLogo: {

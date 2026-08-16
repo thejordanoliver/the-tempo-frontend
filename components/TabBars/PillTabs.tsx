@@ -270,7 +270,7 @@ const pillTabsStyles = (isDark: boolean) =>
     },
 
     tabLabel: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 

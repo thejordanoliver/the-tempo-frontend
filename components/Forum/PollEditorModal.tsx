@@ -264,19 +264,19 @@ function getStyles(isDark: boolean) {
     headerBtn: { padding: 8 },
     headerTitle: {
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
     save: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
     },
     sectionTitle: {
       marginTop: 12,
       marginBottom: 8,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
     inputCard: {
@@ -289,7 +289,7 @@ function getStyles(isDark: boolean) {
     },
     questionInput: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       paddingVertical: 10,
     },
@@ -306,7 +306,7 @@ function getStyles(isDark: boolean) {
     optionInput: {
       flex: 1,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       paddingVertical: 10,
     },
@@ -319,7 +319,7 @@ function getStyles(isDark: boolean) {
     },
     addOptionText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
     },
     toggleCard: {
@@ -333,12 +333,12 @@ function getStyles(isDark: boolean) {
     },
     toggleLabel: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 15,
     },
     toggleSubLabel: {
       color: Colors.lightGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       marginTop: 2,
     },

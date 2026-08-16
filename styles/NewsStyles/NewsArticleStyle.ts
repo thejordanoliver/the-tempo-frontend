@@ -9,7 +9,7 @@ export const getStyles = (isDark: boolean) =>
     },
     title: {
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       marginBottom: 12,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -37,22 +37,22 @@ export const getStyles = (isDark: boolean) =>
     },
     description: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     source: {
       marginTop: 8,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     content: {
       fontSize: 16,
       lineHeight: 24,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       flex: 1,
     },

@@ -235,11 +235,11 @@ const highlightStyles = (isDark: boolean) =>
     },
     headline: {
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
     },
     empty: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,

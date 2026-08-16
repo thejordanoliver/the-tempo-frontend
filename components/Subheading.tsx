@@ -18,7 +18,7 @@ const subHeadingStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       marginBottom: 8,

@@ -213,13 +213,13 @@ export const homeAwayTabBarStyles = (isDark: boolean) => {
     },
     allTabText: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: Colors.midTone,
       opacity: 0.5,
     },
     teamName: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: Colors.midTone,
       opacity: 0.5,
     },

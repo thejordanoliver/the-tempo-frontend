@@ -37,6 +37,10 @@ type Props = {
   isCFB?: boolean;
   showCountdown?: boolean;
   countdownGame?: FootballGame | null;
+  teamLogo?: any;
+  teamName?: string;
+  teamColor?: string;
+  teamSecondaryColor?: string;
 };
 
 type FootballGameSection = {
@@ -58,6 +62,10 @@ export default function GamesList({
   isCFB = false,
   showCountdown = false,
   countdownGame = null,
+  teamLogo,
+  teamName,
+  teamColor,
+  teamSecondaryColor,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -333,7 +341,14 @@ export default function GamesList({
           renderItem={renderGridRow}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
-              <CountdownClock game={countdownGame} loading={loading} />
+              <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
             ) : null
           }
           renderSectionHeader={({ section }) =>
@@ -367,7 +382,14 @@ export default function GamesList({
           renderItem={({ item, index }) => renderGameCard(item, index)}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
-              <CountdownClock game={countdownGame} loading={loading} />
+               <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
             ) : null
           }
           renderSectionHeader={({ section }) => {

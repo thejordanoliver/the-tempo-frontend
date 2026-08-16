@@ -342,12 +342,12 @@ const KeyEventsStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     periodText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
     },
     clockText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.midTone : Colors.darkGray,
       fontSize: 12,
     },
@@ -360,19 +360,19 @@ const KeyEventsStyles = (isDark: boolean) =>
       gap: 8,
     },
     eventType: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 13,
       flexShrink: 1,
     },
     eventText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
       lineHeight: 18,
     },
     participantsText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.midTone : Colors.darkGray,
       fontSize: 12,
       marginTop: 4,

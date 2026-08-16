@@ -46,7 +46,7 @@ export const GiphySearchModal: React.FC<Props> = ({
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => getStyles(isDark), [isDark]);
+  const styles = useMemo(() => GiphySerachModalStyles(isDark), [isDark]);
 
   const debouncedQuery = useDebounce(query.trim(), 400);
   const { data: results, loading, hasMore, searchGifs } = useGiphySearch();
@@ -196,7 +196,7 @@ export const GiphySearchModal: React.FC<Props> = ({
   );
 };
 
-const getStyles = (isDark: boolean) =>
+const GiphySerachModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     modalRoot: {
       flex: 1,
@@ -225,13 +225,13 @@ const getStyles = (isDark: boolean) =>
       marginBottom: 12,
     },
     title: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
     subtitle: {
       marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -261,7 +261,7 @@ const getStyles = (isDark: boolean) =>
     },
     searchInput: {
       flex: 1,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
       paddingVertical: 10,
@@ -288,13 +288,13 @@ const getStyles = (isDark: boolean) =>
     emptyText: {
       textAlign: "center",
       marginTop: 24,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     loadingText: {
       textAlign: "center",
       paddingVertical: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
   });

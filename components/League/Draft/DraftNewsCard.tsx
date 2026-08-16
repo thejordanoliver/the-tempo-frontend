@@ -47,12 +47,12 @@ const getStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     title: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
     timeText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: Colors.midTone,
     },

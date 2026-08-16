@@ -73,7 +73,7 @@ const starRatingStyles = (isDark: boolean) =>
 
     score: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
   });

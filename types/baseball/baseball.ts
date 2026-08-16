@@ -6,7 +6,7 @@ export type BaseballGame = {
     name: string;
     slug: string;
   };
-  id: string | number;
+  id: number;
   uid: string;
   name: string;
   shortName: string;

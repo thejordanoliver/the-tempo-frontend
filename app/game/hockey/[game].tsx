@@ -115,7 +115,7 @@ export default function GameDetailsScreen(
   const showGameChat = shouldShowGameChat(gameDateObj);
 
   const LEAGUE = game?.league?.code ?? "nhl";
-  const gameId = Number(game?.id) ?? 0;
+  const gameId = game?.id ?? 0;
 
   const home = game?.home;
   const away = game?.away;
@@ -134,14 +134,6 @@ export default function GameDetailsScreen(
   const awayHeaderLogo = getNHLTeamLogo(awayId, true);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
-  const homeName = useMemo(
-    () => homeTeam?.fullName ?? "",
-    [homeTeam?.fullName],
-  );
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? "",
-    [awayTeam?.fullName],
-  );
 
   const awayColor = awayTeam?.color ?? Colors.midTone;
   const homeColor = homeTeam?.color ?? Colors.midTone;
@@ -279,30 +271,35 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
+          // Game details
           headline={headline}
-          homeId={homeId}
-          awayId={awayId}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          homeName={homeCode}
-          awayName={awayCode}
-          homeScore={homeScore}
-          awayScore={awayScore}
-          homeRecord={homeRecord}
-          awayRecord={awayRecord}
-          homeTimeouts={homeTimeouts}
-          awayTimeouts={awayTimeouts}
-          homeWins={homeWins}
-          awayWins={awayWins}
-          clock={clock}
-          period={period}
+          league={LEAGUE}
           date={formattedDate}
           time={formattedTime}
           broadcast={broadcast}
+          isDark={isDark}
+          // Away team
+          awayId={awayId}
+          awayName={awayCode}
+          awayLogo={awayLogo}
+          awayScore={awayScore}
+          awayRecord={awayRecord}
+          awayWins={awayWins}
+          awayTimeouts={awayTimeouts}
+          // Home team
+          homeId={homeId}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeScore={homeScore}
+          homeRecord={homeRecord}
+          homeWins={homeWins}
+          homeTimeouts={homeTimeouts}
+          // Live game state
+          clock={clock}
+          period={period}
+          // Status
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
-          isDark={isDark}
-          league={LEAGUE}
         />
 
         {!dontShowDetails && (
@@ -393,8 +390,8 @@ export default function GameDetailsScreen(
             />
 
             <HeadCoaches
-              homeName={homeName}
-              awayName={awayName}
+              homeCode={homeCode}
+              awayCode={awayCode}
               homeCoach={homeCoach}
               awayCoach={awayCoach}
               homeLogo={homeLogo}

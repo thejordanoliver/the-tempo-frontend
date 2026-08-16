@@ -726,7 +726,7 @@ const messageDetailStyles = (isDark: boolean) =>
     messageText: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -750,7 +750,7 @@ const messageDetailStyles = (isDark: boolean) =>
       alignSelf: "flex-end",
       marginTop: 6,
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
 
@@ -773,7 +773,7 @@ const messageDetailStyles = (isDark: boolean) =>
     emptyTitle: {
       marginTop: 12,
       fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
@@ -782,7 +782,7 @@ const messageDetailStyles = (isDark: boolean) =>
       marginTop: 6,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -797,7 +797,7 @@ const messageDetailStyles = (isDark: boolean) =>
 
     retryButtonText: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
 
@@ -811,7 +811,7 @@ const messageDetailStyles = (isDark: boolean) =>
     typingBubbleText: {
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontStyle: "italic",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -860,7 +860,7 @@ const messageDetailStyles = (isDark: boolean) =>
 
     previewBadgeText: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.white,
     },
 
@@ -925,7 +925,7 @@ const messageDetailStyles = (isDark: boolean) =>
       paddingBottom: 8,
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -946,7 +946,7 @@ const messageDetailStyles = (isDark: boolean) =>
       marginTop: 6,
       paddingHorizontal: 8,
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

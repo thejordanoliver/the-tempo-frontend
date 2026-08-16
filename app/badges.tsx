@@ -270,14 +270,14 @@ export const badgeScreenStyles = (isDark: boolean) =>
 
     summaryTitle: {
       fontSize: 21,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     summaryDescription: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -288,13 +288,13 @@ export const badgeScreenStyles = (isDark: boolean) =>
 
     earnedCount: {
       fontSize: 30,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     totalCount: {
       fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -327,13 +327,13 @@ export const badgeScreenStyles = (isDark: boolean) =>
 
     statValue: {
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     statLabel: {
       fontSize: 11,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -358,7 +358,7 @@ export const badgeScreenStyles = (isDark: boolean) =>
     statusText: {
       textAlign: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -366,7 +366,7 @@ export const badgeScreenStyles = (isDark: boolean) =>
       textAlign: "center",
       fontSize: 15,
       lineHeight: 21,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -379,7 +379,7 @@ export const badgeScreenStyles = (isDark: boolean) =>
 
     retryText: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
   });

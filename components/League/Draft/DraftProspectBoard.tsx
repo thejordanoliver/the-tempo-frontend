@@ -491,7 +491,7 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       marginBottom: 12,
     },
     eyebrow: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       letterSpacing: 1,
       textTransform: "uppercase",
@@ -499,7 +499,7 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       opacity: 0.8,
     },
     title: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 19,
       color: isDark ? Colors.white : Colors.black,
       marginTop: 2,
@@ -520,7 +520,7 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     liveText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -548,7 +548,7 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       gap: 6,
     },
     featuredLabel: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
@@ -563,18 +563,18 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       flex: 1,
     },
     prospectName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 17,
       color: isDark ? Colors.white : Colors.black,
     },
     prospectMeta: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,
     },
     prospectSubMeta: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,
@@ -609,13 +609,13 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
     },
     statLabel: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       letterSpacing: 0.4,
     },
     statValue: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -623,7 +623,7 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       marginTop: 14,
     },
     availableTitle: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
       marginBottom: 10,
@@ -655,18 +655,18 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       zIndex: 2,
     },
     availableRankText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: isDark ? Colors.white : Colors.black,
     },
     availableName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
       marginTop: 8,
     },
     availableMeta: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,

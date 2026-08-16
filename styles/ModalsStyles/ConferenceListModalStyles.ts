@@ -55,7 +55,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
     },
@@ -78,7 +78,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
     leagueText: {
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     leftContent: {
       flexDirection: "row",

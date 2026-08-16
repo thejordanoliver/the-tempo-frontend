@@ -6,7 +6,7 @@ import type { ImageSourcePropType } from "react-native";
 
 export type Team = {
   id: number;
-  league: string
+  league: string;
   espnId?: number | null;
   summerLeagueId?: number;
   name: string;
@@ -32,6 +32,30 @@ export type Team = {
   isAllStar: boolean;
   isNational: boolean;
   isActive: boolean;
+};
+
+export type LastPlay = {
+  id: string;
+  text: string;
+  scoreValue: number;
+  scoringPlay: null;
+  clock: null;
+  period: null;
+  type: {
+    id: string;
+    text: string;
+    abbreviation: string;
+  };
+  teamId: number;
+  athletesInvolved: [
+    {
+      id: string;
+      fullName: string;
+      displayName: string;
+      shortName: string;
+      position: string;
+    },
+  ];
 };
 
 export type FootballGame = {
@@ -94,20 +118,7 @@ export type FootballGame = {
     homeMoneyline: null;
     awayMoneyline: null;
   };
-  periods: number;
-  period: number;
-  quarter: number;
-  clock: number;
-  displayClock: string;
-  down: null;
-  distance: null;
-  yardLine: null;
-  possession: null;
-  possessionText: null;
-  redZone: boolean;
-  drive: null;
-  lastPlay: null;
-  teamWithPossession: null;
+
   home: {
     id: number;
     espnId: number;
@@ -147,21 +158,18 @@ export type FootballGame = {
   recent: boolean;
   wasSuspended: boolean;
   situation: {
-    down: null;
-    distance: null;
-    downDistanceText: string | null;
+    down: number;
+    distance: number;
     shortDownDistanceText: string | null;
-    yardLine: null;
-    possession: null;
-    possessionText: null;
-    isRedZone: false;
+    downDistanceText: string | null;
+    yardLine: number;
+    possession: number;
+    possessionText: string;
+    isRedZone: boolean;
     drive: null;
-    lastPlay: null;
-    teamWithPossession: null;
-  };
-  raw: {
-    eventId: string;
-    competitionId: string;
+    lastPlay: LastPlay;
+    homeTimeouts: number;
+    awayTimeouts: number;
   };
 };
 

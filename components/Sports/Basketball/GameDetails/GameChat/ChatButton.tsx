@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { memo, useEffect, useMemo, useRef } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
@@ -13,7 +13,7 @@ type Props = {
 function ChatButton({ isOpen, onPress }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => floatingButtonStyles(isDark), [isDark]);
+  const styles = useMemo(() => ChatButtonStyles(isDark), [isDark]);
 
   const opacityAnim = useRef(new Animated.Value(isOpen ? 0 : 1)).current;
 
@@ -33,7 +33,7 @@ function ChatButton({ isOpen, onPress }: Props) {
       <TouchableOpacity
         style={styles.floatingButton}
         onPress={onPress}
-        activeOpacity={0.8}
+        activeOpacity={activeOpacity}
       >
         <Ionicons
           name="chatbubble"
@@ -47,7 +47,7 @@ function ChatButton({ isOpen, onPress }: Props) {
 
 export default memo(ChatButton);
 
-const floatingButtonStyles = (isDark: boolean) =>
+const ChatButtonStyles = (isDark: boolean) =>
   StyleSheet.create({
     floatingButtonWrapper: {
       position: "absolute",

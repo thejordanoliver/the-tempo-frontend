@@ -289,7 +289,7 @@ const getStyles = (isDark: boolean) =>
     },
 
     rank: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 30,
       lineHeight: 34,
       color: isDark ? Colors.white : Colors.black,
@@ -315,7 +315,7 @@ const getStyles = (isDark: boolean) =>
     },
 
     rankChangeText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -333,7 +333,7 @@ const getStyles = (isDark: boolean) =>
     },
 
     teamName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 25,
       lineHeight: 30,
       color: isDark ? Colors.white : Colors.black,
@@ -341,7 +341,7 @@ const getStyles = (isDark: boolean) =>
 
     points: {
       marginTop: 3,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -370,13 +370,13 @@ const getStyles = (isDark: boolean) =>
     },
 
     statValue: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
 
     statLabel: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

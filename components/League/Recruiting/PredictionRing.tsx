@@ -341,7 +341,7 @@ const predictionRingStyles = (isDark: boolean) =>
     },
 
     percentage: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     splitContent: {

@@ -225,9 +225,7 @@ export const CBBStandingsList = ({ league = "CBB" }: Props) => {
       ]}
     >
       <View style={styles.rankContainer}>
-        <Text style={[styles.rankText, { fontFamily: Fonts.OSSEMIBOLD }]}>
-          #
-        </Text>
+        <Text style={[styles.rankText, { fontFamily: Fonts.SEMIBOLD }]}>#</Text>
       </View>
       <Text style={[styles.teamHeaderText]}>Team</Text>
     </View>
@@ -260,7 +258,7 @@ export const CBBStandingsList = ({ league = "CBB" }: Props) => {
               {
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 20,
-                fontFamily: Fonts.OSSEMIBOLD,
+                fontFamily: Fonts.SEMIBOLD,
               },
             ]}
           >
@@ -278,7 +276,7 @@ export const CBBStandingsList = ({ league = "CBB" }: Props) => {
                 key={item.team?.id || `dropped-${item.previous}-${item.date}`}
                 style={{
                   color: isDark ? Colors.white : Colors.black,
-                  fontFamily: Fonts.OSLIGHT,
+                  fontFamily: Fonts.LIGHT,
                   fontSize: 16,
                   marginVertical: 2,
                   marginRight: 8,

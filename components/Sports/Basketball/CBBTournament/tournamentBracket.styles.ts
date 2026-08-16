@@ -44,12 +44,12 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       gap: 3,
     },
     tournamentName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 22,
       color: textColor,
     },
     tournamentMeta: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: mutedTextColor,
       textTransform: "uppercase",
@@ -66,7 +66,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       paddingVertical: 8,
     },
     warningText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: textColor,
     },
@@ -84,7 +84,6 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       overflow: "visible",
     },
     regionContainer: {
-     
       overflow: "visible",
     },
     regionHeader: {
@@ -95,7 +94,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       borderBottomColor: borderColor,
     },
     regionTitle: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: textColor,
       textTransform: "uppercase",
@@ -104,7 +103,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       flexDirection: "row",
       alignItems: "flex-start",
       gap: BRACKET_LAYOUT.horizontalRoundGap,
-     
+
       overflow: "visible",
     },
     roundColumn: {
@@ -114,7 +113,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     roundLabel: {
       height: BRACKET_LAYOUT.roundTitleHeight,
       paddingTop: 7,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: mutedTextColor,
       textAlign: "center",
@@ -154,7 +153,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     seedText: {
       width: 18,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: mutedTextColor,
       textAlign: "center",
@@ -174,24 +173,24 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     teamName: {
       flex: 1,
       minWidth: 0,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: textColor,
     },
     teamRecord: {
       flexShrink: 0,
       maxWidth: 42,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
     },
     placeholderName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: mutedTextColor,
     },
     teamScore: {
       width: 32,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: textColor,
       textAlign: "right",
@@ -218,17 +217,17 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     statusText: {
       flex: 1,
       minWidth: 0,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
     },
     liveText: {
       color: liveColor,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     broadcastText: {
       maxWidth: 66,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
       textAlign: "right",
@@ -257,7 +256,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       right: 0,
       height: BRACKET_LAYOUT.roundTitleHeight,
       paddingTop: 7,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: mutedTextColor,
       textAlign: "center",
@@ -285,21 +284,21 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       height: 42,
     },
     championLabel: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
       textTransform: "uppercase",
     },
     championName: {
       width: "100%",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: textColor,
       textAlign: "center",
     },
     championMeta: {
       width: "100%",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
       textAlign: "center",
@@ -315,12 +314,12 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       gap: 8,
     },
     openingTitle: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: textColor,
     },
     openingCount: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: mutedTextColor,
     },
@@ -333,7 +332,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       gap: 6,
     },
     advanceText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: mutedTextColor,
     },
@@ -345,20 +344,20 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       gap: 6,
     },
     emptyTitle: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: textColor,
       textAlign: "center",
     },
     emptyBody: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: mutedTextColor,
       textAlign: "center",
     },
     retryText: {
       marginTop: 8,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.dark.blue : Colors.light.blue,
     },

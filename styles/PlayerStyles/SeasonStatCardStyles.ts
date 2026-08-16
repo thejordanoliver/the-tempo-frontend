@@ -24,12 +24,12 @@ export const seasonStatCardStyles = (isDark: boolean) => {
     },
     statValue: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
     statLabel: {
       fontSize: 10,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: muted,
       letterSpacing: 1.8,
       marginTop: 3,
@@ -41,7 +41,7 @@ export const seasonStatCardStyles = (isDark: boolean) => {
     },
     errorText: {
       color: muted,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
   });

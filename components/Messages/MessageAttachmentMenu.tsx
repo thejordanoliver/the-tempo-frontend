@@ -213,14 +213,14 @@ const attachmentMenuStyles = (isDark: boolean) =>
 
     itemTitle: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     itemSubtitle: {
       marginTop: 2,
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 

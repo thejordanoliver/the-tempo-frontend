@@ -155,7 +155,7 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
       paddingBottom: compact ? 18 : 24,
     },
     leagueBadgeText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -177,14 +177,14 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
     },
     teamName: {
       textAlign: "center",
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: compact ? 16 : 22,
       lineHeight: compact ? 20 : 27,
       color: isDark ? Colors.white : Colors.black,
     },
     teamFullName: {
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: compact ? 10 : 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

@@ -256,7 +256,7 @@ const tableStyles = (isDark: boolean) =>
 
     headerName: {
       paddingHorizontal: 10,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -297,19 +297,19 @@ const tableStyles = (isDark: boolean) =>
 
     teamName: {
       flex: 1,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
     },
 
     awardCount: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
 
     subText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       opacity: 0.75,
       color: isDark ? Colors.white : Colors.black,
@@ -317,7 +317,7 @@ const tableStyles = (isDark: boolean) =>
 
     muted: {
       padding: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       opacity: 0.6,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -330,7 +330,7 @@ const tableStyles = (isDark: boolean) =>
     },
 
     showMoreLess: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },

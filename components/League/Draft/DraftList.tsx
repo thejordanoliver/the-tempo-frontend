@@ -503,12 +503,12 @@ export const draftListStyles = (isDark: boolean) =>
       paddingTop: 40,
     },
     errorText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -518,7 +518,7 @@ export const draftListStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     footerLoaderText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

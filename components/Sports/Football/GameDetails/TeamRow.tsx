@@ -20,6 +20,7 @@ export const TeamRow = ({
   isWinner,
   isTie,
   gameStatusDescription,
+  state,
   hasPossession = false,
   timeouts,
   league,
@@ -28,7 +29,7 @@ export const TeamRow = ({
   const styles = teamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
-  const inProgress = gameStatusDescription === "In Progress";
+  const inProgress = state === "in";
   const isFinal = gameStatusDescription === "Final";
   const showRecordInsteadOfScore = isScheduled || score == null;
 

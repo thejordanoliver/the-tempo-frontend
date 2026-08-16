@@ -234,7 +234,7 @@ const confirmModalStyles = (isDark: boolean) =>
     title: {
       fontSize: 22,
       lineHeight: 28,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
       letterSpacing: -0.25,
@@ -246,7 +246,7 @@ const confirmModalStyles = (isDark: boolean) =>
       lineHeight: 22,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     children: {
       width: "100%",
@@ -300,13 +300,13 @@ const confirmModalStyles = (isDark: boolean) =>
     },
     cancelText: {
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       textAlign: "center",
       fontSize: 15,
     },
     confirmText: {
       color: Colors.white,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       textAlign: "center",
       fontSize: 15,
     },

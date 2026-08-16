@@ -515,14 +515,14 @@ const recruitCardStyles = (isDark: boolean) =>
 
     name: {
       flexShrink: 1,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
 
     positionText: {
       marginLeft: 6,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -543,7 +543,7 @@ const recruitCardStyles = (isDark: boolean) =>
     },
 
     rankingText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: Colors.white,
     },
@@ -570,20 +570,20 @@ const recruitCardStyles = (isDark: boolean) =>
     },
 
     subText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
 
     commitText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
 
     uncommittedText: {
       marginTop: 8,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: isDark ? Colors.dark.yellow : Colors.light.yellow,
     },

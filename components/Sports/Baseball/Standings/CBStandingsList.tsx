@@ -375,7 +375,7 @@ export const CBStandingsList = ({ league }: Props) => {
                 key={item.team?.id || `dropped-${item.previous}-${item.date}`}
                 style={{
                   color: isDark ? Colors.white : Colors.black,
-                  fontFamily: Fonts.OSLIGHT,
+                  fontFamily: Fonts.LIGHT,
                   fontSize: 16,
                   marginVertical: 2,
                   marginRight: 8,
@@ -490,14 +490,14 @@ export const standingsStyles = (isDark: boolean) =>
     },
     heading: {
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
     droppedHeading: {
       fontSize: 20,
       paddingBottom: 4,
       marginBottom: 4,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.dark.white : Colors.light.black,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
@@ -530,7 +530,7 @@ export const standingsStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     rankText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -559,31 +559,31 @@ export const standingsStyles = (isDark: boolean) =>
     },
     teamName: {
       fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 32,
     },
     collegeTeamName: {
       fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 40,
     },
     collegeTeamTrend: {
       fontSize: 10,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 40,
     },
     collegeDivisionHeader: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 16,
       marginTop: 4,
       paddingHorizontal: 12,
     },
     teamHeaderText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -594,13 +594,13 @@ export const standingsStyles = (isDark: boolean) =>
       paddingHorizontal: 5,
     },
     headerText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
       textAlign: "center",
     },
     statText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -614,12 +614,12 @@ export const standingsStyles = (isDark: boolean) =>
       paddingHorizontal: 6,
     },
     statusBadgeText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: Colors.white,
     },
     statusText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: 4,
@@ -646,20 +646,20 @@ export const standingsStyles = (isDark: boolean) =>
 
     droppedoutNames: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       fontSize: 16,
       marginVertical: 2,
       marginRight: 8,
     },
     errorText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyText: {
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,

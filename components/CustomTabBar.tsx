@@ -119,9 +119,7 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
   function shouldHideTabBar(currentPathname: string) {
     return (
       HIDDEN_TAB_ROUTES.includes(currentPathname) ||
-      HIDDEN_TAB_PREFIXES.some((prefix) =>
-        currentPathname.startsWith(prefix),
-      )
+      HIDDEN_TAB_PREFIXES.some((prefix) => currentPathname.startsWith(prefix))
     );
   }
 
@@ -261,6 +259,6 @@ const styles = StyleSheet.create({
   tabLabel: {
     marginTop: 4,
     fontSize: 12,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
   },
 });

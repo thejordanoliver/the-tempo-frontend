@@ -182,20 +182,20 @@ export const Weather: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {},
   text: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 20,
   },
   subText: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 16,
   },
   temperature: {
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 28,
     textAlign: "center",
   },
   cityName: {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 28,
     textAlign: "center",
   },

@@ -9,8 +9,6 @@ import {
   Officials,
 } from "@/components/Sports/Basketball/GameDetails";
 import {
-  Team,
-  TeamBoxScoreStat,
   TeamInjury,
   TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -21,6 +19,7 @@ import React from "react";
 import { View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
+import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import GameLeaders from "../GameDetails/GameLeaders";
 
@@ -41,10 +40,7 @@ type GamePreviewContentProps = {
     home: string[];
     away: string[];
   };
-  teamStats: {
-    team: Team;
-    stats: TeamBoxScoreStat[];
-  }[];
+  teamStats?: TeamStatsEntry[];
   leaders: TeamLeaders[];
   injuries: TeamInjury[];
   homeLastGames: LastFiveGame[];
@@ -187,15 +183,14 @@ export default function GamePreviewContent({
         />
 
         <HeadCoaches
-          homeName={homeName}
-          awayName={awayName}
+          homeCode={homeCode}
+          awayCode={awayCode}
           homeCoach={homeCoach}
           awayCoach={awayCoach}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
           isDark
         />
-
         <Officials officials={officials ?? []} state={state} isDark />
 
         <GameLocation

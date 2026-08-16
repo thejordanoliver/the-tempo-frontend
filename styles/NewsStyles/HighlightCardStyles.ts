@@ -28,13 +28,13 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
       marginTop: 8,
     },
     title: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
     },
@@ -48,7 +48,7 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
       paddingVertical: 2,
     },
     time: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: "#fff",
     },

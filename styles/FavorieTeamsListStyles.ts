@@ -38,7 +38,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
     leagueBadgeText: {
       color: Colors.white,
       fontSize: 10,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     logoGridMargin: {
       marginBottom: 8,
@@ -89,7 +89,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
 
     heading: {
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? "white" : Colors.black,
     },
     noFavoritesText: {
@@ -122,7 +122,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       resizeMode: "contain",
     },
     teamName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.white,
       width: "auto",
     },
@@ -130,7 +130,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
     editText: {
       color: isDark ? Colors.black : Colors.white,
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     editIcon: {
       marginLeft: 4,
@@ -138,7 +138,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
     },
     sectionTitle: {
       fontSize: 18,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       marginBottom: 8,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

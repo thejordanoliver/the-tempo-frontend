@@ -14,7 +14,6 @@ import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
-import { getCBBSeason } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
@@ -54,7 +53,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "CBB";
-  const currentSeason = getCBBSeason();
+  const currentSeason = 2027;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -65,6 +64,8 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
+  const teamName = team?.name
   const espnId = team?.espnId ?? 0;
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -279,6 +280,10 @@ export default function TeamDetailScreen() {
             countdownGame={firstSeasonGame}
             scrollEnabled={true}
             showHeaders={true}
+            teamLogo={teamLogo}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+            teamName={teamName}
           />
         </View>
 

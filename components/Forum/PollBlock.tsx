@@ -182,9 +182,7 @@ export default function PollBlock({
                     style={[
                       styles.optionText,
                       {
-                        fontFamily: isSelected
-                          ? Fonts.OSMEDIUM
-                          : Fonts.OSREGULAR,
+                        fontFamily: isSelected ? Fonts.MEDIUM : Fonts.REGULAR,
                       },
                     ]}
                   >

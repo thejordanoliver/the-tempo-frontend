@@ -1356,14 +1356,14 @@ export function CustomHeader({
   const isRacingHeader = Boolean(isEvent && resolvedRacingLeague);
 
   const textStyle: TextStyle = {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 20,
     color: isDark ? Colors.white : Colors.black,
     textAlign: "center",
   };
 
   const constantTextStyle: TextStyle = {
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
     fontSize: 20,
     color: Colors.white,
     textAlign: "center",
@@ -1761,7 +1761,7 @@ export const customHeaderStyles = StyleSheet.create({
 
   teamCode: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 24,
     zIndex: 2,
   },
@@ -1779,7 +1779,7 @@ export const customHeaderStyles = StyleSheet.create({
 
   dividerText: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 24,
   },
 
@@ -1815,7 +1815,7 @@ export const customHeaderStyles = StyleSheet.create({
 
   racingCode: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 12,
   },
 
@@ -1827,14 +1827,14 @@ export const customHeaderStyles = StyleSheet.create({
 
   racingSeriesLabel: {
     color: "rgba(255,255,255,0.72)",
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 8,
     letterSpacing: 1.1,
   },
 
   racingEventTitle: {
     color: Colors.white,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 14,
     maxWidth: width * 0.48,
   },
@@ -1858,7 +1858,7 @@ export const customHeaderStyles = StyleSheet.create({
     position: "absolute",
     right: -4,
     bottom: -22,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 70,
     lineHeight: 78,
     letterSpacing: -3,
@@ -1942,13 +1942,13 @@ export const customHeaderStyles = StyleSheet.create({
   messageUsername: {
     flexShrink: 1,
     fontSize: 15,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
   },
 
   messageFullName: {
     marginTop: 1,
     fontSize: 11,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
   },
 
   profileMenuAnchor: {
@@ -2006,7 +2006,7 @@ export const customHeaderStyles = StyleSheet.create({
   profileSubmenuText: {
     flex: 1,
     fontSize: 12,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
   },
 
   profileSubmenuSeparator: {

@@ -11,6 +11,7 @@ type CenterInfoProps = {
   isDark: boolean;
   broadcast?: string;
   headlineText?: string;
+  state?: string;
   gameStatusDescription?: string;
   gameStatusShortDetail?: string;
   redzone: boolean;
@@ -23,17 +24,15 @@ export function CenterInfo({
   clock,
   downDistance,
   broadcast,
+  state,
   gameStatusDescription,
   gameStatusShortDetail,
   redzone = false,
   isDark,
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
-  const isRedzone = redzone;
 
-  const inProgress =
-    gameStatusDescription === "In Progress" ||
-    gameStatusDescription === "End of Period";
+  const inProgress = state === "in";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -43,11 +42,9 @@ export function CenterInfo({
   const isPostponed = gameStatusDescription === "Postponed";
   const isHalftime = gameStatusDescription === "Halftime";
 
-  const renderdownDistance = () => {
+  const renderDownAndDistance = () => {
     if (!downDistance) return null;
-
     const [beforeAt, afterAt] = downDistance.split(" at ");
-
     return (
       <Text style={styles.downAndDistance}>
         {beforeAt}
@@ -57,7 +54,7 @@ export function CenterInfo({
             <Text
               style={[
                 styles.downAndDistance,
-                isRedzone && {
+                redzone && {
                   color: isDark ? Colors.dark.lightRed : Colors.light.red,
                 },
               ]}
@@ -80,7 +77,7 @@ export function CenterInfo({
         </View>
       )}
 
-      {inProgress && (
+      {inProgress && !isHalftime && !endOfPeriod && (
         <>
           <View style={styles.infoWrapper}>
             <>
@@ -89,20 +86,16 @@ export function CenterInfo({
               <Text style={styles.clock}>{clock}</Text>
             </>
           </View>
-          {renderdownDistance()}
+          {renderDownAndDistance()}
         </>
       )}
 
       {endOfPeriod && (
         <>
           <View style={styles.infoWrapper}>
-            <>
-              <Text style={styles.date}>{period}</Text>
-              <View style={styles.statusDivider} />
-              <Text style={styles.clock}>{clock}</Text>
-            </>
+            <Text style={styles.finalText}>{gameStatusShortDetail}</Text>
           </View>
-          {renderdownDistance()}
+          {renderDownAndDistance()}
         </>
       )}
 

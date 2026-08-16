@@ -54,7 +54,7 @@ export default function SoccerSquareGameCard({ game }: SoccerGameCardProps) {
   const styles = squareGameCardStyles(isDark, isChampionship);
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game?.status.period, isSOCC: true });
-  const clock = game.status?.clock;
+  const clock = game.status?.displayClock;
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status?.shortDetail;
   const inProgress = game.status.state === "in";

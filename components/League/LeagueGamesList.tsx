@@ -66,6 +66,7 @@ const EPL_LEAGUE_ID = 700;
 const FIFA_LEAGUE_ID = 606;
 const CHAMPIONS_LEAGUE_ID = 775;
 const BUNDESLIGA_LEAGUE_ID = 720;
+const LEAGUES_CUP_ID = 720;
 
 const FOOTBALL_PREVIEW_CATEGORIES = ["NFL", "UFL", "College Football"];
 const HOCKEY_PREVIEW_CATEGORIES = ["NHL", "Men's College Hockey"];
@@ -88,6 +89,7 @@ const SOCCER_PREVIEW_CATEGORIES = [
   "UEFA Champions League",
   "UEFA Europa League",
   "English Premier League",
+  "Leagues Cup",
 ];
 
 export type CombinedGamesListProps = {
@@ -177,6 +179,11 @@ export const getCategoryForFavorites = (item: CombinedGame): LeagueCategory => {
   // German Bundesliga
   if (league.id === BUNDESLIGA_LEAGUE_ID) {
     return "German Bundesliga";
+  }
+
+   // Leagues Cup
+  if (league.id === LEAGUES_CUP_ID) {
+    return "Leagues Cup";
   }
 
   if (league.name === "MLB") return "MLB";
@@ -406,6 +413,7 @@ export default function LeagueGamesList({
       category === "German Bundesliga" ||
       category === "UEFA Champions League" ||
       category === "UEFA Europa League" ||
+      category === "Leagues Cup" ||
       category === "English Premier League"
     ) {
       const soccerGame = item as SoccerGame;
@@ -643,6 +651,7 @@ export default function LeagueGamesList({
       case "UEFA Europa League":
       case "English Premier League":
       case "German Bundesliga":
+      case "Leagues Cup":
       case "MMA":
       case "Men's College Basketball":
       case "Women's College Basketball":

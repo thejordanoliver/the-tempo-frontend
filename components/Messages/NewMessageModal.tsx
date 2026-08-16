@@ -448,7 +448,7 @@ const newMessageModalStyles = (isDark: boolean) => {
 
     title: {
       fontSize: 21,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
 
@@ -456,7 +456,7 @@ const newMessageModalStyles = (isDark: boolean) => {
       marginTop: 4,
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: mutedText,
     },
 
@@ -519,7 +519,7 @@ const newMessageModalStyles = (isDark: boolean) => {
     username: {
       maxWidth: "86%",
       fontSize: 15,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
 
@@ -530,7 +530,7 @@ const newMessageModalStyles = (isDark: boolean) => {
     fullName: {
       marginTop: 3,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: mutedText,
     },
 
@@ -546,7 +546,7 @@ const newMessageModalStyles = (isDark: boolean) => {
     emptyTitle: {
       marginTop: 12,
       fontSize: 17,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
       textAlign: "center",
     },
@@ -555,7 +555,7 @@ const newMessageModalStyles = (isDark: boolean) => {
       marginTop: 6,
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: mutedText,
       textAlign: "center",
     },

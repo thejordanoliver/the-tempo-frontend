@@ -194,27 +194,27 @@ const foulTroubleStyles = (isDark: boolean) =>
     },
     name: {
       fontSize: 14,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: 8,
       flexShrink: 1,
     },
     jersey: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       marginLeft: 4,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     value: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyText: {
       fontSize: 16,
       color: Colors.midTone,
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       padding: 12,
     },
   });

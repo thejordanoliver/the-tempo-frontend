@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 32,
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
   },
 });

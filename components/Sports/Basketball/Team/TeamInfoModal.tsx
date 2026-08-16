@@ -161,7 +161,7 @@ export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       paddingBottom: 40,
     },
     teamName: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
       paddingBottom: 12,
       textAlign: "center",
@@ -171,7 +171,7 @@ export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
     sectionTitle: {
       textAlign: "center",
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       marginBottom: 8,
       paddingBottom: 4,
       borderBottomWidth: 0.5,

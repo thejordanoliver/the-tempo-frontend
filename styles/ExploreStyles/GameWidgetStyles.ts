@@ -144,7 +144,7 @@ export const gameWidgetStyles = (
     },
 
     teamName: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: nameFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginTop: isSmallLayout ? 0 : clamp(unit * 0.4, 2, 8),
@@ -152,14 +152,14 @@ export const gameWidgetStyles = (
       maxWidth: isSmallLayout ? teamNameMaxWidth : undefined,
     },
     teamRank: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: rankFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: isSmallLayout ? 0 : clamp(unit * 0.3, 2, 6),
     },
 
     awayScore: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: isSmallLayout ? gap : gap * 1.5,
@@ -168,7 +168,7 @@ export const gameWidgetStyles = (
     },
 
     homeScore: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: isSmallLayout ? gap : 0,
@@ -178,7 +178,7 @@ export const gameWidgetStyles = (
     },
 
     awayRecord: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: isSmallLayout ? gap : gap * 1.5,
@@ -187,7 +187,7 @@ export const gameWidgetStyles = (
     },
 
     homeRecord: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
       marginLeft: isSmallLayout ? gap : 0,
@@ -205,7 +205,7 @@ export const gameWidgetStyles = (
         : { top: 0, position: "absolute" as const }),
     },
     headline: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
@@ -230,7 +230,7 @@ export const gameWidgetStyles = (
     },
 
     dateTime: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       fontSize: metaFz,
       textAlign: "center",
@@ -238,28 +238,28 @@ export const gameWidgetStyles = (
     },
 
     period: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       fontSize: infoFz,
       textAlign: "center",
       flexShrink: 1,
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: infoFz,
       textAlign: "center",
       flexShrink: 1,
     },
     clock: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: infoFz,
       textAlign: "center",
       flexShrink: 1,
     },
     downAndDistance: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: metaFz,
       textAlign: "center",
@@ -279,7 +279,7 @@ export const gameWidgetStyles = (
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     broadcast: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       flexShrink: 1,

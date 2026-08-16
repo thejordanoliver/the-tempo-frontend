@@ -64,7 +64,7 @@ export const formStyles = (isDark: boolean) => {
       flex: 1,
       color: text,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     forgotPasswordLink: {
@@ -76,7 +76,7 @@ export const formStyles = (isDark: boolean) => {
     forgotPasswordText: {
       color: Colors.midTone,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     // ── Progress Bar ───────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ export const formStyles = (isDark: boolean) => {
 
     progressLabel: {
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: subtleText,
       letterSpacing: 0.5,
       textTransform: "uppercase",
@@ -128,7 +128,7 @@ export const formStyles = (isDark: boolean) => {
     teamName: {
       marginLeft: 16,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.white,
     },
 
@@ -168,7 +168,7 @@ export const formStyles = (isDark: boolean) => {
     // ── Section Headings ───────────────────────────────────────────────────
     heading: {
       fontSize: 11,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       letterSpacing: 0.6,
       textTransform: "uppercase",
       color: subtleText,
@@ -208,19 +208,19 @@ export const formStyles = (isDark: boolean) => {
     imagePlaceholder: {
       color: isDark ? Colors.darkGray : Colors.lightGray,
       textAlign: "center",
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       fontSize: 12,
     },
     reviewText: {
       marginVertical: 8,
       color: Colors.midTone,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     skipText: {
       color: Colors.midTone,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     teamCardList: {
       flexDirection: "row",

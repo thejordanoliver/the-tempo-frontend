@@ -35,13 +35,13 @@ export const newsCardStyles = (isDark: boolean) =>
       justifyContent: "space-between",
     },
     title: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     source: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },

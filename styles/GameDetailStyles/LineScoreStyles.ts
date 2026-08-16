@@ -24,7 +24,7 @@ export const lineScoreStyles = (isDark: boolean) =>
     },
     teamCode: {
       width: 48,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       paddingLeft: 8,
     },
@@ -33,7 +33,7 @@ export const lineScoreStyles = (isDark: boolean) =>
       flexDirection: "row",
     },
     header: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
@@ -41,12 +41,12 @@ export const lineScoreStyles = (isDark: boolean) =>
       width: "100%",
     },
     score: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       textAlign: "center",
     },
     totalScore: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       textAlign: "center",
     },

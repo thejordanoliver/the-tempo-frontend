@@ -37,7 +37,7 @@ function ChatInputBar({
   const [isSending, setIsSending] = useState(false);
 
   const isSendingRef = useRef(false);
-  const styles = useMemo(() => getStyles(isDark), [isDark]);
+  const styles = useMemo(() => ChatInputBarStyles(isDark), [isDark]);
 
   const payload = useMemo(
     () => buildChatPayload(value, selectedGifUrl),
@@ -175,7 +175,7 @@ const MemoizedChatInputBar = memo(ChatInputBar);
 
 export default MemoizedChatInputBar;
 
-const getStyles = (isDark: boolean) =>
+const ChatInputBarStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       width: "100%",
@@ -206,7 +206,7 @@ const getStyles = (isDark: boolean) =>
       paddingTop: 9,
       paddingBottom: 9,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 19,
     },

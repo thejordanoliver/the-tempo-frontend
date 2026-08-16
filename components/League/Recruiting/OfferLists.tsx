@@ -135,17 +135,17 @@ const offerListStyles = (isDark: boolean) =>
     },
     headerText: {
       fontSize: 16,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     schoolText: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     statusText: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     rowAltLight: {
@@ -160,7 +160,7 @@ const offerListStyles = (isDark: boolean) =>
     },
     showMoreText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
     },
   });

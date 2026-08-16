@@ -36,7 +36,7 @@ const postButtonStyles = (isDark: boolean) =>
     },
     buttonText: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.black : Colors.white,
     },
   });

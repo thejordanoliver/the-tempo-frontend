@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useLeagueForum } from "hooks/ForumHooks/useLeagueForum";
@@ -114,11 +114,11 @@ export default function LeagueForum({ league = "NBA" }: LeagueForumProps) {
             params: { league, currentUserId },
           })
         }
-        activeOpacity={0.8}
+        activeOpacity={activeOpacity}
       >
         <Ionicons
           name="create"
-          size={20}
+          size={24}
           color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>

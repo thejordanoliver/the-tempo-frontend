@@ -1,4 +1,4 @@
-import { PlayObject } from "@/hooks/FootballHooks/useFootballGameDetails";
+import type { FootballDrive } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -6,12 +6,20 @@ import { FlatList, Image, Text, View } from "react-native";
 import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
 
 type Props = {
-  previousDrives?: PlayObject[] | null;
-  currentDrives?: PlayObject[] | null;
+  previousDrives?: FootballDrive[] | null;
+  currentDrives?: FootballDrive[] | null;
   loading?: boolean;
   error?: string | null;
   isDark: boolean;
   league?: string;
+};
+
+const normalizeDriveId = (id?: string | number | null): string | null => {
+  if (id === null || id === undefined || id === "") {
+    return null;
+  }
+
+  return String(id);
 };
 
 export default function DrivesList({
@@ -35,9 +43,11 @@ export default function DrivesList({
   // ⭐ DE-DUPLICATE BY DRIVE ID
   const seen = new Set<string>();
   const drives = combined.filter((d) => {
-    if (!d || !d.id) return false;
-    if (seen.has(d.id)) return false; // skip duplicates
-    seen.add(d.id);
+    const driveId = normalizeDriveId(d?.id);
+
+    if (!driveId) return false;
+    if (seen.has(driveId)) return false; // skip duplicates
+    seen.add(driveId);
     return true;
   });
 
@@ -58,7 +68,9 @@ export default function DrivesList({
     <View>
       <FlatList
         data={drives}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) =>
+          normalizeDriveId(item.id) ?? `drive-${index}`
+        }
         contentContainerStyle={styles.listContainer}
         scrollEnabled={false}
         renderItem={({ item, index }) => {

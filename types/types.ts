@@ -44,8 +44,8 @@ export type LeagueType =
   | "NHL"
   | "UFC"
   | "F1"
-  | "SOCCER"
-  | "NASCARPREMIER";
+  | "NASCARPREMIER"
+  | "LEAGUESCUP";
 
 export type WCBBTeam = {
   id: number;

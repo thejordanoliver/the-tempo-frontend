@@ -21,17 +21,17 @@ export const exploreStyles = (isDark: boolean) =>
     },
     name: {
       fontSize: 16,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       color: isDark ? Colors.white : Colors.black,
     },
     tag: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     subtext: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     playerRow: {
@@ -69,18 +69,18 @@ export const exploreStyles = (isDark: boolean) =>
     },
     playerTeam: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     emptyText: {
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     errorText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
@@ -92,7 +92,7 @@ export const exploreStyles = (isDark: boolean) =>
     },
     promptText: {
       fontSize: 24,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     teamLogo: {
@@ -119,7 +119,7 @@ export const exploreStyles = (isDark: boolean) =>
     seeAllText: {
       fontSize: 14,
       textAlign: "center",
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       paddingTop: 12,
     },

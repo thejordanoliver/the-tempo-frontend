@@ -1,155 +1,202 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-// Styles
-export const playByPlayFieldStyles = (isDark: boolean) =>
-  StyleSheet.create({
+
+export const getStyles = (isDark: boolean) => {
+  const textColor = isDark ? Colors.white : Colors.black;
+  const subtleText = isDark ? Colors.lightGray : Colors.darkGray;
+  const borderColor = isDark ? Colors.midTone : Colors.lightGray;
+  const cardBackground = isDark ? Colors.black : Colors.white;
+  const mutedBackground = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+
+  return StyleSheet.create({
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       overflow: "hidden",
+      gap: 12,
       padding: 12,
+      borderWidth: 1,
+      borderColor,
+      borderRadius: 8,
+      backgroundColor: cardBackground,
     },
-    lastPlayTextContainer: {
-      borderColor: Colors.midTone,
-      borderBottomWidth: 1,
-      paddingBottom: 12,
+    scoringWrapper: {
+      borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
-    playerContainer: {
+    turnoverWrapper: {
+      borderColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    headerRow: {
+      minHeight: 44,
       flexDirection: "row",
       alignItems: "center",
-      marginRight: 12,
+      justifyContent: "space-between",
+      gap: 12,
     },
-    headshot: {
-      width: 40,
-      height: 40,
-      borderRadius: 100,
-      marginRight: 6,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderWidth: 0.5,
-      paddingTop: 4,
+    titleGroup: {
+      flex: 1,
+      minWidth: 0,
+      gap: 3,
     },
-    name: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
+    liveRow: {
+      minHeight: 15,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
     },
-    posistion: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginLeft: 4,
+    liveDot: {
+      width: 7,
+      height: 7,
+      borderRadius: 999,
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
-    number: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginLeft: 2,
+    eyebrow: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontFamily: Fonts.MEDIUM,
+      textTransform: "uppercase",
+      color: subtleText,
+    },
+    titleText: {
+      fontSize: 18,
+      lineHeight: 22,
+      fontFamily: Fonts.MEDIUM,
+      color: textColor,
+    },
+    headerLogo: {
+      width: 42,
+      height: 42,
+      flexShrink: 0,
+    },
+    driveCard: {
+      gap: 6,
+      padding: 10,
+      borderRadius: 8,
+      backgroundColor: mutedBackground,
+    },
+    driveMetaRow: {
+      minHeight: 18,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 10,
+    },
+    driveMetaLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.MEDIUM,
+      color: subtleText,
+      textTransform: "uppercase",
+    },
+    driveResult: {
+      flexShrink: 1,
+      fontSize: 13,
+      lineHeight: 17,
+      textAlign: "right",
+      fontFamily: Fonts.MEDIUM,
+      color: textColor,
     },
     driveDescription: {
-      fontFamily: Fonts.OSREGULAR,
-      fontSize: 12,
-      marginTop: 4,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: Fonts.REGULAR,
+      color: textColor,
     },
-    fieldContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: "100%",
-      borderWidth: 2,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 4,
-      marginTop: 40,
-    },
-    endzone: {
-      width: 40,
-      height: 200,
-      justifyContent: "center",
-      alignItems: "center",
-      overflow: "hidden",
-    },
-    fieldStripe: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      width: "10%",
-      zIndex: 0,
-    },
-    glowOverlay: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      borderRadius: 4,
-      zIndex: 5,
-    },
-    endzoneLogo: {
-      width: 100,
-      height: 100,
-      resizeMode: "contain",
-      position: "absolute",
-      opacity: 0.4,
-    },
-    endzoneHighlight: { shadowOpacity: 0.9, shadowRadius: 15, elevation: 10 },
     field: {
-      flex: 1,
-      height: 200,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      position: "relative",
+      height: 150,
+      minHeight: 150,
+      overflow: "hidden",
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.darkGray,
+      backgroundColor: isDark ? "#131313" : "#f6f6f6",
     },
-    marker: {
-      position: "absolute",
-      top: 0,
-      width: 2,
-      height: "100%",
-      borderRadius: 2,
-      zIndex: 1,
+    infoGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
     },
-    yardLine: {
-      position: "absolute",
-      top: 0,
-      height: "100%",
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 1,
-      zIndex: 1,
-    },
-    yardNumber: {
-      position: "absolute",
-      top: -22,
-      fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
-      color: isDark ? Colors.white : "#1d1d1d",
-      textAlign: "center",
-      zIndex: 3,
-      width: 20,
-    },
-    scoreOverlay: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: [{ translateX: -125 }, { translateY: -20 }],
-      alignItems: "center",
+    infoPill: {
+      minHeight: 48,
+      flexGrow: 1,
+      flexBasis: "47%",
       justifyContent: "center",
-      zIndex: 5,
+      gap: 2,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+      borderRadius: 8,
+      backgroundColor: mutedBackground,
     },
-    touchdownAnimation: { flexDirection: "row", alignItems: "center" },
-    scoreLogo: { width: 40, height: 40, resizeMode: "contain", marginRight: 8 },
-    scoreText: {
-      fontFamily: Fonts.OSBOLD,
-      fontSize: 20,
-      textAlign: "center",
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 5,
-      color: isDark ? Colors.white : Colors.black,
+    infoLabel: {
+      fontSize: 11,
+      lineHeight: 14,
+      fontFamily: Fonts.MEDIUM,
+      color: subtleText,
+      textTransform: "uppercase",
     },
-    firstDownMarker: {
-      position: "absolute",
-      top: 0,
-      width: 2,
-      height: "100%",
-      zIndex: 2,
-      borderRadius: 1,
-      backgroundColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
+    infoValue: {
+      fontSize: 14,
+      lineHeight: 18,
+      fontFamily: Fonts.MEDIUM,
+      color: textColor,
+    },
+    errorText: {
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    playTextCard: {
+      gap: 5,
+      paddingTop: 2,
+    },
+    playTextLabel: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.MEDIUM,
+      textTransform: "uppercase",
+      color: subtleText,
+    },
+    playText: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontFamily: Fonts.REGULAR,
+      color: textColor,
+    },
+    recentList: {
+      overflow: "hidden",
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: borderColor,
+    },
+    recentPlayRow: {
+      minHeight: 58,
+      flexDirection: "row",
+      gap: 10,
+      paddingVertical: 10,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: borderColor,
+    },
+    lastRecentPlayRow: {
+      borderBottomWidth: 0,
+    },
+    recentPlayMeta: {
+      width: 60,
+      flexShrink: 0,
+    },
+    recentPlayTime: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.MEDIUM,
+      color: subtleText,
+      fontVariant: ["tabular-nums"],
+    },
+    recentPlayText: {
+      flex: 1,
+      minWidth: 0,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: Fonts.REGULAR,
+      color: textColor,
     },
   });
+};

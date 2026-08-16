@@ -82,9 +82,7 @@ export default function LastFiveGames({
   const hasHomeGames = homeGames.length > 0;
   const hasAwayGames = awayGames.length > 0;
 
-  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>(
-    hasAwayGames ? "away" : "home",
-  );
+  const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
   const selectedGames = selectedTab === "away" ? awayGames : homeGames;
 
@@ -132,7 +130,6 @@ export default function LastFiveGames({
       case "cfb":
         return getCFBTeam(teamId);
 
-      case "socc":
       case "soccer":
         return getSOCCTeam(teamId);
 
@@ -184,7 +181,6 @@ export default function LastFiveGames({
       case "cfb":
         return getCFBTeamLogo(teamId, isDark);
 
-      case "socc":
       case "soccer":
         return getSOCCTeamLogo(teamId, isDark);
 

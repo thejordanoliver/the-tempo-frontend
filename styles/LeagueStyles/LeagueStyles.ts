@@ -15,7 +15,7 @@ export const getScoresStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     monthText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -23,17 +23,17 @@ export const getScoresStyles = (isDark: boolean) =>
     monthTextSelected: {
       fontSize: 14,
       textAlign: "center",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     eventText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     eventTextSelected: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     dateNavButton: {
@@ -47,13 +47,13 @@ export const getScoresStyles = (isDark: boolean) =>
       color: isDark ? Colors.black : Colors.white,
       fontWeight: "normal",
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     emptyText: {
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 20,
       fontSize: 20,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
     },
   });

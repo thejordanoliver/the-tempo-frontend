@@ -209,14 +209,14 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       minHeight: 36,
       textAlign: "center",
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       lineHeight: 18,
     },
 
     badgeStatus: {
       textAlign: "center",
       fontSize: 12,
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
     },
 
     emptyContainer: {
@@ -229,7 +229,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
     emptyTitle: {
       textAlign: "center",
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
 
@@ -238,7 +238,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       textAlign: "center",
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -260,7 +260,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
     statusText: {
       textAlign: "center",
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -268,7 +268,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       textAlign: "center",
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -281,7 +281,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
 
     retryText: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
   });

@@ -191,14 +191,14 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     statusText: {
       fontSize: 14,
       lineHeight: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
 
     clockText: {
       fontSize: 14,
       lineHeight: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.midTone : Colors.darkGray,
     },
 
@@ -210,7 +210,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     playText: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -226,7 +226,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       fontSize: 14,
       lineHeight: 20,
       textAlign: "right",
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
   });

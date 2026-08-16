@@ -14,7 +14,7 @@ export const leadersListStyles = (isDark: boolean) =>
       paddingBottom: 100,
     },
     infoText: {
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,

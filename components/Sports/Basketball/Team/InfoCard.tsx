@@ -3,6 +3,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { ReactNode } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
+import { soccerTeams } from "@/constants/teamsSOCC";
 import { teams } from "constants/teams";
 import { cbbTeams } from "constants/teamsCBB";
 import { cfbTeams } from "constants/teamsCFB";
@@ -21,7 +22,7 @@ type TeamColors = {
 type Props = {
   label: string;
   value: string | number | ReactNode | string[] | number[];
-  image?: any;
+  image?: string;
   team: TeamColors;
   teamId?: string;
   teamName?: string;
@@ -34,6 +35,7 @@ const allTeams: TeamColors[] = [
   ...mlbTeams,
   ...nhlTeams,
   ...cbbTeams,
+  ...soccerTeams,
 ];
 
 const findTeam = (
@@ -81,7 +83,7 @@ export default function InfoCard({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = infoCardStyles(isDark, teamObj);
+  const styles = InfoCardStyles(isDark, teamObj);
 
   let formattedValue: string | ReactNode;
 
@@ -98,7 +100,7 @@ export default function InfoCard({
       <View style={styles.cardContainer}>
         {image && (
           <View style={styles.imageContainer}>
-            <Image source={image} style={styles.image} />
+            <Image source={{ uri: image }} style={styles.image} />
           </View>
         )}
 
@@ -108,11 +110,11 @@ export default function InfoCard({
   );
 }
 
-export const infoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
+export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
   StyleSheet.create({
     label: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 20,
       paddingBottom: 4,
       marginBottom: 8,
@@ -140,17 +142,19 @@ export const infoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
       alignItems: "center",
       marginRight: 12,
       overflow: "hidden",
+      resizeMode: "contain",
+      borderWidth: 1,
+      borderColor: Colors.white,
     },
 
     image: {
       width: 54,
       height: 54,
-      resizeMode: "contain",
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      paddingTop: 4,
     },
 
     value: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: Colors.white,
       flexShrink: 1,

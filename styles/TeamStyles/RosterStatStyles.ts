@@ -74,18 +74,18 @@ export const rosterStatsStyles = (isDark: boolean) =>
 
     playerName: {
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
 
     statValue: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       width: STAT_CELL_WIDTH,
     },
     teamStatValue: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -105,20 +105,20 @@ export const rosterStatsStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     cardLabel: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
       marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     cardName: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 14,
       marginTop: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     cardValue: {
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     nameValue: { marginLeft: 12, flexDirection: "column" },
@@ -144,17 +144,17 @@ export const rosterStatsStyles = (isDark: boolean) =>
       transform: [{ translateY: 3 }],
     },
     headerText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
     nameHeaderText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       width: PLAYER_NAME_WIDTH,
     },
     categoryTitle: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
       marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,

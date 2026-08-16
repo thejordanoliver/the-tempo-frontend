@@ -38,7 +38,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     username: {
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
       lineHeight: 18,
     },
@@ -58,7 +58,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     audiencePillText: {
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -71,7 +71,7 @@ export const createPostStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       paddingVertical: 8,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlignVertical: "top",
       color: isDark ? Colors.white : Colors.black,
       backgroundColor: "transparent",
@@ -122,7 +122,7 @@ export const createPostStyles = (isDark: boolean) =>
     mediaBadgeText: {
       color: Colors.white,
       fontSize: 10,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     removeButton: {
       position: "absolute",
@@ -165,7 +165,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     toolGifLabel: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       letterSpacing: 0.5,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       borderWidth: 1.5,
@@ -185,7 +185,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     charCountLabel: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -201,7 +201,7 @@ export const createPostStyles = (isDark: boolean) =>
     pollQuestion: {
       color: isDark ? Colors.white : Colors.black,
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       paddingHorizontal: 12,
       paddingTop: 10,
       paddingBottom: 6,
@@ -220,7 +220,7 @@ export const createPostStyles = (isDark: boolean) =>
     pollOptionsText: {
       color: isDark ? Colors.white : Colors.black,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     metaContainer: {
       flexDirection: "row",
@@ -237,7 +237,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     pollDurationText: {
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     pollRemoveContainer: {
@@ -246,7 +246,7 @@ export const createPostStyles = (isDark: boolean) =>
       gap: 3,
     },
     pollRemoveButton: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
       fontSize: 11,
     },
@@ -285,19 +285,19 @@ export const createPostStyles = (isDark: boolean) =>
     },
     teamBadgeText: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     mediaCountText: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     // ─── Legacy / kept for modals ────────────────────────────────────────
     label: {
       fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       marginBottom: 12,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -327,7 +327,7 @@ export const createPostStyles = (isDark: boolean) =>
     },
     addMediaText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       marginLeft: 4,
     },

@@ -360,14 +360,14 @@ const messageThemeModalStyles = (isDark: boolean) =>
 
     title: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     subtitle: {
       marginTop: 2,
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
@@ -423,14 +423,14 @@ const messageThemeModalStyles = (isDark: boolean) =>
     optionTitle: {
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     optionMeta: {
       marginTop: 2,
       fontSize: 11,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
@@ -464,7 +464,7 @@ const messageThemeModalStyles = (isDark: boolean) =>
 
     sectionTitle: {
       fontSize: 12,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
@@ -489,7 +489,7 @@ const messageThemeModalStyles = (isDark: boolean) =>
 
     emptyTitle: {
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -526,7 +526,7 @@ const messageThemeModalStyles = (isDark: boolean) =>
       marginTop: 10,
       fontSize: 12,
       lineHeight: 17,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -561,13 +561,13 @@ const messageThemeModalStyles = (isDark: boolean) =>
 
     cancelText: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     saveText: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
   });

@@ -1,5 +1,5 @@
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-import { Fonts, Colors } from "constants/styles";
 
 export const settingsStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -18,7 +18,7 @@ export const settingsStyles = (isDark: boolean) =>
     },
     heading: {
       fontSize: 24,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingBottom: 4,
       marginBottom: 12,
       borderBottomWidth: 1,
@@ -45,13 +45,13 @@ export const settingsStyles = (isDark: boolean) =>
     optionText: {
       color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
 
     dangerText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     closeButton: {
       position: "absolute",
@@ -68,7 +68,7 @@ export const settingsStyles = (isDark: boolean) =>
       borderRadius: 8,
       fontSize: 16,
       marginVertical: 12,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       width: "100%",
     },
   });

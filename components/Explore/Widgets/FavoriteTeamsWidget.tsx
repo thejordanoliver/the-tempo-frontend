@@ -7,16 +7,9 @@ import {
   normalizeExploreFavoriteTeam,
 } from "hooks/WidgetHooks/useExploreWidgetGames";
 import { useMemo } from "react";
-import {
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import { ExploreWidgetSize } from "types/widgets";
-import FavoriteTeamsSlider, {
-  FavoriteTeamSlide,
-} from "./FavoriteTeamsSlider";
+import FavoriteTeamsSlider, { FavoriteTeamSlide } from "./FavoriteTeamsSlider";
 import { WidgetEditControls } from "./WidgetSlider";
 
 type FavoriteTeamsWidgetProps = {
@@ -30,21 +23,16 @@ type FavoriteTeamsWidgetProps = {
   widgetSize?: ExploreWidgetSize;
   isEditing?: boolean;
   availableSizeOptions?: readonly ExploreWidgetSize[];
-  onResizeWidget?: (
-    widgetId: string,
-    size: ExploreWidgetSize,
-  ) => void;
+  onResizeWidget?: (widgetId: string, size: ExploreWidgetSize) => void;
   onRemoveWidget?: (widgetId: string) => void;
-  onMoveWidget?: (
-    widgetId: string,
-    direction: -1 | 1,
-  ) => void;
+  onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
 };
 
-type FavoriteTeamsCatalog =
-  ReturnType<typeof useFavoriteTeamsContext>["allTeams"];
+type FavoriteTeamsCatalog = ReturnType<
+  typeof useFavoriteTeamsContext
+>["allTeams"];
 
 const sizeFallback: Record<ExploreWidgetSize, number> = {
   ...EXPLORE_WIDGET_HEIGHTS,
@@ -56,8 +44,7 @@ const findFavoriteTeam = (
 ) =>
   allTeams.find(
     (team) =>
-      team.league === favorite.league &&
-      String(team.id) === favorite.id,
+      team.league === favorite.league && String(team.id) === favorite.id,
   );
 
 const resolveTeamLogo = (
@@ -71,9 +58,7 @@ const resolveTeamLogo = (
     return undefined;
   }
 
-  return isDark
-    ? team.logoLight ?? team.logo
-    : team.logo;
+  return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
 
 export default function FavoriteTeamsWidget({
@@ -93,12 +78,7 @@ export default function FavoriteTeamsWidget({
   canMoveUp,
   canMoveDown,
 }: FavoriteTeamsWidgetProps) {
-  const {
-    favorites,
-    isLoading,
-    ready,
-    allTeams,
-  } = useFavoriteTeamsContext();
+  const { favorites, isLoading, ready, allTeams } = useFavoriteTeamsContext();
 
   const resolvedWidth = Math.max(
     width ?? containerWidth ?? sizeFallback[size],
@@ -119,30 +99,17 @@ export default function FavoriteTeamsWidget({
       favorites
         .map(normalizeExploreFavoriteTeam)
         .filter(
-          (
-            favorite,
-          ): favorite is ExploreFavoriteTeam =>
-            favorite !== null,
+          (favorite): favorite is ExploreFavoriteTeam => favorite !== null,
         )
         .map((favorite) => {
           const team = findFavoriteTeam(favorite, allTeams);
 
           return {
             favorite,
-            name:
-              team?.name ??
-              team?.shortName ??
-              favorite.id,
+            name: team?.name ?? team?.shortName ?? favorite.id,
             fullName:
-              team?.fullName ??
-              team?.name ??
-              team?.shortName ??
-              favorite.id,
-            logo: resolveTeamLogo(
-              favorite,
-              allTeams,
-              isDark,
-            ),
+              team?.fullName ?? team?.name ?? team?.shortName ?? favorite.id,
+            logo: resolveTeamLogo(favorite, allTeams, isDark),
           };
         }),
     [allTeams, favorites, isDark],
@@ -222,10 +189,7 @@ export default function FavoriteTeamsWidget({
   );
 }
 
-const favoriteTeamsWidgetStyles = (
-  isDark: boolean,
-  compact: boolean,
-) =>
+const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     card: {
       borderRadius: 8,
@@ -250,13 +214,13 @@ const favoriteTeamsWidgetStyles = (
       padding: compact ? 8 : 12,
     },
     stateTitle: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: compact ? 14 : 16,
       color: isDark ? Colors.white : Colors.black,
     },
     stateText: {
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: compact ? 11 : 13,
       lineHeight: compact ? 15 : 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,

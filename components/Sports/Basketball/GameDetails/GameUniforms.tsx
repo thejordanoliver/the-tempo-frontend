@@ -82,7 +82,7 @@ const uniformStyles = (isDark: boolean) =>
       height: 200,
     },
     teamName: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       marginTop: 6,
       color: isDark ? Colors.white : Colors.black,
@@ -98,7 +98,7 @@ const uniformStyles = (isDark: boolean) =>
     },
 
     vs: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 24,
       marginHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,

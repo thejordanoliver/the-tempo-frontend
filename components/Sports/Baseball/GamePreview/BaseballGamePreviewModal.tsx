@@ -121,7 +121,7 @@ export default function BaseballGamePreviewModal({
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
   const isTopInning = gameStatusDetail.includes("Top");
-  const isBottomInning = gameStatusDetail.includes("Bottom");
+  const isBottomInning = gameStatusDetail.includes("Bot");
 
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;

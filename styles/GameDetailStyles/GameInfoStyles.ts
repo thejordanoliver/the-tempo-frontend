@@ -9,40 +9,40 @@ export const gameInfoStyles = (isDark: boolean) =>
       flex: 1,
     },
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 16,
     },
     time: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 16,
     },
     broadcasts: {
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     clock: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     downAndDistance: {
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
-      color: Colors.midTone,
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
@@ -67,7 +67,7 @@ export const gameInfoStyles = (isDark: boolean) =>
     headlineText: {
       fontSize: 13,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSEXTRALIGHT,
+      fontFamily: Fonts.EXTRALIGHT,
       textAlign: "center",
     },
     outsContainer: {

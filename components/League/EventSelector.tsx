@@ -277,13 +277,13 @@ const EventSelectorStyles = (isDark: boolean, itemWidth: number) =>
       zIndex: 2,
     },
     eventText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     eventTextSelected: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,

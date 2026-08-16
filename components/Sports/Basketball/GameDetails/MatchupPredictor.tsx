@@ -162,7 +162,6 @@ const MatchupPredictor: React.FC<Props> = ({
                 homeMeterStyle,
               ]}
             />
-            <View style={styles.centerLine} />
           </View>
         </View>
 
@@ -244,12 +243,11 @@ const matchupPredictorStyles = (isDark: boolean) =>
       height: 28,
     },
     teamCode: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 16,
       lineHeight: 20,
       color: isDark ? Colors.white : Colors.black,
     },
-
     trackArea: {
       height: 58,
       justifyContent: "center",
@@ -257,14 +255,14 @@ const matchupPredictorStyles = (isDark: boolean) =>
     },
     logoMarker: {
       position: "absolute",
-      top: 6,
+      top: 10,
       alignItems: "center",
       justifyContent: "center",
-      transform: [{ translateX: -23 }],
-      width: 46,
-      height: 46,
+      transform: [{ translateX: -0 }],
+      width: 40,
+      height: 40,
       borderRadius: 23,
-      borderWidth: 2,
+      borderWidth: 1,
       borderColor: Colors.midTone,
       overflow: "hidden",
       zIndex: 2,
@@ -273,8 +271,8 @@ const matchupPredictorStyles = (isDark: boolean) =>
       borderColor: Colors.white,
     },
     markerLogo: {
-      width: 32,
-      height: 32,
+      width: 28,
+      height: 28,
     },
     track: {
       height: 8,
@@ -311,18 +309,10 @@ const matchupPredictorStyles = (isDark: boolean) =>
       right: 0,
       bottom: 0,
       opacity: 0.92,
-      borderColor: isDark? Colors.white : "transparent",
-      borderWidth : 1.5,
+      borderColor: isDark ? Colors.white : "transparent",
+      borderWidth: 1.5,
     },
-    centerLine: {
-      position: "absolute",
-      top: -4,
-      bottom: -4,
-      left: "50%",
-      width: 1,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      opacity: 0.7,
-    },
+
     percentRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -333,19 +323,19 @@ const matchupPredictorStyles = (isDark: boolean) =>
       alignItems: "flex-end",
     },
     chanceText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 22,
       lineHeight: 27,
       color: isDark ? Colors.white : Colors.black,
     },
     percentLabel: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 15,
       color: Colors.midTone,
     },
     edgeLabel: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 11,
       lineHeight: 14,
       color: isDark ? Colors.white : Colors.black,

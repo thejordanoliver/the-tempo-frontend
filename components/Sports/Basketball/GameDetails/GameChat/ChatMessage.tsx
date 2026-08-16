@@ -16,7 +16,7 @@ const profilePlaceholder =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
 
 function ChatMessage({ item, userName, isDark, emojis, onReaction }: Props) {
-  const styles = useMemo(() => chatMessageStyles(isDark), [isDark]);
+  const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
 
   const time = new Date(item.time).toLocaleTimeString([], {
     hour: "2-digit",
@@ -121,7 +121,7 @@ export default memo(
     prevProps.onReaction === nextProps.onReaction,
 );
 
-const chatMessageStyles = (isDark: boolean) =>
+const ChatMessageStyles = (isDark: boolean) =>
   StyleSheet.create({
     messageContainer: {
       paddingHorizontal: 12,
@@ -145,7 +145,7 @@ const chatMessageStyles = (isDark: boolean) =>
       flexDirection: "row-reverse",
     },
     user: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
       fontSize: 12,
@@ -178,7 +178,7 @@ const chatMessageStyles = (isDark: boolean) =>
       padding: 6,
     },
     message: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
       lineHeight: 19,
@@ -199,7 +199,7 @@ const chatMessageStyles = (isDark: boolean) =>
       marginTop: 6,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       alignSelf: "flex-end",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     currentUserTime: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -232,7 +232,7 @@ const chatMessageStyles = (isDark: boolean) =>
     reactionButtonText: {
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     reactionButtonTextSelected: {
       color: isDark ? Colors.black : Colors.white,

@@ -31,7 +31,7 @@ export const lastFiveGameStyles = (isDark: boolean) => {
       },
       tabText: {
         fontSize: 16,
-        fontFamily: Fonts.OSMEDIUM,
+        fontFamily: Fonts.MEDIUM,
       },
       tabTextSelected: {
         color: baseTextColor,
@@ -62,14 +62,14 @@ export const lastFiveGameStyles = (isDark: boolean) => {
       empty: {
         textAlign: "center",
         fontSize: 20,
-        fontFamily: Fonts.OSREGULAR,
+        fontFamily: Fonts.REGULAR,
         color: Colors.midTone,
       },
       cell: {
         fontSize: 14,
         flex: 1,
         textAlign: "center",
-        fontFamily: Fonts.OSREGULAR,
+        fontFamily: Fonts.REGULAR,
         color: baseTextColor,
       },
       team: {
@@ -90,7 +90,7 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         flex: 2,
       },
       matchupText: {
-        fontFamily: Fonts.OSREGULAR,
+        fontFamily: Fonts.REGULAR,
         color: baseTextColor,
       },
       opponentLogo: {

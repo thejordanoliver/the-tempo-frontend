@@ -30,7 +30,7 @@ export const cropEditorModalStyles = (
     headerBtn: { padding: 8 },
     headerTitle: {
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
     cropContainer: {
@@ -45,7 +45,7 @@ export const cropEditorModalStyles = (
     loadingText: {
       marginTop: 12,
       color: Colors.white,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
     },
     cropBox: {
@@ -88,7 +88,7 @@ export const cropEditorModalStyles = (
     controlLabel: {
       marginTop: 4,
       color: Colors.white,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
     },
     controlLabelDisabled: {
@@ -97,7 +97,7 @@ export const cropEditorModalStyles = (
     scaleIndicator: {
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
     },
     buttonContainer: {
@@ -131,12 +131,12 @@ export const cropEditorModalStyles = (
     },
     saveText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
     },
     cancelText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
     },
     buttonTextDisabled: {

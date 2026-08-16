@@ -54,7 +54,7 @@ const HeaderWithToggleStyles = (isDark: boolean) =>
     },
     heading: {
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
   });

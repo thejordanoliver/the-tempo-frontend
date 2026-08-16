@@ -71,7 +71,7 @@ const labeledInputStyles = (isDark: boolean) =>
     container: { marginBottom: 10 },
     label: {
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.transparentLightGray : Colors.transparentDarkGray,
       letterSpacing: 0.3,
       textTransform: "uppercase",
@@ -87,7 +87,7 @@ const labeledInputStyles = (isDark: boolean) =>
       borderRadius: 12,
       marginVertical: 12,
       fontSize: 15,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       borderWidth: 1,
       borderColor: isDark
         ? Colors.transparentLightGray
@@ -101,12 +101,12 @@ const labeledInputStyles = (isDark: boolean) =>
     },
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
     },
     count: {
       color: Colors.midTone,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
     },
   });

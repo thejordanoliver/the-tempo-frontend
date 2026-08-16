@@ -10,7 +10,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Rugby } from "reicon-react-native";
 import {
   formatDate,
   formatTime,
@@ -18,6 +17,8 @@ import {
   safeDate,
 } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import Football from "../../../../assets/icons8/Football.png";
+import FootballLight from "../../../../assets/icons8/FootballLight.png";
 
 function FootballStackedGameCard({
   game,
@@ -37,8 +38,7 @@ function FootballStackedGameCard({
       },
     });
   };
-  const iconColor = isDark ? Colors.white : Colors.black;
-  const iconSize = 12;
+
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
@@ -224,11 +224,9 @@ function FootballStackedGameCard({
               {awayName}
             </Text>
             {inProgress && awayHasPossession && (
-              <Rugby
-                weight="Filled"
-                color={iconColor}
-                size={iconSize}
-                style={styles.footballPossesion}
+              <Image
+                source={isDark ? FootballLight : Football}
+                style={styles.possession}
               />
             )}
           </View>
@@ -253,11 +251,9 @@ function FootballStackedGameCard({
               {homeName}
             </Text>
             {inProgress && homeHasPossession && (
-              <Rugby
-                weight="Filled"
-                color={iconColor}
-                size={iconSize}
-                style={styles.footballPossesion}
+              <Image
+                source={isDark ? FootballLight : Football}
+                style={styles.possession}
               />
             )}
           </View>

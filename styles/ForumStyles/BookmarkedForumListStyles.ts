@@ -28,7 +28,7 @@ export const bookmarkedForumListStyles = (isDark: boolean) =>
 
     actionButtonText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
   });

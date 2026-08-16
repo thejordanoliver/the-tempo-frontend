@@ -565,20 +565,20 @@ const recruitListStyles = (isDark: boolean) =>
       paddingHorizontal: 20,
     },
     errorText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
     emptyText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     helperText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       marginTop: 8,
       color: isDark ? Colors.lightGray : Colors.darkGray,

@@ -202,23 +202,23 @@ const getStyles = (isDark: boolean) =>
       borderTopColor: Colors.midTone,
     },
     periodText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
       width: 60,
     },
     playDesc: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
     },
     clockText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       width: 45,
       textAlign: "right",
     },
     empty: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -243,13 +243,13 @@ const getStyles = (isDark: boolean) =>
 
     pitchCount: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
       flexShrink: 1,
     },
     outs: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       flexShrink: 1,
     },

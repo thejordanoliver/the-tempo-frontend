@@ -19,8 +19,8 @@ type GameHeaderProps = {
   period?: number | string | null;
   clock: string;
   downDistance: string | undefined | null;
-  awayPossesion: boolean | null;
-  homePossesion: boolean | null;
+  awayPossession: boolean | null;
+  homePossession: boolean | null;
   homeWins: boolean | null;
   awayWins: boolean | null;
   isTie: boolean | null;
@@ -31,6 +31,7 @@ type GameHeaderProps = {
   time: string;
   broadcast: string;
   headline: string | null;
+  state: string;
   gameStatusShortDetail: string;
   gameStatusDescription: string;
   league: string;
@@ -51,8 +52,8 @@ export default function GameHeader({
   isTie,
   homeScore,
   awayScore,
-  awayPossesion,
-  homePossesion,
+  awayPossession,
+  homePossession,
   homeTimeouts = 0,
   awayTimeouts = 0,
   period,
@@ -65,6 +66,7 @@ export default function GameHeader({
   date = "",
   time = "",
   headline,
+  state,
   gameStatusShortDetail,
   gameStatusDescription,
   league,
@@ -92,8 +94,9 @@ export default function GameHeader({
           isWinner={awayWins}
           isTie={isTie}
           timeouts={awayTimeouts}
+          state={state}
           gameStatusDescription={gameStatusDescription}
-          hasPossession={awayPossesion}
+          hasPossession={awayPossession}
           isDark={isDark}
           league={league}
           isHome={false}
@@ -107,6 +110,7 @@ export default function GameHeader({
           isDark={isDark}
           broadcast={broadcast}
           downDistance={downDistance}
+          state={state}
           gameStatusShortDetail={gameStatusShortDetail}
           gameStatusDescription={gameStatusDescription}
           redzone={redzone}
@@ -120,10 +124,11 @@ export default function GameHeader({
           score={homeScore}
           record={homeRecord}
           isWinner={homeWins}
-           isTie={isTie}
+          isTie={isTie}
           timeouts={homeTimeouts}
+          state={state}
           gameStatusDescription={gameStatusDescription}
-          hasPossession={homePossesion}
+          hasPossession={homePossession}
           isDark={isDark}
           league={league}
           isHome={true}

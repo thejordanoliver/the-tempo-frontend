@@ -466,7 +466,9 @@ export default function MatchupComparison({
           >
             {fighter.name}
           </Text>
-          <Text style={[styles.identityRecord, getAlignmentTextStyle(alignment)]}>
+          <Text
+            style={[styles.identityRecord, getAlignmentTextStyle(alignment)]}
+          >
             {fighter.record}
           </Text>
         </View>
@@ -724,7 +726,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     badgeText: {
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 9,
       lineHeight: 12,
       textAlign: "center",
@@ -790,7 +792,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
         : Colors.light.transparentItemBackground,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderWidth: StyleSheet.hairlineWidth,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       textAlign: "center",
     },
@@ -804,7 +806,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     fighterName: {
       width: "100%",
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       lineHeight: 16,
       textAlign: "center",
@@ -823,7 +825,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     recordText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 11,
       lineHeight: 14,
       textAlign: "center",
@@ -889,25 +891,25 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     statLabel: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       textAlign: "center",
       textTransform: "uppercase",
     },
     valueText: {
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 15,
       textAlign: "center",
     },
     winnerText: {
       color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     championText: {
       color: isDark ? Colors.dark.yellow : Colors.light.gold,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     leftText: {
       textAlign: "left",
@@ -977,7 +979,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     compactStatLabel: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       lineHeight: 12,
       textAlign: "center",
@@ -1022,13 +1024,13 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     identityName: {
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       lineHeight: 16,
     },
     identityRecord: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 11,
       lineHeight: 14,
     },
@@ -1039,7 +1041,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     identityVsText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       textAlign: "center",
     },
@@ -1066,7 +1068,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     gridLabel: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       lineHeight: 13,
       textAlign: "center",
@@ -1145,11 +1147,13 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderRadius: 8,
       borderWidth: 1,
-      backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
+      backgroundColor: isDark
+        ? Colors.dark.background
+        : Colors.light.background,
     },
     spotlightVsText: {
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       textAlign: "center",
     },
@@ -1186,7 +1190,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     meterLabel: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       lineHeight: 13,
       textAlign: "center",

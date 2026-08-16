@@ -2,18 +2,7 @@ import { isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export type PlayerLeague =
-  | "NBA"
-  | "NFL"
-  | "CFB"
-  | "CBB"
-  | "WCBB"
-  | "MLB"
-  | "NHL"
-  | "SOCC"
-  | "WNBA";
-
-export function usePlayerById(playerId?: number, league: PlayerLeague = "NFL") {
+export function usePlayerById(playerId?: number, league: string = "NFL") {
   const [player, setPlayer] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

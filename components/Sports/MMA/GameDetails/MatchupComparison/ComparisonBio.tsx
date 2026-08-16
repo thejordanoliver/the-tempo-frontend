@@ -139,10 +139,7 @@ export function ComparisonBio({
         {rows.map((row, index) => (
           <View
             key={row.label}
-            style={[
-              styles.row,
-              index === rows.length - 1 && styles.lastRow,
-            ]}
+            style={[styles.row, index === rows.length - 1 && styles.lastRow]}
           >
             {renderValue(
               row.leftValue,
@@ -223,7 +220,7 @@ export const comparisonBioStyles = (isDark: boolean) =>
       paddingHorizontal: 4,
     },
     categoryTitle: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
@@ -232,16 +229,16 @@ export const comparisonBioStyles = (isDark: boolean) =>
     categoryText: {
       textAlign: "center",
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       lineHeight: 15,
     },
     winnerValueText: {
       color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     championValueText: {
       color: isDark ? Colors.dark.yellow : Colors.light.gold,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
   });

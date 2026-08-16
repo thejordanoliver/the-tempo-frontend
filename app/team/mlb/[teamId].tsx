@@ -68,6 +68,8 @@ export default function TeamDetailScreen() {
   const espnId = team?.espnId ?? 0;
   const teamLogo = getMLBTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
+  const teamName = team?.name;
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -284,6 +286,10 @@ export default function TeamDetailScreen() {
             showCountdown={isSeasonOpeningMonth}
             countdownGame={firstSeasonGame}
             scrollEnabled={true}
+            teamLogo={teamLogo}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+            teamName={teamName}
           />
         </View>
 

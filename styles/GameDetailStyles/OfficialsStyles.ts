@@ -38,13 +38,13 @@ export const officialsStyles = (isDark: boolean) =>
     },
     position: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
       marginBottom: 4,
     },
     name: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
     loadingText: {

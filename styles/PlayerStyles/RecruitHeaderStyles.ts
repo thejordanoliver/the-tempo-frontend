@@ -43,7 +43,7 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
     initial: {
       fontSize: 42,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
 
@@ -57,7 +57,7 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
     positionText: {
       fontSize: 13,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
       letterSpacing: 2.5,
     },
@@ -70,13 +70,13 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
     firstName: {
       fontSize: 22,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
       letterSpacing: 4,
     },
     lastName: {
       fontSize: 22,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: accent,
       letterSpacing: 4,
       lineHeight: 26,
@@ -99,12 +99,12 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
     statValue: {
       fontSize: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: text,
     },
     statLabel: {
       fontSize: 9,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: muted,
       letterSpacing: 1.8,
       marginTop: 3,
@@ -130,7 +130,7 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
     infoLabel: {
       fontSize: 9,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: accent,
       letterSpacing: 1.8,
       width: 80,
@@ -138,7 +138,7 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     infoValue: {
       flex: 1,
       fontSize: 13,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       color: text,
       textAlign: "right",
     },

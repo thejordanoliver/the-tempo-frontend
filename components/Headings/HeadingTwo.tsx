@@ -19,7 +19,7 @@ const headerStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
       fontSize: 20,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       paddingBottom: 4,
       marginBottom: 12,
       borderBottomWidth: 1,

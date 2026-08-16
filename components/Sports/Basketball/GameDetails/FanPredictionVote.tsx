@@ -383,12 +383,12 @@ const pollRowStyles = (isDark: boolean) =>
     },
     label: {
       flex: 1,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
     },
     percent: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -399,13 +399,13 @@ const fanPredictionVoteStyles = (isDark: boolean) =>
     subtitle: {
       marginTop: 4,
       marginBottom: 2,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: Colors.midTone,
     },
     totalVotesText: {
       marginTop: 4,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: Colors.midTone,
     },

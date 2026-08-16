@@ -119,6 +119,14 @@ export function useHomeData(selectedTab: "scores" | "news") {
   } = useSoccerGames(selectedDate, "mls");
 
   const {
+    games: leaguesCupGames,
+    loading: leaguesCupLoading,
+    refreshGames: refreshLeaguesCupGames,
+  } = useSoccerGames(selectedDate, "leaguescup");
+
+
+
+  const {
     games: fifaGames,
     loading: fifaLoading,
     refreshGames: refreshFIFAGames,
@@ -200,6 +208,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const normalizedMLS = useMemo(
     () => normalizeGames(mlsGames, "MLS"),
     [mlsGames],
+  );
+  const normalizedLeaguesCup = useMemo(
+    () => normalizeGames(leaguesCupGames, "LEAGUESCUP"),
+    [leaguesCupGames],
   );
   const normalizedFIFA = useMemo(
     () => normalizeGames(fifaGames, "FIFA"),
@@ -304,6 +316,11 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [normalizedMLS, safeFilterByDate],
   );
 
+  const filteredLEAGUESCUP = useMemo(
+    () => safeFilterByDate(normalizedLeaguesCup, false),
+    [normalizedLeaguesCup, safeFilterByDate],
+  );
+
   const filteredFIFA = useMemo(
     () => safeFilterByDate(normalizedFIFA, false),
     [normalizedFIFA, safeFilterByDate],
@@ -387,6 +404,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       ...collect(filteredMLS, "MLS"),
       ...collect(filteredFIFA, "FIFA"),
       ...collect(filteredEPL, "EPL"),
+      ...collect(filteredLEAGUESCUP, "LEAGUESCUP"),
       ...collect(filteredCHAMPIONS, "CHAMPIONS"),
       ...collect(filteredEUROPA, "EUROPA"),
       ...collect(filteredBUNDESLIGA, "EUROPA"),
@@ -404,6 +422,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredWomensCBB,
     filteredWNBA,
     filteredMLS,
+    filteredLEAGUESCUP,
     filteredFIFA,
     filteredEPL,
     filteredCHAMPIONS,
@@ -449,6 +468,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
       {
         category: "MLS",
         data: limitNonFavorites(filteredMLS, "MLS"),
+      },
+      {
+        category: "Leagues Cup",
+        data: limitNonFavorites(filteredLEAGUESCUP, "LEAGUESCUP"),
       },
       {
         category: "FIFA World Cup",
@@ -503,6 +526,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     filteredWomensCBB,
     filteredWNBA,
     filteredMLS,
+    filteredLEAGUESCUP,
     filteredEPL,
     filteredFIFA,
     filteredEUROPA,
@@ -520,7 +544,10 @@ export function useHomeData(selectedTab: "scores" | "news") {
 
     try {
       const today = getStartOfToday();
-      const shouldUpdateSelectedDate = !dayjs(selectedDate).isSame(today, "day");
+      const shouldUpdateSelectedDate = !dayjs(selectedDate).isSame(
+        today,
+        "day",
+      );
 
       if (shouldUpdateSelectedDate) {
         setSelectedDate(today);
@@ -542,6 +569,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshWomensCBB(),
           refreshWNBA(),
           refreshMLSGames(),
+          refreshLeaguesCupGames(),
           refreshEPLGames(),
           refreshFIFAGames(),
           refreshChampionsGames(),
@@ -570,6 +598,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     womensCBBLoading &&
     wnbaLoading &&
     mlsLoading &&
+    leaguesCupLoading &&
     fifaLoading &&
     eplLoading &&
     europaLoading &&

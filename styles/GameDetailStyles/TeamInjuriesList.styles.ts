@@ -35,7 +35,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
     },
 
     name: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
@@ -44,13 +44,13 @@ export const teamInjuryStyles = (isDark: boolean) =>
       alignItems: "flex-end",
     },
     status: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.midTone : Colors.midTone,
     },
     jersey: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       marginLeft: 4,
     },
@@ -61,7 +61,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
     },
     infoSection: { flex: 1, marginLeft: 10, justifyContent: "center" },
     details: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
@@ -83,24 +83,24 @@ export const teamInjuryStyles = (isDark: boolean) =>
     },
     position: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     detail: {
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     returnDate: {
       marginTop: 2,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
     separator: { height: 10 },
     loadingText: { marginTop: 8, fontSize: 14, color: Colors.darkGray },
     errorText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.white : Colors.light.black,
       textAlign: "center",
       marginVertical: 8,
@@ -132,7 +132,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
     emptyText: {
       textAlign: "center",
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
   });

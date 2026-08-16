@@ -1,3 +1,4 @@
+import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPredictionVote,
   GameLiveChatOverlay,
@@ -5,7 +6,6 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { CustomHeader } from "@/components/CustomHeader";
 import {
   formatDate,
   formatTime,
@@ -108,7 +108,7 @@ export default function GameDetailsScreen(
   const showGameChat = shouldShowGameChat(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
-  const gameId = game?.id;
+  const gameId = game?.id ?? 0;
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
@@ -243,33 +243,38 @@ export default function GameDetailsScreen(
         stickyHeaderIndices={[0]}
       >
         <GameHeader
+          // Fight details
           headline={headline}
-          clock={clock}
-          period={period}
-          isDark={isDark}
           date={formattedDate}
           time={formattedTime}
           broadcast={broadcast}
-          results={results}
+          isDark={isDark}
+          // First fighter
           firstFighterId={firstFighterId}
-          secondFighterId={secondFighterId}
-          firstFighterHeadshot={firstFighterPhoto}
-          secondFighterHeadshot={secondFighterPhoto}
-          firstFighterFlag={firstFighterFlag}
-          secondFighterFlag={secondFighterFlag}
           firstFighterName={firstFighterName}
-          secondFighterName={secondFighterName}
+          firstFighterHeadshot={firstFighterPhoto}
+          firstFighterFlag={firstFighterFlag}
           firstFighterRecord={firstFighterRecord}
-          secondFighterRecord={secondFighterRecord}
-          gameStatusDescription={gameStatusDescription}
           firstFighterIsWinner={firstFighterWinner}
+          // Second fighter
+          secondFighterId={secondFighterId}
+          secondFighterName={secondFighterName}
+          secondFighterHeadshot={secondFighterPhoto}
+          secondFighterFlag={secondFighterFlag}
+          secondFighterRecord={secondFighterRecord}
           secondFighterIsWinner={secondFighterWinner}
+          // Live fight state
+          clock={clock}
+          period={period}
+          results={results}
+          // Status
+          gameStatusDescription={gameStatusDescription}
         />
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
             <FanPredictionVote
-              gameId={String(gameId)}
+              gameId={gameId}
               awayId={secondFighterId}
               awayCode={secondFighterLastName}
               awayLogo={secondFighterFlag}

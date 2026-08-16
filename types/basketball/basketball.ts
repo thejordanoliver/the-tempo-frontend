@@ -1,33 +1,3 @@
-export type NBATeam = {
-  id: number;
-  espnId: number;
-  seed?: number;
-  summerLeagueId?: number;
-  name: string;
-  shortName: string;
-  fullName: string;
-  logo: any;
-  logoLight: any;
-  color: string;
-  secondaryColor?: string;
-  established?: number;
-  record?: string;
-  wins?: number;
-  losses?: number;
-  coach?: string;
-  code: string;
-  location: string;
-  city?: string;
-  state?: string;
-  conference?: string;
-  uniforms?: {
-    home: any;
-    away: any;
-  };
-  isActive: boolean;
-  isAllStar: boolean;
-};
-
 export type BasketballGame = {
   league: {
     id: number;
@@ -36,7 +6,7 @@ export type BasketballGame = {
     name: string;
     slug: string;
   };
-  id: string;
+  id: number;
   uid: string;
   name: string;
   shortName: string;
@@ -120,40 +90,6 @@ export type BasketballGame = {
   playByPlayAvailable: boolean;
   recent: boolean;
   wasSuspended: boolean;
-  raw: {
-    eventId: string;
-    competitionId: string;
-  };
-};
-
-export type Game = {
-  id: number;
-  date: string;
-  time: string;
-  home: NBATeam;
-  away: NBATeam;
-  scores?: { home: { points: number }; away: { points: number } };
-  homeScore?: number;
-  awayScore?: number;
-  period?: string;
-  status: {
-    clock?: string;
-    halftime: boolean;
-    short: number;
-    long: string;
-  };
-  isPlayoff?: boolean;
-  stage?: number;
-  isHalftime?: boolean;
-  linescore?: { home: string[]; away: string[] };
-  periods?: { current: number; total: number; endOfPeriod: boolean };
-  venue?: {
-    name: string;
-    city: string;
-    state?: string;
-    country?: string;
-    capacity?: number;
-  };
 };
 
 export type BasketballGameCardProps = {

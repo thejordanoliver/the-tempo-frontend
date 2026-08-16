@@ -20,7 +20,7 @@ export const awardTableStyles = (isDark: boolean) =>
     },
 
     errorText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       textAlign: "center",
       marginTop: 20,
@@ -37,14 +37,14 @@ export const awardTableStyles = (isDark: boolean) =>
 
     headerName: {
       paddingHorizontal: 10,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
 
     headerCell: {
       textAlign: "center",
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -73,18 +73,18 @@ export const awardTableStyles = (isDark: boolean) =>
       justifyContent: "space-between",
     },
     playerName: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
     seasonText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       opacity: 0.75,
       color: isDark ? Colors.white : Colors.black,
     },
     showMoreLess: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },

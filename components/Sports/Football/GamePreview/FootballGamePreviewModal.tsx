@@ -64,7 +64,6 @@ export default function FootballGamePreviewModal({
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const headline = game.headline || holidayLabel;
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "nfl";
@@ -113,53 +112,54 @@ export default function FootballGamePreviewModal({
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const state = score?.status?.state;
-  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
-  const inProgress = gameStatusDescription === "In Progress";
-  const isCanceled = gameStatusDescription === "Canceled";
-  const isPostponed = gameStatusDescription === "Postponed";
-  const isDelayed = gameStatusDescription === "Delayed";
-  const isForfeited = gameStatusDescription === "Forfeited";
-  const dontShowDetails = isDelayed || isCanceled || isPostponed || isForfeited;
-  const clock = score?.status?.displayClock;
-  const period = formatPeriod({ period: game.status.period });
-  const isRedzone = game?.situation.isRedZone;
-  const broadcasts = details?.broadcasts;
-  const broadcast = getBroadcastDisplay(broadcasts);
-  const downDistanceText = game.situation.downDistanceText;
-  const possessionTeamId = game.situation.possession;
-  const homeRecord = score?.home.record;
-  const awayRecord = score?.away.record;
-  const homeTimeouts = score?.home.timeouts ?? 0;
-  const awayTimeouts = score?.away.timeouts ?? 0;
-  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
-  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
-  const officials = details?.officials ?? [];
-  const homeScore = game.home.score ?? 0;
-  const awayScore = game.away.score ?? 0;
-  const homeRank = game.home.rank ?? null;
-  const awayRank = game.away.rank ?? null;
   const isChampionship =
     game?.headline?.includes("Super Bowl") ??
     game?.headline?.includes("Championship");
   const styles = gamePreviewModalStyle(isChampionship);
-  const homeHasPossession = inProgress && possessionTeamId === homeTeam?.espnId;
-  const awayHasPossession = inProgress && possessionTeamId === awayTeam?.espnId;
+  const state = score?.status.state ?? "pre";
+  const gameStatusDescription = score?.status.gameStatusDescription ?? "";
+  const gameStatusDetail = score?.status.shortDetail ?? "";
+  const isCanceled = gameStatusDescription === "Canceled";
+  const isDelayed = gameStatusDescription === "Delayed";
+  const isPostponed = gameStatusDescription === "Postponed";
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isForfeited = gameStatusDescription === "Forfeit";
+  const dontShowDetails =
+    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+  const clock = score?.status.displayClock ?? "0:00";
+  const period = formatPeriod({ period: score?.status.period });
+  const redzone = game?.situation?.isRedZone;
+  const headline = details?.headline ?? holidayLabel;
+  const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
+  const downDistance = game?.situation.downDistanceText;
+  const homeHasPossession = score?.home?.possession ?? false;
+  const awayHasPossession = score?.away?.possession ?? false;
+  const homeTimeouts = score?.home?.timeouts ?? 0;
+  const awayTimeouts = score?.away?.timeouts ?? 0;
+  const homeRecord = score?.home.record;
+  const awayRecord = score?.away.record;
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+  const homeScore = score?.home.score ?? 0;
+  const awayScore = score?.away.score ?? 0;
   const homeWins = homeScore > awayScore;
   const awayWins = awayScore > homeScore;
-  const isTie = awayScore === homeScore;
+  const isTie = homeScore === awayScore;
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-  const teamStats = score?.teamStats ?? [];
-  const leaders = score?.leaders ?? [];
+  const homeRank = score?.home?.rank;
+  const awayRank = score?.away?.rank;
+  const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
   const injuries = details?.injuries ?? [];
+  const leaders = score?.leaders ?? [];
+  const teamStats = score?.boxScore?.teams ?? [];
   const venueId = Number(details?.venue?.id);
+  const baseVenue = details?.venue;
   const { venue } = useVenue({ sport: "football", id: venueId });
   const { weather } = useWeather({
     lat: Number(venue?.latitude),
@@ -167,13 +167,13 @@ export default function FootballGamePreviewModal({
     location: venue?.city,
     date: gameDateObj,
   });
-  const baseVenue = details?.venue;
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName;
   const venueAddress = venue?.address ?? baseVenueAddress;
   const venueCapacity = venue?.capacity ?? null;
-  const venueImage = venue?.image;
-  const venueAttendance = game?.attendance || null;
+  const venueImage = venue?.image ?? baseVenue?.images?.[0]?.href ?? null;
+  const venueAttendance = details?.attendance ?? null;
+  const venueSurface = baseVenue?.grass;
   const venueCity = venue?.city ?? baseVenue?.address?.city;
   const venueRegion =
     venue?.state ?? baseVenue?.address?.state ?? baseVenue?.address?.country;
@@ -181,7 +181,6 @@ export default function FootballGamePreviewModal({
     venueCity && venueRegion
       ? `${venueCity}, ${venueRegion}`
       : (venueCity ?? "");
-  const venueSurface = baseVenue?.grass;
 
   const isLoading = !!details;
 
@@ -250,6 +249,7 @@ export default function FootballGamePreviewModal({
                   isWinner={awayWins}
                   isTie={isTie}
                   timeouts={awayTimeouts}
+                  state={state}
                   gameStatusDescription={gameStatusDescription}
                   hasPossession={awayHasPossession}
                   league={LEAGUE}
@@ -263,10 +263,11 @@ export default function FootballGamePreviewModal({
                   period={period}
                   clock={clock}
                   broadcast={broadcast}
-                  downDistance={downDistanceText}
+                  downDistance={downDistance}
+                  state={state}
                   gameStatusShortDetail={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
-                  redzone={isRedzone}
+                  redzone={redzone}
                   isDark
                 />
 
@@ -280,6 +281,7 @@ export default function FootballGamePreviewModal({
                   isWinner={homeWins}
                   isTie={isTie}
                   timeouts={homeTimeouts}
+                  state={state}
                   gameStatusDescription={gameStatusDescription}
                   hasPossession={homeHasPossession}
                   league={LEAGUE}

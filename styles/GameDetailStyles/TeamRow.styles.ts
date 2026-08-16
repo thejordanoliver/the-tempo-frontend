@@ -35,6 +35,7 @@ export type FootballTeamRowProps = {
   score?: number | null;
   isWinner: boolean | null;
   isTie: boolean | null;
+  state?: string;
   gameStatusDescription?: string;
   size?: SizeType;
   hasPossession: boolean | null;
@@ -193,7 +194,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     teamName: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
@@ -202,7 +203,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       color: Colors.lightGray,
     },
     record: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: isTie
         ? isDark
@@ -215,13 +216,13 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     score: {
       fontSize: 36,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
       marginHorizontal: 16,
       width: 60,
     },
     preGameRecord: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
       marginHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
@@ -238,7 +239,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       height: 40,
       resizeMode: "contain",
       position: "absolute",
-      top: "30%",
+      bottom: "-35%",
       alignSelf: "center",
     },
     timeoutsContainer: { alignItems: "center" },
@@ -247,7 +248,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       position: "absolute",
       bottom: -10,
       fontSize: 8,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       letterSpacing: 0.5,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -280,7 +281,7 @@ export const DriverRowStyles = (isDark: boolean, isTie?: boolean) =>
       left: 12,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
     teamInfo: {
@@ -305,12 +306,12 @@ export const DriverRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     name: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     subText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 12,

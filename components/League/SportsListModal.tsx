@@ -24,6 +24,7 @@ import F1Logo from "assets/Racing/Logos/f1.png";
 import NascarLogo from "assets/Racing/Logos/Nascar.png";
 import NascarLogoLight from "assets/Racing/Logos/NascarLight.png";
 import BundesligaLogoLight from "assets/Soccer/Logos/BundesligaLight.png";
+import LeaguesCupLogo from "assets/Soccer/Logos/LeaguesCup.png";
 import EPLLogo from "assets/Soccer/Logos/EPL.png";
 import MLSLogo from "assets/Soccer/Logos/MLS.png";
 import UEFAChampionsLogo from "assets/Soccer/Logos/UEFAChampions.png";
@@ -33,7 +34,7 @@ import UEFAEuropaLogoLight from "assets/Soccer/Logos/UEFAEuropaLight.png";
 import WorldCupLogo from "assets/Soccer/Logos/WorldCup.png";
 import WorldCupLogoLight from "assets/Soccer/Logos/WorldCupLight.png";
 import SearchBar from "components/SearchBars/SearchBar";
-import { Colors, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
@@ -80,6 +81,7 @@ const leagues: LeagueType[] = [
   "CHAMPIONS",
   "EUROPA",
   "BUNDESLIGA",
+  "LEAGUESCUP",
   "FIFA",
   "F1",
   "NASCARPREMIER",
@@ -184,6 +186,11 @@ const leagueConfig: Record<
     logo: BundesligaLogo,
     logoLight: BundesligaLogoLight,
   },
+   LEAGUESCUP: {
+    label: "Leagues Cup",
+    logo: LeaguesCupLogo,
+    logoLight: LeaguesCupLogo,
+  },
   F1: {
     label: "F1",
     logo: F1Logo,
@@ -233,6 +240,7 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   EUROPA: "/league/socc",
   FIFA: "/league/socc",
   FIFAW: "/league/socc",
+  LEAGUESCUP: "/league/socc",
   BUNDESLIGA: "/league/socc",
 };
 
@@ -318,7 +326,7 @@ const SportsListModal = forwardRef<SportsListModalRef, SportsListModalProps>(
             <TouchableOpacity
               onPress={() => goToLeague(league)}
               style={styles.leagueButton}
-              activeOpacity={0.6}
+              activeOpacity={activeOpacity}
             >
               <View style={styles.buttonWrapper}>
                 <Image

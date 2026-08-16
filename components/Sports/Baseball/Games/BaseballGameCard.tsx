@@ -100,7 +100,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
   const countOuts = Math.min(Math.max(outs ?? 0, 0), 3);
-
   const getOuts = [1, 2, 3].map((i) => (
     <Ionicons
       key={i}
@@ -109,7 +108,6 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
       color={isDark ? Colors.dark.lightRed : Colors.light.red}
     />
   ));
-
   const bases = {
     onFirst: game?.situation?.onFirst,
     onSecond: game?.situation?.onSecond,

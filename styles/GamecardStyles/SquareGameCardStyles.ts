@@ -59,7 +59,7 @@ export const squareGameCardStyles = (
 
     logo: { width: 20, height: 20, resizeMode: "contain" },
 
-    footballPossesion: {
+    possession: {
       width: 16,
       height: 16,
       resizeMode: "contain",
@@ -67,7 +67,7 @@ export const squareGameCardStyles = (
 
     teamName: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       width: 40,
     },
@@ -78,13 +78,13 @@ export const squareGameCardStyles = (
 
     teamScore: {
       fontSize: 14,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "right",
       color: Colors.midTone,
     },
     teamRecord: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "right",
       color: textColor,
     },
@@ -96,31 +96,31 @@ export const squareGameCardStyles = (
     },
     date: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       textAlign: "center",
     },
 
     period: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       textAlign: "center",
     },
     dateFinal: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       fontSize: 12,
     },
     time: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: textColor,
     },
     clock: {
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: accentRed,
       textAlign: "center",
     },
@@ -132,12 +132,12 @@ export const squareGameCardStyles = (
     },
     outs: {
       fontSize: 12,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: accentRed,
       textAlign: "center",
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: accentRed,
       textAlign: "center",
@@ -145,12 +145,12 @@ export const squareGameCardStyles = (
     broadcast: {
       paddingHorizontal: 4,
       fontSize: 10,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       color: subTextColor,
     },
     headlineText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 8,
       color: headlineColor,
       position: "absolute",
@@ -160,7 +160,7 @@ export const squareGameCardStyles = (
     },
 
     downDistance: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: borderColor,
       textAlign: "center",

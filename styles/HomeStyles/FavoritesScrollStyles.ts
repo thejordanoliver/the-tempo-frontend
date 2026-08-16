@@ -50,7 +50,7 @@ export const favoritesScrollStyles = (isDark: boolean) =>
     teamLabel: {
       fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlignVertical: "center",
     },
   });

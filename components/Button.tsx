@@ -65,6 +65,6 @@ const buttonStyles = (isDark: boolean) =>
     buttonText: {
       color: isDark ? Colors.black : Colors.white,
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
   });

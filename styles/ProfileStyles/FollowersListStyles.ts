@@ -21,7 +21,7 @@ export const followersListStyles = (isDark: boolean) =>
     },
     username: {
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
     avatarContainer: {

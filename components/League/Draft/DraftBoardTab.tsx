@@ -88,18 +88,18 @@ const draftBoardTabStyles = (isDark: boolean) =>
     },
     emptyTitle: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
     },
     emptyText: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       textAlign: "center",
     },
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       textAlign: "center",
     },

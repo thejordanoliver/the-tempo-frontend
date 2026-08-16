@@ -617,7 +617,7 @@ const commentThreadStyles = (isDark: boolean) =>
     emptyTitle: {
       marginTop: 12,
       fontSize: 18,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
@@ -626,7 +626,7 @@ const commentThreadStyles = (isDark: boolean) =>
       marginTop: 6,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -719,7 +719,7 @@ const commentThreadStyles = (isDark: boolean) =>
 
     previewBadgeText: {
       fontSize: 11,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: Colors.white,
     },
 
@@ -739,7 +739,7 @@ const commentThreadStyles = (isDark: boolean) =>
       paddingBottom: 8,
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 

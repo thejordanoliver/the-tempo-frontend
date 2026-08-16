@@ -62,7 +62,7 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     roundLabel: {
       position: "absolute",
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: Colors.midTone,
       textTransform: "uppercase",
@@ -70,7 +70,7 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     sideLabel: {
       position: "absolute",
       top: SIDE_LABEL_TOP,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 28,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
@@ -99,7 +99,7 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     seedText: {
       width: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       textAlign: "center",
     },
@@ -110,7 +110,7 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     teamCode: {
       flex: 1,
       marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
     },
     winsBadge: {
@@ -125,13 +125,13 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
         : Colors.transparentLightGray,
     },
     score: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
     winsText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
     divider: {
@@ -156,31 +156,31 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     footerText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       textAlign: "center",
       color: Colors.midTone,
     },
     broadcast: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     period: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     date: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     clock: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
@@ -189,13 +189,13 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     liveStatusText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       textTransform: "uppercase",
     },
     liveScoreText: {
       marginTop: 2,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
     },
     connectorH: {

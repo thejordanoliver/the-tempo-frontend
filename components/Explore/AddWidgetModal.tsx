@@ -1,9 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import type { ExploreWidgetOption } from "constants/exploreWidgets";
 import {
   EXPLORE_WIDGET_OPTIONS,
   getDefaultWidgetSize,
 } from "constants/exploreWidgets";
-import type { ExploreWidgetOption } from "constants/exploreWidgets";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -429,13 +429,13 @@ const addWidgetModalStyles = (isDark: boolean) =>
       flex: 1,
     },
     title: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
     },
     subtitle: {
       marginTop: 2,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -498,7 +498,7 @@ const addWidgetModalStyles = (isDark: boolean) =>
       flexWrap: "wrap",
     },
     cardTitle: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 17,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -507,13 +507,13 @@ const addWidgetModalStyles = (isDark: boolean) =>
       borderRadius: 4,
       paddingHorizontal: 6,
       paddingVertical: 2,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: isDark ? Colors.white : Colors.black,
       backgroundColor: isDark ? Colors.darkGray : Colors.white,
     },
     description: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -529,7 +529,7 @@ const addWidgetModalStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     addText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
     },
@@ -549,7 +549,7 @@ const addWidgetModalStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     sizeButtonText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -579,7 +579,7 @@ const addWidgetModalStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.white : Colors.black,
     },
     dropZoneText: {
-      fontFamily: Fonts.OSSEMIBOLD,
+      fontFamily: Fonts.SEMIBOLD,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
     },

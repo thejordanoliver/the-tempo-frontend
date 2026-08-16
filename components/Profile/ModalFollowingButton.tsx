@@ -87,6 +87,6 @@ export const followButtonStyles = (isDark: boolean, isFollowing: boolean) =>
           ? Colors.white
           : Colors.black,
       fontSize: 12,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
   });

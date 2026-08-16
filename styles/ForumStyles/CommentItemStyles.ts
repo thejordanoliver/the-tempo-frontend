@@ -25,14 +25,14 @@ export function commentItemStyles(isDark: boolean) {
       paddingTop: 12,
     },
     username: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: textColor,
       marginRight: 8,
       flexShrink: 1,
     },
     timestamp: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
       paddingBottom: 12,
@@ -54,13 +54,13 @@ export function commentItemStyles(isDark: boolean) {
     text: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       flexShrink: 1,
     },
     expandText: {
       color: Colors.midTone,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       paddingVertical: 4,
     },
 
@@ -105,7 +105,7 @@ export function commentItemStyles(isDark: boolean) {
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: textColor,
       padding: 12,
       borderRadius: 6,
@@ -120,12 +120,12 @@ export function commentItemStyles(isDark: boolean) {
     saveText: {
       color: isDark ? Colors.dark.leafGreen : Colors.light.green,
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     cancelText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
   });
 }

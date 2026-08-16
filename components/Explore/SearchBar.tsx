@@ -131,7 +131,7 @@ export const searchBarStyles = (isDark: boolean) =>
       paddingVertical: 8,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       flex: 1,
     },
     clearButton: {

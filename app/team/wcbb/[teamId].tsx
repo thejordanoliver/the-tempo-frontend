@@ -65,6 +65,8 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getWCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
+  const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getWCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -279,6 +281,10 @@ export default function TeamDetailScreen() {
             countdownGame={firstSeasonGame}
             scrollEnabled={true}
             showHeaders={true}
+            teamLogo={teamLogo}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+            teamName={teamName}
           />
         </View>
 

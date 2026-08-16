@@ -10,8 +10,8 @@ type CoachesProps = {
   awayCoach: Coach | null | undefined;
   homeLogo: any;
   awayLogo: any;
-  homeName: string;
-  awayName: string;
+  homeCode: string;
+  awayCode: string;
   isDark: boolean;
 };
 
@@ -20,8 +20,8 @@ export default function HeadCoaches({
   awayCoach,
   homeLogo,
   awayLogo,
-  homeName,
-  awayName,
+  homeCode,
+  awayCode,
   isDark,
 }: CoachesProps) {
   const styles = coachesStyles(isDark);
@@ -100,7 +100,6 @@ export default function HeadCoaches({
         style={[styles.valueText, styles.awayValue]}
         numberOfLines={1}
         adjustsFontSizeToFit
-        minimumFontScale={0.75}
       >
         {awayValue}
       </Text>
@@ -109,7 +108,6 @@ export default function HeadCoaches({
         style={[styles.valueText, styles.homeValue]}
         numberOfLines={1}
         adjustsFontSizeToFit
-        minimumFontScale={0.75}
       >
         {homeValue}
       </Text>
@@ -122,11 +120,11 @@ export default function HeadCoaches({
       <View style={styles.wrapper}>
         <View style={[styles.comparisonRow, styles.headerRow]}>
           <View style={styles.sideCell}>
-            {renderCoachHeader(awayCoach, awayName, awayLogo, "away")}
+            {renderCoachHeader(awayCoach, awayCode, awayLogo, "away")}
           </View>
           <Text style={styles.statLabel}>Coach</Text>
           <View style={styles.sideCell}>
-            {renderCoachHeader(homeCoach, homeName, homeLogo, "home")}
+            {renderCoachHeader(homeCoach, homeCode, homeLogo, "home")}
           </View>
         </View>
         {renderComparisonRow(
@@ -207,14 +205,14 @@ const coachesStyles = (isDark: boolean) =>
 
     coachName: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 15,
       lineHeight: 18,
     },
 
     teamName: {
       color: Colors.midTone,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 15,
     },
@@ -222,7 +220,7 @@ const coachesStyles = (isDark: boolean) =>
     statLabel: {
       width: 76,
       color: Colors.midTone,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       textTransform: "uppercase",
@@ -231,7 +229,7 @@ const coachesStyles = (isDark: boolean) =>
     valueText: {
       flex: 1,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 18,
     },

@@ -91,7 +91,7 @@ export const Colors = {
     itemBackground: "#2e2e2e",
     transparentItemBackground: "#2e2e2e50",
 
-    white: "#fff",
+    white: "#ffffff",
     transparentWhite: "#ffffff50",
 
     background: "#1d1d1d",
@@ -113,19 +113,19 @@ export const Colors = {
     transparentErrorBackground: "#5a1f1f50",
   },
 
-  white: "#fff",
+  white: "#ffffff",
   transparentWhite: "#ffffff50",
 
   black: "#1d1d1d",
   transparentBlack: "#1d1d1d50",
 
-  midTone: "#888",
+  midTone: "#888888",
   transparentMidTone: "#88888850",
 
-  lightGray: "#aaa",
+  lightGray: "#aaaaaa",
   transparentLightGray: "#aaaaaa88",
 
-  darkGray: "#555",
+  darkGray: "#555555",
   transparentDarkGray: "#55555588",
 
   bronze: "#b87333",
@@ -142,12 +142,12 @@ export const Colors = {
 };
 
 export const Fonts = {
-  OSEXTRALIGHT: "Oswald_200ExtraLight",
-  OSLIGHT: "Oswald_300Light",
-  OSREGULAR: "Oswald_400Regular",
-  OSMEDIUM: "Oswald_500Medium",
-  OSSEMIBOLD: "Oswald_600SemiBold",
-  OSBOLD: "Oswald_700Bold",
+  EXTRALIGHT: "Oswald_200ExtraLight",
+  LIGHT: "Oswald_300Light",
+  REGULAR: "Oswald_400Regular",
+  MEDIUM: "Oswald_500Medium",
+  SEMIBOLD: "Oswald_600SemiBold",
+  BOLD: "Oswald_700Bold",
 };
 
 export const globalStyles = (isDark: boolean) =>
@@ -155,7 +155,7 @@ export const globalStyles = (isDark: boolean) =>
     errorText: {
       textAlign: "center",
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyContainer: {
@@ -167,14 +167,14 @@ export const globalStyles = (isDark: boolean) =>
     emptyText: {
       textAlign: "center",
       fontSize: 20,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
     emptySubText: {
       marginTop: 6,
       fontSize: 14,
       textAlign: "center",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

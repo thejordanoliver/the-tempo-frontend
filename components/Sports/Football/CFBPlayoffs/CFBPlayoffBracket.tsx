@@ -449,7 +449,7 @@ const bracketStyles = StyleSheet.create({
   // position: "absolute" is required so that top/left props take effect
   roundLabel: {
     position: "absolute",
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 18,
     color: Colors.midTone,
     textAlign: "center",
@@ -462,7 +462,7 @@ const bracketStyles = StyleSheet.create({
     justifyContent: "center",
   },
   champLabelText: {
-    fontFamily: Fonts.OSBOLD,
+    fontFamily: Fonts.BOLD,
     fontSize: 18,
     color: Colors.midTone,
     textAlign: "center",

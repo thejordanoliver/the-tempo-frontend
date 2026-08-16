@@ -175,7 +175,7 @@ const getStyles = (isDark: boolean) =>
     },
     seedText: {
       width: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -183,7 +183,7 @@ const getStyles = (isDark: boolean) =>
     teamCode: {
       flex: 1,
       marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -199,7 +199,7 @@ const getStyles = (isDark: boolean) =>
         : Colors.transparentLightGray,
     },
     score: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -207,7 +207,7 @@ const getStyles = (isDark: boolean) =>
 
     record: {
       fontSize: 14,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     teamLogo: {
@@ -215,13 +215,13 @@ const getStyles = (isDark: boolean) =>
       height: 34,
     },
     infoText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
     finalText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",

@@ -261,12 +261,12 @@ function getStyles(isDark: boolean) {
     headerBtn: { padding: 8 },
     headerTitle: {
       fontSize: 18,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
     save: {
       color: Colors.white,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
     },
     video: {
@@ -278,7 +278,7 @@ function getStyles(isDark: boolean) {
       marginTop: 12,
       marginBottom: 6,
       color: Colors.white,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
     },
     row: {
@@ -287,11 +287,11 @@ function getStyles(isDark: boolean) {
     },
     label: {
       color: Colors.lightGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     value: {
       color: Colors.white,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     thumbBtn: {
       marginTop: 10,
@@ -307,12 +307,12 @@ function getStyles(isDark: boolean) {
     },
     thumbBtnText: {
       color: Colors.white,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     note: {
       marginTop: 8,
       color: Colors.lightGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
   });
 }

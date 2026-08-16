@@ -116,7 +116,7 @@ export default function TabBar<T extends string>({
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
     color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.midTone,
-    fontFamily: Fonts.OSREGULAR,
+    fontFamily: Fonts.REGULAR,
   });
 
   return (

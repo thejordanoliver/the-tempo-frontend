@@ -222,7 +222,7 @@ const championshipBannerStyles = (isDark: boolean) =>
     yearText: {
       color: Colors.white,
       fontSize: 22,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       marginTop: 4,
     },
 
@@ -238,6 +238,6 @@ const championshipBannerStyles = (isDark: boolean) =>
       fontSize: 12,
       width: 100,
       textAlign: "center",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
   });

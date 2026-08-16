@@ -166,7 +166,7 @@ function getStyles(isDark: boolean) {
     overlayText: {
       color: Colors.white,
       fontSize: 24,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
     playOverlay: {
       position: "absolute",

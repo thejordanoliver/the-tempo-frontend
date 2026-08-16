@@ -347,34 +347,39 @@ export default function GameDetailsScreen(
         stickyHeaderIndices={[0]}
       >
         <GameHeader
+          // Game details
           headline={headline}
-          homeId={homeId}
-          awayId={awayId}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          homeName={homeCode}
-          awayName={awayCode}
-          homeScore={homeScore}
-          awayScore={awayScore}
-          homeRecord={homeRecord}
-          awayRecord={awayRecord}
-          homeRank={homeRank}
-          awayRank={awayRank}
-          homeBonusState={homeBonus}
-          awayBonusState={awayBonus}
-          homeTimeouts={homeTimeouts}
-          awayTimeouts={awayTimeouts}
-          homeWins={homeWins}
-          awayWins={awayWins}
-          clock={clock}
-          period={period}
+          league={LEAGUE}
           date={formattedDate}
           time={formattedTime}
           broadcast={broadcast}
+          isDark={isDark}
+          // Away team
+          awayId={awayId}
+          awayName={awayCode}
+          awayLogo={awayLogo}
+          awayRank={awayRank}
+          awayScore={awayScore}
+          awayRecord={awayRecord}
+          awayWins={awayWins}
+          awayBonusState={awayBonus}
+          awayTimeouts={awayTimeouts}
+          // Home team
+          homeId={homeId}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeRank={homeRank}
+          homeScore={homeScore}
+          homeRecord={homeRecord}
+          homeWins={homeWins}
+          homeBonusState={homeBonus}
+          homeTimeouts={homeTimeouts}
+          // Live game state
+          clock={clock}
+          period={period}
+          // Status
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
-          isDark={isDark}
-          league={LEAGUE}
         />
 
         <View style={styles.innerContainer}>
@@ -528,8 +533,8 @@ export default function GameDetailsScreen(
               <Highlights highlights={highlights} isDark={isDark} />
 
               <HeadCoaches
-                homeName={homeName}
-                awayName={awayName}
+                homeCode={homeCode}
+                awayCode={awayCode}
                 homeCoach={homeCoach}
                 awayCoach={awayCoach}
                 homeLogo={homeLogo}

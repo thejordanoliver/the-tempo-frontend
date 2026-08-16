@@ -16,7 +16,7 @@ export const commentThreadStyles = (isDark: boolean) =>
       paddingVertical: 12,
       paddingHorizontal: 16,
       flex: 1,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       borderTopLeftRadius: 12,
       borderBottomLeftRadius: 12,
     },

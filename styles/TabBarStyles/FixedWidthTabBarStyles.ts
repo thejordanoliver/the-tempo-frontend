@@ -16,7 +16,7 @@ export const fixedWidthTabBarStyles = (isDark: boolean) =>
     },
     tab: {
       fontSize: 16,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.midTone : Colors.midTone,
       opacity: 0.5,
     },

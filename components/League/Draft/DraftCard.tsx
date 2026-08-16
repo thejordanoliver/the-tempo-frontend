@@ -351,7 +351,7 @@ const draftCardStyles = (isDark: boolean) =>
     },
 
     name: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
@@ -369,7 +369,7 @@ const draftCardStyles = (isDark: boolean) =>
     },
 
     rankingText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: Colors.white,
     },
@@ -380,7 +380,7 @@ const draftCardStyles = (isDark: boolean) =>
     },
 
     positionText: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.white : Colors.light.black,
       fontSize: 14,
     },
@@ -393,17 +393,17 @@ const draftCardStyles = (isDark: boolean) =>
     },
 
     subText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
     pickIsIn: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 50,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },
     tradeNoteText: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: isDark ? Colors.dark.white : Colors.light.black,
     },

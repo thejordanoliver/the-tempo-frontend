@@ -499,7 +499,7 @@ function getStyles(isDark: boolean) {
       borderWidth: StyleSheet.hairlineWidth,
     },
     username: {
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       marginBottom: 4,
       color: Colors.white,
     },
@@ -507,7 +507,7 @@ function getStyles(isDark: boolean) {
       fontSize: 14,
       color: Colors.white,
       textAlign: "left",
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       marginBottom: 10,
     },
 
@@ -525,7 +525,7 @@ function getStyles(isDark: boolean) {
     engagementText: {
       fontSize: 16,
       color: Colors.white,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     closeButton: {
       padding: 10,
@@ -544,7 +544,7 @@ function getStyles(isDark: boolean) {
     showMoreText: {
       color: Colors.lightGray,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       marginVertical: 12,
     },
     playOverlay: {

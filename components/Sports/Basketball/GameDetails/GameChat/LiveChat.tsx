@@ -79,7 +79,7 @@ export default function LiveChat({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { top, bottom } = useSafeAreaInsets();
-  const styles = useMemo(() => liveChatStyles(isDark), [isDark]);
+  const styles = useMemo(() => LiveChatStyles(isDark), [isDark]);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
@@ -370,7 +370,7 @@ export default function LiveChat({
   );
 }
 
-const liveChatStyles = (isDark: boolean) =>
+const LiveChatStyles = (isDark: boolean) =>
   StyleSheet.create({
     sheetContainer: {
       zIndex: 10000,
@@ -406,14 +406,14 @@ const liveChatStyles = (isDark: boolean) =>
       marginBottom: 4,
     },
     title: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     userCount: {
       marginTop: 2,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
     },
     footerContainer: {
@@ -438,7 +438,7 @@ const liveChatStyles = (isDark: boolean) =>
       zIndex: 20,
     },
     latestButtonText: {
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 12,
       color: isDark ? Colors.black : Colors.white,
     },

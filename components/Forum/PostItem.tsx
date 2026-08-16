@@ -497,9 +497,7 @@ export const PostItem = memo(function PostItem({
                 />
               ) : (
                 <View style={[styles.profileImage, styles.profilePlaceholder]}>
-                  <Text
-                    style={{ color: Colors.white, fontFamily: Fonts.OSBOLD }}
-                  >
+                  <Text style={{ color: Colors.white, fontFamily: Fonts.BOLD }}>
                     {(item.username?.[0] ?? "T").toUpperCase()}
                   </Text>
                 </View>

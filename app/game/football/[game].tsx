@@ -1,6 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
-import PlayByPlayField from "@/components/Sports/Football/GameDetails/PlayByPlayField";
+import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
@@ -9,7 +9,11 @@ import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDet
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
-import { formatPeriod, formatVenueAddress } from "@/utils/games";
+import {
+  formatPeriod,
+  formatVenueAddress,
+  getBroadcastDisplay,
+} from "@/utils/games";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
@@ -44,6 +48,142 @@ import {
   Officials,
   TeamInjuries,
 } from "../../../components/Sports/Basketball/GameDetails";
+
+import type {
+  FootballDrives,
+  PlayObject,
+} from "@/hooks/FootballHooks/useFootballGameDetails";
+
+export const mockFootballPlay = {
+  id: "40187327289",
+  sequenceNumber: "8900",
+
+  type: {
+    id: "5",
+    text: "Rush",
+    abbreviation: "RUSH",
+  },
+
+  text: "J. Gibbs runs up the middle to DET 36 for 7 yards.",
+
+  awayScore: 0,
+  homeScore: 0,
+
+  period: {
+    number: 1,
+  },
+
+  clock: {
+    displayValue: "14:21",
+  },
+
+  scoringPlay: false,
+  priority: false,
+  isPenalty: false,
+  isTurnover: false,
+  statYardage: 7,
+
+  start: {
+    down: 2,
+    distance: 10,
+    yardLine: 15,
+    yardsToEndzone: 15,
+    downDistanceText: "4th & 10 at DET 29",
+    shortDownDistanceText: "4th & 10",
+    possessionText: "DET 20",
+
+    team: {
+      id: 7,
+      espnId: 8,
+      name: "Detroit Lions",
+      fullName: "Detroit Lions",
+      displayName: "Detroit Lions",
+      shortName: "Lions",
+      shortDisplayName: "Lions",
+      abbreviation: "DET",
+      code: "DET",
+      location: "Detroit, MI",
+      city: "Detroit",
+      color: "#0076B6",
+      alternateColor: "#B0B7BC",
+      primaryColor: "#0076B6",
+      secondaryColor: "#B0B7BC",
+    },
+  },
+
+  end: {
+    down: 3,
+    distance: 10,
+    yardLine: 15,
+    yardsToEndzone: 15,
+    downDistanceText: "3rd & 3 at DET 36",
+    shortDownDistanceText: "3rd & 3",
+    possessionText: "DET 36",
+
+    team: {
+      id: 7,
+      espnId: 8,
+      name: "Detroit Lions",
+      fullName: "Detroit Lions",
+      displayName: "Detroit Lions",
+      shortName: "Lions",
+      shortDisplayName: "Lions",
+      abbreviation: "DET",
+      code: "DET",
+      location: "Detroit, MI",
+      city: "Detroit",
+      color: "#0076B6",
+      alternateColor: "#B0B7BC",
+      primaryColor: "#0076B6",
+      secondaryColor: "#B0B7BC",
+    },
+  },
+
+  teamParticipants: [],
+} as unknown as PlayObject;
+
+export const mockFootballDrives = {
+  current: [
+    {
+      id: "mock-drive-1",
+      description: "6 plays, 48 yards, 3:24",
+      team: mockFootballPlay.start?.team,
+      start: {
+        period: {
+          type: "quarter",
+          number: 1,
+        },
+        clock: {
+          displayValue: "15:00",
+        },
+        yardLine: 80,
+        text: "DET 20",
+      },
+      end: {
+        period: {
+          type: "quarter",
+          number: 1,
+        },
+        clock: {
+          displayValue: "14:21",
+        },
+        yardLine: 64,
+        text: "DET 36",
+      },
+      timeElapsed: {
+        displayValue: "0:39",
+      },
+      yards: 16,
+      isScore: false,
+      offensivePlays: 2,
+      result: null,
+      shortDisplayResult: null,
+      displayResult: null,
+      plays: [mockFootballPlay],
+    },
+  ],
+  previous: [],
+} as unknown as FootballDrives;
 
 type RouteParams = {
   game?: string | string[];
@@ -165,14 +305,7 @@ export default function GameDetailsScreen(
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const homeName = useMemo(
-    () => homeTeam?.fullName ?? "",
-    [homeTeam?.fullName],
-  );
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? "",
-    [awayTeam?.fullName],
-  );
+
   const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
   const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
 
@@ -189,7 +322,7 @@ export default function GameDetailsScreen(
 
   const state = score?.status.state ?? "pre";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
-  const gameStatusDetail = score?.status.gameStatusDetail ?? "";
+  const gameStatusDetail = score?.status.shortDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
@@ -199,18 +332,55 @@ export default function GameDetailsScreen(
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-  const redzone = score?.possession?.isRedZone;
+  const scorePossession = score?.possession;
+  const redzone = game?.situation?.isRedZone ?? false;
   const headline = details?.headline ?? holidayLabel;
-  const broadcast = details?.broadcast ?? "";
-  const currentDrives = score?.drives?.current;
-  const previousDrives = score?.drives?.previous;
+  const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
+
   const scoringPlays = score?.scoringPlays;
-  const downDistance = score?.possession.downDistanceText;
-  const possessionTeamId = score?.possession.teamId;
-  const homeHasPossesion = possessionTeamId === home?.espnId;
-  const awayHasPossesion = possessionTeamId === away?.espnId;
-  const homeTimeouts = score?.possession.homeTimeouts;
-  const awayTimeouts = score?.possession.awayTimeouts;
+  const lastPlay = score?.lastPlay ?? null;
+  const drives = score?.drives;
+  const currentDrives = drives?.current ?? [];
+  const previousDrives = drives?.previous ?? [];
+  const fieldPlay = useMemo(() => {
+    const plays = score?.plays ?? [];
+    const currentDrives = score?.drives?.current ?? [];
+    const previousDrives = score?.drives?.previous ?? [];
+
+    if (lastPlay) {
+      return lastPlay;
+    }
+
+    if (plays.length > 0) {
+      return plays[plays.length - 1];
+    }
+
+    for (let index = currentDrives.length - 1; index >= 0; index -= 1) {
+      const drivePlays = currentDrives[index]?.plays ?? [];
+
+      if (drivePlays.length > 0) {
+        return drivePlays[drivePlays.length - 1];
+      }
+    }
+
+    for (let index = previousDrives.length - 1; index >= 0; index -= 1) {
+      const drivePlays = previousDrives[index]?.plays ?? [];
+
+      if (drivePlays.length > 0) {
+        return drivePlays[drivePlays.length - 1];
+      }
+    }
+
+    return null;
+  }, [lastPlay, score?.plays, score?.drives]);
+
+  const downDistance =
+    scorePossession?.downDistanceText ?? game?.situation?.downDistanceText;
+  const homeHasPossession = score?.home?.possession ?? false;
+  const awayHasPossession = score?.away?.possession ?? false;
+
+  const homeTimeouts = score?.home?.timeouts;
+  const awayTimeouts = score?.away?.timeouts;
   const homeRecord = score?.home.record;
   const awayRecord = score?.away.record;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
@@ -226,14 +396,14 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const homeRank = score?.home?.rank;
   const awayRank = score?.away?.rank;
-  const lastPlay = score?.lastPlay ?? "";
   const officials = details?.officials ?? [];
   const highlights = details?.highlights;
   const injuries = details?.injuries ?? [];
   const leaders = score?.leaders;
-  const teamStats = score?.teamStats ?? [];
+  const teamStats = score?.boxScore?.teams ?? [];
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const baseVenue = details?.venue;
@@ -244,6 +414,7 @@ export default function GameDetailsScreen(
     location: venue?.city,
     date: gameDateObj,
   });
+
   const baseVenueAddress = formatVenueAddress(baseVenue?.address);
   const venueName = venue?.name ?? baseVenue?.fullName ?? null;
   const venueAddress = venue?.address ?? baseVenueAddress;
@@ -319,37 +490,43 @@ export default function GameDetailsScreen(
         stickyHeaderIndices={[0]}
       >
         <GameHeader
+          // Game details
           headline={headline}
-          homeId={homeId}
+          league={LEAGUE}
+          state={state}
+          date={formattedDate}
+          time={formattedTime}
+          broadcast={broadcast}
+          isDark={isDark}
+          // Away team
           awayId={awayId}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          homeName={homeCode}
           awayName={awayCode}
-          homeRank={homeRank}
+          awayLogo={awayLogo}
           awayRank={awayRank}
           awayScore={awayScore}
+          awayWins={awayWins}
+          awayRecord={awayRecord}
+          awayTimeouts={awayTimeouts}
+          awayPossession={awayHasPossession}
+          // Home team
+          homeId={homeId}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeRank={homeRank}
           homeScore={homeScore}
           homeWins={homeWins}
-          awayWins={awayWins}
-          isTie={isTie}
           homeRecord={homeRecord}
-          awayRecord={awayRecord}
           homeTimeouts={homeTimeouts}
-          awayTimeouts={awayTimeouts}
-          homePossesion={homeHasPossesion}
-          awayPossesion={awayHasPossesion}
+          homePossession={homeHasPossession}
+          // Live game state
           clock={clock}
           period={period}
           downDistance={downDistance}
-          isDark={isDark}
-          broadcast={broadcast}
-          date={formattedDate}
-          time={formattedTime}
+          redzone={redzone}
+          isTie={isTie}
+          // Status
           gameStatusShortDetail={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
-          redzone={redzone}
-          league={LEAGUE}
         />
 
         {!dontShowDetails && (
@@ -363,15 +540,6 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
 
-            <PlayByPlayField
-              lastPlay={lastPlay}
-              firstDownYardLine={undefined}
-              possessionTeamId={possessionTeamId}
-              homeTeamId={homeId}
-              awayTeamId={awayId}
-              state={state}
-            />
-
             <FanPredictionVote
               gameId={gameId}
               awayId={awayId}
@@ -382,6 +550,24 @@ export default function GameDetailsScreen(
               homeCode={homeCode}
               homeLogo={homeHeaderLogo}
               homeColor={homeColor}
+              state={state}
+            />
+
+            <PlayByPlay
+              width={420}
+              height={130}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              awayTeamId={awayId}
+              homeTeamId={homeId}
+              awayColor={awayColor}
+              homeColor={homeColor}
+              drives={drives}
+              play={fieldPlay}
+              showPlay={Boolean(fieldPlay)}
+              isDark={isDark}
               state={state}
             />
 
@@ -426,8 +612,8 @@ export default function GameDetailsScreen(
             />
 
             <TeamDrives
-              previousDrives={previousDrives ?? []}
-              currentDrives={currentDrives ?? []}
+              previousDrives={previousDrives}
+              currentDrives={currentDrives}
               awayId={awayId}
               homeId={homeId}
               homeCode={homeCode}
@@ -480,8 +666,8 @@ export default function GameDetailsScreen(
             />
 
             <HeadCoaches
-              homeName={homeName}
-              awayName={awayName}
+              homeCode={homeCode}
+              awayCode={awayCode}
               homeCoach={homeCoach}
               awayCoach={awayCoach}
               homeLogo={homeLogo}

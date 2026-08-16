@@ -147,11 +147,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     <Ionicons
                       name="checkmark"
                       size={18}
-                      color={
-                        isDark
-                          ? Colors.dark.blue
-                          : Colors.light.blue
-                      }
+                      color={isDark ? Colors.dark.blue : Colors.light.blue}
                     />
                   ) : null}
                 </TouchableOpacity>
@@ -212,7 +208,7 @@ export const dropDownStyles = ({
       flex: 1,
       marginRight: 8,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
     },
 
@@ -230,9 +226,7 @@ export const dropDownStyles = ({
       maxHeight: 260,
       borderRadius: 12,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? "rgba(255, 255, 255, 0.16)"
-        : "rgba(0, 0, 0, 0.12)",
+      borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)",
       overflow: "hidden",
       backgroundColor: isDark
         ? Colors.transparentDarkGray
@@ -288,14 +282,12 @@ export const dropDownStyles = ({
       flex: 1,
       marginRight: 8,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
     },
 
     selectedOptionText: {
-      color: isDark
-        ? Colors.dark.blue
-        : Colors.light.blue,
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
     },
   });
 };

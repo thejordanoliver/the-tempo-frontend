@@ -407,20 +407,20 @@ const authStyles = (isDark: boolean) => {
     kicker: {
       color: Colors.midTone,
       fontSize: 13,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       textTransform: "uppercase",
     },
     title: {
       color: text,
       fontSize: 34,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
     subtitle: {
       color: secondaryText,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
       paddingHorizontal: 24,
     },
@@ -441,30 +441,30 @@ const authStyles = (isDark: boolean) => {
       flex: 1,
       color: text,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     codeInputText: {
       textAlign: "center",
       letterSpacing: 8,
       fontSize: 22,
-      fontFamily: Fonts.OSMEDIUM,
+      fontFamily: Fonts.MEDIUM,
     },
     helperText: {
       color: secondaryText,
       fontSize: 14,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontSize: 15,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
     successText: {
       color: isDark ? Colors.dark.limeGreen : Colors.light.green,
       fontSize: 15,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
     button: {
@@ -478,7 +478,7 @@ const authStyles = (isDark: boolean) => {
     linkText: {
       color: Colors.midTone,
       fontSize: 16,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
     },
     disabledLinkText: {
       opacity: 0.6,

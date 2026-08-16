@@ -1,7 +1,7 @@
 // components/Forum/TeamForum.tsx
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import { Colors, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useRouter } from "expo-router";
 import { useTeamForum } from "hooks/ForumHooks/useTeamForum";
@@ -191,11 +191,11 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
             params: { teamId, league, currentUserId },
           })
         }
-        activeOpacity={0.8}
+        activeOpacity={activeOpacity}
       >
         <Ionicons
           name="create"
-          size={20}
+          size={24}
           color={isDark ? Colors.black : Colors.white}
         />
       </TouchableOpacity>
@@ -225,18 +225,19 @@ export function forumStyles(isDark: boolean) {
     floatingButton: {
       position: "absolute",
       bottom: 100,
-      right: 20,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      justifyContent: "center",
+      right: 0,
+      width: 64,
+      height: 64,
+      marginHorizontal: 20,
+      borderRadius: 32,
       alignItems: "center",
-      elevation: 6,
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.white : Colors.black,
       shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 3,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: isDark ? 0.5 : 0.3,
+      shadowRadius: 4.65,
+      elevation: 7,
     },
   });
 }

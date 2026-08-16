@@ -53,14 +53,14 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
     },
     roundLabel: {
       position: "absolute",
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: Colors.midTone,
     },
     sideLabel: {
       position: "absolute",
       top: 300,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 28,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
@@ -77,7 +77,7 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
     },
     seedText: {
       width: 20,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
@@ -89,7 +89,7 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
     teamCode: {
       flex: 1,
       marginLeft: 4,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -105,7 +105,7 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
         : Colors.transparentLightGray,
     },
     score: {
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",

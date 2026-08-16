@@ -69,6 +69,7 @@ export const LEAGUE_TABS = {
   EUROPA: ["scores", "news", "standings", "forum"],
   CHAMPIONS: ["scores", "news", "standings", "forum"],
   BUNDESLIGA: ["scores", "news", "standings", "forum"],
+  LEAGUESCUP: ["scores", "news", "standings", "forum"],
   FIFA: ["scores", "news", "standings", "forum"],
   F1: ["scores", "news", "standings", "forum"],
   NASCARPREMIER: ["scores", "news", "standings", "forum"],

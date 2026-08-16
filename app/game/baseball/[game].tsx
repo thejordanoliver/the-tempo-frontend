@@ -329,33 +329,38 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
       >
         <GameHeader
+          // Game details
           headline={headline}
-          homeLogo={homeLogo}
-          awayLogo={awayLogo}
-          homeName={homeCode}
-          awayName={awayCode}
-          homeScore={homeScore}
-          awayScore={awayScore}
-          isDark={isDark}
+          league={LEAGUE}
+          state={state}
           date={formattedDate}
           time={formattedTime}
           broadcast={broadcast}
-          homeRecord={homeRecord}
-          awayRecord={awayRecord}
-          homeWins={homeWins}
-          awayWins={awayWins}
-          homeRank={homeRank}
-          awayRank={awayRank}
-          homeId={homeId}
+          isDark={isDark}
+          // Away team
           awayId={awayId}
-          state={state}
-          gameStatusDescription={gameStatusDescription}
-          gameStatusDetail={gameStatusDetail}
+          awayName={awayCode}
+          awayLogo={awayLogo}
+          awayRank={awayRank}
+          awayScore={awayScore}
+          awayRecord={awayRecord}
+          awayWins={awayWins}
+          // Home team
+          homeId={homeId}
+          homeName={homeCode}
+          homeLogo={homeLogo}
+          homeRank={homeRank}
+          homeScore={homeScore}
+          homeRecord={homeRecord}
+          homeWins={homeWins}
+          // Live game state
           isTopInning={isTopInning}
           isBottomInning={isBottomInning}
           outs={outs}
           bases={bases}
-          league={LEAGUE}
+          // Status
+          gameStatusDescription={gameStatusDescription}
+          gameStatusDetail={gameStatusDetail}
         />
 
         {!dontShowDetails && (
@@ -463,8 +468,8 @@ export default function GameDetailsScreen(
             />
 
             <HeadCoaches
-              homeName={homeName}
-              awayName={awayName}
+              homeCode={homeCode}
+              awayCode={awayName}
               homeCoach={homeCoach}
               awayCoach={awayCoach}
               homeLogo={homeLogo}

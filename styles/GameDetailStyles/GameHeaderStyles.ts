@@ -28,7 +28,7 @@ export const gameHeaderStyles = (isDark: boolean) =>
       top: 0,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
     divider: {
@@ -48,7 +48,7 @@ export const gameHeaderStyles = (isDark: boolean) =>
     seriesText: {
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.OSREGULAR,
+      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
   });

@@ -465,7 +465,7 @@ export const shotChartStyles = (isDark: boolean) =>
     legendText: {
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
 
     legendLogo: {

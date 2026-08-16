@@ -38,7 +38,7 @@ export const gamePreviewModalStyle = (isChampionship?: boolean) =>
     },
     headlineText: {
       fontSize: 12,
-      fontFamily: Fonts.OSLIGHT,
+      fontFamily: Fonts.LIGHT,
       color: Colors.dark.white,
       textAlign: "center",
     },

@@ -187,7 +187,11 @@ export default function CalendarModal({
             style={styles.closeButton}
             onPress={onClose}
           >
-            <Ionicons name={"close"} size={28} color={isDark ? Colors.white : Colors.black} />
+            <Ionicons
+              name={"close"}
+              size={28}
+              color={isDark ? Colors.white : Colors.black}
+            />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -235,9 +239,9 @@ export default function CalendarModal({
               selectedDayTextColor: Colors.dark.limeGreen,
               monthTextColor: isDark ? Colors.white : Colors.black,
               arrowColor: isDark ? Colors.white : Colors.black,
-              textDayFontFamily: Fonts.OSBOLD,
-              textMonthFontFamily: Fonts.OSBOLD,
-              textDayHeaderFontFamily: Fonts.OSBOLD,
+              textDayFontFamily: Fonts.BOLD,
+              textMonthFontFamily: Fonts.BOLD,
+              textDayHeaderFontFamily: Fonts.BOLD,
               textMonthFontSize: 24,
               textDayFontSize: 20,
               textDayHeaderFontSize: 18,
@@ -298,6 +302,6 @@ const calendarModalStyles = (isDark: boolean) =>
 
     todayText: {
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.OSBOLD,
+      fontFamily: Fonts.BOLD,
     },
   });
