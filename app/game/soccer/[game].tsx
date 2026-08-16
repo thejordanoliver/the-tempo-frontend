@@ -407,10 +407,11 @@ export default function GameDetailsScreen(
               awayCode={awayCode}
               homeGames={homeLastGames}
               awayGames={awayLastGames}
-              league={"socc"}
+              league={"soccer"}
               state={state}
               isDark={isDark}
             />
+            
             <GameLocation
               venueImage={venueImage}
               venueName={venueName}

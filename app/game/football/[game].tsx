@@ -1,6 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
-import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay";
+import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
@@ -305,6 +305,8 @@ export default function GameDetailsScreen(
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
+  const homeName = useMemo(() => homeTeam?.name ?? "", [homeTeam?.name]);
+  const awayName = useMemo(() => awayTeam?.name ?? "", [awayTeam?.name]);
 
   const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
   const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
@@ -558,6 +560,8 @@ export default function GameDetailsScreen(
               height={130}
               awayCode={awayCode}
               homeCode={homeCode}
+              awayName={awayName}
+              homeName={homeName}
               awayLogo={awayLogo}
               homeLogo={homeLogo}
               awayTeamId={awayId}
@@ -569,6 +573,8 @@ export default function GameDetailsScreen(
               showPlay={Boolean(fieldPlay)}
               isDark={isDark}
               state={state}
+              league={LEAGUE}
+              neutralSite={neutralSite}
             />
 
             <MatchupPredictor

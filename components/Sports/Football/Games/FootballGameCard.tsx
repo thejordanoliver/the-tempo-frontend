@@ -174,19 +174,27 @@ function FootballGameCard({
   const renderStatus = () => {
     if (inProgress)
       return (
-        <View style={styles.infoWrapper}>
-          <Text style={styles.date}>{period}</Text>
-          <View style={styles.statusDivider} />
-          <Text style={styles.clock}>{clock}</Text>
-        </View>
+        <>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.date}>{period}</Text>
+            <View style={styles.statusDivider} />
+            <Text style={styles.clock}>{clock}</Text>
+          </View>
+          {renderDownAndDistance()}
+        </>
       );
-
-    if (isDelayed || isCanceled || isPostponed || isForfeited || isSuspended)
-      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
     if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
 
-    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+    if (
+      isHalftime ||
+      isDelayed ||
+      isCanceled ||
+      isPostponed ||
+      isForfeited ||
+      isSuspended
+    )
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
 
     if (isFinal)
       return (
@@ -196,6 +204,7 @@ function FootballGameCard({
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
+
     return (
       <View style={styles.infoWrapper}>
         <Text style={styles.date}>{formattedDate}</Text>
@@ -233,7 +242,7 @@ function FootballGameCard({
 
       <View style={styles.info}>
         {renderStatus()}
-        {renderDownAndDistance()}
+
         {!isFinal && broadcast && (
           <Text style={styles.broadcast}>{broadcast}</Text>
         )}

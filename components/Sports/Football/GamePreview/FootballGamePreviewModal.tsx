@@ -19,7 +19,7 @@ import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import {
   formatDate,
@@ -151,8 +151,46 @@ export default function FootballGamePreviewModal({
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
+
   const homeRank = score?.home?.rank;
   const awayRank = score?.away?.rank;
+  const lastPlay = score?.lastPlay ?? null;
+  const drives = score?.drives ?? {
+    current: [],
+    previous: [],
+  };
+  const fieldPlay = useMemo(() => {
+    const plays = score?.plays ?? [];
+    const currentDrives = score?.drives?.current ?? [];
+    const previousDrives = score?.drives?.previous ?? [];
+
+    if (lastPlay) {
+      return lastPlay;
+    }
+
+    if (plays.length > 0) {
+      return plays[plays.length - 1];
+    }
+
+    for (let index = currentDrives.length - 1; index >= 0; index -= 1) {
+      const drivePlays = currentDrives[index]?.plays ?? [];
+
+      if (drivePlays.length > 0) {
+        return drivePlays[drivePlays.length - 1];
+      }
+    }
+
+    for (let index = previousDrives.length - 1; index >= 0; index -= 1) {
+      const drivePlays = previousDrives[index]?.plays ?? [];
+
+      if (drivePlays.length > 0) {
+        return drivePlays[drivePlays.length - 1];
+      }
+    }
+
+    return null;
+  }, [lastPlay, score?.plays, score?.drives]);
+
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
   const injuries = details?.injuries ?? [];
@@ -304,6 +342,8 @@ export default function FootballGamePreviewModal({
                   awayColor={awayColor}
                   awayName={awayName}
                   homeCode={homeCode}
+                  drives={drives}
+                  fieldPlay={fieldPlay}
                   homeChance={homeChance}
                   awayChance={awayChance}
                   homeCoach={homeCoach}

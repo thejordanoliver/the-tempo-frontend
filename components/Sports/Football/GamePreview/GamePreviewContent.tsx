@@ -9,6 +9,8 @@ import {
   Officials,
 } from "@/components/Sports/Basketball/GameDetails";
 import {
+  FootballDrive,
+  PlayObject,
   TeamInjury,
   TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -22,6 +24,7 @@ import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import GameLeaders from "../GameDetails/GameLeaders";
+import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
 
 type GamePreviewContentProps = {
   homeColor: string;
@@ -39,6 +42,11 @@ type GamePreviewContentProps = {
   lineScore?: {
     home: string[];
     away: string[];
+  };
+  fieldPlay: PlayObject | null;
+  drives: {
+    previous: FootballDrive[];
+    current: FootballDrive[];
   };
   teamStats?: TeamStatsEntry[];
   leaders: TeamLeaders[];
@@ -79,6 +87,8 @@ export default function GamePreviewContent({
   officials,
   homeName,
   awayName,
+  fieldPlay,
+  drives,
   homeCoach,
   awayCoach,
   homeLastGames,
@@ -127,6 +137,27 @@ export default function GamePreviewContent({
           state={state}
           league={league}
           isDark
+        />
+
+        <PlayByPlay
+          width={420}
+          height={130}
+          awayCode={awayCode}
+          homeCode={homeCode}
+          awayName={awayName}
+          homeName={homeName}
+          awayLogo={awayLogo}
+          homeLogo={homeLogo}
+          awayTeamId={awayId}
+          homeTeamId={homeId}
+          awayColor={awayColor}
+          homeColor={homeColor}
+          drives={drives}
+          play={fieldPlay}
+          showPlay={Boolean(fieldPlay)}
+          isDark
+          state={state}
+          league={league}
         />
 
         <GameTeamStats

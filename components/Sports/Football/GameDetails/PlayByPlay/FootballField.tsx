@@ -1,12 +1,21 @@
 // components/Sports/Football/GameDetails/FootballField.tsx
 
 import { Colors, Fonts } from "@/constants/styles";
+import { getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getNFLTeamLogo } from "@/constants/teamsNFL";
 import type {
   FootballDrives,
   PlayObject,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
-import React, { memo, useMemo } from "react";
+import React, { memo, useEffect, useMemo } from "react";
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedProps,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 import {
   ClipPath,
   Defs,
@@ -27,6 +36,9 @@ type FootballFieldProps = {
   awayCode?: string;
   homeCode?: string;
 
+  awayName?: string;
+  homeName?: string;
+
   awayTeamId?: string | number | null;
   homeTeamId?: string | number | null;
 
@@ -41,7 +53,9 @@ type FootballFieldProps = {
 
   showPlay?: boolean;
   isDark?: boolean;
-  state: string;
+  state?: string | null;
+  league?: string | null;
+  neutralSite?: boolean;
 };
 
 type TeamIdentity = {
@@ -61,6 +75,7 @@ const FIELD_TOP = 12;
 const FIELD_BOTTOM = 96;
 const FIELD_DEPTH_BOTTOM = FIELD_BOTTOM + 5;
 const FIELD_MIDDLE_Y = (FIELD_TOP + FIELD_BOTTOM) / 2;
+const KICK_TARGET_Y = FIELD_TOP + 8;
 const FIELD_TOP_LEFT = 108;
 const FIELD_TOP_RIGHT = 492;
 const FIELD_TOP_WIDTH = FIELD_TOP_RIGHT - FIELD_TOP_LEFT;
@@ -68,14 +83,29 @@ const ENDZONE_TOP_WIDTH = FIELD_TOP_WIDTH / 10;
 const FIELD_OUTER_TOP_LEFT = FIELD_TOP_LEFT - ENDZONE_TOP_WIDTH;
 const FIELD_OUTER_TOP_RIGHT = FIELD_TOP_RIGHT + ENDZONE_TOP_WIDTH;
 const FIELD_LABEL_Y = 128;
-const ENDZONE_LOGO_WIDTH = 58;
-const ENDZONE_LOGO_HEIGHT = 48;
-const ENDZONE_LOGO_ROTATION = 12;
+const ENDZONE_LOGO_WIDTH = 50;
+const ENDZONE_LOGO_HEIGHT = 50;
+const ENDZONE_LOGO_ROTATION = -90;
 const AWAY_ENDZONE_CENTER_X =
   (0 + FIELD_LEFT + FIELD_OUTER_TOP_LEFT + FIELD_TOP_LEFT) / 4;
 const HOME_ENDZONE_CENTER_X = VIEWBOX_WIDTH - AWAY_ENDZONE_CENTER_X;
 const ENDZONE_LOGO_Y = FIELD_MIDDLE_Y - ENDZONE_LOGO_HEIGHT / 2;
 const ENDZONE_TEXT_Y = FIELD_MIDDLE_Y + 4;
+
+// Skew angle that "flattens" the endzone logo onto the field's perspective
+// plane. The goal line and back line of the endzone aren't vertical — they
+// converge toward the top the same way the yard lines do — so a plain
+// rotate(90) makes the logo look like a sticker standing up instead of
+// artwork painted on the turf. Skewing by the average slope of those two
+// lines keeps the logo's long edges parallel to them, so it reads as lying
+// flat in the endzone.
+const AWAY_GOAL_LINE_SLOPE =
+  (FIELD_TOP_LEFT - FIELD_LEFT) / (FIELD_TOP - FIELD_BOTTOM);
+const AWAY_BACK_LINE_SLOPE =
+  (FIELD_OUTER_TOP_LEFT - 0) / (FIELD_TOP - FIELD_BOTTOM);
+const ENDZONE_LOGO_SKEW_DEG =
+  (Math.atan((AWAY_GOAL_LINE_SLOPE + AWAY_BACK_LINE_SLOPE) / 2) * 180) /
+  Math.PI;
 
 const LIGHT_GRASS = "#568A3C";
 const DARK_GRASS = "#477936";
@@ -84,6 +114,7 @@ const FIELD_BORDER = Colors.white;
 const PLAY_COLOR = Colors.white;
 const FIRST_DOWN_COLOR = "#E2CE23";
 const GOAL_POST_COLOR = "#E2CE23";
+const MISSED_KICK_COLOR = "#FF5A5F";
 const GOAL_POST_BASE_COLOR = "#6C6E6F";
 const GOAL_POST_INSET_X = FIELD_LEFT - 22;
 const FOOTBALL_COLOR = "#7A4528";
@@ -93,6 +124,23 @@ const POSSESSION_MARKER_SCALE = 1.28;
 const YARDAGE_BADGE_WIDTH = 64;
 const YARDAGE_BADGE_HEIGHT = 22;
 const YARDAGE_BADGE_Y = FIELD_MIDDLE_Y + 14;
+const PLAY_PATH_ANIMATION_DURATION = 520;
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+type KickPlayType = "fieldGoal" | "pat";
+
+type AnimatedPlayPathProps = {
+  d: string;
+  pathLength: number;
+  stroke?: string;
+  strokeWidth: number;
+  strokeLinecap?: "round";
+  strokeLinejoin?: "round";
+  delay?: number;
+  duration?: number;
+  opacity?: number;
+};
 
 const PASS_PLAY_TYPES = new Set([
   "pass",
@@ -113,8 +161,116 @@ const RUSH_PLAY_TYPES = new Set([
 
 const INCOMPLETE_PASS_TYPES = new Set(["pass incompletion", "incomplete pass"]);
 
+function AnimatedPlayPath({
+  d,
+  pathLength,
+  stroke = PLAY_COLOR,
+  strokeWidth,
+  strokeLinecap = "round",
+  strokeLinejoin,
+  delay = 0,
+  duration = PLAY_PATH_ANIMATION_DURATION,
+  opacity = 1,
+}: AnimatedPlayPathProps) {
+  const progress = useSharedValue(0);
+  const safePathLength = Math.max(1, pathLength);
+
+  useEffect(() => {
+    progress.value = 0;
+    progress.value = withDelay(
+      delay,
+      withTiming(1, {
+        duration,
+        easing: Easing.out(Easing.cubic),
+      }),
+    );
+
+    return () => {
+      cancelAnimation(progress);
+    };
+  }, [d, delay, duration, progress]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: safePathLength * (1 - progress.value),
+  }));
+
+  return (
+    <AnimatedPath
+      d={d}
+      fill="none"
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      strokeDasharray={`${safePathLength} ${safePathLength}`}
+      animatedProps={animatedProps}
+      strokeLinecap={strokeLinecap}
+      strokeLinejoin={strokeLinejoin}
+      opacity={opacity}
+    />
+  );
+}
+
 function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(Math.max(value, minimum), maximum);
+}
+
+function getScoreValue(value: unknown) {
+  const scoreValue = Number(value);
+
+  return Number.isFinite(scoreValue) ? scoreValue : null;
+}
+
+function getPlaySearchText(play?: PlayObject | null) {
+  return [
+    play?.type?.text,
+    play?.type?.abbreviation,
+    play?.scoringType?.name,
+    play?.scoringType?.displayName,
+    play?.scoringType?.abbreviation,
+    play?.result,
+    play?.shortDisplayResult,
+    play?.displayResult,
+    play?.text,
+    play?.shortText,
+    play?.description,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function getKickPlayType(play?: PlayObject | null): KickPlayType | null {
+  if (!play) return null;
+
+  const searchText = getPlaySearchText(play);
+  const scoreValue = getScoreValue(play.scoreValue);
+  const isFieldGoal =
+    searchText.includes("field goal") || /\bfg\b/.test(searchText);
+
+  if (isFieldGoal || scoreValue === 3) {
+    return "fieldGoal";
+  }
+
+  const isPat =
+    searchText.includes("extra point") ||
+    searchText.includes("point after") ||
+    /\bpat\b/.test(searchText) ||
+    /\bxp\b/.test(searchText);
+
+  if (isPat || scoreValue === 1) {
+    return "pat";
+  }
+
+  return null;
+}
+
+function isMissedOrBlockedKick(play?: PlayObject | null) {
+  const searchText = getPlaySearchText(play);
+
+  return (
+    searchText.includes("no good") ||
+    searchText.includes("miss") ||
+    searchText.includes("blocked")
+  );
 }
 
 function normalizeId(value: unknown) {
@@ -137,12 +293,11 @@ function teamMatches(
   const normalizedTeamId = normalizeId(teamId);
   const normalizedTeamCode = normalizeTeamCode(teamCode);
 
-  const possibleTeamIds = [
-    normalizeId(team?.id),
-    normalizeId(team?.espnId),
-  ].filter((value): value is string => Boolean(value));
+  const possibleTeamIds = [normalizeId(team?.id)].filter(
+    (value): value is string => Boolean(value),
+  );
 
-  const actualTeamCode = normalizeTeamCode(team?.abbreviation ?? team?.code);
+  const actualTeamCode = normalizeTeamCode(team?.code);
 
   return Boolean(
     (normalizedTeamId && possibleTeamIds.includes(normalizedTeamId)) ||
@@ -176,8 +331,7 @@ function positionToPlayX(position: number) {
 }
 
 function getPossessionMarkerTransform(x: number) {
-  const translateX =
-    x - POSSESSION_MARKER_CENTER_X * POSSESSION_MARKER_SCALE;
+  const translateX = x - POSSESSION_MARKER_CENTER_X * POSSESSION_MARKER_SCALE;
   const translateY =
     FIELD_MIDDLE_Y - POSSESSION_MARKER_TIP_Y * POSSESSION_MARKER_SCALE;
 
@@ -401,6 +555,9 @@ function createDriveShape({
   const pass = isPassPlay(play);
   const incomplete = isIncompletePass(play);
   const rush = isRushingPlay(play);
+  const kickPlayType = getKickPlayType(play);
+  const isKick = kickPlayType !== null;
+  const isMissedKick = isMissedOrBlockedKick(play);
 
   const rawYardsAfterCatch = Number(play.yardsAfterCatch ?? 0);
 
@@ -420,6 +577,7 @@ function createDriveShape({
   const passDistance = Math.abs(catchX - startX);
   const curveHeight = clamp(passDistance * 0.34, 8, 25);
   const controlY = FIELD_MIDDLE_Y - curveHeight;
+  const passPathLength = Math.max(passDistance * 1.25 + curveHeight * 1.4, 16);
 
   const firstDownPosition = getFirstDownPosition({
     startPosition,
@@ -479,10 +637,45 @@ function createDriveShape({
     ].join(" ");
   })();
 
+  const rushPathLength =
+    Math.max(Math.abs(endX - startX), 1) + (rushPath.includes("Q") ? 24 : 0);
+
+  const yardsAfterCatchPathLength = Math.max(Math.abs(endX - catchX), 1);
+
+  const kickTargetX = isKick
+    ? isHomePossession
+      ? GOAL_POST_INSET_X + 17
+      : VIEWBOX_WIDTH - GOAL_POST_INSET_X - 17
+    : null;
+
+  const kickTargetY = isKick ? KICK_TARGET_Y : null;
+
+  const kickPath =
+    kickTargetX !== null && kickTargetY !== null
+      ? [
+          `M ${startX} ${FIELD_MIDDLE_Y}`,
+          `Q ${(startX + kickTargetX) / 2} ${-6}`,
+          `${kickTargetX} ${kickTargetY}`,
+        ].join(" ")
+      : null;
+
+  const kickPathLength =
+    kickTargetX !== null && kickTargetY !== null
+      ? Math.max(
+          Math.hypot(kickTargetX - startX, kickTargetY - FIELD_MIDDLE_Y) * 1.4,
+          40,
+        )
+      : null;
+
+  const kickLabel =
+    kickPlayType === "fieldGoal" ? "FG" : kickPlayType === "pat" ? "PAT" : null;
+
   return {
     startX,
     catchX,
     endX,
+    footballX: kickTargetX ?? endX,
+    footballY: kickTargetY ?? FIELD_MIDDLE_Y,
 
     firstDownTopX:
       firstDownPosition !== null ? getTopX(firstDownPosition) : null,
@@ -490,9 +683,11 @@ function createDriveShape({
     firstDownBottomX:
       firstDownPosition !== null ? positionToX(firstDownPosition) : null,
 
-    isRush: rush,
-    isPass: pass,
+    isRush: rush && !isKick,
+    isPass: pass && !isKick,
+    isKick,
     isIncomplete: incomplete,
+    isMissedKick,
 
     passPath: [
       `M ${startX} ${FIELD_MIDDLE_Y}`,
@@ -500,8 +695,10 @@ function createDriveShape({
       `${catchX} ${controlY}`,
       `${catchX} ${FIELD_MIDDLE_Y}`,
     ].join(" "),
+    passPathLength,
 
     rushPath,
+    rushPathLength,
 
     yardsAfterCatchPath:
       pass && !incomplete && yardsAfterCatch > 0
@@ -509,9 +706,17 @@ function createDriveShape({
             " ",
           )
         : null,
+    yardsAfterCatchPathLength,
+
+    kickPath,
+    kickPathLength,
 
     statLabel:
-      yardsAfterCatch > 0 ? `${yardsAfterCatch} YAC` : `${statYardage} YDS`,
+      kickLabel !== null
+        ? `${kickLabel}${isMissedKick ? " MISS" : ""}`
+        : yardsAfterCatch > 0
+          ? `${yardsAfterCatch} YAC`
+          : `${statYardage} YDS`,
 
     possessionCode,
   };
@@ -524,6 +729,8 @@ function FootballField({
   homeCode = "HOME",
   awayTeamId,
   homeTeamId,
+  awayName = "AWAY",
+  homeName = "HOME",
   playId,
   playSequenceNumber,
   drives,
@@ -532,6 +739,8 @@ function FootballField({
   homeColor = Colors.midTone,
   showPlay = true,
   isDark = true,
+  league,
+  neutralSite,
 }: FootballFieldProps) {
   const selectedPlay = useMemo(
     () =>
@@ -618,8 +827,22 @@ function FootballField({
       ? awayColor
       : Colors.midTone;
 
-  const awayEndzoneLogo = getNFLTeamLogo(awayTeamId ?? 0, true);
-  const homeEndzoneLogo = getNFLTeamLogo(homeTeamId ?? 0, true);
+  const isCFB = league === "cfb";
+  console.log(isCFB);
+  const awayEndzoneLogo = isCFB
+    ? getCFBTeamLogo(awayTeamId ?? 0, true)
+    : getNFLTeamLogo(awayTeamId ?? 0, true);
+  const homeEndzoneLogo = isCFB
+    ? getCFBTeamLogo(homeTeamId ?? 0, true)
+    : getNFLTeamLogo(homeTeamId ?? 0, true);
+  const selectedPlayAnimationKey = selectedPlay
+    ? (normalizeId(selectedPlay.id) ??
+      normalizeId(selectedPlay.sequenceNumber) ??
+      normalizeId(selectedPlay.sequence) ??
+      selectedPlay.text ??
+      "selected-play")
+    : "no-play";
+
   return (
     <Svg
       width={width}
@@ -704,7 +927,7 @@ function FootballField({
           {awayEndzoneLogo ? (
             <G clipPath="url(#awayEndzoneClip)">
               <G
-                transform={`rotate(${ENDZONE_LOGO_ROTATION} ${AWAY_ENDZONE_CENTER_X} ${FIELD_MIDDLE_Y})`}
+                transform={`translate(${AWAY_ENDZONE_CENTER_X} ${FIELD_MIDDLE_Y}) skewX(${ENDZONE_LOGO_SKEW_DEG}) rotate(${ENDZONE_LOGO_ROTATION}) translate(${-AWAY_ENDZONE_CENTER_X} ${-FIELD_MIDDLE_Y})`}
               >
                 <Image
                   href={awayEndzoneLogo}
@@ -726,7 +949,7 @@ function FootballField({
               fontFamily={Fonts.BOLD}
               textAnchor="middle"
             >
-              {awayCode}
+              {awayName}
             </SvgText>
           )}
         </G>
@@ -741,7 +964,7 @@ function FootballField({
           {homeEndzoneLogo ? (
             <G clipPath="url(#homeEndzoneClip)">
               <G
-                transform={`rotate(${-ENDZONE_LOGO_ROTATION} ${HOME_ENDZONE_CENTER_X} ${FIELD_MIDDLE_Y})`}
+                transform={`translate(${HOME_ENDZONE_CENTER_X} ${FIELD_MIDDLE_Y}) skewX(${-ENDZONE_LOGO_SKEW_DEG}) rotate(${-ENDZONE_LOGO_ROTATION}) translate(${-HOME_ENDZONE_CENTER_X} ${-FIELD_MIDDLE_Y})`}
               >
                 <Image
                   href={homeEndzoneLogo}
@@ -763,7 +986,7 @@ function FootballField({
               fontFamily={Fonts.BOLD}
               textAnchor="middle"
             >
-              {homeCode}
+              {homeName}
             </SvgText>
           )}
         </G>
@@ -891,42 +1114,54 @@ function FootballField({
       {/* Current play */}
       {showPlay && driveShape ? (
         <G>
+          {driveShape.kickPath && driveShape.kickPathLength !== null ? (
+            <AnimatedPlayPath
+              key={`${selectedPlayAnimationKey}-kick`}
+              d={driveShape.kickPath}
+              pathLength={driveShape.kickPathLength}
+              stroke={
+                driveShape.isMissedKick ? MISSED_KICK_COLOR : GOAL_POST_COLOR
+              }
+              strokeWidth={3}
+            />
+          ) : null}
+
           {driveShape.isPass ? (
             <>
-              <Path
+              <AnimatedPlayPath
+                key={`${selectedPlayAnimationKey}-pass`}
                 d={driveShape.passPath}
-                fill="none"
-                stroke={PLAY_COLOR}
+                pathLength={driveShape.passPathLength}
                 strokeWidth={2.6}
-                strokeDasharray={driveShape.isIncomplete ? "4 3" : undefined}
-                strokeLinecap="round"
+                opacity={driveShape.isIncomplete ? 0.72 : 1}
               />
 
               {driveShape.yardsAfterCatchPath ? (
-                <Path
+                <AnimatedPlayPath
+                  key={`${selectedPlayAnimationKey}-yac`}
                   d={driveShape.yardsAfterCatchPath}
-                  fill="none"
-                  stroke={PLAY_COLOR}
+                  pathLength={driveShape.yardsAfterCatchPathLength}
                   strokeWidth={3.6}
-                  strokeLinecap="round"
+                  delay={180}
                 />
               ) : null}
             </>
           ) : null}
 
           {driveShape.isRush ? (
-            <Path
+            <AnimatedPlayPath
+              key={`${selectedPlayAnimationKey}-rush`}
               d={driveShape.rushPath}
-              fill="none"
-              stroke={PLAY_COLOR}
+              pathLength={driveShape.rushPathLength}
               strokeWidth={3.6}
-              strokeLinecap="round"
               strokeLinejoin="round"
             />
           ) : null}
 
           {/* Football */}
-          <G transform={`translate(${driveShape.endX} ${FIELD_MIDDLE_Y})`}>
+          <G
+            transform={`translate(${driveShape.footballX} ${driveShape.footballY})`}
+          >
             <Path
               d="M.3 2.861c3.369 0 4.655-2.961 4.655-2.961S3.669-3.061.3-3.061-4.355-.1-4.355-.1-3.068 2.861.3 2.861Z"
               fill={FOOTBALL_COLOR}
@@ -999,7 +1234,7 @@ function FootballField({
             <SvgText
               x={YARDAGE_BADGE_WIDTH / 2}
               y={15}
-              fill={Colors.white}
+              fill={isDark ? Colors.white : Colors.black}
               fontSize={11}
               fontFamily={Fonts.BOLD}
               textAnchor="middle"

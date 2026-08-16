@@ -6,7 +6,7 @@ import type {
   FootballPlayParticipant,
   PlayObject,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -16,6 +16,17 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import Animated, {
+  Easing,
+  FadeInDown,
+  FadeOutUp,
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { formatPeriod } from "@/utils/games";
@@ -27,6 +38,9 @@ type FootballFieldProps = {
 
   awayCode?: string;
   homeCode?: string;
+
+  awayName?: string;
+  homeName?: string;
 
   homeLogo: ImageSourcePropType;
   awayLogo: ImageSourcePropType;
@@ -45,11 +59,23 @@ type FootballFieldProps = {
 
   showPlay?: boolean;
   isDark?: boolean;
-  state: string;
+  state: string | undefined | null;
+  league: string | undefined;
+  neutralSite?: boolean;
 };
+
+type PlayByPlayStyleSheet = ReturnType<typeof PlayByPlayStyles>;
 
 const VIEWBOX_WIDTH = 600;
 const INITIAL_FIELD_HORIZONTAL_INSET = 26;
+
+type PlayBadgeVariant = "redZone" | "touchdown" | "fieldGoal";
+
+const PLAY_BADGE_LABELS: Record<PlayBadgeVariant, string> = {
+  redZone: "RED ZONE",
+  touchdown: "TOUCHDOWN",
+  fieldGoal: "FIELD GOAL",
+};
 
 const PARTICIPANT_LABELS: Record<string, string> = {
   passer: "Passer",
@@ -162,11 +188,197 @@ function getPlayParticipants(participants?: FootballPlayParticipant[]) {
   return uniqueParticipants;
 }
 
+function getYardsToEndzone(value: unknown) {
+  const yardsToEndzone = Number(value);
+
+  return Number.isFinite(yardsToEndzone) ? yardsToEndzone : null;
+}
+
+function isRedZonePlay(play?: PlayObject | null, state?: string | null) {
+  if (!play) return false;
+
+  if (state === "post") return false;
+
+  const redZonePositions = [
+    getYardsToEndzone(play.start?.yardsToEndzone),
+    getYardsToEndzone(play.end?.yardsToEndzone),
+  ].filter((value): value is number => value !== null);
+
+  const isInsideTwenty = redZonePositions.some(
+    (yardsToEndzone) => yardsToEndzone >= 0 && yardsToEndzone <= 20,
+  );
+
+  const isGoalToGo = [
+    play.start?.downDistanceText,
+    play.start?.shortDownDistanceText,
+    play.end?.downDistanceText,
+    play.end?.shortDownDistanceText,
+  ].some((text) => text?.toLowerCase().includes("goal"));
+
+  return isInsideTwenty || isGoalToGo;
+}
+
+function getScoreValue(value: unknown) {
+  const scoreValue = Number(value);
+
+  return Number.isFinite(scoreValue) ? scoreValue : null;
+}
+
+function getPlaySearchText(play?: PlayObject | null) {
+  return [
+    play?.type?.text,
+    play?.type?.abbreviation,
+    play?.scoringType?.name,
+    play?.scoringType?.displayName,
+    play?.scoringType?.abbreviation,
+    play?.text,
+    play?.shortText,
+    play?.description,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function isTouchdownPlay(play?: PlayObject | null) {
+  if (!play) return false;
+
+  const scoreValue = getScoreValue(play.scoreValue);
+  const searchText = getPlaySearchText(play);
+
+  return (
+    scoreValue === 6 ||
+    (Boolean(play.scoringPlay) && searchText.includes("touchdown"))
+  );
+}
+
+function isMadeFieldGoalPlay(play?: PlayObject | null) {
+  if (!play) return false;
+
+  const scoreValue = getScoreValue(play.scoreValue);
+  const searchText = getPlaySearchText(play);
+
+  if (scoreValue === 3) {
+    return true;
+  }
+
+  const isFieldGoal =
+    searchText.includes("field goal") || /\bfg\b/.test(searchText);
+  const isMissedOrBlocked =
+    searchText.includes("no good") ||
+    searchText.includes("miss") ||
+    searchText.includes("blocked");
+
+  return Boolean(play.scoringPlay && isFieldGoal && !isMissedOrBlocked);
+}
+
+function getPlayBadgeVariant(
+  play?: PlayObject | null,
+  state?: string | null,
+): PlayBadgeVariant | null {
+  if (isTouchdownPlay(play)) return "touchdown";
+  if (isMadeFieldGoalPlay(play)) return "fieldGoal";
+  if (isRedZonePlay(play, state)) return "redZone";
+
+  return null;
+}
+
+function PlayStatusBadge({
+  styles,
+  variant,
+}: {
+  styles: PlayByPlayStyleSheet;
+  variant: PlayBadgeVariant;
+}) {
+  const pulse = useSharedValue(1);
+  const glowOpacity = useSharedValue(0.25);
+
+  useEffect(() => {
+    pulse.value = withRepeat(
+      withSequence(
+        withTiming(1.06, {
+          duration: 420,
+          easing: Easing.out(Easing.cubic),
+        }),
+        withTiming(1, {
+          duration: 420,
+          easing: Easing.inOut(Easing.cubic),
+        }),
+      ),
+      -1,
+      false,
+    );
+
+    glowOpacity.value = withRepeat(
+      withSequence(
+        withTiming(0.8, {
+          duration: 420,
+          easing: Easing.out(Easing.cubic),
+        }),
+        withTiming(0.2, {
+          duration: 420,
+          easing: Easing.inOut(Easing.cubic),
+        }),
+      ),
+      -1,
+      false,
+    );
+
+    return () => {
+      cancelAnimation(pulse);
+      cancelAnimation(glowOpacity);
+    };
+  }, [glowOpacity, pulse]);
+
+  const badgeStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulse.value }],
+  }));
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
+
+  return (
+    <Animated.View
+      entering={FadeInDown.duration(180)}
+      exiting={FadeOutUp.duration(140)}
+    >
+      <Animated.View
+        style={[
+          styles.playStatusBadge,
+          variant === "redZone" && styles.redZoneBadge,
+          variant === "touchdown" && styles.touchdownBadge,
+          variant === "fieldGoal" && styles.fieldGoalBadge,
+          badgeStyle,
+        ]}
+        accessibilityLabel={PLAY_BADGE_LABELS[variant]}
+      >
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.playStatusGlow,
+            variant === "redZone" && styles.redZoneGlow,
+            variant === "touchdown" && styles.touchdownGlow,
+            variant === "fieldGoal" && styles.fieldGoalGlow,
+            glowStyle,
+          ]}
+        />
+
+        <Text style={styles.playStatusText} numberOfLines={1}>
+          {PLAY_BADGE_LABELS[variant]}
+        </Text>
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
 function PlayByPlay({
   width = VIEWBOX_WIDTH,
   height = 150,
   awayCode = "AWAY",
   homeCode = "HOME",
+  awayName = "AWAY",
+  homeName = "HOME",
   homeLogo,
   awayLogo,
   awayTeamId,
@@ -180,6 +392,8 @@ function PlayByPlay({
   showPlay = true,
   isDark = true,
   state,
+  league = "nfl",
+  neutralSite,
 }: FootballFieldProps) {
   const styles = PlayByPlayStyles(isDark);
   const { width: windowWidth } = useWindowDimensions();
@@ -187,7 +401,7 @@ function PlayByPlay({
     null,
   );
 
-  const isLive = state.toLowerCase() === "in";
+  const isLive = state === "in";
   const fallbackFieldWidth = Math.max(
     0,
     windowWidth - INITIAL_FIELD_HORIZONTAL_INSET,
@@ -219,6 +433,7 @@ function PlayByPlay({
       playData.start?.downDistanceText ??
       null;
 
+    const playBadgeVariant = getPlayBadgeVariant(playData, state);
     const fieldPosition = playData.start?.possessionText ?? null;
     const playText = playData.text ?? playData.shortText ?? null;
     const isScoringPlay = playData.scoringPlay;
@@ -236,11 +451,12 @@ function PlayByPlay({
       isScoringPlay,
       isTurnover,
       isPenalty,
+      playBadgeVariant,
       playType,
       playText,
       participants,
     };
-  }, [playData]);
+  }, [playData, state]);
 
   const possessionTeam =
     playData?.start?.team ??
@@ -285,14 +501,24 @@ function PlayByPlay({
   const period = playInfo?.period;
   const clock = playInfo?.clock;
   const playParticipants = playInfo?.participants ?? [];
+  const playBadgeVariant = playInfo?.playBadgeVariant ?? null;
+
+  if ( state !== "in" ) return null
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Play By Play</HeadingTwo>
       <View style={styles.wrapper}>
-        <View style={styles.headerRow}>
+        <View style={styles.headerContainer}>
           {playInfo && (
-            <>
+            <View style={styles.headerRow}>
+              {possessionLogo && (
+                <Image
+                  source={possessionLogo}
+                  style={styles.headerLogo}
+                  resizeMode="contain"
+                />
+              )}
               <Text
                 style={[styles.titleText, isFourthDown && styles.fourthDown]}
                 numberOfLines={1}
@@ -301,29 +527,32 @@ function PlayByPlay({
               >
                 {possessionText}
               </Text>
-              {possessionLogo && (
-                <Image
-                  source={possessionLogo}
-                  style={styles.headerLogo}
-                  resizeMode="contain"
-                />
-              )}
-            </>
+            </View>
           )}
-        </View>
-        <View style={styles.liveRow}>
-          {isLive ? <View style={styles.liveDot} /> : null}
+          <View style={styles.headerMeta}>
+            {playBadgeVariant ? (
+              <PlayStatusBadge
+                key={playBadgeVariant}
+                styles={styles}
+                variant={playBadgeVariant}
+              />
+            ) : null}
 
-          {period && clock && (
-            <>
-              <Text style={styles.gameTime}>{period}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.gameTime}>{clock}</Text>
-            </>
-          )}
+            <View style={styles.liveRow}>
+              {isLive ? <View style={styles.liveDot} /> : null}
+
+              {period && clock && (
+                <>
+                  <Text style={styles.gameTime}>{period}</Text>
+                  <View style={styles.divider} />
+                  <Text style={styles.gameTime}>{clock}</Text>
+                </>
+              )}
+            </View>
+          </View>
         </View>
         <View style={styles.detailRow}>
-          {playText && (
+          {playText && state === "in" && (
             <Text
               style={[
                 styles.detailText,
@@ -344,6 +573,8 @@ function PlayByPlay({
             height={fieldHeight}
             awayCode={awayCode}
             homeCode={homeCode}
+            awayName={awayName}
+            homeName={homeName}
             awayTeamId={awayTeamId}
             homeTeamId={homeTeamId}
             awayColor={awayColor}
@@ -355,6 +586,8 @@ function PlayByPlay({
             showPlay={Boolean(showPlay)}
             isDark={isDark}
             state={state}
+            league={league}
+            neutralSite={neutralSite}
           />
         </View>
         {playParticipants.length > 0 && (
@@ -397,7 +630,6 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       borderWidth: 1,
       borderRadius: 8,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
-      backgroundColor: isDark ? Colors.dark.background : Colors.white,
       gap: 6,
     },
     fieldFrame: {
@@ -406,14 +638,27 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       marginTop: -2,
       overflow: "hidden",
     },
-    headerRow: {
+    headerContainer: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "flex-start",
       justifyContent: "space-between",
-      gap: 12,
+      gap: 10,
+    },
+    headerRow: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "flex-start",
+      alignItems: "center",
+      gap: 8,
+      minWidth: 0,
+    },
+    headerMeta: {
+      alignItems: "flex-end",
+      flexShrink: 0,
+      gap: 4,
     },
     liveRow: {
-      minHeight: 15,
+      minHeight: 22,
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
@@ -479,17 +724,11 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       borderRadius: 999,
       backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
-    smallDivider: {
-      width: 1,
-      height: 12,
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
-      opacity: 0.7,
-    },
+
     divider: {
       width: 1,
       height: 14,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
-      opacity: 0.7,
     },
     eyebrow: {
       fontSize: 11,
@@ -498,12 +737,13 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     gameTime: {
-      fontSize: 14,
+      fontSize: 18,
+      lineHeight: 22,
       fontFamily: Fonts.MEDIUM,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: isDark ? Colors.white : Colors.black,
     },
     titleText: {
-      flex: 1,
+      flexShrink: 1,
       fontSize: 18,
       lineHeight: 22,
       fontFamily: Fonts.MEDIUM,
@@ -532,8 +772,52 @@ export const PlayByPlayStyles = (isDark: boolean) =>
     },
 
     headerLogo: {
-      width: 44,
-      height: 44,
+      width: 36,
+      height: 36,
+      resizeMode: "contain",
+    },
+    playStatusBadge: {
+      position: "relative",
+      minWidth: 82,
+      height: 22,
+      paddingHorizontal: 8,
+      borderRadius: 4,
+      overflow: "hidden",
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1,
+    },
+    redZoneBadge: {
+      borderColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+      backgroundColor: isDark ? Colors.light.red : Colors.dark.lightRed,
+    },
+    touchdownBadge: {
+      minWidth: 94,
+      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+      backgroundColor: isDark ? "#116E18" : "#177901",
+    },
+    fieldGoalBadge: {
+      minWidth: 88,
+      borderColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
+      backgroundColor: isDark ? "#7A5A09" : "#B88700",
+    },
+    playStatusGlow: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    redZoneGlow: {
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+    touchdownGlow: {
+      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+    },
+    fieldGoalGlow: {
+      backgroundColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
+    },
+    playStatusText: {
+      fontSize: 10,
+      lineHeight: 12,
+      fontFamily: Fonts.BOLD,
+      color: Colors.white,
     },
   });
 

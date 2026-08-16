@@ -8,8 +8,8 @@ import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/G
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
-import GameTeamStats from "../GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
+import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
   homeId: any;
@@ -100,10 +100,11 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeGames={homeLastGames}
           awayGames={awayLastGames}
-          league={"SOCC"}
+          league={"soccer"}
           state={state}
           isDark
         />
+        
         <Officials officials={officials} state={state} isDark />
 
         <GameLocation

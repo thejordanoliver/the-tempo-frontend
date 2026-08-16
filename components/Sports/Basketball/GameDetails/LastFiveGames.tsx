@@ -265,11 +265,7 @@ export default function LastFiveGames({
 
           {opponentLogo ? (
             <Image
-              source={
-                typeof opponentLogo === "string"
-                  ? { uri: opponentLogo }
-                  : opponentLogo
-              }
+              source={opponentLogo}
               style={styles.opponentLogo}
               resizeMode="contain"
             />
