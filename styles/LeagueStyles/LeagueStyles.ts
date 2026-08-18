@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const getScoresStyles = (isDark: boolean) =>
+export const LeagueScreenStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -9,51 +9,40 @@ export const getScoresStyles = (isDark: boolean) =>
     contentArea: {
       flex: 1,
     },
-    dateNavContainer: {
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
+    scrollContent: {
+      paddingBottom: 80,
+      paddingHorizontal: 12,
+      overflow: "hidden",
     },
-    monthText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      textAlign: "center",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    monthTextSelected: {
-      fontSize: 14,
-      textAlign: "center",
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    eventText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    eventTextSelected: {
-      fontSize: 14,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    dateNavButton: {
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+    searcBarContainer: {
       marginHorizontal: 12,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 6,
+      paddingTop: 12,
     },
-    dateNavText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontWeight: "normal",
+
+    leagueButton: {
+      paddingVertical: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+    },
+    buttonContainer: {
+      backgroundColor: "transparent",
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    buttonWrapper: { flexDirection: "row", alignItems: "center" },
+    leagueLogo: {
+      width: 40,
+      height: 40,
+      marginRight: 8,
+    },
+    leagueText: {
+      color: isDark ? Colors.white : Colors.black,
       fontSize: 18,
-      fontFamily: Fonts.MEDIUM,
-    },
-    emptyText: {
-      textAlign: "center",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: 20,
-      fontSize: 20,
-      fontFamily: Fonts.LIGHT,
+      fontFamily: Fonts.REGULAR,
     },
   });

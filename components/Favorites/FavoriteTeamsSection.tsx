@@ -18,7 +18,6 @@ export default function FavoriteTeamsSection({
   isGridView,
   fadeAnim,
   toggleFavoriteTeamsView,
-  styles,
   itemWidth,
   isCurrentUser,
 }: Props) {

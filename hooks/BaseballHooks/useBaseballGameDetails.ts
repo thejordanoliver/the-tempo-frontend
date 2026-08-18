@@ -79,13 +79,6 @@ export type Predictor = {
   };
 };
 
-type TeamFouls = {
-  bonusState?: string | null;
-  foulsToGive?: number | null;
-  teamFouls?: number | null;
-  teamFoulsCurrent?: number | null;
-};
-
 export type TeamStat = {
   name: string;
   displayValue: string;
@@ -196,28 +189,47 @@ export type Score = {
     stats: TeamStat[];
   }[];
 
-  outs: number;
+  situation: {
+    outs: number;
+    balls: number;
+    strikes: number;
+    pitcher: {
+      id: number;
+      teamId: number;
+      firstName: string;
+      lastName: string;
+      fullName: string;
+      displayName: string;
+      shortName: string;
+      headshot: string;
+      jersey: string;
+      position: string;
+      summary: null;
+    };
+    batter: {
+      id: number;
+      teamId: number;
+      firstName: string;
+      lastName: string;
+      fullName: string;
+      displayName: string;
+      shortName: string;
+      headshot: string;
+      jersey: string;
+      position: string;
+      summary: null;
+    };
+    bases: {
+      onFirst: false;
+      onSecond: true;
+      onThird: false;
+    };
+  };
   resultCount?: any;
 
   playerStats: PlayerStatsByTeam[];
 
   leaders: any[];
-
-  timeouts: {
-    home: number | null;
-    away: number | null;
-  };
-
-  fouls: {
-    home: TeamFouls | number | null;
-    away: TeamFouls | number | null;
-  };
-
-  bases: {
-    onFirst: boolean;
-    onSecond: boolean;
-    onThird: boolean;
-  };
 };
 
 export type GameDetails = {
@@ -297,8 +309,6 @@ export const useBaseballGameDetails = (
         const { data } = await apiClient.get("api/baseball/details", {
           params,
         });
-
-        
 
         if (!data?.score) {
           setScore(null);

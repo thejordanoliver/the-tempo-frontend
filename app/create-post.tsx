@@ -15,7 +15,7 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-import Button from "../components/Button";
+import Button from "../components/Buttons/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import CropEditorModal from "../components/CropEditorModal";
 import CustomActivityIndicator from "../components/CustomActivityIndicator";

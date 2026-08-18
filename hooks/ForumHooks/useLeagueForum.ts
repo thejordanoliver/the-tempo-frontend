@@ -1,11 +1,11 @@
-// hooks/useLeagueForum.ts
+// hooks/useForum.ts
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export function useLeagueForum(league: string) {
+export function useForum(league: string) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);

@@ -28,7 +28,7 @@ interface SeasonLeadersListProps {
   loading?: boolean;
   error?: string | null;
   categories?: Category[];
-  league: "NFL" | "NHL" | "CFB" | "MLB" | "CBB" | "WCBB";
+  league: string;
 }
 
 export default function SeasonLeadersList({

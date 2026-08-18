@@ -4,16 +4,12 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-type League = "nfl" | "cfb" | "ufl";
-
 type UseFootballGamesParams = {
   date?: Date;
   week?: number | string | null;
   season?: number | string | null;
   seasontype?: number | string | null;
-  league?: League;
-
-  // ✅ Add this
+  league?: string;
   conferenceId?: number | string | null;
 };
 
@@ -53,7 +49,7 @@ type FootballGamesResponse = {
   groups?: FootballGameGroup[];
 };
 
-function getEndpoint(league: League) {
+function getEndpoint(league: string) {
   return league === "cfb"
     ? "/api/games/football/cfb"
     : league === "nfl"
@@ -128,71 +124,71 @@ export function useFootballGames({
     return groups.flatMap((group) => group.games);
   }, [groups]);
 
-const fetchGames = useCallback(
-  async ({
-    forceRefresh = false,
-    silent = false,
-  }: FetchGamesOptions = {}) => {
-    const endpoint = getEndpoint(league);
-    const params: Record<string, string | number> = {};
+  const fetchGames = useCallback(
+    async ({
+      forceRefresh = false,
+      silent = false,
+    }: FetchGamesOptions = {}) => {
+      const endpoint = getEndpoint(league);
+      const params: Record<string, string | number> = {};
 
-    if (week) {
-      params.week = week;
-      params.season = season || dayjs().year();
+      if (week) {
+        params.week = week;
+        params.season = season || dayjs().year();
 
-      if (seasontype) {
-        params.seasontype = seasontype;
-      }
-    } else if (date) {
-      params.date = dayjs(date).format("YYYYMMDD");
+        if (seasontype) {
+          params.seasontype = seasontype;
+        }
+      } else if (date) {
+        params.date = dayjs(date).format("YYYYMMDD");
 
-      if (season) {
-        params.season = season;
-      }
+        if (season) {
+          params.season = season;
+        }
 
-      if (seasontype) {
-        params.seasontype = seasontype;
-      }
-    }
-
-    if (league === "cfb" && conferenceId) {
-      params.conferenceId = conferenceId;
-    }
-
-    try {
-      setError(null);
-
-      if (forceRefresh) {
-        setRefreshing(true);
-      } else if (!silent) {
-        setLoading(true);
+        if (seasontype) {
+          params.seasontype = seasontype;
+        }
       }
 
-      const { data } = await apiClient.get<FootballGamesResponse>(endpoint, {
-        params,
-      });
-
-      setGroups(normalizeGroups(data));
-    } catch (err) {
-      console.error(err);
-      setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
-
-      // Preserve existing games if a background refresh temporarily fails.
-      if (!silent) {
-        setGroups([]);
-      }
-    } finally {
-      if (forceRefresh) {
-        setRefreshing(false);
+      if (league === "cfb" && conferenceId) {
+        params.conferenceId = conferenceId;
       }
 
-      if (!silent) {
-        setLoading(false);
+      try {
+        setError(null);
+
+        if (forceRefresh) {
+          setRefreshing(true);
+        } else if (!silent) {
+          setLoading(true);
+        }
+
+        const { data } = await apiClient.get<FootballGamesResponse>(endpoint, {
+          params,
+        });
+
+        setGroups(normalizeGroups(data));
+      } catch (err) {
+        console.error(err);
+        setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
+
+        // Preserve existing games if a background refresh temporarily fails.
+        if (!silent) {
+          setGroups([]);
+        }
+      } finally {
+        if (forceRefresh) {
+          setRefreshing(false);
+        }
+
+        if (!silent) {
+          setLoading(false);
+        }
       }
-    }
-  },
-  [date, week, season, seasontype, league, conferenceId],
-);
+    },
+    [date, week, season, seasontype, league, conferenceId],
+  );
 
   const refreshGames = useCallback(async () => {
     await fetchGames({ forceRefresh: true });

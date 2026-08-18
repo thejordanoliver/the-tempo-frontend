@@ -3,7 +3,7 @@ import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Colors, globalStyles } from "constants/styles";
 import { useEffect, useRef, useState } from "react";
 
-import Button from "components/Button";
+import Button from "@/components/Buttons/Button";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import {

@@ -1,10 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import { Colors, Fonts, PLACEHOLDER_AVATAR } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useCallback, useMemo, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Swipeable, TouchableOpacity } from "react-native-gesture-handler";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import ReanimatedSwipeable, {
+  type SwipeableMethods,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
 import { MessageItem } from "types/messages";
 
 type Props = {
@@ -16,8 +18,6 @@ type Props = {
   query?: string;
 };
 
-const FALLBACK_AVATAR =
-  "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
 
 type MessageItemWithDates = MessageItem & {
   lastMessageAt?: string | number | Date | null;
@@ -80,9 +80,9 @@ export default function ConversationItem({
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => conversationItemStyles(isDark), [isDark]);
 
-  const swipeableRef = useRef<Swipeable | null>(null);
+  const swipeableRef = useRef<SwipeableMethods | null>(null);
 
-  const profileImageUrl = item.profileImageUrl?.trim() || FALLBACK_AVATAR;
+  const profileImageUrl = item.profileImageUrl?.trim() || PLACEHOLDER_AVATAR;
   const canDelete = Boolean(onDelete) && query.trim().length === 0;
   const canPin = Boolean(onTogglePin);
 
@@ -118,10 +118,17 @@ export default function ConversationItem({
     if (!canPin) return null;
 
     return (
-      <TouchableOpacity
-        activeOpacity={activeOpacity}
-        style={[styles.actionContainer, styles.pinAction]}
+      <Pressable
+        style={({ pressed }) => [
+          styles.actionContainer,
+          styles.pinAction,
+          pressed && styles.pressed,
+        ]}
         onPress={handleTogglePin}
+        accessibilityRole="button"
+        accessibilityLabel={
+          item.isPinned ? "Unpin conversation" : "Pin conversation"
+        }
       >
         <Ionicons
           name={item.isPinned ? "pin" : "pin-outline"}
@@ -130,7 +137,7 @@ export default function ConversationItem({
         />
 
         <Text style={styles.actionText}>{item.isPinned ? "Unpin" : "Pin"}</Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   }, [
     canPin,
@@ -139,21 +146,26 @@ export default function ConversationItem({
     styles.actionContainer,
     styles.actionText,
     styles.pinAction,
+    styles.pressed,
   ]);
 
   const renderRightActions = useCallback(() => {
     if (!canDelete) return null;
 
     return (
-      <TouchableOpacity
-        activeOpacity={activeOpacity}
-        style={[styles.actionContainer, styles.deleteAction]}
+      <Pressable
+        style={({ pressed }) => [
+          styles.actionContainer,
+          styles.deleteAction,
+          pressed && styles.pressed,
+        ]}
         onPress={handleDelete}
+        accessibilityRole="button"
+        accessibilityLabel="Delete conversation"
       >
         <Ionicons name="trash-outline" size={22} color={Colors.white} />
-
         <Text style={styles.actionText}>Delete</Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   }, [
     canDelete,
@@ -161,11 +173,12 @@ export default function ConversationItem({
     styles.actionContainer,
     styles.actionText,
     styles.deleteAction,
+    styles.pressed,
   ]);
 
   return (
     <View style={styles.swipeContainer}>
-      <Swipeable
+      <ReanimatedSwipeable
         ref={swipeableRef}
         renderLeftActions={renderLeftActions}
         renderRightActions={renderRightActions}
@@ -176,10 +189,14 @@ export default function ConversationItem({
         rightThreshold={42}
         leftThreshold={42}
       >
-        <TouchableOpacity
-          activeOpacity={0.82}
-          style={styles.rowContainer}
+        <Pressable
+          style={({ pressed }) => [
+            styles.rowContainer,
+            pressed && styles.pressed,
+          ]}
           onPress={handleSelect}
+          accessibilityRole="button"
+          accessibilityLabel={`Open conversation with ${displayUsername}`}
         >
           <View style={styles.avatarWrapper}>
             <Image
@@ -201,7 +218,7 @@ export default function ConversationItem({
                 <Ionicons
                   name="checkmark-circle"
                   size={15}
-                  color="#3B82F6"
+                  color={isDark ? Colors.dark.blue : Colors.light.blue}
                   style={styles.inlineIcon}
                 />
               )}
@@ -240,8 +257,8 @@ export default function ConversationItem({
               </View>
             )}
           </View>
-        </TouchableOpacity>
-      </Swipeable>
+        </Pressable>
+      </ReanimatedSwipeable>
     </View>
   );
 }
@@ -361,7 +378,6 @@ const conversationItemStyles = (isDark: boolean) =>
 
     actionContainer: {
       width: 92,
-      flex: 1,
       height: "100%",
       alignItems: "center",
       justifyContent: "center",
@@ -380,5 +396,10 @@ const conversationItemStyles = (isDark: boolean) =>
       fontSize: 12,
       fontFamily: Fonts.BOLD,
       color: Colors.white,
+    },
+    pressed: {
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
   });

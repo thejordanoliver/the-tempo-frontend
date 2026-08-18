@@ -14,7 +14,7 @@ import DraftProspectBoard from "./DraftProspectBoard";
 
 type Props = {
   safeYear: string;
-  league: "nba" | "wnba" | "nfl";
+  league: string;
 };
 
 export default function DraftBoardTab({ safeYear, league }: Props) {

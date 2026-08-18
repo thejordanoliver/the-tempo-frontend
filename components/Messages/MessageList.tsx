@@ -1,20 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
-import ConversationItem from "components/Messages/ConversationItem";
+import MessageListItem from "components/Messages/MessageListItem";
 import PinnedConversations from "components/Messages/PinnedConversations";
 import SearchBar from "components/SearchBars/SearchBar";
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import {
+  Colors,
+  Fonts,
+  activeOpacity,
+  globalStyles,
+} from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import {
-  ActivityIndicator,
   FlatList,
-  ListRenderItem,
+  type ListRenderItem,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { MessageItem } from "types/messages";
+import type { MessageItem } from "types/messages";
+import CustomActivityIndicator from "../CustomActivityIndicator";
 
 type Props = {
   conversations: MessageItem[];
@@ -34,7 +39,7 @@ type Props = {
   onRetry: () => void;
 };
 
-function MessageList({
+export default function MessageList({
   conversations,
   pinnedConversations,
   search,
@@ -53,14 +58,18 @@ function MessageList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => messageListStyles(isDark), [isDark]);
-  const trimmedSearch = search.trim();
 
-  const keyExtractor = useCallback((item: MessageItem) => item.id, []);
+  const styles = useMemo(() => messageListStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
+
+  const keyExtractor = useCallback(
+    (item: MessageItem) => String(item.id),
+    [],
+  );
 
   const renderItem = useCallback<ListRenderItem<MessageItem>>(
     ({ item }) => (
-      <ConversationItem
+      <MessageListItem
         item={item}
         query={search}
         onSelect={onSelectConversation}
@@ -70,110 +79,102 @@ function MessageList({
       />
     ),
     [
-      onDeleteConversation,
-      onSelectConversation,
-      onSwipeableOpen,
-      onTogglePinConversation,
       search,
+      onSelectConversation,
+      onDeleteConversation,
+      onTogglePinConversation,
+      onSwipeableOpen,
     ],
   );
 
-  const renderHeader = useCallback(
-    () => (
-      <View>
-        {shouldShowPinned && (
-          <PinnedConversations
-            conversations={pinnedConversations}
-            onSelect={onSelectConversation}
-            onRemovePinned={onTogglePinConversation}
-          />
-        )}
-      </View>
-    ),
-    [
-      onSelectConversation,
-      onTogglePinConversation,
-      pinnedConversations,
-      shouldShowPinned,
-    ],
-  );
+  const renderHeader = useCallback(() => {
+    if (!shouldShowPinned) {
+      return null;
+    }
+
+    return (
+      <PinnedConversations
+        conversations={pinnedConversations}
+        onSelect={onSelectConversation}
+        onRemovePinned={onTogglePinConversation}
+      />
+    );
+  }, [
+    shouldShowPinned,
+    pinnedConversations,
+    onSelectConversation,
+    onTogglePinConversation,
+  ]);
 
   const renderEmptyState = useCallback(() => {
-    if (isLoading) {
-      return (
-        <View style={styles.emptyState}>
-          <ActivityIndicator
-            size="small"
-            color={isDark ? Colors.white : Colors.black}
-          />
-
-          <Text style={styles.emptyTitle}>Loading messages</Text>
-        </View>
-      );
+    if (!shouldShowEmptyState) {
+      return null;
     }
 
-    if (error) {
-      return (
-        <View style={styles.emptyState}>
-          <View style={styles.emptyIconContainer}>
-            <Ionicons
-              name="alert-circle-outline"
-              size={30}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </View>
-
-          <Text style={styles.emptyTitle}>Messages unavailable</Text>
-
-          <Text style={styles.emptyText}>{error}</Text>
-
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            style={styles.retryButton}
-            onPress={onRetry}
-          >
-            <Text style={styles.retryButtonText}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
+    const hasSearch = search.trim().length > 0;
 
     return (
       <View style={styles.emptyState}>
         <View style={styles.emptyIconContainer}>
           <Ionicons
-            name="chatbubbles-outline"
+            name={hasSearch ? "search-outline" : "chatbubble-outline"}
             size={30}
             color={isDark ? Colors.white : Colors.black}
           />
         </View>
 
         <Text style={styles.emptyTitle}>
-          {trimmedSearch.length > 0
-            ? "No conversations found"
-            : "No messages yet"}
+          {hasSearch ? "No conversations found" : "No messages yet"}
         </Text>
 
         <Text style={styles.emptyText}>
-          {trimmedSearch.length > 0
-            ? "Try searching for another username, name, or message."
-            : "Your conversations will show up here once you start chatting."}
+          {hasSearch
+            ? "Try searching for another username or conversation."
+            : "Start a new conversation using the button above."}
         </Text>
       </View>
     );
   }, [
-    error,
     isDark,
-    isLoading,
-    onRetry,
+    search,
+    shouldShowEmptyState,
     styles.emptyIconContainer,
     styles.emptyState,
     styles.emptyText,
     styles.emptyTitle,
-    styles.retryButton,
-    styles.retryButtonText,
-    trimmedSearch.length,
   ]);
+
+  if (isLoading) {
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.emptyState}>
+        <View style={styles.emptyIconContainer}>
+          <Ionicons
+            name="alert-circle-outline"
+            size={30}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </View>
+
+        <Text style={global.errorText}>Messages unavailable</Text>
+
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          style={styles.retryButton}
+          onPress={onRetry}
+        >
+          <Text style={styles.retryButtonText}>Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -190,24 +191,20 @@ function MessageList({
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
-        ListEmptyComponent={
-          shouldShowEmptyState || isLoading || error ? renderEmptyState : null
-        }
+        ListEmptyComponent={renderEmptyState}
+        contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshing={isRefreshing}
         onRefresh={onRefresh}
         contentContainerStyle={[
-          styles.contentContainerStyle,
-          (shouldShowEmptyState || isLoading || error) &&
-            styles.emptyContentContainer,
+          styles.contentContainer,
+          shouldShowEmptyState && styles.emptyContentContainer,
         ]}
       />
     </View>
   );
 }
-
-export default MessageList;
 
 const messageListStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -215,7 +212,7 @@ const messageListStyles = (isDark: boolean) =>
       flex: 1,
     },
 
-    contentContainerStyle: {
+    contentContainer: {
       flexGrow: 1,
       paddingHorizontal: 12,
       paddingBottom: 100,
@@ -225,14 +222,6 @@ const messageListStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       paddingTop: 10,
       paddingBottom: 12,
-    },
-
-    sectionTitle: {
-      marginTop: 4,
-      marginBottom: 10,
-      fontSize: 16,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     emptyContentContainer: {
@@ -259,19 +248,19 @@ const messageListStyles = (isDark: boolean) =>
     },
 
     emptyTitle: {
+      marginBottom: 6,
       fontSize: 18,
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
-      marginBottom: 6,
     },
 
     emptyText: {
       fontSize: 14,
+      lineHeight: 20,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
-      lineHeight: 20,
     },
 
     retryButton: {

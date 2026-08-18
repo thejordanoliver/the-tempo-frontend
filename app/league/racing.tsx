@@ -18,16 +18,13 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
 import { CustomHeader } from "../../components/CustomHeader";
-import LeagueForum from "../../components/Forum/LeagueForum";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+import Forum from "../../components/Forum/Forum";
 import NewsList from "../../components/News/NewsList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { formatDateToUTCYYYYMMDD } from "../../utils/dateUtils";
 
 function isLeague(value: unknown): value is League {
@@ -61,13 +58,11 @@ export default function RacingLeagueScreen() {
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
+  const styles = LeagueScreenStyles(isDark);
 
   const navigation = useNavigation();
-  const sportsModalRef = useRef<SportsListModalRef>(null);
   const pagerRef = useRef<PagerView>(null);
 
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
     null,
   );
@@ -174,25 +169,13 @@ export default function RacingLeagueScreen() {
     [sortedCalendar.length],
   );
 
-  const openLeagueModal = useCallback(() => {
-    setLeagueModalVisible(true);
-    sportsModalRef.current?.present();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader
-          tabName="League"
-          league={leagueLabel}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={openLeagueModal}
-          onBack={goBack}
-        />
+        <CustomHeader tabName="League" league={leagueLabel} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueModalVisible, leagueLabel, openLeagueModal]);
+  }, [navigation, leagueLabel]);
 
   return (
     <>
@@ -256,16 +239,10 @@ export default function RacingLeagueScreen() {
           </View>
 
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
-
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onClose={() => setLeagueModalVisible(false)}
-      />
     </>
   );
 }

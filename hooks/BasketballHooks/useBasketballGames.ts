@@ -4,22 +4,12 @@ import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-type League =
-  | "nba"
-  | "cbb"
-  | "wcbb"
-  | "wnba"
-  | "summervegas"
-  | "summerutah"
-  | "summercalifornia";
-
 type FetchGamesOptions = {
   forceRefresh?: boolean;
   silent?: boolean;
 };
 
-
-function getBasketballEndpoint(league: League) {
+function getBasketballEndpoint(league: string) {
   switch (league) {
     case "cbb":
       return "api/games/basketball/cbb";
@@ -38,7 +28,7 @@ function getBasketballEndpoint(league: League) {
   }
 }
 
-export function useBasketballGames(date?: Date, league: League = "nba") {
+export function useBasketballGames(date?: Date, league: string = "nba") {
   const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

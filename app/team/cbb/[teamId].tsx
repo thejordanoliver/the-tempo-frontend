@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import Forum from "@/components/Forum/Forum";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
@@ -15,7 +16,6 @@ import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -65,7 +65,7 @@ export default function TeamDetailScreen() {
   const team = getCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
-  const teamName = team?.name
+  const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -331,7 +331,7 @@ export default function TeamDetailScreen() {
         </View>
 
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamIdStr} league={league} />
+          <Forum teamId={teamIdStr} league={league} />
         </View>
       </PagerView>
 

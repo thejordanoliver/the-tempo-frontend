@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { CountdownType } from "@/types/date";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "./Headings/HeadingTwo";
 import SeasonBeginsAnimation from "./SeasonBeginsAnimation";
@@ -20,7 +20,7 @@ type Props<TGame extends CountdownGame> = {
   teamSecondaryColor?: string;
 };
 
-// Survives screen unmounts for the current app session.
+// Prevents the same animation from replaying after screen remounts.
 const playedSeasonAnimations = new Set<string>();
 
 export default function CountdownClock<TGame extends CountdownGame>({
@@ -36,7 +36,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
   const styles = countdownClockStyles(isDark);
 
   const [countDown, setCountdown] = useState<CountdownType | null>(null);
-  const [hasReachedZero, setHasReachedZero] = useState(false);
+  const [showSeasonAnimation, setShowSeasonAnimation] = useState(false);
   const [countdownEnded, setCountdownEnded] = useState(false);
 
   const gameDate = game?.date ?? null;
@@ -45,66 +45,86 @@ export default function CountdownClock<TGame extends CountdownGame>({
   const formatTime = (value?: number) =>
     String(value ?? 0).padStart(2, "0");
 
+  const handleAnimationComplete = useCallback(() => {
+    setShowSeasonAnimation(false);
+  }, []);
+
   useEffect(() => {
     setCountdown(null);
-    setHasReachedZero(false);
+    setShowSeasonAnimation(false);
     setCountdownEnded(false);
 
     if (!gameDate || !animationKey) {
       return;
     }
 
-    const firstGameDate = new Date(gameDate).getTime();
+    const gameTime = new Date(gameDate).getTime();
 
-    if (Number.isNaN(firstGameDate)) {
+    if (Number.isNaN(gameTime)) {
       return;
     }
 
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
+    /*
+     * This becomes true only if this mounted component displayed a
+     * future countdown. Mounting after game time will not animate.
+     */
+    let wasActivelyCountingDown = false;
+
     const stopInterval = () => {
-      if (intervalId) {
+      if (intervalId !== null) {
         clearInterval(intervalId);
         intervalId = null;
       }
     };
 
     const updateCountdown = () => {
-      const distance = firstGameDate - Date.now();
+      const distance = gameTime - Date.now();
 
       if (distance <= 0) {
         setCountdown(null);
         setCountdownEnded(true);
         stopInterval();
 
-        if (!playedSeasonAnimations.has(animationKey)) {
+        const shouldPlay =
+          wasActivelyCountingDown &&
+          !playedSeasonAnimations.has(animationKey);
+
+        if (shouldPlay) {
           playedSeasonAnimations.add(animationKey);
-          setHasReachedZero(true);
+          setShowSeasonAnimation(true);
         } else {
-          setHasReachedZero(false);
+          setShowSeasonAnimation(false);
         }
 
         return;
       }
 
+      wasActivelyCountingDown = true;
+
       setCountdownEnded(false);
-      setHasReachedZero(false);
+      setShowSeasonAnimation(false);
 
       setCountdown({
         days: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hours: Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          (distance % (1000 * 60 * 60 * 24)) /
+            (1000 * 60 * 60),
         ),
         minutes: Math.floor(
-          (distance % (1000 * 60 * 60)) / (1000 * 60),
+          (distance % (1000 * 60 * 60)) /
+            (1000 * 60),
         ),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000),
+        seconds: Math.floor(
+          (distance % (1000 * 60)) / 1000,
+        ),
       });
     };
 
     updateCountdown();
 
-    if (firstGameDate > Date.now()) {
+    if (gameTime > Date.now()) {
       intervalId = setInterval(updateCountdown, 1000);
     }
 
@@ -115,7 +135,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
     return null;
   }
 
-  if (hasReachedZero && teamLogo) {
+  if (showSeasonAnimation && teamLogo) {
     return (
       <View style={styles.container}>
         <SeasonBeginsAnimation
@@ -125,12 +145,12 @@ export default function CountdownClock<TGame extends CountdownGame>({
           teamName={teamName}
           teamColor={teamColor}
           teamSecondaryColor={teamSecondaryColor}
+          onComplete={handleAnimationComplete}
         />
       </View>
     );
   }
 
-  // Prevents the 00:00:00:00 countdown from appearing after the animation.
   if (countdownEnded || !countDown) {
     return null;
   }
@@ -141,53 +161,62 @@ export default function CountdownClock<TGame extends CountdownGame>({
 
       <View style={styles.wrapper}>
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{formatTime(countDown.days)}</Text>
+          <Text style={styles.time}>
+            {formatTime(countDown.days)}
+          </Text>
           <Text style={styles.label}>Days</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{formatTime(countDown.hours)}</Text>
+          <Text style={styles.time}>
+            {formatTime(countDown.hours)}
+          </Text>
           <Text style={styles.label}>Hours</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{formatTime(countDown.minutes)}</Text>
+          <Text style={styles.time}>
+            {formatTime(countDown.minutes)}
+          </Text>
           <Text style={styles.label}>Minutes</Text>
         </View>
 
         <View style={styles.timeContainer}>
-          <Text style={styles.time}>{formatTime(countDown.seconds)}</Text>
+          <Text style={styles.time}>
+            {formatTime(countDown.seconds)}
+          </Text>
           <Text style={styles.label}>Seconds</Text>
         </View>
       </View>
     </View>
   );
 }
+
 const countdownClockStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      marginBottom: 12,
       width: "100%",
+      marginBottom: 12,
     },
 
     wrapper: {
+      width: "100%",
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "space-between",
-      width: "100%",
     },
 
     timeContainer: {
+      width: "22%",
+      minWidth: 72,
+      maxWidth: 92,
       alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      justifyContent: "center",
-      maxWidth: 92,
-      minWidth: 72,
-      paddingVertical: 12,
-      width: "22%",
     },
 
     time: {

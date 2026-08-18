@@ -5,15 +5,15 @@ import { memo, useEffect, useMemo, useRef } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
-  gameId: string;
   isOpen: boolean;
   onPress: () => void;
+  icon?: string;
 };
 
-function ChatButton({ isOpen, onPress }: Props) {
+function FloatingButton({ isOpen, onPress, icon }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => ChatButtonStyles(isDark), [isDark]);
+  const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
 
   const opacityAnim = useRef(new Animated.Value(isOpen ? 0 : 1)).current;
 
@@ -36,7 +36,7 @@ function ChatButton({ isOpen, onPress }: Props) {
         activeOpacity={activeOpacity}
       >
         <Ionicons
-          name="chatbubble"
+          name={icon || "chatbubble"}
           size={24}
           color={isDark ? Colors.black : Colors.white}
         />
@@ -45,9 +45,9 @@ function ChatButton({ isOpen, onPress }: Props) {
   );
 }
 
-export default memo(ChatButton);
+export default memo(FloatingButton);
 
-const ChatButtonStyles = (isDark: boolean) =>
+const FloatingButtonStyles = (isDark: boolean) =>
   StyleSheet.create({
     floatingButtonWrapper: {
       position: "absolute",

@@ -425,7 +425,7 @@ const filteredTeams = useMemo(() => {
   /* ---------------- REMOVE FAVORITE ---------------- */
 
   const handleRemoveFavorite = useCallback(
-    async (team: TeamWithLeague) => {
+    async (team: Team) => {
       const id = getTeamId(team);
 
       if (id === undefined || id === null) {

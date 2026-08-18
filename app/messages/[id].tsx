@@ -1,9 +1,11 @@
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
+import MessageThemeModal from "@/components/Messages/MessageThemeModal";
 import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
 import { Ionicons } from "@expo/vector-icons";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
-import MessageThemeSettingsModal from "components/Messages/MessageThemeSettingsModal";
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -18,7 +20,6 @@ import {
 } from "react";
 import type { ListRenderItem } from "react-native";
 import {
-  ActivityIndicator,
   Alert,
   Animated,
   Easing,
@@ -34,15 +35,12 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DirectMessageItem, MessageAttachment } from "types/messages";
-import {
-  getReadableTextColor,
-  getReadableTimestampColor,
-} from "utils/messageTheme";
+import { getContrastingTextColor } from "utils/color";
 
 const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
 
-export default function MessageDetailScreen() {
+export default function ConversationScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
@@ -54,7 +52,9 @@ export default function MessageDetailScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => messageDetailStyles(isDark), [isDark]);
+  const global = globalStyles(isDark);
   const insets = useSafeAreaInsets();
+  const themeSheetRef = useRef<BottomSheetModal>(null);
   const { height: windowHeight } = useWindowDimensions();
 
   const listRef = useRef<FlatList<DirectMessageItem>>(null);
@@ -110,7 +110,12 @@ export default function MessageDetailScreen() {
 
   const handleOpenThemeSettings = useCallback(() => {
     closeAttachmentMenu();
+    Keyboard.dismiss();
     setThemeModalVisible(true);
+
+    requestAnimationFrame(() => {
+      themeSheetRef.current?.present();
+    });
   }, [closeAttachmentMenu]);
 
   const handleCloseThemeSettings = useCallback(() => {
@@ -208,6 +213,14 @@ export default function MessageDetailScreen() {
       const hasText = item.text.trim().length > 0;
       const hasAttachment = Boolean(item.attachment);
 
+      const customBubbleColor = item.isCurrentUser
+        ? messageAccent.primary
+        : messageAccent.secondary;
+
+      const customTextColor = usesCustomMessageAccent
+        ? getContrastingTextColor(customBubbleColor)
+        : undefined;
+
       return (
         <View
           style={[
@@ -233,14 +246,11 @@ export default function MessageDetailScreen() {
               styles.messageBubble,
               hasAttachment && styles.attachmentMessageBubble,
               item.isCurrentUser
-                ? [
-                    styles.currentUserBubble,
-                    usesCustomMessageAccent && {
-                      backgroundColor: messageAccent.primary,
-                      borderColor: messageAccent.primary,
-                    },
-                  ]
+                ? styles.currentUserBubble
                 : styles.otherUserBubble,
+              usesCustomMessageAccent && {
+                backgroundColor: customBubbleColor,
+              },
             ]}
           >
             {item.attachment && (
@@ -257,11 +267,11 @@ export default function MessageDetailScreen() {
                   styles.messageText,
                   hasAttachment && styles.attachmentCaptionText,
                   item.isCurrentUser &&
-                    (usesCustomMessageAccent
-                      ? {
-                          color: getReadableTextColor(messageAccent.primary),
-                        }
-                      : styles.currentUserMessageText),
+                    !usesCustomMessageAccent &&
+                    styles.currentUserMessageText,
+                  usesCustomMessageAccent && {
+                    color: customTextColor,
+                  },
                 ]}
               >
                 {item.text}
@@ -273,11 +283,12 @@ export default function MessageDetailScreen() {
                 styles.messageTime,
                 hasAttachment && styles.attachmentMessageTime,
                 item.isCurrentUser &&
-                  (usesCustomMessageAccent
-                    ? {
-                        color: getReadableTimestampColor(messageAccent.primary),
-                      }
-                    : styles.currentUserMessageTime),
+                  !usesCustomMessageAccent &&
+                  styles.currentUserMessageTime,
+                usesCustomMessageAccent && {
+                  color: customTextColor,
+                  opacity: 0.72,
+                },
               ]}
             >
               {item.timestamp}
@@ -288,6 +299,9 @@ export default function MessageDetailScreen() {
     },
     [
       conversation?.profileImageUrl,
+      messageAccent.primary,
+      messageAccent.secondary,
+      usesCustomMessageAccent,
       styles.attachmentCaptionText,
       styles.attachmentMessageBubble,
       styles.attachmentMessageTime,
@@ -303,8 +317,6 @@ export default function MessageDetailScreen() {
       styles.messageTime,
       styles.otherUserBubble,
       styles.otherUserRow,
-      messageAccent.primary,
-      usesCustomMessageAccent,
     ],
   );
 
@@ -313,12 +325,8 @@ export default function MessageDetailScreen() {
   const renderEmptyState = useCallback(() => {
     if (isLoading) {
       return (
-        <View style={styles.emptyState}>
-          <ActivityIndicator
-            size="small"
-            color={isDark ? Colors.white : Colors.black}
-          />
-          <Text style={styles.emptyTitle}>Loading conversation</Text>
+        <View style={global.emptyContainer}>
+          <CustomActivityIndicator />
         </View>
       );
     }
@@ -370,6 +378,7 @@ export default function MessageDetailScreen() {
     styles.emptyTitle,
     styles.retryButton,
     styles.retryButtonText,
+    global.emptyContainer,
   ]);
 
   const renderTypingIndicator = useCallback(() => {
@@ -465,6 +474,7 @@ export default function MessageDetailScreen() {
           messageFullName={displayFullName}
           messageIsOnline={Boolean(conversation?.isOnline)}
           messageIsVerified={conversation?.isVerified}
+          onOpenThemesSettings={handleOpenThemeSettings}
           onBack={handleBack}
         />
       ),
@@ -476,6 +486,7 @@ export default function MessageDetailScreen() {
     displayFullName,
     displayUsername,
     handleBack,
+    handleOpenThemeSettings,
     navigation,
   ]);
 
@@ -561,33 +572,6 @@ export default function MessageDetailScreen() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              activeOpacity={activeOpacity}
-              onPress={handleOpenThemeSettings}
-              style={[
-                styles.themeButton,
-                usesCustomMessageAccent && {
-                  backgroundColor: messageAccent.primary,
-                  borderColor: messageAccent.primary,
-                },
-              ]}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel="Open message theme settings"
-            >
-              <Ionicons
-                name="color-palette-outline"
-                size={19}
-                color={
-                  usesCustomMessageAccent
-                    ? getReadableTextColor(messageAccent.primary)
-                    : isDark
-                      ? Colors.white
-                      : Colors.black
-                }
-              />
-            </TouchableOpacity>
-
             <TextInput
               ref={inputRef}
               value={draftMessage}
@@ -641,7 +625,8 @@ export default function MessageDetailScreen() {
         gifsCount={selectedAttachment?.type === "gif" ? 1 : 0}
       />
 
-      <MessageThemeSettingsModal
+      <MessageThemeModal
+        sheetRef={themeSheetRef}
         visible={themeModalVisible}
         isDark={isDark}
         currentPreference={messageThemePreference}
@@ -700,6 +685,7 @@ const messageDetailStyles = (isDark: boolean) =>
       paddingVertical: 10,
       borderRadius: 18,
       borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     attachmentMessageBubble: {

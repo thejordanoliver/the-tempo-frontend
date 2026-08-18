@@ -12,6 +12,8 @@ type Props = {
   fadeAnim: Animated.Value;
 };
 
+const CARD_HEIGHT = 130;
+
 export default function FavoriteTeamsSelectorSkeleton({
   isGridView,
   itemWidth,
@@ -34,7 +36,7 @@ export default function FavoriteTeamsSelectorSkeleton({
             styles.skeletonCard,
             {
               width: isGridView ? itemWidth : "100%",
-              height: isGridView ? 130 : 60,
+              height: isGridView ? CARD_HEIGHT : 60,
               marginBottom: 12,
             },
           ]}

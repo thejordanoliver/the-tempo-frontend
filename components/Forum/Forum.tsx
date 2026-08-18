@@ -1,49 +1,45 @@
-// components/Forum/TeamForum.tsx
+import { useForum } from "@/hooks/ForumHooks/useForum";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import { activeOpacity, Colors, globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useFocusEffect, useRouter } from "expo-router";
-import { useTeamForum } from "hooks/ForumHooks/useTeamForum";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
+import FloatingButton from "../Buttons/FloatingButton";
 import { Post, PostItem } from "./PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
-interface TeamForumProps {
-  teamId: string;
+interface ForumProps {
+  teamId?: string;
   league?: string;
 }
 
-interface AlertConfig {
-  title?: string;
-  message?: string;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm?: () => void | Promise<void>;
-  variant?: "default" | "danger";
-  showCancel?: boolean;
-  confirmDisabled?: boolean;
-}
-
-export default function TeamForum({ teamId, league }: TeamForumProps) {
-  const setGlobalImage = useImagePreviewStore((state) => state.setImages);
+export default function Forum({ teamId, league }: ForumProps) {
   const router = useRouter();
+  const setGlobalImage = useImagePreviewStore((s) => s.setImages);
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = forumStyles(isDark);
-  const global = globalStyles(isDark);
+  const styles = useMemo(() => forumStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
+  const [alertConfig, setAlertConfig] = useState<null | {
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    variant?: "default" | "danger";
+    onConfirm?: () => void | Promise<void>;
+  }>(null);
 
   const {
     posts,
@@ -57,16 +53,28 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     deletePost,
     editPost,
     updatePost,
-  } = useTeamForum(teamId, league);
+  } = useForum({teamId, league});
 
-  const showAlert = useCallback((config: AlertConfig) => {
+  /** Fetch initial posts on screen focus */
+  useFocusEffect(
+    useCallback(() => {
+      fetchPosts(1);
+    }, [fetchPosts]),
+  );
+
+  /** Clear global image preview on unmount */
+  useEffect(() => {
+    return () => setGlobalImage([], 0);
+  }, [setGlobalImage]);
+
+  /** Alert helpers */
+  const showAlert = useCallback((config: typeof alertConfig) => {
     setAlertConfig(config);
   }, []);
 
-  const closeAlert = useCallback(() => {
-    setAlertConfig(null);
-  }, []);
+  const closeAlert = useCallback(() => setAlertConfig(null), []);
 
+  /** Post actions */
   const handleDeletePost = useCallback(
     async (id: string) => {
       try {
@@ -81,6 +89,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
           title: "Error",
           message: "Failed to delete post.",
           confirmText: "OK",
+          variant: "danger",
         });
       }
     },
@@ -101,24 +110,14 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
           title: "Error",
           message: "Failed to update post.",
           confirmText: "OK",
+          variant: "danger",
         });
       }
     },
     [editPost, showAlert],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchPosts(1);
-    }, [fetchPosts]),
-  );
-
-  useEffect(() => {
-    return () => {
-      setGlobalImage([], 0);
-    };
-  }, [setGlobalImage]);
-
+  /** Render each post */
   const renderPostItem = useCallback(
     ({ item }: { item: Post }) => (
       <PostItem
@@ -128,10 +127,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         deletePost={handleDeletePost}
         editPost={handleEditPost}
         onBookmarkChange={updatePost}
-        onImagePress={(imgUri) => {
-          setGlobalImage([], 0);
-          setGlobalImage([imgUri], 0);
-        }}
+        onImagePress={(uri) => setGlobalImage([uri], 0)}
       />
     ),
     [
@@ -144,16 +140,29 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
     ],
   );
 
-  if (loading)
+  /** Navigate to create-post */
+  const handlePressCreate = useCallback(() => {
+    router.push({
+      pathname: "/create-post",
+      params: { teamId, league, currentUserId },
+    });
+  }, [router, teamId, league, currentUserId]);
+
+  /** Loading skeleton */
+  if (loading) {
     return (
       <ScrollView contentContainerStyle={styles.container}>
         {Array.from({ length: 5 }).map((_, i) => (
-          <PostItemSkeleton key={`skeleton-${i}`} showMedia />
+          <PostItemSkeleton key={i} showMedia />
         ))}
       </ScrollView>
     );
+  }
 
-  if (error) return <Text style={global.errorText}>{error}</Text>;
+  /** Error state */
+  if (error) {
+    return <Text style={global.errorText}>{error}</Text>;
+  }
 
   return (
     <>
@@ -167,7 +176,7 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
-        ListEmptyComponent={() => (
+        ListEmptyComponent={
           <View style={global.emptyContainer}>
             <Ionicons
               name="chatbubble-outline"
@@ -179,26 +188,14 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
               No posts yet. Be the first to start the conversation.
             </Text>
           </View>
-        )}
+        }
       />
 
-      {/* Floating Create Post Button */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() =>
-          router.push({
-            pathname: "/create-post",
-            params: { teamId, league, currentUserId },
-          })
-        }
-        activeOpacity={activeOpacity}
-      >
-        <Ionicons
-          name="create"
-          size={24}
-          color={isDark ? Colors.black : Colors.white}
-        />
-      </TouchableOpacity>
+      <FloatingButton
+        isOpen={false}
+        onPress={handlePressCreate}
+        icon={"create"}
+      />
 
       <ConfirmModal
         visible={!!alertConfig}
@@ -206,13 +203,13 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
         message={alertConfig?.message}
         confirmText={alertConfig?.confirmText ?? "OK"}
         cancelText={alertConfig?.cancelText}
-        showCancel={alertConfig?.showCancel ?? !!alertConfig?.cancelText}
-        confirmDisabled={alertConfig?.confirmDisabled}
         variant={alertConfig?.variant ?? "default"}
         onCancel={closeAlert}
-        onConfirm={() => {
-          alertConfig?.onConfirm?.();
-          if (!alertConfig?.onConfirm) closeAlert();
+        onConfirm={async () => {
+          if (alertConfig?.onConfirm) {
+            await alertConfig.onConfirm();
+          }
+          closeAlert();
         }}
       />
     </>
@@ -222,22 +219,5 @@ export default function TeamForum({ teamId, league }: TeamForumProps) {
 export function forumStyles(isDark: boolean) {
   return StyleSheet.create({
     container: { paddingBottom: 130, flexGrow: 1 },
-    floatingButton: {
-      position: "absolute",
-      bottom: 100,
-      right: 0,
-      width: 64,
-      height: 64,
-      marginHorizontal: 20,
-      borderRadius: 32,
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: isDark ? 0.5 : 0.3,
-      shadowRadius: 4.65,
-      elevation: 7,
-    },
   });
 }

@@ -1,6 +1,6 @@
 // components/FollowersList.tsx
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, globalStyles } from "constants/styles";
+import { Colors, globalStyles, PLACEHOLDER_AVATAR } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { User } from "hooks/UserHooks/useFollowers";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
@@ -43,9 +43,7 @@ export default function FollowersList({
   }
 
   const renderItem = ({ item }: { item: User }) => {
-    const profilePlaceholder =
-      "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";
-    const profileImage = item.profile_image;
+    const profileImage = item.profile_image || PLACEHOLDER_AVATAR;
     const isCurrentUser = item.id.toString() === currentUserId;
 
     return (
@@ -56,10 +54,7 @@ export default function FollowersList({
             style={styles.userRow}
           >
             <View style={styles.avatarContainer}>
-              <Image
-                source={{ uri: profileImage || profilePlaceholder }}
-                style={styles.avatar}
-              />
+              <Image source={{ uri: profileImage }} style={styles.avatar} />
             </View>
             <Text style={styles.username}>{item.username}</Text>
           </TouchableOpacity>

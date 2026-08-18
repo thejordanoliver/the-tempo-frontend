@@ -29,7 +29,7 @@ type Props = {
   onTeamChange: (t: string) => void;
   onRoundChange: (r: string) => void;
   onViewChange?: (v: "players" | "teams") => void;
-  league: "nba" | "wnba" | "nfl";
+  league: string;
 };
 
 const CHUNK_SIZE = 20;
@@ -63,7 +63,7 @@ const NFL_POSITION_MAP: Record<string, string> = {
   "94": "Punter",
 };
 
-export const getDefaultDraftYear = (league: "nba" | "wnba" | "nfl") => {
+export const getDefaultDraftYear = (league: string) => {
   const now = dayjs();
   const year = now.year();
 
@@ -133,7 +133,7 @@ export default function DraftList({
     return arr;
   }, [league]);
 
-  const getDraftSeasonYear = (draftLeague: "nba" | "nfl" | "wnba") => {
+  const getDraftSeasonYear = (draftLeague: string) => {
     const now = new Date();
     const currentYear = now.getFullYear();
 

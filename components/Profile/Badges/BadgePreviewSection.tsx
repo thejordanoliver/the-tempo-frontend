@@ -26,6 +26,72 @@ type BadgePreviewSectionProps = {
   onRetry?: () => void;
 };
 
+type BadgePreviewCardProps = {
+  badge: BadgeProgress;
+  isDark: boolean;
+  itemWidth: number;
+};
+
+function BadgePreviewCard({ badge, isDark, itemWidth }: BadgePreviewCardProps) {
+  const styles = badgePreviewSectionStyles(isDark, itemWidth);
+  const primaryText = isDark ? Colors.white : Colors.black;
+  const secondaryText = isDark ? Colors.lightGray : Colors.darkGray;
+  const tierColor = BADGE_TIER_COLORS[badge.tier];
+  const statusText = badge.isEarned
+    ? "Earned"
+    : `${Math.round(badge.progressPercent)}%`;
+  const statusColor = badge.isEarned ? tierColor : secondaryText;
+  const emblemSize = Math.min(64, Math.max(54, itemWidth * 0.55));
+
+  return (
+    <View
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel={`${badge.name}, ${statusText}`}
+      style={[
+        styles.previewCard,
+        {
+          borderColor: badge.isEarned
+            ? tierColor
+            : isDark
+              ? Colors.darkGray
+              : Colors.lightGray,
+        },
+      ]}
+    >
+      <BadgeEmblem badge={badge} size={emblemSize} />
+
+      <View style={styles.cardText}>
+        <Text
+          selectable
+          numberOfLines={2}
+          style={[
+            styles.badgeName,
+            {
+              color: primaryText,
+            },
+          ]}
+        >
+          {badge.name}
+        </Text>
+
+        <Text
+          selectable
+          numberOfLines={1}
+          style={[
+            styles.badgeStatus,
+            {
+              color: statusColor,
+            },
+          ]}
+        >
+          {statusText}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 export default function BadgePreviewSection({
   badges,
   earnedCount,
@@ -102,72 +168,6 @@ export default function BadgePreviewSection({
             itemWidth={itemWidth}
           />
         ))}
-      </View>
-    </View>
-  );
-}
-
-type BadgePreviewCardProps = {
-  badge: BadgeProgress;
-  isDark: boolean;
-  itemWidth: number;
-};
-
-function BadgePreviewCard({ badge, isDark, itemWidth }: BadgePreviewCardProps) {
-  const styles = badgePreviewSectionStyles(isDark, itemWidth);
-  const primaryText = isDark ? Colors.white : Colors.black;
-  const secondaryText = isDark ? Colors.lightGray : Colors.darkGray;
-  const tierColor = BADGE_TIER_COLORS[badge.tier];
-  const statusText = badge.isEarned
-    ? "Earned"
-    : `${Math.round(badge.progressPercent)}%`;
-  const statusColor = badge.isEarned ? tierColor : secondaryText;
-  const emblemSize = Math.min(64, Math.max(54, itemWidth * 0.55));
-
-  return (
-    <View
-      accessible
-      accessibilityRole="text"
-      accessibilityLabel={`${badge.name}, ${statusText}`}
-      style={[
-        styles.previewCard,
-        {
-          borderColor: badge.isEarned
-            ? tierColor
-            : isDark
-              ? Colors.darkGray
-              : Colors.lightGray,
-        },
-      ]}
-    >
-      <BadgeEmblem badge={badge} size={emblemSize} />
-
-      <View style={styles.cardText}>
-        <Text
-          selectable
-          numberOfLines={2}
-          style={[
-            styles.badgeName,
-            {
-              color: primaryText,
-            },
-          ]}
-        >
-          {badge.name}
-        </Text>
-
-        <Text
-          selectable
-          numberOfLines={1}
-          style={[
-            styles.badgeStatus,
-            {
-              color: statusColor,
-            },
-          ]}
-        >
-          {statusText}
-        </Text>
       </View>
     </View>
   );

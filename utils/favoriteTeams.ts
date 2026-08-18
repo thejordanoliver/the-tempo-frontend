@@ -70,24 +70,36 @@ export function getFavoriteTeamLogo(
   switch (team.league) {
     case "NBA":
       return getTeamLogo(teamId, true);
+
     case "WNBA":
       return getWNBATeamLogo(teamId, true);
+
     case "NFL":
       return getNFLTeamLogo(teamId, true);
+
     case "CFB":
       return getCFBTeamLogo(teamId, true);
+
     case "CBB":
       return getCBBTeamLogo(teamId, true);
+
     case "WCBB":
       return team.logo ?? getWCBBTeamLogo(teamId, true);
+
     case "MLB":
       return getMLBTeamLogo(teamId, true);
+
     case "CB":
       return getCBTeamLogo(teamId, true);
+
     case "SB":
       return getSBTeamLogo(teamId, true);
+
     case "NHL":
       return getNHLTeamLogo(teamId, true);
+
+    default:
+      return team.logo ?? null;
   }
 }
 

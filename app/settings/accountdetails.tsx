@@ -1,6 +1,6 @@
+import Button from "@/components/Buttons/Button";
 import { CustomHeader } from "@/components/CustomHeader";
 import { useNavigation } from "@react-navigation/native";
-import Button from "components/Button";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";

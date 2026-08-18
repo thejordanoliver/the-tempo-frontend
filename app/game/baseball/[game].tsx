@@ -220,12 +220,12 @@ export default function GameDetailsScreen(
       }
     : undefined;
 
-  const outs = score?.outs ?? 0;
+  const outs = score?.situation.outs ?? 0;
 
   const bases = {
-    onFirst: score?.bases.onFirst ?? false,
-    onSecond: score?.bases.onSecond ?? false,
-    onThird: score?.bases?.onThird ?? false,
+    onFirst: score?.situation.bases.onFirst ?? false,
+    onSecond: score?.situation.bases.onSecond ?? false,
+    onThird: score?.situation.bases?.onThird ?? false,
   };
 
   const homeHits = score?.home.hits;

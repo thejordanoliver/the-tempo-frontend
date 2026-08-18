@@ -1,3 +1,4 @@
+import Forum from "@/components/Forum/Forum";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { Colors } from "@/constants/styles";
@@ -6,7 +7,6 @@ import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames
 import useTeamDetails from "@/hooks/useTeams";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import TeamForum from "components/Forum/TeamForum";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -175,7 +175,7 @@ export default function TeamDetailScreen() {
 
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamId as string} league={league} />
+          <Forum teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 

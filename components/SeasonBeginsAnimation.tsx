@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "@/constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ImageSourcePropType,
   StyleSheet,
@@ -30,6 +30,7 @@ type SeasonBeginsAnimationProps = {
   teamSecondaryColor?: string;
   isDark: boolean;
   visible: boolean;
+  onComplete?: () => void;
 };
 
 const CONTAINER_HEIGHT = 150;
@@ -50,10 +51,16 @@ export default function SeasonBeginsAnimation({
   teamSecondaryColor,
   isDark,
   visible,
+  onComplete,
 }: SeasonBeginsAnimationProps) {
   const { width } = useWindowDimensions();
   const slideDistance = Math.max(width, 400);
   const [isRendered, setIsRendered] = useState(visible);
+
+  const handleAnimationComplete = useCallback(() => {
+    setIsRendered(false);
+    onComplete?.();
+  }, [onComplete]);
 
   const teamNameTranslateX = useSharedValue(slideDistance);
   const titleTranslateX = useSharedValue(slideDistance);
@@ -245,7 +252,7 @@ export default function SeasonBeginsAnimation({
         },
         (finished) => {
           if (finished) {
-            runOnJS(setIsRendered)(false);
+            runOnJS(handleAnimationComplete)();
           }
         },
       ),
@@ -286,6 +293,7 @@ export default function SeasonBeginsAnimation({
     textOpacity,
     titleTranslateX,
     topShutterTranslateY,
+    handleAnimationComplete,
     visible,
   ]);
 

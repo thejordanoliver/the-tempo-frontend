@@ -38,7 +38,7 @@ interface SeasonLeaderResult {
 
 export function useSeasonLeaders(
   season: number,
-  league: "NFL" | "NHL" | "CFB" | "MLB" | "WCBB" | "CBB" = "NFL",
+  league: string,
 ): SeasonLeaderResult {
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,10 +61,9 @@ export function useSeasonLeaders(
       try {
         const leaguePath = league.toLowerCase();
 
-        const res = await apiClient.get(
-          `api/leaders/${leaguePath}/leaders`,
-          { params: { season } },
-        );
+        const res = await apiClient.get(`api/leaders/${leaguePath}/leaders`, {
+          params: { season },
+        });
 
         const rawCategories: LeaderCategory[] = res.data.categories ?? [];
 

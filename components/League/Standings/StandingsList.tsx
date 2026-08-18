@@ -1,4 +1,4 @@
-// components/NBAStandingsList.tsx
+// components/StandingsList.tsx
 import { getUFLTeam } from "@/constants/teamsUFL";
 import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -41,7 +41,7 @@ type SectionType = {
 type Props = {
   year?: string;
   onYearChange?: (year: string) => void;
-  league: string;
+  league: PlayoffLeague;
   isGameDetailScreen?: boolean;
 };
 

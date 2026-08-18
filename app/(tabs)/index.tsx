@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -35,11 +36,18 @@ export default function HomeScreen() {
     loading: gamesLoading,
   } = useHomeData(selectedTab);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => <CustomHeader tabName="Home" />,
-    });
-  }, [navigation]);
+React.useLayoutEffect(() => {
+  navigation.setOptions({
+    header: () => (
+      <CustomHeader
+        tabName="Home"
+        onNotificationsCenter={() =>
+          router.navigate("/notification-center")
+        }
+      />
+    ),
+  });
+}, [navigation]);
 
   const handleTabPress = useCallback((tab: "scores" | "news") => {
     setSelectedTab(tab);

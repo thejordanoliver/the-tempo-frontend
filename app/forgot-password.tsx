@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from "../components/Button";
+import Button from "../components/Buttons/Button";
 import { Colors, Fonts } from "../constants/styles";
 import { usePreferences } from "../contexts/PreferencesContext";
 import {

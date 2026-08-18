@@ -17,7 +17,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import Button from "../components/Button";
+import Button from "../components/Buttons/Button";
 import ConfirmModal from "../components/ConfirmModal";
 import CropEditorModal from "../components/CropEditorModal";
 import { CustomHeader } from "../components/CustomHeader";

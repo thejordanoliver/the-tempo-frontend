@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
-import Button from "../components/Button";
+import Button from "../components/Buttons/Button";
 import { CustomHeader } from "../components/CustomHeader";
 import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";

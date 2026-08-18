@@ -3,12 +3,13 @@ import { useLiveGameChat } from "hooks/useLiveGameChat";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 import type { ChatSendPayload } from "utils/chatPayload";
-import ChatButton from "./ChatButton";
+import FloatingButton from "../../../../Buttons/FloatingButton";
 
 type GameChatSessionProps = {
   gameId: string;
   onClose: () => void;
 };
+
 type GameLiveChat = {
   gameId: string;
   opacityAnim: Animated.Value;
@@ -75,10 +76,10 @@ export default function GameLiveChatOverlay({
         pointerEvents="box-none"
         style={[styles.floatingButtonLayer, { opacity: opacityAnim }]}
       >
-        <ChatButton
-          gameId={gameId}
+        <FloatingButton
           isOpen={chatOpen}
           onPress={handleOpenChat}
+          icon={"chatbubble"}
         />
       </Animated.View>
 

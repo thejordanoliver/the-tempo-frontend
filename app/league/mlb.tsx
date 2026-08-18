@@ -4,17 +4,15 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
-import LeagueForum from "../../components/Forum/LeagueForum";
+import Forum from "../../components/Forum/Forum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Baseball/Games/GamesList";
@@ -27,7 +25,7 @@ import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { getMLBStandingsSeason } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
@@ -37,15 +35,15 @@ export default function MLBLeagueScreen() {
   const league = "MLB";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
-  const sportsModalRef = useRef<SportsListModalRef>(null);
+  const styles = LeagueScreenStyles(isDark);
+
   const pagerRef = useRef<PagerView>(null);
   const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
   const navigation = useNavigation();
   const { categories, loading, error } = useSeasonLeaders(2025, league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
+
   const { calendar } = useLeagueCalendar(league);
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [selectedDate, setSelectedDate] = React.useState<Date>(
@@ -67,25 +65,13 @@ export default function MLBLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  const openLeagueModal = useCallback(() => {
-    setLeagueModalVisible(true);
-    sportsModalRef.current?.present();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader
-          tabName="League"
-          league={league}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={openLeagueModal}
-          onBack={goBack}
-        />
+        <CustomHeader tabName="League" league={league} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueModalVisible, league, openLeagueModal]);
+  }, [navigation, league]);
 
   const handleScoresRefresh = React.useCallback(async () => {
     setGamesRefreshing(true);
@@ -200,7 +186,7 @@ export default function MLBLeagueScreen() {
 
           {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
@@ -219,12 +205,6 @@ export default function MLBLeagueScreen() {
         markedDates={{
           ...markDates([...calendar]),
         }}
-      />
-
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onClose={() => setLeagueModalVisible(false)}
       />
     </>
   );

@@ -1,37 +1,44 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import MessageList from "components/Messages/MessageList";
-import NewMessageModal from "components/Messages/NewMessageModal";
+import NewMessageModal, {
+  NewMessageModalRef,
+} from "components/Messages/NewMessageModal";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useConversations } from "hooks/MessageHooks/useConversations";
-import { useProfile } from "hooks/UserHooks/useProfile";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Alert, LayoutAnimation, StyleSheet, View } from "react-native";
 import { createConversation } from "services/messagesApi";
 import type { UserSearchResult } from "services/usersApi";
-import { MessageItem } from "types/messages";
+import type { MessageItem } from "types/messages";
 
-export default function MessageScreen() {
+export default function MessageListScreen() {
   const router = useRouter();
   const navigation = useNavigation();
+
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => messagesStyles(isDark), [isDark]);
+
+  const styles = useMemo(() => MessageListScreenStyles(isDark), [isDark]);
+
   const [search, setSearch] = useState("");
-  const [isNewMessageMounted, setIsNewMessageMounted] = useState(false);
-  const [isNewMessageVisible, setIsNewMessageVisible] = useState(false);
-  const [newMessageModalKey, setNewMessageModalKey] = useState(0);
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
-  const hasLoadedProfileRef = useRef(false);
-  const lastLoadedUserIdRef = useRef<number | null>(null);
-  const isOpeningNewMessageRef = useRef(false);
+  const [hasLoadedSuccessfully, setHasLoadedSuccessfully] = useState(false);
+
+  const newMessageModalRef = useRef<NewMessageModalRef>(null);
+
   const openSwipeableRef = useRef<{
     id: string;
     close: () => void;
   } | null>(null);
-
-  const { currentUserId, loadProfile } = useProfile();
 
   const {
     conversations,
@@ -45,14 +52,35 @@ export default function MessageScreen() {
 
   const trimmedSearch = search.trim();
 
-  const handleBack = useCallback(() => {
-    router.back();
-  }, [router]);
+  /*
+   * Once the list has loaded successfully, subsequent action or refresh
+   * failures should not replace the entire screen with an error state.
+   */
+  useEffect(() => {
+    if (!isLoading && !error) {
+      setHasLoadedSuccessfully(true);
+    }
+  }, [error, isLoading]);
+
+  /* ----------------------------- Swipeables ----------------------------- */
 
   const closeOpenSwipeable = useCallback(() => {
     openSwipeableRef.current?.close();
     openSwipeableRef.current = null;
   }, []);
+
+  const handleSwipeableOpen = useCallback((id: string, close: () => void) => {
+    if (openSwipeableRef.current?.id !== id) {
+      openSwipeableRef.current?.close();
+    }
+
+    openSwipeableRef.current = {
+      id,
+      close,
+    };
+  }, []);
+
+  /* ----------------------------- Search ----------------------------- */
 
   const handleSearchChange = useCallback(
     (value: string) => {
@@ -62,13 +90,7 @@ export default function MessageScreen() {
     [closeOpenSwipeable],
   );
 
-  const handleSwipeableOpen = useCallback((id: string, close: () => void) => {
-    if (openSwipeableRef.current?.id !== id) {
-      openSwipeableRef.current?.close();
-    }
-
-    openSwipeableRef.current = { id, close };
-  }, []);
+  /* ----------------------------- Conversation Actions ----------------------------- */
 
   const handleSelectConversation = useCallback(
     (item: MessageItem) => {
@@ -76,58 +98,79 @@ export default function MessageScreen() {
 
       router.push({
         pathname: "/messages/[id]",
-        params: { id: item.id },
+        params: {
+          id: String(item.id),
+        },
       });
     },
     [closeOpenSwipeable, router],
   );
 
   const handleDeleteConversation = useCallback(
-    (item: MessageItem) => {
+    async (item: MessageItem) => {
       closeOpenSwipeable();
-      deleteConversation(item);
+
+      LayoutAnimation.configureNext({
+        duration: 180,
+        create: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+          property: LayoutAnimation.Properties.opacity,
+        },
+        update: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+        },
+        delete: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+          property: LayoutAnimation.Properties.opacity,
+        },
+      });
+
+      try {
+        await deleteConversation(item);
+      } catch (err: any) {
+        Alert.alert(
+          "Could not delete conversation",
+          err?.response?.data?.error ??
+            err?.message ??
+            "Please try again in a moment.",
+        );
+      }
     },
     [closeOpenSwipeable, deleteConversation],
   );
 
   const handleTogglePinConversation = useCallback(
-    (item: MessageItem) => {
+    async (item: MessageItem) => {
       closeOpenSwipeable();
-      togglePinConversation(item);
+
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+      try {
+        await togglePinConversation(item);
+      } catch (err: any) {
+        Alert.alert(
+          "Could not update conversation",
+          err?.response?.data?.error ??
+            err?.message ??
+            "Please try again in a moment.",
+        );
+      }
     },
     [closeOpenSwipeable, togglePinConversation],
   );
 
+  /* ----------------------------- New Message ----------------------------- */
+
   const handleCreateMessage = useCallback(() => {
-    if (
-      isOpeningNewMessageRef.current ||
-      isNewMessageVisible ||
-      isCreatingConversation
-    ) {
-      return;
-    }
-
-    isOpeningNewMessageRef.current = true;
-
     closeOpenSwipeable();
-    setIsNewMessageMounted(true);
-    setIsNewMessageVisible(true);
-  }, [closeOpenSwipeable, isCreatingConversation, isNewMessageVisible]);
-
-  const handleCloseNewMessage = useCallback(() => {
-    if (isCreatingConversation) return;
-    setIsNewMessageVisible(false);
-  }, [isCreatingConversation]);
-
-  const handleDismissNewMessage = useCallback(() => {
-    isOpeningNewMessageRef.current = false;
-    setIsNewMessageVisible(false);
-    setIsNewMessageMounted(false);
-  }, []);
+    newMessageModalRef.current?.present();
+  }, [closeOpenSwipeable]);
 
   const handleSelectRecipient = useCallback(
     async (user: UserSearchResult) => {
-      if (isCreatingConversation) return;
+      if (isCreatingConversation) {
+        return;
+      }
 
       setIsCreatingConversation(true);
 
@@ -142,19 +185,22 @@ export default function MessageScreen() {
         }
 
         setSearch("");
-        setIsNewMessageVisible(false);
-        setIsNewMessageMounted(false);
+        newMessageModalRef.current?.close();
 
         await refresh();
 
         router.push({
           pathname: "/messages/[id]",
-          params: { id: String(conversationId) },
+          params: {
+            id: String(conversationId),
+          },
         });
       } catch (err: any) {
         Alert.alert(
           "Could not start message",
-          err?.response?.data?.error ?? err.message ?? "Try again in a moment.",
+          err?.response?.data?.error ??
+            err?.message ??
+            "Try again in a moment.",
         );
       } finally {
         setIsCreatingConversation(false);
@@ -163,14 +209,20 @@ export default function MessageScreen() {
     [isCreatingConversation, refresh, router],
   );
 
+  /* ----------------------------- Derived Lists ----------------------------- */
+
   const pinnedConversations = useMemo(() => {
-    if (trimmedSearch.length > 0) return [];
+    if (trimmedSearch.length > 0) {
+      return [];
+    }
 
     return conversations.filter((conversation) => conversation.isPinned);
   }, [conversations, trimmedSearch.length]);
 
   const visibleConversations = useMemo(() => {
-    if (trimmedSearch.length > 0) return conversations;
+    if (trimmedSearch.length > 0) {
+      return conversations;
+    }
 
     return conversations.filter((conversation) => !conversation.isPinned);
   }, [conversations, trimmedSearch.length]);
@@ -181,36 +233,13 @@ export default function MessageScreen() {
     visibleConversations.length === 0 &&
     (trimmedSearch.length > 0 || pinnedConversations.length === 0);
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
+  /*
+   * Only show the full-page error if the initial list request failed.
+   * Delete, pin, and refresh failures should not hide existing content.
+   */
+  const visibleError = hasLoadedSuccessfully ? null : error;
 
-      const initialize = async () => {
-        let activeUserId = currentUserId ?? null;
-
-        if (
-          !hasLoadedProfileRef.current ||
-          !activeUserId ||
-          activeUserId !== lastLoadedUserIdRef.current
-        ) {
-          const loadedUserId = await loadProfile();
-
-          if (!isActive) return;
-
-          activeUserId = loadedUserId ?? activeUserId;
-          hasLoadedProfileRef.current = Boolean(activeUserId);
-          lastLoadedUserIdRef.current = activeUserId ?? null;
-        }
-      };
-
-      initialize();
-
-      return () => {
-        isActive = false;
-        closeOpenSwipeable();
-      };
-    }, [closeOpenSwipeable, currentUserId, loadProfile]),
-  );
+  /* ----------------------------- Header ----------------------------- */
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -218,12 +247,14 @@ export default function MessageScreen() {
         <CustomHeader
           title="Messages"
           tabName="Messages"
-          onBack={handleBack}
+          onBack={() => router.back()}
           onCreateMessage={handleCreateMessage}
         />
       ),
     });
-  }, [navigation, handleBack, handleCreateMessage]);
+  }, [handleCreateMessage, navigation, router]);
+
+  /* ----------------------------- Render ----------------------------- */
 
   return (
     <View style={styles.container}>
@@ -233,7 +264,7 @@ export default function MessageScreen() {
         search={search}
         isLoading={isLoading}
         isRefreshing={isRefreshing}
-        error={error}
+        error={visibleError}
         shouldShowPinned={shouldShowPinned}
         shouldShowEmptyState={shouldShowEmptyState}
         onSearchChange={handleSearchChange}
@@ -245,21 +276,17 @@ export default function MessageScreen() {
         onRetry={refresh}
       />
 
-      {isNewMessageMounted && (
-        <NewMessageModal
-          key={newMessageModalKey}
-          visible={isNewMessageVisible}
-          isCreating={isCreatingConversation}
-          onClose={handleCloseNewMessage}
-          onDismiss={handleDismissNewMessage}
-          onSelectUser={handleSelectRecipient}
-        />
-      )}
+      <NewMessageModal
+        ref={newMessageModalRef}
+        isCreating={isCreatingConversation}
+        onClose={() => {}}
+        onSelectUser={handleSelectRecipient}
+      />
     </View>
   );
 }
 
-export const messagesStyles = (isDark: boolean) =>
+export const MessageListScreenStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,

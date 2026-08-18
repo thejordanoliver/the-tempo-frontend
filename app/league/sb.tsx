@@ -1,4 +1,4 @@
-import LeagueForum from "@/components/Forum/LeagueForum";
+import Forum from "@/components/Forum/Forum";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -10,9 +10,7 @@ import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "../../components/Sports/Baseball/Standings/CBStandingsList";
@@ -23,7 +21,7 @@ import { useBaseballGames } from "../../hooks/BaseballHooks/useBaseballGames";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -31,17 +29,17 @@ dayjs.extend(timezone);
 export default function SBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
+  const styles = LeagueScreenStyles(isDark);
   const league = "SB" as const;
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
+
   const navigation = useNavigation();
   const pagerRef = useRef<PagerView>(null);
-  const sportsModalRef = useRef<SportsListModalRef>(null);
+
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const { calendar } = useLeagueCalendar(league);
 
@@ -66,17 +64,11 @@ export default function SBLeagueScreen() {
         <CustomHeader
           tabName="League"
           league={"College Softball" as "SB"}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={() => {
-            setLeagueModalVisible(true);
-            sportsModalRef.current?.present();
-          }}
           onBack={goBack}
         />
       ),
     });
-  }, [navigation, leagueModalVisible]);
+  }, [navigation]);
 
   const handleScoresRefresh = useCallback(async () => {
     setGamesRefreshing(true);
@@ -173,7 +165,7 @@ export default function SBLeagueScreen() {
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
@@ -192,12 +184,6 @@ export default function SBLeagueScreen() {
         markedDates={{
           ...markDates([...calendar]),
         }}
-      />
-
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onClose={() => setLeagueModalVisible(false)}
       />
     </>
   );

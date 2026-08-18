@@ -1,16 +1,16 @@
-// hooks/useLeagueForumPosts.ts
+// hooks/useForumPosts.ts
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LeagueType } from "types/types";
 
 import { apiClient } from "utils/apiClient";
-interface useLeagueForumPostsParams {
+interface useForumPostsParams {
   teamId: string;
   league?: LeagueType;
 }
 
-export function useLeagueForumPosts({ league }: useLeagueForumPostsParams) {
+export function useForumPosts({ league }: useForumPostsParams) {
   const { token, user } = useAuth();
   const { requestBadgeDataRefresh } = useBadgeNotifications();
 

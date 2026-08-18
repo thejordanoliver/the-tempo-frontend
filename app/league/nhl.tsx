@@ -7,17 +7,15 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
-import LeagueForum from "../../components/Forum/LeagueForum";
+import Forum from "../../components/Forum/Forum";
 import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
@@ -27,7 +25,7 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { getNHLSeason } from "../../utils/dateUtils";
 
 dayjs.extend(utc);
@@ -41,13 +39,11 @@ export default function NHLLeagueScreen() {
     league,
   );
 
-  const sportsModalRef = useRef<SportsListModalRef>(null);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(currentSeason);
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
+  const styles = LeagueScreenStyles(isDark);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -74,25 +70,13 @@ export default function NHLLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  const openLeagueModal = useCallback(() => {
-    setLeagueModalVisible(true);
-    sportsModalRef.current?.present();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader
-          tabName="League"
-          league={league}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={openLeagueModal}
-          onBack={goBack}
-        />
+        <CustomHeader tabName="League" league={league} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueModalVisible, league, openLeagueModal]);
+  }, [navigation, league]);
 
   const handleScoresRefresh = React.useCallback(async () => {
     setGamesRefreshing(true);
@@ -206,7 +190,7 @@ export default function NHLLeagueScreen() {
 
           {/* FORUM */}
           <View key="forum">
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
@@ -224,12 +208,6 @@ export default function NHLLeagueScreen() {
         markedDates={{
           ...markDates([...calendar]),
         }}
-      />
-
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onClose={() => setLeagueModalVisible(false)}
       />
     </>
   );

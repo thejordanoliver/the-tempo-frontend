@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import Forum from "@/components/Forum/Forum";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
@@ -15,7 +16,6 @@ import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
 import useTeamDetails from "@/hooks/useTeams";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
@@ -340,7 +340,7 @@ export default function TeamDetailScreen() {
         </View>
 
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamIdStr} league={league} />
+          <Forum teamId={teamIdStr} league={league} />
         </View>
       </PagerView>
 

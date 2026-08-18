@@ -7,12 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  ScrollView,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";

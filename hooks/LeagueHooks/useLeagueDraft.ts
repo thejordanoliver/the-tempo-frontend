@@ -2,8 +2,6 @@ import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BASE_URL } from "utils/apiClient";
 
-type League = "nba" | "wnba" | "nfl";
-
 type FetchMode = "initial" | "refresh" | "silent";
 
 type DraftPick = {
@@ -57,7 +55,7 @@ export type DraftProps = {
   breakingNews: BreakingNews[];
 };
 
-export function useDraft(league: League, year: number | string | undefined) {
+export function useDraft(league: string, year: number | string | undefined) {
   const [draft, setDraft] = useState<DraftProps | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);

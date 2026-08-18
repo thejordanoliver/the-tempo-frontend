@@ -21,7 +21,7 @@ export type FavoriteTeamItem = {
   code: string;
   logo?: ImageSourcePropType | null;
   color?: string;
-  league: FavoriteLeague;
+  league: string;
   key: string;
   isDark: boolean;
 };

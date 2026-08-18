@@ -6,7 +6,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -33,16 +33,18 @@ export const CBBStandingsList = ({ league = "CBB" }: Props) => {
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = standingsStyles(isDark);
+  const global = globalStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "WCBB";
-  const getRankedTeam = (espnId?: string | number | null) =>
+  const getRankedTeam = (espnId: string | number) =>
     isWCBB ? getWCBBTeamByESPNId(espnId) : getCBBTeamByESPNId(espnId ?? "");
-  const getRankedTeamLogo = (teamId?: string | number | null) =>
+  const getRankedTeamLogo = (teamId?: string | number) =>
     isWCBB
       ? getWCBBTeamLogo(teamId, isDark)
-      : getCBBTeamLogo(teamId ?? undefined, isDark, false);
+      : getCBBTeamLogo(teamId ?? undefined, isDark);
+
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
@@ -51,17 +53,12 @@ export const CBBStandingsList = ({ league = "CBB" }: Props) => {
       setRefreshing(false);
     }
   };
-  if (loading)
-    return (
-      <View style={{ flex: 1 }}>
-        <StandingsSkeleton />
-      </View>
-    );
+  if (loading) return <StandingsSkeleton />;
 
   if (error)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
 

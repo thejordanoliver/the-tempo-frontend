@@ -6,17 +6,15 @@ import utc from "dayjs/plugin/utc";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import * as React from "react";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
-import LeagueForum from "../../components/Forum/LeagueForum";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+import Forum from "../../components/Forum/Forum";
+
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Soccer/Games/GamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
@@ -25,7 +23,7 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -52,23 +50,19 @@ export default function SoccerLeagueScreen() {
     leagueLabel?: string;
   }>();
   const normalizedParamLeague = normalizeLeagueParam(params.league);
-
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
-
   const league: League = isLeague(normalizedParamLeague)
     ? normalizedParamLeague
     : "EPL";
 
-console.log(league)
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+
+  console.log(league);
 
   const leagueLabel = params.leagueLabel;
 
   const { calendar } = useLeagueCalendar(league);
-
-  const sportsModalRef = useRef<SportsListModalRef>(null);
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
 
   const navigation = useNavigation();
   const pagerRef = useRef<PagerView>(null);
@@ -117,25 +111,13 @@ console.log(league)
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  const openLeagueModal = useCallback(() => {
-    setLeagueModalVisible(true);
-    sportsModalRef.current?.present();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader
-          tabName="League"
-          league={leagueLabel}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={openLeagueModal}
-          onBack={goBack}
-        />
+        <CustomHeader tabName="League" league={leagueLabel} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueModalVisible, leagueLabel, openLeagueModal]);
+  }, [navigation, leagueLabel]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -209,7 +191,7 @@ console.log(league)
           <View key="standings" />
 
           <View key="forum">
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
@@ -228,12 +210,6 @@ console.log(league)
         markedDates={{
           ...markDates([...calendar]),
         }}
-      />
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onOpen={() => setLeagueModalVisible(true)}
-        onClose={() => setLeagueModalVisible(false)}
       />
     </>
   );

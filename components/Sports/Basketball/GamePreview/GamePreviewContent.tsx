@@ -170,8 +170,8 @@ export default function GamePreviewContent({
         <Highlights highlights={highlights} isDark />
 
         <HeadCoaches
-          homeName={homeName}
-          awayName={awayName}
+          homeCode={homeName}
+          awayCode={awayName}
           homeCoach={homeCoach}
           awayCoach={awayCoach}
           homeLogo={homeLogo}

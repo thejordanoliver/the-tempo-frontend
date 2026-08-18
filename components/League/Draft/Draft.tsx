@@ -16,7 +16,7 @@ type Props = {
   year: string;
   team: string;
   round: string;
-  league: "nba" | "wnba" | "nfl";
+  league: string;
   onYearChange: (year: string) => void;
   onTeamChange: (team: string) => void;
   onRoundChange: (round: string) => void;

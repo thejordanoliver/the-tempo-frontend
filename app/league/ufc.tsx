@@ -5,14 +5,12 @@ import EventSelector, {
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeader } from "../../components/CustomHeader";
-import LeagueForum from "../../components/Forum/LeagueForum";
-import SportsListModal, {
-  SportsListModalRef,
-} from "../../components/League/SportsListModal";
+import Forum from "../../components/Forum/Forum";
+
 import NewsList from "../../components/News/NewsList";
 import MMAGamesList from "../../components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
@@ -20,19 +18,17 @@ import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useMMAGames } from "../../hooks/MMAHooks/useMMAGames";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
-import { getScoresStyles } from "../../styles/LeagueStyles/LeagueStyles";
+import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
 export default function UFCLeagueScreen() {
   const league = "UFC";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getScoresStyles(isDark);
+  const styles = LeagueScreenStyles(isDark);
 
   const navigation = useNavigation();
-  const sportsModalRef = useRef<SportsListModalRef>(null);
-  const pagerRef = useRef<PagerView>(null);
 
-  const [leagueModalVisible, setLeagueModalVisible] = useState(false);
+  const pagerRef = useRef<PagerView>(null);
 
   // null means "the user has not selected an event yet"
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
@@ -86,25 +82,13 @@ export default function UFCLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  const openLeagueModal = useCallback(() => {
-    setLeagueModalVisible(true);
-    sportsModalRef.current?.present();
-  }, []);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader
-          tabName="League"
-          league={league}
-          modalVisible={leagueModalVisible}
-          setModalVisible={setLeagueModalVisible}
-          onOpenLeagueModal={openLeagueModal}
-          onBack={goBack}
-        />
+        <CustomHeader tabName="League" league={league} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueModalVisible, league, openLeagueModal]);
+  }, [navigation, league]);
 
   return (
     <>
@@ -171,16 +155,10 @@ export default function UFCLeagueScreen() {
           </View>
 
           <View key="forum" style={styles.contentArea}>
-            <LeagueForum league={league} />
+            <Forum league={league} />
           </View>
         </PagerView>
       </View>
-
-      <SportsListModal
-        ref={sportsModalRef}
-        onSelect={() => {}}
-        onClose={() => setLeagueModalVisible(false)}
-      />
     </>
   );
 }

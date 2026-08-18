@@ -1,29 +1,57 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
+const GRID_GAP = 8;
+const CARD_HEIGHT = 130;
+
 /* ---------------- STYLES ---------------- */
 
-export const favoriteTeamsListStyles = (isDark: boolean) =>
+export const favoriteTeamsListStyles = (
+  isDark: boolean,
+  itemWidth: number,
+  isGridView: boolean,
+) =>
   StyleSheet.create({
-    gridContainer: {
-      columnGap: 8,
-      rowGap: 8,
+    grid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      alignItems: "flex-start",
       justifyContent: "flex-start",
+      columnGap: GRID_GAP,
+      rowGap: GRID_GAP,
     },
     gridItem: {
-      width: "32%",
+      width: itemWidth,
+      height: CARD_HEIGHT,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+      paddingHorizontal: 8,
+      paddingVertical: 12,
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+
+      position: "relative",
+      overflow: "hidden",
     },
+    list: {
+      flex: 1,
+    },
+
     listItem: {
+      flex: 1,
+      justifyContent: "center",
       width: "100%",
+      marginBottom: 8,
+      borderRadius: 8,
+      overflow: "hidden",
     },
     pressed: {
       opacity: 0.6,
     },
-    teamItemBase: {
-      alignItems: "center",
-      position: "relative",
-      overflow: "hidden",
-    },
+
     leagueBadge: {
       position: "absolute",
       top: 0,
@@ -53,11 +81,7 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       fontSize: 12,
       textAlign: "center",
     },
-    gridNicknameText: {
-      fontSize: 12,
-      textAlign: "center",
-      marginTop: 2,
-    },
+
     listNameText: {
       textAlign: "left",
       fontSize: 14,
@@ -68,52 +92,13 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       marginVertical: 12,
     },
 
-    favoritesContainer: {
-      marginTop: 20,
-      paddingHorizontal: 12,
-      paddingBottom: 100,
-    },
-    favoritesHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 12,
-      paddingBottom: 8,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      color: isDark ? Colors.white : Colors.black,
-    },
     toggleIcon: {
       paddingHorizontal: 4,
     },
 
-    heading: {
-      fontSize: 24,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? "white" : Colors.black,
-    },
-    noFavoritesText: {
-      fontStyle: "italic",
-      color: isDark ? Colors.midTone : Colors.midTone,
-      textAlign: "center",
-    },
-    teamGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      marginBottom: 8,
-    },
-
     teamItem: {
-      flex: 1,
-      paddingHorizontal: 12,
-      flexDirection: "row",
-      alignItems: "center",
-      position: "relative",
-      overflow: "hidden",
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      borderRadius: 8,
+      flexDirection: isGridView ? "column" : "row",
+      alignItems: isGridView ? "center" : "center",
     },
 
     teamLogo: {
@@ -122,9 +107,9 @@ export const favoriteTeamsListStyles = (isDark: boolean) =>
       resizeMode: "contain",
     },
     teamName: {
+      flex: isGridView ? 0 : 1,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.white,
-      width: "auto",
     },
 
     editText: {

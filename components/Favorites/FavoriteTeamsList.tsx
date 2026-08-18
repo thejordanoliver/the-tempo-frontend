@@ -1,8 +1,9 @@
 // components/Favorites/FavoriteTeamsList.tsx
 
+import Button from "@/components/Buttons/Button";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { isFavoriteLeague } from "@/types/favorites";
 import { Ionicons } from "@expo/vector-icons";
-import Button from "components/Button";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
 import { Colors } from "constants/styles";
 import { getTeamLogo } from "constants/teams";
@@ -18,26 +19,19 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
-import {
-  LongPressGestureHandler,
-  State,
-} from "react-native-gesture-handler";
+import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { favoriteTeamsListStyles } from "styles/FavorieTeamsListStyles";
-import type { LeagueType, Team } from "types/types";
+import type { Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 
-type FavoriteTeam = Team & {
-  league: LeagueType;
-};
-
 type Props = {
-  favoriteTeams: FavoriteTeam[];
+  favoriteTeams: Team[];
   isGridView: boolean;
-  itemWidth?: number;
+  itemWidth: number;
   isCurrentUser: boolean;
 };
 
-const getLeagueBadgeColor = (league: LeagueType) => {
+const getLeagueBadgeColor = (league: string) => {
   switch (league) {
     case "CFB":
       return "#228B22";
@@ -54,15 +48,16 @@ const getLeagueBadgeColor = (league: LeagueType) => {
   }
 };
 
-const FavoriteTeamsList = ({
+export default function FavoriteTeamsList({
   favoriteTeams,
   isGridView,
+  itemWidth,
   isCurrentUser,
-}: Props) => {
+}: Props) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = favoriteTeamsListStyles(isDark);
+  const styles = favoriteTeamsListStyles(isDark, itemWidth, isGridView);
 
   const {
     previewTeam,
@@ -86,12 +81,7 @@ const FavoriteTeamsList = ({
         />
       )}
 
-      <View
-        style={[
-          isGridView ? styles.teamGrid : undefined,
-          styles.gridContainer,
-        ]}
-      >
+      <View style={[isGridView ? styles.grid : styles.list]}>
         {favoriteTeams.map((team) => {
           const id = team.id;
           const { league } = team;
@@ -134,13 +124,9 @@ const FavoriteTeamsList = ({
               logo = null;
           }
 
-          const showLeagueBadge = [
-            "CFB",
-            "CBB",
-            "WCBB",
-            "CB",
-            "SB",
-          ].includes(league);
+          const showLeagueBadge = ["CFB", "CBB", "WCBB", "CB", "SB"].includes(
+            league,
+          );
 
           const teamName = team.name ?? team.shortName ?? String(id);
 
@@ -158,8 +144,17 @@ const FavoriteTeamsList = ({
                 style={({ pressed }) => [
                   pressed && styles.pressed,
                   isGridView ? styles.gridItem : styles.listItem,
+                  {
+                    backgroundColor: teamBackgroundColor,
+                    padding: isGridView ? 20 : 12,
+                  },
                 ]}
                 onPress={() => {
+                  if (!isFavoriteLeague(league)) {
+                    console.warn(`Unsupported favorite league: ${league}`);
+                    return;
+                  }
+
                   router.push({
                     pathname: getFavoriteTeamRoute(league),
                     params: {
@@ -169,30 +164,19 @@ const FavoriteTeamsList = ({
                   });
                 }}
               >
-                <View
-                  style={[
-                    styles.teamItem,
-                    {
-                      flex: 1,
-                      backgroundColor: teamBackgroundColor,
-                      flexDirection: isGridView ? "column" : "row",
-                      paddingVertical: isGridView ? 20 : 12,
-                    },
-                  ]}
-                >
-                  {showLeagueBadge && (
-                    <View
-                      style={[
-                        styles.leagueBadge,
-                        {
-                          backgroundColor: getLeagueBadgeColor(league),
-                        },
-                      ]}
-                    >
-                      <Text style={styles.leagueBadgeText}>{league}</Text>
-                    </View>
-                  )}
-
+                {showLeagueBadge && (
+                  <View
+                    style={[
+                      styles.leagueBadge,
+                      {
+                        backgroundColor: getLeagueBadgeColor(league),
+                      },
+                    ]}
+                  >
+                    <Text style={styles.leagueBadgeText}>{league}</Text>
+                  </View>
+                )}
+                <View style={[styles.teamItem]}>
                   <Image
                     source={logo}
                     style={[
@@ -203,13 +187,14 @@ const FavoriteTeamsList = ({
                     ]}
                   />
 
-                  {isGridView ? (
+                  {isGridView && (
                     <View style={styles.gridNameContainer}>
                       <Text style={[styles.teamName, styles.gridNameText]}>
                         {teamName}
                       </Text>
                     </View>
-                  ) : (
+                  )}
+                  {!isGridView && (
                     <Text style={[styles.teamName, styles.listNameText]}>
                       {teamName}
                     </Text>
@@ -239,6 +224,4 @@ const FavoriteTeamsList = ({
       )}
     </>
   );
-};
-
-export default FavoriteTeamsList;
+}

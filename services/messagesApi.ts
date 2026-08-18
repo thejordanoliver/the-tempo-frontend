@@ -18,6 +18,11 @@ export type CreateConversationResponse = {
   id?: string;
 };
 
+export type PaginatedConversationsResponse = {
+  items: MessageItem[];
+  nextCursor: string | null;
+};
+
 const getFirstArray = (payload: any, keys: string[]) => {
   if (Array.isArray(payload)) return payload;
 
@@ -246,16 +251,38 @@ export const normalizeMessage = (raw: RawRecord = {}): DirectMessageItem => {
   };
 };
 
+/**
+ * Paginated conversations: matches backend `{ items, nextCursor }`
+ */
 export const getConversations = async (
   search?: string,
-): Promise<MessageItem[]> => {
+  cursor?: string,
+  limit: number = 50,
+): Promise<PaginatedConversationsResponse> => {
+  const params: Record<string, any> = {};
+
+  const trimmed = search?.trim();
+  if (trimmed) params.search = trimmed;
+  if (cursor) params.cursor = cursor;
+  params.limit = limit;
+
   const response = await apiClient.get("/api/messages/conversations", {
-    params: search?.trim() ? { search: search.trim() } : undefined,
+    params,
   });
 
-  return getFirstArray(response.data, ["conversations"]).map(
-    normalizeConversation,
-  );
+  const data = response.data ?? {};
+
+  const rawItems =
+    data.items ?? getFirstArray(data, ["conversations", "items"]);
+
+  const items = rawItems.map((raw: RawRecord) => normalizeConversation(raw));
+
+  const nextCursor = data.nextCursor ?? null;
+
+  return {
+    items,
+    nextCursor,
+  };
 };
 
 export const getConversation = async (

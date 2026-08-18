@@ -192,8 +192,8 @@ export default function GamePreviewModal({
       }
     : undefined;
 
-  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE);
-  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE);
+  const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);

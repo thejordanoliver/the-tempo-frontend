@@ -13,8 +13,6 @@ export const LEAGUE_TABS = {
     "scores",
     "news",
     "standings",
-    "playoffs",
-    "stats",
     "draft",
     "awards",
     "forum",
@@ -109,4 +107,11 @@ export function isLeague(value: string): value is League {
 
 export function isTeam(value: string): value is Team {
   return value in TEAM_TABS;
+}
+export function normalizeLeagueParam(value: string | string[] | undefined) {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+
+  return String(rawValue || "")
+    .trim()
+    .toUpperCase();
 }

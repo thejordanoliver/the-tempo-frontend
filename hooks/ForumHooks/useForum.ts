@@ -1,11 +1,16 @@
-// hooks/useTeamForum.ts
+// hooks/useForum.ts
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export function useTeamForum(teamId: string, league?: string) {
+interface UseForumProps {
+  teamId?: string;
+  league?: string;
+}
+
+export function useForum({ teamId, league }: UseForumProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -13,23 +18,18 @@ export function useTeamForum(teamId: string, league?: string) {
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
   const { requestBadgeDataRefresh } = useBadgeNotifications();
 
-  // Read userId from AsyncStorage — written by useAuth on login
   useEffect(() => {
     AsyncStorage.getItem("userId")
       .then((id) => setCurrentUserId(id ? parseInt(id, 10) : null))
       .catch(() => setCurrentUserId(null));
   }, []);
 
-  /*
-  -----------------------------
-  FETCH POSTS
-  -----------------------------
-  */
   const fetchPosts = useCallback(
     async (pageNumber = 1, isRefresh = false) => {
-      if (!teamId || !league) return;
+      if (!league) return;
 
       if (isRefresh) {
         setRefreshing(true);
@@ -40,7 +40,11 @@ export function useTeamForum(teamId: string, league?: string) {
       setError(null);
 
       try {
-        const res = await apiClient.get(`/api/forum/team/${league}/${teamId}`, {
+        const endpoint = teamId
+          ? `/api/forum/team/${league}/${teamId}`
+          : `/api/forum/league/${league}`;
+
+        const res = await apiClient.get(endpoint, {
           params: { page: pageNumber, limit: 10 },
         });
 
@@ -50,9 +54,8 @@ export function useTeamForum(teamId: string, league?: string) {
           pageNumber === 1 ? data.posts : [...prev, ...data.posts],
         );
 
-        // Track page locally — don't trust server echo
         setPage(pageNumber);
-        setTotalPages(data.pagination.totalPages);
+        setTotalPages(data.pagination.totalPages ?? 1);
       } catch (err: any) {
         console.error("Fetch posts error:", err);
         setError(
@@ -66,40 +69,16 @@ export function useTeamForum(teamId: string, league?: string) {
     [teamId, league],
   );
 
-  /*
-  -----------------------------
-  INITIAL FETCH
-  -----------------------------
-  */
-  useEffect(() => {
-    fetchPosts(1);
+  const refresh = useCallback(() => {
+    fetchPosts(1, true);
   }, [fetchPosts]);
 
-  /*
-  -----------------------------
-  REFRESH
-  -----------------------------
-  */
-  const refresh = () => {
-    fetchPosts(1, true);
-  };
-
-  /*
-  -----------------------------
-  LOAD MORE (PAGINATION)
-  -----------------------------
-  */
-  const loadMore = () => {
+  const loadMore = useCallback(() => {
     if (page < totalPages && !loading && !refreshing) {
       fetchPosts(page + 1);
     }
-  };
+  }, [page, totalPages, loading, refreshing, fetchPosts]);
 
-  /*
-  -----------------------------
-  DELETE POST
-  -----------------------------
-  */
   const deletePost = useCallback(
     async (postId: string) => {
       try {
@@ -116,11 +95,6 @@ export function useTeamForum(teamId: string, league?: string) {
     [requestBadgeDataRefresh],
   );
 
-  /*
-  -----------------------------
-  EDIT POST
-  -----------------------------
-  */
   const editPost = useCallback(async (postId: string, newText: string) => {
     try {
       const res = await apiClient.patch(`/api/forum/post/${postId}`, {
@@ -137,11 +111,6 @@ export function useTeamForum(teamId: string, league?: string) {
     }
   }, []);
 
-  /*
-  -----------------------------
-  PREPEND POST (optimistic after create)
-  -----------------------------
-  */
   const prependPost = useCallback((newPost: Post) => {
     setPosts((prev) => [newPost, ...prev]);
   }, []);
@@ -156,11 +125,6 @@ export function useTeamForum(teamId: string, league?: string) {
     );
   }, []);
 
-  /*
-  -----------------------------
-  RETURN HOOK DATA
-  -----------------------------
-  */
   return {
     posts,
     loading,

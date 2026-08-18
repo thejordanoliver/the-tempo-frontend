@@ -30,7 +30,6 @@ import {
   ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Search } from "reicon-react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -139,6 +138,8 @@ type CustomHeaderProps = {
   isPlayerScreen?: boolean;
 
   onSearchToggle?: () => void;
+  onNotificationsCenter?: () => void;
+  onOpenThemesSettings?: () => void;
   onAddWidget?: () => void;
 
   teamCode?: string;
@@ -416,7 +417,7 @@ const MessageThreadHeader = ({
           {isVerified ? (
             <Ionicons
               name="checkmark-circle"
-              size={14}
+              size={24}
               color={Colors.dark.blue}
             />
           ) : null}
@@ -533,7 +534,7 @@ const ProfileHeaderMenu = ({
           >
             <Ionicons
               name="settings-outline"
-              size={16}
+              size={24}
               color={isDark ? Colors.white : Colors.black}
             />
           </View>
@@ -579,7 +580,7 @@ const ProfileHeaderMenu = ({
             >
               <Ionicons
                 name="log-out-outline"
-                size={16}
+                size={24}
                 color={isDark ? Colors.dark.lightRed : Colors.light.red}
               />
             </View>
@@ -1146,6 +1147,8 @@ export function CustomHeader({
   teamColor,
   isTeamScreen = false,
   onSearchToggle,
+  onNotificationsCenter,
+  onOpenThemesSettings,
   onAddWidget,
   teamId,
   teamCode,
@@ -1443,8 +1446,8 @@ export function CustomHeader({
               hitSlop={8}
             >
               <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={21}
+                name="chatbubbles-outline"
+                size={24}
                 color={isDark ? Colors.white : Colors.black}
               />
             </TouchableOpacity>
@@ -1494,7 +1497,9 @@ export function CustomHeader({
             eventTitle={title}
             eventLogo={logo ?? homeLogo}
           />
-        ) : tabName === "League" ? (
+        ) : (tabName === "League" && league === "College Football") ||
+          league === "Men's College Basketball" ||
+          league === "Women's College Basketball" ? (
           <View style={styles.leagueHeaderContainer}>
             <TouchableOpacity
               activeOpacity={activeOpacity}
@@ -1518,7 +1523,7 @@ export function CustomHeader({
               >
                 <Ionicons
                   name="chevron-down"
-                  size={20}
+                  size={24}
                   color={
                     selectedConference
                       ? Colors.white
@@ -1548,7 +1553,6 @@ export function CustomHeader({
         )}
 
         {/* RIGHT HEADER ACTION */}
-
         {isTeamScreen ? (
           <View style={styles.teamHeaderActions}>
             {onToggleFavorite ? (
@@ -1624,7 +1628,7 @@ export function CustomHeader({
             >
               <Ionicons
                 name="ellipsis-horizontal"
-                size={22}
+                size={24}
                 color={isDark ? Colors.white : Colors.black}
               />
             </TouchableOpacity>
@@ -1635,25 +1639,44 @@ export function CustomHeader({
             onPress={onSearchToggle}
             hitSlop={8}
           >
-            <Search size={20} color={isDark ? Colors.white : Colors.black} />
+            <Ionicons
+              name="search"
+              size={24}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        ) : tabName === "Home" && onNotificationsCenter ? (
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onNotificationsCenter}
+            hitSlop={8}
+          >
+            <Ionicons
+              name="notifications-outline"
+              size={24}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        ) : tabName === "Message" && onOpenThemesSettings ? (
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            onPress={onOpenThemesSettings}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Open message theme settings"
+          >
+            <Ionicons
+              name="color-palette-outline"
+              size={24}
+              color={isDark ? Colors.white : Colors.black}
+            />
           </TouchableOpacity>
         ) : isMessagesListScreen && onCreateMessage ? (
           <Pressable
-            onPressIn={onCreateMessage}
+            onPress={onCreateMessage}
             accessibilityRole="button"
             accessibilityLabel="Create message"
-            hitSlop={{
-              top: 14,
-              right: 14,
-              bottom: 14,
-              left: 14,
-            }}
-            pressRetentionOffset={{
-              top: 16,
-              right: 16,
-              bottom: 16,
-              left: 16,
-            }}
+            hitSlop={14}
             style={({ pressed }) => [
               styles.headerActionButton,
               pressed && styles.headerActionButtonPressed,
@@ -1673,7 +1696,7 @@ export function CustomHeader({
           >
             <Ionicons
               name={isGrid ? "list" : "grid"}
-              size={22}
+              size={24}
               color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>

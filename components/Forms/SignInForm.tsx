@@ -1,5 +1,5 @@
+import Button from "@/components/Buttons/Button";
 import { Ionicons } from "@expo/vector-icons";
-import Button from "components/Button";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";

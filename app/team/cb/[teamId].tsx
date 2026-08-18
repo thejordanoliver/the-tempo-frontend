@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import Forum from "@/components/Forum/Forum";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -9,7 +10,6 @@ import useTeamDetails from "@/hooks/useTeams";
 import { getWNBASeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import TeamForum from "components/Forum/TeamForum";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
@@ -275,7 +275,7 @@ export default function TeamDetailScreen() {
 
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
-          <TeamForum teamId={teamIdStr ?? ""} league={league} />
+          <Forum teamId={teamIdStr ?? ""} league={league} />
         </View>
       </PagerView>
 

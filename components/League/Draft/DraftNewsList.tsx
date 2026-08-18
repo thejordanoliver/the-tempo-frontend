@@ -22,7 +22,7 @@ const TICKER_SPEED = 40;
 
 type Props = {
   year: string;
-  league: "nba" | "wnba" | "nfl";
+  league: string;
 };
 
 export default function DraftNewsList({ year, league }: Props) {

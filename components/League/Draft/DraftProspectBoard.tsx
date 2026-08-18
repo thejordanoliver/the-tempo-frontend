@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 
-type DraftLeague = "nba" | "wnba" | "nfl";
+
 
 type DraftProspectAttribute = {
   name?: string | null;
@@ -68,7 +68,7 @@ export type DraftCurrent = {
 
 type Props = {
   current?: DraftCurrent | null;
-  league?: DraftLeague;
+  league?: string;
   maxBestAvailablePicks?: number;
 };
 
@@ -131,7 +131,7 @@ const getSchoolName = (prospect?: DraftProspect | null) => {
 
 const getProspectPosition = (
   prospect: DraftProspect | null | undefined,
-  league?: DraftLeague,
+  league?: string,
 ) => {
   if (!prospect) return "";
 
@@ -267,7 +267,7 @@ function FeaturedProspectCard({
   label: string;
   icon: React.ComponentProps<typeof Ionicons>["name"];
   prospect: DraftProspect;
-  league?: DraftLeague;
+  league?: string;
   isDark: boolean;
 }) {
   const styles = draftProspectBoardStyles(isDark);
@@ -332,7 +332,7 @@ function AvailableProspectCard({
 }: {
   prospect: DraftProspect;
   index: number;
-  league?: DraftLeague;
+  league?: string;
   isDark: boolean;
 }) {
   const styles = draftProspectBoardStyles(isDark);

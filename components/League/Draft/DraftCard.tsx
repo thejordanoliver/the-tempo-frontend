@@ -35,7 +35,7 @@ export type DraftPick = {
 type Props = {
   player: DraftPick;
   index: number;
-  league: "nba" | "wnba" | "nfl";
+  league: string;
   isFirstOnTheClock?: boolean;
 };
 
