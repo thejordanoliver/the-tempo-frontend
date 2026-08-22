@@ -1,25 +1,31 @@
-import { Ionicons } from "@expo/vector-icons";
+import SearchBar from "@/components/SearchBars/SearchBar";
+import { snapPoints } from "@/utils/modalUtils";
+import {
+  BottomSheetBackdrop,
+  BottomSheetFlatList,
+  BottomSheetModal,
+} from "@gorhom/bottom-sheet";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { useDebounce } from "hooks/useDebounce";
 import { useGiphySearch } from "hooks/useGiphySearch";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Alert,
-  FlatList,
   Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type GifItem = {
   id: string;
@@ -43,18 +49,39 @@ export const GiphySearchModal: React.FC<Props> = ({
   gifsCount,
 }) => {
   const [query, setQuery] = useState("");
+  const sheetRef = useRef<BottomSheetModal>(null);
+  const { top } = useSafeAreaInsets();
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => GiphySerachModalStyles(isDark), [isDark]);
+  const styles = useMemo(() => giphySearchModalStyles(isDark), [isDark]);
 
   const debouncedQuery = useDebounce(query.trim(), 400);
   const { data: results, loading, hasMore, searchGifs } = useGiphySearch();
 
+  const hasPresentedRef = useRef(false);
+
+  useEffect(() => {
+    if (!visible) {
+      if (hasPresentedRef.current) {
+        sheetRef.current?.dismiss();
+      }
+
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      hasPresentedRef.current = true;
+      sheetRef.current?.present();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [visible]);
+
   useEffect(() => {
     if (!visible) return;
 
-    searchGifs(debouncedQuery || "NBA", true);
+    searchGifs(debouncedQuery || "SPORTS", true);
   }, [debouncedQuery, searchGifs, visible]);
 
   useEffect(() => {
@@ -63,8 +90,9 @@ export const GiphySearchModal: React.FC<Props> = ({
     setQuery("");
   }, [visible]);
 
-  const handleClose = useCallback(() => {
-    Keyboard.dismiss();
+  const handleDismiss = useCallback(() => {
+    hasPresentedRef.current = false;
+    setQuery("");
     onClose();
   }, [onClose]);
 
@@ -83,6 +111,7 @@ export const GiphySearchModal: React.FC<Props> = ({
 
       Keyboard.dismiss();
       onGifSelected(gif.images.original.url);
+      sheetRef.current?.dismiss();
     },
     [gifsCount, onGifSelected],
   );
@@ -106,118 +135,97 @@ export const GiphySearchModal: React.FC<Props> = ({
 
   const keyExtractor = useCallback((item: GifItem) => item.id, []);
 
-  return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      transparent
-      statusBarTranslucent
-      presentationStyle="pageSheet"
-      onRequestClose={handleClose}
-    >
-      <KeyboardAvoidingView
-        style={styles.modalRoot}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <BlurView
-          intensity={100}
-          tint={"systemMaterial"}
-          style={StyleSheet.absoluteFill}
-        />
-
-        <Pressable style={styles.backdropPressable} onPress={handleClose} />
-
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <View>
-              <Text style={styles.title}>GIFs</Text>
-              <Text style={styles.subtitle}>Search and add a GIF</Text>
-            </View>
-
-            <TouchableOpacity
-              onPress={handleClose}
-              style={styles.closeButton}
-              activeOpacity={activeOpacity}
-              hitSlop={8}
-            >
-              <Ionicons
-                name="close"
-                size={22}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
+  const listHeader = useMemo(
+    () => (
+      <View style={styles.headerContent}>
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.title}>GIFs</Text>
+            <Text style={styles.subtitle}>Search and add a GIF</Text>
           </View>
-
-          <View style={styles.searchRow}>
-            <Ionicons
-              name="search"
-              size={18}
-              color={isDark ? Colors.lightGray : Colors.darkGray}
-            />
-
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search GIFs"
-              placeholderTextColor={isDark ? Colors.lightGray : Colors.darkGray}
-              value={query}
-              onChangeText={setQuery}
-              returnKeyType="search"
-              autoCorrect={false}
-              autoCapitalize="none"
-              autoFocus
-            />
-          </View>
-
-          <FlatList
-            data={results as GifItem[]}
-            keyExtractor={keyExtractor}
-            numColumns={3}
-            renderItem={renderItem}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.5}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-            columnWrapperStyle={styles.columnWrapper}
-            ListEmptyComponent={() =>
-              !loading && debouncedQuery.length >= 3 ? (
-                <Text style={styles.emptyText}>No GIFs found.</Text>
-              ) : null
-            }
-            ListFooterComponent={() =>
-              loading ? (
-                <Text style={styles.loadingText}>Loading...</Text>
-              ) : null
-            }
-          />
         </View>
-      </KeyboardAvoidingView>
-    </Modal>
+
+        <SearchBar
+          placeholder="Search GIFs"
+          value={query}
+          onChangeText={setQuery}
+        />
+      </View>
+    ),
+    [query, styles.header, styles.headerContent, styles.subtitle, styles.title],
+  );
+
+  return (
+    <BottomSheetModal
+      ref={sheetRef}
+      index={1}
+      snapPoints={snapPoints}
+      stackBehavior="push"
+      topInset={top}
+      enableDynamicSizing={false}
+      enablePanDownToClose
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
+      onDismiss={handleDismiss}
+      backdropComponent={(props) => (
+        <BottomSheetBackdrop
+          {...props}
+          appearsOnIndex={0}
+          disappearsOnIndex={-1}
+        />
+      )}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
+    >
+      <BottomSheetFlatList
+        data={results as GifItem[]}
+        keyExtractor={keyExtractor}
+        numColumns={3}
+        renderItem={renderItem}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnWrapper}
+        ListHeaderComponent={listHeader}
+        ListEmptyComponent={() =>
+          !loading && debouncedQuery.length >= 3 ? (
+            <Text style={styles.emptyText}>No GIFs found.</Text>
+          ) : null
+        }
+        ListFooterComponent={() =>
+          loading ? <Text style={styles.loadingText}>Loading...</Text> : null
+        }
+      />
+    </BottomSheetModal>
   );
 };
 
-const GiphySerachModalStyles = (isDark: boolean) =>
+const giphySearchModalStyles = (isDark: boolean) =>
   StyleSheet.create({
-    modalRoot: {
-      flex: 1,
-      justifyContent: "flex-end",
-    },
-    backdropPressable: {
-      ...StyleSheet.absoluteFillObject,
-    },
-    container: {
-      height: "88%",
+    handleStyle: {
+      backgroundColor: isDark ? Colors.black : Colors.white,
       borderTopLeftRadius: 22,
       borderTopRightRadius: 22,
-      paddingHorizontal: 14,
-      paddingTop: 10,
+    },
+    handleIndicatorStyle: {
+      backgroundColor: Colors.midTone,
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+    },
+    backgroundStyle: {
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      borderTopLeftRadius: 22,
+      borderTopRightRadius: 22,
+    },
+    headerContent: {
       paddingBottom: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
-
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      overflow: "hidden",
     },
-
     header: {
       flexDirection: "row",
       alignItems: "center",
@@ -252,7 +260,6 @@ const GiphySerachModalStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
-      marginBottom: 12,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: isDark
@@ -267,7 +274,9 @@ const GiphySerachModalStyles = (isDark: boolean) =>
       paddingVertical: 10,
     },
     listContent: {
-      paddingBottom: 28,
+      paddingHorizontal: 14,
+      paddingBottom: 44,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     columnWrapper: {
       gap: 8,

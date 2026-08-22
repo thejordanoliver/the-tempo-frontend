@@ -164,7 +164,7 @@ export const createPostStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     toolGifLabel: {
-      fontSize: 11,
+      fontSize: 10,
       fontFamily: Fonts.BOLD,
       letterSpacing: 0.5,
       color: isDark ? Colors.lightGray : Colors.darkGray,

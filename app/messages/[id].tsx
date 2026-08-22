@@ -1,7 +1,7 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import MessageThemeModal from "@/components/Messages/MessageThemeModal";
-import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
+import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchModal";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";

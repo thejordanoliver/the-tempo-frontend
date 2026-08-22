@@ -1,17 +1,17 @@
 // hooks/useForum.ts
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useState } from "react";
+import type {
+  ForumPost,
+  ForumPostUpdateResponse,
+  ForumPostsResponse,
+  UseForumOptions,
+} from "types/forum";
 import { apiClient } from "utils/apiClient";
 
-interface UseForumProps {
-  teamId?: string;
-  league?: string;
-}
-
-export function useForum({ teamId, league }: UseForumProps) {
-  const [posts, setPosts] = useState<Post[]>([]);
+export function useForum({ teamId, league }: UseForumOptions) {
+  const [posts, setPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
@@ -44,18 +44,20 @@ export function useForum({ teamId, league }: UseForumProps) {
           ? `/api/forum/team/${league}/${teamId}`
           : `/api/forum/league/${league}`;
 
-        const res = await apiClient.get(endpoint, {
+        const res = await apiClient.get<ForumPostsResponse>(endpoint, {
           params: { page: pageNumber, limit: 10 },
         });
 
         const data = res.data;
+        const nextPosts = Array.isArray(data?.posts) ? data.posts : [];
+        const nextTotalPages = Number(data?.pagination?.totalPages) || 1;
 
         setPosts((prev) =>
-          pageNumber === 1 ? data.posts : [...prev, ...data.posts],
+          pageNumber === 1 ? nextPosts : [...prev, ...nextPosts],
         );
 
         setPage(pageNumber);
-        setTotalPages(data.pagination.totalPages ?? 1);
+        setTotalPages(nextTotalPages);
       } catch (err: any) {
         console.error("Fetch posts error:", err);
         setError(
@@ -97,11 +99,16 @@ export function useForum({ teamId, league }: UseForumProps) {
 
   const editPost = useCallback(async (postId: string, newText: string) => {
     try {
-      const res = await apiClient.patch(`/api/forum/post/${postId}`, {
-        text: newText,
-      });
+      const res = await apiClient.patch<ForumPostUpdateResponse>(
+        `/api/forum/post/${postId}`,
+        {
+          text: newText,
+        },
+      );
       setPosts((prev) =>
-        prev.map((p) => (String(p.id) === postId ? res.data.post : p)),
+        prev.map((p) =>
+          String(p.id) === postId && res.data.post ? res.data.post : p,
+        ),
       );
     } catch (err: any) {
       const message =
@@ -111,11 +118,11 @@ export function useForum({ teamId, league }: UseForumProps) {
     }
   }, []);
 
-  const prependPost = useCallback((newPost: Post) => {
+  const prependPost = useCallback((newPost: ForumPost) => {
     setPosts((prev) => [newPost, ...prev]);
   }, []);
 
-  const updatePost = useCallback((updatedPost: Post) => {
+  const updatePost = useCallback((updatedPost: ForumPost) => {
     setPosts((prev) =>
       prev.map((post) =>
         String(post.id) === String(updatedPost.id)

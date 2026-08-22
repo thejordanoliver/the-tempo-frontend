@@ -239,6 +239,7 @@ export default function GameDetailsScreen(
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
   const lastPlay = score?.lastPlay;
+
   const teamStats = score?.teamStats ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];

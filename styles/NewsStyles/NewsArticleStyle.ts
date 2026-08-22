@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean) =>
+export const newsArticleStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: 12,

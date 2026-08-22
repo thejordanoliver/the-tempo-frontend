@@ -34,6 +34,8 @@ export function usePlayerById(playerId?: number, league: string = "NFL") {
                         ? `api/roster/wnba/player/${playerId}`
                         : league === "SOCC"
                           ? `api/roster/socc/player/${playerId}`
+                        : league === "MMA"
+                          ? `/api/roster/mma/player/${playerId}`
                           : `api/roster/nfl/player/${playerId}`;
 
         const res = await apiClient.get(url, {

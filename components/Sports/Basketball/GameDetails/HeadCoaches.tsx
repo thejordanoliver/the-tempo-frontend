@@ -247,8 +247,8 @@ const coachesStyles = (isDark: boolean) =>
     },
 
     teamLogo: {
-      width: 36,
-      height: 36,
+      width: 32,
+      height: 32,
       resizeMode: "contain",
     },
   });

@@ -10,7 +10,7 @@ import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
-import { useMMAGames } from "./MMAHooks/useMMAGames";
+import { useMMAEvents } from "./MMAHooks/useMMAEvents";
 import { useAllNews } from "./NewsHooks/useAllNews";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 
@@ -107,7 +107,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     loading: mmaLoading,
     error: mmaError,
     refreshGames: refreshMMAGames,
-  } = useMMAGames({
+  } = useMMAEvents({
     date: selectedDate,
     league: "ufc",
   });
@@ -123,8 +123,6 @@ export function useHomeData(selectedTab: "scores" | "news") {
     loading: leaguesCupLoading,
     refreshGames: refreshLeaguesCupGames,
   } = useSoccerGames(selectedDate, "leaguescup");
-
-
 
   const {
     games: fifaGames,

@@ -44,11 +44,7 @@ import { LeagueType } from "../../types/types";
 type LeagueRoute =
   | "/league/basketball"
   | "/league/football"
-  | "/league/cb"
-  | "/league/sb"
-  | "/league/cbb"
-  | "/league/wcbb"
-  | "/league/mlb"
+  | "/league/baseball"
   | "/league/nhl"
   | "/league/ufc"
   | "/league/racing"
@@ -205,9 +201,9 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   NFL: "/league/football",
   UFL: "/league/football",
   CFB: "/league/football",
-  CB: "/league/cb",
-  SB: "/league/sb",
-  MLB: "/league/mlb",
+  CB: "/league/baseball",
+  SB: "/league/baseball",
+  MLB: "/league/baseball",
   NHL: "/league/nhl",
   UFC: "/league/ufc",
   F1: "/league/racing",

@@ -2,19 +2,20 @@
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { useAuth } from "hooks/UserHooks/useAuth"; // adjust if your auth hook path differs
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LeagueType } from "types/types";
+import type {
+  ForumPost,
+  ForumPostUpdateResponse,
+  ForumPostsResponse,
+  UseLeagueForumPostsParams,
+} from "types/forum";
 
 import { apiClient } from "utils/apiClient";
-interface useForumPostsParams {
-  teamId: string;
-  league?: LeagueType;
-}
 
-export function useForumPosts({ league }: useForumPostsParams) {
+export function useForumPosts({ league }: UseLeagueForumPostsParams) {
   const { token, user } = useAuth();
   const { requestBadgeDataRefresh } = useBadgeNotifications();
 
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<ForumPost[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -44,18 +45,21 @@ export function useForumPosts({ league }: useForumPostsParams) {
       setError(null);
 
       try {
-        const res = await apiClient.get(`/api/forum/league/${league}`, {
-          params: { page: pageNumber, limit: 10 },
-        });
+        const res = await apiClient.get<ForumPostsResponse>(
+          `/api/forum/league/${league}`,
+          {
+            params: { page: pageNumber, limit: 10 },
+          },
+        );
 
-        const { posts: newPosts, pagination } = res.data;
+        const { posts: newPosts = [], pagination } = res.data;
 
         setPosts((prev) =>
           pageNumber === 1 ? newPosts : [...prev, ...newPosts],
         );
 
-        setPage(pagination.page);
-        setTotalPages(pagination.totalPages);
+        setPage(pagination?.page ?? pageNumber);
+        setTotalPages(pagination?.totalPages ?? 1);
       } catch (err: any) {
         setError(
           err.response?.data?.error ||
@@ -106,10 +110,13 @@ export function useForumPosts({ league }: useForumPostsParams) {
     async (postId: string, text: string) => {
       if (!token) throw new Error("Not authenticated");
 
-      const res = await apiClient.patch(`/api/forum/post/${postId}`, { text });
+      const res = await apiClient.patch<ForumPostUpdateResponse>(
+        `/api/forum/post/${postId}`,
+        { text },
+      );
 
       setPosts((prev) =>
-        prev.map((p) => (p.id === postId ? res.data.post : p)),
+        prev.map((p) => (p.id === postId && res.data.post ? res.data.post : p)),
       );
     },
     [token],

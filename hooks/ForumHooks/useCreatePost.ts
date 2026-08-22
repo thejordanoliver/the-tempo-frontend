@@ -1,7 +1,5 @@
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { isAxiosError } from "axios";
-import { PollData } from "components/Forum/PollEditorModal";
-import type { Post } from "components/Forum/PostItem";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
@@ -14,18 +12,14 @@ import {
   UIManager,
 } from "react-native";
 import { AlertConfig } from "types/alert";
-import type { ForumPostCreateResponse } from "types/badges";
+import type {
+  ForumComposerMediaItem,
+  ForumPollDraft,
+  ForumPost,
+  ForumPostCreateResponse,
+} from "types/forum";
 import { LeagueType } from "types/types";
 import { apiClient } from "utils/apiClient";
-
-export type MediaItem = {
-  id: string;
-  uri: string;
-  type: "image" | "video" | "gif";
-  thumbnailUri?: string;
-  trimStartMs?: number;
-  trimEndMs?: number;
-};
 
 if (
   Platform.OS === "android" &&
@@ -41,7 +35,7 @@ const createAnim = () => ({ opacity: new Animated.Value(1) });
 const createMediaId = () =>
   `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-const getMimeType = (item: MediaItem) => {
+const getMimeType = (item: ForumComposerMediaItem) => {
   if (item.type === "gif") return "image/gif";
 
   const filename = item.uri.split("/").pop() || "";
@@ -62,13 +56,13 @@ const getMimeType = (item: MediaItem) => {
 export function useCreatePost(teamId?: string, league?: LeagueType) {
   const [newPostText, setNewPostText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [media, setMedia] = useState<ForumComposerMediaItem[]>([]);
   const [mediaAnims, setMediaAnims] = useState<
     Record<string, { opacity: Animated.Value }>
   >({});
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [poll, setPoll] = useState<PollData | null>(null);
+  const [posts, setPosts] = useState<ForumPost[]>([]);
+  const [poll, setPoll] = useState<ForumPollDraft | null>(null);
 
   const router = useRouter();
   const removingRef = useRef(new Set<string>());
@@ -83,11 +77,11 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
     setAlertConfig(null);
   }, []);
 
-  const prependPost = useCallback((post: Post) => {
+  const prependPost = useCallback((post: ForumPost) => {
     setPosts((prev) => [post, ...prev]);
   }, []);
 
-  const addMediaItems = useCallback((items: MediaItem[]) => {
+  const addMediaItems = useCallback((items: ForumComposerMediaItem[]) => {
     if (items.length === 0) return;
 
     setMedia((prev) => [...prev, ...items]);
@@ -122,7 +116,7 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
 
     if (result.canceled) return;
 
-    const selected: MediaItem[] = await Promise.all(
+    const selected: ForumComposerMediaItem[] = await Promise.all(
       result.assets.map(async (asset) => {
         const id = createMediaId();
 
@@ -326,15 +320,13 @@ export function useCreatePost(teamId?: string, league?: LeagueType) {
         ? `/api/forum/team/${teamId}`
         : `/api/forum/league/${league}`;
 
-      const res = await apiClient.post<ForumPostCreateResponse<Post, unknown>>(
-        endpoint,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      const res = await apiClient.post<
+        ForumPostCreateResponse<ForumPost, unknown>
+      >(endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      );
+      });
 
       const { post: newPost, newlyAwardedBadges } = res.data;
 

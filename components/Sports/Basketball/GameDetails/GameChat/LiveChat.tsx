@@ -35,7 +35,7 @@ import { createMessageKey } from "utils/chatUtils";
 import { snapPoints } from "utils/modalUtils";
 import ChatInputBar from "./ChatInputBar";
 import ChatMessage from "./ChatMessage";
-import { GiphySearchModal } from "./GiphySearchSheet";
+import { GiphySearchModal } from "./GiphySearchModal";
 
 const EMOJIS = ["😂", "😱", "😳", "🔥"];
 const FALLBACK_INPUT_HEIGHT = 84;
@@ -89,15 +89,25 @@ export default function LiveChat({
   const [selectedGifUrl, setSelectedGifUrl] = useState<string | null>(null);
   const [gifModalVisible, setGifModalVisible] = useState(false);
 
+  // `@gorhom/bottom-sheet` doesn't expose an imperative method for toggling
+  // content panning — it's driven by the `enableContentPanningGesture` prop
+  // instead, so we track it as state and feed it to the sheet below.
+  const [contentPanningEnabled, setContentPanningEnabled] = useState(true);
+
   const isNearBottomRef = useRef(true);
   const previousMessageCountRef = useRef(messages.length);
+
+  const disablePanDown = useCallback(() => {
+    setContentPanningEnabled(false);
+  }, []);
+
+  const enablePanDown = useCallback(() => {
+    setContentPanningEnabled(true);
+  }, []);
 
   const scrollToLatestMessage = useCallback((animated = true) => {
     const scroll = (shouldAnimate: boolean) => {
       listRef.current?.scrollToEnd({ animated: shouldAnimate });
-
-      // More reliable than scrollToEnd when the footer/bottom padding/image layout
-      // changes after the first scroll calculation.
       listRef.current?.scrollToOffset?.({
         offset: Number.MAX_SAFE_INTEGER,
         animated: shouldAnimate,
@@ -109,9 +119,6 @@ export default function LiveChat({
 
     requestAnimationFrame(() => {
       scroll(animated);
-
-      // BottomSheet footer + GIF/image content can change measured height after
-      // the first frame, so run it again after layout settles.
       setTimeout(() => scroll(false), 60);
       setTimeout(() => scroll(false), 160);
     });
@@ -121,7 +128,6 @@ export default function LiveChat({
     const frame = requestAnimationFrame(() => {
       bottomSheetRef.current?.present();
     });
-
     return () => cancelAnimationFrame(frame);
   }, []);
 
@@ -146,21 +152,22 @@ export default function LiveChat({
 
   const openGifPicker = useCallback(() => {
     Keyboard.dismiss();
-
-    requestAnimationFrame(() => {
-      setGifModalVisible(true);
-    });
-  }, []);
+    disablePanDown();
+    setGifModalVisible(true);
+  }, [disablePanDown]);
 
   const closeGifPicker = useCallback(() => {
-    Keyboard.dismiss();
+    enablePanDown();
     setGifModalVisible(false);
-  }, []);
+  }, [enablePanDown]);
 
-  const handleGifSelected = useCallback((gifUrl: string) => {
-    setSelectedGifUrl(gifUrl);
-    setGifModalVisible(false);
-  }, []);
+  const handleGifSelected = useCallback(
+    (gifUrl: string) => {
+      setSelectedGifUrl(gifUrl);
+      closeGifPicker();
+    },
+    [closeGifPicker],
+  );
 
   const contentContainerStyle = useMemo(
     () => [
@@ -262,6 +269,8 @@ export default function LiveChat({
           selectedGifUrl={selectedGifUrl}
           onSelectedGifUrlChange={setSelectedGifUrl}
           onOpenGifPicker={openGifPicker}
+          disablePanDown={disablePanDown}
+          enablePanDown={enablePanDown}
         />
       </BottomSheetFooter>
     ),
@@ -273,6 +282,8 @@ export default function LiveChat({
       openGifPicker,
       selectedGifUrl,
       styles.footerContainer,
+      disablePanDown,
+      enablePanDown,
     ],
   );
 
@@ -280,14 +291,14 @@ export default function LiveChat({
     <>
       <BottomSheetModal
         ref={bottomSheetRef}
-        index={1}
+        index={2}
         snapPoints={snapPoints}
         onDismiss={onDismiss}
         topInset={top}
         containerComponent={ChatSheetContainer}
-        containerStyle={styles.sheetContainer}
         footerComponent={renderFooter}
         enablePanDownToClose
+        enableContentPanningGesture={contentPanningEnabled}
         enableDynamicSizing={false}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
@@ -298,19 +309,13 @@ export default function LiveChat({
             {...props}
             appearsOnIndex={0}
             disappearsOnIndex={-1}
-            pressBehavior="close"
-            style={styles.backdrop}
           />
         )}
         backgroundComponent={() => (
           <View style={[StyleSheet.absoluteFill, styles.background]}>
             <BlurView
               intensity={80}
-              tint={
-                isDark
-                  ? "systemChromeMaterialDark"
-                  : "systemChromeMaterialLight"
-              }
+              tint={"systemChromeMaterial"}
               style={StyleSheet.absoluteFill}
             />
           </View>
@@ -318,12 +323,12 @@ export default function LiveChat({
       >
         <View style={styles.content}>
           {header}
+
           <BottomSheetChatList
             ref={listRef}
             data={messages}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
-            ListHeaderComponent={null}
             contentContainerStyle={contentContainerStyle}
             onContentSizeChange={handleContentSizeChange}
             onLayout={handleListLayout}
@@ -372,18 +377,11 @@ export default function LiveChat({
 
 const LiveChatStyles = (isDark: boolean) =>
   StyleSheet.create({
-    sheetContainer: {
-      zIndex: 10000,
-      elevation: 10000,
-    },
     handleIndicatorStyle: {
       backgroundColor: isDark ? Colors.white : Colors.black,
       width: 42,
     },
-    backdrop: {
-      zIndex: 9999,
-      elevation: 9999,
-    },
+
     background: {
       overflow: "hidden",
       borderTopLeftRadius: 18,

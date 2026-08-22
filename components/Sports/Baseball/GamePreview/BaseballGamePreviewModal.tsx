@@ -146,12 +146,12 @@ export default function BaseballGamePreviewModal({
       }
     : undefined;
 
-  const outs = score?.outs ?? 0;
+  const outs = score?.situation.outs ?? 0;
 
   const bases = {
-    onFirst: score?.bases.onFirst ?? false,
-    onSecond: score?.bases.onSecond ?? false,
-    onThird: score?.bases?.onThird ?? false,
+    onFirst: score?.situation.bases.onFirst ?? false,
+    onSecond: score?.situation.bases.onSecond ?? false,
+    onThird: score?.situation.bases?.onThird ?? false,
   };
 
   const homeHits = score?.home.hits ?? 0;
@@ -197,7 +197,7 @@ export default function BaseballGamePreviewModal({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
+      index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
       enableDynamicSizing={false}

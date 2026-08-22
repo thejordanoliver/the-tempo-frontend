@@ -2,14 +2,9 @@ import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import type { ForumPostButtonProps } from "types/forum";
 
-type PostButtonProps = {
-  onPress: () => void;
-  disabled?: boolean;
-  title: string;
-};
-
-export default function PostButton({ onPress, disabled }: PostButtonProps) {
+export default function PostButton({ onPress, disabled }: ForumPostButtonProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = postButtonStyles(isDark);

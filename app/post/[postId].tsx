@@ -1,22 +1,19 @@
 // post/[postId].tsx
 
 import { CustomHeader } from "@/components/CustomHeader";
-import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchSheet";
+import { PostItem } from "@/components/Forum/PostItem/PostItem";
+import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchModal";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CommentItem } from "components/Forum/CommentItem";
-import { Post, PostItem } from "components/Forum/PostItem";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import {
-  type CommentAttachment,
-  useCommentThread,
-} from "hooks/ForumHooks/useCommentThread";
+import { useCommentThread } from "hooks/ForumHooks/useCommentThread";
 import {
   useCallback,
   useEffect,
@@ -40,37 +37,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-interface Comment {
-  id: string;
-  text: string | null;
-  user_id: number;
-  username: string;
-  created_at: string;
-  profile_image: string | null;
-  images?: string[];
-  videos?: string[];
-  video_thumbnails?: (string | null)[];
-}
-
-function mapCommentToPost(comment: Comment): Post {
-  return {
-    id: comment.id,
-    text: comment.text ?? "",
-    user_id: comment.user_id,
-    username: comment.username,
-    created_at: comment.created_at,
-    full_name: null,
-    profile_image: comment.profile_image,
-    likes: 0,
-    shares: 0,
-    comments_count: 0,
-    liked_by_current_user: false,
-    images: comment.images ?? [],
-    videos: comment.videos ?? [],
-    video_thumbnails: comment.video_thumbnails ?? [],
-  };
-}
+import type { ForumComment, ForumCommentAttachment } from "types/forum";
 
 export default function CommentThreadScreen() {
   const params = useLocalSearchParams();
@@ -86,14 +53,15 @@ export default function CommentThreadScreen() {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
 
-  const listRef = useRef<FlatList<Post>>(null);
+  const listRef = useRef<FlatList<ForumComment>>(null);
   const inputRef = useRef<TextInput>(null);
   const keyboardOffset = useRef(new Animated.Value(0)).current;
   const hasExitedAfterDeleteRef = useRef(false);
 
   const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<ForumComment | null>(null);
   const [selectedAttachment, setSelectedAttachment] =
-    useState<CommentAttachment | null>(null);
+    useState<ForumCommentAttachment | null>(null);
   const [attachmentMenuVisible, setAttachmentMenuVisible] = useState(false);
   const [gifModalVisible, setGifModalVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -108,30 +76,40 @@ export default function CommentThreadScreen() {
     alertConfig,
     setAlertConfig,
     postComment,
+    postReply,
     editComment,
     deleteComment,
     deletePost,
     updatePost,
   } = useCommentThread(postId);
 
-  const commentItems = useMemo(
-    () => comments.map(mapCommentToPost),
-    [comments],
-  );
-
   const isSendDisabled =
     (newComment.trim().length === 0 && selectedAttachment === null) ||
     submitting;
 
+  const composerPlaceholder = replyingTo
+    ? selectedAttachment
+      ? "Add a reply caption..."
+      : `Reply to @${replyingTo.username}...`
+    : selectedAttachment
+      ? "Add a caption..."
+      : "Write a comment...";
+
   const listBottomPadding = useMemo(() => {
-    const composerPadding = selectedAttachment ? 330 : 118;
+    const composerPadding = selectedAttachment ? 360 : replyingTo ? 152 : 118;
 
     if (keyboardVisible) {
       return composerPadding + keyboardHeight;
     }
 
     return composerPadding + Math.max(insets.bottom, 8);
-  }, [insets.bottom, keyboardHeight, keyboardVisible, selectedAttachment]);
+  }, [
+    insets.bottom,
+    keyboardHeight,
+    keyboardVisible,
+    replyingTo,
+    selectedAttachment,
+  ]);
 
   const goBackToPreviousScreen = useCallback(() => {
     if (hasExitedAfterDeleteRef.current) return;
@@ -205,22 +183,55 @@ export default function CommentThreadScreen() {
     });
   }, []);
 
+  const handleStartReply = useCallback((comment: ForumComment) => {
+    setReplyingTo(comment);
+    setAttachmentMenuVisible(false);
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  }, []);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyingTo(null);
+
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
+  }, []);
+
   const handlePostComment = useCallback(async () => {
     const trimmedComment = newComment.trim();
 
     if ((!trimmedComment && !selectedAttachment) || submitting) return;
 
-    await postComment(trimmedComment, selectedAttachment);
+    const submitted = replyingTo
+      ? await postReply(replyingTo.id, trimmedComment, selectedAttachment)
+      : await postComment(trimmedComment, selectedAttachment);
+
+    if (!submitted) return;
 
     setNewComment("");
     setSelectedAttachment(null);
+    setReplyingTo(null);
     setAttachmentMenuVisible(false);
-    scrollToBottom();
+
+    if (!replyingTo) {
+      scrollToBottom();
+    }
 
     requestAnimationFrame(() => {
       inputRef.current?.focus();
     });
-  }, [newComment, postComment, scrollToBottom, selectedAttachment, submitting]);
+  }, [
+    newComment,
+    postComment,
+    postReply,
+    replyingTo,
+    scrollToBottom,
+    selectedAttachment,
+    submitting,
+  ]);
 
   const handlePickImage = useCallback(async () => {
     closeAttachmentMenu();
@@ -304,30 +315,41 @@ export default function CommentThreadScreen() {
     });
   }, []);
 
-  const renderComment: ListRenderItem<Post> = useCallback(
+  useEffect(() => {
+    if (
+      replyingTo &&
+      !comments.some((comment) => comment.id === replyingTo.id)
+    ) {
+      setReplyingTo(null);
+    }
+  }, [comments, replyingTo]);
+
+  const renderComment: ListRenderItem<ForumComment> = useCallback(
     ({ item, index }) => (
       <CommentItem
         comment={item}
         postId={postId ?? ""}
         isDark={isDark}
-        currentUserId={currentUserId ?? ""}
+        currentUserId={currentUserId}
         editComment={editComment}
         deleteComment={deleteComment}
-        isLast={index === commentItems.length - 1}
+        onReply={handleStartReply}
+        isLast={index === comments.length - 1}
       />
     ),
     [
-      commentItems.length,
+      comments.length,
       currentUserId,
       deleteComment,
       editComment,
+      handleStartReply,
       isDark,
       postId,
     ],
   );
 
   const renderEmptyComments = useCallback(() => {
-    if (commentItems.length > 0) return null;
+    if (comments.length > 0) return null;
 
     return (
       <View style={styles.emptyCommentsContainer}>
@@ -345,7 +367,7 @@ export default function CommentThreadScreen() {
       </View>
     );
   }, [
-    commentItems.length,
+    comments.length,
     isDark,
     styles.emptyCommentsContainer,
     styles.emptyText,
@@ -419,8 +441,8 @@ export default function CommentThreadScreen() {
     <View style={styles.root}>
       <FlatList
         ref={listRef}
-        data={commentItems}
-        keyExtractor={(item) => item.id}
+        data={comments}
+        keyExtractor={(item) => String(item.id)}
         renderItem={renderComment}
         ListHeaderComponent={
           post ? (
@@ -446,7 +468,7 @@ export default function CommentThreadScreen() {
           { paddingBottom: listBottomPadding },
         ]}
         onContentSizeChange={() => {
-          if (commentItems.length > 0 && !keyboardVisible) {
+          if (comments.length > 0 && !keyboardVisible && !replyingTo) {
             scrollToBottom(false);
           }
         }}
@@ -500,6 +522,38 @@ export default function CommentThreadScreen() {
           </View>
         )}
 
+        {replyingTo && (
+          <View style={styles.replyTargetContainer}>
+            <Ionicons
+              name="return-down-forward-outline"
+              size={15}
+              color={isDark ? Colors.dark.blue : Colors.light.blue}
+            />
+
+            <Text style={styles.replyTargetText} numberOfLines={1}>
+              Replying to{" "}
+              <Text style={styles.replyTargetUsername}>
+                @{replyingTo.username}
+              </Text>
+            </Text>
+
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Cancel reply to ${replyingTo.username}`}
+              activeOpacity={activeOpacity}
+              onPress={handleCancelReply}
+              style={styles.replyCancelButton}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="close"
+                size={18}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
         <View style={styles.composer}>
           <View style={styles.attachmentAnchor}>
             <MessageAttachmentMenu
@@ -528,9 +582,7 @@ export default function CommentThreadScreen() {
 
           <TextInput
             ref={inputRef}
-            placeholder={
-              selectedAttachment ? "Add a caption..." : "Write a comment..."
-            }
+            placeholder={composerPlaceholder}
             value={newComment}
             onChangeText={setNewComment}
             multiline
@@ -543,7 +595,9 @@ export default function CommentThreadScreen() {
             onPressIn={closeAttachmentMenu}
             onFocus={() => {
               requestAnimationFrame(() => {
-                scrollToBottom();
+                if (!replyingTo) {
+                  scrollToBottom();
+                }
               });
             }}
             style={styles.input}
@@ -658,6 +712,45 @@ const commentThreadStyles = (isDark: boolean) =>
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+    },
+
+    replyTargetContainer: {
+      minHeight: 34,
+      marginBottom: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 7,
+      borderRadius: 10,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+    },
+
+    replyTargetText: {
+      flex: 1,
+      minWidth: 0,
+      fontSize: 13,
+      lineHeight: 17,
+      fontFamily: Fonts.REGULAR,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    replyTargetUsername: {
+      fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+
+    replyCancelButton: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
     attachmentAnchor: {

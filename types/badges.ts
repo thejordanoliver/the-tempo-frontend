@@ -85,35 +85,6 @@ export type BadgeAwardResponse = {
 
 export type BadgeMutationResponse = BadgeAwardResponse;
 
-export type ForumPostCreateResponse<TPost = unknown, TPoll = unknown> =
-  BadgeMutationResponse & {
-    post: TPost;
-    poll?: TPoll | null;
-  };
-
-export type ForumCommentCreateResponse<TComment = unknown> =
-  BadgeMutationResponse & {
-    message?: string;
-    comment: TComment;
-  };
-
-export type ForumLikeMutationResponse<TPost = unknown> =
-  BadgeMutationResponse & {
-    post: TPost;
-    didChangeLike: boolean;
-  };
-
-export type ForumShareMutationResponse<TPost = unknown> =
-  BadgeMutationResponse & {
-    post: TPost;
-    didCreateShare: boolean;
-  };
-
-export type ForumDeleteMutationResponse<TDeleted = unknown> = {
-  message?: string;
-  comment?: TDeleted;
-};
-
 export type BadgeProgress = BadgeDefinition & {
   currentValue: number;
   progressPercent: number;

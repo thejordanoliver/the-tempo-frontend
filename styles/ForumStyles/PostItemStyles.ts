@@ -2,252 +2,330 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export function postItemStyles(isDark: boolean) {
+  const textColor = isDark ? Colors.white : Colors.black;
+  const mutedColor = Colors.midTone;
+  const surfaceColor = isDark
+    ? Colors.dark.itemBackground
+    : Colors.light.itemBackground;
+  const borderColor = isDark ? Colors.darkGray : Colors.lightGray;
+
   return StyleSheet.create({
+    /* -------------------------------------------------------------------------- */
+    /*                                  Container                                 */
+    /* -------------------------------------------------------------------------- */
+
     container: {
-      paddingTop: 12,
-      paddingHorizontal: 12,
+      paddingHorizontal: 14,
     },
+
     postContainer: {
-      borderBottomColor: Colors.midTone,
+      paddingTop: 16,
+      paddingBottom: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingVertical: 10,
+      borderBottomColor: borderColor,
     },
-    username: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    timeWrapper: { flex: 1, justifyContent: "flex-end" },
-    timestamp: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: Colors.midTone,
-    },
-    postTextWrapper: {
-      minHeight: 100,
-      justifyContent: "center",
-    },
-    postText: {
-      marginTop: 12,
-      marginBottom: 12,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    editPostText: {
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderWidth: 1,
-      borderRadius: 6,
-      padding: 8,
-      minHeight: 100,
-      maxHeight: 280,
-      marginTop: 12,
-      marginBottom: 12,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    postFooter: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    leftSide: {
-      flexDirection: "row",
-    },
-    rightSide: {
-      flexDirection: "row",
-    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Header                                   */
+    /* -------------------------------------------------------------------------- */
+
     userRow: {
       flexDirection: "row",
       alignItems: "center",
-      marginBottom: 4,
       justifyContent: "space-between",
     },
-    profileImage: {
-      width: 40,
-      height: 40,
-      borderRadius: 50,
-      marginRight: 8,
+
+    leftSide: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      flexShrink: 1,
     },
+
+    profileImage: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+    },
+
     profilePlaceholder: {
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       justifyContent: "center",
       alignItems: "center",
     },
-    likeButtonContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: 50,
-    },
-    count: {
+
+    username: {
+      flexShrink: 1,
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      marginLeft: 4,
-      marginRight: 4,
+      lineHeight: 20,
+      color: textColor,
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                Post Content                                */
+    /* -------------------------------------------------------------------------- */
+
+    postTextWrapper: {
+      paddingTop: 12,
+    },
+
+    postText: {
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      lineHeight: 23,
+      color: textColor,
     },
-    interactionContainer: { flex: 1 },
-    interactionWrapper: {
-      flex: 1,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginVertical: 8,
-    },
-    dropdownMenu: {
-      position: "absolute",
-      right: 12,
-      top: 36,
-      borderRadius: 8,
-      borderTopRightRadius: 2,
-      overflow: "hidden",
-      width: 120,
-      height: 100,
-      shadowColor: Colors.black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-      zIndex: 1000,
-      justifyContent: "center",
-    },
-    dropdownItem: { borderBottomWidth: 1, borderBottomColor: Colors.midTone },
 
     singleImageWrapper: {
-      marginTop: 4,
-    },
-    singlePostImage: {
-      width: "100%",
-      height: 250,
-      borderRadius: 8,
-      marginBottom: 10,
-    },
-    editActionsContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "100%",
-    },
-    saveText: {
-      color: isDark ? Colors.dark.leafGreen : Colors.light.green,
-      fontSize: 20,
-      fontFamily: Fonts.REGULAR,
-    },
-    cancelText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 20,
-      fontFamily: Fonts.REGULAR,
-    },
-    button: {
-      padding: 10,
-      flexDirection: "row",
-      alignItems: "center",
+      marginTop: 12,
     },
 
-    //Poll Block
+    singlePostImage: {
+      width: "100%",
+      height: 280,
+      borderRadius: 14,
+      marginTop: 12,
+    },
+
     pollContainer: {
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      marginTop: 14,
       padding: 14,
-      marginTop: 10,
+      borderRadius: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor,
+      backgroundColor: surfaceColor,
     },
 
     pollQuestion: {
-      color: isDark ? Colors.white : Colors.black,
+      marginBottom: 14,
       fontFamily: Fonts.BOLD,
-      fontSize: 15,
-      marginBottom: 12,
+      fontSize: 16,
+      lineHeight: 21,
+      color: textColor,
     },
+
     optionWrapper: {
-      borderRadius: 8,
+      position: "relative",
+      minHeight: 46,
+      marginBottom: 9,
+      borderRadius: 10,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor,
       overflow: "hidden",
-      borderWidth: 1,
     },
+
     optionFill: {
       position: "absolute",
       top: 0,
       left: 0,
       bottom: 0,
-      borderRadius: 8,
+      borderRadius: 10,
     },
+
     optionLabelRow: {
+      minHeight: 46,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: 12,
-      paddingVertical: 10,
     },
-    optionContent: { flexDirection: "row", alignItems: "center", gap: 6 },
+
+    optionContent: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+      paddingRight: 8,
+    },
+
     optionText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 14,
-    },
-    percentageText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      flexShrink: 1,
       fontFamily: Fonts.REGULAR,
-      fontSize: 13,
+      fontSize: 14,
+      lineHeight: 19,
+      color: textColor,
     },
+
+    percentageText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: mutedColor,
+    },
+
     footerText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      marginTop: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      marginTop: 4,
+      color: mutedColor,
     },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Footer                                   */
+    /* -------------------------------------------------------------------------- */
+
+    postFooter: {
+      marginTop: 12,
+    },
+
+    interactionContainer: {
+      width: "100%",
+    },
+
+    interactionWrapper: {
+      width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+
+    rightSide: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+
+    buttonContainer: {
+      minWidth: 44,
+      minHeight: 40,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 5,
+      paddingHorizontal: 4,
+    },
+
+    count: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
+      lineHeight: 18,
+      color: mutedColor,
+    },
+
+    timestamp: {
+      marginTop: 4,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      lineHeight: 16,
+      color: mutedColor,
+    },
+
+    timeWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 3,
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Edit                                    */
+    /* -------------------------------------------------------------------------- */
+
+    editPostText: {
+      minHeight: 110,
+      marginTop: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor,
+      borderRadius: 12,
+      backgroundColor: surfaceColor,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      lineHeight: 22,
+      color: textColor,
+    },
+
+    editActionsContainer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      alignItems: "center",
+      gap: 10,
+      width: "100%",
+    },
+
+    button: {
+      minHeight: 40,
+      paddingHorizontal: 18,
+      borderRadius: 10,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: surfaceColor,
+    },
+
+    saveText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      color: textColor,
+    },
+
+    cancelText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      color: mutedColor,
+    },
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Menu                                    */
+    /* -------------------------------------------------------------------------- */
 
     menuAnchor: {
       position: "relative",
-      width: 32,
-      height: 32,
+      width: 40,
+      height: 40,
       alignItems: "center",
       justifyContent: "center",
       zIndex: 60,
-      elevation: 60,
     },
 
     menuPlaceholder: {
-      width: 32,
-      height: 32,
+      width: 40,
+      height: 40,
     },
 
     menuButton: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: "transparent",
       backgroundColor: "transparent",
     },
 
     submenu: {
       position: "absolute",
-      top: 38,
+      top: 42,
       right: 0,
-      width: 136,
+      width: 160,
+
       borderRadius: 14,
       borderWidth: StyleSheet.hairlineWidth,
+
       shadowColor: Colors.black,
-      shadowOpacity: 0.18,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 18,
+      shadowOpacity: 0.16,
+      shadowRadius: 14,
+      shadowOffset: {
+        width: 0,
+        height: 8,
+      },
+
+      elevation: 20,
       overflow: "hidden",
       zIndex: 80,
     },
 
     submenuItem: {
+      minHeight: 48,
       flexDirection: "row",
       alignItems: "center",
-      paddingHorizontal: 10,
-      paddingVertical: 10,
-      gap: 8,
+      paddingHorizontal: 12,
+      gap: 10,
     },
 
     submenuIconWrap: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: isDark ? Colors.black : Colors.white,
@@ -255,14 +333,15 @@ export function postItemStyles(isDark: boolean) {
 
     submenuText: {
       flex: 1,
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
+      fontSize: 14,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     submenuSeparator: {
       height: StyleSheet.hairlineWidth,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      marginLeft: 52,
+      backgroundColor: borderColor,
     },
   });
 }
@@ -277,6 +356,13 @@ export const commentItemStyles = (isDark: boolean) =>
       elevation: 0,
     },
 
+    replyRoot: {
+      paddingHorizontal: 0,
+      marginLeft: 42,
+      marginTop: 8,
+      backgroundColor: "transparent",
+    },
+
     containerMenuOpen: {
       zIndex: 1000,
       elevation: 24,
@@ -288,6 +374,11 @@ export const commentItemStyles = (isDark: boolean) =>
       paddingVertical: 10,
       overflow: "visible",
       zIndex: 1,
+    },
+
+    replyCommentContainer: {
+      paddingVertical: 7,
+      borderBottomWidth: 0,
     },
 
     lastContainer: {
@@ -320,6 +411,12 @@ export const commentItemStyles = (isDark: boolean) =>
       borderRadius: 17,
     },
 
+    replyProfileImage: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+    },
+
     profilePlaceholder: {
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       justifyContent: "center",
@@ -330,6 +427,10 @@ export const commentItemStyles = (isDark: boolean) =>
       color: Colors.white,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+    },
+
+    replyProfileInitial: {
+      fontSize: 12,
     },
 
     userMeta: {
@@ -345,11 +446,19 @@ export const commentItemStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
 
+    replyUsername: {
+      fontSize: 14,
+    },
+
     timestamp: {
       marginTop: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: Colors.midTone,
+    },
+
+    replyTimestamp: {
+      fontSize: 10,
     },
 
     menuAnchor: {
@@ -455,6 +564,11 @@ export const commentItemStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
 
+    replyText: {
+      fontSize: 13,
+      lineHeight: 19,
+    },
+
     expandButton: {
       alignSelf: "flex-start",
       marginTop: 5,
@@ -480,8 +594,58 @@ export const commentItemStyles = (isDark: boolean) =>
       marginTop: 4,
     },
 
+    replyMediaWrapper: {
+      maxWidth: "92%",
+    },
+
     mediaOnlyWrapper: {
       marginTop: 0,
+    },
+
+    commentActionsRow: {
+      marginTop: 8,
+      minHeight: 24,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+    },
+
+    replyActionButton: {
+      minHeight: 24,
+      justifyContent: "center",
+    },
+
+    replyActionText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
+    },
+
+    replyCountText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.REGULAR,
+      color: Colors.midTone,
+    },
+
+    repliesContainer: {
+      marginTop: 4,
+    },
+
+    viewRepliesButton: {
+      alignSelf: "flex-start",
+      minHeight: 28,
+      justifyContent: "center",
+      marginLeft: 42,
+      marginTop: 2,
+    },
+
+    viewRepliesText: {
+      fontSize: 12,
+      lineHeight: 16,
+      fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
     },
 
     editContainer: {

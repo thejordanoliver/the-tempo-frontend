@@ -140,7 +140,7 @@ export default function HockeyGamePreviewModal({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
+      index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
       enableDynamicSizing={false}

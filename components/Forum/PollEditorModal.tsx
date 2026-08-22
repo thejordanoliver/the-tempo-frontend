@@ -17,21 +17,10 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from "react-native-draggable-flatlist";
-
-export type PollOption = { id: string; text: string };
-
-export type PollData = {
-  question: string;
-  options: PollOption[];
-  allowsMultiple: boolean;
-};
-
-type Props = {
-  visible: boolean;
-  initial?: PollData | null;
-  onClose: () => void;
-  onSave: (poll: PollData) => void;
-};
+import type {
+  ForumPollDraftOption,
+  ForumPollEditorModalProps,
+} from "types/forum";
 
 const MAX_OPTIONS = 4;
 const MIN_OPTIONS = 2;
@@ -52,13 +41,13 @@ export default function PollEditorModal({
   initial,
   onClose,
   onSave,
-}: Props) {
+}: ForumPollEditorModalProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
   const [question, setQuestion] = useState(initial?.question ?? "");
-  const [options, setOptions] = useState<PollOption[]>(
+  const [options, setOptions] = useState<ForumPollDraftOption[]>(
     initial?.options ?? makeDefaultOptions(),
   );
   const [allowsMultiple, setAllowsMultiple] = useState(
@@ -100,7 +89,12 @@ export default function PollEditorModal({
   };
 
   const renderOption = useCallback(
-    ({ item, drag, isActive, getIndex }: RenderItemParams<PollOption>) => {
+    ({
+      item,
+      drag,
+      isActive,
+      getIndex,
+    }: RenderItemParams<ForumPollDraftOption>) => {
       const index = (getIndex?.() ?? 0) + 1;
       return (
         <View

@@ -21,11 +21,14 @@ import {
   View,
 } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
-import type { ForumLikeMutationResponse } from "types/badges";
+import type {
+  ForumDisplayMediaItem,
+  ForumLikeMutationResponse,
+  ForumPost,
+  ForumPostImagesModalProps,
+} from "types/forum";
 import { apiClient, BASE_URL } from "utils/apiClient";
 import AppVideo from "../AppVideo";
-import { MediaItem } from "./PostImages";
-import type { Post } from "./PostItem";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -35,22 +38,6 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-type PostImagesModalProps = {
-  visible: boolean;
-  postId: string;
-  media: MediaItem[];
-  initialIndex: number;
-  onClose: () => void;
-  postText?: string;
-  likesCount?: number;
-  commentsCount?: number;
-  likedByCurrentUser?: boolean;
-  profileImage?: string | null;
-  username?: string;
-  postAuthorUserId: string | number;
-  currentUserId: string | number | null;
-};
 
 export default function PostImagesModal({
   visible,
@@ -66,12 +53,12 @@ export default function PostImagesModal({
   username,
   postAuthorUserId,
   currentUserId,
-}: PostImagesModalProps) {
+}: ForumPostImagesModalProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  const flatListRef = useRef<FlatList<MediaItem>>(null);
+  const flatListRef = useRef<FlatList<ForumDisplayMediaItem>>(null);
   const opacity = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.85)).current;
   const [expanded, setExpanded] = useState(false);
@@ -116,7 +103,7 @@ export default function PostImagesModal({
 
     try {
       const response = await apiClient.patch<
-        ForumLikeMutationResponse<Partial<Post>>
+        ForumLikeMutationResponse<Partial<ForumPost>>
       >(`/api/forum/post/${postId}/like`, {
         like: nextLiked,
       });
@@ -135,7 +122,7 @@ export default function PostImagesModal({
 
       if (
         currentUserId != null &&
-        String(currentUserId) === String(postAuthorUserId)
+        currentUserId === postAuthorUserId
       ) {
         handleBadgeAwards(response.data.newlyAwardedBadges);
       } else if (__DEV__ && response.data.newlyAwardedBadges?.length) {

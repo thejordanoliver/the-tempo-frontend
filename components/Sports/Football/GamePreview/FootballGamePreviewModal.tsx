@@ -228,7 +228,7 @@ export default function FootballGamePreviewModal({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
+      index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
       enableDynamicSizing={false}

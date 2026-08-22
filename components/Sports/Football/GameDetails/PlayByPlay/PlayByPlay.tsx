@@ -503,7 +503,7 @@ function PlayByPlay({
   const playParticipants = playInfo?.participants ?? [];
   const playBadgeVariant = playInfo?.playBadgeVariant ?? null;
 
-  if ( state !== "in" ) return null
+  if (state !== "in") return null;
 
   return (
     <View style={styles.container}>
@@ -794,7 +794,7 @@ export const PlayByPlayStyles = (isDark: boolean) =>
     touchdownBadge: {
       minWidth: 94,
       borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
-      backgroundColor: isDark ? "#116E18" : "#177901",
+      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
     fieldGoalBadge: {
       minWidth: 88,

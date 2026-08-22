@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import { Play } from "../BasketballHooks/useBasketballGameDetails";
 import { TeamInjury } from "../FootballHooks/useFootballGameDetails";
 
 type Team = {
@@ -182,7 +183,7 @@ export type Score = {
   }[];
 
   plays: any[];
-  lastPlay: any | null;
+  lastPlay: Play;
 
   teamStats: {
     team: any;

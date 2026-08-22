@@ -32,7 +32,12 @@ function ChatInputBar({
   selectedGifUrl,
   onSelectedGifUrlChange,
   onOpenGifPicker,
-}: Props) {
+  disablePanDown,
+  enablePanDown,
+}: Props & {
+  disablePanDown: () => void;
+  enablePanDown: () => void;
+}) {
   const [value, setValue] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -57,11 +62,9 @@ function ChatInputBar({
     if (disabled || isSending) return;
 
     Keyboard.dismiss();
-
-    requestAnimationFrame(() => {
-      onOpenGifPicker();
-    });
-  }, [disabled, isSending, onOpenGifPicker]);
+    disablePanDown();
+    onOpenGifPicker();
+  }, [disabled, isSending, disablePanDown, onOpenGifPicker]);
 
   const handleSend = useCallback(async () => {
     if (sendDisabled || isSendingRef.current) return;
@@ -151,6 +154,8 @@ function ChatInputBar({
           scrollEnabled
           textAlignVertical="center"
           blurOnSubmit={false}
+          onFocus={disablePanDown}
+          onBlur={enablePanDown}
         />
 
         <TouchableOpacity
@@ -170,6 +175,7 @@ function ChatInputBar({
     </View>
   );
 }
+
 
 const MemoizedChatInputBar = memo(ChatInputBar);
 

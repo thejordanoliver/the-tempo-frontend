@@ -119,7 +119,7 @@ export type MMAGamesResponse = {
   [key: string]: any;
 };
 
-export type UseMMAGamesOptions = {
+export type useMMAEventsOptions = {
   date?: Date | string | number | null;
   league?: MMALeague;
   enabled?: boolean;
@@ -313,13 +313,13 @@ function isLiveMMAEvent(event: MMAEvent | any) {
   return fights.some((fight: MMAFight) => isLiveStatus(fight?.status));
 }
 
-export function useMMAGames({
+export function useMMAEvents({
   date,
   league = "ufc",
   enabled = true,
   pollLiveEvents = true,
   pollIntervalMs = 90000,
-}: UseMMAGamesOptions = {}) {
+}: useMMAEventsOptions = {}) {
   const [data, setData] = useState<MMAGamesResponse | null>(null);
   const [loading, setLoading] = useState(enabled);
   const [refreshing, setRefreshing] = useState(false);
@@ -363,7 +363,7 @@ export function useMMAGames({
 
         setData(response.data);
       } catch (err: any) {
-        console.error(`[useMMAGames] ${league} fetch failed`, err);
+        console.error(`[useMMAEvents] ${league} fetch failed`, err);
 
         setError(
           new Error(

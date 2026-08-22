@@ -1,6 +1,7 @@
 import FavoriteTeamsSelectorSkeleton from "@/components/Skeletons/FavoriteTeamsSelectorSkeleton";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
 import Button from "../components/Buttons/Button";
@@ -52,7 +53,7 @@ export default function EditFavoritesScreen() {
       header: () => (
         <CustomHeader
           title="Edit Favorites"
-          onBack={() => router.back()}
+          onBack={goBack}
           onToggleLayout={toggleLayout}
           isGrid={isGridView}
         />

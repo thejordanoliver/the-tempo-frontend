@@ -95,7 +95,7 @@ const MatchupPredictor: React.FC<Props> = ({
       >
         <View style={styles.headerRow}>
           <View style={styles.teamHeader}>
-            <View style={[styles.logoBadge, { backgroundColor: awayColor }]}>
+            <View style={styles.logoBadge}>
               <Image
                 source={getLogoSource(awayLogo)}
                 style={styles.logo}
@@ -115,13 +115,7 @@ const MatchupPredictor: React.FC<Props> = ({
                 {homeCode}
               </Text>
             </View>
-            <View
-              style={[
-                styles.logoBadge,
-                styles.homeLogoBadge,
-                { backgroundColor: homeColor },
-              ]}
-            >
+            <View style={[styles.logoBadge, styles.homeLogoBadge]}>
               <Image
                 source={getLogoSource(homeLogo)}
                 style={styles.logo}
@@ -239,8 +233,9 @@ const matchupPredictorStyles = (isDark: boolean) =>
       borderColor: Colors.white,
     },
     logo: {
-      width: 28,
-      height: 28,
+      width: 32,
+      height: 32,
+      resizeMode: "contain",
     },
     teamCode: {
       fontFamily: Fonts.SEMIBOLD,

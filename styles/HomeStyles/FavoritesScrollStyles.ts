@@ -4,15 +4,14 @@ export const favoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesWrapper: { padding: 0 },
     favorites: {
+      gap: 12,
       flexDirection: "row",
       marginBottom: 20,
       paddingTop: 24,
       paddingHorizontal: 16,
     },
-    editButton: {
-      marginRight: 0,
-    },
-    teamIcon: { alignItems: "center", marginRight: 16 },
+
+    teamContainer: { alignItems: "center" },
     logoWrapper: {
       width: 80,
       height: 80,
@@ -25,14 +24,17 @@ export const favoritesScrollStyles = (isDark: boolean) =>
     },
     logo: { width: 50, height: 50 },
     editIcon: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+      borderWidth: 0.5,
       backgroundColor: isDark
         ? Colors.light.background
         : Colors.dark.background,
-      width: 80,
-      height: 80,
-      borderRadius: 100,
-      justifyContent: "center",
-      alignItems: "center",
+      borderColor: isDark ? Colors.light.background : Colors.dark.background,
     },
     teamLabelContainer: {
       flexDirection: "row",

@@ -142,7 +142,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
+      index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
       enableDynamicSizing={false}

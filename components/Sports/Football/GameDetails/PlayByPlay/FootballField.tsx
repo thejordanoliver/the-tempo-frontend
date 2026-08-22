@@ -828,7 +828,7 @@ function FootballField({
       : Colors.midTone;
 
   const isCFB = league === "cfb";
-  console.log(isCFB);
+
   const awayEndzoneLogo = isCFB
     ? getCFBTeamLogo(awayTeamId ?? 0, true)
     : getNFLTeamLogo(awayTeamId ?? 0, true);
@@ -1180,7 +1180,9 @@ function FootballField({
           </G>
 
           {/* Possession marker */}
-          <G transform={getPossessionMarkerTransform(driveShape.endX)}>
+          <G
+            transform={`${getPossessionMarkerTransform(driveShape.endX)} translate(0 -8)`}
+          >
             <Path
               d="M15 12.5c8.7 0 15.75 7.05 15.75 15.75 0 8.7-7.8 16.7-15.22 24.07a.75.75 0 0 1-1.06 0C7.05 44.95-.75 36.95-.75 28.25-.75 19.55 6.3 12.5 15 12.5Z"
               fill={possessionColor}
@@ -1192,7 +1194,7 @@ function FootballField({
               <Image
                 href={possessionLogo}
                 x={3.5}
-                y={16.75}
+                y={16.5}
                 width={23}
                 height={23}
                 preserveAspectRatio="xMidYMid meet"

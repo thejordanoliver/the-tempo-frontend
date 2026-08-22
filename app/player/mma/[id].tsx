@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import { useMMAFighter } from "@/hooks/MMAHooks/useMMAFighter";
+import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerHeader from "components/Sports/MMA/Player/PlayerHeader";
 import { Colors, globalStyles } from "constants/styles";
@@ -18,8 +18,9 @@ export default function PlayerDetailScreen() {
   const { id } = useLocalSearchParams<{
     id: string;
   }>();
-
-  const { player, loading } = useMMAFighter(id);
+  const league = "MMA";
+  const playerId = Number(id);
+  const { player, loading } = usePlayerById(playerId, league);
   const flag = player?.flag_url;
   const color = player?.citizenship_country_alt_color ?? Colors.midTone;
 
@@ -32,7 +33,7 @@ export default function PlayerDetailScreen() {
           onBack={() => navigation.goBack()}
           isTeamScreen={true}
           isPlayerScreen
-          league="MMA"
+          league={league}
         />
       ),
     });

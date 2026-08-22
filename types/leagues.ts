@@ -1,4 +1,4 @@
-import { MMAFight } from "@/hooks/MMAHooks/useMMAGames";
+import { MMAFight } from "@/hooks/MMAHooks/useMMAEvents";
 import { BaseballGame } from "./baseball/baseball";
 import { BasketballGame } from "./basketball/basketball";
 import { FootballGame } from "./football/football";

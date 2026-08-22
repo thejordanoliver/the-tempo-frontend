@@ -16,12 +16,12 @@ import {
   Text,
   View,
 } from "react-native";
-import { getStyles } from "styles/NewsStyles/NewsArticleStyle";
+import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
 
 export default function ArticleScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = getStyles(isDark);
+  const styles = newsArticleStyles(isDark);
   const global = globalStyles(isDark);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();

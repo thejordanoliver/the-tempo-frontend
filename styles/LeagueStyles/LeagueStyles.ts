@@ -36,13 +36,14 @@ export const LeagueScreenStyles = (isDark: boolean) =>
     },
     buttonWrapper: { flexDirection: "row", alignItems: "center" },
     leagueLogo: {
-      width: 40,
-      height: 40,
+      width: 36,
+      height: 36,
       marginRight: 8,
     },
     leagueText: {
       color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
+      fontSize: 16,
       fontFamily: Fonts.REGULAR,
     },
   });
+

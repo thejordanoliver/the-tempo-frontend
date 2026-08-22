@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import type { MMAAthlete, MMAFight } from "./useMMAGames";
+import type { MMAAthlete, MMAFight } from "./useMMAEvents";
 
-export type { MMAAthlete, MMAFight } from "./useMMAGames";
+export type { MMAAthlete, MMAFight } from "./useMMAEvents";
 
 export type MMAScore = {
   gameId: string;

@@ -103,34 +103,44 @@ export function getFavoriteTeamLogo(
   }
 }
 
-export function getFavoriteTeamRoute(
-  league: FavoriteLeague,
-): FavoriteTeamRoute {
+export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
   switch (league) {
     case "NBA":
       return "/team/[teamId]";
+
     case "WNBA":
       return "/team/wnba/[teamId]";
+
     case "NFL":
       return "/team/nfl/[teamId]";
+
     case "CFB":
       return "/team/cfb/[teamId]";
+
     case "CBB":
       return "/team/cbb/[teamId]";
+
     case "WCBB":
       return "/team/wcbb/[teamId]";
+
     case "MLB":
       return "/team/mlb/[teamId]";
+
     case "CB":
       return "/team/cb/[teamId]";
+
     case "SB":
       return "/team/sb/[teamId]";
+
     case "NHL":
       return "/team/nhl/[teamId]";
+
+    default:
+      throw new Error(`Unsupported favorite team league: ${league}`);
   }
 }
 
-export function isCollegeFavoriteLeague(league: FavoriteLeague): boolean {
+export function isCollegeFavoriteLeague(league: string): boolean {
   return (
     league === "CFB" ||
     league === "CBB" ||

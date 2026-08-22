@@ -1,52 +1,25 @@
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { useCallback, useEffect, useState } from "react";
 import type {
+  ForumBookmarkMutationResponse,
   ForumCommentCreateResponse,
+  ForumCommentsResponse,
+  ForumLegacyComment,
+  ForumLegacyPost,
   ForumLikeMutationResponse,
   ForumPostCreateResponse,
-} from "types/badges";
+  ForumPostUpdateResponse,
+  ForumPostsResponse,
+  ForumUser,
+} from "types/forum";
 import { apiClient } from "utils/apiClient";
-
-type User = {
-  id: string;
-  name: string;
-  avatar: string;
-  username: string;
-};
-
-export type Post = {
-  id: string;
-  teamId: string;
-  text: string;
-  images: string[];
-  videos: string[];
-  user: User;
-  likes: number;
-  liked: boolean; // You might want to maintain this client-side or via auth
-  comments: number;
-  commented: boolean; // Likewise, client-side only
-  bookmarks: number;
-  bookmarked: boolean; // Client-side only unless implemented on backend
-  shares: number;
-  shared: boolean;
-  createdAt: string;
-  editedAt?: string;
-};
-
-export type Comment = {
-  id: string;
-  user: User;
-  text: string;
-  createdAt: string;
-  editedAt?: string;
-};
 
 const getErrorMessage = (error: unknown, fallback: string) => {
   return error instanceof Error ? error.message : fallback;
 };
 
 export function useForumPosts(teamId: string) {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<ForumLegacyPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { handleBadgeAwards, requestBadgeDataRefresh } =
@@ -63,13 +36,15 @@ export function useForumPosts(teamId: string) {
     [handleBadgeAwards, requestBadgeDataRefresh],
   );
 
-  // Fetch posts
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await apiClient.get(`/api/forum/${teamId}`);
-      setPosts(res.data.posts);
+      const res = await apiClient.get<ForumPostsResponse<ForumLegacyPost>>(
+        `/api/forum/${teamId}`,
+      );
+      setPosts(res.data.posts ?? []);
     } catch (err: unknown) {
       setError(getErrorMessage(err, "Failed to fetch posts"));
     } finally {
@@ -77,24 +52,23 @@ export function useForumPosts(teamId: string) {
     }
   }, [teamId]);
 
-  // Create post
   const createPost = useCallback(
     async (
       text: string,
       images: string[] = [],
       videos: string[] = [],
-      user: User,
+      user: ForumUser,
     ) => {
       try {
-        const res = await apiClient.post<ForumPostCreateResponse<Post>>(
-          `/api/forum/${teamId}`,
-          {
-            text,
-            images,
-            videos,
-            user,
-          },
-        );
+        const res = await apiClient.post<
+          ForumPostCreateResponse<ForumLegacyPost>
+        >(`/api/forum/${teamId}`, {
+          text,
+          images,
+          videos,
+          user,
+        });
+
         setPosts((prev) => [res.data.post, ...prev]);
         handleAwardsOrRefresh(res.data.newlyAwardedBadges);
       } catch (err: unknown) {
@@ -104,17 +78,22 @@ export function useForumPosts(teamId: string) {
     [handleAwardsOrRefresh, teamId],
   );
 
-  // Edit post
   const editPost = useCallback(
     async (
       postId: string,
-      updates: Partial<Pick<Post, "text" | "images" | "videos">>,
+      updates: Partial<Pick<ForumLegacyPost, "text" | "images" | "videos">>,
     ) => {
       try {
-        const res = await apiClient.put(`/api/forum/${postId}`, updates);
-        setPosts((prev) =>
-          prev.map((p) => (p.id === postId ? res.data.post : p)),
-        );
+        const res = await apiClient.put<
+          ForumPostUpdateResponse<ForumLegacyPost>
+        >(`/api/forum/${postId}`, updates);
+        const updatedPost = res.data.post;
+
+        if (updatedPost) {
+          setPosts((prev) =>
+            prev.map((p) => (p.id === postId ? updatedPost : p)),
+          );
+        }
       } catch (err: unknown) {
         setError(getErrorMessage(err, "Failed to update post"));
       }
@@ -122,7 +101,6 @@ export function useForumPosts(teamId: string) {
     [],
   );
 
-  // Delete post
   const deletePost = useCallback(
     async (postId: string) => {
       try {
@@ -136,17 +114,15 @@ export function useForumPosts(teamId: string) {
     [requestBadgeDataRefresh],
   );
 
-  // Toggle like (expects current liked state, toggles it)
   const toggleLike = useCallback(
     async (postId: string, currentlyLiked: boolean) => {
       try {
-        // Send explicit like state to backend (true to like, false to unlike)
-        const res = await apiClient.patch<ForumLikeMutationResponse<Post>>(
-          `/api/forum/${postId}/like`,
-          {
-            like: !currentlyLiked,
-          },
-        );
+        const res = await apiClient.patch<
+          ForumLikeMutationResponse<ForumLegacyPost>
+        >(`/api/forum/${postId}/like`, {
+          like: !currentlyLiked,
+        });
+
         setPosts((prev) =>
           prev.map((p) => (p.id === postId ? res.data.post : p)),
         );
@@ -158,16 +134,21 @@ export function useForumPosts(teamId: string) {
     [handleAwardsOrRefresh],
   );
 
-  // Toggle bookmark (expects current bookmarked state, toggles it)
   const toggleBookmark = useCallback(
     async (postId: string, currentlyBookmarked: boolean) => {
       try {
-        const res = await apiClient.patch(`/api/forum/${postId}/bookmark`, {
+        const res = await apiClient.patch<
+          ForumBookmarkMutationResponse<ForumLegacyPost>
+        >(`/api/forum/${postId}/bookmark`, {
           bookmark: !currentlyBookmarked,
         });
-        setPosts((prev) =>
-          prev.map((p) => (p.id === postId ? res.data.post : p)),
-        );
+        const updatedPost = res.data.post;
+
+        if (updatedPost) {
+          setPosts((prev) =>
+            prev.map((p) => (p.id === postId ? updatedPost : p)),
+          );
+        }
       } catch (err: unknown) {
         setError(getErrorMessage(err, "Failed to toggle bookmark"));
       }
@@ -175,14 +156,14 @@ export function useForumPosts(teamId: string) {
     [],
   );
 
-  // Remove toggleComment (dummy count) since backend manages comment counts
-
-  // Fetch all comments
   const fetchComments = useCallback(
-    async (postId: string): Promise<Comment[]> => {
+    async (postId: string): Promise<ForumLegacyComment[]> => {
       try {
-        const res = await apiClient.get(`/api/forum/${postId}/comments`);
-        return res.data.comments;
+        const res = await apiClient.get<
+          ForumCommentsResponse<ForumLegacyComment>
+        >(`/api/forum/${postId}/comments`);
+
+        return res.data.comments ?? [];
       } catch (err: unknown) {
         setError(getErrorMessage(err, "Failed to fetch comments"));
         return [];
@@ -191,23 +172,21 @@ export function useForumPosts(teamId: string) {
     [],
   );
 
-  // Add comment
   const addComment = useCallback(
     async (
       postId: string,
-      user: User,
+      user: ForumUser,
       text: string,
-    ): Promise<Comment | null> => {
+    ): Promise<ForumLegacyComment | null> => {
       try {
-        const res = await apiClient.post<ForumCommentCreateResponse<Comment>>(
-          `/api/forum/${postId}/comments`,
-          {
-            user,
-            text,
-          },
-        );
+        const res = await apiClient.post<
+          ForumCommentCreateResponse<ForumLegacyComment>
+        >(`/api/forum/${postId}/comments`, {
+          user,
+          text,
+        });
+
         handleAwardsOrRefresh(res.data.newlyAwardedBadges);
-        // Optionally refresh posts to update comment count after adding comment
         await fetchPosts();
         return res.data.comment;
       } catch (err: unknown) {
@@ -218,20 +197,19 @@ export function useForumPosts(teamId: string) {
     [fetchPosts, handleAwardsOrRefresh],
   );
 
-  // Edit comment
   const editComment = useCallback(
     async (
       postId: string,
       commentId: string,
       text: string,
-    ): Promise<Comment | null> => {
+    ): Promise<ForumLegacyComment | null> => {
       try {
-        const res = await apiClient.put(
-          `/api/forum/${postId}/comments/${commentId}`,
-          {
-            text,
-          },
-        );
+        const res = await apiClient.put<
+          ForumCommentCreateResponse<ForumLegacyComment>
+        >(`/api/forum/${postId}/comments/${commentId}`, {
+          text,
+        });
+
         return res.data.comment;
       } catch (err: unknown) {
         setError(getErrorMessage(err, "Failed to edit comment"));
@@ -241,13 +219,11 @@ export function useForumPosts(teamId: string) {
     [],
   );
 
-  // Delete comment
   const deleteComment = useCallback(
     async (postId: string, commentId: string): Promise<boolean> => {
       try {
         await apiClient.delete(`/api/forum/${postId}/comments/${commentId}`);
         requestBadgeDataRefresh();
-        // Refresh posts to update comment counts
         await fetchPosts();
         return true;
       } catch (err: unknown) {

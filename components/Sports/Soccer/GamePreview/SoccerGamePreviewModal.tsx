@@ -62,8 +62,7 @@ export default function SoccerGamePreviewModal({
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
   const home = score?.home;
   const away = score?.away;
-  
-  
+
   const homeId = Number(home?.id ?? 0);
   const awayId = Number(away?.id ?? 0);
 
@@ -107,7 +106,7 @@ export default function SoccerGamePreviewModal({
   const isGameLoading = !score || !details || !homeTeam || !awayTeam;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period, isSOCC: true });
-  const clock = game.status.clock;
+  const clock = score?.status.displayClock ?? "0:00";
   const gameStatusDescription = game.status?.description;
   const gameStatusDetail = game.status.shortDetail;
   const isSuspended = gameStatusDescription === "Suspended";
@@ -165,7 +164,7 @@ export default function SoccerGamePreviewModal({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
+      index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
       enableContentPanningGesture

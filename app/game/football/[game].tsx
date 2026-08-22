@@ -334,7 +334,6 @@ export default function GameDetailsScreen(
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-  const scorePossession = score?.possession;
   const redzone = game?.situation?.isRedZone ?? false;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
@@ -376,8 +375,8 @@ export default function GameDetailsScreen(
     return null;
   }, [lastPlay, score?.plays, score?.drives]);
 
-  const downDistance =
-    scorePossession?.downDistanceText ?? game?.situation?.downDistanceText;
+  const downDistance = currentDrives[0]?.end?.downDistanceText;
+
   const homeHasPossession = score?.home?.possession ?? false;
   const awayHasPossession = score?.away?.possession ?? false;
 
@@ -387,6 +386,7 @@ export default function GameDetailsScreen(
   const awayRecord = score?.away.record;
   const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
   const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
+
   const homeScore = score?.home.score ?? 0;
   const awayScore = score?.away.score ?? 0;
   const homeWins = homeScore > awayScore;

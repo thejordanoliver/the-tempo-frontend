@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import type { ForumPostImagesProps } from "types/forum";
 import PostImagesModal from "./PostImagesModal";
 
 const screenWidth = Dimensions.get("window").width;
@@ -21,31 +22,11 @@ const IMAGE_SIZE =
   (screenWidth - PARENT_PADDING * 2 - IMAGE_MARGIN * (NUM_COLUMNS - 1)) /
   NUM_COLUMNS;
 
-export type MediaItem = {
-  id: string; // ✅ ADD
-  uri: string;
-  type: "image" | "video";
-  thumbnailUri?: string; // ✅ for video preview + upload
-  trimStartMs?: number; // ✅ for future trimming
-  trimEndMs?: number; // ✅ for future trimming
-};
-
-type Props = {
-  media: MediaItem[];
-  currentUserId: string | number | null;
-  item: {
-    id: string;
-    text?: string;
-    likes: number;
-    comments_count?: number;
-    liked_by_current_user?: boolean;
-    username?: string;
-    profile_image: string | null;
-    user_id: string | number;
-  };
-};
-
-export default function PostImages({ media, currentUserId, item }: Props) {
+export default function PostImages({
+  media,
+  currentUserId,
+  item,
+}: ForumPostImagesProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

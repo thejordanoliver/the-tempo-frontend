@@ -3,25 +3,9 @@ import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { useCallback, useMemo } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { bookmarkedForumListStyles } from "styles/ForumStyles/BookmarkedForumListStyles";
-import { PostItem, type Post } from "./PostItem";
+import type { BookmarkedForumListProps, ForumPost } from "types/forum";
+import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
-
-export type BookmarkedForumListProps = {
-  posts: Post[];
-  currentUserId: number | null;
-  isDark: boolean;
-  loading: boolean;
-  refreshing: boolean;
-  error: string | null;
-  hasMore: boolean;
-  onRetry: () => void;
-  onLoadMore: () => void;
-  onUpdatePost: (post: Post) => void;
-  onRemovePost: (postId: string) => void;
-  onDeletePost: (postId: string) => void | Promise<void>;
-  onEditPost: (postId: string, newText: string) => void | Promise<void>;
-  onImagePress: (uri: string, caption?: string) => void;
-};
 
 export default function BookmarkedForumList({
   posts,
@@ -46,7 +30,7 @@ export default function BookmarkedForumList({
   const loadMoreDisabled = loading || refreshing;
 
   const handleBookmarkChange = useCallback(
-    (post: Post, bookmarked: boolean) => {
+    (post: ForumPost, bookmarked: boolean) => {
       if (bookmarked) {
         onUpdatePost(post);
         return;

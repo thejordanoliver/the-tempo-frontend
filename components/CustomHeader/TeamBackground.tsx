@@ -1,0 +1,71 @@
+import { Colors } from "constants/styles";
+import { Image, StyleSheet, View } from "react-native";
+import { customHeaderStyles } from "./styles";
+import type { HeaderImageSource, HeaderTeamLike } from "./types";
+import { resolveImage } from "./utils";
+
+type TeamBackgroundProps = {
+  insets: {
+    top: number;
+  };
+  isDark: boolean;
+  selectedTeam?: HeaderTeamLike | null;
+  logo?: HeaderImageSource;
+  teamColor?: string;
+  isTeamScreen: boolean;
+  isPlayerScreen?: boolean;
+};
+
+export function TeamBackground({
+  insets,
+  isDark,
+  selectedTeam,
+  logo,
+  teamColor,
+  isTeamScreen,
+  isPlayerScreen,
+}: TeamBackgroundProps) {
+  const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
+  const styles = customHeaderStyles;
+
+  if (!(isTeamScreen || isPlayerScreen)) {
+    return (
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: defaultBackgroundColor,
+          zIndex: -1,
+        }}
+      />
+    );
+  }
+
+  const selectedTeamLogo = resolveImage(
+    selectedTeam?.logoLight ?? selectedTeam?.logo ?? logo,
+  );
+
+  return (
+    <View
+      style={{
+        position: "absolute",
+        top: insets.top,
+        height: 56,
+        width: "100%",
+        overflow: "hidden",
+        zIndex: 0,
+      }}
+    >
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: teamColor || defaultBackgroundColor,
+          zIndex: -1,
+        }}
+      />
+
+      {selectedTeamLogo ? (
+        <Image source={selectedTeamLogo} style={styles.bgImage} />
+      ) : null}
+    </View>
+  );
+}

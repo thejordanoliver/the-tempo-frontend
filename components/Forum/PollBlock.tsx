@@ -3,21 +3,8 @@ import { Colors, Fonts } from "constants/styles";
 import { useCallback, useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import type { ForumPollResponse, ForumPollState } from "types/forum";
 import { apiClient } from "utils/apiClient";
-export interface PollOption {
-  id: number;
-  text: string;
-  vote_count: number;
-  voted_by_current_user: boolean;
-}
-
-export interface PollState {
-  id: string;
-  question: string;
-  allows_multiple: boolean;
-  expires_at: string | null;
-  options: PollOption[];
-}
 
 export default function PollBlock({
   postId,
@@ -27,7 +14,7 @@ export default function PollBlock({
   isDark: boolean;
 }) {
   const styles = postItemStyles(isDark);
-  const [poll, setPoll] = useState<PollState | null>(null);
+  const [poll, setPoll] = useState<ForumPollState | null>(null);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);
 
@@ -35,9 +22,9 @@ export default function PollBlock({
   useEffect(() => {
     let cancelled = false;
     apiClient
-      .get(`/api/forum/post/${postId}/poll`)
+      .get<ForumPollResponse>(`/api/forum/post/${postId}/poll`)
       .then((res) => {
-        if (!cancelled) setPoll(res.data.poll);
+        if (!cancelled) setPoll(res.data.poll ?? null);
       })
       .catch(() => {
         // No poll for this post — silently ignore 404
@@ -86,8 +73,10 @@ export default function PollBlock({
         });
 
         // Optionally, fetch latest poll from server to sync state
-        const res = await apiClient.get(`/api/forum/post/${postId}/poll`);
-        setPoll(res.data.poll);
+        const res = await apiClient.get<ForumPollResponse>(
+          `/api/forum/post/${postId}/poll`,
+        );
+        setPoll(res.data.poll ?? null);
       } catch (err: any) {
         console.error("Vote failed:", err.response?.data ?? err.message);
 

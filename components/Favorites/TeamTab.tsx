@@ -19,7 +19,6 @@ export const TeamTab = ({
 }: RenderItemParams<FavoriteTeamItem>) => {
   const router = useRouter();
   const styles = favoritesScrollStyles(item.isDark);
-
   const logo = getFavoriteTeamLogo(item);
   const isCollege = isCollegeFavoriteLeague(item.league);
   const teamId = String(item.id);
@@ -45,7 +44,7 @@ export const TeamTab = ({
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={({ pressed }) => [
-        styles.teamIcon,
+        styles.teamContainer,
         pressed && { opacity: 0.6 },
         isActive && { opacity: activeOpacity, transform: [{ scale: 1.05 }] },
       ]}
@@ -54,13 +53,11 @@ export const TeamTab = ({
         style={[
           styles.logoWrapper,
           {
-            backgroundColor: item.isDark
-              ? item.color || Colors.dark.itemBackground
-              : item.color || Colors.light.itemBackground,
+            backgroundColor: item.color || Colors.midTone,
           },
         ]}
       >
-        <Image source={logo} style={styles.logo} contentFit="contain" />
+        <Image source={logo} style={styles.logo} />
       </View>
 
       <View style={styles.teamLabelContainer}>

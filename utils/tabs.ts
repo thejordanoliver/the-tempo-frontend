@@ -9,14 +9,7 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  WNBA: [
-    "scores",
-    "news",
-    "standings",
-    "draft",
-    "awards",
-    "forum",
-  ],
+  WNBA: ["scores", "news", "standings", "draft", "awards", "forum"],
   NFL: [
     "scores",
     "news",
@@ -29,7 +22,7 @@ export const LEAGUE_TABS = {
   ],
   UFL: ["scores", "news", "standings", "stats", "forum"],
   MLB: ["scores", "news", "standings", "stats", "awards", "forum"],
-  NHL: ["scores", "news", "standings", "playoffs", "stats", "forum"],
+  NHL: ["scores", "news", "standings", "stats", "awards", "forum"],
   CFB: [
     "scores",
     "news",
@@ -50,15 +43,7 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  WCBB: [
-    "scores",
-    "news",
-    "standings",
-    "stats",
-    "bracket",
-    "awards",
-    "forum",
-  ],
+  WCBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
   CB: ["scores", "news", "standings", "forum"],
   SB: ["scores", "news", "standings", "forum"],
   UFC: ["fights", "news", "champions"],
@@ -95,11 +80,9 @@ export const TEAM_TABS = {
 export type League = keyof typeof LEAGUE_TABS;
 export type Team = keyof typeof TEAM_TABS;
 
-export type LeagueTab<L extends League> =
-  (typeof LEAGUE_TABS)[L][number];
+export type LeagueTab<L extends League> = (typeof LEAGUE_TABS)[L][number];
 
-export type TeamTab<T extends Team> =
-  (typeof TEAM_TABS)[T][number];
+export type TeamTab<T extends Team> = (typeof TEAM_TABS)[T][number];
 
 export function isLeague(value: string): value is League {
   return value in LEAGUE_TABS;

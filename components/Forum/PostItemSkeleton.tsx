@@ -3,12 +3,11 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
+import type { ForumPostItemSkeletonProps } from "types/forum";
 
-type Props = {
-  showMedia?: boolean; // set true if your post can have images/videos
-};
-
-export default function PostItemSkeleton({ showMedia = true }: Props) {
+export default function PostItemSkeleton({
+  showMedia = true,
+}: ForumPostItemSkeletonProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

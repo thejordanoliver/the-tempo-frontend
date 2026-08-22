@@ -49,7 +49,7 @@ const normalizeCachedString = (value?: string | null) => {
 export default function ProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = profileStyles(isDark);
+  const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const { favorites, loadFavorites, clearFavorites, allTeams } =
     useFavoriteTeamsContext();
   const { width: screenWidth } = useWindowDimensions();

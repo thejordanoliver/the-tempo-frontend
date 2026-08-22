@@ -3,6 +3,7 @@ import { useProfileRefreshStore } from "@/store/profileRefreshStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import {
   useCallback,
   useEffect,
@@ -303,15 +304,11 @@ export default function EditProfileScreen() {
     };
   }, [showAlert]);
 
-  const handleBack = useCallback(() => {
-    router.back();
-  }, [router]);
-
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Edit Profile" onBack={handleBack} />,
+      header: () => <CustomHeader title="Edit Profile" onBack={goBack} />,
     });
-  }, [handleBack, navigation]);
+  }, [navigation]);
 
   const requestImagePermission = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();

@@ -1,22 +1,12 @@
 import { isAxiosError } from "axios";
-import type { Post } from "components/Forum/PostItem";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type {
+  ForumPost,
+  ForumPostUpdateResponse,
+  ForumPostsResponse,
+  UseBookmarkedPostsOptions,
+} from "types/forum";
 import { apiClient } from "utils/apiClient";
-
-type UseBookmarkedPostsOptions = {
-  enabled?: boolean;
-  limit?: number;
-};
-
-type BookmarkedPostsResponse = {
-  posts?: Post[];
-  pagination?: {
-    page?: number;
-    limit?: number;
-    total?: number;
-    totalPages?: number;
-  };
-};
 
 const getErrorMessage = (error: unknown, fallback: string) => {
   if (isAxiosError<{ error?: string; message?: string }>(error)) {
@@ -35,7 +25,7 @@ export function useBookmarkedPosts({
   enabled = true,
   limit = 10,
 }: UseBookmarkedPostsOptions = {}) {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<ForumPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +51,7 @@ export function useBookmarkedPosts({
       setError(null);
 
       try {
-        const response = await apiClient.get<BookmarkedPostsResponse>(
+        const response = await apiClient.get<ForumPostsResponse>(
           "/api/forum/bookmarks",
           {
             params: {
@@ -112,7 +102,7 @@ export function useBookmarkedPosts({
     }
   }, [fetchBookmarks, loading, page, refreshing, totalPages]);
 
-  const updatePost = useCallback((updatedPost: Post) => {
+  const updatePost = useCallback((updatedPost: ForumPost) => {
     setPosts((current) =>
       current.map((post) =>
         String(post.id) === String(updatedPost.id)
@@ -143,7 +133,7 @@ export function useBookmarkedPosts({
   const editPost = useCallback(
     async (postId: string, newText: string) => {
       try {
-        const response = await apiClient.patch<{ post?: Post }>(
+        const response = await apiClient.patch<ForumPostUpdateResponse>(
           `/api/forum/post/${postId}`,
           {
             text: newText,

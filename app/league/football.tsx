@@ -338,8 +338,7 @@ export default function FootballLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName="League"
-          league={isCFB ? ("College Football" as "CFB") : league}
+          tabName={isCFB ? "College Football" : league}
           onBack={goBack}
           modalVisible={isCFB ? isConferenceModalOpen : undefined}
           setModalVisible={isCFB ? setIsConferenceModalOpen : undefined}

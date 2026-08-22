@@ -23,10 +23,6 @@ import {
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import { ProfileTab } from "../(tabs)/profile";
 
-const NUM_COLUMNS = 3;
-const HORIZONTAL_PADDING = 40;
-const COLUMN_GAP = 12;
-
 type RouteParam = string | string[] | undefined;
 
 const normalizeRouteParam = (param: RouteParam) => {
@@ -40,12 +36,12 @@ export default function UserProfileScreen() {
   const navigation = useNavigation();
   const router = useRouter();
   const { width: screenWidth } = useWindowDimensions();
-  const itemWidth = useMemo(() => {
-    const totalGap = COLUMN_GAP * (NUM_COLUMNS - 1);
-    const availableWidth = screenWidth - HORIZONTAL_PADDING - totalGap;
-
-    return availableWidth / NUM_COLUMNS;
-  }, [screenWidth]);
+  const numColumns = 3;
+  const horizontalPadding = 24;
+  const columnGap = 8;
+  const totalGap = columnGap * (numColumns - 1);
+  const availableWidth = screenWidth - horizontalPadding - totalGap;
+  const itemWidth = availableWidth / numColumns;
 
   const params = useLocalSearchParams<{ id?: RouteParam }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);

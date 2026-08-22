@@ -21,12 +21,10 @@ type Props = {
   gameId: number;
   awayId: string | number;
   awayCode?: string;
-  awayName?: string; // optional — used for row labels & "you picked X" copy
   awayLogo: any;
   awayColor?: string | null;
   homeId: string | number;
   homeCode?: string;
-  homeName?: string;
   homeLogo: any;
   homeColor?: string | null;
   onVoteCast?: (teamId: string | number) => void;
@@ -108,7 +106,7 @@ function PollRow({
         }
         accessibilityState={{ disabled, selected: isSelected }}
       >
-        <View style={[rowStyles.badge, { backgroundColor: color }]}>
+        <View style={rowStyles.badge}>
           <Image
             source={typeof logo === "string" ? { uri: logo } : logo}
             style={rowStyles.badgeLogo}
@@ -130,12 +128,10 @@ export default function FanPredictionVote({
   gameId,
   awayId,
   awayCode,
-  awayName,
   awayLogo,
   awayColor,
   homeId,
   homeCode,
-  homeName,
   homeLogo,
   homeColor,
   onVoteCast,
@@ -256,9 +252,7 @@ export default function FanPredictionVote({
 
   const formatPercentage = (pct: number) => `${Math.round(pct * 100)}%`;
 
-  const pickedName = isSameTeamId(userVote, awayId)
-    ? awayName || awayCode
-    : homeName || homeCode;
+  const pickedName = isSameTeamId(userVote, awayId) ? awayCode : homeCode;
   const subtitle =
     phase === "loading"
       ? "Loading poll…"
@@ -300,7 +294,6 @@ export default function FanPredictionVote({
       <PollRow
         teamId={awayId}
         code={awayCode}
-        name={awayName}
         logo={awayLogo}
         color={awayColor || Colors.darkGray}
         fillAnim={animFillAway}
@@ -316,7 +309,6 @@ export default function FanPredictionVote({
       <PollRow
         teamId={homeId}
         code={homeCode}
-        name={homeName}
         logo={homeLogo}
         color={homeColor || Colors.lightGray}
         fillAnim={animFillHome}
@@ -378,8 +370,9 @@ const pollRowStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
     badgeLogo: {
-      width: 24,
-      height: 24,
+      width: 32,
+      height: 32,
+      resizeMode: "contain",
     },
     label: {
       flex: 1,

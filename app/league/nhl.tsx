@@ -1,66 +1,145 @@
-import GamesList from "@/components/Sports/Hockey/Games/GamesList";
 import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
-import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
+import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import * as React from "react";
-import { useLayoutEffect, useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
+
+/* -------------------------------------------------------------------------- */
+/*                                   Shared                                   */
+/* -------------------------------------------------------------------------- */
+
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import Forum from "../../components/Forum/Forum";
-import AwardSeasons from "../../components/League/Awards/AwardSeasons";
-
-import { StandingsList } from "../../components/League/Standings/StandingsList";
 import NewsList from "../../components/News/NewsList";
-import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
+import GamesList from "../../components/Sports/Hockey/Games/GamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
+
+import AwardSeasons from "@/components/League/Awards/AwardSeasons";
+import { StandingsList } from "@/components/League/Standings/StandingsList";
+
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
+import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
-import { getNHLSeason } from "../../utils/dateUtils";
+import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
+import { getNHLSeason } from "@/utils/dateUtils";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export default function NHLLeagueScreen() {
-  const league = "NHL";
-  const currentSeason = getNHLSeason();
-  const { categories, loading, error } = useSeasonLeaders(
-    Number(getNHLSeason()),
-    league,
-  );
+type SupportedHockeyLeague = Extract<League, "NHL" | "MCH" | "WCH">;
 
-  const [standingsYear, setStandingsYear] = useState(currentSeason);
-  const navigation = useNavigation();
+/* -------------------------------------------------------------------------- */
+/*                                   Helpers                                  */
+/* -------------------------------------------------------------------------- */
+
+function isSupportedHockeyLeague(
+  league: League,
+): league is SupportedHockeyLeague {
+  return league === "NHL";
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Main Route                                 */
+/* -------------------------------------------------------------------------- */
+
+export default function HockeyLeagueScreen() {
+  const params = useLocalSearchParams<{
+    league?: string | string[];
+    leagueLabel?: string;
+  }>();
+
+  const normalizedLeague = normalizeLeagueParam(params.league);
+
+  const parsedLeague: League = isLeague(normalizedLeague)
+    ? normalizedLeague
+    : "NHL";
+
+  const league: SupportedHockeyLeague = isSupportedHockeyLeague(parsedLeague)
+    ? parsedLeague
+    : "NHL";
+
+  if (league === "NHL") return <NHLLeagueScreen />;
+
+  return <NHLLeagueScreen />;
+}
+
+/* ========================================================================== */
+/*                                    NHL                                     */
+/* ========================================================================== */
+
+function NHLLeagueScreen() {
+  const league = "NHL";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
+  const pagerRef = useRef<PagerView>(null);
+  const [standingsYear, setStandingsYear] = useState(getNHLSeason());
+  const navigation = useNavigation();
+  const { categories, loading, error } = useSeasonLeaders(2025, league);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
+
+  const { calendar } = useLeagueCalendar(league);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
 
-  const { calendar } = useLeagueCalendar(league);
+  const markedDates = useMemo(() => {
+    return (calendar ?? []).reduce(
+      (dates, calendarDate) => {
+        if (typeof calendarDate !== "string") {
+          return dates;
+        }
+
+        const dateKey =
+          getLeagueCalendarDateKey(calendarDate) ??
+          dayjs(calendarDate).format("YYYY-MM-DD");
+
+        if (!dateKey) {
+          return dates;
+        }
+
+        dates[dateKey] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return dates;
+      },
+      {} as Record<
+        string,
+        {
+          marked: boolean;
+          dotColor: string;
+        }
+      >,
+    );
+  }, [calendar, isDark]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                   Games                                  */
+  /* ------------------------------------------------------------------------ */
 
   const {
     games,
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useHockeyGames(selectedDate);
-
-  const pagerRef = useRef<PagerView>(null);
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  } = useHockeyGames(selectedDate, "nhl");
 
   const {
     articles,
@@ -78,136 +157,168 @@ export default function NHLLeagueScreen() {
     });
   }, [navigation, league]);
 
-  const handleScoresRefresh = React.useCallback(async () => {
+  /* ------------------------------------------------------------------------ */
+  /*                                 Handlers                                 */
+  /* ------------------------------------------------------------------------ */
+
+  const handleScoresRefresh = useCallback(async () => {
     setGamesRefreshing(true);
 
     try {
       await refreshGames();
     } catch (error) {
-      console.warn("Failed to refresh games:", error);
+      console.warn("Failed to refresh NHL games:", error);
     } finally {
       setGamesRefreshing(false);
     }
   }, [refreshGames]);
 
-  const changeDateByDays = (days: number) => {
-    setSelectedDate((prev) =>
-      dayjs(prev).add(days, "day").startOf("day").toDate(),
+  const changeDateByDays = useCallback((days: number) => {
+    setSelectedDate((previousDate) =>
+      dayjs(previousDate).add(days, "day").startOf("day").toDate(),
     );
-  };
+  }, []);
 
-  const markDates = (calendarArray: string[]) =>
-    calendarArray.reduce(
-      (acc, dateStr) => {
-        const iso = dayjs(dateStr).format("YYYY-MM-DD");
+  const handleTabPress = useCallback(
+    (tab: (typeof tabs)[number]) => {
+      const pageIndex = tabs.indexOf(tab);
 
-        acc[iso] = {
-          marked: true,
-          dotColor: isDark ? Colors.white : Colors.black,
-        };
+      if (pageIndex < 0) {
+        return;
+      }
 
-        return acc;
-      },
-      {} as Record<string, { marked: boolean; dotColor: string }>,
-    );
+      setSelectedTab(tab);
+      pagerRef.current?.setPage(pageIndex);
+    },
+    [setSelectedTab, tabs],
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Pages                                   */
+  /* ------------------------------------------------------------------------ */
+
+  const scoresPage = (
+    <View key="scores" style={styles.contentArea}>
+      <DateNavigator
+        selectedDate={selectedDate}
+        onChangeDate={changeDateByDays}
+        onOpenCalendar={() => setShowCalendarModal(true)}
+        isDark={isDark}
+      />
+
+      <GamesList
+        games={games}
+        error={gamesError}
+        loading={loadingGames}
+        refreshing={gamesRefreshing}
+        onRefresh={handleScoresRefresh}
+        scrollEnabled={true}
+        showHeaders={false}
+      />
+    </View>
+  );
+
+  const newsPage = (
+    <View key="news" style={styles.contentArea}>
+      <NewsList
+        items={articles}
+        loading={newsLoading}
+        error={newsError}
+        refreshing={refreshingNews}
+        onRefresh={refreshNews}
+        isDark={isDark}
+      />
+    </View>
+  );
+
+  const standingsPage = (
+    <View key="standings" style={styles.contentArea}>
+      <StandingsList
+        year={standingsYear}
+        onYearChange={setStandingsYear}
+        league={league}
+      />
+    </View>
+  );
+
+  const statsPage = (
+    <View key="stats" style={styles.contentArea}>
+      <SeasonLeadersList
+        loading={loading}
+        error={error}
+        categories={categories}
+        league={league}
+      />
+    </View>
+  );
+
+  const awardsPage = (
+    <View key="awards" style={styles.contentArea}>
+      <AwardSeasons league={league} />
+    </View>
+  );
+
+  const forumPage = (
+    <View key="forum" style={styles.contentArea}>
+      <Forum league={league} />
+    </View>
+  );
+
+  const pagerPages = [
+    scoresPage,
+    newsPage,
+    standingsPage,
+    statsPage,
+    awardsPage,
+    forumPage,
+  ];
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Render                                  */
+  /* ------------------------------------------------------------------------ */
+
   return (
     <>
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-          const index = tabs.indexOf(tab);
-          pagerRef.current?.setPage(index);
-        }}
+        onTabPress={handleTabPress}
         isDark={isDark}
       />
+
       <View style={styles.container}>
         <PagerView
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
-            setSelectedTab(tabs[index]);
+          scrollEnabled={selectedTab !== "bracket"}
+          onPageSelected={(event) => {
+            const pageIndex = event.nativeEvent.position;
+
+            const nextTab = tabs[pageIndex];
+
+            if (nextTab) {
+              setSelectedTab(nextTab);
+            }
           }}
         >
-          {/* SCORES */}
-          <View key="scores">
-            <DateNavigator
-              selectedDate={selectedDate}
-              onChangeDate={changeDateByDays}
-              onOpenCalendar={() => setShowCalendarModal(true)}
-              isDark={isDark}
-            />
-
-            <GamesList
-              games={games}
-              error={gamesError}
-              loading={loadingGames}
-              refreshing={gamesRefreshing}
-              onRefresh={handleScoresRefresh}
-              showHeaders={false}
-              scrollEnabled={true}
-            />
-          </View>
-
-          {/* NEWS */}
-          <View key="news" style={styles.contentArea}>
-            <NewsList
-              items={articles}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshingNews}
-              onRefresh={refreshNews}
-              isDark={isDark}
-            />
-          </View>
-
-          {/* STANDINGS */}
-          <ScrollView key="standings">
-            <StandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
-              league={league}
-            />
-          </ScrollView>
-
-          {/* STATS */}
-          <View key="stats" style={styles.contentArea}>
-            <SeasonLeadersList
-              loading={loading}
-              error={error}
-              categories={categories}
-              league={league}
-            />
-          </View>
-
-          {/* AWARDS */}
-          <View key="awards">
-            <AwardSeasons league={league} />
-          </View>
-
-          {/* FORUM */}
-          <View key="forum">
-            <Forum league={league} />
-          </View>
+          {pagerPages}
         </PagerView>
       </View>
 
       <CalendarModal
         visible={showCalendarModal}
+        selectedDate={dayjs(selectedDate).format("YYYY-MM-DD")}
         onClose={() => setShowCalendarModal(false)}
         onSelectDate={(dateString) => {
-          const localSelected = dayjs(dateString, "YYYY-MM-DD")
+          const nextDate = dayjs(dateString, "YYYY-MM-DD")
             .startOf("day")
             .toDate();
-          setSelectedDate(localSelected);
+
+          setSelectedDate(nextDate);
           setShowCalendarModal(false);
         }}
-        markedDates={{
-          ...markDates([...calendar]),
-        }}
+        markedDates={markedDates}
       />
     </>
   );

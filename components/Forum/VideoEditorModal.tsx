@@ -15,20 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-type Props = {
-  visible: boolean;
-  videoUri: string;
-  initialThumbnailUri?: string;
-  initialTrimStartMs?: number;
-  initialTrimEndMs?: number;
-  onClose: () => void;
-  onSave: (payload: {
-    thumbnailUri: string;
-    trimStartMs: number;
-    trimEndMs: number;
-  }) => void;
-};
+import type { ForumVideoEditorModalProps } from "types/forum";
 
 export default function VideoEditorModal({
   visible,
@@ -38,7 +25,7 @@ export default function VideoEditorModal({
   initialTrimEndMs,
   onClose,
   onSave,
-}: Props) {
+}: ForumVideoEditorModalProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

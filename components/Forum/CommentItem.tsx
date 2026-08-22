@@ -1,6 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
-import { Post } from "components/Forum/PostItem";
 import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
@@ -23,33 +22,41 @@ import Reanimated, {
 } from "react-native-reanimated";
 import { commentItemStyles } from "styles/ForumStyles/PostItemStyles";
 import { AlertConfig } from "types/alert";
-import PostImages, { MediaItem } from "./PostImages";
-
-interface CommentItemProps {
-  comment: Post;
-  postId: string;
-  isDark: boolean;
-  currentUserId: string | number;
-  editComment: (commentId: string, newText: string) => Promise<void>;
-  deleteComment: (postId: string, commentId: string) => Promise<void>;
-  isLast: boolean;
-}
+import type {
+  ForumActionSubmenuProps,
+  ForumComment,
+  ForumCommentItemProps,
+  ForumDisplayMediaItem,
+  ForumPostImageItem,
+} from "types/forum";
+import PostImages from "./PostImages";
 
 const COLLAPSED_HEIGHT = Math.round(3 * 20 * PixelRatio.getFontScale());
+const REPLY_COLLAPSE_THRESHOLD = 3;
 
-type CommentSubmenuProps = {
-  visible: boolean;
-  isDark: boolean;
-  onEdit: () => void;
-  onDelete: () => void;
-};
+function getCreatedAtTime(comment: ForumComment) {
+  const time = new Date(comment.created_at).getTime();
+  return Number.isFinite(time) ? time : 0;
+}
+
+function sortReplies(replies: ForumComment[]) {
+  return [...replies].sort(
+    (first, second) =>
+      getCreatedAtTime(first) - getCreatedAtTime(second) ||
+      first.id - second.id,
+  );
+}
+
+function formatReplyCount(count: number) {
+  return `${count} ${count === 1 ? "reply" : "replies"}`;
+}
 
 const CommentSubmenu = ({
   visible,
   isDark,
   onEdit,
   onDelete,
-}: CommentSubmenuProps) => {
+}: ForumActionSubmenuProps) => {
   const progress = useRef(new RNAnimated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
   const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
@@ -151,13 +158,21 @@ export const CommentItem = ({
   currentUserId,
   editComment,
   deleteComment,
+  onReply,
+  isReply = false,
   isLast,
-}: CommentItemProps) => {
+}: ForumCommentItemProps) => {
   const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
   const router = useRouter();
 
   const commentText = comment.text ?? "";
   const hasText = commentText.trim().length > 0;
+  const replies = useMemo(
+    () => (isReply ? [] : sortReplies(comment.replies ?? [])),
+    [comment.replies, isReply],
+  );
+  const replyCount = replies.length;
+  const shouldCollapseReplies = replyCount >= REPLY_COLLAPSE_THRESHOLD;
 
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(commentText);
@@ -165,14 +180,16 @@ export const CommentItem = ({
   const [fullHeight, setFullHeight] = useState(0);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
+  const [repliesExpanded, setRepliesExpanded] = useState(false);
+  const previousReplyCountRef = useRef(replyCount);
 
   const animatedHeight = useSharedValue(COLLAPSED_HEIGHT);
 
-  const isAuthor = String(currentUserId) === String(comment.user_id);
+  const isAuthor = currentUserId != null && comment.user_id === currentUserId;
   const profileImageUri = comment.profile_image?.trim() || null;
   const profileInitial = (comment.username?.[0] ?? "T").toUpperCase();
 
-  const media = useMemo<MediaItem[]>(
+  const media = useMemo<ForumDisplayMediaItem[]>(
     () => [
       ...(comment.images ?? []).map((uri, index) => ({
         id: `comment-img-${comment.id}-${index}`,
@@ -188,6 +205,25 @@ export const CommentItem = ({
     ],
     [comment.id, comment.images, comment.video_thumbnails, comment.videos],
   );
+  const mediaItem = useMemo<ForumPostImageItem>(
+    () => ({
+      id: String(comment.id),
+      text: comment.text ?? "",
+      likes: 0,
+      comments_count: 0,
+      liked_by_current_user: false,
+      username: comment.username,
+      profile_image: comment.profile_image ?? null,
+      user_id: comment.user_id,
+    }),
+    [
+      comment.id,
+      comment.profile_image,
+      comment.text,
+      comment.user_id,
+      comment.username,
+    ],
+  );
 
   useEffect(() => {
     setEditText(commentText);
@@ -200,6 +236,17 @@ export const CommentItem = ({
       setSubmenuVisible(false);
     }
   }, [isEditing]);
+
+  useEffect(() => {
+    if (
+      replyCount >= REPLY_COLLAPSE_THRESHOLD &&
+      replyCount > previousReplyCountRef.current
+    ) {
+      setRepliesExpanded(true);
+    }
+
+    previousReplyCountRef.current = replyCount;
+  }, [replyCount]);
 
   const shouldShowExpand =
     hasText && (commentText.length > 100 || commentText.split("\n").length > 3);
@@ -231,7 +278,7 @@ export const CommentItem = ({
 
     router.push({
       pathname: "/user/[id]",
-      params: { id: comment.user_id },
+      params: { id: String(comment.user_id) },
     });
   };
 
@@ -239,9 +286,11 @@ export const CommentItem = ({
     setSubmenuVisible(false);
 
     setAlertConfig({
-      title: "Delete Comment",
+      title: isReply ? "Delete Reply" : "Delete Comment",
       message:
-        "This action can't be undone. The comment will be permanently deleted.",
+        isReply
+          ? "This action can't be undone. The reply will be permanently deleted."
+          : "This action can't be undone. The comment will be permanently deleted.",
       confirmText: "Delete",
       cancelText: "Cancel",
       variant: "danger",
@@ -279,11 +328,30 @@ export const CommentItem = ({
     setSubmenuVisible((current) => !current);
   };
 
+  const handleReplyPress = () => {
+    if (isEditing || isReply) return;
+
+    onReply?.(comment);
+  };
+
+  const visibleReplies =
+    shouldCollapseReplies && !repliesExpanded ? [] : replies;
+
   return (
     <View
-      style={[styles.container, submenuVisible && styles.containerMenuOpen]}
+      style={[
+        styles.container,
+        isReply && styles.replyRoot,
+        submenuVisible && styles.containerMenuOpen,
+      ]}
     >
-      <View style={[styles.commentContainer, isLast && styles.lastContainer]}>
+      <View
+        style={[
+          styles.commentContainer,
+          isReply && styles.replyCommentContainer,
+          isLast && !isReply && styles.lastContainer,
+        ]}
+      >
         <View style={styles.userRow}>
           <View style={styles.leftSide}>
             <TouchableOpacity
@@ -295,11 +363,27 @@ export const CommentItem = ({
               {profileImageUri ? (
                 <Image
                   source={{ uri: profileImageUri }}
-                  style={styles.profileImage}
+                  style={[
+                    styles.profileImage,
+                    isReply && styles.replyProfileImage,
+                  ]}
                 />
               ) : (
-                <View style={[styles.profileImage, styles.profilePlaceholder]}>
-                  <Text style={styles.profileInitial}>{profileInitial}</Text>
+                <View
+                  style={[
+                    styles.profileImage,
+                    isReply && styles.replyProfileImage,
+                    styles.profilePlaceholder,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.profileInitial,
+                      isReply && styles.replyProfileInitial,
+                    ]}
+                  >
+                    {profileInitial}
+                  </Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -310,10 +394,16 @@ export const CommentItem = ({
               onPress={handleOpenUser}
               style={styles.userMeta}
             >
-              <Text style={styles.username} numberOfLines={1}>
+              <Text
+                style={[styles.username, isReply && styles.replyUsername]}
+                numberOfLines={1}
+              >
                 {comment.username}
               </Text>
-              <Text style={styles.timestamp} numberOfLines={1}>
+              <Text
+                style={[styles.timestamp, isReply && styles.replyTimestamp]}
+                numberOfLines={1}
+              >
                 {timestamp}
               </Text>
             </TouchableOpacity>
@@ -398,7 +488,10 @@ export const CommentItem = ({
                     style={[styles.commentTextClip, heightStyle]}
                   >
                     <Text
-                      style={styles.commentText}
+                      style={[
+                        styles.commentText,
+                        isReply && styles.replyText,
+                      ]}
                       numberOfLines={textExpanded ? undefined : 3}
                     >
                       {commentText}
@@ -417,7 +510,11 @@ export const CommentItem = ({
 
                   <Text
                     pointerEvents="none"
-                    style={[styles.commentText, styles.measureText]}
+                    style={[
+                      styles.commentText,
+                      isReply && styles.replyText,
+                      styles.measureText,
+                    ]}
                     onLayout={(event) =>
                       setFullHeight(event.nativeEvent.layout.height)
                     }
@@ -426,23 +523,84 @@ export const CommentItem = ({
                   </Text>
                 </>
               ) : (
-                <Text style={styles.commentText}>{commentText}</Text>
+                <Text style={[styles.commentText, isReply && styles.replyText]}>
+                  {commentText}
+                </Text>
               ))}
 
             {media.length > 0 && (
               <View
                 style={[
                   styles.commentMediaWrapper,
+                  isReply && styles.replyMediaWrapper,
                   !hasText && styles.mediaOnlyWrapper,
                 ]}
               >
                 <PostImages
                   media={media}
-                  item={comment}
+                  item={mediaItem}
                   currentUserId={currentUserId}
                 />
               </View>
             )}
+          </View>
+        )}
+
+        {!isEditing && !isReply && (
+          <View style={styles.commentActionsRow}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={`Reply to ${comment.username}`}
+              activeOpacity={activeOpacity}
+              onPress={handleReplyPress}
+              style={styles.replyActionButton}
+            >
+              <Text style={styles.replyActionText}>Reply</Text>
+            </TouchableOpacity>
+
+            {replyCount > 0 && !shouldCollapseReplies && (
+              <Text style={styles.replyCountText}>
+                {formatReplyCount(replyCount)}
+              </Text>
+            )}
+          </View>
+        )}
+
+        {!isReply && replyCount > 0 && (
+          <View style={styles.repliesContainer}>
+            {shouldCollapseReplies && (
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={
+                  repliesExpanded
+                    ? `Hide replies to ${comment.username}`
+                    : `View ${formatReplyCount(replyCount)} to ${comment.username}`
+                }
+                activeOpacity={activeOpacity}
+                onPress={() => setRepliesExpanded((current) => !current)}
+                style={styles.viewRepliesButton}
+              >
+                <Text style={styles.viewRepliesText}>
+                  {repliesExpanded
+                    ? "Hide replies"
+                    : `View ${formatReplyCount(replyCount)}`}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {visibleReplies.map((reply, index) => (
+              <CommentItem
+                key={String(reply.id)}
+                comment={reply}
+                postId={postId}
+                isDark={isDark}
+                currentUserId={currentUserId}
+                editComment={editComment}
+                deleteComment={deleteComment}
+                isReply
+                isLast={index === visibleReplies.length - 1}
+              />
+            ))}
           </View>
         )}
       </View>

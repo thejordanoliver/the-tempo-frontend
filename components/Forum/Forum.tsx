@@ -13,15 +13,11 @@ import {
   Text,
   View,
 } from "react-native";
+import type { ForumPost, ForumProps } from "types/forum";
 import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import FloatingButton from "../Buttons/FloatingButton";
-import { Post, PostItem } from "./PostItem";
+import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
-
-interface ForumProps {
-  teamId?: string;
-  league?: string;
-}
 
 export default function Forum({ teamId, league }: ForumProps) {
   const router = useRouter();
@@ -53,7 +49,7 @@ export default function Forum({ teamId, league }: ForumProps) {
     deletePost,
     editPost,
     updatePost,
-  } = useForum({teamId, league});
+  } = useForum({ teamId, league });
 
   /** Fetch initial posts on screen focus */
   useFocusEffect(
@@ -119,7 +115,7 @@ export default function Forum({ teamId, league }: ForumProps) {
 
   /** Render each post */
   const renderPostItem = useCallback(
-    ({ item }: { item: Post }) => (
+    ({ item }: { item: ForumPost }) => (
       <PostItem
         item={item}
         isDark={isDark}
