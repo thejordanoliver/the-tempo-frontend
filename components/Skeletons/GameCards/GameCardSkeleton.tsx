@@ -46,13 +46,13 @@ const getStyles = (isDark: boolean) => {
     ========================= */
     card: {
       flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 8,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      padding: 8,
-      alignItems: "center",
-      justifyContent: "space-between",
     },
 
     /* =========================
@@ -100,9 +100,9 @@ const getStyles = (isDark: boolean) => {
     timeSkeleton: {
       width: 70,
       height: 12,
+      marginBottom: 6,
       borderRadius: 6,
       backgroundColor: skeletonColor,
-      marginBottom: 6,
     },
 
     broadcastSkeleton: {

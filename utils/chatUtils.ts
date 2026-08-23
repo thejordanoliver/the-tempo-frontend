@@ -20,6 +20,8 @@ type FlexibleIncomingChatMessage = IncomingChatMessage & {
   body?: unknown;
   username?: unknown;
   name?: unknown;
+  senderId?: unknown;
+  sender_id?: unknown;
   profileImage?: unknown;
   avatar_url?: unknown;
   game_id?: unknown;
@@ -69,6 +71,17 @@ const normalizeGameId = (value: unknown) => {
   if (typeof value === "string" && value.trim()) return value.trim();
   if (typeof value === "number" && Number.isFinite(value)) return value;
   return undefined;
+};
+
+const normalizeSenderId = (value: unknown) => {
+  if (value === null) return null;
+
+  const parsed =
+    typeof value === "number"
+      ? value
+      : Number.parseInt(String(value ?? ""), 10);
+
+  return Number.isInteger(parsed) ? parsed : undefined;
 };
 
 const normalizeReactions = (value: unknown): ChatReactionMap | undefined => {
@@ -202,6 +215,7 @@ export const normalizeMessage = (
       normalizeId(raw.message_id) ??
       createMessageKey(message),
     clientId: normalizeId(raw.clientId),
+    senderId: normalizeSenderId(raw.senderId ?? raw.sender_id),
     user: getMessageUser(message),
     message: cleanText,
     time: getMessageTime(message),
@@ -236,6 +250,7 @@ export const areSameChatMessage = (
 const areChatMessagesEqual = (a: ChatMessageItem, b: ChatMessageItem) =>
   a.id === b.id &&
   a.clientId === b.clientId &&
+  a.senderId === b.senderId &&
   a.user === b.user &&
   a.message === b.message &&
   a.time === b.time &&
@@ -244,18 +259,29 @@ const areChatMessagesEqual = (a: ChatMessageItem, b: ChatMessageItem) =>
   a.reactions === b.reactions &&
   a.gameId === b.gameId;
 
+const hasCanonicalServerId = (message: ChatMessageItem) =>
+  !message.clientId || message.id !== message.clientId;
+
 export const mergeChatMessages = (
   existing: ChatMessageItem,
   incoming: ChatMessageItem,
 ) => {
+  const canonicalMessage =
+    hasCanonicalServerId(incoming) || !hasCanonicalServerId(existing)
+      ? incoming
+      : existing;
+  const secondaryMessage =
+    canonicalMessage === incoming ? existing : incoming;
+
   const merged: ChatMessageItem = {
-    ...existing,
-    ...incoming,
+    ...secondaryMessage,
+    ...canonicalMessage,
     clientId: existing.clientId ?? incoming.clientId,
-    profile_image: incoming.profile_image ?? existing.profile_image,
-    gif_url: incoming.gif_url ?? existing.gif_url,
-    reactions: incoming.reactions ?? existing.reactions,
-    gameId: incoming.gameId ?? existing.gameId,
+    profile_image:
+      canonicalMessage.profile_image ?? secondaryMessage.profile_image,
+    gif_url: canonicalMessage.gif_url ?? secondaryMessage.gif_url,
+    reactions: canonicalMessage.reactions ?? secondaryMessage.reactions,
+    gameId: canonicalMessage.gameId ?? secondaryMessage.gameId,
   };
 
   return areChatMessagesEqual(existing, merged) ? existing : merged;

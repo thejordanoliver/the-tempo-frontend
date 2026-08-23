@@ -188,16 +188,16 @@ const championshipBannerStyles = (isDark: boolean) =>
     wrapper: {
       flexDirection: "row",
       flexWrap: "wrap",
-      gap: 12,
       justifyContent: "center",
+      gap: 12,
       marginVertical: 16,
     },
 
     bannerWrapper: {
-      width: 120,
-      height: 165,
       alignItems: "center",
       justifyContent: "center",
+      width: 120,
+      height: 165,
     },
 
     bannerFill: {
@@ -215,15 +215,15 @@ const championshipBannerStyles = (isDark: boolean) =>
     contentOverlay: {
       position: "absolute",
       top: 16,
-      width: "100%",
       alignItems: "center",
+      width: "100%",
     },
 
     yearText: {
-      color: Colors.white,
-      fontSize: 22,
-      fontFamily: Fonts.BOLD,
       marginTop: 4,
+      fontFamily: Fonts.BOLD,
+      fontSize: 22,
+      color: Colors.white,
     },
 
     teamLogo: {
@@ -234,10 +234,10 @@ const championshipBannerStyles = (isDark: boolean) =>
     },
 
     leagueLabel: {
-      color: Colors.white,
-      fontSize: 12,
       width: 100,
-      textAlign: "center",
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
+      color: Colors.white,
+      textAlign: "center",
     },
   });

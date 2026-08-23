@@ -466,21 +466,21 @@ export default function LineScore({
 
 const baseballStyles = StyleSheet.create({
   table: {
-    width: "100%",
     flexDirection: "row",
+    width: "100%",
     overflow: "hidden",
   },
   teamColumn: {
-    width: BASEBALL_TEAM_WIDTH,
     flexShrink: 0,
+    width: BASEBALL_TEAM_WIDTH,
   },
   headerCell: {
-    height: 34,
     justifyContent: "center",
+    height: 34,
   },
   teamCell: {
-    height: 42,
     justifyContent: "center",
+    height: 42,
     paddingLeft: 2,
   },
   hiddenText: {
@@ -495,32 +495,32 @@ const baseballStyles = StyleSheet.create({
     flexGrow: 0,
   },
   headerRow: {
-    height: 34,
     flexDirection: "row",
     alignItems: "center",
+    height: 34,
   },
   scoreRow: {
-    height: 42,
     flexDirection: "row",
     alignItems: "center",
+    height: 42,
   },
   rheColumn: {
-    width: BASEBALL_RHE_WIDTH,
     flexShrink: 0,
+    width: BASEBALL_RHE_WIDTH,
   },
   rheHeaderRow: {
-    height: 34,
     flexDirection: "row",
     alignItems: "center",
+    height: 34,
   },
   rheScoreRow: {
-    height: 42,
     flexDirection: "row",
     alignItems: "center",
+    height: 42,
   },
   rheCell: {
-    width: BASEBALL_RHE_CELL_WIDTH,
     alignItems: "center",
     justifyContent: "center",
+    width: BASEBALL_RHE_CELL_WIDTH,
   },
 });

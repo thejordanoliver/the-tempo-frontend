@@ -157,8 +157,8 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     },
 
     barContainer: {
-      height: 60,
       width: "100%",
+      height: 60,
       borderRadius: 8,
       overflow: "hidden",
     },
@@ -169,8 +169,8 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     },
 
     halfBar: {
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
 
     fillAway: {
@@ -186,22 +186,22 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     },
 
     centerContent: {
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
 
     logo: {
       width: LOGO_SIZE,
       height: LOGO_SIZE,
-      borderRadius: 100,
       marginBottom: 4,
+      borderRadius: 100,
     },
 
     teamName: {
+      position: "absolute",
       width: 60,
       height: 20,
       borderRadius: 4,
-      position: "absolute",
     },
 
     percentRow: {
@@ -219,7 +219,7 @@ const getStyles = (isDark: boolean, LOGO_SIZE = 150) =>
     totalVotes: {
       width: 120,
       height: 12,
-      borderRadius: 4,
       marginTop: 8,
+      borderRadius: 4,
     },
   });

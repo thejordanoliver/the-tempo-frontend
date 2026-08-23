@@ -144,34 +144,37 @@ export default function NotificationsCenter() {
 
 export const NotificationsCenterStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { flex: 1, paddingBottom: 80 },
+    container: {
+      flex: 1,
+      paddingBottom: 80,
+    },
 
     wrapper: { paddingHorizontal: 12 },
 
     notficationRow: {
-      padding: 12,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
+      padding: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.white : Colors.black,
     },
 
     iconWrapper: {
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderWidth: 1,
-      borderRadius: 999,
       padding: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 999,
     },
     notficationHeader: {
-      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     notficationText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       letterSpacing: 0.5,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
   });

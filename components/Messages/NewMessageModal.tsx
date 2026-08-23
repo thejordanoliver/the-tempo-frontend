@@ -422,9 +422,9 @@ const newMessageModalStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     sheetBackground: {
-      backgroundColor: background,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
+      backgroundColor: background,
     },
 
     handleIndicator: {
@@ -460,28 +460,28 @@ const newMessageModalStyles = (isDark: boolean) => {
     },
 
     title: {
-      fontSize: 21,
       fontFamily: Fonts.BOLD,
+      fontSize: 21,
       color: text,
     },
 
     subtitle: {
       marginTop: 4,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.REGULAR,
       color: mutedText,
     },
 
     closeButton: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: card,
+      width: 36,
+      height: 36,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: border,
+      borderRadius: 18,
+      backgroundColor: card,
     },
 
     searchBarWrap: {
@@ -489,16 +489,16 @@ const newMessageModalStyles = (isDark: boolean) => {
     },
 
     userRow: {
-      minHeight: 68,
       flexDirection: "row",
       alignItems: "center",
+      minHeight: 68,
+      marginBottom: 10,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      marginBottom: 10,
-      borderRadius: 18,
-      backgroundColor: cardAlt,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: border,
+      borderRadius: 18,
+      backgroundColor: cardAlt,
     },
 
     userRowPressed: {
@@ -513,8 +513,8 @@ const newMessageModalStyles = (isDark: boolean) => {
     avatar: {
       width: 48,
       height: 48,
-      borderRadius: 24,
       marginRight: 12,
+      borderRadius: 24,
       backgroundColor: card,
     },
 
@@ -531,8 +531,8 @@ const newMessageModalStyles = (isDark: boolean) => {
 
     username: {
       maxWidth: "86%",
-      fontSize: 15,
       fontFamily: Fonts.BOLD,
+      fontSize: 15,
       color: text,
     },
 
@@ -542,33 +542,33 @@ const newMessageModalStyles = (isDark: boolean) => {
 
     fullName: {
       marginTop: 3,
-      fontSize: 13,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
       color: mutedText,
     },
 
     emptyState: {
       flex: 1,
-      minHeight: 285,
       alignItems: "center",
       justifyContent: "center",
+      minHeight: 285,
       paddingHorizontal: 24,
       paddingBottom: 36,
     },
 
     emptyTitle: {
       marginTop: 12,
-      fontSize: 17,
       fontFamily: Fonts.BOLD,
+      fontSize: 17,
       color: text,
       textAlign: "center",
     },
 
     emptyText: {
       marginTop: 6,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.REGULAR,
       color: mutedText,
       textAlign: "center",
     },

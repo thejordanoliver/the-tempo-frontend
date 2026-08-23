@@ -692,31 +692,31 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       width: "100%",
     },
     wrapper: {
+      gap: 10,
       width: "100%",
       padding: 10,
-      borderColor: Colors.midTone,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
-      gap: 10,
       backgroundColor: isDark
         ? Colors.dark.transparentBackground
         : Colors.light.transparentBackground,
     },
     badgesRow: {
-      minHeight: 18,
       flexDirection: "row",
       flexWrap: "wrap",
       alignItems: "center",
       justifyContent: "center",
       gap: 4,
+      minHeight: 18,
     },
     badge: {
-      minHeight: 18,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 4,
+      minHeight: 18,
       paddingHorizontal: 5,
       paddingVertical: 2,
+      borderRadius: 4,
     },
     winnerBadge: {
       backgroundColor: isDark ? Colors.dark.green : Colors.light.green,
@@ -725,15 +725,15 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
     badgeText: {
-      color: Colors.white,
       fontFamily: Fonts.BOLD,
       fontSize: 9,
       lineHeight: 12,
+      color: Colors.white,
       textAlign: "center",
     },
     winnerBorder: {
-      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
       borderWidth: 1,
+      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
     championBorder: {
       borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
@@ -745,120 +745,120 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       opacity: 0.72,
     },
     cornerHeader: {
-      minHeight: 142,
       flexDirection: "row",
       alignItems: "stretch",
       justifyContent: "center",
       gap: 8,
+      minHeight: 142,
     },
     cornerFighterCard: {
       flex: 1,
-      minWidth: 0,
       alignItems: "center",
       justifyContent: "space-between",
       gap: 6,
+      minWidth: 0,
       padding: 8,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     cornerImageFrame: {
-      width: "100%",
-      height: 74,
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      height: 74,
     },
     cornerImage: {
       width: "100%",
       height: "100%",
     },
     vsStack: {
-      width: 40,
       alignItems: "center",
       justifyContent: "center",
+      width: 40,
     },
     vsText: {
       minWidth: 34,
       minHeight: 34,
-      borderRadius: 8,
-      overflow: "hidden",
       paddingTop: 7,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-      borderWidth: StyleSheet.hairlineWidth,
+      overflow: "hidden",
       fontFamily: Fonts.BOLD,
       fontSize: 13,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     nameBlock: {
-      width: "100%",
-      minHeight: 44,
       alignItems: "center",
       justifyContent: "center",
       gap: 3,
+      width: "100%",
+      minHeight: 44,
     },
     fighterName: {
       width: "100%",
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       lineHeight: 16,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     metaRow: {
-      width: "100%",
-      minHeight: 18,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: 5,
+      width: "100%",
+      minHeight: 18,
     },
     flag: {
       width: 22,
       height: 15,
     },
     recordText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.MEDIUM,
       fontSize: 11,
       lineHeight: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     stanceFallback: {
       alignItems: "center",
       justifyContent: "center",
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.light.transparentBlack,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentBackground
         : Colors.light.transparentBackground,
     },
     statList: {
       width: "100%",
-      borderRadius: 8,
-      overflow: "hidden",
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderRadius: 8,
+      overflow: "hidden",
     },
     statRow: {
-      minHeight: 38,
       flexDirection: "row",
       alignItems: "center",
+      minHeight: 38,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderBottomWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
@@ -868,48 +868,48 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     statValueCell: {
       flex: 1,
+      justifyContent: "center",
       minWidth: 0,
       minHeight: 38,
-      justifyContent: "center",
       paddingHorizontal: 7,
       paddingVertical: 5,
     },
     statLabelCell: {
-      width: 68,
-      minHeight: 38,
       alignItems: "center",
       justifyContent: "center",
+      width: 68,
+      minHeight: 38,
       paddingHorizontal: 5,
+      borderLeftWidth: StyleSheet.hairlineWidth,
+      borderRightWidth: StyleSheet.hairlineWidth,
       borderLeftColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderLeftWidth: StyleSheet.hairlineWidth,
       borderRightColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderRightWidth: StyleSheet.hairlineWidth,
     },
     statLabel: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
     },
     valueText: {
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 15,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     winnerText: {
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
       fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
     championText: {
-      color: isDark ? Colors.dark.yellow : Colors.light.gold,
       fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.yellow : Colors.light.gold,
     },
     leftText: {
       textAlign: "left",
@@ -924,33 +924,33 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       padding: 8,
     },
     tapeContainer: {
-      width: "100%",
-      minHeight: 296,
       flexDirection: "row",
       alignItems: "stretch",
       gap: 7,
+      width: "100%",
+      minHeight: 296,
     },
     tapeFighterCard: {
       flex: 1,
-      minWidth: 0,
       alignItems: "center",
       justifyContent: "space-between",
       gap: 8,
+      minWidth: 0,
       paddingHorizontal: 6,
       paddingVertical: 8,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     tapeImageFrame: {
-      width: "100%",
       flex: 1,
-      minHeight: 160,
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      minHeight: 160,
     },
     tapeImage: {
       width: "100%",
@@ -958,30 +958,30 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     compactStatRail: {
       flex: 1.08,
-      minWidth: 0,
       justifyContent: "center",
       gap: 4,
+      minWidth: 0,
     },
     compactStatRow: {
-      minHeight: 35,
       alignItems: "center",
       justifyContent: "center",
+      minHeight: 35,
       paddingHorizontal: 4,
       paddingVertical: 3,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     compactStatLabel: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 10,
       lineHeight: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
     },
@@ -989,100 +989,100 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       gap: 9,
     },
     identityRow: {
-      width: "100%",
-      minHeight: 48,
       flexDirection: "row",
       alignItems: "stretch",
       gap: 7,
+      width: "100%",
+      minHeight: 48,
     },
     identityPill: {
       flex: 1,
-      minWidth: 0,
       justifyContent: "center",
+      minWidth: 0,
       paddingHorizontal: 8,
       paddingVertical: 7,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     identityPillInner: {
-      width: "100%",
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
+      width: "100%",
     },
     identityPillRight: {
       flexDirection: "row-reverse",
     },
     identityTextBlock: {
       flex: 1,
-      minWidth: 0,
       gap: 1,
+      minWidth: 0,
     },
     identityName: {
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       lineHeight: 16,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     identityRecord: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.MEDIUM,
       fontSize: 11,
       lineHeight: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     identityVs: {
-      width: 34,
       alignItems: "center",
       justifyContent: "center",
+      width: 34,
     },
     identityVsText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     grid: {
-      width: "100%",
       flexDirection: "row",
       flexWrap: "wrap",
       gap: 8,
+      width: "100%",
     },
     gridCard: {
-      width: "48.7%",
-      minHeight: 72,
       justifyContent: "space-between",
       gap: 7,
+      width: "48.7%",
+      minHeight: 72,
       padding: 8,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     gridLabel: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 11,
       lineHeight: 13,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
     },
     gridValues: {
-      minHeight: 34,
       flexDirection: "row",
       alignItems: "stretch",
+      minHeight: 34,
     },
     gridValueCell: {
       flex: 1,
-      minWidth: 0,
       justifyContent: "center",
+      minWidth: 0,
       paddingHorizontal: 3,
     },
     gridDivider: {
@@ -1095,27 +1095,27 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       gap: 10,
     },
     spotlightStage: {
-      minHeight: 220,
       flexDirection: "row",
       alignItems: "stretch",
       gap: 8,
+      minHeight: 220,
     },
     spotlightFighter: {
       flex: 1,
       minWidth: 0,
-      overflow: "hidden",
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
+      overflow: "hidden",
     },
     spotlightImageFrame: {
-      width: "100%",
-      height: 150,
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      height: 150,
       paddingHorizontal: 6,
       paddingTop: 8,
     },
@@ -1124,62 +1124,62 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       height: "100%",
     },
     spotlightNamePlate: {
-      minHeight: 68,
       justifyContent: "center",
       gap: 4,
+      minHeight: 68,
       paddingHorizontal: 8,
       paddingVertical: 8,
+      borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderTopWidth: StyleSheet.hairlineWidth,
     },
     spotlightVsBadge: {
       position: "absolute",
-      zIndex: 2,
       top: 72,
       left: "50%",
+      zIndex: 2,
+      alignItems: "center",
+      justifyContent: "center",
       width: 42,
       height: 42,
       marginLeft: -21,
-      alignItems: "center",
-      justifyContent: "center",
+      borderWidth: 1,
       borderColor: Colors.midTone,
       borderRadius: 8,
-      borderWidth: 1,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.background,
     },
     spotlightVsText: {
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     meterWrapper: {
       gap: 9,
     },
     meterHeader: {
-      width: "100%",
-      minHeight: 52,
       flexDirection: "row",
       alignItems: "stretch",
       gap: 8,
+      width: "100%",
+      minHeight: 52,
     },
     meterList: {
-      width: "100%",
       gap: 8,
+      width: "100%",
     },
     meterRow: {
-      minHeight: 68,
       gap: 5,
+      minHeight: 68,
       padding: 8,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
@@ -1189,18 +1189,18 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
     meterLabel: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 11,
       lineHeight: 13,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
     },
     meterValues: {
-      minHeight: 20,
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
+      minHeight: 20,
     },
     meterValueCell: {
       flex: 1,
@@ -1212,13 +1212,13 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     meterTrack: {
       flex: 1,
-      height: 5,
-      overflow: "hidden",
       flexDirection: "row",
+      height: 5,
       borderRadius: 4,
       backgroundColor: isDark
         ? Colors.dark.transparentBackground
         : Colors.light.transparentBackground,
+      overflow: "hidden",
     },
     meterFill: {
       height: "100%",

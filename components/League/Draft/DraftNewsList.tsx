@@ -111,8 +111,8 @@ const draftNewsList = (isDark: boolean) =>
       paddingHorizontal: 12,
     },
     tickerWindow: {
-      overflow: "hidden",
       marginTop: 4,
+      overflow: "hidden",
     },
     tickerRow: {
       flexDirection: "row",
@@ -122,8 +122,8 @@ const draftNewsList = (isDark: boolean) =>
       width: CARD_SEPARATOR,
     },
     center: {
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       paddingVertical: 24,
     },
   });

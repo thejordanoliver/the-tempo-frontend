@@ -17,23 +17,22 @@ export const favoriteTeamsListStyles = (
       flexWrap: "wrap",
       alignItems: "flex-start",
       justifyContent: "flex-start",
-      columnGap: GRID_GAP,
       rowGap: GRID_GAP,
+      columnGap: GRID_GAP,
     },
     gridItem: {
-      width: itemWidth,
-      height: CARD_HEIGHT,
+      position: "relative",
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      width: itemWidth,
+      height: CARD_HEIGHT,
       paddingHorizontal: 8,
       paddingVertical: 12,
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-
-      position: "relative",
       overflow: "hidden",
     },
     list: {
@@ -56,17 +55,17 @@ export const favoriteTeamsListStyles = (
       position: "absolute",
       top: 0,
       right: 0,
+      zIndex: 2,
       paddingLeft: 12,
       paddingRight: 6,
       paddingVertical: 4,
       borderTopLeftRadius: 6,
       borderBottomLeftRadius: 100,
-      zIndex: 2,
     },
     leagueBadgeText: {
-      color: Colors.white,
-      fontSize: 10,
       fontFamily: Fonts.BOLD,
+      fontSize: 10,
+      color: Colors.white,
     },
     logoGridMargin: {
       marginBottom: 8,
@@ -83,9 +82,9 @@ export const favoriteTeamsListStyles = (
     },
 
     listNameText: {
-      textAlign: "left",
-      fontSize: 14,
       marginLeft: 10,
+      fontSize: 14,
+      textAlign: "left",
     },
     buttonContainer: {
       width: "100%",
@@ -113,23 +112,23 @@ export const favoriteTeamsListStyles = (
     },
 
     editText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontSize: 20,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
+      color: isDark ? Colors.black : Colors.white,
     },
     editIcon: {
       marginLeft: 4,
       color: isDark ? Colors.black : Colors.white,
     },
     sectionTitle: {
-      fontSize: 18,
-      fontFamily: Fonts.SEMIBOLD,
       marginBottom: 8,
+      fontFamily: Fonts.SEMIBOLD,
+      fontSize: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     teamCard: {
       alignItems: "center",
-      marginRight: 16,
       width: 80,
+      marginRight: 16,
     },
   });

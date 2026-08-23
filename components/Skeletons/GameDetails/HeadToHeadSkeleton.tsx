@@ -63,19 +63,19 @@ const getStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     container: {
-      marginTop: 12,
       gap: 12,
+      marginTop: 12,
     },
 
     /* =========================
        SERIES TEXT
     ========================= */
     seriesSkeleton: {
+      alignSelf: "center",
       width: 140,
       height: 16,
       borderRadius: 6,
       backgroundColor: skeletonColor,
-      alignSelf: "center",
     },
 
     /* =========================
@@ -103,9 +103,9 @@ const getStyles = (isDark: boolean) => {
     teamText: {
       width: 40,
       height: 10,
+      marginTop: 4,
       borderRadius: 4,
       backgroundColor: skeletonColor,
-      marginTop: 4,
     },
 
     score: {

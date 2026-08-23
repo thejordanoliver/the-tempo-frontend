@@ -291,47 +291,47 @@ export default function DraftCard({
 const draftCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     cardWrapper: {
-      overflow: "hidden",
+      position: "relative",
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      position: "relative",
+      overflow: "hidden",
     },
 
     logoContainer: {
       position: "absolute",
-      right: 0,
       top: 0,
+      right: 0,
       bottom: 0,
-      width: "45%",
-      justifyContent: "center",
       alignItems: "flex-end",
+      justifyContent: "center",
+      width: "45%",
       overflow: "hidden",
     },
 
     backgroundLogo: {
       height: "160%",
       aspectRatio: 1,
-      opacity: 1,
       marginRight: -20,
+      opacity: 1,
     },
 
     cardGradient: {
       position: "absolute",
-      left: 0,
       top: 0,
       bottom: 0,
+      left: 0,
       width: "175%",
     },
 
     cardContent: {
-      padding: 12,
       gap: 4,
+      padding: 12,
     },
 
     row: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
     },
     playerHeader: {
       flex: 1,
@@ -343,11 +343,11 @@ const draftCardStyles = (isDark: boolean) =>
     headshot: {
       width: 50,
       height: 50,
-      borderRadius: 25,
-      paddingTop: 4,
       marginRight: 8,
+      paddingTop: 4,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 25,
     },
 
     name: {
@@ -381,8 +381,8 @@ const draftCardStyles = (isDark: boolean) =>
 
     positionText: {
       fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.white : Colors.light.black,
       fontSize: 14,
+      color: isDark ? Colors.dark.white : Colors.light.black,
     },
 
     divider: {

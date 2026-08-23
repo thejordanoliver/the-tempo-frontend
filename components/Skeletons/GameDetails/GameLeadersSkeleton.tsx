@@ -197,9 +197,9 @@ export default function GameLeadersSkeleton() {
 
 const styles = StyleSheet.create({
   wrapper: {
+    paddingTop: 12,
     borderWidth: 1,
     borderRadius: 8,
-    paddingTop: 12,
   },
   card: {
     flexDirection: "row",
@@ -213,12 +213,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   avatarWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
     width: 60,
     height: 60,
     borderRadius: 100,
     overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
   },
   infoSection: {
     flex: 1,
@@ -230,8 +230,8 @@ const styles = StyleSheet.create({
   },
   statRow: {
     flexDirection: "row",
-    marginTop: 4,
     justifyContent: "space-between",
+    marginTop: 4,
     paddingRight: 12,
   },
   statBlock: {

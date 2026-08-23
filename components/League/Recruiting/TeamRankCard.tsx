@@ -237,44 +237,44 @@ export default function TeamRankCard({ item, index, league }: Props) {
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     cardWrapper: {
-      overflow: "hidden",
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       position: "relative",
       minHeight: 116,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      overflow: "hidden",
     },
 
     logoContainer: {
       position: "absolute",
-      right: 0,
       top: 0,
+      right: 0,
       bottom: 0,
-      width: "48%",
-      justifyContent: "center",
       alignItems: "flex-end",
+      justifyContent: "center",
+      width: "48%",
       overflow: "hidden",
     },
 
     backgroundLogo: {
       height: "210%",
       aspectRatio: 1,
-      opacity: isDark ? 0.5 : 0.38,
       marginRight: -42,
+      opacity: isDark ? 0.5 : 0.38,
     },
 
     cardGradient: {
       position: "absolute",
-      left: 0,
       top: 0,
       bottom: 0,
+      left: 0,
       width: "122%",
     },
 
     cardContent: {
+      gap: 12,
       paddingHorizontal: 12,
       paddingVertical: 12,
-      gap: 12,
     },
 
     topRow: {
@@ -284,8 +284,8 @@ const getStyles = (isDark: boolean) =>
     },
 
     rankBlock: {
-      width: 76,
       gap: 5,
+      width: 76,
     },
 
     rank: {
@@ -298,8 +298,8 @@ const getStyles = (isDark: boolean) =>
     rankChangePill: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
       alignSelf: "flex-start",
+      gap: 4,
       paddingHorizontal: 7,
       paddingVertical: 3,
       borderRadius: 999,
@@ -350,11 +350,11 @@ const getStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       alignSelf: "flex-start",
+      gap: 10,
       paddingHorizontal: 10,
       paddingVertical: 8,
       borderRadius: 14,
       backgroundColor: isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.045)",
-      gap: 10,
     },
 
     statItem: {

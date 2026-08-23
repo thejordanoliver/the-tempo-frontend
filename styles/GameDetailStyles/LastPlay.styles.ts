@@ -4,24 +4,24 @@ import { StyleSheet } from "react-native";
 export const lastPlayStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      marginVertical: 12,
       flexGrow: 1,
+      marginVertical: 12,
     },
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
-      overflow: "hidden",
       justifyContent: "center",
       gap: 8,
       padding: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
+      overflow: "hidden",
     },
     row: {
       flexDirection: "row",
       alignItems: "center",
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingBottom: 8,
       marginBottom: 8,
+      paddingBottom: 8,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     statusContainer: {
@@ -45,11 +45,11 @@ export const lastPlayStyles = (isDark: boolean) =>
     headhshot: {
       width: 40,
       height: 40,
-      borderRadius: 100,
-      borderWidth: 0.5,
-      paddingTop: 4,
       marginRight: 8,
+      paddingTop: 4,
+      borderWidth: 0.5,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 100,
     },
     athleteDetails: {
       flexDirection: "row",
@@ -61,24 +61,24 @@ export const lastPlayStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     athleteMeta: {
+      marginLeft: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      marginLeft: 4,
       color: isDark ? Colors.midTone : Colors.midTone,
     },
     playText: {
+      flex: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      flex: 1,
     },
     playTextWithAthletes: {
       marginTop: 8,
     },
     description: {
+      marginTop: 4,
+      opacity: 0.7,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
-      opacity: 0.7,
-      marginTop: 4,
     },
   });

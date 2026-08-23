@@ -200,18 +200,18 @@ const countdownClockStyles = (isDark: boolean) =>
     },
 
     wrapper: {
-      width: "100%",
-      alignItems: "center",
       flexDirection: "row",
+      alignItems: "center",
       justifyContent: "space-between",
+      width: "100%",
     },
 
     timeContainer: {
+      alignItems: "center",
+      justifyContent: "center",
       width: "22%",
       minWidth: 72,
       maxWidth: 92,
-      alignItems: "center",
-      justifyContent: "center",
       paddingVertical: 12,
       borderRadius: 8,
       backgroundColor: isDark
@@ -220,18 +220,18 @@ const countdownClockStyles = (isDark: boolean) =>
     },
 
     time: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
       fontSize: 20,
       fontVariant: ["tabular-nums"],
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
 
     label: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 10,
       letterSpacing: 2,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
     },

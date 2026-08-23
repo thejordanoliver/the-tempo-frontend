@@ -86,22 +86,22 @@ const getPillStyles = (isDark: boolean) =>
   StyleSheet.create({
     pill: {
       flex: 1,
-      backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-      borderRadius: 8,
+      gap: 1,
       paddingHorizontal: 10,
       paddingVertical: 6,
-      gap: 1,
+      borderRadius: 8,
+      backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
     },
     pillLabel: {
-      fontSize: 10,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 10,
       letterSpacing: 0.8,
-      textTransform: "uppercase",
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textTransform: "uppercase",
     },
     pillValue: {
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
     },
   });
@@ -243,15 +243,15 @@ export default function MMAChampionsList() {
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainer: {
+      gap: 10,
       paddingHorizontal: 16,
       paddingTop: 20,
       paddingBottom: 120,
-      gap: 10,
     },
     stateContainer: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       paddingHorizontal: 24,
     },
 
@@ -260,34 +260,34 @@ const getStyles = (isDark: boolean) =>
       marginBottom: 12,
     },
     eyebrow: {
-      fontSize: 11,
+      marginBottom: 4,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
       letterSpacing: 3,
       color: isDark ? Colors.dark.gold : Colors.light.gold,
       textTransform: "uppercase",
-      marginBottom: 4,
     },
     title: {
+      fontFamily: Fonts.BOLD,
       fontSize: 40,
       lineHeight: 44,
-      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     headerDivider: {
-      marginTop: 14,
       height: 1,
+      marginTop: 14,
       backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
     },
 
     // ── Card ────────────────────────────────────────
     card: {
+      gap: 12,
+      padding: 16,
+      borderRadius: 18,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 18,
-      padding: 16,
       overflow: "hidden",
-      gap: 12,
     },
 
     // Ghost watermark behind content
@@ -306,30 +306,30 @@ const getStyles = (isDark: boolean) =>
     // Top bar
     cardHeader: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: 10,
     },
     divisionLabel: {
       flex: 1,
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       letterSpacing: 0.4,
-      textTransform: "uppercase",
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textTransform: "uppercase",
     },
     badge: {
-      borderRadius: 999,
       paddingHorizontal: 10,
       paddingVertical: 4,
+      borderRadius: 999,
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
     interimBadge: {
       opacity: 0.75,
     },
     badgeText: {
-      fontSize: 11,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
       letterSpacing: 0.6,
       color: isDark ? Colors.white : Colors.black,
     },
@@ -343,10 +343,10 @@ const getStyles = (isDark: boolean) =>
     avatarWrap: {
       width: 60,
       height: 60,
-      borderRadius: 100,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 100,
+      overflow: "hidden",
     },
     avatar: {
       width: "100%",
@@ -354,15 +354,15 @@ const getStyles = (isDark: boolean) =>
     },
     avatarFallback: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       borderWidth: 1,
       borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)",
       borderRadius: 14,
     },
     avatarInitial: {
-      fontSize: 26,
       fontFamily: Fonts.BOLD,
+      fontSize: 26,
       color: isDark ? Colors.white : Colors.black,
     },
     nameBlock: {
@@ -370,14 +370,14 @@ const getStyles = (isDark: boolean) =>
       gap: 2,
     },
     fighterName: {
+      fontFamily: Fonts.BOLD,
       fontSize: 22,
       lineHeight: 26,
-      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     nickname: {
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 

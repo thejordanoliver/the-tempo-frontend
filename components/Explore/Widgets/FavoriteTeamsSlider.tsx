@@ -134,8 +134,8 @@ export default function FavoriteTeamsSlider({
 const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     container: {
-      overflow: "hidden",
       borderRadius: 6,
+      overflow: "hidden",
     },
     list: {
       flex: 1,
@@ -146,10 +146,10 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
     },
     slideButton: {
       flex: 1,
-      width: "100%",
       alignItems: "center",
       justifyContent: "center",
       gap: compact ? 10 : 18,
+      width: "100%",
       paddingHorizontal: compact ? 8 : 14,
       paddingTop: compact ? 8 : 12,
       paddingBottom: compact ? 18 : 24,
@@ -165,10 +165,10 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
       resizeMode: "contain",
     },
     teamLogoFallback: {
-      width: compact ? "48%" : "52%",
-      height: compact ? "48%" : "52%",
       alignItems: "center",
       justifyContent: "center",
+      width: compact ? "48%" : "52%",
+      height: compact ? "48%" : "52%",
     },
     teamTextWrap: {
       alignItems: "center",
@@ -176,23 +176,23 @@ const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
       maxWidth: "100%",
     },
     teamName: {
-      textAlign: "center",
       fontFamily: Fonts.SEMIBOLD,
       fontSize: compact ? 16 : 22,
       lineHeight: compact ? 20 : 27,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     teamFullName: {
-      textAlign: "center",
       fontFamily: Fonts.REGULAR,
       fontSize: compact ? 10 : 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
     dots: {
       position: "absolute",
       bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
-      alignSelf: "center",
       flexDirection: "row",
+      alignSelf: "center",
       gap: 5,
     },
     dot: {

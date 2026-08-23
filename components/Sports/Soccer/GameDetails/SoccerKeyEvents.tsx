@@ -309,8 +309,8 @@ const KeyEventsStyles = (isDark: boolean) =>
       marginTop: 10,
     },
     wrapper: {
-      borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderWidth: 1,
+      borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderRadius: 8,
       overflow: "hidden",
     },
@@ -337,19 +337,19 @@ const KeyEventsStyles = (isDark: boolean) =>
     },
     timeColumn: {
       flexDirection: "row",
+      alignItems: "center",
       gap: 4,
       width: 48,
-      alignItems: "center",
     },
     periodText: {
       fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
+      color: isDark ? Colors.white : Colors.black,
     },
     clockText: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.midTone : Colors.darkGray,
       fontSize: 12,
+      color: isDark ? Colors.midTone : Colors.darkGray,
     },
     eventBody: {
       flex: 1,
@@ -360,21 +360,21 @@ const KeyEventsStyles = (isDark: boolean) =>
       gap: 8,
     },
     eventType: {
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 13,
       flexShrink: 1,
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
     },
     eventText: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
       fontSize: 12,
       lineHeight: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
     participantsText: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.midTone : Colors.darkGray,
-      fontSize: 12,
       marginTop: 4,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.midTone : Colors.darkGray,
     },
   });

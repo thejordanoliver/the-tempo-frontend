@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginBottom: 10,
     borderRadius: 8,
   },
   avatar: {
@@ -184,13 +184,13 @@ const styles = StyleSheet.create({
   },
   statRow: {
     flexDirection: "row",
-    marginTop: 6,
     justifyContent: "space-between",
+    marginTop: 6,
     paddingRight: 12,
   },
   statBlock: {
-    alignItems: "flex-start",
     flex: 1,
+    alignItems: "flex-start",
   },
   line: {
     borderRadius: 4,

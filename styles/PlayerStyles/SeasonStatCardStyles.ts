@@ -11,8 +11,8 @@ export const seasonStatCardStyles = (isDark: boolean) => {
 
   return StyleSheet.create({
     card: {
-      borderRadius: 8,
       padding: 12,
+      borderRadius: 8,
       backgroundColor: surface,
     },
     statsRow: {
@@ -23,16 +23,16 @@ export const seasonStatCardStyles = (isDark: boolean) => {
       alignItems: "center",
     },
     statValue: {
-      fontSize: 20,
       fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: text,
     },
     statLabel: {
-      fontSize: 10,
-      fontFamily: Fonts.MEDIUM,
-      color: muted,
-      letterSpacing: 1.8,
       marginTop: 3,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 10,
+      letterSpacing: 1.8,
+      color: muted,
     },
     statDivider: {
       width: 1,
@@ -40,8 +40,8 @@ export const seasonStatCardStyles = (isDark: boolean) => {
       backgroundColor: divider,
     },
     errorText: {
-      color: muted,
       fontFamily: Fonts.REGULAR,
+      color: muted,
       textAlign: "center",
     },
   });

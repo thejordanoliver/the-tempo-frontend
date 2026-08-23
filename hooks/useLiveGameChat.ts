@@ -1,9 +1,17 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { format } from "date-fns";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
-import type { ChatMessageItem, IncomingChatMessage } from "types/chat";
+import type {
+  ChatMessageItem,
+  GameChatHistoryResponse,
+  GameChatReactionUpdate,
+  IncomingChatMessage,
+  SendGameChatMessageAck,
+  SendGameChatMessagePayload,
+  ToggleGameChatReactionAck,
+  ToggleGameChatReactionPayload,
+} from "types/chat";
 import { buildChatPayload, type ChatSendPayload } from "utils/chatPayload";
 import {
   areSameChatMessage,
@@ -14,25 +22,56 @@ import {
   normalizeMessage,
   normalizeProfileImage,
 } from "utils/chatUtils";
+import { apiClient, BASE_URL, getAccessToken } from "utils/apiClient";
 
-const SOCKET_URL = process.env.EXPO_PUBLIC_API_URL;
+const SOCKET_URL = BASE_URL;
 const DUPLICATE_SEND_BLOCK_MS = 800;
+
+type GameChatServerToClientEvents = {
+  receiveMessage: (message: IncomingChatMessage) => void;
+  userCount: (count: number) => void;
+  reactionUpdated: (payload: GameChatReactionUpdate) => void;
+};
+
+type GameChatClientToServerEvents = {
+  joinGame: (gameId: string) => void;
+  leaveGame: (gameId: string) => void;
+  sendMessage: (
+    payload: SendGameChatMessagePayload,
+    ack?: (response: SendGameChatMessageAck) => void,
+  ) => void;
+  toggleReaction: (
+    payload: ToggleGameChatReactionPayload,
+    ack?: (response: ToggleGameChatReactionAck) => void,
+  ) => void;
+};
+
+type GameChatSocket = Socket<
+  GameChatServerToClientEvents,
+  GameChatClientToServerEvents
+>;
+
+const sortMessages = (messages: ChatMessageItem[]) =>
+  [...messages].sort((a, b) => a.time - b.time);
+
+const mergeMessageList = (messages: ChatMessageItem[]) =>
+  sortMessages(dedupeMessages(messages));
 
 export function useLiveGameChat(gameId: string | number) {
   const { user } = useAuth();
-  const socketRef = useRef<Socket | null>(null);
-  const cacheLoadedRef = useRef(false);
+  const socketRef = useRef<GameChatSocket | null>(null);
   const recentSendRef = useRef<{ key: string; time: number } | null>(null);
+  const historySyncInFlightRef = useRef(false);
+  const historySyncRequestedRef = useRef(false);
+  const activeRoomRef = useRef("");
 
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [userCount, setUserCount] = useState(0);
   const [isReady, setIsReady] = useState(false);
+  const [cacheLoaded, setCacheLoaded] = useState(false);
 
   const roomId = useMemo(() => String(gameId), [gameId]);
-  const storageKey = useMemo(() => {
-    const today = format(new Date(), "yyyy-MM-dd");
-    return `chat_${roomId}_${today}`;
-  }, [roomId]);
+  const storageKey = useMemo(() => `chat_${roomId}`, [roomId]);
 
   const currentUserName = user?.username?.trim() || "Anonymous";
   const currentUserProfileImage = normalizeProfileImage(user?.profile_image);
@@ -47,7 +86,7 @@ export function useLiveGameChat(gameId: string | number) {
       );
 
       if (existingIndex === -1) {
-        return [...prevMessages, normalizedMessage];
+        return mergeMessageList([...prevMessages, normalizedMessage]);
       }
 
       const mergedMessage = mergeChatMessages(
@@ -61,15 +100,81 @@ export function useLiveGameChat(gameId: string | number) {
 
       const nextMessages = [...prevMessages];
       nextMessages[existingIndex] = mergedMessage;
-      return nextMessages;
+      return mergeMessageList(nextMessages);
     });
 
     return true;
   }, []);
 
+  const applyReactionUpdate = useCallback(
+    (payload: GameChatReactionUpdate | ToggleGameChatReactionAck) => {
+      if ("ok" in payload && !payload.ok) return;
+
+      const messageId = payload.messageId;
+      const reactions = payload.reactions;
+
+      setMessages((prevMessages) =>
+        prevMessages.map((message) =>
+          message.id === messageId || message.clientId === messageId
+            ? {
+                ...message,
+                reactions,
+              }
+            : message,
+        ),
+      );
+    },
+    [],
+  );
+
+  const removeOptimisticMessage = useCallback((clientId: string) => {
+    setMessages((prevMessages) =>
+      prevMessages.filter(
+        (message) => message.id !== clientId && message.clientId !== clientId,
+      ),
+    );
+  }, []);
+
+  const syncHistory = useCallback(async () => {
+    if (historySyncInFlightRef.current) {
+      historySyncRequestedRef.current = true;
+      return;
+    }
+
+    historySyncInFlightRef.current = true;
+
+    try {
+      do {
+        historySyncRequestedRef.current = false;
+
+        const requestRoomId = roomId;
+        const response = await apiClient.get<GameChatHistoryResponse>(
+          `/api/game-chat/${encodeURIComponent(requestRoomId)}/messages`,
+        );
+
+        if (activeRoomRef.current !== requestRoomId) {
+          return;
+        }
+
+        const serverMessages = response.data.messages
+          .map((message) => normalizeMessage(message))
+          .filter((message): message is ChatMessageItem => message !== null);
+
+        setMessages((currentMessages) =>
+          mergeMessageList([...serverMessages, ...currentMessages]),
+        );
+      } while (historySyncRequestedRef.current);
+    } catch (error) {
+      console.warn("Failed to sync live chat history", error);
+    } finally {
+      historySyncInFlightRef.current = false;
+    }
+  }, [roomId]);
+
   useEffect(() => {
     let isMounted = true;
-    cacheLoadedRef.current = false;
+    activeRoomRef.current = roomId;
+    setCacheLoaded(false);
     setMessages([]);
     setUserCount(0);
 
@@ -93,13 +198,13 @@ export function useLiveGameChat(gameId: string | number) {
           .map((message) => normalizeMessage(message as IncomingChatMessage))
           .filter((message): message is ChatMessageItem => message !== null);
 
-        setMessages(dedupeMessages(normalizedMessages));
+        setMessages(mergeMessageList(normalizedMessages));
       } catch (error) {
         console.warn("Failed to load live chat cache", error);
         if (isMounted) setMessages([]);
       } finally {
         if (isMounted) {
-          cacheLoadedRef.current = true;
+          setCacheLoaded(true);
         }
       }
     };
@@ -109,52 +214,98 @@ export function useLiveGameChat(gameId: string | number) {
     return () => {
       isMounted = false;
     };
-  }, [storageKey]);
+  }, [roomId, storageKey]);
 
   useEffect(() => {
-    if (!cacheLoadedRef.current) return;
+    if (!cacheLoaded) return;
 
     AsyncStorage.setItem(storageKey, JSON.stringify(messages)).catch((error) =>
       console.warn("Failed to persist live chat cache", error),
     );
-  }, [messages, storageKey]);
+  }, [cacheLoaded, messages, storageKey]);
 
   useEffect(() => {
+    if (!cacheLoaded) return;
+
+    void syncHistory();
+  }, [cacheLoaded, syncHistory]);
+
+  useEffect(() => {
+    if (!cacheLoaded) return;
+
     setIsReady(false);
 
-    const socket = io(SOCKET_URL, {
-      transports: ["websocket"],
-    });
+    let isMounted = true;
+    let socket: GameChatSocket | null = null;
 
-    const handleConnect = () => {
-      socket.emit("joinGame", roomId);
-      setIsReady(true);
+    const connectSocket = async () => {
+      const token = await getAccessToken();
+
+      if (!isMounted) return;
+
+      if (!token || !SOCKET_URL) {
+        setIsReady(false);
+        return;
+      }
+
+      socket = io(SOCKET_URL, {
+        transports: ["websocket", "polling"],
+        auth: { token },
+        reconnection: true,
+      });
+
+      socketRef.current = socket;
+
+      const handleConnect = () => {
+        socket?.emit("joinGame", roomId);
+        setIsReady(true);
+        void syncHistory();
+      };
+
+      const handleDisconnect = () => {
+        setIsReady(false);
+      };
+
+      const handleReceiveMessage = (message: IncomingChatMessage) => {
+        upsertMessage(message);
+      };
+
+      const handleReactionUpdated = (payload: GameChatReactionUpdate) => {
+        if (payload.gameId !== roomId) return;
+
+        applyReactionUpdate(payload);
+      };
+
+      socket.on("connect", handleConnect);
+      socket.on("disconnect", handleDisconnect);
+      socket.on("receiveMessage", handleReceiveMessage);
+      socket.on("reactionUpdated", handleReactionUpdated);
+      socket.on("userCount", setUserCount);
+      socket.on("connect_error", (error) => {
+        console.warn("Game chat socket connection failed", error.message);
+      });
     };
 
-    const handleDisconnect = () => {
-      setIsReady(false);
-    };
-
-    const handleReceiveMessage = (message: IncomingChatMessage) => {
-      upsertMessage(message);
-    };
-
-    socketRef.current = socket;
-    socket.on("connect", handleConnect);
-    socket.on("disconnect", handleDisconnect);
-    socket.on("receiveMessage", handleReceiveMessage);
-    socket.on("userCount", setUserCount);
+    connectSocket();
 
     return () => {
-      socket.emit("leaveGame", roomId);
-      socket.off("connect", handleConnect);
-      socket.off("disconnect", handleDisconnect);
-      socket.off("receiveMessage", handleReceiveMessage);
-      socket.off("userCount", setUserCount);
-      socket.disconnect();
+      isMounted = false;
+
+      if (socket) {
+        socket.emit("leaveGame", roomId);
+        socket.disconnect();
+      }
+
       socketRef.current = null;
+      setIsReady(false);
     };
-  }, [roomId, upsertMessage]);
+  }, [
+    applyReactionUpdate,
+    cacheLoaded,
+    roomId,
+    syncHistory,
+    upsertMessage,
+  ]);
 
   const sendMessage = useCallback(
     (sendPayload: ChatSendPayload) => {
@@ -163,7 +314,7 @@ export function useLiveGameChat(gameId: string | number) {
         sendPayload.gifUrl,
       );
       const socket = socketRef.current;
-      if (!payload || !socket) return false;
+      if (!payload || !socket?.connected) return false;
 
       const now = Date.now();
       const sendKey = createSendPayloadKey(payload);
@@ -186,19 +337,60 @@ export function useLiveGameChat(gameId: string | number) {
       if (!message) return false;
 
       recentSendRef.current = { key: sendKey, time: now };
-      socket.emit("sendMessage", message);
       upsertMessage(message);
+
+      socket.emit(
+        "sendMessage",
+        {
+          gameId: roomId,
+          clientId: message.clientId ?? message.id,
+          text: payload.text,
+          gifUrl: payload.gifUrl,
+        },
+        (response) => {
+          if (response.ok) {
+            upsertMessage(response.message);
+            return;
+          }
+
+          console.warn("Game chat message rejected", response.error);
+          removeOptimisticMessage(message.clientId ?? message.id);
+        },
+      );
+
       return true;
     },
-    [currentUserName, currentUserProfileImage, roomId, upsertMessage],
+    [
+      currentUserName,
+      currentUserProfileImage,
+      removeOptimisticMessage,
+      roomId,
+      upsertMessage,
+    ],
   );
 
   const addReaction = useCallback(
     (messageId: string, emoji: string) => {
+      const socket = socketRef.current;
+      const targetMessage = messages.find(
+        (message) => message.id === messageId || message.clientId === messageId,
+      );
+
+      if (
+        !socket?.connected ||
+        !targetMessage ||
+        targetMessage.id === targetMessage.clientId
+      ) {
+        return;
+      }
+
+      const canonicalMessageId = targetMessage.id;
+
       setMessages((prevMessages) => {
         const messageIndex = prevMessages.findIndex(
           (message) =>
-            message.id === messageId || message.clientId === messageId,
+            message.id === canonicalMessageId ||
+            message.clientId === canonicalMessageId,
         );
 
         if (messageIndex === -1) return prevMessages;
@@ -219,8 +411,22 @@ export function useLiveGameChat(gameId: string | number) {
 
         return nextMessages;
       });
+
+      socket.emit(
+        "toggleReaction",
+        { messageId: canonicalMessageId, emoji },
+        (response) => {
+          if (response.ok) {
+            applyReactionUpdate(response);
+            return;
+          }
+
+          console.warn("Game chat reaction rejected", response.error);
+          void syncHistory();
+        },
+      );
     },
-    [currentUserName],
+    [applyReactionUpdate, currentUserName, messages, syncHistory],
   );
 
   return {

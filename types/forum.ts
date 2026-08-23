@@ -230,15 +230,40 @@ export type UseLeagueForumPostsParams = {
   league?: LeagueType;
 };
 
-export type ForumProps = UseForumOptions;
+export type ForumLoadMoreMode = "automatic" | "button";
+
+export type ForumProps = {
+  posts: ForumPost[];
+  currentUserId: number | null;
+  isDark: boolean;
+  loading?: boolean;
+  refreshing?: boolean;
+  error?: string | null;
+  hasMore?: boolean;
+  onRefresh?: () => void;
+  onRetry?: () => void;
+  onLoadMore?: () => void;
+  onDeletePost: (postId: string) => void | Promise<void>;
+  onEditPost: (postId: string, newText: string) => void | Promise<void>;
+  onBookmarkChange?: (post: ForumPost, bookmarked: boolean) => void;
+  onImagePress?: (uri: string, caption?: string) => void;
+  showCreateButton?: boolean;
+  onCreatePost?: () => void;
+  emptyTitle?: string;
+  emptyMessage?: string;
+  emptyIcon?: string;
+  scrollEnabled?: boolean;
+  loadMoreMode?: ForumLoadMoreMode;
+  skeletonCount?: number;
+};
 
 export type ForumPostItemProps = {
   item: ForumPost;
   isDark: boolean;
   currentUserId: number | null;
-  deletePost: (postId: string) => void;
-  editPost: (postId: string, newText: string) => void;
-  onImagePress: (uri: string, caption?: string) => void;
+  deletePost: (postId: string) => void | Promise<void>;
+  editPost: (postId: string, newText: string) => void | Promise<void>;
+  onImagePress?: (uri: string, caption?: string) => void;
   onBookmarkChange?: (post: ForumPost, bookmarked: boolean) => void;
   disableCommentNavigation?: boolean;
 };
@@ -293,23 +318,6 @@ export type ForumCommentItemProps = {
   onReply?: (comment: ForumComment) => void;
   isReply?: boolean;
   isLast: boolean;
-};
-
-export type BookmarkedForumListProps = {
-  posts: ForumPost[];
-  currentUserId: number | null;
-  isDark: boolean;
-  loading: boolean;
-  refreshing: boolean;
-  error: string | null;
-  hasMore: boolean;
-  onRetry: () => void;
-  onLoadMore: () => void;
-  onUpdatePost: (post: ForumPost) => void;
-  onRemovePost: (postId: string) => void;
-  onDeletePost: (postId: string) => void | Promise<void>;
-  onEditPost: (postId: string, newText: string) => void | Promise<void>;
-  onImagePress: (uri: string, caption?: string) => void;
 };
 
 export type ForumPollEditorModalProps = {

@@ -146,25 +146,25 @@ export function XCard(content: XCardProps) {
 export const xCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
+      flexDirection: "column",
       width: XCARD_WIDTH,
       height: XCARD_HEIGHT,
       borderWidth: 0.5,
-      borderRadius: 12,
       borderColor: Colors.midTone,
+      borderRadius: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
       overflow: "hidden",
-      flexDirection: "column",
     },
     thumbnail: {
+      flexShrink: 0,
       width: "100%",
       height: 120,
-      flexShrink: 0,
     },
     body: {
       flex: 1,
-      padding: 12,
-      gap: 10,
       flexDirection: "column",
+      gap: 10,
+      padding: 12,
     },
     authorRow: {
       flexDirection: "row",
@@ -191,26 +191,26 @@ export const xCardStyles = (isDark: boolean) =>
       gap: 4,
     },
     name: {
-      color: isDark ? Colors.white : Colors.black,
+      flexShrink: 1,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
-      flexShrink: 1,
+      color: isDark ? Colors.white : Colors.black,
     },
     username: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     verifiedIcon: {
       width: 13,
       height: 13,
     },
     text: {
+      flex: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 18,
       color: isDark ? Colors.white : Colors.black,
-      flex: 1,
     },
     footer: {
       flexDirection: "row",

@@ -187,10 +187,10 @@ const styles = StyleSheet.create({
   },
 
   filterRow: {
-    marginBottom: 12,
     flexDirection: "row",
-    gap: 8,
     justifyContent: "flex-end",
+    gap: 8,
+    marginBottom: 12,
   },
 
   filterLarge: {
@@ -206,15 +206,15 @@ const styles = StyleSheet.create({
   },
 
   tableWrapper: {
+    marginBottom: 16,
     borderWidth: 1,
     borderRadius: 8,
     overflow: "hidden",
-    marginBottom: 16,
   },
 
   conferenceHeader: {
-    padding: 12,
     justifyContent: "center",
+    padding: 12,
     borderBottomWidth: 1,
   },
 
@@ -236,8 +236,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: ROW_HEIGHT,
-    borderBottomWidth: 1,
     paddingHorizontal: 12,
+    borderBottomWidth: 1,
   },
 
   teamRow: {
@@ -283,8 +283,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: ROW_HEIGHT,
-    borderBottomWidth: 1,
     paddingLeft: 16,
+    borderBottomWidth: 1,
   },
 
   statRow: {

@@ -12,18 +12,18 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
 
     linearGradient: {
       marginTop: "auto",
+      padding: 1.5,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      padding: 1.5,
     },
 
     blurViewWrapper: {
-      borderTopLeftRadius: 18.5,
-      borderTopRightRadius: 18.5,
+      alignItems: "center",
       paddingHorizontal: 20,
       paddingVertical: 40,
+      borderTopLeftRadius: 18.5,
+      borderTopRightRadius: 18.5,
       backgroundColor: "rgba(255,255,255,0.05)",
-      alignItems: "center",
     },
 
     teamLogo: {
@@ -33,8 +33,8 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
     },
 
     teamName: {
-      fontSize: 20,
       fontFamily: Fonts.SEMIBOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
@@ -52,29 +52,29 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
     },
 
     goButton: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      alignItems: "center",
+      width: "100%",
+      marginBottom: 12,
       padding: 16,
       borderRadius: 10,
-      alignItems: "center",
-      marginBottom: 12,
-      width: "100%",
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     goText: {
-      color: isDark ? Colors.black : Colors.white,
       fontFamily: Fonts.SEMIBOLD,
+      color: isDark ? Colors.black : Colors.white,
     },
 
     removeButton: {
-      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
-      padding: 16,
-      borderRadius: 12,
       alignItems: "center",
       width: "100%",
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
     removeText: {
-      color: Colors.white,
       fontFamily: Fonts.SEMIBOLD,
+      color: Colors.white,
     },
   });

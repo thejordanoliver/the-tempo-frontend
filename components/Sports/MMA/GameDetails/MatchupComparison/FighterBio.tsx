@@ -149,29 +149,29 @@ const FighterBioStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      minWidth: 0,
+      alignItems: "stretch",
       alignSelf: "stretch",
       justifyContent: "center",
-      alignItems: "stretch",
+      minWidth: 0,
     },
     card: {
       flex: 1,
-      minHeight: 268,
       alignItems: "center",
       justifyContent: "space-between",
       gap: 8,
+      minHeight: 268,
       paddingHorizontal: 6,
       paddingVertical: 8,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentItemBackground
         : Colors.light.transparentItemBackground,
     },
     winnerCard: {
-      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
       borderWidth: 1,
+      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
     championCard: {
       borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
@@ -183,49 +183,49 @@ const FighterBioStyles = (isDark: boolean) =>
       opacity: 0.72,
     },
     badgeRow: {
-      minHeight: 20,
       flexDirection: "row",
       flexWrap: "wrap",
       alignItems: "center",
       justifyContent: "center",
       gap: 4,
+      minHeight: 20,
     },
     stanceImage: {
       width: "100%",
       height: "100%",
     },
     stanceImageContainer: {
+      alignItems: "center",
+      justifyContent: "center",
       width: "100%",
       height: 176,
-      alignItems: "center",
-      justifyContent: "center",
     },
     stanceFallback: {
-      width: "100%",
-      height: "100%",
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      height: "100%",
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.light.transparentBlack,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       backgroundColor: isDark
         ? Colors.dark.transparentBackground
         : Colors.light.transparentBackground,
     },
     stanceFallbackText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 28,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     badge: {
-      minHeight: 18,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 4,
+      minHeight: 18,
       paddingHorizontal: 5,
       paddingVertical: 2,
+      borderRadius: 4,
     },
     winnerBadge: {
       backgroundColor: isDark ? Colors.dark.green : Colors.light.green,
@@ -234,33 +234,33 @@ const FighterBioStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
     badgeText: {
-      color: Colors.white,
       fontFamily: Fonts.BOLD,
       fontSize: 9,
       lineHeight: 12,
+      color: Colors.white,
       textAlign: "center",
     },
     bottomInfo: {
-      width: "100%",
-      minHeight: 54,
       alignItems: "center",
       justifyContent: "center",
       gap: 4,
+      width: "100%",
+      minHeight: 54,
     },
     bottomInfoText: {
-      fontSize: 12,
-      textAlign: "center",
       fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+      fontSize: 12,
       lineHeight: 16,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
     },
     metaRow: {
-      width: "100%",
-      minHeight: 22,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: 5,
+      width: "100%",
+      minHeight: 22,
     },
     flag: {
       width: 22,
@@ -268,9 +268,9 @@ const FighterBioStyles = (isDark: boolean) =>
     },
     recordText: {
       maxWidth: "75%",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.MEDIUM,
       fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
   });

@@ -336,13 +336,13 @@ export default function FanPredictionVote({
 const pollRowStyles = (isDark: boolean) =>
   StyleSheet.create({
     row: {
-      height: 60,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      overflow: "hidden",
       position: "relative",
       justifyContent: "center",
+      height: 60,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 12,
+      overflow: "hidden",
     },
     rowSelected: {
       borderColor: isDark ? Colors.white : Colors.black,
@@ -350,23 +350,23 @@ const pollRowStyles = (isDark: boolean) =>
     fill: {
       position: "absolute",
       top: 0,
-      left: 0,
       bottom: 0,
+      left: 0,
       opacity: 0.26,
     },
     touchArea: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 10,
       height: "100%",
       paddingHorizontal: 12,
-      gap: 10,
     },
     badge: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 36,
       height: 36,
       borderRadius: 18,
-      alignItems: "center",
-      justifyContent: "center",
       overflow: "hidden",
     },
     badgeLogo: {
@@ -404,22 +404,22 @@ const fanPredictionVoteStyles = (isDark: boolean) =>
     },
     skeletonRow: {
       height: 60,
-      borderRadius: 12,
       marginBottom: 8,
+      borderRadius: 12,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     skeletonSubtitle: {
-      marginTop: 4,
-      marginBottom: 2,
       width: 60,
       height: 14,
+      marginTop: 4,
+      marginBottom: 2,
       borderRadius: 12,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
     skeletonTotalVotesText: {
-      marginTop: 4,
       width: 40,
       height: 14,
+      marginTop: 4,
       borderRadius: 12,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },

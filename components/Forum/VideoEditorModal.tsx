@@ -230,10 +230,10 @@ function getStyles(isDark: boolean) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      overflow: "hidden",
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      overflow: "hidden",
     },
     wrapper: {
       padding: 12,
@@ -247,14 +247,14 @@ function getStyles(isDark: boolean) {
     },
     headerBtn: { padding: 8 },
     headerTitle: {
-      fontSize: 18,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
     save: {
-      color: Colors.white,
       fontFamily: Fonts.MEDIUM,
       fontSize: 18,
+      color: Colors.white,
     },
     video: {
       width: "100%",
@@ -264,42 +264,42 @@ function getStyles(isDark: boolean) {
     sectionTitle: {
       marginTop: 12,
       marginBottom: 6,
-      color: Colors.white,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+      color: Colors.white,
     },
     row: {
       flexDirection: "row",
       justifyContent: "space-between",
     },
     label: {
-      color: Colors.lightGray,
       fontFamily: Fonts.REGULAR,
+      color: Colors.lightGray,
     },
     value: {
-      color: Colors.white,
       fontFamily: Fonts.REGULAR,
+      color: Colors.white,
     },
     thumbBtn: {
-      marginTop: 10,
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
       alignSelf: "flex-start",
+      gap: 8,
+      marginTop: 10,
       paddingVertical: 8,
       paddingHorizontal: 10,
-      borderRadius: 10,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: "rgba(255,255,255,0.25)",
+      borderRadius: 10,
     },
     thumbBtnText: {
-      color: Colors.white,
       fontFamily: Fonts.REGULAR,
+      color: Colors.white,
     },
     note: {
       marginTop: 8,
-      color: Colors.lightGray,
       fontFamily: Fonts.REGULAR,
+      color: Colors.lightGray,
     },
   });
 }

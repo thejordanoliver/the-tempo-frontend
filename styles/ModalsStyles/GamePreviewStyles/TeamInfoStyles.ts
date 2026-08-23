@@ -14,8 +14,8 @@ export const TeamInfoStyle = StyleSheet.create({
   },
 
   teamName: {
-    fontSize: 14,
     fontFamily: Fonts.REGULAR,
+    fontSize: 14,
     color: Colors.white,
     textAlign: "center",
   },
@@ -27,8 +27,8 @@ export const TeamInfoStyle = StyleSheet.create({
   },
 
   scoreWrapper: {
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
     minWidth: 60,
   },
 
@@ -41,9 +41,9 @@ export const TeamInfoStyle = StyleSheet.create({
   },
 
   teamRecord: {
+    opacity: 0.7,
     fontFamily: Fonts.REGULAR,
     color: Colors.white,
-    opacity: 0.7,
   },
 
   teamValue: {
@@ -51,11 +51,11 @@ export const TeamInfoStyle = StyleSheet.create({
     color: Colors.white,
   },
   bonus: {
-    marginTop: 2,
     position: "absolute",
     bottom: -10,
-    fontSize: 8,
+    marginTop: 2,
     fontFamily: Fonts.MEDIUM,
+    fontSize: 8,
     letterSpacing: 0.5,
     color: Colors.white,
     textAlign: "center",
@@ -74,9 +74,9 @@ export const TeamInfoStyle = StyleSheet.create({
   timeoutBar: {
     width: 5,
     height: 2,
+    marginHorizontal: 2,
     borderRadius: 2,
     backgroundColor: Colors.white,
-    marginHorizontal: 2,
   },
   fighterContainer: {
     alignItems: "center",
@@ -88,18 +88,18 @@ export const TeamInfoStyle = StyleSheet.create({
   },
 
   fighterImageContainer: {
+    alignItems: "center",
     width: 50,
     height: 50,
     paddingTop: 2,
     borderWidth: 1,
-    alignItems: "center",
-    borderRadius: 100,
     borderColor: Colors.lightGray,
+    borderRadius: 100,
     overflow: "hidden",
   },
   fighterName: {
-    fontSize: 14,
     fontFamily: Fonts.REGULAR,
+    fontSize: 14,
     color: Colors.white,
     textAlign: "center",
   },

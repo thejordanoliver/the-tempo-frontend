@@ -1,17 +1,17 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const getStyles = (isDark: boolean) =>
+export const DriveListStyles = (isDark: boolean) =>
   StyleSheet.create({
     listContainer: {
-      marginVertical: 8,
       maxHeight: 400,
+      marginVertical: 8,
     },
     driveCard: {
       paddingHorizontal: 12,
       paddingVertical: 8,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     headerRow: {
       flexDirection: "row",
@@ -23,27 +23,27 @@ export const getStyles = (isDark: boolean) =>
       marginRight: 8,
     },
     driveDescription: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
     },
     driveDetail: {
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       marginTop: 2,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     driveTeam: {
-      fontSize: 15,
       fontFamily: Fonts.BOLD,
+      fontSize: 15,
       color: isDark ? Colors.white : Colors.black,
     },
     emptyText: {
+      marginTop: 20,
+      padding: 12,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: Colors.midTone,
       textAlign: "center",
-      marginTop: 20,
-      fontFamily: Fonts.REGULAR,
-      padding: 12,
     },
   });

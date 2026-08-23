@@ -27,13 +27,13 @@ export default function NewsCardSkeleton() {
 const newsCardSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 8,
-      overflow: "hidden",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderWidth: 1,
+      overflow: "hidden",
     },
 
     content: {
@@ -41,24 +41,24 @@ const newsCardSkeletonStyles = (isDark: boolean) =>
     },
 
     thumbnail: {
-      height: 300,
       width: "100%",
+      height: 300,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     title: {
-      height: 16,
       width: "60%",
-      borderRadius: 8,
+      height: 16,
       marginTop: 12,
+      borderRadius: 8,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     source: {
-      height: 12,
       width: "20%",
-      borderRadius: 8,
+      height: 12,
       marginTop: 10,
+      borderRadius: 8,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
   });

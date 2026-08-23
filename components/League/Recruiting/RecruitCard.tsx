@@ -416,9 +416,9 @@ const recruitCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     cardWrapper: {
       position: "relative",
-      overflow: "hidden",
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      overflow: "hidden",
     },
 
     logoContainer: {
@@ -426,10 +426,10 @@ const recruitCardStyles = (isDark: boolean) =>
       top: 0,
       right: 0,
       bottom: 0,
+      alignItems: "flex-end",
+      justifyContent: "center",
       width: "45%",
       overflow: "hidden",
-      justifyContent: "center",
-      alignItems: "flex-end",
     },
 
     splitLogoStack: {
@@ -440,22 +440,22 @@ const recruitCardStyles = (isDark: boolean) =>
 
     splitLogoPane: {
       flex: 1,
-      overflow: "hidden",
       alignItems: "flex-end",
       justifyContent: "center",
+      overflow: "hidden",
     },
 
     backgroundLogo: {
       height: "155%",
       aspectRatio: 1,
-      opacity: 0.55,
       marginRight: -40,
+      opacity: 0.55,
     },
 
     splitBackgroundLogo: {
       height: "190%",
-      opacity: 0.48,
       marginRight: -34,
+      opacity: 0.48,
     },
 
     cardGradient: {
@@ -473,8 +473,8 @@ const recruitCardStyles = (isDark: boolean) =>
 
     row: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
     },
 
     playerHeader: {
@@ -494,12 +494,12 @@ const recruitCardStyles = (isDark: boolean) =>
     avatarContainer: {
       width: 50,
       height: 50,
-      borderRadius: 25,
       marginRight: 8,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 25,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      overflow: "hidden",
     },
 
     avatar: {

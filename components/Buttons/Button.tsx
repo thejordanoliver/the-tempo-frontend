@@ -55,16 +55,16 @@ export default function Button({
 const buttonStyles = (isDark: boolean) =>
   StyleSheet.create({
     button: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
       padding: 16,
       borderRadius: 12,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     buttonText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontSize: 16,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      color: isDark ? Colors.black : Colors.white,
     },
   });

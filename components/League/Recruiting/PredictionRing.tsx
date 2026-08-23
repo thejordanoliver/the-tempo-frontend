@@ -335,9 +335,9 @@ const predictionRingStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
     hairline: {
+      marginVertical: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
-      marginVertical: 8,
     },
 
     percentage: {

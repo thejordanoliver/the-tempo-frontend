@@ -5,13 +5,13 @@ export const newsCardStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "column",
+      paddingBottom: 12,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      paddingBottom: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
     },
     thumbnail: {
@@ -20,24 +20,24 @@ export const newsCardStyles = (isDark: boolean) =>
       resizeMode: "cover",
     },
     thumbnailPlaceholder: {
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       width: "100%",
       height: 300,
       backgroundColor: Colors.midTone,
     },
     details: {
-      paddingHorizontal: 12,
       marginTop: 8,
+      paddingHorizontal: 12,
     },
     timeContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
     },
     title: {
+      marginBottom: 4,
       fontFamily: Fonts.BOLD,
       fontSize: 16,
-      marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     source: {

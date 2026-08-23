@@ -153,21 +153,21 @@ const coachesStyles = (isDark: boolean) =>
     container: { flex: 1 },
 
     wrapper: {
-      borderColor: Colors.midTone,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
       overflow: "hidden",
     },
 
     comparisonRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
       minHeight: 44,
       paddingHorizontal: 10,
       paddingVertical: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
     },
 
     headerRow: {
@@ -204,34 +204,34 @@ const coachesStyles = (isDark: boolean) =>
     },
 
     coachName: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 15,
       lineHeight: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     teamName: {
-      color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 15,
+      color: Colors.midTone,
     },
 
     statLabel: {
       width: 76,
-      color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
+      color: Colors.midTone,
       textAlign: "center",
       textTransform: "uppercase",
     },
 
     valueText: {
       flex: 1,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     awayValue: {

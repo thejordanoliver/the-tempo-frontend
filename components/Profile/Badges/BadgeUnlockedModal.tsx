@@ -263,42 +263,42 @@ const badgeUnlockedModalStyles = (isDark: boolean, tierColor: string) =>
     },
 
     card: {
+      alignItems: "center",
       width: "100%",
       maxWidth: 360,
-      alignItems: "center",
-      overflow: "hidden",
-      borderRadius: 24,
-      borderWidth: 1,
-      borderColor: tierColor,
       paddingHorizontal: 22,
       paddingTop: 24,
       paddingBottom: 20,
+      borderWidth: 1,
+      borderColor: tierColor,
+      borderRadius: 24,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      overflow: "hidden",
       shadowColor: Colors.black,
-      shadowOpacity: isDark ? 0.44 : 0.22,
-      shadowRadius: 24,
       shadowOffset: {
         width: 0,
         height: 16,
       },
+      shadowOpacity: isDark ? 0.44 : 0.22,
+      shadowRadius: 24,
       elevation: 24,
     },
 
     accent: {
       position: "absolute",
       top: 0,
-      left: 0,
       right: 0,
+      left: 0,
       height: 5,
       backgroundColor: tierColor,
     },
 
     heading: {
-      textAlign: "center",
-      fontSize: 15,
       fontFamily: Fonts.BOLD,
-      textTransform: "uppercase",
+      fontSize: 15,
       color: tierColor,
+      textAlign: "center",
+      textTransform: "uppercase",
     },
 
     emblemWrap: {
@@ -312,36 +312,36 @@ const badgeUnlockedModalStyles = (isDark: boolean, tierColor: string) =>
     },
 
     name: {
-      textAlign: "center",
-      fontSize: 24,
       fontFamily: Fonts.BOLD,
+      fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     tier: {
-      textAlign: "center",
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
-      textTransform: "uppercase",
+      fontSize: 13,
       color: tierColor,
+      textAlign: "center",
+      textTransform: "uppercase",
     },
 
     description: {
       marginTop: 4,
-      textAlign: "center",
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       lineHeight: 21,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
 
     button: {
-      marginTop: 22,
-      minWidth: 150,
       alignItems: "center",
-      borderRadius: 10,
+      minWidth: 150,
+      marginTop: 22,
       paddingHorizontal: 22,
       paddingVertical: 11,
+      borderRadius: 10,
       backgroundColor: tierColor,
     },
 
@@ -350,8 +350,8 @@ const badgeUnlockedModalStyles = (isDark: boolean, tierColor: string) =>
     },
 
     buttonText: {
-      fontSize: 15,
       fontFamily: Fonts.BOLD,
+      fontSize: 15,
       color: Colors.white,
     },
   });

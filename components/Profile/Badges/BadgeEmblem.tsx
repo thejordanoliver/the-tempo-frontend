@@ -3,7 +3,7 @@ import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { BadgeProgress } from "@/types/badges";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type BadgeEmblemProps = {
   badge: BadgeProgress;
@@ -18,8 +18,11 @@ export default function BadgeEmblem({
 }: BadgeEmblemProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+
   const isLocked = showLockedState && !badge.isEarned;
+
   const tierColor = BADGE_TIER_COLORS[badge.tier] ?? BADGE_TIER_COLORS.bronze;
+
   const categoryColor =
     BADGE_CATEGORY_COLORS[badge.category] ?? BADGE_CATEGORY_COLORS.community;
 
@@ -63,12 +66,21 @@ export default function BadgeEmblem({
       >
         {isLocked ? (
           <Ionicons
-            name={"lock-closed-outline"}
-            size={24}
+            name="lock-closed-outline"
+            size={innerSize * 0.4}
             color={isDark ? Colors.white : Colors.black}
           />
         ) : (
-          badge.symbol
+          <Text
+            style={[
+              styles.symbol,
+              {
+                fontSize: innerSize * 0.48,
+              },
+            ]}
+          >
+            {badge.symbol}
+          </Text>
         )}
       </View>
     </View>
@@ -87,6 +99,7 @@ const styles = StyleSheet.create({
   },
 
   symbol: {
+    color: Colors.white,
     textAlign: "center",
   },
 });

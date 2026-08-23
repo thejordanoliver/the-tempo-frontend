@@ -87,20 +87,20 @@ const draftBoardTabStyles = (isDark: boolean) =>
       gap: 6,
     },
     emptyTitle: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.BOLD,
       fontSize: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     emptyText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     errorText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
   });

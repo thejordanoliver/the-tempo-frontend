@@ -8,22 +8,22 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
     container: {
       borderLeftWidth: 1,
       borderRightWidth: 1,
-      borderBottomRightRadius: 12,
-      borderBottomLeftRadius: 12,
       borderBottomWidth: 1,
       borderColor: Colors.midTone,
+      borderBottomRightRadius: 12,
+      borderBottomLeftRadius: 12,
     },
     logosRow: {
       flexDirection: "row",
+      alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
       paddingVertical: 12,
       paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
       borderTopRightRadius: 12,
       borderTopLeftRadius: 12,
-      alignItems: "center",
-      borderColor: Colors.midTone,
-      borderWidth: 1,
     },
     teamContainer: {
       flexDirection: "row",
@@ -50,8 +50,8 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
     statLabel: {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     row: {
       flexDirection: "row",
@@ -78,28 +78,28 @@ export const gameTeamStatsStyles = (isDark: boolean) =>
         : Colors.light.transparentItemBackground,
     },
     bar: {
-      height: 8,
       justifyContent: "center",
+      height: 8,
       borderRadius: 100,
     },
 
     barText: {
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 14,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     showMoreLessContainer: {
-      paddingVertical: 12,
-      justifyContent: "center",
       alignItems: "center",
-      borderColor: Colors.midTone,
-      borderTopWidth: StyleSheet.hairlineWidth,
+      justifyContent: "center",
       width: "100%",
+      paddingVertical: 12,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderColor: Colors.midTone,
     },
     showMoreLess: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

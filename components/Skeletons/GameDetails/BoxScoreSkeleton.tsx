@@ -126,11 +126,11 @@ const getStyles = (isDark: boolean) =>
     container: {},
 
     teamBox: {
+      justifyContent: "center",
+      borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 10,
       overflow: "hidden",
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      justifyContent: "center",
     },
 
     teamHeader: {
@@ -143,8 +143,8 @@ const getStyles = (isDark: boolean) =>
     teamName: {
       width: 140,
       height: 18,
-      borderRadius: 6,
       marginRight: 12,
+      borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -157,11 +157,11 @@ const getStyles = (isDark: boolean) =>
 
     headerRow: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
+      height: ROW_HEIGHT,
+      paddingHorizontal: 6,
       borderBottomWidth: 1,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      paddingHorizontal: 6,
     },
 
     headerCellWide: {
@@ -181,20 +181,20 @@ const getStyles = (isDark: boolean) =>
 
     row: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
+      height: ROW_HEIGHT,
+      paddingHorizontal: 6,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      paddingHorizontal: 6,
     },
     button: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
       justifyContent: "center",
+      height: ROW_HEIGHT,
+      paddingHorizontal: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      paddingHorizontal: 12,
     },
 
     buttonSkeleton: {

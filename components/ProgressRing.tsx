@@ -91,14 +91,14 @@ export default function ProgressRing({
 const progressRingStyles = (isDark: boolean) =>
   StyleSheet.create({
     teamValue: {
+      marginTop: 6,
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
-      marginTop: 6,
     },
     teamName: {
-      fontSize: 10,
-      fontFamily: Fonts.BOLD,
       marginTop: 6,
+      fontFamily: Fonts.BOLD,
+      fontSize: 10,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },

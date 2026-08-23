@@ -186,9 +186,9 @@ const styles = StyleSheet.create({
   },
 
   tabPressable: {
+    alignItems: "center",
     paddingTop: 10,
     paddingBottom: 4,
     paddingHorizontal: 16,
-    alignItems: "center",
   },
 });

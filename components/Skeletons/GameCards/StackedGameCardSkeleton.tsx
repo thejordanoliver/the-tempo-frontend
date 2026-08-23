@@ -46,36 +46,36 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 12,
+      paddingVertical: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      justifyContent: "space-between",
-      borderRadius: 8,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
     },
     cardWrapper: {
+      flex: 1,
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRightWidth: 0.5,
       paddingRight: 12,
-      flex: 1,
+      borderRightWidth: 0.5,
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     teamSection: {
       flexDirection: "row",
-      justifyContent: "flex-start",
       alignItems: "center",
+      justifyContent: "flex-start",
       gap: 4,
     },
 
     teamWrapper: {
+      flex: 1,
       flexDirection: "row",
-      justifyContent: "flex-start",
       alignItems: "center",
+      justifyContent: "flex-start",
       gap: 8,
       width: 100,
-      flex: 1,
     },
     logoSkeleton: {
       width: 24,
@@ -86,9 +86,9 @@ const getStyles = (isDark: boolean) =>
     nameSkeleton: {
       width: 120,
       height: 14,
+      marginHorizontal: 8,
       borderRadius: 4,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      marginHorizontal: 8,
     },
     scoreSkeleton: {
       width: 40,
@@ -99,9 +99,9 @@ const getStyles = (isDark: boolean) =>
     info: {
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 30,
       gap: 6,
       width: 100,
+      minHeight: 30,
     },
     dateSkeleton: {
       width: 40,

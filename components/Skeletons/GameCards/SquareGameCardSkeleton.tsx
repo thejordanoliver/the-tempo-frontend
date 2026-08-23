@@ -49,33 +49,33 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
       flexDirection: "row",
+      justifyContent: "space-between",
       height: 120,
+      paddingHorizontal: 8,
+      paddingVertical: 16,
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      justifyContent: "space-between",
-      borderRadius: 12,
-      paddingHorizontal: 8,
-      paddingVertical: 16,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRightWidth: 0.5,
-      paddingRight: 12,
       gap: 8,
+      paddingRight: 12,
+      borderRightWidth: 0.5,
+      borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     teamSection: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: 4,
     },
     teamWrapper: {
       flexDirection: "row",
-      justifyContent: "flex-start",
       alignItems: "center",
+      justifyContent: "flex-start",
       gap: 8,
       width: 88,
     },
@@ -98,17 +98,16 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     info: {
+      alignItems: "center",
       justifyContent: "center",
       minHeight: 40,
-      alignItems: "center",
     },
     dateSkeleton: {
       width: 36,
       height: 16,
+      marginBottom: 6,
       borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
-      marginBottom: 6,
     },
     timeSkeleton: {
       width: 20,

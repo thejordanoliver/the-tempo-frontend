@@ -430,15 +430,15 @@ const animationStyles = (
 ) =>
   StyleSheet.create({
     container: {
+      position: "relative",
       alignItems: "center",
-      backgroundColor: Colors.white,
+      justifyContent: "center",
+      width: "100%",
+      height: CONTAINER_HEIGHT,
       borderCurve: "continuous",
       borderRadius: 14,
-      height: CONTAINER_HEIGHT,
-      justifyContent: "center",
+      backgroundColor: Colors.white,
       overflow: "hidden",
-      position: "relative",
-      width: "100%",
     },
 
     logoStage: {
@@ -448,67 +448,67 @@ const animationStyles = (
     },
 
     glow: {
-      backgroundColor: `${accentColor}33`,
-      borderRadius: 999,
-      height: 190,
       position: "absolute",
       width: 190,
+      height: 190,
+      borderRadius: 999,
+      backgroundColor: `${accentColor}33`,
     },
 
     ring: {
-      borderColor: accentColor,
-      borderRadius: 999,
-      borderWidth: 3,
-      height: 105,
       position: "absolute",
       width: 105,
+      height: 105,
+      borderWidth: 3,
+      borderColor: accentColor,
+      borderRadius: 999,
     },
 
     logoWrap: {
-      height: 130,
       width: 130,
+      height: 130,
     },
 
     logo: {
-      height: "100%",
       width: "100%",
+      height: "100%",
     },
 
     announcementPanel: {
       ...StyleSheet.absoluteFillObject,
-      alignItems: "center",
-      backgroundColor: Colors.white,
-      gap: 2,
-      justifyContent: "center",
-      paddingHorizontal: 18,
       zIndex: 2,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 2,
+      paddingHorizontal: 18,
+      backgroundColor: Colors.white,
     },
 
     teamName: {
-      color: secondaryColor,
+      width: "100%",
       fontFamily: Fonts.BOLD,
       fontSize: 40,
       letterSpacing: 2,
+      color: secondaryColor,
       textAlign: "center",
-      width: "100%",
     },
 
     title: {
-      color: Colors.black,
-      fontFamily: Fonts.BOLD,
-      letterSpacing: 0.5,
-      fontSize: 30,
-      textAlign: "center",
       width: "100%",
+      fontFamily: Fonts.BOLD,
+      fontSize: 30,
+      letterSpacing: 0.5,
+      color: Colors.black,
+      textAlign: "center",
     },
 
     shutter: {
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      height: SHUTTER_HEIGHT,
-      left: 0,
       position: "absolute",
-      width: "100%",
+      left: 0,
       zIndex: 20,
+      width: "100%",
+      height: SHUTTER_HEIGHT,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
     topShutter: {

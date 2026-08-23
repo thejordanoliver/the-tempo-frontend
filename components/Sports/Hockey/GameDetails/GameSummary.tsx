@@ -200,8 +200,15 @@ export default function GameSummary({
 /* ---------------- STYLES ---------------- */
 const gameSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
-    logo: { width: 26, height: 26, marginRight: 8 },
-    listContainer: { marginTop: 12, height: 400 },
+    logo: {
+      width: 26,
+      height: 26,
+      marginRight: 8,
+    },
+    listContainer: {
+      height: 400,
+      marginTop: 12,
+    },
     playRow: {
       flexDirection: "row",
       alignItems: "flex-start",
@@ -210,25 +217,25 @@ const gameSummaryStyles = (isDark: boolean) =>
       borderTopColor: Colors.midTone,
     },
     periodText: {
+      width: 60,
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
-      width: 60,
     },
     playDesc: {
+      flexShrink: 1,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
-      flexShrink: 1,
     },
     clockText: {
+      width: 45,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      width: 45,
       textAlign: "right",
     },
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       paddingTop: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
     },
   });

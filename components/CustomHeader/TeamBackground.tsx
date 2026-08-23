@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { Image, StyleSheet, View } from "react-native";
-import { customHeaderStyles } from "./styles";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, HeaderTeamLike } from "./types";
 import { resolveImage } from "./utils";
 

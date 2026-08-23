@@ -6,20 +6,20 @@ export const playerCardStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       alignItems: "center",
+      paddingHorizontal: 20,
+      paddingVertical: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      paddingHorizontal: 20,
-      paddingVertical: 12,
     },
     avatarContainer: {
       width: 50,
       height: 50,
-      borderRadius: 30,
+      paddingTop: 4,
       borderWidth: 1,
       borderColor: Colors.midTone,
-      paddingTop: 4,
+      borderRadius: 30,
       overflow: "hidden",
     },
     avatar: {
@@ -27,37 +27,37 @@ export const playerCardStyles = (isDark: boolean) =>
       height: 50,
     },
     rank: {
+      marginRight: 12,
+      fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.BOLD,
-      marginRight: 12,
     },
     info: {
       flex: 1,
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
-      marginLeft: 12,
+      justifyContent: "space-between",
       height: "100%",
+      marginLeft: 12,
     },
     container: {
       flexDirection: "row",
       alignItems: "center",
     },
     name: {
-      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     jerseyNumber: {
-      fontSize: 16,
       marginLeft: 6,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     position: {
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.BOLD,
     },
   });

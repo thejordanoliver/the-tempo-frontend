@@ -32,7 +32,7 @@ export function CenterInfo({
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
 
-  const inProgress = state === "in";
+  const inProgress = state === "in" && gameStatusDescription !== "Delayed";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const isFinal = gameStatusDescription === "Final";
   const isScheduled = gameStatusDescription === "Scheduled";
@@ -114,7 +114,7 @@ export function CenterInfo({
       )}
 
       {/* 📺 Broadcast */}
-      {broadcast && (inProgress || isScheduled) && (
+      {broadcast && (inProgress || isScheduled || isDelayed) && (
         <Text style={styles.broadcasts}>{broadcast}</Text>
       )}
     </View>

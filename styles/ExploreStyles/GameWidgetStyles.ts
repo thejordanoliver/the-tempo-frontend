@@ -62,9 +62,9 @@ export const gameWidgetStyles = (
 
   return StyleSheet.create({
     container: {
+      justifyContent: isSmallLayout ? "flex-start" : "center",
       width: "100%",
       height,
-      justifyContent: isSmallLayout ? "flex-start" : "center",
       paddingVertical: paddingV,
       paddingHorizontal: paddingH,
       overflow: "hidden",
@@ -72,11 +72,11 @@ export const gameWidgetStyles = (
 
     wrapper: {
       flex: isSmallLayout ? 1 : undefined,
-      width: "100%",
       flexDirection: isSmallLayout ? "column" : "row",
       alignItems: isSmallLayout ? "stretch" : "center",
       justifyContent: "center",
       gap: isSmallLayout ? clamp(h * 0.018, 2, 5) : 0,
+      width: "100%",
     },
 
     /* -------- TEAM SECTIONS -------- */
@@ -86,9 +86,9 @@ export const gameWidgetStyles = (
       flexDirection: "row",
       alignItems: "center",
       justifyContent: isSmallLayout ? "space-between" : "center",
-      minHeight: isSmallLayout ? clamp(h * 0.22, 32, 42) : undefined,
-      minWidth: 0,
       width: isSmallLayout ? "100%" : undefined,
+      minWidth: 0,
+      minHeight: isSmallLayout ? clamp(h * 0.22, 32, 42) : undefined,
     },
 
     homeSection: {
@@ -96,16 +96,16 @@ export const gameWidgetStyles = (
       flexDirection: "row",
       alignItems: "center",
       justifyContent: isSmallLayout ? "space-between" : "center",
-      minHeight: isSmallLayout ? clamp(h * 0.22, 32, 42) : undefined,
-      minWidth: 0,
       width: isSmallLayout ? "100%" : undefined,
+      minWidth: 0,
+      minHeight: isSmallLayout ? clamp(h * 0.22, 32, 42) : undefined,
     },
 
     teamWrapper: {
+      flexShrink: isSmallLayout ? 1 : undefined,
       flexDirection: isSmallLayout ? "row" : "column",
       alignItems: "center",
       justifyContent: "center",
-      flexShrink: isSmallLayout ? 1 : undefined,
       minWidth: 0,
     },
 
@@ -144,55 +144,55 @@ export const gameWidgetStyles = (
     },
 
     teamName: {
+      flexShrink: isSmallLayout ? 1 : undefined,
+      maxWidth: isSmallLayout ? teamNameMaxWidth : undefined,
+      marginTop: isSmallLayout ? 0 : clamp(unit * 0.4, 2, 8),
       fontFamily: Fonts.REGULAR,
       fontSize: nameFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginTop: isSmallLayout ? 0 : clamp(unit * 0.4, 2, 8),
-      flexShrink: isSmallLayout ? 1 : undefined,
-      maxWidth: isSmallLayout ? teamNameMaxWidth : undefined,
     },
     teamRank: {
+      marginTop: isSmallLayout ? 0 : clamp(unit * 0.3, 2, 6),
       fontFamily: Fonts.REGULAR,
       fontSize: rankFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: isSmallLayout ? 0 : clamp(unit * 0.3, 2, 6),
     },
 
     awayScore: {
+      minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
+      marginLeft: isSmallLayout ? gap : gap * 1.5,
       fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: isSmallLayout ? gap : gap * 1.5,
-      minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
       textAlign: "center",
     },
 
     homeScore: {
+      minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
+      marginLeft: isSmallLayout ? gap : 0,
+      marginRight: isSmallLayout ? 0 : gap * 1.5,
       fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: isSmallLayout ? gap : 0,
-      marginRight: isSmallLayout ? 0 : gap * 1.5,
-      minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
       textAlign: "center",
     },
 
     awayRecord: {
+      minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
+      marginLeft: isSmallLayout ? gap : gap * 1.5,
       fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: isSmallLayout ? gap : gap * 1.5,
-      minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
       textAlign: "right",
     },
 
     homeRecord: {
+      minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
+      marginLeft: isSmallLayout ? gap : 0,
+      marginRight: isSmallLayout ? 0 : gap * 1.5,
       fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
-      marginLeft: isSmallLayout ? gap : 0,
-      marginRight: isSmallLayout ? 0 : gap * 1.5,
-      minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
       textAlign: "right",
     },
 
@@ -214,12 +214,12 @@ export const gameWidgetStyles = (
     gameInfo: {
       flex: isSmallLayout ? 0 : 1,
       flexShrink: 1,
+      flexDirection: isSmallLayout ? "row" : "column",
       alignItems: "center",
       justifyContent: isSmallLayout ? "space-between" : "center",
-      minHeight: isSmallLayout ? clamp(h * 0.18, 26, 36) : undefined,
-      minWidth: 0,
       width: isSmallLayout ? "100%" : undefined,
-      flexDirection: isSmallLayout ? "row" : "column",
+      minWidth: 0,
+      minHeight: isSmallLayout ? clamp(h * 0.18, 26, 36) : undefined,
     },
 
     infoWrapper: {
@@ -230,60 +230,60 @@ export const gameWidgetStyles = (
     },
 
     dateTime: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: metaFz,
-      textAlign: "center",
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
+      fontSize: metaFz,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     period: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: infoFz,
-      textAlign: "center",
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
+      fontSize: infoFz,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     finalText: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: infoFz,
-      textAlign: "center",
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
+      fontSize: infoFz,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
     clock: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: infoFz,
-      textAlign: "center",
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
+      fontSize: infoFz,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
     downAndDistance: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontSize: metaFz,
-      textAlign: "center",
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
+      fontSize: metaFz,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
 
     divider: {
-      marginHorizontal: clamp(gap * 0.2, 3, 12),
-      height: divH,
       width: 1,
+      height: divH,
+      marginHorizontal: clamp(gap * 0.2, 3, 12),
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     finalDivder: {
-      marginHorizontal: clamp(gap * 0.4, 3, 12),
-      height: divH,
       width: StyleSheet.hairlineWidth,
+      height: divH,
+      marginHorizontal: clamp(gap * 0.4, 3, 12),
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     broadcast: {
+      flexShrink: 1,
+      maxWidth: "100%",
       fontFamily: Fonts.REGULAR,
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      flexShrink: 1,
-      maxWidth: "100%",
       textAlign: "right",
     },
     outsContainer: {
@@ -294,8 +294,8 @@ export const gameWidgetStyles = (
 
     basesContainer: {
       position: "absolute",
-      right: 12,
       top: 12,
+      right: 12,
     },
   });
 };

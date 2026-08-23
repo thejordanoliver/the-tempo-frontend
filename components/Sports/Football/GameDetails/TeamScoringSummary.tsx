@@ -153,12 +153,12 @@ export default function TeamScoringSummary({
 const TeamScoringSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      overflow: "hidden",
       maxHeight: 400,
       borderWidth: 1,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
       borderRadius: 8,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      overflow: "hidden",
     },
 
     listContainer: {
@@ -166,10 +166,10 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     },
 
     playRow: {
-      minHeight: 72,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
+      minHeight: 72,
       paddingHorizontal: 12,
       paddingVertical: 14,
       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -181,24 +181,24 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     },
 
     status: {
-      width: 64,
       flexShrink: 0,
       flexDirection: "row",
       alignItems: "center",
       gap: 2,
+      width: 64,
     },
 
     statusText: {
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       lineHeight: 16,
-      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
 
     clockText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 16,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.midTone : Colors.darkGray,
     },
 
@@ -208,25 +208,25 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
     },
 
     playText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     score: {
-      minWidth: 48,
       flexShrink: 0,
       alignItems: "flex-end",
       justifyContent: "center",
+      minWidth: 48,
       paddingTop: 1,
     },
 
     scoreText: {
+      fontFamily: Fonts.MEDIUM,
       fontSize: 14,
       lineHeight: 20,
-      textAlign: "right",
-      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "right",
     },
   });

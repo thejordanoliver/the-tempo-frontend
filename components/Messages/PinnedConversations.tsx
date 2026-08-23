@@ -228,8 +228,8 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       marginBottom: 16,
       paddingTop: 2,
       paddingBottom: 12,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     grid: {
@@ -241,10 +241,10 @@ const pinnedConversationsStyles = (isDark: boolean) =>
     },
 
     card: {
-      width: "31.5%",
-      alignItems: "center",
       position: "relative",
       zIndex: 1,
+      alignItems: "center",
+      width: "31.5%",
     },
 
     activeCard: {
@@ -257,13 +257,13 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       top: 0,
       right: 6,
       zIndex: 3,
-      width: 24,
-      height: 24,
-      borderRadius: 12,
       alignItems: "center",
       justifyContent: "center",
+      width: 24,
+      height: 24,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -280,53 +280,53 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       right: 0,
       zIndex: 10,
       width: 140,
-      borderRadius: 14,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 14,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
       shadowColor: Colors.black,
+      shadowOffset: { width: 0, height: 6 },
       shadowOpacity: 0.18,
       shadowRadius: 12,
-      shadowOffset: { width: 0, height: 6 },
       elevation: 12,
-      overflow: "hidden",
     },
 
     submenuItem: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 8,
       paddingHorizontal: 10,
       paddingVertical: 10,
-      gap: 8,
     },
 
     submenuIconWrap: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 24,
       height: 24,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
     submenuText: {
       flex: 1,
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     avatarOuter: {
-      width: 66,
-      height: 66,
-      borderRadius: 33,
       alignItems: "center",
       justifyContent: "center",
+      width: 66,
+      height: 66,
       marginBottom: 7,
       borderWidth: 2,
       borderColor: isDark ? Colors.dark.blue : Colors.light.blue,
+      borderRadius: 33,
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
@@ -343,39 +343,39 @@ const pinnedConversationsStyles = (isDark: boolean) =>
       bottom: 5,
       width: 13,
       height: 13,
-      borderRadius: 7,
       borderWidth: 2,
       borderColor: isDark ? Colors.black : Colors.white,
+      borderRadius: 7,
       backgroundColor: Colors.dark.leafGreen,
     },
 
     name: {
       width: "100%",
       marginBottom: 7,
-      textAlign: "center",
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
     },
 
     messageBubble: {
-      width: "100%",
-      minHeight: 44,
-      borderRadius: 14,
-      paddingHorizontal: 9,
-      paddingVertical: 8,
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      minHeight: 44,
+      paddingHorizontal: 9,
+      paddingVertical: 8,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
+      borderRadius: 14,
     },
 
     messageText: {
-      textAlign: "center",
+      opacity: 0.8,
+      fontFamily: Fonts.REGULAR,
       fontSize: 11,
       lineHeight: 14,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
-      opacity: 0.8,
+      textAlign: "center",
     },
   });

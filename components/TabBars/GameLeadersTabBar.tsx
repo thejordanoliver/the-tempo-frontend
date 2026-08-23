@@ -103,22 +103,22 @@ export default function GameLeadersTabBar<T extends string>({
 const gameLeadersTabBarStyles = (isDark: boolean) => {
   return StyleSheet.create({
     tabs: {
-      flexDirection: "row",
       position: "relative",
-      marginBottom: 10,
+      flexDirection: "row",
       alignSelf: "center",
+      marginBottom: 10,
     },
     tabPressable: {
       alignItems: "center",
       paddingVertical: 10,
     },
     underline: {
-      height: 2,
-      backgroundColor: isDark ? Colors.white : Colors.black,
       position: "absolute",
       bottom: 0,
       left: 0,
+      height: 2,
       borderRadius: 50,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
   });
 };

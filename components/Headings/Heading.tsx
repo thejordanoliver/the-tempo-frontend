@@ -18,10 +18,10 @@ const Heading: React.FC<Props> = ({ children, style, isDark }) => {
 const headerStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
-      fontSize: 20,
-      fontFamily: Fonts.MEDIUM,
-      color: isDark ? Colors.dark.white : Colors.light.black,
       borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
+      color: isDark ? Colors.dark.white : Colors.light.black,
     },
   });
 

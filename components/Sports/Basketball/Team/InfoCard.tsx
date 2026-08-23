@@ -113,38 +113,38 @@ export default function InfoCard({
 export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
   StyleSheet.create({
     label: {
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 20,
-      paddingBottom: 4,
       marginBottom: 8,
+      paddingBottom: 4,
       borderBottomWidth: 0.5,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     cardContainer: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: teamObj?.color ?? Colors.midTone,
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      marginBottom: 12,
       width: "100%",
       minHeight: 80,
-      borderColor: Colors.midTone,
+      marginBottom: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
       borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
+      backgroundColor: teamObj?.color ?? Colors.midTone,
     },
 
     imageContainer: {
-      borderRadius: 100,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       marginRight: 12,
-      overflow: "hidden",
-      resizeMode: "contain",
       borderWidth: 1,
       borderColor: Colors.white,
+      borderRadius: 100,
+      overflow: "hidden",
+      resizeMode: "contain",
     },
 
     image: {
@@ -154,10 +154,10 @@ export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
     },
 
     value: {
+      flex: 1,
+      flexShrink: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: Colors.white,
-      flexShrink: 1,
-      flex: 1,
     },
   });

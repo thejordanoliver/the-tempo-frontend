@@ -15,9 +15,9 @@ export const cropEditorModalStyles = (
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
     wrapper: {
-      padding: 12,
       flex: 1,
       justifyContent: "flex-start",
+      padding: 12,
     },
 
     header: {
@@ -29,8 +29,8 @@ export const cropEditorModalStyles = (
 
     headerBtn: { padding: 8 },
     headerTitle: {
-      fontSize: 18,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
     cropContainer: {
@@ -44,28 +44,28 @@ export const cropEditorModalStyles = (
     },
     loadingText: {
       marginTop: 12,
-      color: Colors.white,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
+      color: Colors.white,
     },
     cropBox: {
       borderWidth: 2,
-      overflow: "hidden",
       backgroundColor: Colors.black,
+      overflow: "hidden",
     },
     imageContainer: {
+      alignItems: "center",
+      justifyContent: "center",
       width: cropWidth,
       height: cropHeight,
       borderRadius: isProfile ? cropHeight / 2 : 8,
-      overflow: "hidden",
       backgroundColor: Colors.black,
-      alignItems: "center",
-      justifyContent: "center",
+      overflow: "hidden",
     },
     cropFrame: {
       ...StyleSheet.absoluteFillObject,
-      borderColor: isDark ? Colors.white : Colors.black,
       borderWidth: 2,
+      borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: isProfile ? cropHeight / 2 : 8,
     },
     controlsContainer: {
@@ -74,8 +74,8 @@ export const cropEditorModalStyles = (
     },
     controlRow: {
       flexDirection: "row",
-      justifyContent: "space-around",
       alignItems: "center",
+      justifyContent: "space-around",
       marginBottom: 12,
     },
     controlButton: {
@@ -87,18 +87,18 @@ export const cropEditorModalStyles = (
     },
     controlLabel: {
       marginTop: 4,
-      color: Colors.white,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
+      color: Colors.white,
     },
     controlLabelDisabled: {
       color: Colors.darkGray,
     },
     scaleIndicator: {
-      textAlign: "center",
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     buttonContainer: {
       flexDirection: "row",
@@ -107,37 +107,37 @@ export const cropEditorModalStyles = (
       paddingVertical: 20,
     },
     cancelButton: {
-      paddingVertical: 12,
-      paddingHorizontal: 24,
-      borderRadius: 8,
       flex: 1,
-      marginRight: 8,
       alignItems: "center",
       justifyContent: "center",
-    },
-    saveButton: {
-      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      marginRight: 8,
       paddingVertical: 12,
       paddingHorizontal: 24,
       borderRadius: 8,
+    },
+    saveButton: {
       flex: 1,
-      marginLeft: 8,
       alignItems: "center",
       justifyContent: "center",
       minHeight: 48,
+      marginLeft: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
     buttonDisabled: {
       opacity: 0.5,
     },
     saveText: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
     cancelText: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
     buttonTextDisabled: {
       opacity: 0.5,

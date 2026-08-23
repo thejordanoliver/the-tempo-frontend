@@ -4,19 +4,19 @@ import { StyleSheet } from "react-native";
 export const gameHeaderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      borderBottomWidth: 1,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      paddingVertical: 4,
-      paddingHorizontal: 12,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       flex: 1,
       justifyContent: "center",
+      paddingVertical: 4,
+      paddingHorizontal: 12,
+      borderBottomWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     teamsContainer: {
-      flexDirection: "row",
-      justifyContent: "space-around",
-      alignItems: "center",
       flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-around",
     },
     headlineContainer: {
       alignItems: "center",
@@ -24,31 +24,31 @@ export const gameHeaderStyles = (isDark: boolean) =>
     },
     headlineText: {
       position: "absolute",
-      width: "100%",
       top: 0,
+      width: "100%",
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
     divider: {
+      width: 1,
       height: 10,
       marginHorizontal: 4,
-      width: 1,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     seriesContainer: {
       position: "absolute",
-      width: "100%",
       top: 0,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
     },
     seriesText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.REGULAR,
       textAlign: "center",
     },
   });
@@ -57,9 +57,5 @@ export const DriverHeaderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       padding: 12,
-    },
-    driverContainer: {
-      flexDirection: "row",
-      gap: 12,
     },
   });

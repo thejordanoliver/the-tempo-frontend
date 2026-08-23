@@ -64,6 +64,7 @@ type Props = {
   onReaction: (messageId: string, emoji: string) => void;
   onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;
   inputDisabled?: boolean;
+  sendDisabled?: boolean;
   onDismiss: () => void;
 };
 
@@ -74,6 +75,7 @@ export default function LiveChat({
   onReaction,
   onSend,
   inputDisabled = false,
+  sendDisabled = false,
   onDismiss,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
@@ -264,6 +266,7 @@ export default function LiveChat({
           isDark={isDark}
           onSend={handleSend}
           disabled={inputDisabled}
+          sendDisabled={sendDisabled}
           onHeightChange={setInputHeight}
           onSent={handleMessageSent}
           selectedGifUrl={selectedGifUrl}
@@ -280,6 +283,7 @@ export default function LiveChat({
       inputDisabled,
       isDark,
       openGifPicker,
+      sendDisabled,
       selectedGifUrl,
       styles.footerContainer,
       disablePanDown,
@@ -378,30 +382,30 @@ export default function LiveChat({
 const LiveChatStyles = (isDark: boolean) =>
   StyleSheet.create({
     handleIndicatorStyle: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
       width: 42,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     background: {
-      overflow: "hidden",
       borderTopLeftRadius: 18,
       borderTopRightRadius: 18,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      overflow: "hidden",
     },
     content: {
-      flex: 1,
       position: "relative",
+      flex: 1,
     },
     listContent: {
       paddingTop: 4,
     },
     header: {
+      alignItems: "center",
+      marginBottom: 4,
       paddingTop: 4,
       paddingBottom: 10,
-      alignItems: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      marginBottom: 4,
     },
     title: {
       fontFamily: Fonts.MEDIUM,
@@ -410,9 +414,9 @@ const LiveChatStyles = (isDark: boolean) =>
     },
     userCount: {
       marginTop: 2,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     footerContainer: {
       borderTopWidth: StyleSheet.hairlineWidth,
@@ -420,20 +424,20 @@ const LiveChatStyles = (isDark: boolean) =>
     },
     latestButton: {
       position: "absolute",
-      alignSelf: "center",
+      zIndex: 20,
       flexDirection: "row",
       alignItems: "center",
+      alignSelf: "center",
       gap: 6,
       paddingHorizontal: 20,
       paddingVertical: 12,
       borderRadius: 999,
       backgroundColor: isDark ? Colors.white : Colors.black,
       shadowColor: Colors.black,
+      shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.18,
       shadowRadius: 8,
-      shadowOffset: { width: 0, height: 3 },
       elevation: 6,
-      zIndex: 20,
     },
     latestButtonText: {
       fontFamily: Fonts.MEDIUM,

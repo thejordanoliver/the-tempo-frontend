@@ -15,6 +15,10 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, TextStyle, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  customHeaderStyles,
+  HEADER_WIDTH,
+} from "../../styles/CustomHeaderStyles";
 import { ConferenceBackground } from "./ConferenceBackground";
 import { GameHeader } from "./GameHeader";
 import { HeaderLeftActions } from "./HeaderLeftActions";
@@ -22,7 +26,6 @@ import { HeaderRightActions } from "./HeaderRightActions";
 import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
 import { resolveRacingLeague } from "./racingConfig";
-import { customHeaderStyles, HEADER_WIDTH } from "./styles";
 import { TeamBackground } from "./TeamBackground";
 import type { CustomHeaderProps, HeaderTeamLike } from "./types";
 
@@ -373,7 +376,9 @@ export function CustomHeader({
           />
         ) : (
           <View style={styles.defaultHeaderTitleContainer}>
-            <HeaderTitle style={textStyle}>{title || tabName || ""}</HeaderTitle>
+            <HeaderTitle style={textStyle}>
+              {title || tabName || ""}
+            </HeaderTitle>
           </View>
         )}
 

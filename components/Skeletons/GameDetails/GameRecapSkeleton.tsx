@@ -82,10 +82,10 @@ export default function GameRecapSkeleton() {
 const skeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      borderWidth: 1,
-      borderRadius: 8,
-      borderColor: Colors.midTone,
       padding: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
     },
 
     playerContainer: {
@@ -105,8 +105,8 @@ const skeletonStyles = (isDark: boolean) =>
     },
 
     divider: {
-      height: 20,
       width: 1,
+      height: 20,
       marginHorizontal: 8,
       backgroundColor: Colors.midTone,
     },
@@ -114,17 +114,17 @@ const skeletonStyles = (isDark: boolean) =>
     avatarSkeleton: {
       width: 44,
       height: 44,
-      borderRadius: 22,
       marginRight: 12,
+      borderRadius: 22,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     nameSkeleton: {
       width: 120,
       height: 14,
+      marginBottom: 6,
       borderRadius: 4,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      marginBottom: 6,
     },
 
     teamSkeleton: {
@@ -143,8 +143,8 @@ const skeletonStyles = (isDark: boolean) =>
 
     lineSkeleton: {
       height: 10,
+      marginBottom: 6,
       borderRadius: 4,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      marginBottom: 6,
     },
   });

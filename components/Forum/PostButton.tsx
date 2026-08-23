@@ -23,15 +23,15 @@ export default function PostButton({ onPress, disabled }: ForumPostButtonProps) 
 const postButtonStyles = (isDark: boolean) =>
   StyleSheet.create({
     button: {
+      alignItems: "center",
       marginVertical: 24,
       padding: 16,
       borderRadius: 8,
-      alignItems: "center",
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     buttonText: {
-      fontSize: 16,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
       color: isDark ? Colors.black : Colors.white,
     },
   });

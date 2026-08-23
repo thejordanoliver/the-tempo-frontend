@@ -122,30 +122,30 @@ const offerListStyles = (isDark: boolean) =>
       borderRadius: 8,
     },
     itemContainer: {
-      padding: 12,
       flexDirection: "row",
       justifyContent: "space-between",
+      padding: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.white : Colors.black,
     },
     emptyContainer: {
-      padding: 12,
       flexDirection: "row",
       justifyContent: "center",
+      padding: 12,
     },
     headerText: {
-      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     schoolText: {
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     statusText: {
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     rowAltLight: {
@@ -155,12 +155,12 @@ const offerListStyles = (isDark: boolean) =>
       backgroundColor: Colors.dark.itemBackground,
     },
     showMoreButton: {
-      paddingVertical: 12,
       alignItems: "center",
+      paddingVertical: 12,
     },
     showMoreText: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

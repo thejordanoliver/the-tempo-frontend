@@ -5,13 +5,13 @@ export const HEADER_WIDTH = Dimensions.get("window").width;
 
 export const customHeaderStyles = StyleSheet.create({
   bgImage: {
-    height: 200,
-    width: "100%",
-    resizeMode: "contain",
-    opacity: 0.25,
     position: "absolute",
     top: -70,
     zIndex: 0,
+    width: "100%",
+    height: 200,
+    opacity: 0.25,
+    resizeMode: "contain",
   },
 
   headerSidePlaceholder: {
@@ -30,16 +30,16 @@ export const customHeaderStyles = StyleSheet.create({
 
   leagueHeaderContainer: {
     flex: 1,
-    height: 56,
     alignItems: "center",
     justifyContent: "center",
+    height: 56,
     overflow: "hidden",
   },
 
   leagueHeaderButton: {
+    zIndex: 2,
     flexDirection: "row",
     alignItems: "center",
-    zIndex: 2,
   },
 
   teamHeaderActions: {
@@ -52,34 +52,34 @@ export const customHeaderStyles = StyleSheet.create({
   },
 
   teamHalfWrapper: {
+    position: "relative",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    position: "relative",
     overflow: "hidden",
   },
 
   teamHalfContent: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: 2,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 2,
   },
 
   bgLogo: {
     position: "absolute",
+    alignSelf: "center",
     width: "100%",
     height: 180,
-    opacity: 0.25,
-    alignSelf: "center",
     marginTop: 10,
+    opacity: 0.25,
   },
 
   teamCode: {
-    color: Colors.white,
+    zIndex: 2,
     fontFamily: Fonts.BOLD,
     fontSize: 24,
-    zIndex: 2,
+    color: Colors.white,
   },
 
   teamCodeRow: {
@@ -88,21 +88,21 @@ export const customHeaderStyles = StyleSheet.create({
 
   dividerWrapper: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
     zIndex: 2,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   dividerText: {
-    color: Colors.white,
     fontFamily: Fonts.BOLD,
     fontSize: 24,
+    color: Colors.white,
   },
 
   racingHeader: {
     zIndex: -10,
-    overflow: "hidden",
     backgroundColor: Colors.black,
+    overflow: "hidden",
   },
 
   racingAccent: {
@@ -110,8 +110,8 @@ export const customHeaderStyles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    width: 5,
     zIndex: 3,
+    width: 5,
   },
 
   racingHeaderContent: {
@@ -130,9 +130,9 @@ export const customHeaderStyles = StyleSheet.create({
   },
 
   racingCode: {
-    color: Colors.white,
     fontFamily: Fonts.BOLD,
     fontSize: 12,
+    color: Colors.white,
   },
 
   racingTextWrapper: {
@@ -142,27 +142,27 @@ export const customHeaderStyles = StyleSheet.create({
   },
 
   racingSeriesLabel: {
-    color: "rgba(255,255,255,0.72)",
     fontFamily: Fonts.BOLD,
     fontSize: 8,
     letterSpacing: 1.1,
+    color: "rgba(255,255,255,0.72)",
   },
 
   racingEventTitle: {
-    color: Colors.white,
+    maxWidth: HEADER_WIDTH * 0.48,
     fontFamily: Fonts.BOLD,
     fontSize: 14,
-    maxWidth: HEADER_WIDTH * 0.48,
+    color: Colors.white,
   },
 
   racingLogoWrapper: {
     position: "absolute",
-    right: 34,
     top: -26,
+    right: 34,
+    zIndex: 1,
     width: 116,
     height: 116,
     opacity: 0.18,
-    zIndex: 1,
   },
 
   racingLogo: {
@@ -174,21 +174,21 @@ export const customHeaderStyles = StyleSheet.create({
     position: "absolute",
     right: -4,
     bottom: -22,
+    zIndex: 1,
+    opacity: 0.09,
     fontFamily: Fonts.BOLD,
     fontSize: 70,
     lineHeight: 78,
     letterSpacing: -3,
-    opacity: 0.09,
-    zIndex: 1,
   },
 
   racingCheckeredPattern: {
     position: "absolute",
     top: -14,
     right: -12,
-    width: 108,
     flexDirection: "row",
     flexWrap: "wrap",
+    width: 108,
     opacity: 0.08,
     transform: [
       {
@@ -212,18 +212,18 @@ export const customHeaderStyles = StyleSheet.create({
 
   messageHeaderContainer: {
     flex: 1,
-    height: 56,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    height: 56,
     paddingHorizontal: 8,
   },
 
   messageAvatarWrap: {
     width: 36,
     height: 36,
-    borderRadius: 18,
     marginRight: 9,
+    borderRadius: 18,
   },
 
   messageAvatar: {
@@ -239,14 +239,14 @@ export const customHeaderStyles = StyleSheet.create({
     bottom: 1,
     width: 10,
     height: 10,
-    borderRadius: 5,
     borderWidth: 1.5,
+    borderRadius: 5,
     backgroundColor: Colors.dark.leafGreen,
   },
 
   messageHeaderTextWrap: {
-    maxWidth: HEADER_WIDTH * 0.54,
     justifyContent: "center",
+    maxWidth: HEADER_WIDTH * 0.54,
   },
 
   messageUsernameRow: {
@@ -257,32 +257,32 @@ export const customHeaderStyles = StyleSheet.create({
 
   messageUsername: {
     flexShrink: 1,
-    fontSize: 15,
     fontFamily: Fonts.BOLD,
+    fontSize: 15,
   },
 
   messageFullName: {
     marginTop: 1,
-    fontSize: 11,
     fontFamily: Fonts.REGULAR,
+    fontSize: 11,
   },
 
   profileMenuAnchor: {
     position: "relative",
-    width: 32,
-    height: 32,
+    zIndex: 50,
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 50,
+    width: 32,
+    height: 32,
     elevation: 50,
   },
 
   profileHeaderActionButton: {
+    alignItems: "center",
+    justifyContent: "center",
     width: 32,
     height: 32,
     borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   profileSubmenu: {
@@ -290,39 +290,39 @@ export const customHeaderStyles = StyleSheet.create({
     top: 38,
     right: 0,
     width: 150,
-    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 14,
+    overflow: "hidden",
     shadowColor: Colors.black,
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
     shadowOffset: {
       width: 0,
       height: 6,
     },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
     elevation: 18,
-    overflow: "hidden",
   },
 
   profileSubmenuItem: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    gap: 8,
   },
 
   profileSubmenuIconWrap: {
+    alignItems: "center",
+    justifyContent: "center",
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   profileSubmenuText: {
     flex: 1,
-    fontSize: 12,
     fontFamily: Fonts.BOLD,
+    fontSize: 12,
   },
 
   profileSubmenuSeparator: {
@@ -331,11 +331,11 @@ export const customHeaderStyles = StyleSheet.create({
   },
 
   headerActionButton: {
+    alignItems: "center",
+    justifyContent: "center",
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
   },
 
   headerActionButtonPressed: {

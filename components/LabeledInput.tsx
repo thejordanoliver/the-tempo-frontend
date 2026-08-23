@@ -70,43 +70,43 @@ const labeledInputStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { marginBottom: 10 },
     label: {
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
-      color: isDark ? Colors.transparentLightGray : Colors.transparentDarkGray,
-      letterSpacing: 0.3,
-      textTransform: "uppercase",
       paddingLeft: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
+      letterSpacing: 0.3,
+      color: isDark ? Colors.transparentLightGray : Colors.transparentDarkGray,
+      textTransform: "uppercase",
     },
     input: {
+      marginVertical: 12,
       paddingVertical: 20,
       paddingHorizontal: 12,
-      color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      borderRadius: 12,
-      marginVertical: 12,
-      fontSize: 15,
-      fontFamily: Fonts.REGULAR,
       borderWidth: 1,
       borderColor: isDark
         ? Colors.transparentLightGray
         : Colors.transparentDarkGray,
+      borderRadius: 12,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 15,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     hintContainer: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
     },
     errorText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     count: {
-      color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      color: Colors.midTone,
     },
   });

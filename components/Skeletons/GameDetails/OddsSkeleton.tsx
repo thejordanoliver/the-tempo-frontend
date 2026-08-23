@@ -158,14 +158,14 @@ export const OddsSkeleton = () => {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 12,
     marginBottom: 10,
+    borderRadius: 12,
   },
   wrapper: {
-    borderColor: Colors.midTone,
-    borderWidth: 1,
-    borderRadius: 8,
     padding: 12,
+    borderWidth: 1,
+    borderColor: Colors.midTone,
+    borderRadius: 8,
     overflow: "hidden",
   },
   headerRow: {
@@ -194,14 +194,14 @@ const styles = StyleSheet.create({
   teamNameSkeleton: {
     width: TEAM_NAME_WIDTH,
     height: 16,
-    borderRadius: 6,
     marginLeft: TEAM_INFO_GAP,
+    borderRadius: 6,
   },
   subtext: {
     width: 40,
     height: 8,
-    borderRadius: 6,
     marginTop: 8,
+    borderRadius: 6,
   },
   date: {
     width: 60,
@@ -213,10 +213,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   bookmaker: {
-    flexDirection: "row",
     flex: 1,
-    justifyContent: "space-between",
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 12,
   },
 });

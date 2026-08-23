@@ -4,30 +4,33 @@ import { StyleSheet } from "react-native";
 export const commentThreadStyles = (isDark: boolean) =>
   StyleSheet.create({
     blurviewContainer: {
+      flexDirection: "row",
       padding: 16,
       paddingBottom: 30,
-      flexDirection: "row",
     },
     textInputContainer: {
-      color: isDark ? Colors.white : Colors.black,
+      flex: 1,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderTopLeftRadius: 12,
+      borderBottomLeftRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      flex: 1,
       fontFamily: Fonts.REGULAR,
-      borderTopLeftRadius: 12,
-      borderBottomLeftRadius: 12,
+      color: isDark ? Colors.white : Colors.black,
     },
     sendButton: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      alignItems: "center",
+      justifyContent: "center",
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderTopRightRadius: 12,
       borderBottomRightRadius: 12,
-      justifyContent: "center",
-      alignItems: "center",
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
-    centerContainer: { flex: 1, justifyContent: "center" },
+    centerContainer: {
+      flex: 1,
+      justifyContent: "center",
+    },
   });

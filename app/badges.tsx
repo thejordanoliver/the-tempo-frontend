@@ -248,12 +248,12 @@ export const badgeScreenStyles = (isDark: boolean) =>
     summaryCard: {
       gap: 18,
       padding: 18,
-      borderRadius: 18,
       borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 18,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     summaryHeader: {
@@ -269,15 +269,15 @@ export const badgeScreenStyles = (isDark: boolean) =>
     },
 
     summaryTitle: {
-      fontSize: 21,
       fontFamily: Fonts.BOLD,
+      fontSize: 21,
       color: isDark ? Colors.white : Colors.black,
     },
 
     summaryDescription: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -287,24 +287,24 @@ export const badgeScreenStyles = (isDark: boolean) =>
     },
 
     earnedCount: {
-      fontSize: 30,
       fontFamily: Fonts.BOLD,
+      fontSize: 30,
       color: isDark ? Colors.white : Colors.black,
     },
 
     totalCount: {
-      fontSize: 14,
       fontFamily: Fonts.SEMIBOLD,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     summaryProgressTrack: {
       height: 9,
       borderRadius: 999,
-      overflow: "hidden",
       backgroundColor: isDark
         ? Colors.dark.transparentBlue
         : Colors.light.transparentBlue,
+      overflow: "hidden",
     },
 
     summaryProgressFill: {
@@ -326,14 +326,14 @@ export const badgeScreenStyles = (isDark: boolean) =>
     },
 
     statValue: {
-      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
 
     statLabel: {
-      fontSize: 11,
       fontFamily: Fonts.SEMIBOLD,
+      fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -342,32 +342,32 @@ export const badgeScreenStyles = (isDark: boolean) =>
     },
 
     statusContainer: {
-      minHeight: 180,
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      minHeight: 180,
       padding: 18,
-      borderRadius: 12,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     statusText: {
-      textAlign: "center",
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
 
     errorText: {
-      textAlign: "center",
+      fontFamily: Fonts.REGULAR,
       fontSize: 15,
       lineHeight: 21,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
 
     retryButton: {
@@ -378,8 +378,8 @@ export const badgeScreenStyles = (isDark: boolean) =>
     },
 
     retryText: {
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
     },
   });

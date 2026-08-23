@@ -13,24 +13,24 @@ export const awardTableStyles = (isDark: boolean) =>
     },
 
     table: {
-      overflow: "hidden",
-      borderColor: Colors.midTone,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
+      overflow: "hidden",
     },
 
     errorText: {
+      marginTop: 20,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
 
     headerRow: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
+      height: ROW_HEIGHT,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
@@ -43,10 +43,10 @@ export const awardTableStyles = (isDark: boolean) =>
     },
 
     headerCell: {
-      textAlign: "center",
       fontFamily: Fonts.MEDIUM,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     row: {
@@ -56,17 +56,24 @@ export const awardTableStyles = (isDark: boolean) =>
       borderColor: Colors.lightGray,
     },
     nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
       height: ROW_HEIGHT,
+      paddingHorizontal: 10,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.lightGray,
-      paddingHorizontal: 10,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
     },
-    leftContainer: { flexDirection: "row", alignItems: "center", gap: 10 },
+    leftContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
     rightContainer: { alignItems: "flex-end" },
-    teamLogo: { width: 28, height: 28 },
+    teamLogo: {
+      width: 28,
+      height: 28,
+    },
     nameWrapper: {
       flexDirection: "row",
       alignItems: "center",
@@ -78,9 +85,9 @@ export const awardTableStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     seasonText: {
+      opacity: 0.75,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      opacity: 0.75,
       color: isDark ? Colors.white : Colors.black,
     },
     showMoreLess: {
@@ -90,7 +97,7 @@ export const awardTableStyles = (isDark: boolean) =>
     },
     dropdownRow: {
       flexDirection: "row",
-      gap: 8,
       justifyContent: "flex-end",
+      gap: 8,
     },
   });

@@ -63,8 +63,8 @@ export function XFeed({ items, loading }: XFeedProps) {
 
 export const xFeedStyles = StyleSheet.create({
   wrapper: {
-    overflow: "hidden",
     paddingHorizontal: 12,
+    overflow: "hidden",
   },
   container: {
     marginBottom: 12,

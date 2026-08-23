@@ -838,32 +838,32 @@ const shotMapStyles = (isDark: boolean) =>
     },
 
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       paddingTop: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
       overflow: "hidden",
     },
 
     dropdownRow: {
-      flexDirection: "row",
-      gap: 12,
-      justifyContent: "center",
-      alignItems: "center",
       zIndex: 20,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 12,
     },
 
     fieldContainer: {
-      width: "100%",
-      overflow: "hidden",
       zIndex: 1,
+      width: "100%",
       marginTop: 12,
+      overflow: "hidden",
     },
 
     shotDetails: {
+      gap: 10,
       marginTop: 12,
       padding: 14,
-      gap: 10,
     },
 
     shotDetailsHeader: {
@@ -873,8 +873,8 @@ const shotMapStyles = (isDark: boolean) =>
     },
 
     teamIndicator: {
-      width: 5,
       alignSelf: "stretch",
+      width: 5,
     },
 
     shotDetailsTitleArea: {
@@ -883,8 +883,8 @@ const shotMapStyles = (isDark: boolean) =>
     },
 
     playerName: {
-      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -893,10 +893,10 @@ const shotMapStyles = (isDark: boolean) =>
       marginTop: 0,
       paddingHorizontal: 12,
       paddingVertical: 10,
+      borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.light.transparentBlack,
-      borderTopWidth: StyleSheet.hairlineWidth,
     },
 
     teamLegendRow: {
@@ -908,10 +908,10 @@ const shotMapStyles = (isDark: boolean) =>
 
     teamLegendItem: {
       flex: 1,
-      minWidth: 0,
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
+      minWidth: 0,
     },
 
     homeTeamLegendItem: {
@@ -926,31 +926,31 @@ const shotMapStyles = (isDark: boolean) =>
 
     outcomeLegendRow: {
       flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
       justifyContent: "center",
-      flexWrap: "wrap",
       gap: 14,
     },
 
     outcomeLegendItem: {
-      minHeight: 22,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
       gap: 6,
+      minHeight: 22,
     },
 
     legendText: {
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.BOLD,
     },
 
     legendTeamCode: {
       flexShrink: 1,
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.BOLD,
     },
 
     legendLogo: {
@@ -959,22 +959,22 @@ const shotMapStyles = (isDark: boolean) =>
     },
 
     shotMeta: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
     },
 
     shotText: {
+      fontFamily: Fonts.BOLD,
       fontSize: 13,
       lineHeight: 19,
-      fontFamily: Fonts.BOLD,
       color: Colors.midTone,
     },
 
     assistText: {
+      fontFamily: Fonts.MEDIUM,
       fontSize: 12,
       lineHeight: 18,
-      fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.white : Colors.black,
     },
   });

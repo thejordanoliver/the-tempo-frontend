@@ -603,16 +603,16 @@ function depthChartStyles(isDark: boolean) {
     },
 
     header: {
-      alignItems: "center",
       flexDirection: "row",
+      alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: 16,
     },
 
     title: {
-      color: theme.text,
       fontFamily: Fonts.BOLD,
       fontSize: 24,
+      color: theme.text,
     },
 
     positionItemWrap: {},
@@ -622,36 +622,36 @@ function depthChartStyles(isDark: boolean) {
     },
 
     positionCard: {
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor,
       borderRadius: 8,
-      borderWidth: StyleSheet.hairlineWidth,
       overflow: "hidden",
     },
 
     positionHeader: {
-      alignItems: "center",
-      borderBottomColor: borderColor,
-      borderBottomWidth: StyleSheet.hairlineWidth,
       flexDirection: "row",
+      alignItems: "center",
       gap: 10,
       padding: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: borderColor,
     },
 
     positionAbbrBox: {
       alignItems: "center",
+      justifyContent: "center",
+      width: 50,
+      height: 40,
+      borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 10,
-      height: 40,
-      justifyContent: "center",
-      width: 50,
     },
 
     positionAbbr: {
-      color: theme.text,
       fontFamily: Fonts.BOLD,
       fontSize: 15,
+      color: theme.text,
     },
 
     positionTitleWrap: {
@@ -659,21 +659,21 @@ function depthChartStyles(isDark: boolean) {
     },
 
     positionName: {
-      color: theme.text,
       fontFamily: Fonts.BOLD,
       fontSize: 15,
+      color: theme.text,
     },
 
     positionCount: {
-      color: theme.icon,
+      marginTop: 2,
       fontFamily: Fonts.MEDIUM,
       fontSize: 12,
-      marginTop: 2,
+      color: theme.icon,
     },
 
     playerRowWrap: {
-      borderBottomColor: borderColor,
       borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: borderColor,
     },
 
     lastPlayerRow: {
@@ -681,8 +681,8 @@ function depthChartStyles(isDark: boolean) {
     },
 
     playerRow: {
-      alignItems: "center",
       flexDirection: "row",
+      alignItems: "center",
       gap: 10,
       minHeight: 64,
       paddingRight: 12,
@@ -691,44 +691,44 @@ function depthChartStyles(isDark: boolean) {
 
     rankBadge: {
       alignItems: "center",
-      borderRadius: 14,
-      height: 28,
       justifyContent: "center",
       width: 28,
+      height: 28,
+      borderRadius: 14,
     },
 
     rankText: {
-      color: theme.text,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+      color: theme.text,
     },
 
     headshot: {
+      width: 44,
+      height: 44,
       paddingTop: 4,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 21,
-      borderWidth: StyleSheet.hairlineWidth,
-      height: 44,
-      width: 44,
     },
 
     fallbackHeadshot: {
       alignItems: "center",
+      justifyContent: "center",
+      width: 42,
+      height: 42,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 21,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.itemBackground,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 21,
-      borderWidth: StyleSheet.hairlineWidth,
-      height: 42,
-      justifyContent: "center",
-      width: 42,
     },
 
     fallbackInitials: {
-      color: theme.text,
       fontFamily: Fonts.BOLD,
       fontSize: 12,
+      color: theme.text,
     },
 
     playerInfo: {
@@ -737,45 +737,45 @@ function depthChartStyles(isDark: boolean) {
     },
 
     playerNameRow: {
-      alignItems: "center",
       flexDirection: "row",
-      gap: 8,
+      alignItems: "center",
       justifyContent: "space-between",
+      gap: 8,
     },
 
     playerName: {
-      color: theme.text,
       flexShrink: 1,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
+      color: theme.text,
     },
 
     slotChip: {
+      paddingHorizontal: 7,
+      paddingVertical: 3,
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.itemBackground,
-      borderRadius: 12,
-      paddingHorizontal: 7,
-      paddingVertical: 3,
     },
 
     slotChipText: {
-      color: theme.icon,
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 10,
+      color: theme.icon,
     },
 
     playerMeta: {
-      color: theme.icon,
       fontFamily: Fonts.MEDIUM,
       fontSize: 12,
+      color: theme.icon,
     },
 
     emptyText: {
-      color: theme.icon,
+      padding: 14,
       fontFamily: Fonts.MEDIUM,
       fontSize: 13,
-      padding: 14,
+      color: theme.icon,
     },
 
     emptyChartCardWrap: {
@@ -784,17 +784,17 @@ function depthChartStyles(isDark: boolean) {
 
     stateCard: {
       alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      minHeight: 132,
+      marginHorizontal: 16,
+      padding: 18,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor,
+      borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.background,
-      borderColor,
-      borderRadius: 16,
-      borderWidth: StyleSheet.hairlineWidth,
-      gap: 8,
-      justifyContent: "center",
-      marginHorizontal: 16,
-      minHeight: 132,
-      padding: 18,
     },
 
     errorStateCard: {
@@ -802,16 +802,16 @@ function depthChartStyles(isDark: boolean) {
     },
 
     stateText: {
-      color: theme.text,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
+      color: theme.text,
       textAlign: "center",
     },
 
     stateHint: {
-      color: theme.icon,
       fontFamily: Fonts.REGULAR,
       fontSize: 13,
+      color: theme.icon,
       textAlign: "center",
     },
 

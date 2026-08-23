@@ -266,17 +266,17 @@ export default function ConversationItem({
 const conversationItemStyles = (isDark: boolean) =>
   StyleSheet.create({
     swipeContainer: {
-      borderRadius: 18,
       marginBottom: 10,
-      overflow: "hidden",
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.midTone : Colors.lightGray,
+      borderRadius: 18,
+      overflow: "hidden",
     },
 
     rowContainer: {
-      minHeight: 82,
       flexDirection: "row",
       alignItems: "center",
+      minHeight: 82,
       paddingHorizontal: 12,
       paddingVertical: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
@@ -285,8 +285,8 @@ const conversationItemStyles = (isDark: boolean) =>
     avatarWrapper: {
       width: 50,
       height: 50,
-      borderRadius: 25,
       marginRight: 12,
+      borderRadius: 25,
     },
 
     avatar: {
@@ -302,16 +302,16 @@ const conversationItemStyles = (isDark: boolean) =>
       bottom: 1,
       width: 13,
       height: 13,
-      borderRadius: 7,
       borderWidth: 2,
       borderColor: isDark ? Colors.black : Colors.white,
+      borderRadius: 7,
       backgroundColor: Colors.dark.leafGreen,
     },
 
     middleContent: {
       flex: 1,
-      minWidth: 0,
       justifyContent: "center",
+      minWidth: 0,
     },
 
     nameRow: {
@@ -322,8 +322,8 @@ const conversationItemStyles = (isDark: boolean) =>
 
     username: {
       maxWidth: "82%",
-      fontSize: 15,
       fontFamily: Fonts.BOLD,
+      fontSize: 15,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
@@ -333,54 +333,54 @@ const conversationItemStyles = (isDark: boolean) =>
 
     fullName: {
       marginTop: 2,
-      fontSize: 13,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     lastMessage: {
       marginTop: 3,
-      fontSize: 13,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
       opacity: 0.72,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     metaContent: {
       alignItems: "flex-end",
       justifyContent: "center",
-      marginLeft: 10,
       minWidth: 48,
+      marginLeft: 10,
     },
 
     timestamp: {
-      fontSize: 11,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       marginBottom: 8,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     unreadBadge: {
-      minWidth: 22,
-      height: 22,
-      borderRadius: 11,
-      paddingHorizontal: 7,
       alignItems: "center",
       justifyContent: "center",
+      height: 22,
+      minWidth: 22,
+      paddingHorizontal: 7,
+      borderRadius: 11,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
     unreadText: {
-      fontSize: 11,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
       color: Colors.white,
     },
 
     actionContainer: {
-      width: 92,
-      height: "100%",
       alignItems: "center",
       justifyContent: "center",
+      width: 92,
+      height: "100%",
     },
 
     pinAction: {
@@ -393,8 +393,8 @@ const conversationItemStyles = (isDark: boolean) =>
 
     actionText: {
       marginTop: 4,
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
       color: Colors.white,
     },
     pressed: {

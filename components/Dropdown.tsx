@@ -185,31 +185,31 @@ export const dropDownStyles = ({
 
   return StyleSheet.create({
     container: {
-      width,
       position: "relative",
       zIndex: visible ? 9999 : 1,
+      width,
       elevation: visible ? 9999 : 1,
     },
 
     toggleButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
       width: "100%",
       minHeight: 42,
       paddingVertical: 8,
       paddingHorizontal: 16,
-      borderRadius: 8,
       borderWidth: 1,
       borderColor: Colors.midTone,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      borderRadius: 8,
     },
 
     selectedLabel: {
       flex: 1,
       marginRight: 8,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     chevronContainer: {
@@ -222,19 +222,17 @@ export const dropDownStyles = ({
       position: "absolute",
       top: 48,
       left: 0,
+      zIndex: 9999,
       width,
       maxHeight: 260,
-      borderRadius: 12,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? "rgba(255, 255, 255, 0.16)" : "rgba(0, 0, 0, 0.12)",
-      overflow: "hidden",
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
       opacity: anim,
-      transform: [{ translateY }],
-      zIndex: 9999,
-      elevation: 9999,
+      overflow: "hidden",
       shadowColor: Colors.black,
       shadowOffset: {
         width: 0,
@@ -242,6 +240,8 @@ export const dropDownStyles = ({
       },
       shadowOpacity: 0.2,
       shadowRadius: 8,
+      elevation: 9999,
+      transform: [{ translateY }],
     },
 
     blurView: {
@@ -257,12 +257,12 @@ export const dropDownStyles = ({
     },
 
     optionButton: {
-      minHeight: 44,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      minHeight: 44,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
     },
 
     optionBorder: {
@@ -281,9 +281,9 @@ export const dropDownStyles = ({
     optionText: {
       flex: 1,
       marginRight: 8,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     selectedOptionText: {

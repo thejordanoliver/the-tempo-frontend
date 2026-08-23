@@ -192,14 +192,14 @@ export default function FavoriteTeamsWidget({
 const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     card: {
-      borderRadius: 8,
-      borderColor: Colors.midTone,
+      position: "relative",
       borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       overflow: "hidden",
-      position: "relative",
     },
     body: {
       flex: 1,
@@ -219,10 +219,10 @@ const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     stateText: {
-      textAlign: "center",
       fontFamily: Fonts.REGULAR,
       fontSize: compact ? 11 : 13,
       lineHeight: compact ? 15 : 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
   });

@@ -241,15 +241,15 @@ const tableStyles = (isDark: boolean) =>
 
     table: {
       borderWidth: 1,
-      borderRadius: 8,
       borderColor: Colors.midTone,
+      borderRadius: 8,
       overflow: "hidden",
     },
 
     headerRow: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
+      height: ROW_HEIGHT,
       borderBottomWidth: 1,
       borderColor: Colors.midTone,
     },
@@ -263,11 +263,11 @@ const tableStyles = (isDark: boolean) =>
 
     row: {
       flexDirection: "row",
+      alignItems: "center",
       justifyContent: "space-between",
       padding: 14,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.lightGray,
-      alignItems: "center",
     },
 
     lastRow: {
@@ -275,10 +275,10 @@ const tableStyles = (isDark: boolean) =>
     },
 
     teamRow: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
-      flex: 1,
     },
 
     logo: {
@@ -309,22 +309,22 @@ const tableStyles = (isDark: boolean) =>
     },
 
     subText: {
+      opacity: 0.75,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      opacity: 0.75,
       color: isDark ? Colors.white : Colors.black,
     },
 
     muted: {
       padding: 12,
-      fontFamily: Fonts.REGULAR,
       opacity: 0.6,
+      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     showMoreButton: {
-      paddingVertical: 14,
       alignItems: "center",
+      paddingVertical: 14,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.lightGray,
     },

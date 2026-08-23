@@ -871,11 +871,11 @@ const draggableFrameStyles = StyleSheet.create({
     top: 8,
     right: 8,
     zIndex: 40,
+    alignItems: "center",
+    justifyContent: "center",
     width: 34,
     height: 34,
     borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "rgba(127,127,127,0.18)",
   },
 });

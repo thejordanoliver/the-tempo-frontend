@@ -412,16 +412,16 @@ export default function PostImagesModal({
 function getStyles(isDark: boolean) {
   return StyleSheet.create({
     modalContainer: {
-      flex: 1,
-      backgroundColor: "transparent",
-      justifyContent: "center",
-      alignItems: "center",
       position: "relative",
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "transparent",
     },
     modalBackground: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: "rgba(0, 0, 0, 0.10)",
       zIndex: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.10)",
     },
     galleryWrapper: {
       flex: 1,
@@ -434,28 +434,28 @@ function getStyles(isDark: boolean) {
       width: "100%",
       padding: 12,
       paddingBottom: 40,
-      borderTopColor: Colors.midTone,
       borderTopWidth: 0.5,
+      borderTopColor: Colors.midTone,
     },
     videoFallback: {
-      backgroundColor: Colors.black,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: Colors.black,
     },
 
     imageContainer: {
-      width: screenWidth,
-      justifyContent: "center",
       alignItems: "flex-start",
+      justifyContent: "center",
+      width: screenWidth,
       paddingBottom: 80,
     },
     imageWrapper: {
       width: screenWidth - 32,
-      borderRadius: 12,
-      borderColor: Colors.white,
       borderWidth: 1,
-      overflow: "hidden",
+      borderColor: Colors.white,
+      borderRadius: 12,
       backgroundColor: Colors.black,
+      overflow: "hidden",
     },
     image: {
       width: "100%",
@@ -467,8 +467,8 @@ function getStyles(isDark: boolean) {
     },
     header: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       width: "100%",
       paddingHorizontal: 12,
       paddingTop: 20,
@@ -481,21 +481,21 @@ function getStyles(isDark: boolean) {
     profileImage: {
       width: 40,
       height: 40,
-      borderRadius: 60,
-      borderColor: Colors.white,
       borderWidth: StyleSheet.hairlineWidth,
+      borderColor: Colors.white,
+      borderRadius: 60,
     },
     username: {
-      fontFamily: Fonts.REGULAR,
       marginBottom: 4,
+      fontFamily: Fonts.REGULAR,
       color: Colors.white,
     },
     captionText: {
+      marginBottom: 10,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: Colors.white,
       textAlign: "left",
-      fontFamily: Fonts.REGULAR,
-      marginBottom: 10,
     },
 
     engagementRow: {
@@ -510,38 +510,38 @@ function getStyles(isDark: boolean) {
       gap: 6,
     },
     engagementText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: Colors.white,
-      fontFamily: Fonts.REGULAR,
     },
     closeButton: {
+      zIndex: 10,
       padding: 10,
       borderRadius: 8,
-      zIndex: 10,
     },
     mediaContainer: {
-      width: screenWidth,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
+      width: screenWidth,
     },
     media: {
       width: screenWidth,
       height: 320,
     },
     showMoreText: {
-      color: Colors.lightGray,
-      fontSize: 13,
-      fontFamily: Fonts.REGULAR,
       marginVertical: 12,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      color: Colors.lightGray,
     },
     playOverlay: {
       position: "absolute",
       top: 0,
       left: 0,
+      alignItems: "center",
+      justifyContent: "center",
       width: screenWidth,
       height: 320,
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: "rgba(0,0,0,0.25)",
     },
   });

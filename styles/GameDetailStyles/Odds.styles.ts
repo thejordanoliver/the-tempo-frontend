@@ -4,10 +4,10 @@ import { StyleSheet } from "react-native";
 export const gameOddsStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       padding: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
     },
     headerRow: {
       flexDirection: "row",
@@ -19,9 +19,9 @@ export const gameOddsStyles = (isDark: boolean) =>
       textAlign: "center",
     },
     headerTeamText: {
+      paddingLeft: 4,
       fontSize: 12,
       textAlign: "left",
-      paddingLeft: 4,
     },
     teamRow: {
       flexDirection: "row",
@@ -43,19 +43,19 @@ export const gameOddsStyles = (isDark: boolean) =>
     },
     oddsText: {
       flex: 1,
-      textAlign: "center",
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      textAlign: "center",
     },
     divider: {
-      borderBottomWidth: 1,
       marginVertical: 8,
+      borderBottomWidth: 1,
     },
     bookmaker: {
-      flexDirection: "row",
       flex: 1,
-      justifyContent: "space-between",
+      flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
       marginTop: 12,
     },
     bookmakerWrapper: {
@@ -63,15 +63,15 @@ export const gameOddsStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     subtext: {
-      color: Colors.midTone,
-      fontSize: 12,
       fontFamily: Fonts.LIGHT,
+      fontSize: 12,
+      color: Colors.midTone,
     },
     errorText: {
+      marginTop: 20,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
   });

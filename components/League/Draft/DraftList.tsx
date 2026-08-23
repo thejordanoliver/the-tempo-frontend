@@ -481,15 +481,15 @@ export const draftListStyles = (isDark: boolean) =>
       paddingBottom: 80,
     },
     dropdownContainer: {
-      paddingHorizontal: 12,
       marginVertical: 12,
+      paddingHorizontal: 12,
     },
     dropdownWrapper: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      marginBottom: 8,
       gap: 12,
+      marginBottom: 8,
     },
     dropdownRow: {
       flexDirection: "row",
@@ -498,8 +498,8 @@ export const draftListStyles = (isDark: boolean) =>
     },
     center: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       paddingTop: 40,
     },
     errorText: {
@@ -508,14 +508,14 @@ export const draftListStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     emptyText: {
+      marginTop: 20,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     footerLoader: {
-      padding: 20,
       alignItems: "center",
+      padding: 20,
     },
     footerLoaderText: {
       fontFamily: Fonts.REGULAR,

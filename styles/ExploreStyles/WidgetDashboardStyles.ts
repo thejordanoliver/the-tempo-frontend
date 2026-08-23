@@ -16,9 +16,9 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     },
     gridRow: {
       flexDirection: "row",
+      alignItems: "flex-start",
       gap: EXPLORE_WIDGET_GRID_GAP,
       width: "100%",
-      alignItems: "flex-start",
     },
     gridCell: {
       flexShrink: 0,
@@ -30,14 +30,14 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       marginBottom: 0,
     },
     dropPlaceholder: {
-      width: "100%",
-      borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
       gap: 6,
+      width: "100%",
       borderWidth: 1,
-      borderStyle: "dashed",
       borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      borderStyle: "dashed",
+      borderRadius: 8,
       backgroundColor: isDark
         ? "rgba(68, 178, 111, 0.12)"
         : "rgba(44, 156, 83, 0.1)",
@@ -54,21 +54,21 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       width: "100%",
     },
     toolbarButton: {
-      minHeight: 34,
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
-      borderRadius: 8,
+      minHeight: 34,
       paddingHorizontal: 10,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     toolbarButtonSelected: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
       borderColor: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     toolbarButtonText: {
       fontFamily: Fonts.SEMIBOLD,
@@ -81,20 +81,20 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     emptyWrap: {
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: 24,
       gap: 10,
+      paddingHorizontal: 24,
     },
     emptyIcon: {
-      width: 56,
-      height: 56,
-      borderRadius: 16,
       alignItems: "center",
       justifyContent: "center",
+      width: 56,
+      height: 56,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     emptyTitle: {
       fontFamily: Fonts.SEMIBOLD,
@@ -103,20 +103,20 @@ export const widgetDashboardStyles = (isDark: boolean) =>
     },
     emptyText: {
       maxWidth: 280,
-      textAlign: "center",
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
     cta: {
-      marginTop: 6,
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      borderRadius: 8,
+      marginTop: 6,
       paddingVertical: 10,
       paddingHorizontal: 14,
+      borderRadius: 8,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     ctaText: {
@@ -128,33 +128,33 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       flex: 1,
     },
     placeholderCard: {
-      borderRadius: 8,
-      padding: 14,
+      position: "relative",
       gap: 6,
+      padding: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      position: "relative",
       overflow: "hidden",
     },
     loadingCard: {
-      minHeight: 84,
-      borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
+      minHeight: 84,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     errorCard: {
-      borderRadius: 8,
-      padding: 14,
       gap: 6,
-      backgroundColor: isDark ? "#351c1c" : "#fff0f0",
+      padding: 14,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? "#7a2d2d" : "#f2b8b8",
+      borderRadius: 8,
+      backgroundColor: isDark ? "#351c1c" : "#fff0f0",
     },
     placeholderTitle: {
       flex: 1,

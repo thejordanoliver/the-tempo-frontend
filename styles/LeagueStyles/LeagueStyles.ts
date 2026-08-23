@@ -20,30 +20,33 @@ export const LeagueScreenStyles = (isDark: boolean) =>
     },
 
     leagueButton: {
-      paddingVertical: 8,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
+      paddingVertical: 8,
     },
     buttonContainer: {
-      backgroundColor: "transparent",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: "transparent",
     },
-    buttonWrapper: { flexDirection: "row", alignItems: "center" },
+    buttonWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
     leagueLogo: {
       width: 36,
       height: 36,
       marginRight: 8,
     },
     leagueText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
     },
   });
 

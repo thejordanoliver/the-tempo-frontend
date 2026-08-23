@@ -34,11 +34,11 @@ export default function SeasonStatCardSkeleton() {
 export const statSeasonCardSkeleton = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
+      padding: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      padding: 12,
-      borderRadius: 8,
     },
     title: {
       alignItems: "center",

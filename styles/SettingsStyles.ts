@@ -4,8 +4,8 @@ import { StyleSheet } from "react-native";
 export const settingsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      flex: 1,
       position: "relative",
+      flex: 1,
     },
 
     wrapper: {
@@ -17,13 +17,13 @@ export const settingsStyles = (isDark: boolean) =>
       paddingBottom: 40,
     },
     heading: {
-      fontSize: 24,
-      fontFamily: Fonts.MEDIUM,
-      paddingBottom: 4,
       marginBottom: 12,
+      paddingBottom: 4,
       borderBottomWidth: 1,
-      color: isDark ? Colors.dark.white : Colors.light.black,
       borderBottomColor: isDark ? Colors.midTone : Colors.midTone,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 24,
+      color: isDark ? Colors.dark.white : Colors.light.black,
     },
     seperator: {
       height: 20,
@@ -37,21 +37,21 @@ export const settingsStyles = (isDark: boolean) =>
         : Colors.transparentDarkGray,
     },
     optionButton: {
-      flexDirection: "row",
       flex: 1,
-      justifyContent: "space-between",
+      flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
     },
     optionText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 18,
       fontFamily: Fonts.REGULAR,
+      fontSize: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     dangerText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 18,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 18,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     closeButton: {
       position: "absolute",
@@ -59,16 +59,16 @@ export const settingsStyles = (isDark: boolean) =>
       right: 15,
     },
     input: {
+      width: "100%",
+      marginVertical: 12,
+      padding: 20,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      color: isDark ? Colors.white : Colors.black,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      padding: 20,
-      borderRadius: 8,
-      fontSize: 16,
-      marginVertical: 12,
       fontFamily: Fonts.LIGHT,
-      width: "100%",
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

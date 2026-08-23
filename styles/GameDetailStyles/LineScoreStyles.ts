@@ -7,11 +7,11 @@ export const lineScoreStyles = (isDark: boolean) =>
       width: "100%",
     },
     wrapper: {
-      borderColor: Colors.midTone,
+      padding: 12,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
       overflow: "hidden",
-      padding: 12,
     },
     headerRow: {
       flexDirection: "row",
@@ -24,21 +24,21 @@ export const lineScoreStyles = (isDark: boolean) =>
     },
     teamCode: {
       width: 48,
+      paddingLeft: 8,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
-      paddingLeft: 8,
     },
     scoresWrapper: {
       flex: 1,
       flexDirection: "row",
     },
     header: {
+      width: "100%",
       fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textTransform: "uppercase",
-      width: "100%",
     },
     score: {
       fontFamily: Fonts.REGULAR,

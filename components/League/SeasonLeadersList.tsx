@@ -120,8 +120,8 @@ export default function SeasonLeadersList({
 const seasonLeadersListStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainerStyle: {
-      paddingBottom: 100,
       gap: 12,
+      paddingBottom: 100,
       paddingHorizontal: 12,
     },
     playersList: {
@@ -129,9 +129,9 @@ const seasonLeadersListStyles = (isDark: boolean) =>
     },
 
     centered: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      flex: 1,
     },
     skeletonList: {
       justifyContent: "center",

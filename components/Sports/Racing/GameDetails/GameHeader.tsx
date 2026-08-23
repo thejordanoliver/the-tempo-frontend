@@ -46,8 +46,6 @@ export default function GameHeader({
       <FlatList
         data={drivers}
         keyExtractor={(item, index) => String(item.id ?? `driver-${index}`)}
-        contentContainerStyle={styles.driverContainer}
-        horizontal
         renderItem={({ item }) => {
           const rank = getStatisticValue(item.statistics, "place");
           const time = getStatisticValue(item.statistics, "totalTime");

@@ -7,8 +7,8 @@ export const gameLeadersStyles = (isDark: boolean) =>
       gap: 10,
     },
     wrapper: {
-      borderColor: Colors.midTone,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
     },
     pressed: {
@@ -22,31 +22,35 @@ export const gameLeadersStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
     },
     avatar: {
-      width: 52,
-      height: 52,
+      width: 50,
+      height: 50,
     },
     avatarWrapper: {
-      width: 60,
-      height: 60,
-      borderRadius: 100,
-      paddingTop: 10,
-      overflow: "hidden",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
+      width: 50,
+      height: 50,
+      paddingTop: 8,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 100,
+      overflow: "hidden",
     },
     jersey: {
+      marginLeft: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      marginLeft: 4,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     nameRow: {
       flexDirection: "row",
       alignItems: "flex-end",
     },
-    infoSection: { flex: 1, marginLeft: 10, justifyContent: "flex-end" },
+    infoSection: {
+      flex: 1,
+      justifyContent: "flex-end",
+      marginLeft: 10,
+    },
     playerName: {
       fontFamily: Fonts.BOLD,
       fontSize: 14,
@@ -54,11 +58,14 @@ export const gameLeadersStyles = (isDark: boolean) =>
     },
     statRow: {
       flexDirection: "row",
-      marginTop: 4,
       justifyContent: "space-between",
+      marginTop: 4,
       paddingRight: 12,
     },
-    statBlock: { alignItems: "flex-start", flex: 1 },
+    statBlock: {
+      flex: 1,
+      alignItems: "flex-start",
+    },
     statLabel: {
       fontFamily: Fonts.MEDIUM,
       fontSize: 10,
@@ -69,5 +76,11 @@ export const gameLeadersStyles = (isDark: boolean) =>
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
-    teamLogo: { position: "absolute", top: 8, right: 8, width: 28, height: 28 },
+    teamLogo: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      width: 28,
+      height: 28,
+    },
   });

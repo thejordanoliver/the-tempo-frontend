@@ -174,32 +174,32 @@ export const comparisonBioStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      minWidth: 0,
       alignItems: "stretch",
       justifyContent: "center",
+      minWidth: 0,
     },
     wrapper: {
       width: "100%",
       minWidth: 0,
     },
     row: {
-      minHeight: 34,
       flexDirection: "row",
       alignItems: "center",
+      minHeight: 34,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderBottomWidth: StyleSheet.hairlineWidth,
     },
     lastRow: {
       borderBottomWidth: 0,
     },
     valueCell: {
       flex: 1,
-      minWidth: 0,
-      minHeight: 34,
       alignItems: "center",
       justifyContent: "center",
+      minWidth: 0,
+      minHeight: 34,
       paddingHorizontal: 4,
       paddingVertical: 4,
     },
@@ -209,36 +209,36 @@ export const comparisonBioStyles = (isDark: boolean) =>
         : Colors.light.transparentGreen,
     },
     championValueCell: {
-      borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
       borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
     },
     centerCell: {
-      width: 62,
-      minHeight: 34,
       alignItems: "center",
       justifyContent: "center",
+      width: 62,
+      minHeight: 34,
       paddingHorizontal: 4,
     },
     categoryTitle: {
       fontFamily: Fonts.BOLD,
       fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
       textAlign: "center",
+      textTransform: "uppercase",
     },
     categoryText: {
-      textAlign: "center",
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       lineHeight: 15,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
     },
     winnerValueText: {
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
       fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
     },
     championValueText: {
-      color: isDark ? Colors.dark.yellow : Colors.light.gold,
       fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.dark.yellow : Colors.light.gold,
     },
   });

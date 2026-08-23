@@ -526,22 +526,22 @@ const recruitListStyles = (isDark: boolean) =>
     headerLayer: {
       position: "relative",
       zIndex: 1000,
-      elevation: 1000,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.background,
+      elevation: 1000,
     },
     list: {
       zIndex: 1,
       elevation: 1,
     },
     headerContainer: {
-      paddingHorizontal: 12,
-      marginBottom: 12,
       position: "relative",
       zIndex: 1000,
-      elevation: 1000,
+      marginBottom: 12,
+      paddingHorizontal: 12,
       overflow: "visible",
+      elevation: 1000,
     },
     filterRow: {
       flexDirection: "row",
@@ -550,17 +550,17 @@ const recruitListStyles = (isDark: boolean) =>
       marginBottom: 8,
     },
     dropdownGroup: {
-      flexDirection: "row",
-      gap: 8,
       position: "relative",
       zIndex: 1001,
-      elevation: 1001,
+      flexDirection: "row",
+      gap: 8,
       overflow: "visible",
+      elevation: 1001,
     },
     center: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       paddingTop: 40,
       paddingHorizontal: 20,
     },
@@ -571,16 +571,16 @@ const recruitListStyles = (isDark: boolean) =>
       textAlign: "center",
     },
     emptyText: {
+      marginTop: 20,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     helperText: {
+      marginTop: 8,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      marginTop: 8,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -588,7 +588,7 @@ const recruitListStyles = (isDark: boolean) =>
       paddingVertical: 20,
     },
     footerText: {
-      textAlign: "center",
       color: Colors.lightGray,
+      textAlign: "center",
     },
   });

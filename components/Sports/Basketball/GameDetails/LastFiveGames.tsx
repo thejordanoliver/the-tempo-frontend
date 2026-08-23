@@ -208,21 +208,11 @@ export default function LastFiveGames({
       return fallbackTeam.code;
     }
 
-    if (fallbackTeam?.abbreviation) {
-      return fallbackTeam.abbreviation;
-    }
-
     if (typeof item.opponent === "string") {
       return item.opponent;
     }
 
-    return (
-      item.opponent?.code ??
-      item.opponent?.abbreviation ??
-      item.opponent?.name ??
-      fallbackTeam?.name ??
-      "TBD"
-    );
+    return item.opponent?.code ?? "TBD";
   };
 
   const renderRow = ({
@@ -233,18 +223,26 @@ export default function LastFiveGames({
     index: number;
   }) => {
     const matchupSymbol = item.isHome ? "vs" : "@";
-    const resultSymbol = item.won ? "W" : "L";
-    const resultColor = item.won ? styles.colors.win : styles.colors.loss;
+
+    const selectedTeamScore = item.isHome ? item.homeScore : item.awayScore;
+    const opponentScore = item.isHome ? item.awayScore : item.homeScore;
+
+    const isTie = selectedTeamScore === opponentScore;
+    const isWin = selectedTeamScore > opponentScore;
+
+    const resultSymbol = isTie ? "T" : isWin ? "W" : "L";
+
+    const resultColor = isTie
+      ? styles.colors.tie
+      : isWin
+        ? styles.colors.win
+        : styles.colors.loss;
 
     const opponentId = getOpponentId(item);
     const opponent = resolveTeam(opponentId);
     const resolvedOpponentLogo = resolveLogo(opponentId);
     const opponentLogo = resolvedOpponentLogo ?? item.opponentLogo;
     const opponentCode = getOpponentCode(item, opponent);
-
-    const selectedTeamScore = item.isHome ? item.homeScore : item.awayScore;
-
-    const opponentScore = item.isHome ? item.awayScore : item.homeScore;
 
     return (
       <View

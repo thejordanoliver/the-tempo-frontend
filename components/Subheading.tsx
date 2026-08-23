@@ -17,12 +17,12 @@ const Subheading: React.FC<Props> = ({ children }) => {
 const subHeadingStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
-      fontSize: 16,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       marginBottom: 8,
       paddingBottom: 4,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
     },
   });
 

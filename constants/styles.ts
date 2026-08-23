@@ -157,28 +157,28 @@ export const Fonts = {
 export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
     errorText: {
-      textAlign: "center",
-      fontSize: 20,
       fontFamily: Fonts.REGULAR,
+      fontSize: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
     emptyContainer: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       padding: 12,
     },
     emptyText: {
-      textAlign: "center",
-      fontSize: 20,
       fontFamily: Fonts.REGULAR,
+      fontSize: 20,
       color: Colors.midTone,
+      textAlign: "center",
     },
     emptySubText: {
       marginTop: 6,
-      fontSize: 14,
-      textAlign: "center",
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
   });

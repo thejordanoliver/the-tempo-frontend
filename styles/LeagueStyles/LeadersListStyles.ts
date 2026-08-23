@@ -8,16 +8,20 @@ export const leadersListStyles = (isDark: boolean) =>
       paddingBottom: 12,
     },
     playersList: { gap: 12 },
-    centered: { alignItems: "center", justifyContent: "center", flex: 1 },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     skeletonList: {
       paddingTop: 6,
       paddingBottom: 100,
     },
     infoText: {
+      marginTop: 20,
       fontFamily: Fonts.LIGHT,
       fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
   });

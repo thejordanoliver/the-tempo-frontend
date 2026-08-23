@@ -25,75 +25,78 @@ export function commentItemStyles(isDark: boolean) {
       paddingTop: 12,
     },
     username: {
+      flexShrink: 1,
+      marginRight: 8,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: textColor,
-      marginRight: 8,
-      flexShrink: 1,
     },
     timestamp: {
+      paddingBottom: 12,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: Colors.midTone,
-      paddingBottom: 12,
     },
 
     // -----------------------------
     // Comment Content
     // -----------------------------
-    commentContainer: { flex: 1, marginTop: 8 },
+    commentContainer: {
+      flex: 1,
+      marginTop: 8,
+    },
     timestampContainer: {
       flexDirection: "row",
     },
     image: {
       width: 30,
       height: 30,
-      borderRadius: 100,
       marginRight: 10,
+      borderRadius: 100,
     },
     text: {
+      flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: textColor,
-      flexShrink: 1,
     },
     expandText: {
-      color: Colors.midTone,
-      fontFamily: Fonts.BOLD,
       paddingVertical: 4,
+      fontFamily: Fonts.BOLD,
+      color: Colors.midTone,
     },
 
     // -----------------------------
     // Actions
     // -----------------------------
     actionsContainer: {
-      width: ACTION_WIDTH,
       flexDirection: "row",
+      width: ACTION_WIDTH,
       paddingLeft: 12,
     },
     actionWrapper: {
       flex: 1,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
     button: {
-      padding: 10,
       flexDirection: "row",
       alignItems: "center",
+      padding: 10,
     },
     confirmButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: "100%",
       height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
     deleteButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: "100%",
       height: "100%",
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -101,31 +104,31 @@ export function commentItemStyles(isDark: boolean) {
     // Edit Mode
     // -----------------------------
     editInputContainer: {
+      marginVertical: 12,
+      padding: 12,
+      borderRadius: 6,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: textColor,
-      padding: 12,
-      borderRadius: 6,
-      marginVertical: 12,
     },
     editActionsContainer: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       width: "100%",
     },
     saveText: {
-      color: isDark ? Colors.dark.leafGreen : Colors.light.green,
-      fontSize: 20,
       fontFamily: Fonts.REGULAR,
+      fontSize: 20,
+      color: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
     cancelText: {
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 20,
       fontFamily: Fonts.REGULAR,
+      fontSize: 20,
+      color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });
 }

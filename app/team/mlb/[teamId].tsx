@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import Forum from "@/components/Forum/Forum";
+import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Baseball/Games/GamesList";
 import RosterStats from "@/components/Sports/Baseball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -342,7 +342,7 @@ export default function TeamDetailScreen() {
 
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
-          <Forum teamId={teamIdStr ?? ""} league={league} />
+          <ForumFeed teamId={teamIdStr ?? ""} league={league} />
         </View>
       </PagerView>
 

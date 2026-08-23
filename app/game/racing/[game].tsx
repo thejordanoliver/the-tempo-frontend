@@ -85,11 +85,6 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const league =
-    game?.league ??
-    getFirstParam(params.league) ??
-    getFirstParam(params.leagueId);
-
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
   }, [game?.date]);
@@ -113,7 +108,7 @@ export default function GameDetailsScreen(
   const dontShowDetails =
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
 
-  // Circuit info (was previously mis-mapped onto venue/weather fields)
+  const gameName = game?.name ?? "";
   const circuitDiagram = game?.venue.image?.href;
   const circuitName = game?.venue.name;
   const venueLocation = `${game?.venue.city}, ${game?.venue.country}`;
@@ -123,25 +118,17 @@ export default function GameDetailsScreen(
   const isLoading = !game;
 
   useLayoutEffect(() => {
-    if (!game) {
+    if (isLoading) {
       navigation.setOptions({
         header: () => null,
       });
-
       return;
     }
 
     navigation.setOptions({
-      header: () => (
-        <CustomHeader
-          tabName={league}
-          title={game.name ?? ""}
-          onBack={goBack}
-          isEvent
-        />
-      ),
+      header: () => <CustomHeader tabName={gameName} onBack={goBack} />,
     });
-  }, [game, league, navigation]);
+  }, [isLoading, navigation, gameName]);
 
   if (isLoading) {
     return (
@@ -158,7 +145,6 @@ export default function GameDetailsScreen(
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
-        stickyHeaderIndices={[0]}
       >
         <GameHeader
           drivers={drivers}

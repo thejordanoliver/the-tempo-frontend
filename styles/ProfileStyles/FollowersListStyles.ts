@@ -13,25 +13,25 @@ export const followersListStyles = (isDark: boolean) =>
     },
 
     itemContainer: {
-      paddingVertical: 12,
+      flex: 1,
       alignItems: "flex-start",
       justifyContent: "space-between",
+      paddingVertical: 12,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      flex: 1,
     },
     username: {
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     avatarContainer: {
       width: 44,
       height: 44,
-      borderRadius: 24,
       marginRight: 12,
-      overflow: "hidden",
       borderWidth: 0.5,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 24,
+      overflow: "hidden",
     },
     avatar: {
       width: 44,

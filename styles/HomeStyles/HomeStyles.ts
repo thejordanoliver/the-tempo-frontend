@@ -16,22 +16,22 @@ export const homeStyles = (isDark: boolean) =>
     },
     teamLabel: {
       marginTop: 4,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.REGULAR,
     },
     emptyText: {
+      marginTop: 20,
       fontFamily: Fonts.LIGHT,
       fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
     errorText: {
+      marginTop: 20,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      textAlign: "center",
-      marginTop: 20,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
   });

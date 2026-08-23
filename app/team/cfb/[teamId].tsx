@@ -1,4 +1,4 @@
-import Forum from "@/components/Forum/Forum";
+import ForumFeed from "@/components/Forum/ForumFeed";
 import Roster from "@/components/Sports/Baseball/Team/Roster";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
@@ -242,7 +242,7 @@ export default function TeamDetailScreen() {
 
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
-          <Forum teamId={teamId as string} league={league} />
+          <ForumFeed teamId={teamId as string} league={league} />
         </View>
       </PagerView>
 

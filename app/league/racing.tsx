@@ -18,7 +18,7 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { LEAGUE_TABS, League } from "utils/tabs";
 import { CustomHeader } from "../../components/CustomHeader";
-import Forum from "../../components/Forum/Forum";
+import ForumFeed from "../../components/Forum/ForumFeed";
 import NewsList from "../../components/News/NewsList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -239,7 +239,7 @@ export default function RacingLeagueScreen() {
           </View>
 
           <View key="forum" style={styles.contentArea}>
-            <Forum league={league} />
+            <ForumFeed league={league} />
           </View>
         </PagerView>
       </View>

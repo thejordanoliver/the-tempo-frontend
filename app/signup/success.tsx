@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    fontSize: 32,
     fontFamily: Fonts.BOLD,
+    fontSize: 32,
   },
 });

@@ -2,8 +2,7 @@ import { Colors } from "constants/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
-import { RACING_LEAGUE_CONFIG, resolveRacingLeague } from "./racingConfig";
-import { customHeaderStyles } from "./styles";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, RacingLeague } from "./types";
 import { resolveImage } from "./utils";
 
@@ -77,20 +76,7 @@ export function GameHeader({
     [],
   );
 
-  const resolvedRacingLeague = useMemo(
-    () => resolveRacingLeague(racingLeague, tabName),
-    [racingLeague, tabName],
-  );
-
-  const racingConfig = resolvedRacingLeague
-    ? RACING_LEAGUE_CONFIG[resolvedRacingLeague]
-    : null;
-
-  const isRacingHeader = Boolean(isEvent && racingConfig);
-
-  const isTeamGameHeader = Boolean(
-    tabName === "Game" && homeTeam && awayTeam && !isRacingHeader,
-  );
+  const isTeamGameHeader = Boolean(tabName === "Game" && homeTeam && awayTeam);
 
   const awayLetters = useMemo(
     () => getTeamCodeLetters(awayCode, "AWY"),
@@ -102,14 +88,6 @@ export function GameHeader({
     [getTeamCodeLetters, homeCode],
   );
 
-  const eventLetters = useMemo(
-    () =>
-      String(racingConfig?.shortLabel ?? "RACE")
-        .toUpperCase()
-        .split(""),
-    [racingConfig?.shortLabel],
-  );
-
   const awayLetterAnims = useMemo(
     () => awayLetters.map(() => new Animated.Value(0)),
     [awayLetters],
@@ -118,11 +96,6 @@ export function GameHeader({
   const homeLetterAnims = useMemo(
     () => homeLetters.map(() => new Animated.Value(0)),
     [homeLetters],
-  );
-
-  const eventLetterAnims = useMemo(
-    () => eventLetters.map(() => new Animated.Value(0)),
-    [eventLetters],
   );
 
   useEffect(() => {
@@ -138,47 +111,6 @@ export function GameHeader({
     homeLetterAnims.forEach((animation) => {
       animation.setValue(0);
     });
-
-    eventLetterAnims.forEach((animation) => {
-      animation.setValue(0);
-    });
-
-    if (isRacingHeader) {
-      const racingAnimation = Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 650,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-
-        Animated.spring(scaleHome, {
-          toValue: 1,
-          damping: 14,
-          stiffness: 130,
-          mass: 0.8,
-          useNativeDriver: true,
-        }),
-
-        Animated.stagger(
-          70,
-          eventLetterAnims.map((animation) =>
-            Animated.timing(animation, {
-              toValue: 1,
-              duration: 450,
-              easing: Easing.out(Easing.cubic),
-              useNativeDriver: true,
-            }),
-          ),
-        ),
-      ]);
-
-      racingAnimation.start();
-
-      return () => {
-        racingAnimation.stop();
-      };
-    }
 
     if (!isTeamGameHeader) {
       return;
@@ -254,121 +186,15 @@ export function GameHeader({
   }, [
     awayLetterAnims,
     dividerScale,
-    eventLetterAnims,
     homeLetterAnims,
-    isRacingHeader,
     isTeamGameHeader,
     opacity,
     scaleAway,
     scaleHome,
   ]);
 
-  if (!isRacingHeader && !isTeamGameHeader) {
+  if (!isTeamGameHeader) {
     return null;
-  }
-
-  if (isRacingHeader && racingConfig) {
-    const eventColor = racingConfig.accentColor;
-    const eventLogoSource = resolveImage(eventLogo ?? homeLogo);
-
-    return (
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          StyleSheet.absoluteFillObject,
-          styles.racingHeader,
-          {
-            opacity,
-          },
-        ]}
-      >
-        <LinearGradient
-          colors={[eventColor, "#171717", Colors.black]}
-          locations={[0, 0.48, 1]}
-          start={{
-            x: 0,
-            y: 0,
-          }}
-          end={{
-            x: 1,
-            y: 0.8,
-          }}
-          style={StyleSheet.absoluteFillObject}
-        />
-
-        <View
-          style={[
-            styles.racingAccent,
-            {
-              backgroundColor: eventColor,
-            },
-          ]}
-        />
-
-        <View style={styles.racingCheckeredPattern}>
-          {Array.from({
-            length: 24,
-          }).map((_, index) => {
-            const columns = 6;
-            const row = Math.floor(index / columns);
-            const column = index % columns;
-            const isFilled = (row + column) % 2 === 0;
-
-            return (
-              <View
-                key={`checkered-cell-${index}`}
-                style={[
-                  styles.racingCheckeredCell,
-                  isFilled
-                    ? styles.racingCheckeredCellFilled
-                    : styles.racingCheckeredCellEmpty,
-                ]}
-              />
-            );
-          })}
-        </View>
-
-        {eventLogoSource ? (
-          <Animated.View
-            style={[
-              styles.racingLogoWrapper,
-              {
-                transform: [
-                  {
-                    scale: scaleHome,
-                  },
-                ],
-              },
-            ]}
-          >
-            <Image
-              source={eventLogoSource}
-              style={styles.racingLogo}
-              resizeMode="contain"
-            />
-          </Animated.View>
-        ) : null}
-
-        <View style={styles.racingHeaderContent}>
-          <Animated.Text
-            numberOfLines={1}
-            style={[
-              styles.racingEventTitle,
-              {
-                opacity,
-                transform: [
-                  {
-                    scale: scaleHome,
-                  },
-                ],
-              },
-            ]}
-          >
-            {eventTitle}
-          </Animated.Text>
-        </View>
-      </Animated.View>
-    );
   }
 
   const resolvedAwayColor = awayColor || Colors.midTone;

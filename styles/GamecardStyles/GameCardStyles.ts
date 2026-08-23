@@ -19,20 +19,20 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     ========================= */
     card: {
       flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 8,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      padding: 8,
-      alignItems: "center",
-      justifyContent: "space-between",
     },
 
     info: {
-      marginTop: 4,
       alignItems: "center",
       justifyContent: "center",
       width: 100,
+      marginTop: 4,
     },
 
     infoWrapper: {
@@ -61,12 +61,12 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     teamName: {
+      width: 100,
       marginTop: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: textColor,
       textAlign: "center",
-      width: 100,
     },
 
     rank: {
@@ -75,30 +75,30 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     teamScore: {
-      fontSize: 28,
-      fontFamily: Fonts.BOLD,
-      textAlign: "center",
       width: 72,
+      fontFamily: Fonts.BOLD,
+      fontSize: 28,
+      textAlign: "center",
     },
 
     teamRecord: {
-      fontSize: 16,
+      width: 72,
       fontFamily: Fonts.BOLD,
+      fontSize: 16,
       color: textColor,
       textAlign: "center",
-      width: 72,
     },
 
     /* =========================
        🥊 FIGHTERS
     ========================= */
     fighterContainer: {
+      alignItems: "center",
       width: 40,
       height: 40,
       borderWidth: 1,
-      alignItems: "center",
-      borderRadius: 100,
       borderColor,
+      borderRadius: 100,
       overflow: "hidden",
     },
 
@@ -110,20 +110,20 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     leftFighterFlag: {
       position: "absolute",
+      bottom: 14,
+      left: 4,
+      zIndex: 99,
       width: 20,
       height: 20,
-      left: 4,
-      bottom: 14,
-      zIndex: 99,
     },
 
     rightFighterFlag: {
       position: "absolute",
-      width: 20,
-      height: 20,
       right: 4,
       bottom: 14,
       zIndex: 99,
+      width: 20,
+      height: 20,
     },
 
     /* =========================
@@ -131,14 +131,14 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     ========================= */
     date: {
       fontFamily: Fonts.REGULAR,
-      color: textColor,
       fontSize: 12,
+      color: textColor,
     },
 
     period: {
       fontFamily: Fonts.REGULAR,
-      color: textColor,
       fontSize: 12,
+      color: textColor,
     },
 
     finalText: {
@@ -162,8 +162,8 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     outs: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
@@ -185,22 +185,22 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     broadcast: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: subTextColor,
+      textAlign: "center",
     },
 
     statusDivider: {
-      height: 12,
       width: 1,
-      backgroundColor: textColor,
+      height: 12,
       marginHorizontal: 4,
+      backgroundColor: textColor,
     },
 
     finalStatusDivider: {
-      height: 12,
       width: 1,
-      backgroundColor: accentRed,
+      height: 12,
       marginHorizontal: 4,
+      backgroundColor: accentRed,
     },
 
     /* =========================
@@ -209,11 +209,11 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     headlineContainer: {
       position: "absolute",
       top: 4,
-      left: 0,
       right: 0,
+      left: 0,
+      zIndex: 10,
       alignItems: "center",
       justifyContent: "center",
-      zIndex: 10,
     },
 
     headlineText: {
@@ -224,8 +224,8 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     headlineDivider: {
-      height: 8,
       width: 1,
+      height: 8,
       backgroundColor: headlineColor,
     },
 
@@ -233,11 +233,11 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        ⚾ POSSESSION / EXTRAS
     ========================= */
     possession: {
+      position: "absolute",
+      bottom: -14,
       width: 22,
       height: 22,
       resizeMode: "contain",
-      position: "absolute",
-      bottom: -14,
     },
   });
 };
@@ -261,11 +261,11 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     ========================= */
     card: {
       flexDirection: "column",
+      padding: 8,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      padding: 8,
     },
 
     cardHeader: {
@@ -337,8 +337,8 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     date: {
       fontFamily: Fonts.REGULAR,
-      color: textColor,
       fontSize: 12,
+      color: textColor,
     },
 
     lapInfo: {
@@ -352,9 +352,9 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        🏎️ DRIVER
     ========================= */
     positionContainer: {
-      width: 24,
       alignItems: "center",
       justifyContent: "center",
+      width: 24,
     },
 
     position: {
@@ -368,19 +368,19 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     driverImageContainer: {
+      alignItems: "center",
       width: 40,
       height: 40,
-      borderWidth: 1,
-      alignItems: "center",
-      borderRadius: 100,
-      borderColor,
-      overflow: "hidden",
       marginRight: 8,
+      borderWidth: 1,
+      borderColor,
+      borderRadius: 100,
+      overflow: "hidden",
     },
 
     leaderImageContainer: {
-      borderColor: goldColor,
       borderWidth: 1.5,
+      borderColor: goldColor,
     },
 
     driverImage: {
@@ -407,17 +407,17 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     carNumberBadge: {
-      width: 22,
-      height: 22,
-      borderRadius: 4,
       alignItems: "center",
       justifyContent: "center",
+      width: 22,
+      height: 22,
+      marginRight: 8,
+      borderWidth: 1,
+      borderColor,
+      borderRadius: 4,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: 1,
-      borderColor,
-      marginRight: 8,
     },
 
     carNumberText: {
@@ -437,19 +437,19 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
        ⏱️ TIMING / GAP
     ========================= */
     timeGap: {
+      width: 64,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: textColor,
       textAlign: "right",
-      width: 64,
     },
 
     interval: {
+      width: 64,
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: subTextColor,
       textAlign: "right",
-      width: 64,
     },
 
     statusIcon: {
@@ -483,22 +483,22 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     dnfText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
-      color: subTextColor,
       fontStyle: "italic",
+      color: subTextColor,
     },
 
     statusDivider: {
-      height: 12,
       width: 1,
-      backgroundColor: textColor,
+      height: 12,
       marginHorizontal: 4,
+      backgroundColor: textColor,
     },
 
     finalStatusDivider: {
-      height: 12,
       width: 1,
-      backgroundColor: accentRed,
+      height: 12,
       marginHorizontal: 4,
+      backgroundColor: accentRed,
     },
 
     /* =========================
@@ -523,8 +523,8 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     broadcast: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: subTextColor,
+      textAlign: "center",
     },
 
     showMoreButton: {

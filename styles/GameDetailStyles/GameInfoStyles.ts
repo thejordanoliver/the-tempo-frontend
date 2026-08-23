@@ -4,23 +4,23 @@ import { StyleSheet } from "react-native";
 export const gameInfoStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      justifyContent: "center",
-      alignItems: "center",
       flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
     },
     date: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 16,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     time: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 16,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     broadcasts: {
-      fontSize: 10,
       fontFamily: Fonts.REGULAR,
+      fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -31,15 +31,15 @@ export const gameInfoStyles = (isDark: boolean) =>
       textAlign: "center",
     },
     downAndDistance: {
-      fontSize: 10,
       fontFamily: Fonts.REGULAR,
+      fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     dateFinal: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     finalText: {
       fontFamily: Fonts.REGULAR,
@@ -55,19 +55,19 @@ export const gameInfoStyles = (isDark: boolean) =>
       gap: 4,
     },
     statusDivider: {
-      height: 16,
       width: 1,
+      height: 16,
       backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
     },
     finalStatusDivider: {
-      height: 16,
       width: 1,
+      height: 16,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     headlineText: {
+      fontFamily: Fonts.EXTRALIGHT,
       fontSize: 13,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.EXTRALIGHT,
       textAlign: "center",
     },
     outsContainer: {

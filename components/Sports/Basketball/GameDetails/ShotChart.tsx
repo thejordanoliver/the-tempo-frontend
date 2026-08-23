@@ -411,25 +411,25 @@ export const shotChartStyles = (isDark: boolean) =>
     },
 
     wrapper: {
-      borderColor: Colors.midTone,
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
       overflow: "hidden",
     },
 
     dropdownRow: {
+      zIndex: 20,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
       padding: 12,
-      zIndex: 20,
     },
 
     chartWrapper: {
+      position: "relative",
       width: "100%",
       aspectRatio: COURT_LENGTH / COURT_WIDTH,
       overflow: "hidden",
-      position: "relative",
     },
 
     courtImage: {
@@ -450,22 +450,22 @@ export const shotChartStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      gap: 12,
       marginTop: 10,
       padding: 12,
-      gap: 12,
     },
 
     legendItem: {
+      flexShrink: 1,
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      flexShrink: 1,
     },
 
     legendText: {
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.BOLD,
     },
 
     legendLogo: {
@@ -474,8 +474,8 @@ export const shotChartStyles = (isDark: boolean) =>
     },
 
     divider: {
-      height: 14,
       width: 1,
+      height: 14,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
@@ -488,8 +488,8 @@ export const shotChartStyles = (isDark: boolean) =>
     missedMarker: {
       width: 14,
       height: 14,
+      borderWidth: 4,
       borderRadius: 7,
       backgroundColor: Colors.white,
-      borderWidth: 4,
     },
   });

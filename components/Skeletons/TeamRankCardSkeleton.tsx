@@ -28,39 +28,39 @@ export default function TeamRankCardSkeleton() {
 
 const styles = StyleSheet.create({
   cardWrapper: {
-    overflow: "hidden",
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(150,150,150,0.25)",
     position: "relative",
     paddingVertical: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(150,150,150,0.25)",
+    overflow: "hidden",
   },
 
   /* Logo watermark */
   logoContainer: {
     position: "absolute",
-    right: 0,
     top: 0,
+    right: 0,
     bottom: 0,
-    width: "45%",
-    justifyContent: "center",
     alignItems: "flex-end",
+    justifyContent: "center",
+    width: "45%",
     overflow: "hidden",
   },
 
   backgroundLogo: {
     height: "200%",
     aspectRatio: 1,
-    opacity: 0.3,
     marginRight: -40,
     borderRadius: 12,
+    opacity: 0.3,
   },
 
   /* Gradient placeholder */
   cardGradient: {
     position: "absolute",
-    left: 0,
     top: 0,
     bottom: 0,
+    left: 0,
     width: "110%",
     opacity: 0.25,
   },
@@ -84,15 +84,15 @@ const styles = StyleSheet.create({
   },
 
   teamNameBlock: {
-    height: 28,
     width: 160,
+    height: 28,
     borderRadius: 100,
   },
 
   pointsBlock: {
-    marginTop: 6,
-    height: 18,
     width: 120,
+    height: 18,
+    marginTop: 6,
     borderRadius: 6,
   },
 });

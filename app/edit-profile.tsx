@@ -642,9 +642,9 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   formContainer: {
+    gap: 14,
     paddingTop: 64,
     paddingHorizontal: 12,
     paddingBottom: 24,
-    gap: 14,
   },
 });

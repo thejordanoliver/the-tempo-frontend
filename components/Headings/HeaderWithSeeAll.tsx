@@ -48,8 +48,8 @@ const HeaderWithSeeAllStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesHeader: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: 12,
       marginBottom: 12,
       paddingBottom: 8,
@@ -61,18 +61,18 @@ const HeaderWithSeeAllStyles = (isDark: boolean) =>
       gap: 2,
     },
     seeAll: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 14,
       fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
     heading: {
-      fontSize: 20,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
     subtitle: {
-      fontSize: 13,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

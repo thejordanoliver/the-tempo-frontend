@@ -210,17 +210,17 @@ const pillTabsStyles = (isDark: boolean) =>
   StyleSheet.create({
     seasonTabsPill: {
       position: "relative",
-      overflow: "hidden",
       marginTop: 4,
       marginBottom: 16,
-      borderRadius: 999,
       borderWidth: 1,
       borderColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
+      borderRadius: 999,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
 
     scrollContent: {
@@ -233,8 +233,8 @@ const pillTabsStyles = (isDark: boolean) =>
 
     tabsTrack: {
       position: "relative",
-      flexDirection: "row",
       flexGrow: 1,
+      flexDirection: "row",
     },
 
     tabsTrackFull: {

@@ -12,8 +12,8 @@ export const badgeCardStyles = (
       alignItems: "center",
       gap: 14,
       padding: 16,
-      borderRadius: 16,
       borderWidth: 1,
+      borderRadius: 16,
     },
 
     content: {
@@ -34,15 +34,15 @@ export const badgeCardStyles = (
     },
 
     name: {
-      fontSize: 17,
       fontFamily: Fonts.BOLD,
+      fontSize: 17,
     },
 
     tier: {
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
-      textTransform: "uppercase",
+      fontSize: 12,
       letterSpacing: 0.6,
+      textTransform: "uppercase",
     },
 
     categoryPill: {
@@ -52,14 +52,14 @@ export const badgeCardStyles = (
     },
 
     categoryText: {
-      fontSize: 11,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
     },
 
     description: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       lineHeight: 18,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -74,14 +74,14 @@ export const badgeCardStyles = (
     },
 
     progressText: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     statusText: {
-      fontSize: 12,
       fontFamily: Fonts.SEMIBOLD,
+      fontSize: 12,
       color: isEarned ? tierColor : isDark ? Colors.lightGray : Colors.darkGray,
     },
 

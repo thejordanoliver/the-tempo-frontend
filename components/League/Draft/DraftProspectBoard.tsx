@@ -480,9 +480,9 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       marginTop: 4,
       marginBottom: 12,
       padding: 12,
-      borderRadius: 18,
       borderWidth: 1,
       borderColor: isDark ? Colors.midTone : Colors.black,
+      borderRadius: 18,
     },
     sectionHeader: {
       flexDirection: "row",
@@ -491,18 +491,18 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       marginBottom: 12,
     },
     eyebrow: {
+      opacity: 0.8,
       fontFamily: Fonts.BOLD,
       fontSize: 11,
       letterSpacing: 1,
-      textTransform: "uppercase",
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      opacity: 0.8,
+      textTransform: "uppercase",
     },
     title: {
+      marginTop: 2,
       fontFamily: Fonts.BOLD,
       fontSize: 19,
       color: isDark ? Colors.white : Colors.black,
-      marginTop: 2,
     },
     liveBadge: {
       flexDirection: "row",
@@ -528,9 +528,9 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       gap: 10,
     },
     firstFeaturedCardWrapper: {
+      paddingBottom: 10,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.midTone : Colors.black,
-      paddingBottom: 10,
     },
     featuredCard: {
       padding: 12,
@@ -550,9 +550,9 @@ const draftProspectBoardStyles = (isDark: boolean) =>
     featuredLabel: {
       fontFamily: Fonts.BOLD,
       fontSize: 12,
+      letterSpacing: 0.6,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
-      letterSpacing: 0.6,
     },
     featuredBody: {
       flexDirection: "row",
@@ -568,17 +568,17 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     prospectMeta: {
+      marginTop: 2,
       fontFamily: Fonts.REGULAR,
       fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: 2,
     },
     prospectSubMeta: {
+      marginTop: 2,
+      opacity: 0.8,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: 2,
-      opacity: 0.8,
     },
     avatar: {
       width: 58,
@@ -611,8 +611,8 @@ const draftProspectBoardStyles = (isDark: boolean) =>
     statLabel: {
       fontFamily: Fonts.BOLD,
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       letterSpacing: 0.4,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     statValue: {
       fontFamily: Fonts.BOLD,
@@ -623,10 +623,10 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       marginTop: 14,
     },
     availableTitle: {
+      marginBottom: 10,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
-      marginBottom: 10,
     },
     availableList: {
       gap: 10,
@@ -635,24 +635,24 @@ const draftProspectBoardStyles = (isDark: boolean) =>
     availableCard: {
       width: 150,
       padding: 10,
+      borderWidth: 1,
+      borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
       borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: 1,
-      borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
     },
     availableRankBadge: {
       position: "absolute",
       top: 8,
       right: 8,
+      zIndex: 2,
+      alignItems: "center",
+      justifyContent: "center",
       width: 24,
       height: 24,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
-      zIndex: 2,
     },
     availableRankText: {
       fontFamily: Fonts.BOLD,
@@ -660,16 +660,16 @@ const draftProspectBoardStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     availableName: {
+      marginTop: 8,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.white : Colors.black,
-      marginTop: 8,
     },
     availableMeta: {
+      marginTop: 2,
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      marginTop: 2,
     },
     compactStatRow: {
       flexDirection: "row",

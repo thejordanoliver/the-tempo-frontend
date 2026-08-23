@@ -123,10 +123,10 @@ const styles = StyleSheet.create({
   },
 
   wrapper: {
+    padding: 12,
     borderWidth: 1,
     borderRadius: 8,
     overflow: "hidden",
-    padding: 12,
   },
 
   headerRow: {
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   teamCode: {
     width: 48,
     height: 14,
-    borderRadius: 4,
     paddingLeft: 8,
+    borderRadius: 4,
   },
 
   scoresWrapper: {
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
   },
 
   divider: {
-    height: 1,
     width: "100%",
+    height: 1,
     marginVertical: 4,
   },
 });

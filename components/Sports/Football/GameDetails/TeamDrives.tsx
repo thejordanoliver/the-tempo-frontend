@@ -164,9 +164,9 @@ export default function TeamDrives({
 const TeamDrivesStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: Colors.midTone,
       borderRadius: 8,
+      overflow: "hidden",
     },
   });

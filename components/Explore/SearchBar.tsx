@@ -121,23 +121,23 @@ export const searchBarStyles = (isDark: boolean) =>
       alignItems: "center",
     },
     searchInput: {
+      flex: 1,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderWidth: StyleSheet.hairlineWidth,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
+      fontFamily: Fonts.LIGHT,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.LIGHT,
-      flex: 1,
     },
     clearButton: {
       position: "absolute",
       right: 10,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
   });

@@ -28,9 +28,9 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       flex: 1,
     },
     verticalScrollContent: {
+      gap: 14,
       paddingTop: 8,
       paddingBottom: 112,
-      gap: 14,
     },
     horizontalScrollContent: {
       flexGrow: 1,
@@ -38,10 +38,10 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       paddingBottom: 18,
     },
     header: {
+      gap: 3,
       paddingHorizontal: 16,
       paddingTop: 12,
       paddingBottom: 2,
-      gap: 3,
     },
     tournamentName: {
       fontFamily: Fonts.BOLD,
@@ -56,14 +56,14 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     warningBanner: {
       marginHorizontal: 16,
-      borderRadius: 8,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
       borderWidth: 1,
       borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.transparentGold
         : Colors.light.transparentGold,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
     },
     warningText: {
       fontFamily: Fonts.REGULAR,
@@ -87,9 +87,9 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       overflow: "visible",
     },
     regionHeader: {
+      justifyContent: "center",
       height: BRACKET_LAYOUT.regionHeaderHeight,
       paddingHorizontal: 12,
-      justifyContent: "center",
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: borderColor,
     },
@@ -124,14 +124,14 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       overflow: "visible",
     },
     matchupCard: {
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor,
-      backgroundColor: cardBackground,
-      overflow: "hidden",
       justifyContent: "space-between",
       paddingHorizontal: 7,
       paddingVertical: 6,
+      borderWidth: 1,
+      borderColor,
+      borderRadius: 8,
+      backgroundColor: cardBackground,
+      overflow: "hidden",
     },
     matchupCardCompact: {
       minHeight: BRACKET_LAYOUT.gameCardHeight,
@@ -148,16 +148,16 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     teamRow: {
       flexDirection: "row",
       alignItems: "center",
-      height: 21,
       gap: 5,
+      height: 21,
     },
     seedText: {
       width: 18,
       fontFamily: Fonts.BOLD,
       fontSize: 11,
+      fontVariant: ["tabular-nums"],
       color: mutedTextColor,
       textAlign: "center",
-      fontVariant: ["tabular-nums"],
     },
     teamLogo: {
       width: 19,
@@ -165,10 +165,10 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     teamNameWrap: {
       flex: 1,
-      minWidth: 0,
       flexDirection: "row",
       alignItems: "center",
       gap: 5,
+      minWidth: 0,
     },
     teamName: {
       flex: 1,
@@ -192,9 +192,9 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       width: 32,
       fontFamily: Fonts.BOLD,
       fontSize: 13,
+      fontVariant: ["tabular-nums"],
       color: textColor,
       textAlign: "right",
-      fontVariant: ["tabular-nums"],
     },
     winnerText: {
       color: winnerColor,
@@ -204,8 +204,8 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     divider: {
       height: StyleSheet.hairlineWidth,
-      backgroundColor: separatorColor,
       marginVertical: 2,
+      backgroundColor: separatorColor,
     },
     cardFooter: {
       flexDirection: "row",
@@ -222,8 +222,8 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       color: mutedTextColor,
     },
     liveText: {
-      color: liveColor,
       fontFamily: Fonts.BOLD,
+      color: liveColor,
     },
     broadcastText: {
       maxWidth: 66,
@@ -245,15 +245,15 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       borderRadius: BRACKET_LAYOUT.connectorLineWidth,
     },
     championshipColumn: {
-      width: BRACKET_LAYOUT.centerColumnWidth,
       alignItems: "center",
+      width: BRACKET_LAYOUT.centerColumnWidth,
       overflow: "visible",
     },
     championshipLabel: {
       position: "absolute",
       top: 0,
-      left: 0,
       right: 0,
+      left: 0,
       height: BRACKET_LAYOUT.roundTitleHeight,
       paddingTop: 7,
       fontFamily: Fonts.BOLD,
@@ -263,20 +263,20 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       textTransform: "uppercase",
     },
     championPanel: {
-      width: BRACKET_LAYOUT.gameCardWidth + 22,
       alignItems: "center",
       justifyContent: "center",
       gap: 5,
-      borderRadius: 8,
+      width: BRACKET_LAYOUT.gameCardWidth + 22,
+      padding: 10,
       borderWidth: 1,
       borderColor: accentColor,
+      borderRadius: 8,
       backgroundColor: cardBackground,
-      padding: 10,
     },
     championPanelOverlay: {
       position: "absolute",
-      left: 0,
       right: 0,
+      left: 0,
       alignItems: "center",
     },
     championLogo: {
@@ -304,13 +304,13 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       textAlign: "center",
     },
     openingSection: {
-      paddingHorizontal: 16,
       gap: 10,
+      paddingHorizontal: 16,
     },
     openingHeaderRow: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: 8,
     },
     openingTitle: {
@@ -328,8 +328,8 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       paddingRight: 16,
     },
     openingCardWrap: {
-      width: BRACKET_LAYOUT.gameCardWidth,
       gap: 6,
+      width: BRACKET_LAYOUT.gameCardWidth,
     },
     advanceText: {
       fontFamily: Fonts.REGULAR,
@@ -340,8 +340,8 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      padding: 20,
       gap: 6,
+      padding: 20,
     },
     emptyTitle: {
       fontFamily: Fonts.BOLD,
@@ -363,16 +363,16 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     skeletonCanvas: {
       position: "relative",
+      gap: 12,
       paddingHorizontal: 16,
       paddingTop: 12,
-      gap: 12,
     },
     skeletonRegion: {
-      borderRadius: 8,
+      gap: 10,
+      padding: 12,
       borderWidth: 1,
       borderColor,
-      padding: 12,
-      gap: 10,
+      borderRadius: 8,
       backgroundColor: subtleBackground,
     },
     skeletonRow: {

@@ -674,8 +674,8 @@ const messageDetailStyles = (isDark: boolean) =>
     messageAvatar: {
       width: 30,
       height: 30,
-      borderRadius: 15,
       marginRight: 8,
+      borderRadius: 15,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -683,9 +683,9 @@ const messageDetailStyles = (isDark: boolean) =>
       maxWidth: "78%",
       paddingHorizontal: 13,
       paddingVertical: 10,
-      borderRadius: 18,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 18,
     },
 
     attachmentMessageBubble: {
@@ -696,23 +696,23 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     currentUserBubble: {
-      borderBottomRightRadius: 6,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderBottomRightRadius: 6,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     otherUserBubble: {
-      borderBottomLeftRadius: 6,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomLeftRadius: 6,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     messageText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -735,8 +735,8 @@ const messageDetailStyles = (isDark: boolean) =>
     messageTime: {
       alignSelf: "flex-end",
       marginTop: 6,
-      fontSize: 11,
       fontFamily: Fonts.REGULAR,
+      fontSize: 11,
       color: Colors.midTone,
     },
 
@@ -758,17 +758,17 @@ const messageDetailStyles = (isDark: boolean) =>
 
     emptyTitle: {
       marginTop: 12,
-      fontSize: 18,
       fontFamily: Fonts.BOLD,
+      fontSize: 18,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
 
     emptyText: {
       marginTop: 6,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -782,50 +782,50 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     retryButtonText: {
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
     },
 
     typingBubble: {
+      justifyContent: "center",
+      minHeight: 40,
       paddingHorizontal: 13,
       paddingVertical: 10,
-      minHeight: 40,
-      justifyContent: "center",
     },
 
     typingBubbleText: {
-      fontSize: 13,
-      lineHeight: 18,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
       fontStyle: "italic",
+      lineHeight: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     composerOuter: {
       position: "absolute",
-      left: 0,
       right: 0,
       bottom: 0,
+      left: 0,
       zIndex: 20,
-      elevation: 20,
       paddingHorizontal: 12,
       paddingTop: 8,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      elevation: 20,
     },
 
     previewContainer: {
-      marginBottom: 8,
       alignSelf: "center",
-      borderRadius: 14,
-      overflow: "hidden",
+      marginBottom: 8,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 14,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
 
     previewMedia: {
@@ -836,8 +836,8 @@ const messageDetailStyles = (isDark: boolean) =>
 
     previewBadge: {
       position: "absolute",
-      left: 8,
       top: 8,
+      left: 8,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 999,
@@ -845,8 +845,8 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     previewBadgeText: {
-      fontSize: 11,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
       color: Colors.white,
     },
 
@@ -854,8 +854,8 @@ const messageDetailStyles = (isDark: boolean) =>
       position: "absolute",
       top: 6,
       right: 6,
-      backgroundColor: "#00000088",
       borderRadius: 999,
+      backgroundColor: "#00000088",
     },
 
     composer: {
@@ -865,9 +865,9 @@ const messageDetailStyles = (isDark: boolean) =>
       minHeight: 50,
       paddingHorizontal: 10,
       paddingVertical: 6,
-      borderRadius: 24,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 24,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -880,11 +880,11 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     attachmentButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: "transparent",
     },
 
@@ -893,34 +893,34 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     themeButton: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
       alignItems: "center",
       justifyContent: "center",
+      width: 38,
+      height: 38,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 19,
       backgroundColor: "transparent",
     },
 
     input: {
       flex: 1,
-      maxHeight: 112,
       minHeight: 38,
+      maxHeight: 112,
       paddingTop: 8,
       paddingBottom: 8,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     sendButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
@@ -931,8 +931,8 @@ const messageDetailStyles = (isDark: boolean) =>
     sendError: {
       marginTop: 6,
       paddingHorizontal: 8,
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
   });

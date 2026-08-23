@@ -26,30 +26,30 @@ export const squareGameCardStyles = (
   return StyleSheet.create({
     card: {
       flexDirection: "row",
+      justifyContent: "space-between",
       height: 120,
+      paddingVertical: 28,
+      paddingHorizontal: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      justifyContent: "space-between",
-      borderRadius: 8,
-      paddingVertical: 28,
-      paddingHorizontal: 12,
     },
     cardWrapper: {
       flexDirection: "column",
       justifyContent: "center",
-      borderRightColor: borderColor,
-      borderRightWidth: 0.5,
       gap: 8,
       width: 120,
+      borderRightWidth: 0.5,
+      borderRightColor: borderColor,
     },
     teamSection: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       gap: 4,
-      paddingRight: 8,
       width: "100%",
+      paddingRight: 8,
     },
     teamWrapper: {
       flexDirection: "row",
@@ -57,7 +57,11 @@ export const squareGameCardStyles = (
       gap: 4,
     },
 
-    logo: { width: 20, height: 20, resizeMode: "contain" },
+    logo: {
+      width: 20,
+      height: 20,
+      resizeMode: "contain",
+    },
 
     possession: {
       width: 16,
@@ -66,10 +70,10 @@ export const squareGameCardStyles = (
     },
 
     teamName: {
-      fontSize: 14,
-      fontFamily: Fonts.REGULAR,
-      color: textColor,
       width: 40,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      color: textColor,
     },
     rank: {
       fontSize: 8,
@@ -77,50 +81,54 @@ export const squareGameCardStyles = (
     },
 
     teamScore: {
-      fontSize: 14,
       fontFamily: Fonts.BOLD,
-      textAlign: "right",
+      fontSize: 14,
       color: Colors.midTone,
+      textAlign: "right",
     },
     teamRecord: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
-      textAlign: "right",
+      fontSize: 12,
       color: textColor,
+      textAlign: "right",
     },
-    info: { alignItems: "center", justifyContent: "center", width: 60 },
+    info: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: 60,
+    },
     infoWrapper: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
     },
     date: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: textColor,
       textAlign: "center",
     },
 
     period: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: textColor,
       textAlign: "center",
     },
     dateFinal: {
       fontFamily: Fonts.REGULAR,
-      color: textColor,
       fontSize: 12,
+      color: textColor,
     },
     time: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
+      fontSize: 12,
       color: textColor,
+      textAlign: "center",
     },
     clock: {
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: accentRed,
       textAlign: "center",
     },
@@ -131,8 +139,8 @@ export const squareGameCardStyles = (
       marginVertical: 2,
     },
     outs: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
@@ -144,19 +152,19 @@ export const squareGameCardStyles = (
     },
     broadcast: {
       paddingHorizontal: 4,
-      fontSize: 10,
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
+      fontSize: 10,
       color: subTextColor,
+      textAlign: "center",
     },
     headlineText: {
+      position: "absolute",
+      top: 4,
+      left: 8,
+      width: "100%",
       fontFamily: Fonts.REGULAR,
       fontSize: 8,
       color: headlineColor,
-      position: "absolute",
-      width: "100%",
-      top: 4,
-      left: 8,
     },
 
     downDistance: {
@@ -181,12 +189,12 @@ export const squareGameCardStyles = (
     },
 
     fighterContainer: {
+      alignItems: "center",
       width: 25,
       height: 25,
       borderWidth: 1,
-      alignItems: "center",
-      borderRadius: 100,
       borderColor: borderColor,
+      borderRadius: 100,
       overflow: "hidden",
     },
 
@@ -194,10 +202,10 @@ export const squareGameCardStyles = (
       position: "absolute",
       top: "50%",
       left: "50%",
-      transform: "translate(-50%, -50%)",
       zIndex: -1,
       width: 50,
       height: 100,
+      transform: "translate(-50%, -50%)",
     },
   });
 };

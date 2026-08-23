@@ -16,6 +16,7 @@ type Props = {
   onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;
   isDark: boolean;
   disabled?: boolean;
+  sendDisabled?: boolean;
   onHeightChange?: (height: number) => void;
   onSent?: () => void;
   selectedGifUrl: string | null;
@@ -27,6 +28,7 @@ function ChatInputBar({
   onSend,
   isDark,
   disabled = false,
+  sendDisabled: sendDisabledProp = false,
   onHeightChange,
   onSent,
   selectedGifUrl,
@@ -49,7 +51,9 @@ function ChatInputBar({
     [selectedGifUrl, value],
   );
 
-  const sendDisabled = !payload || isSending || disabled;
+  const inputDisabled = disabled || isSending;
+  const sendDisabled =
+    !payload || isSending || disabled || sendDisabledProp;
 
   const handleLayout = useCallback(
     (event: LayoutChangeEvent) => {
@@ -59,12 +63,12 @@ function ChatInputBar({
   );
 
   const handleOpenGifPicker = useCallback(() => {
-    if (disabled || isSending) return;
+    if (inputDisabled) return;
 
     Keyboard.dismiss();
     disablePanDown();
     onOpenGifPicker();
-  }, [disabled, isSending, disablePanDown, onOpenGifPicker]);
+  }, [inputDisabled, disablePanDown, onOpenGifPicker]);
 
   const handleSend = useCallback(async () => {
     if (sendDisabled || isSendingRef.current) return;
@@ -124,14 +128,14 @@ function ChatInputBar({
           onPress={handleOpenGifPicker}
           style={styles.iconButton}
           activeOpacity={activeOpacity}
-          disabled={disabled || isSending}
+          disabled={inputDisabled}
           hitSlop={8}
         >
           <Ionicons
             name="images-outline"
             size={22}
             color={
-              disabled || isSending
+              inputDisabled
                 ? Colors.darkGray
                 : isDark
                   ? Colors.white
@@ -150,7 +154,7 @@ function ChatInputBar({
           returnKeyType="send"
           submitBehavior="submit"
           multiline
-          editable={!disabled && !isSending}
+          editable={!inputDisabled}
           scrollEnabled
           textAlignVertical="center"
           blurOnSubmit={false}
@@ -197,54 +201,54 @@ const ChatInputBarStyles = (isDark: boolean) =>
       alignItems: "flex-end",
       gap: 8,
       minHeight: 54,
+      marginBottom: 8,
       paddingVertical: 8,
       paddingHorizontal: 10,
-      borderRadius: 22,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 22,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      marginBottom: 8,
     },
     input: {
       flex: 1,
-      maxHeight: 104,
       minHeight: 38,
+      maxHeight: 104,
       paddingTop: 9,
       paddingBottom: 9,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 19,
+      color: isDark ? Colors.white : Colors.black,
     },
     iconButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      justifyContent: "center",
-      alignItems: "center",
     },
     sendButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
       backgroundColor: isDark ? Colors.white : Colors.black,
-      justifyContent: "center",
-      alignItems: "center",
     },
     sendButtonDisabled: {
       opacity: 0.35,
     },
     previewContainer: {
+      alignSelf: "flex-start",
       marginBottom: 8,
       marginHorizontal: 4,
-      alignSelf: "flex-start",
-      borderRadius: 14,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 14,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
     previewGif: {
       width: 148,
@@ -254,7 +258,7 @@ const ChatInputBarStyles = (isDark: boolean) =>
       position: "absolute",
       top: 6,
       right: 6,
-      backgroundColor: "#00000088",
       borderRadius: 999,
+      backgroundColor: "#00000088",
     },
   });

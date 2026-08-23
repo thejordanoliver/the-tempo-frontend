@@ -14,17 +14,17 @@ export const createPostStyles = (isDark: boolean) =>
     userRow: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 10,
       paddingHorizontal: 12,
       paddingTop: 14,
       paddingBottom: 8,
-      gap: 10,
     },
     avatar: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
       overflow: "hidden",
     },
     avatarImage: {
@@ -37,28 +37,28 @@ export const createPostStyles = (isDark: boolean) =>
       gap: 2,
     },
     username: {
-      fontSize: 14,
       fontFamily: Fonts.MEDIUM,
-      color: isDark ? Colors.white : Colors.black,
+      fontSize: 14,
       lineHeight: 18,
+      color: isDark ? Colors.white : Colors.black,
     },
     audiencePill: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 3,
       alignSelf: "flex-start",
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      gap: 3,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 999,
-      paddingHorizontal: 8,
-      paddingVertical: 2,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     audiencePillText: {
-      fontSize: 11,
       fontFamily: Fonts.REGULAR,
+      fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -70,11 +70,11 @@ export const createPostStyles = (isDark: boolean) =>
       minHeight: 120,
       paddingHorizontal: 12,
       paddingVertical: 8,
-      fontSize: 16,
-      fontFamily: Fonts.REGULAR,
-      textAlignVertical: "top",
-      color: isDark ? Colors.white : Colors.black,
       backgroundColor: "transparent",
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+      textAlignVertical: "top",
     },
 
     // ─── Media strip (inline thumbnails) ────────────────────────────────
@@ -84,15 +84,15 @@ export const createPostStyles = (isDark: boolean) =>
       overflow: "visible",
     },
     mediaThumb: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 80,
       height: 80,
-      borderRadius: 10,
       marginRight: 8,
+      borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      alignItems: "center",
-      justifyContent: "center",
       overflow: "hidden",
     },
     mediaThumbImage: {
@@ -101,39 +101,39 @@ export const createPostStyles = (isDark: boolean) =>
       borderRadius: 10,
     },
     mediaAddButton: {
-      width: 80,
-      height: 80,
-      borderRadius: 10,
-      borderWidth: 1.5,
-      borderStyle: "dashed",
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       alignItems: "center",
       justifyContent: "center",
+      width: 80,
+      height: 80,
+      borderWidth: 1.5,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderStyle: "dashed",
+      borderRadius: 10,
     },
     mediaBadge: {
       position: "absolute",
-      left: 5,
       bottom: 5,
+      left: 5,
       paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 999,
       backgroundColor: "rgba(0,0,0,0.7)",
     },
     mediaBadgeText: {
-      color: Colors.white,
-      fontSize: 10,
       fontFamily: Fonts.BOLD,
+      fontSize: 10,
+      color: Colors.white,
     },
     removeButton: {
       position: "absolute",
       top: 3,
       right: 3,
+      alignItems: "center",
+      justifyContent: "center",
       width: 18,
       height: 18,
       borderRadius: 9,
       backgroundColor: "rgba(0,0,0,0.6)",
-      alignItems: "center",
-      justifyContent: "center",
     },
 
     // ─── Divider ─────────────────────────────────────────────────────────
@@ -146,16 +146,16 @@ export const createPostStyles = (isDark: boolean) =>
     toolbar: {
       flexDirection: "row",
       alignItems: "center",
+      gap: 4,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      gap: 4,
     },
     toolBtn: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 40,
       height: 40,
       borderRadius: 8,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: "transparent",
     },
     toolBtnActive: {
@@ -164,16 +164,16 @@ export const createPostStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     toolGifLabel: {
-      fontSize: 10,
-      fontFamily: Fonts.BOLD,
-      letterSpacing: 0.5,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      paddingHorizontal: 5,
+      paddingVertical: 2,
       borderWidth: 1.5,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 4,
-      paddingHorizontal: 5,
-      paddingVertical: 2,
       overflow: "hidden",
+      fontFamily: Fonts.BOLD,
+      fontSize: 10,
+      letterSpacing: 0.5,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     toolSpacer: {
       flex: 1,
@@ -184,8 +184,8 @@ export const createPostStyles = (isDark: boolean) =>
       gap: 6,
     },
     charCountLabel: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -193,34 +193,34 @@ export const createPostStyles = (isDark: boolean) =>
     pollCardContainer: {
       marginHorizontal: 16,
       marginBottom: 12,
-      borderRadius: 12,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 12,
       overflow: "hidden",
     },
     pollQuestion: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 14,
-      fontFamily: Fonts.BOLD,
       paddingHorizontal: 12,
       paddingTop: 10,
       paddingBottom: 6,
+      fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
     optionRow: {
       flexDirection: "row",
       alignItems: "center",
-      borderRadius: 8,
       marginHorizontal: 12,
       marginBottom: 6,
       paddingHorizontal: 10,
       paddingVertical: 8,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
     },
     pollOptionsText: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 13,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
     },
     metaContainer: {
       flexDirection: "row",
@@ -236,8 +236,8 @@ export const createPostStyles = (isDark: boolean) =>
       gap: 4,
     },
     pollDurationText: {
-      fontSize: 11,
       fontFamily: Fonts.REGULAR,
+      fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     pollRemoveContainer: {
@@ -247,17 +247,17 @@ export const createPostStyles = (isDark: boolean) =>
     },
     pollRemoveButton: {
       fontFamily: Fonts.REGULAR,
-      color: Colors.midTone,
       fontSize: 11,
+      color: Colors.midTone,
     },
 
     // ─── Bottom bar ──────────────────────────────────────────────────────
     bottom: {
       gap: 20,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
       paddingHorizontal: 12,
       paddingVertical: 10,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     bottomBar: {
       flexDirection: "row",
@@ -268,14 +268,14 @@ export const createPostStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 999,
-      paddingHorizontal: 10,
-      paddingVertical: 5,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     teamDot: {
       width: 8,
@@ -284,21 +284,21 @@ export const createPostStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.dark.blue : Colors.light.blue,
     },
     teamBadgeText: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     mediaCountText: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     // ─── Legacy / kept for modals ────────────────────────────────────────
     label: {
-      fontSize: 18,
-      fontFamily: Fonts.REGULAR,
       marginBottom: 12,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
     header: {
@@ -306,14 +306,14 @@ export const createPostStyles = (isDark: boolean) =>
       justifyContent: "space-between",
     },
     thumbnail: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 80,
       height: 80,
       borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      justifyContent: "center",
-      alignItems: "center",
     },
     // kept as alias so renderMediaItem still compiles
     thumnailPreview: {
@@ -322,18 +322,18 @@ export const createPostStyles = (isDark: boolean) =>
       borderRadius: 10,
     },
     imageContainer: {
-      overflow: "visible",
       marginBottom: 12,
+      overflow: "visible",
     },
     addMediaText: {
-      color: isDark ? Colors.white : Colors.black,
+      marginLeft: 4,
       fontFamily: Fonts.MEDIUM,
       fontSize: 16,
-      marginLeft: 4,
+      color: isDark ? Colors.white : Colors.black,
     },
     mediaItem: {
-      marginRight: 8,
       position: "relative",
+      marginRight: 8,
       overflow: "visible",
     },
     postOptionsContainer: {
@@ -344,10 +344,10 @@ export const createPostStyles = (isDark: boolean) =>
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     postOptionsWrapper: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      flex: 1,
       paddingVertical: 12,
     },
     postOptionsInnerWrapper: {

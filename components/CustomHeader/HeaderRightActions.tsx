@@ -1,8 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { Pressable, TouchableOpacity, View } from "react-native";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
-import { customHeaderStyles } from "./styles";
 
 type HeaderRightActionsProps = {
   isTeamScreen: boolean;

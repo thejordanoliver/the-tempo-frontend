@@ -127,24 +127,27 @@ export default function TeamInfoModal({
 
 export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
   StyleSheet.create({
-    backgroundStyle: { backgroundColor: "transparent", overflow: "hidden" },
-    handleStyle: {
+    backgroundStyle: {
       backgroundColor: "transparent",
-      height: 40,
-      justifyContent: "center",
-      alignItems: "center",
+      overflow: "hidden",
+    },
+    handleStyle: {
       position: "absolute",
-      left: 8,
-      right: 8,
       top: 0,
+      right: 8,
+      left: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 40,
+      backgroundColor: "transparent",
     },
     handleIndicatorStyle: {
-      backgroundColor: Colors.midTone,
+      zIndex: 9999,
       width: 36,
       height: 4,
-      borderRadius: 2,
-      zIndex: 9999,
       marginBottom: 4,
+      borderRadius: 2,
+      backgroundColor: Colors.midTone,
     },
     container: {
       flex: 1,
@@ -153,30 +156,30 @@ export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       overflow: "hidden",
     },
     wrapper: {
-      paddingHorizontal: 12,
       flex: 1,
+      paddingHorizontal: 12,
     },
     contentContainerStyle: {
       paddingTop: 20,
       paddingBottom: 40,
     },
     teamName: {
+      paddingBottom: 12,
+      paddingTop: Math.max(insets?.top - 20, 12),
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
-      paddingBottom: 12,
-      textAlign: "center",
-      paddingTop: Math.max(insets?.top - 20, 12),
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     sectionTitle: {
-      textAlign: "center",
-      fontSize: 20,
-      fontFamily: Fonts.MEDIUM,
       marginBottom: 8,
       paddingBottom: 4,
       borderBottomWidth: 0.5,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     infoCardContainer: { width: "100%" },
   });

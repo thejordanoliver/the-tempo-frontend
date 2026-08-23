@@ -33,21 +33,21 @@ export const followersListStyles = (isDark: boolean) => {
       flex: 1,
     },
     itemContainer: {
-      paddingVertical: 12,
       alignItems: "flex-start",
       justifyContent: "space-between",
+      paddingVertical: 12,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     username: {
       width: 60,
       height: 12,
+      marginTop: 6,
       borderRadius: 4,
       backgroundColor: skeletonColor,
-      marginTop: 6,
     },
     avatarContainer: {
-      borderRadius: 100,
       marginRight: 12,
+      borderRadius: 100,
       backgroundColor: skeletonColor,
     },
     userRow: {
@@ -65,8 +65,8 @@ export const followersListStyles = (isDark: boolean) => {
     mutalIcon: { marginRight: 6 },
     buttonContainer: {
       width: 80,
-      overflow: "hidden",
       padding: 16,
+      overflow: "hidden",
     },
   });
 };

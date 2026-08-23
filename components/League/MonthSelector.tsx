@@ -242,30 +242,30 @@ export const monthSelectorStyles = (
     },
     contentContainerStyle: {
       position: "relative",
-      paddingHorizontal: horizontalPadding,
       alignItems: "center",
+      paddingHorizontal: horizontalPadding,
     },
     slidingSelectedContainer: {
       position: "absolute",
-      left: horizontalPadding,
       top: 0,
+      left: horizontalPadding,
       width: ITEM_WIDTH,
       height: ITEM_HEIGHT,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.white : Colors.black,
     },
     monthButton: {
+      zIndex: 2,
+      alignItems: "center",
+      justifyContent: "center",
       width: ITEM_WIDTH,
       height: ITEM_HEIGHT,
-      justifyContent: "center",
-      alignItems: "center",
       padding: 4,
       borderRadius: 12,
-      zIndex: 2,
     },
     monthText: {
       fontFamily: Fonts.REGULAR,

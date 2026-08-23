@@ -33,30 +33,30 @@ const newsArticleSkeletonStyles = (isDark: boolean) =>
     container: { paddingHorizontal: 12 },
 
     title: {
-      height: 28,
       width: "60%",
-      borderRadius: 8,
+      height: 28,
       marginBottom: 20,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     titleRowTwo: {
-      height: 28,
       width: "80%",
-      borderRadius: 8,
+      height: 28,
       marginBottom: 20,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     image: {
-      height: 180,
       width: "100%",
-      borderRadius: 8,
+      height: 180,
       marginBottom: 20,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -64,8 +64,8 @@ const newsArticleSkeletonStyles = (isDark: boolean) =>
 
     contentLine: {
       height: 16,
-      borderRadius: 8,
       marginBottom: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,

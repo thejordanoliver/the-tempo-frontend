@@ -107,23 +107,23 @@ export default function AwardSeasonTableSkeleton({
 const getStyles = (isDark: boolean, lighter: boolean) =>
   StyleSheet.create({
     teamBox: {
+      borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 10,
       overflow: "hidden",
-      borderColor: Colors.midTone,
-      borderWidth: 1,
     },
 
     headerRow: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
+      height: ROW_HEIGHT,
+      paddingHorizontal: 6,
       borderBottomWidth: 1,
       borderColor: lighter
         ? Colors.lightGray
         : isDark
           ? Colors.lightGray
           : Colors.darkGray,
-      paddingHorizontal: 6,
     },
 
     headerCellWide: {
@@ -143,22 +143,22 @@ const getStyles = (isDark: boolean, lighter: boolean) =>
 
     row: {
       flexDirection: "row",
-      height: ROW_HEIGHT,
       alignItems: "center",
       justifyContent: "space-between",
+      height: ROW_HEIGHT,
+      paddingHorizontal: 6,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: lighter
         ? Colors.lightGray
         : isDark
           ? Colors.lightGray
           : Colors.darkGray,
-      paddingHorizontal: 6,
     },
 
     button: {
-      height: ROW_HEIGHT,
       alignItems: "center",
       justifyContent: "center",
+      height: ROW_HEIGHT,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderColor: lighter
         ? Colors.lightGray

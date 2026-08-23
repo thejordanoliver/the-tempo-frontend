@@ -221,9 +221,9 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
 const styles = StyleSheet.create({
   tabBarWrapper: {
     position: "absolute",
+    right: 0,
     bottom: 0,
     left: 0,
-    right: 0,
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     shadowColor: "rgba(0, 0, 0, 0.8)",
     shadowOffset: {
@@ -237,15 +237,15 @@ const styles = StyleSheet.create({
 
   tabBarContainer: {
     height: 80,
-    overflow: "hidden",
     backgroundColor: "transparent",
+    overflow: "hidden",
   },
 
   tabRow: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
+    justifyContent: "space-around",
     marginBottom: 10,
     paddingVertical: 20,
   },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
 
   tabLabel: {
     marginTop: 4,
-    fontSize: 12,
     fontFamily: Fonts.REGULAR,
+    fontSize: 12,
   },
 });

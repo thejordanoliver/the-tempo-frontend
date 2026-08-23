@@ -66,10 +66,10 @@ const uniformStyles = (isDark: boolean) =>
     },
     wrapper: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
-      borderColor: Colors.midTone,
+      justifyContent: "center",
       borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 8,
     },
 
@@ -82,14 +82,14 @@ const uniformStyles = (isDark: boolean) =>
       height: 200,
     },
     teamName: {
+      marginTop: 6,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
-      marginTop: 6,
       color: isDark ? Colors.white : Colors.black,
     },
     divider: {
-      height: "100%",
       width: 1,
+      height: "100%",
     },
     center: {
       alignItems: "center",
@@ -98,9 +98,9 @@ const uniformStyles = (isDark: boolean) =>
     },
 
     vs: {
+      marginHorizontal: 8,
       fontFamily: Fonts.BOLD,
       fontSize: 24,
-      marginHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
     },
   });

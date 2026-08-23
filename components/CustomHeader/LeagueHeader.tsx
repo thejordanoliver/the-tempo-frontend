@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Animated, TouchableOpacity, View } from "react-native";
-import { customHeaderStyles } from "./styles";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type LeagueHeaderProps = {
   selectedConference?: unknown | null;

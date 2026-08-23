@@ -52,28 +52,28 @@ const starRatingStyles = (isDark: boolean) =>
       marginVertical: 12,
     },
     card: {
-      borderRadius: 8,
       justifyContent: "center",
       padding: 16,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     starRow: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       marginBottom: 4,
     },
     scoreRow: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
 
     score: {
-      fontSize: 20,
       fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
   });

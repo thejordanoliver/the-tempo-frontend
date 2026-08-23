@@ -9,16 +9,16 @@ export const teamDetailStyles = StyleSheet.create({
     },
   loadContainer: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   monthSelector: {
     flexDirection: "row",
     paddingHorizontal: 0,
   },
   monthButton: {
+    marginHorizontal: 6,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    marginHorizontal: 6,
   },
 });

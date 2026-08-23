@@ -76,7 +76,6 @@ export default function PlayerCardSkeletonList({
 const playerCardSkeletonListStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
-      overflow: "hidden",
       flexDirection: "row",
       alignItems: "center",
       padding: 12,
@@ -84,6 +83,7 @@ const playerCardSkeletonListStyles = (isDark: boolean) =>
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
     avatar: {
       width: 48,
@@ -93,10 +93,10 @@ const playerCardSkeletonListStyles = (isDark: boolean) =>
     },
     textContainer: {
       flex: 1,
-      marginLeft: 12,
-      justifyContent: "space-between",
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "space-between",
+      marginLeft: 12,
     },
     nameBar: {
       width: "50%",
@@ -114,7 +114,7 @@ const playerCardSkeletonListStyles = (isDark: boolean) =>
       gap: 12,
     },
     container: {
-      paddingHorizontal: 12,
       width: "100%",
+      paddingHorizontal: 12,
     },
   });

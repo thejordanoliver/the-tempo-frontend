@@ -409,19 +409,19 @@ const addWidgetModalStyles = (isDark: boolean) =>
     },
     sheet: {
       maxHeight: "86%",
-      borderTopLeftRadius: 16,
-      borderTopRightRadius: 16,
       paddingTop: 18,
       paddingHorizontal: 16,
       paddingBottom: 18,
-      backgroundColor: isDark ? Colors.black : Colors.white,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     header: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "flex-start",
+      justifyContent: "space-between",
       gap: 16,
       marginBottom: 14,
     },
@@ -440,11 +440,11 @@ const addWidgetModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     closeButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 36,
       height: 36,
       borderRadius: 18,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -459,14 +459,14 @@ const addWidgetModalStyles = (isDark: boolean) =>
       paddingBottom: 12,
     },
     card: {
-      minHeight: 88,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
+      minHeight: 88,
       padding: 12,
-      borderRadius: 8,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -480,11 +480,11 @@ const addWidgetModalStyles = (isDark: boolean) =>
       opacity: 0.92,
     },
     iconWrap: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 42,
       height: 42,
       borderRadius: 8,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? Colors.darkGray : Colors.white,
     },
     cardBody: {
@@ -493,9 +493,9 @@ const addWidgetModalStyles = (isDark: boolean) =>
     },
     titleRow: {
       flexDirection: "row",
+      flexWrap: "wrap",
       alignItems: "center",
       gap: 8,
-      flexWrap: "wrap",
     },
     cardTitle: {
       fontFamily: Fonts.MEDIUM,
@@ -503,14 +503,14 @@ const addWidgetModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     badge: {
-      overflow: "hidden",
-      borderRadius: 4,
       paddingHorizontal: 6,
       paddingVertical: 2,
+      borderRadius: 4,
+      backgroundColor: isDark ? Colors.darkGray : Colors.white,
+      overflow: "hidden",
       fontFamily: Fonts.MEDIUM,
       fontSize: 10,
       color: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark ? Colors.darkGray : Colors.white,
     },
     description: {
       fontFamily: Fonts.REGULAR,
@@ -519,13 +519,13 @@ const addWidgetModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     action: {
-      minWidth: 46,
       alignItems: "flex-end",
+      minWidth: 46,
     },
     addButton: {
-      borderRadius: 6,
       paddingHorizontal: 8,
       paddingVertical: 5,
+      borderRadius: 6,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     addText: {
@@ -539,14 +539,14 @@ const addWidgetModalStyles = (isDark: boolean) =>
       marginTop: 8,
     },
     sizeButton: {
-      width: 30,
-      height: 26,
-      borderRadius: 6,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      width: 30,
+      height: 26,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 6,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     sizeButtonText: {
       fontFamily: Fonts.BOLD,
@@ -554,29 +554,29 @@ const addWidgetModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     dropZone: {
-      minHeight: 46,
-      marginTop: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderStyle: "dashed",
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      flexDirection: "row",
       gap: 8,
+      minHeight: 46,
+      marginTop: 12,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderStyle: "dashed",
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       opacity: 0.72,
     },
     dropZoneVisible: {
-      opacity: 1,
       borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      opacity: 1,
     },
     dropZoneActive: {
+      borderColor: isDark ? Colors.white : Colors.black,
       borderStyle: "solid",
       backgroundColor: isDark ? Colors.white : Colors.black,
-      borderColor: isDark ? Colors.white : Colors.black,
     },
     dropZoneText: {
       fontFamily: Fonts.SEMIBOLD,

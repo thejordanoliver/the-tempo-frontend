@@ -69,14 +69,14 @@ const searchBarStyles = (isDark: boolean) =>
     input: {
       height: 40,
       paddingHorizontal: 10,
-      fontSize: 16,
-      fontFamily: Fonts.LIGHT,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderWidth: StyleSheet.hairlineWidth,
+      fontFamily: Fonts.LIGHT,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
   });

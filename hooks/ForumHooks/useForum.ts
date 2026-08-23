@@ -138,6 +138,7 @@ export function useForum({ teamId, league }: UseForumOptions) {
     refreshing,
     error,
     currentUserId,
+    hasMore: page < totalPages,
     fetchPosts,
     refresh,
     loadMore,

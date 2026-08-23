@@ -1,4 +1,4 @@
-import Forum from "@/components/Forum/Forum";
+import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import Draft, { getDefaultDraftYear } from "@/components/League/Draft/Draft";
 import RecruitsList from "@/components/League/Recruiting/RecruitsList";
@@ -420,7 +420,7 @@ export default function FootballLeagueScreen() {
 
   const forumPage = (
     <View key="forum" style={styles.contentArea}>
-      <Forum league={league} />
+      <ForumFeed league={league} />
     </View>
   );
 

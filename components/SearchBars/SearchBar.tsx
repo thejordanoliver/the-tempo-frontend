@@ -33,17 +33,17 @@ export default function SearchBar({ value, onChangeText, placeholder }: Props) {
 const searchBarStyles = (isDark: boolean) =>
   StyleSheet.create({
     input: {
-      height: 40,
       width: "100%",
+      height: 40,
       paddingHorizontal: 10,
-      fontSize: 16,
-      fontFamily: Fonts.LIGHT,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      fontFamily: Fonts.LIGHT,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
-      borderWidth: StyleSheet.hairlineWidth,
     },
   });

@@ -1,4 +1,4 @@
-import Forum from "@/components/Forum/Forum";
+import ForumFeed from "@/components/Forum/ForumFeed";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Hockey/Games/GamesList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
@@ -301,7 +301,7 @@ export default function TeamDetailScreen() {
         </View>
 
         <View key="forum" style={styles.contentArea}>
-          <Forum teamId={teamIdStr ?? ""} league={league} />
+          <ForumFeed teamId={teamIdStr ?? ""} league={league} />
         </View>
       </PagerView>
 

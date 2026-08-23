@@ -107,9 +107,9 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
       alignItems: "center",
       marginTop: 12,
       paddingVertical: 12,
-      borderRadius: 12,
       borderWidth: 1,
       borderColor: Colors.midTone,
+      borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -123,13 +123,13 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
     },
 
     logoWrapper: {
+      alignItems: "center",
+      justifyContent: "center",
       width: logoSize,
       height: logoSize,
-      borderRadius: logoSize / 2,
       borderWidth: 1,
       borderColor: Colors.midTone,
-      justifyContent: "center",
-      alignItems: "center",
+      borderRadius: logoSize / 2,
     },
 
     logo: {
@@ -143,15 +143,15 @@ export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
 
     teamRow: {
       flexDirection: "row",
-      marginTop: 6,
       alignItems: "center",
+      marginTop: 6,
     },
 
     value: {
+      marginRight: 4,
       fontFamily: Fonts.BOLD,
       fontSize,
       color: isDark ? Colors.white : Colors.black,
-      marginRight: 4,
     },
 
     label: {

@@ -180,43 +180,43 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       flexWrap: "wrap",
       alignItems: "flex-start",
       justifyContent: "flex-start",
-      columnGap: BADGE_GRID_GAP,
       rowGap: BADGE_GRID_GAP,
+      columnGap: BADGE_GRID_GAP,
     },
 
     previewCard: {
-      width: itemWidth,
-      height: BADGE_CARD_HEIGHT,
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      width: itemWidth,
+      height: BADGE_CARD_HEIGHT,
       paddingHorizontal: 8,
       paddingVertical: 12,
-      borderRadius: 8,
       borderWidth: 1,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     cardText: {
-      width: "100%",
       alignItems: "center",
       gap: 4,
+      width: "100%",
     },
 
     badgeName: {
       minHeight: 36,
-      textAlign: "center",
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       lineHeight: 18,
+      textAlign: "center",
     },
 
     badgeStatus: {
-      textAlign: "center",
-      fontSize: 12,
       fontFamily: Fonts.SEMIBOLD,
+      fontSize: 12,
+      textAlign: "center",
     },
 
     emptyContainer: {
@@ -227,49 +227,49 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
     },
 
     emptyTitle: {
-      textAlign: "center",
-      fontSize: 20,
       fontFamily: Fonts.REGULAR,
+      fontSize: 20,
       color: Colors.midTone,
+      textAlign: "center",
     },
 
     emptyText: {
       marginTop: 6,
-      textAlign: "center",
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
 
     statusContainer: {
-      minHeight: BADGE_CARD_HEIGHT,
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      minHeight: BADGE_CARD_HEIGHT,
       paddingHorizontal: 12,
       paddingVertical: 24,
-      borderRadius: 8,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     statusText: {
-      textAlign: "center",
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
 
     errorText: {
-      textAlign: "center",
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
 
     retryButton: {
@@ -280,8 +280,8 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
     },
 
     retryText: {
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
     },
   });

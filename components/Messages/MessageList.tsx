@@ -237,28 +237,28 @@ const messageListStyles = (isDark: boolean) =>
     },
 
     emptyIconContainer: {
-      width: 64,
-      height: 64,
-      borderRadius: 32,
       alignItems: "center",
       justifyContent: "center",
+      width: 64,
+      height: 64,
       marginBottom: 16,
       borderWidth: 2,
       borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 32,
     },
 
     emptyTitle: {
       marginBottom: 6,
-      fontSize: 18,
       fontFamily: Fonts.BOLD,
+      fontSize: 18,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
 
     emptyText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
@@ -272,8 +272,8 @@ const messageListStyles = (isDark: boolean) =>
     },
 
     retryButtonText: {
-      fontSize: 13,
       fontFamily: Fonts.BOLD,
+      fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
     },
   });

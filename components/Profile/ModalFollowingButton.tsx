@@ -60,25 +60,27 @@ export const followButtonStyles = (isDark: boolean, isFollowing: boolean) =>
   StyleSheet.create({
     container: {
       width: 80,
-      overflow: "hidden",
       marginVertical: 4,
+      overflow: "hidden",
     },
     wrapper: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 8,
       backgroundColor: isFollowing
         ? isDark
           ? Colors.white
           : Colors.black
         : "transparent",
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 8,
-      borderWidth: 1,
-      paddingVertical: 8,
-      paddingHorizontal: 16,
-      alignItems: "center",
-      justifyContent: "center",
-      width: "100%",
     },
     buttonText: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 12,
       color: isFollowing
         ? isDark
           ? Colors.black
@@ -86,7 +88,5 @@ export const followButtonStyles = (isDark: boolean, isFollowing: boolean) =>
         : isDark
           ? Colors.white
           : Colors.black,
-      fontSize: 12,
-      fontFamily: Fonts.MEDIUM,
     },
   });

@@ -4,35 +4,35 @@ import { StyleSheet } from "react-native";
 export const MessageThemeModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     handleStyle: {
-      backgroundColor: "transparent",
-      height: 40,
-      justifyContent: "center",
-      alignItems: "center",
       position: "absolute",
-      left: 8,
-      right: 8,
       top: 0,
+      right: 8,
+      left: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      height: 40,
+      backgroundColor: "transparent",
     },
     handleIndicatorStyle: {
-      backgroundColor: Colors.midTone,
       width: 36,
       height: 4,
       borderRadius: 2,
+      backgroundColor: Colors.midTone,
     },
     backgroundStyle: { backgroundColor: isDark ? Colors.black : Colors.white },
     container: {
       flex: 1,
       padding: 12,
+      paddingTop: 40,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      paddingTop: 40,
     },
     blurViewContainer: {
       flex: 1,
       padding: 12,
+      paddingTop: 40,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      paddingTop: 40,
     },
     contentContainerStyle: {
       paddingBottom: 100,
@@ -47,25 +47,25 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     title: {
-      fontSize: 20,
       fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
 
     subtitle: {
       marginTop: 2,
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
 
     closeButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 36,
       height: 36,
       borderRadius: 18,
-      alignItems: "center",
-      justifyContent: "center",
     },
 
     scrollContent: {
@@ -74,15 +74,15 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     optionRow: {
-      minHeight: 66,
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
+      minHeight: 66,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      borderRadius: 8,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
     },
 
     optionSelected: {
@@ -99,28 +99,28 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     optionTitle: {
+      fontFamily: Fonts.BOLD,
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
 
     optionMeta: {
       marginTop: 2,
-      fontSize: 11,
       fontFamily: Fonts.REGULAR,
+      fontSize: 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
 
     defaultIcon: {
+      flexDirection: "row",
       width: 42,
       height: 42,
-      borderRadius: 21,
-      overflow: "hidden",
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      flexDirection: "row",
+      borderRadius: 21,
+      overflow: "hidden",
     },
 
     defaultSwatch: {
@@ -141,44 +141,44 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     sectionTitle: {
-      fontSize: 12,
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
     },
 
     loadingRow: {
-      minHeight: 72,
       alignItems: "center",
       justifyContent: "center",
+      minHeight: 72,
     },
 
     emptyState: {
-      minHeight: 72,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 8,
+      minHeight: 72,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     emptyTitle: {
-      fontSize: 13,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     logoWrap: {
-      width: 42,
-      height: 42,
-      borderRadius: 21,
       alignItems: "center",
       justifyContent: "center",
+      width: 42,
+      height: 42,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 21,
     },
 
     logo: {
@@ -194,16 +194,16 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     colorSwatch: {
       width: 18,
       height: 18,
-      borderRadius: 9,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 9,
     },
 
     errorText: {
       marginTop: 10,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       lineHeight: 17,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -215,10 +215,10 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
 
     actionButton: {
       flex: 1,
-      minHeight: 44,
-      borderRadius: 8,
       alignItems: "center",
       justifyContent: "center",
+      minHeight: 44,
+      borderRadius: 8,
     },
 
     cancelButton: {
@@ -236,14 +236,14 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     cancelText: {
-      fontSize: 14,
       fontFamily: Fonts.BOLD,
+      fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
 
     saveText: {
-      fontSize: 14,
       fontFamily: Fonts.BOLD,
+      fontSize: 14,
       color: isDark ? Colors.black : Colors.white,
     },
   });

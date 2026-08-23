@@ -13,7 +13,7 @@ import { LEAGUE_TABS, League } from "utils/tabs";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
-import Forum from "../../components/Forum/Forum";
+import ForumFeed from "../../components/Forum/ForumFeed";
 
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Soccer/Games/GamesList";
@@ -191,7 +191,7 @@ export default function SoccerLeagueScreen() {
           <View key="standings" />
 
           <View key="forum">
-            <Forum league={league} />
+            <ForumFeed league={league} />
           </View>
         </PagerView>
       </View>

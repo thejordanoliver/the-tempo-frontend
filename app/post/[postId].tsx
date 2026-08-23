@@ -670,33 +670,33 @@ const commentThreadStyles = (isDark: boolean) =>
 
     emptyTitle: {
       marginTop: 12,
-      fontSize: 18,
       fontFamily: Fonts.BOLD,
+      fontSize: 18,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
 
     emptyText: {
       marginTop: 6,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
 
     composerOuter: {
       position: "absolute",
-      left: 0,
       right: 0,
       bottom: 0,
+      left: 0,
       zIndex: 20,
-      elevation: 20,
       paddingHorizontal: 12,
       paddingTop: 8,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      elevation: 20,
     },
 
     composer: {
@@ -706,36 +706,36 @@ const commentThreadStyles = (isDark: boolean) =>
       minHeight: 50,
       paddingHorizontal: 10,
       paddingVertical: 6,
-      borderRadius: 24,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 24,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
 
     replyTargetContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
       minHeight: 34,
       marginBottom: 8,
       paddingHorizontal: 10,
       paddingVertical: 7,
-      borderRadius: 10,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 7,
     },
 
     replyTargetText: {
       flex: 1,
       minWidth: 0,
+      fontFamily: Fonts.REGULAR,
       fontSize: 13,
       lineHeight: 17,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
@@ -745,11 +745,11 @@ const commentThreadStyles = (isDark: boolean) =>
     },
 
     replyCancelButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 24,
       height: 24,
       borderRadius: 12,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
@@ -760,11 +760,11 @@ const commentThreadStyles = (isDark: boolean) =>
     },
 
     attachmentButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: "transparent",
     },
 
@@ -773,17 +773,17 @@ const commentThreadStyles = (isDark: boolean) =>
     },
 
     previewContainer: {
-      marginBottom: 8,
       alignSelf: "center",
       width: 200,
       height: 200,
-      borderRadius: 14,
-      overflow: "hidden",
+      marginBottom: 8,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 14,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
 
     previewMedia: {
@@ -793,17 +793,17 @@ const commentThreadStyles = (isDark: boolean) =>
     },
 
     previewVideoPlaceholder: {
-      width: "100%",
-      height: "100%",
       alignItems: "center",
       justifyContent: "center",
+      width: "100%",
+      height: "100%",
       backgroundColor: "#111827",
     },
 
     previewBadge: {
       position: "absolute",
-      left: 8,
       top: 8,
+      left: 8,
       paddingHorizontal: 8,
       paddingVertical: 4,
       borderRadius: 999,
@@ -811,8 +811,8 @@ const commentThreadStyles = (isDark: boolean) =>
     },
 
     previewBadgeText: {
-      fontSize: 11,
       fontFamily: Fonts.BOLD,
+      fontSize: 11,
       color: Colors.white,
     },
 
@@ -820,28 +820,28 @@ const commentThreadStyles = (isDark: boolean) =>
       position: "absolute",
       top: 6,
       right: 6,
-      backgroundColor: "#00000088",
       borderRadius: 999,
+      backgroundColor: "#00000088",
     },
 
     input: {
       flex: 1,
-      maxHeight: 112,
       minHeight: 38,
+      maxHeight: 112,
       paddingTop: 8,
       paddingBottom: 8,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
       lineHeight: 19,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
     },
 
     sendButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 38,
       height: 38,
       borderRadius: 19,
-      alignItems: "center",
-      justifyContent: "center",
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 

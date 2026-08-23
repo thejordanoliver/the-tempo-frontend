@@ -311,15 +311,16 @@ export default function GameDetailsScreen(
               state={state}
               league={LEAGUE}
             />
+
             <FanPredictionVote
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
-              awayLogo={awayHeaderLogo}
+              awayLogo={awayLogo}
               awayColor={awayColor}
               homeId={homeId}
               homeCode={homeCode}
-              homeLogo={homeHeaderLogo}
+              homeLogo={homeLogo}
               homeColor={homeColor}
               state={state}
             />

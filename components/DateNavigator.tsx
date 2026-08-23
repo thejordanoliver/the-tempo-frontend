@@ -72,20 +72,20 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     dateNavContainer: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
       marginVertical: 12,
     },
     dateNavButton: {
+      marginHorizontal: 12,
       paddingHorizontal: 16,
       paddingVertical: 8,
-      marginHorizontal: 12,
-      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: 6,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     dateNavText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontSize: 18,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 18,
+      color: isDark ? Colors.black : Colors.white,
     },
   });

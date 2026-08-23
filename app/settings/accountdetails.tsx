@@ -196,46 +196,46 @@ const accountDetailsStyles = (isDark: boolean) =>
     container: { flex: 1 },
     contentContainerStyle: {
       flex: 1,
+      gap: 16,
       paddingHorizontal: 12,
       paddingTop: 20,
-      gap: 16,
     },
     input: {
-      height: 54,
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      borderRadius: 8,
+      height: 54,
       paddingHorizontal: 16,
       borderWidth: 1,
       borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
 
     inputText: {
       flex: 1,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
     },
 
     button: {
+      alignItems: "center",
       padding: 14,
       borderRadius: 8,
-      alignItems: "center",
     },
     text: {
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontSize: 16,
-      fontFamily: Fonts.REGULAR,
       marginBottom: 10,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     memberSince: {
-      color: isDark ? Colors.darkGray : Colors.lightGray,
-      fontSize: 16,
       marginTop: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
       textAlign: "center",
     },
   });

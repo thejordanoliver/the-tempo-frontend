@@ -4,21 +4,21 @@ export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       flexDirection: "row",
+      marginBottom: 20,
       paddingHorizontal: 16,
       paddingTop: 24,
-      marginBottom: 20,
     },
     skeletonItem: {
-      marginRight: 16,
       alignItems: "center",
+      marginRight: 16,
     },
     circleWrapper: {
+      position: "relative",
       width: 80,
       height: 80,
+      marginBottom: 6,
       borderRadius: 40,
       overflow: "hidden",
-      position: "relative",
-      marginBottom: 6,
     },
     circle: {
       width: 80,
@@ -29,11 +29,11 @@ export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
     },
     labelWrapper: {
+      position: "relative",
       width: 50,
       height: 12,
       borderRadius: 4,
       overflow: "hidden",
-      position: "relative",
     },
     label: {
       width: 50,
@@ -48,11 +48,11 @@ export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
       top: 0,
       bottom: 0,
       width: 60,
+      borderRadius: 10,
       backgroundColor: isDark
         ? "rgba(255,255,255,0.15)"
         : "rgba(255,255,255,0.4)",
       opacity: 0.7,
-      borderRadius: 10,
       transform: [{ rotate: "20deg" }],
     },
   });

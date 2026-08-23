@@ -124,9 +124,9 @@ export default memo(
 const ChatMessageStyles = (isDark: boolean) =>
   StyleSheet.create({
     messageContainer: {
+      width: "100%",
       paddingHorizontal: 12,
       paddingVertical: 8,
-      width: "100%",
     },
     currentUserContainer: {
       alignItems: "flex-end",
@@ -145,10 +145,10 @@ const ChatMessageStyles = (isDark: boolean) =>
       flexDirection: "row-reverse",
     },
     user: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
+      color: isDark ? Colors.white : Colors.black,
     },
     image: {
       width: 28,
@@ -157,32 +157,32 @@ const ChatMessageStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     messageWrapper: {
+      maxWidth: "86%",
       paddingHorizontal: 12,
       paddingVertical: 10,
-      maxWidth: "86%",
-      borderRadius: 18,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 18,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     currentUserMessageWrapper: {
       alignSelf: "flex-end",
+      borderColor: isDark ? Colors.white : Colors.black,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderColor: isDark ? Colors.white : Colors.black,
     },
     gifOnlyMessageWrapper: {
       padding: 6,
     },
     message: {
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.white : Colors.black,
       flexShrink: 1,
-      lineHeight: 19,
+      fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      lineHeight: 19,
+      color: isDark ? Colors.white : Colors.black,
     },
     currentUserText: {
       color: isDark ? Colors.white : Colors.black,
@@ -190,16 +190,16 @@ const ChatMessageStyles = (isDark: boolean) =>
     gif: {
       width: 220,
       height: 180,
-      borderRadius: 14,
       marginBottom: 6,
+      borderRadius: 14,
       backgroundColor: isDark ? Colors.black : Colors.lightGray,
     },
     time: {
-      fontSize: 11,
-      marginTop: 6,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       alignSelf: "flex-end",
+      marginTop: 6,
       fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     currentUserTime: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
@@ -207,32 +207,32 @@ const ChatMessageStyles = (isDark: boolean) =>
     reactionContainer: {
       flexDirection: "row",
       flexWrap: "wrap",
-      marginTop: 6,
       gap: 7,
       maxWidth: "86%",
+      marginTop: 6,
     },
     currentUserReactionContainer: {
       alignSelf: "flex-end",
       justifyContent: "flex-end",
     },
     reactionButtonWrapper: {
-      borderRadius: 999,
       paddingVertical: 5,
       paddingHorizontal: 10,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 999,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     reactionButtonSelected: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
       borderColor: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     reactionButtonText: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.REGULAR,
     },
     reactionButtonTextSelected: {
       color: isDark ? Colors.black : Colors.white,

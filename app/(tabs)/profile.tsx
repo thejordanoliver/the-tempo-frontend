@@ -11,7 +11,7 @@ import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
-import BookmarkedForumList from "../../components/Forum/BookmarkedForumList";
+import Forum from "../../components/Forum/Forum";
 import BioSection from "../../components/Profile/BioSection";
 import FollowStats from "../../components/Profile/FollowStats";
 import ProfileBanner from "../../components/Profile/ProfileBanner";
@@ -25,6 +25,7 @@ import { useFollowersStore } from "../../store/followersStore";
 import { useProfileRefreshStore } from "../../store/profileRefreshStore";
 import { useSettingsModalStore } from "../../store/settingsModalStore";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
+import type { ForumPost } from "../../types/forum";
 import type { LeagueType } from "../../types/types";
 
 type CachedUser = {
@@ -126,6 +127,18 @@ export default function ProfileScreen() {
   }, []);
 
   const handleBookmarkedImagePress = useCallback(() => {}, []);
+
+  const handleBookmarkedBookmarkChange = useCallback(
+    (post: ForumPost, bookmarked: boolean) => {
+      if (bookmarked) {
+        updateBookmarkedPost(post);
+        return;
+      }
+
+      removeBookmarkedPost(post.id);
+    },
+    [removeBookmarkedPost, updateBookmarkedPost],
+  );
 
   const toggleFavoriteTeamsView = useCallback(() => {
     Animated.timing(fadeAnim, {
@@ -456,7 +469,7 @@ export default function ProfileScreen() {
         )}
         {selectedTab === "bookmarks" && (
           <View style={styles.bookmarkContainer}>
-            <BookmarkedForumList
+            <Forum
               posts={bookmarkedPosts}
               currentUserId={currentUserId}
               isDark={isDark}
@@ -466,11 +479,17 @@ export default function ProfileScreen() {
               hasMore={hasMoreBookmarks}
               onRetry={refreshBookmarks}
               onLoadMore={loadMoreBookmarks}
-              onUpdatePost={updateBookmarkedPost}
-              onRemovePost={removeBookmarkedPost}
+              onBookmarkChange={handleBookmarkedBookmarkChange}
               onDeletePost={deleteBookmarkedPost}
               onEditPost={editBookmarkedPost}
               onImagePress={handleBookmarkedImagePress}
+              showCreateButton={false}
+              emptyTitle="No bookmarks yet"
+              emptyMessage="Saved forum posts will appear here."
+              emptyIcon="bookmark-outline"
+              scrollEnabled={false}
+              loadMoreMode="button"
+              skeletonCount={3}
             />
           </View>
         )}

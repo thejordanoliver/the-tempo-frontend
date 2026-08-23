@@ -7,6 +7,7 @@ export const lastFiveGameStyles = (isDark: boolean) => {
     colors: {
       win: isDark ? Colors.dark.leafGreen : Colors.light.green,
       loss: isDark ? Colors.dark.lightRed : Colors.light.red,
+      tie: Colors.midTone,
       text: baseTextColor,
     },
     ...StyleSheet.create({
@@ -14,8 +15,8 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         flex: 1,
       },
       wrapper: {
-        borderColor: Colors.midTone,
         borderWidth: 1,
+        borderColor: Colors.midTone,
         borderRadius: 8,
         overflow: "hidden",
       },
@@ -30,8 +31,8 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         resizeMode: "contain",
       },
       tabText: {
-        fontSize: 16,
         fontFamily: Fonts.MEDIUM,
+        fontSize: 16,
       },
       tabTextSelected: {
         color: baseTextColor,
@@ -48,29 +49,29 @@ export const lastFiveGameStyles = (isDark: boolean) => {
       headerRow: {
         flexDirection: "row",
         justifyContent: "space-between",
+        marginTop: 8,
         paddingBottom: 4,
         borderBottomWidth: 1,
         borderColor: Colors.midTone,
-        marginTop: 8,
       },
       emptyContainer: {
         flexDirection: "row",
-        justifyContent: "center",
         alignItems: "center",
+        justifyContent: "center",
         padding: 20,
       },
       empty: {
-        textAlign: "center",
-        fontSize: 20,
         fontFamily: Fonts.REGULAR,
+        fontSize: 20,
         color: Colors.midTone,
+        textAlign: "center",
       },
       cell: {
-        fontSize: 14,
         flex: 1,
-        textAlign: "center",
         fontFamily: Fonts.REGULAR,
+        fontSize: 14,
         color: baseTextColor,
+        textAlign: "center",
       },
       team: {
         flex: 1.5,
@@ -84,10 +85,10 @@ export const lastFiveGameStyles = (isDark: boolean) => {
         flex: 2,
       },
       teamWithLogo: {
+        flex: 2,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        flex: 2,
       },
       matchupText: {
         fontFamily: Fonts.REGULAR,
@@ -96,8 +97,8 @@ export const lastFiveGameStyles = (isDark: boolean) => {
       opponentLogo: {
         width: 18,
         height: 18,
-        resizeMode: "contain",
         marginLeft: 4,
+        resizeMode: "contain",
       },
     }),
   };

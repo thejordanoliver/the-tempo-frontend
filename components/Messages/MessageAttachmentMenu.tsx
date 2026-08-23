@@ -161,29 +161,29 @@ const attachmentMenuStyles = (isDark: boolean) =>
   StyleSheet.create({
     menu: {
       position: "absolute",
-      left: -4,
       bottom: 50,
+      left: -4,
+      zIndex: 100,
       width: 250,
       minHeight: 142,
-      zIndex: 100,
-      borderRadius: 18,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.lightGray,
-      overflow: "visible",
+      borderRadius: 18,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "visible",
       shadowColor: Colors.black,
+      shadowOffset: { width: 0, height: 8 },
       shadowOpacity: 0.22,
       shadowRadius: 16,
-      shadowOffset: { width: 0, height: 8 },
       elevation: 20,
     },
 
     pointerDiamond: {
       position: "absolute",
-      left: 21,
       bottom: -7,
+      left: 21,
       width: 14,
       height: 14,
       borderRightWidth: StyleSheet.hairlineWidth,
@@ -198,12 +198,12 @@ const attachmentMenuStyles = (isDark: boolean) =>
     },
 
     iconWrap: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
       alignItems: "center",
       justifyContent: "center",
+      width: 38,
+      height: 38,
       marginRight: 11,
+      borderRadius: 19,
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
@@ -212,15 +212,15 @@ const attachmentMenuStyles = (isDark: boolean) =>
     },
 
     itemTitle: {
-      fontSize: 14,
       fontFamily: Fonts.BOLD,
+      fontSize: 14,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     itemSubtitle: {
       marginTop: 2,
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 

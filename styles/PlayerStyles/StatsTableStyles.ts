@@ -24,18 +24,18 @@ export const statsTableStyles = (isDark: boolean) => {
 
     dropdown: {
       position: "absolute",
-      right: 0,
       top: -12,
+      right: 0,
     },
 
     filtersRow: {
       position: "absolute",
+      top: -12,
+      right: 0,
+      zIndex: 20,
       flexDirection: "row",
       justifyContent: "flex-end",
       gap: 8,
-      zIndex: 20,
-      right: 0,
-      top: -12,
     },
 
     filterDropdown: { marginBottom: 4 },
@@ -56,15 +56,15 @@ export const statsTableStyles = (isDark: boolean) => {
 
     tableWrapper: {
       flexDirection: "row",
-      borderRadius: 8,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor,
+      borderRadius: 8,
+      overflow: "hidden",
     },
 
     fixedSection: {
-      flexDirection: "row",
       flexShrink: 0,
+      flexDirection: "row",
     },
 
     scrollSection: {
@@ -83,10 +83,10 @@ export const statsTableStyles = (isDark: boolean) => {
 
     row: {
       flexDirection: "row",
-      height: rowHeight,
       alignItems: "center",
-      borderBottomColor: borderColor,
+      height: rowHeight,
       borderBottomWidth: 1,
+      borderBottomColor: borderColor,
     },
 
     lastRow: {
@@ -114,24 +114,24 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     careerCell: {
-      width: statCellWidth,
-      textAlign: "center",
       alignItems: "center",
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
+      width: statCellWidth,
       paddingHorizontal: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: Colors.white,
+      textAlign: "center",
       includeFontPadding: false,
     },
 
     cell: {
       width: statCellWidth,
+      paddingHorizontal: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
       textAlignVertical: "center",
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
-      paddingHorizontal: 4,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     fixedColumn: {
@@ -153,23 +153,23 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     fixedCell: {
-      width: seasonColumnWidth,
-      textAlign: "center",
       alignItems: "center",
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
+      width: seasonColumnWidth,
       paddingHorizontal: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: textColor,
+      textAlign: "center",
       includeFontPadding: false,
     },
 
     fixedTeamCell: {
       width: teamColumnWidth,
-      textAlign: "center",
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
       paddingHorizontal: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: textColor,
+      textAlign: "center",
       includeFontPadding: false,
     },
 
@@ -184,20 +184,20 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     fixedCareerCell: {
-      width: teamColumnWidth,
-      textAlign: "center",
       alignItems: "center",
-      fontSize: 14,
-      fontFamily: Fonts.MEDIUM,
+      width: teamColumnWidth,
       paddingHorizontal: 4,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: Colors.white,
+      textAlign: "center",
       includeFontPadding: false,
     },
 
     headerCell: {
+      paddingHorizontal: 8,
       fontFamily: Fonts.BOLD,
       color: textColor,
-      paddingHorizontal: 8,
       textTransform: "uppercase",
     },
 
@@ -205,11 +205,11 @@ export const statsTableStyles = (isDark: boolean) => {
       flexDirection: "row",
       marginTop: 4,
       marginBottom: 16,
-      borderRadius: 999,
       borderWidth: 1,
       borderColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
+      borderRadius: 999,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -225,8 +225,8 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     tabContainerActive: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: 999,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     tabLabel: {
@@ -239,25 +239,25 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     legendText: {
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
     },
 
     glossaryContainer: {
       marginTop: 12,
-      borderRadius: 8,
       borderWidth: 1,
       borderColor,
+      borderRadius: 8,
       overflow: "hidden",
     },
 
     headerName: {
       padding: 10,
+      borderBottomWidth: 1,
+      borderColor,
       fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: textColor,
-      borderBottomWidth: 1,
-      borderColor,
     },
 
     glossaryRow: {
@@ -281,15 +281,15 @@ export const statsTableStyles = (isDark: boolean) => {
     },
 
     glossaryAbbr: {
+      fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: textColor,
-      fontFamily: Fonts.BOLD,
     },
 
     glossaryDisplayName: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.REGULAR,
     },
   });
 };

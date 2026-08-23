@@ -103,14 +103,14 @@ const getStyles = (isDark: boolean, horizontalPadding: number) =>
     },
     contentContainerStyle: {
       position: "relative",
-      paddingHorizontal: horizontalPadding,
       alignItems: "center",
+      paddingHorizontal: horizontalPadding,
     },
     monthButton: {
+      alignItems: "center",
+      justifyContent: "center",
       width: ITEM_WIDTH,
       height: ITEM_HEIGHT,
-      justifyContent: "center",
-      alignItems: "center",
       padding: 4,
       borderRadius: 12,
     },
@@ -121,9 +121,9 @@ const getStyles = (isDark: boolean, horizontalPadding: number) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     gameCountText: {
-      marginTop: 4,
       width: 52,
       height: 10,
+      marginTop: 4,
       borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },

@@ -52,12 +52,12 @@ const HeadingWithDropdowns: React.FC<HeadingWithDropdownsProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    paddingBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: Colors.midTone,
-    paddingBottom: 8,
-    marginBottom: 12,
   },
   heading: {
     flexShrink: 1,

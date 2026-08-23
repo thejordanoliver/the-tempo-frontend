@@ -41,36 +41,36 @@ const styles = StyleSheet.create({
   },
 
   nameBar: {
-    height: 18,
     width: 140,
-    borderRadius: 100,
+    height: 18,
     marginLeft: 10,
+    borderRadius: 100,
   },
 
   rankBadge: {
-    height: 18,
     width: 45,
-    borderRadius: 6,
+    height: 18,
     marginLeft: "auto",
+    borderRadius: 6,
   },
 
   starLine: {
-    height: 14,
     width: 180,
-    borderRadius: 6,
+    height: 14,
     marginBottom: 10,
+    borderRadius: 6,
   },
 
   locationLine: {
-    height: 14,
     width: 210,
-    borderRadius: 6,
+    height: 14,
     marginBottom: 10,
+    borderRadius: 6,
   },
 
   commitLine: {
-    height: 14,
     width: 130,
+    height: 14,
     borderRadius: 6,
   },
 });

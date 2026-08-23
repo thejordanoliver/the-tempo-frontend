@@ -141,18 +141,17 @@ export function GameCard({
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
+      justifyContent: "space-around",
       width: 176,
       height: 142,
-      justifyContent: "space-around",
       paddingVertical: 10,
+      paddingHorizontal: 12,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      paddingHorizontal: 12,
     },
     teamContainer: {
       justifyContent: "center",
@@ -177,8 +176,8 @@ const getStyles = (isDark: boolean) =>
       width: 20,
       fontFamily: Fonts.BOLD,
       fontSize: 18,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     teamCode: {
       flex: 1,
@@ -188,12 +187,12 @@ const getStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     winsBadge: {
-      minWidth: 30,
-      height: 30,
-      paddingHorizontal: 8,
-      borderRadius: 100,
       alignItems: "center",
       justifyContent: "center",
+      height: 30,
+      minWidth: 30,
+      paddingHorizontal: 8,
+      borderRadius: 100,
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
@@ -206,8 +205,8 @@ const getStyles = (isDark: boolean) =>
     },
 
     record: {
-      fontSize: 14,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     teamLogo: {
@@ -217,8 +216,8 @@ const getStyles = (isDark: boolean) =>
     infoText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     finalText: {
       fontFamily: Fonts.REGULAR,

@@ -167,20 +167,23 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     teamInfoContainer: {
       flexDirection: "column",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
     teamInfo: {
       justifyContent: "center",
     },
     headshotContainer: {
       borderWidth: 1,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderRadius: 100,
       overflow: "hidden",
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    logo: { width: 50, height: 50 },
+    logo: {
+      width: 50,
+      height: 50,
+    },
 
     headshot: {
       width: 50,
@@ -193,10 +196,10 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
       justifyContent: "center",
     },
     teamName: {
-      fontSize: 12,
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
+      fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     rank: {
       fontSize: 10,
@@ -204,7 +207,7 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
     },
     record: {
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
+      fontSize: 12,
       color: isTie
         ? isDark
           ? Colors.white
@@ -212,43 +215,43 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
         : isDark
           ? Colors.white
           : Colors.black,
-      fontSize: 12,
+      textAlign: "center",
     },
     score: {
-      fontSize: 36,
-      fontFamily: Fonts.BOLD,
-      textAlign: "center",
-      marginHorizontal: 16,
       width: 60,
+      marginHorizontal: 16,
+      fontFamily: Fonts.BOLD,
+      fontSize: 36,
+      textAlign: "center",
     },
     preGameRecord: {
-      fontFamily: Fonts.BOLD,
-      textAlign: "center",
-      marginHorizontal: 8,
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 20,
       width: 80,
+      marginHorizontal: 8,
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     scoreWrapper: {
-      justifyContent: "center",
-      alignItems: "center",
       position: "relative",
+      alignItems: "center",
+      justifyContent: "center",
     },
     possessionIcon: {
-      width: 25,
-      height: 40,
-      resizeMode: "contain",
       position: "absolute",
       bottom: "-35%",
       alignSelf: "center",
+      width: 25,
+      height: 40,
+      resizeMode: "contain",
     },
     timeoutsContainer: { alignItems: "center" },
     bonus: {
-      marginTop: 2,
       position: "absolute",
       bottom: -10,
-      fontSize: 8,
+      marginTop: 2,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 8,
       letterSpacing: 0.5,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -259,61 +262,57 @@ export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
 export const DriverRowStyles = (isDark: boolean, isTie?: boolean) =>
   StyleSheet.create({
     row: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      width: 200,
       padding: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
     },
-    driverInfoContainer: {
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
+    driverContainer: {
       flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
     },
     rank: {
-      position: "absolute",
-      top: 4,
-      left: 12,
+      width: 30,
+      fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
-    teamInfo: {
-      justifyContent: "center",
-    },
-    headshotContainer: {
-      borderWidth: 1,
-      borderRadius: 100,
-      overflow: "hidden",
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    logo: { width: 50, height: 50 },
-    headshot: {
-      width: 50,
-      height: 50,
-      paddingTop: 4,
-    },
-    nameRow: {
+    profileContainer: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
     },
+    headshotContainer: {
+      width: 40,
+      height: 40,
+      marginHorizontal: 8,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 999,
+      overflow: "hidden",
+    },
+    headshot: {
+      width: 40,
+      height: 40,
+      paddingTop: 4,
+    },
+
     name: {
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     subText: {
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
   });

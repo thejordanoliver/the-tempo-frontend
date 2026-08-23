@@ -163,22 +163,22 @@ export default function TabBar<T extends string>({
 
 const styles = StyleSheet.create({
   tabs: {
+    position: "relative",
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 10,
-    position: "relative",
   },
   tabPressable: {
+    alignItems: "center",
     paddingTop: 10,
     paddingBottom: 4,
     paddingHorizontal: 16,
-    alignItems: "center",
   },
   underline: {
     position: "absolute",
     bottom: 0,
+    left: 0,
     height: 2,
     borderRadius: 100,
-    left: 0,
   },
 });

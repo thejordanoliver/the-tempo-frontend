@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { TouchableOpacity, View } from "react-native";
-import { customHeaderStyles } from "./styles";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type HeaderLeftActionsProps = {
   tabName?: string;
@@ -45,7 +45,11 @@ export function HeaderLeftActions({
 
   if (showBackButton && onBack) {
     return (
-      <TouchableOpacity activeOpacity={activeOpacity} onPress={onBack} hitSlop={8}>
+      <TouchableOpacity
+        activeOpacity={activeOpacity}
+        onPress={onBack}
+        hitSlop={8}
+      >
         <Ionicons name="arrow-back" size={24} color={headerIconColor} />
       </TouchableOpacity>
     );

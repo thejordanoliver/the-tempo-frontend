@@ -45,8 +45,8 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
       justifyContent: "center",
       paddingHorizontal: 12,
       paddingVertical: 10,
-      borderRadius: 16,
       borderWidth: 1,
+      borderRadius: 16,
     },
     finalsShell: {
       borderWidth: 1.5,
@@ -79,8 +79,8 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
       width: 20,
       fontFamily: Fonts.BOLD,
       fontSize: 18,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     teamLogo: {
       width: 34,
@@ -94,12 +94,12 @@ export const nflPlayoffBracketStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     winsBadge: {
-      minWidth: 30,
-      height: 30,
-      paddingHorizontal: 8,
-      borderRadius: 100,
       alignItems: "center",
       justifyContent: "center",
+      height: 30,
+      minWidth: 30,
+      paddingHorizontal: 8,
+      borderRadius: 100,
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,

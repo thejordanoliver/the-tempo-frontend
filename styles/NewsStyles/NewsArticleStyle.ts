@@ -8,22 +8,22 @@ export const newsArticleStyles = (isDark: boolean) =>
       paddingBottom: 100,
     },
     title: {
-      fontSize: 24,
-      fontFamily: Fonts.BOLD,
       marginBottom: 12,
+      fontFamily: Fonts.BOLD,
+      fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
     },
     image: {
       width: "100%",
       height: 240,
-      borderRadius: 8,
       marginBottom: 8,
+      borderRadius: 8,
     },
     descriptionContainer: {
-      borderBottomColor: isDark ? Colors.white : Colors.black,
-      borderBottomWidth: StyleSheet.hairlineWidth,
       marginBottom: 12,
       paddingBottom: 8,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.white : Colors.black,
     },
     publishContainer: {
       flexDirection: "row",
@@ -36,8 +36,8 @@ export const newsArticleStyles = (isDark: boolean) =>
       marginBottom: 8,
     },
     description: {
-      fontSize: 14,
       fontFamily: Fonts.REGULAR,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     source: {
@@ -50,10 +50,10 @@ export const newsArticleStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     content: {
+      flex: 1,
+      fontFamily: Fonts.REGULAR,
       fontSize: 16,
       lineHeight: 24,
-      fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.black,
-      flex: 1,
     },
   });

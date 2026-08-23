@@ -157,8 +157,8 @@ export const BasesIndicator: React.FC<BasesIndicatorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: "center",
     alignItems: "center",
+    alignSelf: "center",
     justifyContent: "center",
   },
   baseContainer: {

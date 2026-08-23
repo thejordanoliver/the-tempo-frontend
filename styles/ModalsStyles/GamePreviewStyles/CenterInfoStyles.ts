@@ -3,12 +3,12 @@ import { StyleSheet } from "react-native";
 
 export const centerInfoStyles = StyleSheet.create({
   container: {
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   date: {
-    fontSize: 16,
     fontFamily: Fonts.REGULAR,
+    fontSize: 16,
     color: Colors.dark.white,
   },
   period: {
@@ -23,10 +23,10 @@ export const centerInfoStyles = StyleSheet.create({
     textAlign: "center",
   },
   downAndDistance: {
+    marginTop: 2,
     fontFamily: Fonts.MEDIUM,
     fontSize: 10,
     color: Colors.dark.white,
-    marginTop: 2,
     textAlign: "center",
   },
   finalText: {
@@ -36,44 +36,44 @@ export const centerInfoStyles = StyleSheet.create({
     textAlign: "center",
   },
   headlineText: {
+    position: "absolute",
+    top: -50,
+    width: 140,
     fontFamily: Fonts.REGULAR,
     fontSize: 10,
     color: Colors.midTone,
     textAlign: "center",
-    width: 140,
-    position: "absolute",
-    top: -50,
   },
   logoWrapper: {
+    position: "relative",
     width: 100,
     height: 60,
-    position: "relative",
   },
   logo: {
-    width: 100,
-    height: 60,
-    resizeMode: "contain",
     position: "absolute",
     top: 0,
     left: 0,
+    width: 100,
+    height: 60,
+    resizeMode: "contain",
   },
   gameInfoRow: {
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 6,
   },
 
   headline: {
-    fontSize: 12,
-    fontFamily: Fonts.LIGHT,
-    color: Colors.dark.white,
     position: "absolute",
     top: -48,
+    fontFamily: Fonts.LIGHT,
+    fontSize: 12,
+    color: Colors.dark.white,
   },
   broadcast: {
-    fontSize: 12,
     fontFamily: Fonts.REGULAR,
+    fontSize: 12,
     color: Colors.dark.white,
     textAlign: "center",
   },
@@ -84,14 +84,14 @@ export const centerInfoStyles = StyleSheet.create({
     gap: 4,
   },
   statusDivider: {
-    height: 18,
-    width: 1,
     alignSelf: "center",
+    width: 1,
+    height: 18,
     backgroundColor: Colors.dark.white,
   },
   finalStatusDivider: {
-    height: 18,
     width: 1,
+    height: 18,
     backgroundColor: Colors.dark.lightRed,
   },
 });

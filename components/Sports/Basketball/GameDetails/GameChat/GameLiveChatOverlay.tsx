@@ -2,11 +2,17 @@ import LiveChat from "@/components/Sports/Basketball/GameDetails/GameChat/LiveCh
 import { useLiveGameChat } from "hooks/useLiveGameChat";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
+import type { ChatMessageItem } from "types/chat";
 import type { ChatSendPayload } from "utils/chatPayload";
 import FloatingButton from "../../../../Buttons/FloatingButton";
 
 type GameChatSessionProps = {
-  gameId: string;
+  messages: ChatMessageItem[];
+  userCount: number;
+  currentUserName: string;
+  isReady: boolean;
+  sendMessage: (payload: ChatSendPayload) => boolean;
+  addReaction: (messageId: string, emoji: string) => void;
   onClose: () => void;
 };
 
@@ -16,19 +22,23 @@ type GameLiveChat = {
   state?: string | null;
 };
 
+type MountedGameLiveChatOverlayProps = {
+  gameId: string;
+  opacityAnim: Animated.Value;
+  chatOpen: boolean;
+  onOpenChat: () => void;
+  onCloseChat: () => void;
+};
+
 const GameChatSession = memo(function GameChatSession({
-  gameId,
+  messages,
+  userCount,
+  currentUserName,
+  isReady,
+  sendMessage,
+  addReaction,
   onClose,
 }: GameChatSessionProps) {
-  const {
-    messages,
-    userCount,
-    currentUserName,
-    isReady,
-    sendMessage,
-    addReaction,
-  } = useLiveGameChat(gameId);
-
   const handleSend = useCallback(
     async (payload: ChatSendPayload) => {
       return sendMessage(payload);
@@ -43,11 +53,55 @@ const GameChatSession = memo(function GameChatSession({
       currentUserName={currentUserName}
       onReaction={addReaction}
       onSend={handleSend}
-      inputDisabled={!isReady}
+      sendDisabled={!isReady}
       onDismiss={onClose}
     />
   );
 });
+
+function MountedGameLiveChatOverlay({
+  gameId,
+  opacityAnim,
+  chatOpen,
+  onOpenChat,
+  onCloseChat,
+}: MountedGameLiveChatOverlayProps) {
+  const {
+    messages,
+    userCount,
+    currentUserName,
+    isReady,
+    sendMessage,
+    addReaction,
+  } = useLiveGameChat(gameId);
+
+  return (
+    <>
+      <Animated.View
+        pointerEvents="box-none"
+        style={[styles.floatingButtonLayer, { opacity: opacityAnim }]}
+      >
+        <FloatingButton
+          isOpen={chatOpen}
+          onPress={onOpenChat}
+          icon={"chatbubble"}
+        />
+      </Animated.View>
+
+      {chatOpen && (
+        <GameChatSession
+          messages={messages}
+          userCount={userCount}
+          currentUserName={currentUserName}
+          isReady={isReady}
+          sendMessage={sendMessage}
+          addReaction={addReaction}
+          onClose={onCloseChat}
+        />
+      )}
+    </>
+  );
+}
 
 export default function GameLiveChatOverlay({
   gameId,
@@ -71,26 +125,13 @@ export default function GameLiveChatOverlay({
   if (state === "post") return null;
 
   return (
-    <>
-      <Animated.View
-        pointerEvents="box-none"
-        style={[styles.floatingButtonLayer, { opacity: opacityAnim }]}
-      >
-        <FloatingButton
-          isOpen={chatOpen}
-          onPress={handleOpenChat}
-          icon={"chatbubble"}
-        />
-      </Animated.View>
-
-      {chatOpen && (
-        <GameChatSession
-          key={gameId}
-          gameId={gameId}
-          onClose={handleCloseChat}
-        />
-      )}
-    </>
+    <MountedGameLiveChatOverlay
+      gameId={gameId}
+      opacityAnim={opacityAnim}
+      chatOpen={chatOpen}
+      onOpenChat={handleOpenChat}
+      onCloseChat={handleCloseChat}
+    />
   );
 }
 

@@ -42,8 +42,8 @@ const HeaderWithToggleStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesHeader: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       marginBottom: 12,
       paddingBottom: 8,
       borderBottomWidth: 1,
@@ -53,8 +53,8 @@ const HeaderWithToggleStyles = (isDark: boolean) =>
       paddingHorizontal: 4,
     },
     heading: {
-      fontSize: 20,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
   });

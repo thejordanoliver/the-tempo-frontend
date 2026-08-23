@@ -1,14 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
 import { useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  Easing,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { customHeaderStyles } from "./styles";
+import { Animated, Easing, Text, TouchableOpacity, View } from "react-native";
+import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type ProfileHeaderMenuProps = {
   visible: boolean;
@@ -93,14 +87,7 @@ export function ProfileHeaderMenu({
           style={styles.profileSubmenuItem}
           onPress={onSettings}
         >
-          <View
-            style={[
-              styles.profileSubmenuIconWrap,
-              {
-                backgroundColor: isDark ? Colors.black : Colors.white,
-              },
-            ]}
-          >
+          <View style={styles.profileSubmenuIconWrap}>
             <Ionicons
               name="settings-outline"
               size={24}
@@ -139,14 +126,7 @@ export function ProfileHeaderMenu({
             style={styles.profileSubmenuItem}
             onPress={onLogout}
           >
-            <View
-              style={[
-                styles.profileSubmenuIconWrap,
-                {
-                  backgroundColor: isDark ? Colors.black : Colors.white,
-                },
-              ]}
-            >
+            <View style={styles.profileSubmenuIconWrap}>
               <Ionicons
                 name="log-out-outline"
                 size={24}

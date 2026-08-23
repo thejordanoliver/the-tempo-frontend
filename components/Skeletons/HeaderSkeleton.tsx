@@ -28,8 +28,8 @@ export default function HeaderSkeleton({ style }: HeaderSkeletonProps) {
 const skeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      paddingBottom: 4,
       marginBottom: 12,
+      paddingBottom: 4,
       borderBottomWidth: 1,
     },
   });

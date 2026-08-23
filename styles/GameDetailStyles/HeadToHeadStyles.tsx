@@ -6,25 +6,25 @@ export const headToHeadStyles = (isDark: boolean) =>
     container: { flex: 1 },
 
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       paddingTop: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
       overflow: "hidden",
     },
 
     seriesText: {
       fontFamily: Fonts.BOLD,
       fontSize: 18,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     gameCard: {
-      paddingVertical: 12,
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
@@ -34,20 +34,20 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
 
     info: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      flex: 1,
     },
     teamInfo: {
+      flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      flex: 1,
     },
 
     teamRow: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      flex: 1,
     },
 
     teamLogo: {
@@ -57,16 +57,16 @@ export const headToHeadStyles = (isDark: boolean) =>
 
     teamName: {
       fontFamily: Fonts.REGULAR,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     teamScore: {
+      flex: 1,
       fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
-      flex: 1,
     },
     teamRecord: {
       fontFamily: Fonts.REGULAR,
@@ -78,10 +78,10 @@ export const headToHeadStyles = (isDark: boolean) =>
       opacity: 0.5,
     },
     gameDate: {
-      textAlign: "center",
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
     },
     infoWrapper: {
       flexDirection: "row",
@@ -91,13 +91,13 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
     date: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     period: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.dark.text : Colors.light.text,
       fontSize: 14,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     finalText: {
       fontFamily: Fonts.REGULAR,
@@ -113,26 +113,26 @@ export const headToHeadStyles = (isDark: boolean) =>
     },
     broadcast: {
       fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontSize: 10,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
     statusDivider: {
-      height: 14,
       width: 1,
+      height: 14,
       backgroundColor: isDark ? Colors.dark.text : Colors.light.text,
     },
     finalStatusDivider: {
-      height: 14,
       width: 1,
+      height: 14,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     circle: {
       position: "absolute",
+      zIndex: 0,
       width: 160,
       height: 160,
       borderRadius: 999,
       opacity: 0.25,
-      zIndex: 0,
     },
   });

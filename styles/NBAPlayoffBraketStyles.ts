@@ -49,9 +49,9 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
       height: CANVAS_HEIGHT,
     },
     loadingState: {
-      minHeight: 360,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
+      minHeight: 360,
     },
     playoffsLogo: {
       position: "absolute",
@@ -83,11 +83,11 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     cardShell: {
       position: "absolute",
+      justifyContent: "space-around",
       paddingHorizontal: 12,
       paddingVertical: 10,
-      borderRadius: 16,
       borderWidth: 1,
-      justifyContent: "space-around",
+      borderRadius: 16,
       elevation: 5,
     },
     finalsShell: {
@@ -114,12 +114,12 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
       fontSize: 18,
     },
     winsBadge: {
-      minWidth: 30,
-      height: 30,
-      paddingHorizontal: 8,
-      borderRadius: 100,
       alignItems: "center",
       justifyContent: "center",
+      height: 30,
+      minWidth: 30,
+      paddingHorizontal: 8,
+      borderRadius: 100,
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
@@ -141,49 +141,49 @@ export const nbaPlayoffBracketStyles = (isDark: boolean) =>
     },
     statusContainer: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
     },
     statusWrapper: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
     },
     statusDivider: {
-      height: 10,
       width: 1,
+      height: 10,
       marginHorizontal: 3,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
     footerText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      textAlign: "center",
       color: Colors.midTone,
+      textAlign: "center",
     },
     broadcast: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     period: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     date: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     clock: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      textAlign: "center",
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
     liveContainer: {
       alignItems: "center",

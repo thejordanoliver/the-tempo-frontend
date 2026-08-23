@@ -32,14 +32,14 @@ export const profileStyles = (
       position: "absolute",
       bottom: -PROFILE_PIC_SIZE / 2,
       left: "50%",
-      marginLeft: -PROFILE_PIC_SIZE / 2,
-      borderRadius: PROFILE_PIC_SIZE / 2,
-      borderWidth: 4,
-      borderColor: isDark ? Colors.black : Colors.white,
-      overflow: "hidden",
       width: PROFILE_PIC_SIZE,
       height: PROFILE_PIC_SIZE,
+      marginLeft: -PROFILE_PIC_SIZE / 2,
+      borderWidth: 4,
+      borderColor: isDark ? Colors.black : Colors.white,
+      borderRadius: PROFILE_PIC_SIZE / 2,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      overflow: "hidden",
     },
     profilePic: {
       width: "100%",
@@ -52,8 +52,8 @@ export const profileStyles = (
     },
     wrapper: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       marginBottom: 16,
       paddingHorizontal: 12,
     },
@@ -61,41 +61,40 @@ export const profileStyles = (
       flexDirection: "column",
     },
     fullNameText: {
-      fontSize: 20,
       fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
     usernameText: {
-      fontSize: 16,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     followContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
-      paddingVertical: 20,
-      paddingHorizontal: 50,
       width: "100%",
       marginBottom: 16,
+      paddingVertical: 20,
+      paddingHorizontal: 50,
     },
     followItem: {
       alignItems: "center",
     },
 
     followButtonContainer: {
-      opacity: opacityAnim,
       width: 120,
       borderRadius: 10,
+      opacity: opacityAnim,
       overflow: "hidden",
     },
     followButton: {
-      backgroundColor: isFollowing
-        ? isDark
-          ? Colors.white
-          : Colors.black
-        : isDark
-          ? Colors.black
-          : Colors.white,
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderWidth: 1,
       borderColor: isFollowing
         ? isDark
           ? Colors.black
@@ -103,15 +102,18 @@ export const profileStyles = (
         : isDark
           ? Colors.white
           : Colors.black,
-      borderWidth: 1,
       borderRadius: 10,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      alignItems: "center",
-      justifyContent: "center",
-      width: "100%",
+      backgroundColor: isFollowing
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+          ? Colors.black
+          : Colors.white,
     },
     followText: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
       color: isFollowing
         ? isDark
           ? Colors.black
@@ -119,39 +121,37 @@ export const profileStyles = (
         : isDark
           ? Colors.white
           : Colors.black,
-      fontSize: 16,
-      fontFamily: Fonts.MEDIUM,
     },
     followCount: {
-      fontSize: 20,
       fontFamily: Fonts.BOLD,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
     },
     followLabel: {
+      fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.MEDIUM,
     },
     bioText: {
       marginVertical: 8,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      lineHeight: 22,
       fontFamily: Fonts.LIGHT,
+      fontSize: 16,
+      lineHeight: 22,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     editProfileBtn: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 10,
       flexDirection: "row",
       alignItems: "center",
       gap: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 20,
+      borderRadius: 10,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     editProfileText: {
-      color: isDark ? Colors.black : Colors.white,
-      fontSize: 16,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      color: isDark ? Colors.black : Colors.white,
     },
     favoritesContainer: {
       marginTop: 20,
@@ -162,6 +162,9 @@ export const profileStyles = (
       marginTop: 20,
       paddingBottom: 100,
     },
-    favoritesHeader: { flexDirection: "row", justifyContent: "space-between" },
+    favoritesHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
   });
 };

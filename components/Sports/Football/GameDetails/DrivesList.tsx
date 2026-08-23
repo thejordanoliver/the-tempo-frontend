@@ -3,7 +3,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { FlatList, Image, Text, View } from "react-native";
-import { getStyles } from "styles/GameDetailStyles/DrivesListStyles";
+import { DriveListStyles } from "styles/GameDetailStyles/DrivesListStyles";
 
 type Props = {
   previousDrives?: FootballDrive[] | null;
@@ -30,7 +30,7 @@ export default function DrivesList({
   isDark,
   league = "nfl",
 }: Props) {
-  const styles = getStyles(isDark);
+  const styles = DriveListStyles(isDark);
   const global = globalStyles(isDark);
 
   // Normalize

@@ -4,17 +4,17 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
   StyleSheet.create({
     card: {
       flexDirection: "column",
+      paddingBottom: 12,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      paddingBottom: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
       shadowColor: "#000",
-      shadowOpacity: 0.1,
       shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
       shadowRadius: 6,
       elevation: 3,
     },
@@ -24,13 +24,13 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
       resizeMode: "cover",
     },
     details: {
-      paddingHorizontal: 12,
       marginTop: 8,
+      paddingHorizontal: 12,
     },
     title: {
+      marginBottom: 4,
       fontFamily: Fonts.BOLD,
       fontSize: 16,
-      marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     date: {
@@ -42,10 +42,10 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
       position: "absolute",
       top: 20,
       right: 12,
-      borderRadius: 4,
-      overflow: "hidden",
       paddingHorizontal: 6,
       paddingVertical: 2,
+      borderRadius: 4,
+      overflow: "hidden",
     },
     time: {
       fontFamily: Fonts.REGULAR,
@@ -54,7 +54,7 @@ export const highlightCardStyles = (isDark: boolean, thumbnailHeight: number) =>
     },
     subtitle: {
       flexDirection: "row",
-      gap: 8,
       justifyContent: "space-between",
+      gap: 8,
     },
   });

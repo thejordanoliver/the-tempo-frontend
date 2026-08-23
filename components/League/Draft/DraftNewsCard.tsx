@@ -37,10 +37,10 @@ export default function DraftNewsCard({ item }: Props) {
 const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     card: {
+      justifyContent: "space-between",
+      gap: 6,
       width: CARD_WIDTH,
       padding: 12,
-      gap: 6,
-      justifyContent: "space-between",
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground

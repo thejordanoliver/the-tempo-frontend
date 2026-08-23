@@ -33,9 +33,9 @@ export const formStyles = (isDark: boolean) => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      marginBottom: 40,
       padding: 12,
       backgroundColor: isDark ? Colors.black : Colors.white,
-      marginBottom: 40,
     },
     sectionContainer: {
       flex: 1,
@@ -47,24 +47,24 @@ export const formStyles = (isDark: boolean) => {
     },
 
     inputFocused: {
-      borderColor: focusBorder,
       borderWidth: 1,
+      borderColor: focusBorder,
     },
 
     input: {
-      height: INPUT_HEIGHT,
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: surface,
-      borderRadius: 8,
+      height: INPUT_HEIGHT,
       paddingHorizontal: SPACING.lg,
+      borderRadius: 8,
+      backgroundColor: surface,
     },
 
     inputText: {
       flex: 1,
-      color: text,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: text,
     },
 
     forgotPasswordLink: {
@@ -74,45 +74,45 @@ export const formStyles = (isDark: boolean) => {
     },
 
     forgotPasswordText: {
-      color: Colors.midTone,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: Colors.midTone,
     },
 
     // ── Progress Bar ───────────────────────────────────────────────────────
     progressContainer: {
+      gap: SPACING.xs,
       paddingTop: SPACING.sm,
       paddingBottom: SPACING.md,
-      gap: SPACING.xs,
     },
 
     progressMeta: {
       flexDirection: "row",
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       marginBottom: SPACING.xs,
     },
 
     progressLabel: {
-      fontSize: 11,
       fontFamily: Fonts.REGULAR,
-      color: subtleText,
+      fontSize: 11,
       letterSpacing: 0.5,
+      color: subtleText,
       textTransform: "uppercase",
     },
 
     progressBarBackground: {
-      height: 3,
       width: "100%",
-      backgroundColor: divider,
+      height: 3,
       borderRadius: RADIUS.full,
+      backgroundColor: divider,
       overflow: "hidden",
     },
 
     progressBarFill: {
       height: "100%",
-      backgroundColor: isDark ? Colors.white : Colors.black,
       borderRadius: RADIUS.full,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     row: {
@@ -127,37 +127,37 @@ export const formStyles = (isDark: boolean) => {
 
     teamName: {
       marginLeft: 16,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
       color: Colors.white,
     },
 
     // ── Image Upload ───────────────────────────────────────────────────────
     imageUploadBox: {
+      alignItems: "center",
+      justifyContent: "center",
+      height: 100,
       borderWidth: 1,
       borderColor: border,
       borderStyle: "dashed",
       borderRadius: RADIUS.md,
-      height: 100,
-      justifyContent: "center",
-      alignItems: "center",
       backgroundColor: surface,
       overflow: "hidden",
     },
 
     profileImageUploadBox: {
+      alignItems: "center",
+      alignSelf: "center",
+      justifyContent: "center",
+      width: 110,
+      height: 110,
+      marginVertical: SPACING.sm,
       borderWidth: 1,
       borderColor: border,
       borderStyle: "dashed",
       borderRadius: RADIUS.full,
-      height: 110,
-      width: 110,
-      justifyContent: "center",
-      alignItems: "center",
-      alignSelf: "center",
       backgroundColor: surface,
       overflow: "hidden",
-      marginVertical: SPACING.sm,
     },
     bannerImage: {
       width: "100%",
@@ -167,71 +167,71 @@ export const formStyles = (isDark: boolean) => {
 
     // ── Section Headings ───────────────────────────────────────────────────
     heading: {
-      fontSize: 11,
-      fontFamily: Fonts.MEDIUM,
-      letterSpacing: 0.6,
-      textTransform: "uppercase",
-      color: subtleText,
       marginTop: SPACING.lg,
       marginBottom: SPACING.xs,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 11,
+      letterSpacing: 0.6,
+      color: subtleText,
+      textTransform: "uppercase",
     },
 
     divider: {
       height: 1,
-      backgroundColor: divider,
       marginVertical: SPACING.xs,
+      backgroundColor: divider,
     },
 
     reviewInput: {
-      backgroundColor: surface,
-      borderRadius: RADIUS.md,
+      marginTop: SPACING.xs,
       paddingVertical: SPACING.md,
       paddingHorizontal: SPACING.lg,
       borderWidth: 1,
       borderColor: border,
-      marginTop: SPACING.xs,
+      borderRadius: RADIUS.md,
+      backgroundColor: surface,
     },
 
     reviewContainer: {
-      justifyContent: "center",
       alignContent: "center",
+      justifyContent: "center",
     },
     favoritesContainer: {
       flex: 1,
     },
     imagePreview: {
-      height: 120,
-      width: 120,
-      borderRadius: 100,
       alignSelf: "center",
+      width: 120,
+      height: 120,
+      borderRadius: 100,
     },
     imagePlaceholder: {
-      color: isDark ? Colors.darkGray : Colors.lightGray,
-      textAlign: "center",
       fontFamily: Fonts.LIGHT,
       fontSize: 12,
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+      textAlign: "center",
     },
     reviewText: {
       marginVertical: 8,
-      color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
+      color: Colors.midTone,
     },
 
     skipText: {
-      color: Colors.midTone,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: Colors.midTone,
     },
     teamCardList: {
-      flexDirection: "row",
       flex: 1,
+      flexDirection: "row",
       alignItems: "center",
       marginTop: 12,
       padding: 12,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      borderRadius: 8,
     },
 
     tabBarWrapper: { paddingHorizontal: 80 },

@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
   title: {
     width: 120,
     height: 28,
-    borderRadius: 6,
     marginBottom: 16,
+    borderRadius: 6,
     backgroundColor: Colors.midTone,
   },
   image: {
@@ -79,22 +79,22 @@ const styles = StyleSheet.create({
   text: {
     width: "80%",
     height: 16,
-    borderRadius: 6,
     marginTop: 12,
+    borderRadius: 6,
     backgroundColor: Colors.midTone,
   },
   temperature: {
     width: "40%",
     height: 16,
-    borderRadius: 6,
     marginTop: 12,
+    borderRadius: 6,
     backgroundColor: Colors.midTone,
   },
   capacity: {
     width: "20%",
     height: 16,
-    borderRadius: 6,
     marginTop: 12,
+    borderRadius: 6,
     backgroundColor: Colors.midTone,
   },
 });

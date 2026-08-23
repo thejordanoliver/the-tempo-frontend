@@ -109,16 +109,16 @@ const favoriteTeamsSelectorSkeletonStyles = (
       paddingBottom: 20,
     },
     columnWrapper: {
-      width: itemWidth * 3 + 24,
       justifyContent: "flex-start",
       gap: 12,
+      width: itemWidth * 3 + 24,
     },
     skeletonCard: {
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      padding: 12,
       alignItems: "center",
       justifyContent: "center",
+      padding: 12,
+      borderRadius: 8,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       overflow: "hidden",
     },
 

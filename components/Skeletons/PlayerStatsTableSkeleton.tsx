@@ -66,8 +66,8 @@ const getStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       width: "100%",
-      overflow: "hidden",
       borderRadius: 8,
+      overflow: "hidden",
     },
 
     tableWrapper: {
@@ -95,8 +95,8 @@ const getStyles = (isDark: boolean) =>
     fixedCell: {
       width: CELL_WIDTH,
       height: CELL_HEIGHT,
-      borderRadius: 6,
       marginHorizontal: CELL_MARGIN,
+      borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -114,8 +114,8 @@ const getStyles = (isDark: boolean) =>
     cell: {
       width: CELL_WIDTH,
       height: CELL_HEIGHT,
-      borderRadius: 6,
       marginHorizontal: CELL_MARGIN,
+      borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 

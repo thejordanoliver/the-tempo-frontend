@@ -256,18 +256,18 @@ export default function CalendarModal({
 const calendarModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     modal: {
-      margin: 0,
-      justifyContent: "center",
       alignItems: "center",
+      justifyContent: "center",
+      margin: 0,
     },
 
     blurContainer: {
       flex: 1,
+      alignItems: "center",
+      justifyContent: "flex-start",
       width: "100%",
       height: "100%",
       paddingTop: 100,
-      justifyContent: "flex-start",
-      alignItems: "center",
     },
 
     calendarWrapper: {
@@ -301,7 +301,7 @@ const calendarModalStyles = (isDark: boolean) =>
     },
 
     todayText: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

@@ -57,18 +57,18 @@ export default function PlayerAwardList(player: Props) {
 export const playerAwardListStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      borderRadius: 8,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 8,
       overflow: "hidden",
     },
     awardItem: {
-      gap: 12,
-      paddingHorizontal: 12,
       flexDirection: "row",
       alignItems: "center",
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      gap: 12,
+      paddingHorizontal: 12,
       paddingVertical: 12,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     awardText: {
       fontFamily: Fonts.REGULAR,

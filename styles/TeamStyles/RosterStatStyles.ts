@@ -6,17 +6,20 @@ const STAT_CELL_WIDTH = 80;
 
 export const rosterStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
-    center: { alignItems: "center", justifyContent: "center" },
-    container: {
-      justifyContent: "center",
+    center: {
       alignItems: "center",
+      justifyContent: "center",
+    },
+    container: {
+      alignItems: "center",
+      justifyContent: "center",
     },
     scrollContainer: {
       flexGrow: 1,
-      borderRadius: 4,
-      overflow: "hidden",
       paddingHorizontal: 12,
       paddingBottom: 100,
+      borderRadius: 4,
+      overflow: "hidden",
     },
     fixedColumnContainer: {
       zIndex: 2,
@@ -31,32 +34,35 @@ export const rosterStatsStyles = (isDark: boolean) =>
     },
     tableWrapper: {
       flexDirection: "row",
-      borderRadius: 8,
-      overflow: "hidden",
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 8,
+      overflow: "hidden",
     },
     tableRow: {
       flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "flex-start",
+      minHeight: 40,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      justifyContent: "flex-start",
-      alignItems: "center",
-      minHeight: 40,
     },
-    teamTableContainer: { flex: 1, gap: 20 },
+    teamTableContainer: {
+      flex: 1,
+      gap: 20,
+    },
     playerStatSelector: {
       marginBottom: 16,
     },
 
     teamTableRow: {
       flexDirection: "row",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-      justifyContent: "space-between",
       alignItems: "center",
+      justifyContent: "space-between",
       minHeight: 40,
       paddingHorizontal: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     tableCell: {
@@ -64,83 +70,89 @@ export const rosterStatsStyles = (isDark: boolean) =>
     },
 
     nameColumn: {
+      zIndex: 10,
+      width: PLAYER_NAME_WIDTH,
       backgroundColor: isDark
         ? Colors.dark.background
         : Colors.light.background,
-      width: PLAYER_NAME_WIDTH,
-      zIndex: 10,
       elevation: 10,
     },
 
     playerName: {
-      fontSize: 14,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
 
     statValue: {
+      width: STAT_CELL_WIDTH,
       fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
-      width: STAT_CELL_WIDTH,
     },
     teamStatValue: {
       fontFamily: Fonts.MEDIUM,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
-    cardWrapper: { flexDirection: "row", alignItems: "flex-end" },
+    cardWrapper: {
+      flexDirection: "row",
+      alignItems: "flex-end",
+    },
     cardContainer: {
-      justifyContent: "center",
       alignItems: "flex-start",
+      justifyContent: "center",
     },
     statCard: {
       flexDirection: "row",
       alignItems: "center",
-      padding: 12,
       width: 260,
+      padding: 12,
       borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     cardLabel: {
+      marginBottom: 4,
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
-      marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     cardName: {
+      marginTop: 4,
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 14,
-      marginTop: 4,
       color: isDark ? Colors.white : Colors.black,
     },
     cardValue: {
-      fontSize: 24,
       fontFamily: Fonts.BOLD,
+      fontSize: 24,
       color: isDark ? Colors.white : Colors.black,
     },
-    nameValue: { marginLeft: 12, flexDirection: "column" },
+    nameValue: {
+      flexDirection: "column",
+      marginLeft: 12,
+    },
     avatar: {
       width: 60,
       height: 60,
-      borderRadius: 30,
-      paddingTop: 8,
       marginVertical: 4,
+      paddingTop: 8,
       borderWidth: 1,
       borderColor: Colors.midTone,
+      borderRadius: 30,
     },
     divider: {
       width: 1,
       height: "72%",
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
       marginHorizontal: 16,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     number: {
       fontSize: 10,
-      color: Colors.midTone,
       lineHeight: 14,
+      color: Colors.midTone,
       transform: [{ translateY: 3 }],
     },
     headerText: {
@@ -149,14 +161,14 @@ export const rosterStatsStyles = (isDark: boolean) =>
       textAlign: "center",
     },
     nameHeaderText: {
+      width: PLAYER_NAME_WIDTH,
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
-      width: PLAYER_NAME_WIDTH,
     },
     categoryTitle: {
+      marginBottom: 4,
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
-      marginBottom: 4,
       color: isDark ? Colors.white : Colors.black,
     },
 

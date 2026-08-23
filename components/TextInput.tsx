@@ -45,14 +45,14 @@ export default function TextInputComponent({
 const inputStyles = (isDark: boolean) =>
   StyleSheet.create({
     input: {
+      marginBottom: 12,
+      padding: 16,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-      padding: 16,
-      borderRadius: 8,
-      marginBottom: 12,
-      fontSize: 16,
       fontFamily: Fonts.REGULAR,
+      fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
     bioInput: {

@@ -1380,27 +1380,30 @@ export default function BoxScore({
 
 export const boxScoreStyles = (isDark: boolean) =>
   StyleSheet.create({
-    playerColumn: { flexDirection: "row", width: "100%" },
+    playerColumn: {
+      flexDirection: "row",
+      width: "100%",
+    },
     loading: {
-      textAlign: "center",
       padding: 20,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     error: {
-      textAlign: "center",
       padding: 20,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
+      textAlign: "center",
     },
     teamGap: { height: 24 },
     teamContainer: {
+      borderWidth: 1,
+      borderColor: Colors.midTone,
       borderRadius: 12,
       overflow: "hidden",
-      borderColor: Colors.midTone,
-      borderWidth: 1,
     },
     teamHeader: {
       flexDirection: "row",
@@ -1413,8 +1416,8 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     teamLabel: {
       flexShrink: 1,
-      fontSize: 18,
       fontFamily: Fonts.BOLD,
+      fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
     },
     section: {
@@ -1422,10 +1425,10 @@ export const boxScoreStyles = (isDark: boolean) =>
       paddingBottom: 2,
     },
     categoryLabel: {
-      fontSize: 12,
-      fontFamily: Fonts.BOLD,
       marginBottom: 4,
       paddingHorizontal: 8,
+      fontFamily: Fonts.BOLD,
+      fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     playerNameColumn: {
@@ -1433,16 +1436,16 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     tableHeader: {
       flexDirection: "row",
-      borderBottomWidth: 1,
-      paddingVertical: 8,
       height: 40,
+      paddingVertical: 8,
+      borderBottomWidth: 1,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
     },
     tableRow: {
       flexDirection: "row",
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      paddingVertical: 6,
       height: PLAYER_ROW_HEIGHT,
+      paddingVertical: 6,
+      borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.midTone,
     },
     rowAlt: {
@@ -1456,18 +1459,18 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     cellName: {
       width: NAME_COLUMN_WIDTH,
+      paddingHorizontal: 8,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      paddingHorizontal: 8,
       color: isDark ? Colors.white : Colors.black,
     },
     cell: {
       width: COLUMN_WIDTH,
-      fontSize: 13,
-      textAlign: "center",
       paddingHorizontal: 4,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
     didNotPlayerRow: {
       flex: 1,
@@ -1476,30 +1479,36 @@ export const boxScoreStyles = (isDark: boolean) =>
     },
     didNotPlayCell: {
       flex: 1,
-      fontSize: 12,
-      textAlign: "center",
-      color: Colors.midTone,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 12,
+      color: Colors.midTone,
+      textAlign: "center",
     },
     cellHeader: {
       width: COLUMN_WIDTH,
-      fontSize: 13,
-      textAlign: "center",
       paddingHorizontal: 4,
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
-    cellContainer: { justifyContent: "center", alignItems: "center" },
-    teamLogo: { width: 28, height: 28 },
-    showMoreLessButton: {
-      paddingVertical: 12,
+    cellContainer: {
       alignItems: "center",
+      justifyContent: "center",
+    },
+    teamLogo: {
+      width: 28,
+      height: 28,
+    },
+    showMoreLessButton: {
+      alignItems: "center",
+      paddingVertical: 12,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: Colors.midTone,
     },
     showMoreLess: {
-      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.MEDIUM,
       fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
     },
   });

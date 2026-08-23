@@ -133,10 +133,10 @@ export default function TeamInjuriesSkeleton({ rows = 4 }: Props) {
 const skeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
-      borderColor: Colors.midTone,
-      borderWidth: 1,
-      borderRadius: 8,
       paddingTop: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
     },
 
     skeleton: {
@@ -181,27 +181,27 @@ const skeletonStyles = (isDark: boolean) =>
     },
 
     textContainer: {
-      marginLeft: 10,
       flex: 1,
       justifyContent: "center",
       gap: 6,
+      marginLeft: 10,
     },
 
     name: {
-      height: 14,
       width: "35%",
+      height: 14,
       borderRadius: 4,
     },
 
     detail: {
-      height: 12,
       width: "20%",
+      height: 12,
       borderRadius: 4,
     },
 
     status: {
-      height: 10,
       width: "25%",
+      height: 10,
       borderRadius: 4,
     },
   });

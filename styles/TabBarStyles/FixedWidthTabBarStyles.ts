@@ -15,14 +15,14 @@ export const fixedWidthTabBarStyles = (isDark: boolean) =>
       paddingBottom: 10,
     },
     tab: {
-      fontSize: 16,
-      fontFamily: Fonts.MEDIUM,
-      color: isDark ? Colors.midTone : Colors.midTone,
       opacity: 0.5,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      color: isDark ? Colors.midTone : Colors.midTone,
     },
     tabSelected: {
-      color: isDark ? Colors.white : Colors.black,
       opacity: 1,
+      color: isDark ? Colors.white : Colors.black,
     },
     underline: {
       position: "absolute",

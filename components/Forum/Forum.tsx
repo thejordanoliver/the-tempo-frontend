@@ -1,163 +1,235 @@
-import { useForum } from "@/hooks/ForumHooks/useForum";
 import { Ionicons } from "@expo/vector-icons";
-import ConfirmModal from "components/ConfirmModal";
-import { Colors, globalStyles } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
+import { useCallback, useMemo } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import type { ListRenderItem } from "react-native";
 import type { ForumPost, ForumProps } from "types/forum";
-import { useImagePreviewStore } from "../../store/imagePreviewStore";
 import FloatingButton from "../Buttons/FloatingButton";
 import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
 
-export default function Forum({ teamId, league }: ForumProps) {
-  const router = useRouter();
-  const setGlobalImage = useImagePreviewStore((s) => s.setImages);
+const DEFAULT_EMPTY_TITLE = "It's Quiet Here";
+const DEFAULT_EMPTY_MESSAGE =
+  "No posts yet. Be the first to start the conversation.";
+const DEFAULT_EMPTY_ICON = "chatbubble-outline";
+const DEFAULT_SKELETON_COUNT = 5;
 
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
+export default function Forum({
+  posts,
+  currentUserId,
+  isDark,
+  loading = false,
+  refreshing = false,
+  error = null,
+  hasMore = false,
+  onRefresh,
+  onRetry,
+  onLoadMore,
+  onDeletePost,
+  onEditPost,
+  onBookmarkChange,
+  onImagePress,
+  showCreateButton = false,
+  onCreatePost,
+  emptyTitle = DEFAULT_EMPTY_TITLE,
+  emptyMessage = DEFAULT_EMPTY_MESSAGE,
+  emptyIcon = DEFAULT_EMPTY_ICON,
+  scrollEnabled = true,
+  loadMoreMode,
+  skeletonCount = DEFAULT_SKELETON_COUNT,
+}: ForumProps) {
   const styles = useMemo(() => forumStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const [alertConfig, setAlertConfig] = useState<null | {
-    title: string;
-    message: string;
-    confirmText?: string;
-    cancelText?: string;
-    variant?: "default" | "danger";
-    onConfirm?: () => void | Promise<void>;
-  }>(null);
+  const isInitialLoading = loading || (refreshing && posts.length === 0);
+  const loadMoreDisabled = loading || refreshing;
+  const effectiveLoadMoreMode =
+    loadMoreMode ?? (scrollEnabled ? "automatic" : "button");
+  const shouldShowCreateButton = showCreateButton && !!onCreatePost;
+  const shouldRenderLoadMoreButton =
+    hasMore && !!onLoadMore && effectiveLoadMoreMode === "button";
 
-  const {
-    posts,
-    loading,
-    refreshing,
-    error,
-    currentUserId,
-    fetchPosts,
-    refresh,
-    loadMore,
-    deletePost,
-    editPost,
-    updatePost,
-  } = useForum({ teamId, league });
-
-  /** Fetch initial posts on screen focus */
-  useFocusEffect(
-    useCallback(() => {
-      fetchPosts(1);
-    }, [fetchPosts]),
-  );
-
-  /** Clear global image preview on unmount */
-  useEffect(() => {
-    return () => setGlobalImage([], 0);
-  }, [setGlobalImage]);
-
-  /** Alert helpers */
-  const showAlert = useCallback((config: typeof alertConfig) => {
-    setAlertConfig(config);
-  }, []);
-
-  const closeAlert = useCallback(() => setAlertConfig(null), []);
-
-  /** Post actions */
-  const handleDeletePost = useCallback(
-    async (id: string) => {
-      try {
-        await deletePost(id);
-        showAlert({
-          title: "Deleted",
-          message: "Post deleted.",
-          confirmText: "OK",
-        });
-      } catch {
-        showAlert({
-          title: "Error",
-          message: "Failed to delete post.",
-          confirmText: "OK",
-          variant: "danger",
-        });
-      }
-    },
-    [deletePost, showAlert],
-  );
-
-  const handleEditPost = useCallback(
-    async (id: string, text: string) => {
-      try {
-        await editPost(id, text);
-        showAlert({
-          title: "Updated",
-          message: "Post updated.",
-          confirmText: "OK",
-        });
-      } catch {
-        showAlert({
-          title: "Error",
-          message: "Failed to update post.",
-          confirmText: "OK",
-          variant: "danger",
-        });
-      }
-    },
-    [editPost, showAlert],
-  );
-
-  /** Render each post */
-  const renderPostItem = useCallback(
-    ({ item }: { item: ForumPost }) => (
+  const renderPostItem = useCallback<ListRenderItem<ForumPost>>(
+    ({ item }) => (
       <PostItem
         item={item}
         isDark={isDark}
         currentUserId={currentUserId}
-        deletePost={handleDeletePost}
-        editPost={handleEditPost}
-        onBookmarkChange={updatePost}
-        onImagePress={(uri) => setGlobalImage([uri], 0)}
+        deletePost={onDeletePost}
+        editPost={onEditPost}
+        onBookmarkChange={onBookmarkChange}
+        onImagePress={onImagePress}
       />
     ),
     [
-      isDark,
       currentUserId,
-      handleDeletePost,
-      handleEditPost,
-      updatePost,
-      setGlobalImage,
+      isDark,
+      onBookmarkChange,
+      onDeletePost,
+      onEditPost,
+      onImagePress,
     ],
   );
 
-  /** Navigate to create-post */
-  const handlePressCreate = useCallback(() => {
-    router.push({
-      pathname: "/create-post",
-      params: { teamId, league, currentUserId },
-    });
-  }, [router, teamId, league, currentUserId]);
+  const handleEndReached = useCallback(() => {
+    if (
+      effectiveLoadMoreMode === "automatic" &&
+      hasMore &&
+      onLoadMore &&
+      !loadMoreDisabled
+    ) {
+      onLoadMore();
+    }
+  }, [effectiveLoadMoreMode, hasMore, loadMoreDisabled, onLoadMore]);
 
-  /** Loading skeleton */
-  if (loading) {
+  const renderSkeletons = () =>
+    Array.from({ length: skeletonCount }).map((_, index) => (
+      <PostItemSkeleton key={`forum-skeleton-${index}`} showMedia />
+    ));
+
+  const renderEmptyState = () => (
+    <View style={global.emptyContainer}>
+      <Ionicons
+        name={emptyIcon as keyof typeof Ionicons.glyphMap}
+        size={48}
+        color={Colors.midTone}
+      />
+      <Text style={global.emptyText}>{emptyTitle}</Text>
+      <Text style={global.emptySubText}>{emptyMessage}</Text>
+    </View>
+  );
+
+  const renderLoadMoreButton = () => {
+    if (!shouldRenderLoadMoreButton) {
+      return null;
+    }
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <PostItemSkeleton key={i} showMedia />
-        ))}
-      </ScrollView>
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel="Load more forum posts"
+        accessibilityState={{
+          disabled: loadMoreDisabled,
+          busy: refreshing,
+        }}
+        activeOpacity={activeOpacity}
+        disabled={loadMoreDisabled}
+        onPress={onLoadMore}
+        style={[
+          styles.actionButton,
+          styles.loadMoreButton,
+          loadMoreDisabled && styles.disabledButton,
+        ]}
+      >
+        {refreshing && (
+          <ActivityIndicator
+            size="small"
+            color={isDark ? Colors.white : Colors.black}
+          />
+        )}
+
+        <Text style={styles.actionButtonText}>
+          {refreshing ? "Loading..." : "Load more"}
+        </Text>
+      </TouchableOpacity>
     );
+  };
+
+  const renderErrorState = () => {
+    if (!onRetry) {
+      return <Text style={global.errorText}>{error}</Text>;
+    }
+
+    const retryDisabled = loading || refreshing;
+
+    return (
+      <View style={global.emptyContainer}>
+        <Ionicons
+          name="alert-circle-outline"
+          size={42}
+          color={isDark ? Colors.dark.lightRed : Colors.light.red}
+        />
+
+        <Text style={global.errorText} selectable>
+          {error}
+        </Text>
+
+        <TouchableOpacity
+          accessibilityRole="button"
+          accessibilityLabel="Retry loading forum posts"
+          accessibilityState={{
+            disabled: retryDisabled,
+            busy: retryDisabled,
+          }}
+          activeOpacity={activeOpacity}
+          disabled={retryDisabled}
+          onPress={onRetry}
+          style={[styles.actionButton, retryDisabled && styles.disabledButton]}
+        >
+          <Text style={styles.actionButtonText}>
+            {retryDisabled ? "Retrying..." : "Retry"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  if (isInitialLoading) {
+    if (scrollEnabled) {
+      return (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {renderSkeletons()}
+        </ScrollView>
+      );
+    }
+
+    return <View style={styles.embeddedContainer}>{renderSkeletons()}</View>;
   }
 
-  /** Error state */
   if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+    return renderErrorState();
+  }
+
+  if (!scrollEnabled) {
+    return (
+      <>
+        <View style={styles.embeddedContainer}>
+          {posts.length === 0
+            ? renderEmptyState()
+            : posts.map((post) => (
+                <PostItem
+                  key={String(post.id)}
+                  item={post}
+                  isDark={isDark}
+                  currentUserId={currentUserId}
+                  deletePost={onDeletePost}
+                  editPost={onEditPost}
+                  onBookmarkChange={onBookmarkChange}
+                  onImagePress={onImagePress}
+                />
+              ))}
+
+          {renderLoadMoreButton()}
+        </View>
+
+        {shouldShowCreateButton && (
+          <FloatingButton
+            isOpen={false}
+            onPress={onCreatePost}
+            icon={"create"}
+          />
+        )}
+      </>
+    );
   }
 
   return (
@@ -165,55 +237,63 @@ export default function Forum({ teamId, league }: ForumProps) {
       <FlatList
         data={posts}
         keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.scrollContainer}
         renderItem={renderPostItem}
-        onEndReached={loadMore}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+          onRefresh ? (
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          ) : undefined
         }
-        ListEmptyComponent={
-          <View style={global.emptyContainer}>
-            <Ionicons
-              name="chatbubble-outline"
-              size={48}
-              color={Colors.midTone}
-            />
-            <Text style={global.emptyText}>{"It's Quiet Here"}</Text>
-            <Text style={global.emptySubText}>
-              No posts yet. Be the first to start the conversation.
-            </Text>
-          </View>
-        }
+        ListEmptyComponent={renderEmptyState}
+        ListFooterComponent={renderLoadMoreButton}
       />
 
-      <FloatingButton
-        isOpen={false}
-        onPress={handlePressCreate}
-        icon={"create"}
-      />
-
-      <ConfirmModal
-        visible={!!alertConfig}
-        title={alertConfig?.title}
-        message={alertConfig?.message}
-        confirmText={alertConfig?.confirmText ?? "OK"}
-        cancelText={alertConfig?.cancelText}
-        variant={alertConfig?.variant ?? "default"}
-        onCancel={closeAlert}
-        onConfirm={async () => {
-          if (alertConfig?.onConfirm) {
-            await alertConfig.onConfirm();
-          }
-          closeAlert();
-        }}
-      />
+      {shouldShowCreateButton && (
+        <FloatingButton
+          isOpen={false}
+          onPress={onCreatePost}
+          icon={"create"}
+        />
+      )}
     </>
   );
 }
 
 export function forumStyles(isDark: boolean) {
   return StyleSheet.create({
-    container: { paddingBottom: 130, flexGrow: 1 },
+    scrollContainer: {
+      flexGrow: 1,
+      paddingBottom: 130,
+    },
+    embeddedContainer: {
+      paddingBottom: 0,
+    },
+    actionButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "center",
+      justifyContent: "center",
+      gap: 8,
+      minHeight: 40,
+      marginTop: 14,
+      paddingHorizontal: 18,
+      paddingVertical: 9,
+      borderWidth: 1,
+      borderColor: isDark ? Colors.white : Colors.black,
+      borderRadius: 8,
+    },
+    loadMoreButton: {
+      marginTop: 12,
+    },
+    disabledButton: {
+      opacity: 0.6,
+    },
+    actionButtonText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      color: isDark ? Colors.white : Colors.black,
+    },
   });
 }

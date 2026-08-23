@@ -120,9 +120,9 @@ const favoriteTeamsSelectorStyles = (isGridView: boolean, itemWidth: number) =>
       paddingBottom: 20,
     },
     columnWrapper: {
-      width: itemWidth * 3 + 24,
       justifyContent: "flex-start",
       gap: 12,
+      width: itemWidth * 3 + 24,
       marginBottom: 12,
     },
   });

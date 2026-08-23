@@ -4,8 +4,8 @@ export const favoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesWrapper: { padding: 0 },
     favorites: {
-      gap: 12,
       flexDirection: "row",
+      gap: 12,
       marginBottom: 20,
       paddingTop: 24,
       paddingHorizontal: 16,
@@ -13,46 +13,49 @@ export const favoritesScrollStyles = (isDark: boolean) =>
 
     teamContainer: { alignItems: "center" },
     logoWrapper: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
       alignItems: "center",
       justifyContent: "center",
-      overflow: "hidden",
+      width: 80,
+      height: 80,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
-    },
-    logo: { width: 50, height: 50 },
-    editIcon: {
-      width: 80,
-      height: 80,
       borderRadius: 40,
+      overflow: "hidden",
+    },
+    logo: {
+      width: 50,
+      height: 50,
+    },
+    editIcon: {
       alignItems: "center",
       justifyContent: "center",
-      overflow: "hidden",
+      width: 80,
+      height: 80,
       borderWidth: 0.5,
+      borderColor: isDark ? Colors.light.background : Colors.dark.background,
+      borderRadius: 40,
       backgroundColor: isDark
         ? Colors.light.background
         : Colors.dark.background,
-      borderColor: isDark ? Colors.light.background : Colors.dark.background,
+      overflow: "hidden",
     },
     teamLabelContainer: {
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
-      marginTop: 4,
+      justifyContent: "center",
       width: 60,
+      marginTop: 4,
     },
     divider: {
       width: 1,
       height: 12,
-      backgroundColor: Colors.lightGray,
       marginHorizontal: 4,
+      backgroundColor: Colors.lightGray,
     },
     teamLabel: {
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
-      fontFamily: Fonts.REGULAR,
       textAlignVertical: "center",
     },
   });
