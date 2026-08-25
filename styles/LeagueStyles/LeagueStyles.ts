@@ -10,13 +10,12 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       flex: 1,
     },
     scrollContent: {
-      paddingBottom: 80,
+      paddingBottom: 100,
       paddingHorizontal: 12,
       overflow: "hidden",
     },
     searcBarContainer: {
-      marginHorizontal: 12,
-      paddingTop: 12,
+      paddingHorizontal: 12,
     },
 
     leagueButton: {
@@ -30,8 +29,8 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
       backgroundColor: "transparent",
     },
     buttonWrapper: {
@@ -49,4 +48,3 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
   });
-

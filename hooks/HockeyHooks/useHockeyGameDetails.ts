@@ -1,5 +1,6 @@
 import { Venue } from "@/types/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 export type StatsByKey = {
@@ -326,6 +327,11 @@ export type GameDetails = {
   venue?: Venue | null;
 };
 
+type HockeyGameDetailsResponse = {
+  score: Score;
+  details: GameDetails;
+};
+
 /* ---------------------------------- */
 /* Hook                               */
 /* ---------------------------------- */
@@ -339,8 +345,6 @@ export const useHockeyGameDetails = (
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const skipFetch = !league || !gameId;
 
@@ -389,30 +393,22 @@ export const useHockeyGameDetails = (
     fetchDetails(true);
   }, [skipFetch, fetchDetails]);
 
-  /* ---------------------------------- */
-  /* Poll LIVE games only               */
-  /* ---------------------------------- */
-  useEffect(() => {
-    if (!score) return;
+  useLiveSportsSubscription<HockeyGameDetailsResponse>({
+    enabled: !skipFetch && score?.status.state === "in",
+    kind: "game",
+    payload: {
+      sport: "hockey",
+      league: league || "nhl",
+      gameId: gameId || "",
+    },
+    onUpdate: (payload) => {
+      if (!payload?.score) return;
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    if (score.status.state !== "in") return;
-
-    intervalRef.current = setInterval(() => {
-      fetchDetails(true);
-    }, 60000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [score, score?.status, fetchDetails]);
+      setScore(payload.score);
+      setDetails(payload.details);
+      setLastRefresh(new Date());
+    },
+  });
 
   const refresh = useCallback(() => {
     if (!skipFetch) fetchDetails(false);

@@ -230,12 +230,13 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       left: SIDE_PADDING,
       width: itemWidth,
       height: ITEM_HEIGHT,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: 1,
       borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+        overflow: "hidden",
     },
     label: {
       zIndex: 2,
@@ -244,7 +245,7 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       width: itemWidth,
       height: ITEM_HEIGHT,
       padding: 4,
-      borderRadius: 12,
+      borderRadius: 8,
     },
     monthText: {
       fontFamily: Fonts.REGULAR,

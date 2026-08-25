@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
@@ -19,6 +19,7 @@ export interface TabBarProps<T extends string> {
   renderLabel?: (tab: T, isSelected: boolean) => React.ReactNode;
   style?: StyleProp<ViewStyle>;
   isDark: boolean;
+  scrollProgress?: Animated.Value;
 }
 
 const UNDERLINE_SPRING_CONFIG = {
@@ -35,6 +36,7 @@ export default function TabBar<T extends string>({
   renderLabel,
   style,
   isDark,
+  scrollProgress,
 }: TabBarProps<T>) {
   // Animated values
   const underlineX = useRef(new Animated.Value(0)).current;
@@ -44,29 +46,62 @@ export default function TabBar<T extends string>({
   const textMeasurements = useRef<{ width: number }[]>([]);
   const pressableMeasurements = useRef<{ x: number; width: number }[]>([]);
   const initialized = useRef(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const getUnderlineMetrics = useCallback((index: number) => {
+    const textWidth = textMeasurements.current[index]?.width;
+    const pressable = pressableMeasurements.current[index];
+
+    if (!textWidth || !pressable) {
+      return null;
+    }
+
+    return {
+      x: pressable.x + (pressable.width - textWidth) / 2,
+      width: textWidth,
+    };
+  }, []);
+
+  const setUnderlineProgress = useCallback(
+    (progress: number) => {
+      const maxIndex = tabs.length - 1;
+      const clampedProgress = Math.min(maxIndex, Math.max(0, progress));
+      const startIndex = Math.floor(clampedProgress);
+      const endIndex = Math.min(maxIndex, startIndex + 1);
+      const amount = clampedProgress - startIndex;
+
+      const start = getUnderlineMetrics(startIndex);
+      const end = getUnderlineMetrics(endIndex);
+
+      if (!start || !end) {
+        return;
+      }
+
+      underlineX.setValue(start.x + (end.x - start.x) * amount);
+      underlineWidth.setValue(start.width + (end.width - start.width) * amount);
+    },
+    [getUnderlineMetrics, tabs.length, underlineWidth, underlineX],
+  );
 
   // Smooth spring animation preset
   const animateUnderline = useCallback(
     (index: number) => {
-      const textWidth = textMeasurements.current[index]?.width;
-      const pressable = pressableMeasurements.current[index];
+      const metrics = getUnderlineMetrics(index);
 
-      if (!textWidth || !pressable) return;
-
-      const x = pressable.x + (pressable.width - textWidth) / 2;
+      if (!metrics) return;
 
       Animated.parallel([
         Animated.spring(underlineX, {
           ...UNDERLINE_SPRING_CONFIG,
-          toValue: x,
+          toValue: metrics.x,
         }),
         Animated.spring(underlineWidth, {
           ...UNDERLINE_SPRING_CONFIG,
-          toValue: textWidth,
+          toValue: metrics.width,
         }),
       ]).start();
     },
-    [underlineWidth, underlineX],
+    [getUnderlineMetrics, underlineWidth, underlineX],
   );
 
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
@@ -95,23 +130,29 @@ export default function TabBar<T extends string>({
     ) {
       initialized.current = true;
       const initialIndex = tabs.indexOf(selected);
-
-      // Set values instantly to prevent flicker
-      const textWidth = textMeasurements.current[initialIndex].width;
-      const pressable = pressableMeasurements.current[initialIndex];
-      const x = pressable.x + (pressable.width - textWidth) / 2;
-
-      underlineX.setValue(x);
-      underlineWidth.setValue(textWidth);
+      setUnderlineProgress(initialIndex);
+      setIsInitialized(true);
     }
   };
 
   // Re-run animation on selected tab change
   useEffect(() => {
-    if (!initialized.current) return;
+    if (!isInitialized || scrollProgress) return;
     const index = tabs.indexOf(selected);
     animateUnderline(index);
-  }, [animateUnderline, selected, tabs]);
+  }, [animateUnderline, isInitialized, scrollProgress, selected, tabs]);
+
+  useEffect(() => {
+    if (!isInitialized || !scrollProgress) return;
+
+    const listenerId = scrollProgress.addListener(({ value }) => {
+      setUnderlineProgress(value);
+    });
+
+    return () => {
+      scrollProgress.removeListener(listenerId);
+    };
+  }, [isInitialized, scrollProgress, setUnderlineProgress]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,

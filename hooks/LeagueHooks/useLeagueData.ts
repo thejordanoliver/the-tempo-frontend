@@ -12,7 +12,7 @@ import { useBaseballGames } from "../BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "../BasketballHooks/useBasketballGames";
 import { useFootballGames } from "../FootballHooks/useFootballGames";
 import { useHockeyGames } from "../HockeyHooks/useHockeyGames";
-import { useMMAGames } from "../MMAHooks/useMMAEvents";
+import { useMMAEvents } from "../MMAHooks/useMMAEvents";
 import { useSoccerGames } from "../SoccerHooks/useSoccerGames";
 
 dayjs.extend(utc);
@@ -130,7 +130,7 @@ export function useLeagueData() {
     loading: mmaLoading,
     refreshGames: refreshMMAGames,
     error: mmaError,
-  } = useMMAGames({
+  } = useMMAEvents({
     league: "ufc",
     date: selectedDate,
     enabled: Boolean(selectedDate),

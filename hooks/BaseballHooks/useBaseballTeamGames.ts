@@ -1,6 +1,6 @@
 import { BaseballGame } from "@/types/baseball/baseball";
-import { isGameLive } from "@/utils/games";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 export type BaseballTeamScheduleLeague = "mlb" | "cb" | "sb";
@@ -59,9 +59,6 @@ interface UseBaseballTeamGamesResult {
   refresh: () => Promise<void>;
 }
 
-const LIVE_POLL_INTERVAL = 60_000;
-const IDLE_POLL_INTERVAL = 60_000;
-
 function areScheduleResponsesEqual(
   current: BaseballTeamScheduleResponse,
   next: BaseballTeamScheduleResponse,
@@ -83,38 +80,6 @@ function hasValidValue(
   return value !== null && value !== undefined && value !== "";
 }
 
-function isBaseballGameLive(game: BaseballGame): boolean {
-  if (isGameLive(game)) {
-    return true;
-  }
-
-  const currentGame = game as any;
-
-  const state = String(
-    currentGame?.status?.type?.state ??
-      currentGame?.status?.state ??
-      currentGame?.state ??
-      currentGame?.statusState ??
-      "",
-  ).toLowerCase();
-
-  const statusName = String(
-    currentGame?.status?.type?.name ??
-      currentGame?.status?.name ??
-      currentGame?.statusName ??
-      "",
-  ).toLowerCase();
-
-  return (
-    state === "in" ||
-    state === "live" ||
-    state === "in_progress" ||
-    statusName === "status_in_progress" ||
-    statusName.includes("in_progress") ||
-    statusName.includes("in progress")
-  );
-}
-
 export function useBaseballTeamGames(
   league: BaseballTeamScheduleLeague,
   teamId: string | number | null,
@@ -125,8 +90,6 @@ export function useBaseballTeamGames(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  const pollingRequestInProgressRef = useRef(false);
 
   const fetchSchedule = useCallback(
     async ({
@@ -141,14 +104,6 @@ export function useBaseballTeamGames(
         return;
       }
 
-      if (silent && pollingRequestInProgressRef.current) {
-        return;
-      }
-
-      if (silent) {
-        pollingRequestInProgressRef.current = true;
-      }
-
       try {
         if (isRefresh) {
           setRefreshing(true);
@@ -158,14 +113,6 @@ export function useBaseballTeamGames(
 
         const response = await apiClient.get<BaseballTeamScheduleResponse>(
           `api/games/baseball/team/${league}/${teamId}/${season}`,
-          {
-            params: silent
-              ? {
-                  // Prevent cached live-score responses.
-                  _t: Date.now(),
-                }
-              : undefined,
-          },
         );
 
         const responseGames = response.data.games ?? [];
@@ -205,10 +152,6 @@ export function useBaseballTeamGames(
           setData(null);
         }
       } finally {
-        if (silent) {
-          pollingRequestInProgressRef.current = false;
-        }
-
         if (isRefresh) {
           setRefreshing(false);
         }
@@ -227,25 +170,35 @@ export function useBaseballTeamGames(
 
   const games = useMemo(() => data?.games ?? [], [data]);
 
-  const hasLiveGame = useMemo(
-    () => games.some(isBaseballGameLive),
-    [games],
-  );
+  useLiveSportsSubscription<BaseballTeamScheduleResponse>({
+    enabled: Boolean(league && hasValidValue(teamId) && hasValidValue(season)),
+    kind: "scoreboard",
+    payload: {
+      sport: "baseball",
+      league,
+      feed: "teamSchedule",
+      teamId: teamId || "",
+      season: season || "",
+    },
+    onUpdate: (payload) => {
+      const nextData: BaseballTeamScheduleResponse = {
+        league: payload.league,
+        team: payload.team ?? null,
+        season: payload.season,
+        games: payload.games ?? [],
+        months: payload.months ?? [],
+      };
 
-  useEffect(() => {
-    // Keep polling so scheduled games can transition into a live state.
-    const intervalDuration = hasLiveGame
-      ? LIVE_POLL_INTERVAL
-      : IDLE_POLL_INTERVAL;
+      setError(null);
+      setData((currentData) => {
+        if (currentData && areScheduleResponsesEqual(currentData, nextData)) {
+          return currentData;
+        }
 
-    const interval = setInterval(() => {
-      fetchSchedule({ silent: true });
-    }, intervalDuration);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [hasLiveGame, fetchSchedule]);
+        return nextData;
+      });
+    },
+  });
 
   const refresh = useCallback(async () => {
     await fetchSchedule({ isRefresh: true });

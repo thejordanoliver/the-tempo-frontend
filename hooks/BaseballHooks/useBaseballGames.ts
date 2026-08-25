@@ -2,6 +2,7 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 type League = "mlb" | "cb" | "sb";
@@ -11,6 +12,9 @@ type FetchGamesOptions = {
   silent?: boolean;
 };
 
+type BaseballGamesResponse = {
+  games?: BaseballGame[];
+};
 
 function getBaseballEndpoint(league: League) {
   switch (league) {
@@ -43,7 +47,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
       try {
         setError(null);
 
-        // Keep pull-to-refresh and live polling from showing the full skeleton.
+        // Keep pull-to-refresh and live updates from showing the full skeleton.
         if (!forceRefresh && !silent) {
           setLoading(true);
         }
@@ -80,15 +84,18 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
     return games.some(isGameLive);
   }, [games]);
 
-  useEffect(() => {
-    if (!hasLiveGame) return;
-
-    const interval = setInterval(() => {
-      fetchGames({ silent: true });
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [hasLiveGame, fetchGames]);
+  useLiveSportsSubscription<BaseballGamesResponse>({
+    enabled: hasLiveGame,
+    kind: "scoreboard",
+    payload: {
+      sport: "baseball",
+      league,
+      date: formattedDate !== "today" ? formattedDate : undefined,
+    },
+    onUpdate: (payload) => {
+      setGames(Array.isArray(payload?.games) ? payload.games : []);
+    },
+  });
 
   return {
     games,

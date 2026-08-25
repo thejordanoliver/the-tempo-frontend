@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 import { Play } from "../BasketballHooks/useBasketballGameDetails";
 import { TeamInjury } from "../FootballHooks/useFootballGameDetails";
@@ -264,6 +265,11 @@ export type GameDetails = {
   venue?: Venue | null;
 };
 
+type BaseballGameDetailsResponse = {
+  score: Score;
+  details: GameDetails | null;
+};
+
 /* ---------------------------------- */
 /* Hook                               */
 /* ---------------------------------- */
@@ -282,8 +288,6 @@ export const useBaseballGameDetails = (
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const skipFetch = !league || !gameId;
 
@@ -362,31 +366,22 @@ export const useBaseballGameDetails = (
     void fetchDetails(true);
   }, [skipFetch, fetchDetails]);
 
-  /* ---------------------------------- */
-  /* Poll live games only               */
-  /* ---------------------------------- */
+  useLiveSportsSubscription<BaseballGameDetailsResponse>({
+    enabled: !skipFetch && score?.status.state === "in",
+    kind: "game",
+    payload: {
+      sport: "baseball",
+      league: league || "mlb",
+      gameId: gameId || "",
+    },
+    onUpdate: (payload) => {
+      if (!payload?.score) return;
 
-  useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    if (score?.status.state !== "in") {
-      return;
-    }
-
-    intervalRef.current = setInterval(() => {
-      void fetchDetails(true);
-    }, 60_000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [score?.status.state, fetchDetails]);
+      setScore(payload.score);
+      setDetails(payload.details);
+      setLastRefresh(new Date());
+    },
+  });
 
   /* ---------------------------------- */
   /* Manual refresh                     */

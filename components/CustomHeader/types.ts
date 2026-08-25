@@ -1,10 +1,12 @@
-import type { ImageSourcePropType } from "react-native";
+import type { Animated, ImageSourcePropType } from "react-native";
 
 export type RacingLeague =
   | "f1"
   | "nascarpremier"
   | "nascarsecondary"
   | "nascartruck";
+
+export type HomeHeaderTab = "scores" | "news";
 
 export type RacingLeagueDisplayConfig = {
   label: string;
@@ -43,11 +45,14 @@ export type CustomHeaderProps = {
 
   onLogout?: () => void;
   onSettings?: () => void;
+  onEdit?: () => void;
   onMessages?: () => void;
   onCreateMessage?: () => void;
   onBack?: () => void;
   onCalendarPress?: () => void;
   onOpenLeagueModal?: () => void;
+  onHomeTabPress?: (tab: HomeHeaderTab) => void;
+  homeScrollProgress?: Animated.Value;
 
   modalVisible?: boolean;
   setModalVisible?: (value: boolean) => void;
@@ -71,6 +76,8 @@ export type CustomHeaderProps = {
   onOpenThemesSettings?: () => void;
   onAddWidget?: () => void;
 
+  unreadNotificationCount?: number;
+
   teamCode?: string;
   teamId?: number;
 
@@ -84,6 +91,8 @@ export type CustomHeaderProps = {
   teamHistory?: string;
 
   selectedConferenceName?: string;
+
+  homeSelectedTab?: HomeHeaderTab;
 
   showBackButton?: boolean;
 

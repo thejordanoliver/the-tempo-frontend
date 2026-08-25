@@ -31,7 +31,7 @@ import SWACLogo from "../assets/College_Logos/Conference_Logos/SWAC.png";
 export type Conference = {
   id: number;
   uid: string;
-  groupId: number;
+  groupId: number | null;
   name: string;
   shortName: string;
   logo: ImageSourcePropType | string | null;
@@ -41,7 +41,21 @@ export type Conference = {
   parentGroupId: number | null;
 };
 
+export type CFBConferenceSelection = number | string | null | undefined;
+
 export const cfbConferences: Conference[] = [
+  {
+    id: 0,
+    uid: "top25",
+    groupId: null,
+    name: "Top 25",
+    shortName: "Top 25",
+    logo: CFBLogo,
+    logoLight: CFBLogo,
+    parentGroupId: 80,
+    color: "#009CDE",
+    secondaryColor: "#000000",
+  },
   {
     id: 1,
     uid: "s:20~l:23~g:80",
@@ -50,9 +64,9 @@ export const cfbConferences: Conference[] = [
     shortName: "FBS",
     logo: CFBLogo,
     logoLight: CFBLogo,
-    parentGroupId: null,
-    color: null,
-    secondaryColor: null,
+    parentGroupId: 80,
+    color: "#009CDE",
+    secondaryColor: "#000000",
   },
   {
     id: 2,
@@ -368,9 +382,72 @@ export const cfbConferences: Conference[] = [
   },
 ];
 
-export function getCFBConferenceLogo(id: number | string, isDark: boolean) {
+function normalizeCFBConferenceSelection(selection: CFBConferenceSelection) {
+  return String(selection ?? "").trim();
+}
+
+export const getCFBConference = (groupId: number | string | null) => {
+  if (groupId == null) return undefined;
+  return cfbConferences.find((c) => String(c.groupId) === String(groupId));
+};
+
+export const getCFBConferenceName = (groupId: number | string | null) => {
+  if (groupId == null) return undefined;
   const conference = cfbConferences.find(
-    (t) => String(t.groupId) === String(id),
+    (c) => String(c.groupId) === String(groupId),
+  );
+
+  return conference?.shortName || conference?.name;
+};
+
+export const resolveCFBConferenceSelection = (
+  selection: CFBConferenceSelection,
+) => {
+  const normalizedSelection = normalizeCFBConferenceSelection(selection);
+
+  if (!normalizedSelection) {
+    return undefined;
+  }
+
+  const lowerSelection = normalizedSelection.toLowerCase();
+
+  if (lowerSelection === "all conferences") {
+    return getCFBConference(80);
+  }
+
+  return cfbConferences.find((conference) => {
+    return (
+      conference.uid.toLowerCase() === lowerSelection ||
+      conference.shortName.toLowerCase() === lowerSelection ||
+      conference.name.toLowerCase() === lowerSelection ||
+      (conference.groupId != null &&
+        String(conference.groupId) === normalizedSelection)
+    );
+  });
+};
+
+export const getCFBConferenceSelectionName = (
+  selection: CFBConferenceSelection,
+) => {
+  const conference = resolveCFBConferenceSelection(selection);
+
+  if (!conference) {
+    return undefined;
+  }
+
+  if (conference.groupId === 80) {
+    return "All Conferences";
+  }
+
+  return conference.shortName || conference.name;
+};
+
+export function getCFBConferenceLogo(
+  groupId: number | string | null,
+  isDark: boolean,
+) {
+  const conference = cfbConferences.find(
+    (t) => String(t.groupId) === String(groupId),
   );
 
   if (!conference) return PlaceholderLogo;

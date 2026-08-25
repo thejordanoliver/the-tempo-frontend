@@ -34,8 +34,8 @@ import WorldCupLogo from "assets/Soccer/Logos/WorldCup.png";
 import WorldCupLightLogo from "assets/Soccer/Logos/WorldCupLight.png";
 import WNBALogo from "assets/WNBA/Logos/WNBA.png";
 
+import SearchBar from "@/components/Explore/SearchBar";
 import { CustomHeader } from "../../components/CustomHeader";
-import SearchBar from "../../components/SearchBars/SearchBar";
 import { activeOpacity, Colors, globalStyles } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
@@ -227,14 +227,28 @@ export default function LeagueScreen() {
 
   const styles = LeagueScreenStyles(isDark);
   const global = globalStyles(isDark);
-
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchToggle = useCallback(() => {
+    setIsSearchVisible((current) => {
+      const next = !current;
+
+      if (!next) {
+        setSearchQuery("");
+      }
+
+      return next;
+    });
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader tabName="Leagues" />,
+      header: () => (
+        <CustomHeader tabName="Leagues" onSearchToggle={handleSearchToggle} />
+      ),
     });
-  }, [navigation]);
+  }, [handleSearchToggle, navigation]);
 
   const filteredLeagues = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
@@ -278,11 +292,17 @@ export default function LeagueScreen() {
   );
 
   const renderLeague: ListRenderItem<LeagueType> = useCallback(
-    ({ item: league }) => {
+    ({ item: league, index }) => {
       const { label, logo, logoLight } = leagueConfig[league];
+      const isLastRow = index === filteredLeagues.length - 1;
 
       return (
-        <View style={styles.buttonContainer}>
+        <View
+          style={[
+            styles.buttonContainer,
+            isLastRow && { borderBottomWidth: 0 },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => goToLeague(league)}
             style={styles.leagueButton}
@@ -307,7 +327,7 @@ export default function LeagueScreen() {
         </View>
       );
     },
-    [goToLeague, isDark, styles],
+    [filteredLeagues.length, goToLeague, isDark, styles],
   );
 
   const renderEmptyResults = useCallback(
@@ -322,7 +342,14 @@ export default function LeagueScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.searcBarContainer}>
-        <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          visible={isSearchVisible}
+          onFocus={() => {}}
+          onBlur={() => {}}
+          placeholder="Search leagues..."
+        />
       </View>
 
       <FlatList

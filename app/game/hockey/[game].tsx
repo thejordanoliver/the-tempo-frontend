@@ -8,9 +8,10 @@ import {
   LastFiveGames,
   LastPlay,
   LineScore,
+  MatchupPredictor,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
+import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
@@ -166,7 +167,9 @@ export default function GameDetailsScreen(
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
-  const period = formatPeriod({ period: game?.status.period, isNHL: true });
+  const period = formatPeriod({ period: score?.status.period, isNHL: true });
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const clock = score?.status.displayClock ?? "0:00";
   const homeScore = score?.home?.score ?? 0;
   const awayScore = score?.away?.score ?? 0;
@@ -312,7 +315,16 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
 
-            <FanPredictionVote
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              league={LEAGUE}
+              isDark={isDark}
+              state={state}
+            />
+
+            <FanPrediction
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
@@ -325,11 +337,20 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <LineScore
-              linescore={lineScore}
+            <MatchupPredictor
+              homeId={homeId}
               homeCode={homeCode}
+              homeLogo={homeLogo}
+              homeHeaderLogo={homeHeaderLogo}
+              homeChance={homeChance}
+              homeColor={homeColor}
+              awayId={awayId}
               awayCode={awayCode}
-              league={LEAGUE}
+              awayLogo={awayLogo}
+              awayHeaderLogo={awayHeaderLogo}
+              awayChance={awayChance}
+              awayColor={awayColor}
+              size={180}
               isDark={isDark}
               state={state}
             />

@@ -1,5 +1,5 @@
 import { Colors, Fonts } from "constants/styles";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -21,6 +21,7 @@ export interface TabBarProps<T extends string> {
   renderLabel?: (tab: T, isSelected: boolean) => React.ReactNode;
   style?: StyleProp<ViewStyle>;
   isDark?: boolean;
+  scrollProgress?: Animated.Value;
 }
 
 export default function MainScrollTabBar<T extends string>({
@@ -30,13 +31,51 @@ export default function MainScrollTabBar<T extends string>({
   onTabPress,
   renderLabel,
   style,
+  scrollProgress,
 }: TabBarProps<T>) {
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
   const textMeasurements = useRef<{ width: number }[]>([]);
   const pressableMeasurements = useRef<{ x: number; width: number }[]>([]);
   const isInitialized = useRef(false);
+  const [isMeasured, setIsMeasured] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+
+  const getUnderlineMetrics = useCallback((index: number) => {
+    const text = textMeasurements.current[index];
+    const pressable = pressableMeasurements.current[index];
+
+    if (!text || !pressable) {
+      return null;
+    }
+
+    return {
+      x: pressable.x + (pressable.width - text.width) / 2,
+      width: text.width,
+    };
+  }, []);
+
+  const setUnderlineProgress = useCallback(
+    (progress: number) => {
+      const maxIndex = tabs.length - 1;
+      const clampedProgress = Math.min(maxIndex, Math.max(0, progress));
+      const startIndex = Math.floor(clampedProgress);
+      const endIndex = Math.min(maxIndex, startIndex + 1);
+      const amount = clampedProgress - startIndex;
+
+      const start = getUnderlineMetrics(startIndex);
+      const end = getUnderlineMetrics(endIndex);
+
+      if (!start || !end) {
+        return;
+      }
+
+      underlineX.setValue(start.x + (end.x - start.x) * amount);
+      underlineWidth.setValue(start.width + (end.width - start.width) * amount);
+    },
+    [getUnderlineMetrics, tabs.length, underlineWidth, underlineX],
+  );
+
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
     textMeasurements.current[index] = { width };
@@ -58,11 +97,10 @@ export default function MainScrollTabBar<T extends string>({
 
     if (!text || !pressable || isInitialized.current) return;
 
-    const initialX = calculateUnderlineX(index);
-    underlineX.setValue(initialX);
-    underlineWidth.setValue(text.width);
+    setUnderlineProgress(index);
 
     isInitialized.current = true;
+    setIsMeasured(true);
     scrollToActive(index);
   };
 
@@ -92,7 +130,7 @@ export default function MainScrollTabBar<T extends string>({
     const textMeasurement = textMeasurements.current[index];
     const pressableMeasurement = pressableMeasurements.current[index];
 
-    if (textMeasurement && pressableMeasurement) {
+    if (!scrollProgress && textMeasurement && pressableMeasurement) {
       const x = calculateUnderlineX(index);
 
       Animated.parallel([
@@ -112,7 +150,26 @@ export default function MainScrollTabBar<T extends string>({
 
       scrollToActive(index);
     }
-  }, [selected, tabs, underlineWidth, underlineX]);
+  }, [scrollProgress, selected, tabs, underlineWidth, underlineX]);
+
+  useEffect(() => {
+    if (!isMeasured || !scrollProgress) return;
+
+    const listenerId = scrollProgress.addListener(({ value }) => {
+      setUnderlineProgress(value);
+    });
+
+    return () => {
+      scrollProgress.removeListener(listenerId);
+    };
+  }, [isMeasured, scrollProgress, setUnderlineProgress]);
+
+  useEffect(() => {
+    if (!isMeasured || !scrollProgress) return;
+
+    const index = tabs.indexOf(selected);
+    scrollToActive(index);
+  }, [isMeasured, scrollProgress, selected, tabs]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,

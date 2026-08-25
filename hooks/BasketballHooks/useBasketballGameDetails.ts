@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { Official, TeamInjury } from "../FootballHooks/useFootballGameDetails";
@@ -353,8 +354,6 @@ export const useBasketballGameDetails = (
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const skipFetch = !league || !gameId;
 
   /* ---------------------------------- */
@@ -420,31 +419,22 @@ export const useBasketballGameDetails = (
     fetchDetails(true);
   }, [fetchDetails, skipFetch]);
 
-  /* ---------------------------------- */
-  /* Poll live games only               */
-  /* ---------------------------------- */
+  useLiveSportsSubscription<BasketballGameDetailsResponse>({
+    enabled: !skipFetch && score?.status?.state === "in",
+    kind: "game",
+    payload: {
+      sport: "basketball",
+      league: league || "nba",
+      gameId: gameId || "",
+    },
+    onUpdate: (payload) => {
+      if (!payload?.score) return;
 
-  useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-
-    if (score?.status?.state !== "in") {
-      return;
-    }
-
-    intervalRef.current = setInterval(() => {
-      fetchDetails(true);
-    }, 10_000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [fetchDetails, score?.status?.state]);
+      setScore(payload.score);
+      setDetails(payload.details);
+      setLastRefresh(new Date());
+    },
+  });
 
   const refresh = useCallback(() => {
     if (!skipFetch) {

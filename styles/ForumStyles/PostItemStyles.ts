@@ -197,10 +197,9 @@ export function postItemStyles(isDark: boolean) {
     },
 
     count: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 14,
-      lineHeight: 18,
-      color: mutedColor,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: textColor,
     },
 
     timestamp: {

@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
-import { Pressable, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
 
@@ -17,9 +17,11 @@ type HeaderRightActionsProps = {
   profileMenuVisible: boolean;
   onToggleProfileMenu: () => void;
   onProfileSettings: () => void;
+  onEditProfile: () => void;
   onProfileLogout: () => void;
   onSearchToggle?: () => void;
   onNotificationsCenter?: () => void;
+  unreadNotificationCount?: number;
   onOpenThemesSettings?: () => void;
   isMessagesListScreen: boolean;
   onCreateMessage?: () => void;
@@ -40,16 +42,18 @@ export function HeaderRightActions({
   profileMenuVisible,
   onToggleProfileMenu,
   onProfileSettings,
+  onEditProfile,
   onProfileLogout,
   onSearchToggle,
   onNotificationsCenter,
+  unreadNotificationCount = 0,
   onOpenThemesSettings,
   isMessagesListScreen,
   onCreateMessage,
   onToggleLayout,
   isGrid,
 }: HeaderRightActionsProps) {
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   if (isTeamScreen) {
     return (
@@ -106,6 +110,7 @@ export function HeaderRightActions({
           visible={profileMenuVisible}
           isDark={isDark}
           onSettings={onProfileSettings}
+          onEdit={onEditProfile}
           onLogout={onProfileLogout}
         />
 
@@ -139,12 +144,14 @@ export function HeaderRightActions({
     );
   }
 
-  if (tabName === "Explore" && onSearchToggle) {
+  if ((tabName === "Explore" || tabName === "Leagues") && onSearchToggle) {
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
         onPress={onSearchToggle}
         hitSlop={8}
+        accessibilityRole="button"
+        accessibilityLabel="Search"
       >
         <Ionicons
           name="search"
@@ -156,17 +163,48 @@ export function HeaderRightActions({
   }
 
   if (tabName === "Home" && onNotificationsCenter) {
+    const hasUnreadNotifications = unreadNotificationCount > 0;
+
+    const notificationCount =
+      unreadNotificationCount > 99 ? "99+" : String(unreadNotificationCount);
+
     return (
       <TouchableOpacity
         activeOpacity={activeOpacity}
         onPress={onNotificationsCenter}
         hitSlop={8}
+        style={styles.notificationButton}
+        accessibilityRole="button"
+        accessibilityLabel={
+          hasUnreadNotifications
+            ? `${unreadNotificationCount} unread notifications`
+            : "Notifications"
+        }
       >
         <Ionicons
-          name="notifications-outline"
+          name={
+            hasUnreadNotifications ? "notifications" : "notifications-outline"
+          }
           size={24}
           color={isDark ? Colors.white : Colors.black}
         />
+
+        {hasUnreadNotifications && (
+          <View
+            style={[
+              styles.notificationBadge,
+              {
+                backgroundColor: isDark
+                  ? Colors.dark.lightRed
+                  : Colors.light.red,
+              },
+            ]}
+          >
+            <Text style={styles.notificationBadgeText}>
+              {notificationCount}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   }

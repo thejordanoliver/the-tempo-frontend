@@ -10,12 +10,16 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface Props {
+  homeId: number;
   homeCode: string;
   homeLogo: any;
+  homeHeaderLogo: any;
   homeColor: string;
   homeChance: number;
+  awayId: number;
   awayCode: string;
   awayLogo: any;
+  awayHeaderLogo: any;
   awayColor: string;
   awayChance: number;
   size?: number;
@@ -38,12 +42,16 @@ const getLogoSource = (logo: any) =>
   typeof logo === "string" ? { uri: logo } : logo;
 
 const MatchupPredictor: React.FC<Props> = ({
+  homeId,
   homeCode,
   homeLogo,
+  homeHeaderLogo,
   homeColor,
   homeChance,
+  awayId,
   awayCode,
   awayLogo,
+  awayHeaderLogo,
   awayColor,
   awayChance,
   isDark,
@@ -58,7 +66,7 @@ const MatchupPredictor: React.FC<Props> = ({
   const awayTrackPct = totalChance > 0 ? (awayPct / totalChance) * 100 : 50;
   const isHomeFavorite = homePct >= awayPct;
   const favoriteCode = isHomeFavorite ? homeCode : awayCode;
-  const favoriteLogo = isHomeFavorite ? homeLogo : awayLogo;
+  const favoriteLogo = isHomeFavorite ? homeHeaderLogo : awayHeaderLogo;
   const favoriteColor = isHomeFavorite ? homeColor : awayColor;
   const edge = Math.abs(homePct - awayPct);
 
@@ -115,7 +123,7 @@ const MatchupPredictor: React.FC<Props> = ({
                 {homeCode}
               </Text>
             </View>
-            <View style={[styles.logoBadge, styles.homeLogoBadge]}>
+            <View style={styles.logoBadge}>
               <Image
                 source={getLogoSource(homeLogo)}
                 style={styles.logo}
@@ -164,12 +172,7 @@ const MatchupPredictor: React.FC<Props> = ({
             <Text style={styles.chanceText}>{awayPct.toFixed(1)}%</Text>
             <Text style={styles.percentLabel}>{awayCode}</Text>
           </View>
-          <Text
-            style={[
-              styles.edgeLabel,
-              { borderColor: isHomeFavorite ? homeColor : awayColor },
-            ]}
-          >
+          <Text style={styles.edgeLabel}>
             {favoriteCode} +{edge.toFixed(1)}
           </Text>
           <View style={styles.homePercent}>
@@ -224,14 +227,10 @@ const matchupPredictorStyles = (isDark: boolean) =>
       justifyContent: "center",
       width: 40,
       height: 40,
-      borderWidth: 1,
-      borderColor: Colors.white,
       borderRadius: 20,
       overflow: "hidden",
     },
-    homeLogoBadge: {
-      borderColor: Colors.white,
-    },
+
     logo: {
       width: 32,
       height: 32,
@@ -334,6 +333,7 @@ const matchupPredictorStyles = (isDark: boolean) =>
       paddingVertical: 4,
       borderWidth: 1,
       borderRadius: 999,
+      borderColor: isDark ? Colors.white : Colors.black,
       overflow: "hidden",
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 11,

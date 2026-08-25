@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
-export default function FanPredictionVoteSkeleton() {
+export default function FanPredictionSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

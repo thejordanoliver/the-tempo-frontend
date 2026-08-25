@@ -1,6 +1,7 @@
 import { BaseballGame } from "@/types/baseball/baseball";
 import { isGameLive } from "@/utils/games";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 export type BaseballLeague = "mlb" | "cb" | "sb";
@@ -69,7 +70,7 @@ export function useTeamLatestGame(
 
         setError(message);
 
-        // Do not clear the current game during silent polling.
+        // Do not clear the current game during background live updates.
         if (!silent) {
           setGame(null);
         }
@@ -94,15 +95,19 @@ export function useTeamLatestGame(
     return isGameLive(game);
   }, [game]);
 
-  useEffect(() => {
-    if (!hasLiveGame) return;
-
-    const interval = setInterval(() => {
-      fetchLastGame({ silent: true });
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [hasLiveGame, fetchLastGame]);
+  useLiveSportsSubscription<LastBaseballTeamGameResponse>({
+    enabled: Boolean(teamId && hasLiveGame),
+    kind: "scoreboard",
+    payload: {
+      sport: "baseball",
+      league,
+      feed: "teamLatest",
+      teamId: teamId || "",
+    },
+    onUpdate: (payload) => {
+      setGame(payload.game ?? payload.games?.[0] ?? null);
+    },
+  });
 
   const refresh = useCallback(async () => {
     await fetchLastGame({ isRefresh: true });

@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 export type MMALeague = "ufc" | "mma";
@@ -397,15 +398,19 @@ export function useMMAEvents({
     return rawEvents.some(isLiveMMAEvent) || games.some(isLiveMMAEvent);
   }, [rawEvents, games]);
 
-  useEffect(() => {
-    if (!pollLiveEvents || !hasLiveEvent) return;
-
-    const interval = setInterval(() => {
-      fetchGames({ silent: true });
-    }, pollIntervalMs);
-
-    return () => clearInterval(interval);
-  }, [fetchGames, hasLiveEvent, pollIntervalMs, pollLiveEvents]);
+  useLiveSportsSubscription<MMAGamesResponse>({
+    enabled: enabled && pollLiveEvents && hasLiveEvent && pollIntervalMs > 0,
+    kind: "scoreboard",
+    payload: {
+      sport: "mma",
+      league,
+      feed: "eventList",
+      date: formattedDate,
+    },
+    onUpdate: (payload) => {
+      setData(payload);
+    },
+  });
 
   return {
     data,

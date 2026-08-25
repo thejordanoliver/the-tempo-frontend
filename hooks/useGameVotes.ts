@@ -1,7 +1,3 @@
-// hooks/useGameVotes.ts
-// FIX: replaced manual AsyncStorage token reads + axios with apiClient.
-//      apiClient attaches the Authorization header and handles token refresh
-//      automatically — no manual token management needed here.
 import { apiClient } from "utils/apiClient";
 
 export type PollResult = {
@@ -17,18 +13,13 @@ export type VoteResponse = {
 // Fetch vote results for a game
 export const fetchVoteResults = async (
   gameId: number,
+  options: { signal?: AbortSignal } = {},
 ): Promise<VoteResponse> => {
-  const res = await apiClient.get(`/api/votes/${gameId}`);
+  const res = await apiClient.get(`/api/votes/${gameId}`, {
+    signal: options.signal,
+  });
   return {
     votes: res.data.votes ?? [],
     userVote: res.data.userVote ?? null,
   };
-};
-
-// Cast a vote for a team
-export const castVoteApi = async (
-  gameId: string,
-  teamId: string | number,
-): Promise<void> => {
-  await apiClient.post("/api/votes", { gameId, teamId });
 };

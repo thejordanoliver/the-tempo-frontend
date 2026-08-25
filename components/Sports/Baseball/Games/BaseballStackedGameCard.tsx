@@ -1,4 +1,3 @@
-import { useBaseballGameDetails } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -74,8 +73,6 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
       : getMLBTeamLogo(awayTeamId, isDark);
 
   const league = game?.league?.code ?? "mlb";
-  const gameId = game?.id;
-  const { score } = useBaseballGameDetails(league, gameId);
 
   const isChampionship = game?.season.slug === "championship-series";
   const styles = stackedGameCardStyles(isDark, isChampionship);
@@ -94,8 +91,8 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const homeScore = score?.home.score ?? home?.score ?? 0;
-  const awayScore = score?.away.score ?? away?.score ?? 0;
+  const homeScore = home?.score ?? 0;
+  const awayScore = away?.score ?? 0;
   const homeRecord = game.home.record;
   const awayRecord = game.away.record;
   const homeRank = game.home.homeRank;

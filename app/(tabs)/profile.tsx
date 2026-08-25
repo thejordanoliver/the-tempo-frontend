@@ -325,6 +325,9 @@ export default function ProfileScreen() {
               },
             });
           }}
+           onEdit={() => {
+            router.push("/edit-profile");
+          }}
         />
       ),
     });

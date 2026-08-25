@@ -160,7 +160,7 @@ function MLBLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="League" league={league} onBack={goBack} />
+        <CustomHeader tabName={league} league={league} onBack={goBack} />
       ),
     });
   }, [navigation, league]);

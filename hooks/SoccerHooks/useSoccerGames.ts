@@ -1,11 +1,16 @@
 import { SoccerGame } from "@/types/soccer/soccer";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 type FetchGamesOptions = {
   forceRefresh?: boolean;
   silent?: boolean;
+};
+
+type SoccerGamesResponse = {
+  games?: SoccerGame[];
 };
 
 const LIVE_STATES = "in";
@@ -32,7 +37,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
       try {
         setError(null);
 
-        // Keep pull-to-refresh and live polling from showing the full skeleton.
+        // Keep pull-to-refresh and live updates from showing the full skeleton.
         if (!forceRefresh && !silent) {
           setLoading(true);
         }
@@ -69,15 +74,18 @@ export function useSoccerGames(date?: Date, league = "epl") {
     return games.some(isLiveSoccerGame);
   }, [games]);
 
-  useEffect(() => {
-    if (!hasLiveGame) return;
-
-    const interval = setInterval(() => {
-      fetchGames({ silent: true });
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [hasLiveGame, fetchGames]);
+  useLiveSportsSubscription<SoccerGamesResponse>({
+    enabled: hasLiveGame,
+    kind: "scoreboard",
+    payload: {
+      sport: "soccer",
+      league,
+      date: formattedDate !== "today" ? formattedDate : undefined,
+    },
+    onUpdate: (payload) => {
+      setGames(Array.isArray(payload?.games) ? payload.games : []);
+    },
+  });
 
   return {
     games,

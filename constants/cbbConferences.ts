@@ -31,9 +31,13 @@ import SoConLogo from "../assets/College_Logos/Conference_Logos/SoCon.png";
 import SunBeltLogo from "../assets/College_Logos/Conference_Logos/SunBelt.png";
 import SWACLogo from "../assets/College_Logos/Conference_Logos/SWAC.png";
 
-import { Conference } from "./cfbConferences";
+import type { Conference } from "./cfbConferences";
 
-export const cbbConferences: Conference[] = [
+export type CBBConference = Omit<Conference, "groupId"> & {
+  groupId: number;
+};
+
+export const cbbConferences: CBBConference[] = [
   {
     id: 1,
     uid: "s:40~l:41~g:3",
@@ -417,3 +421,19 @@ export function getCBBConferenceLogo(id: number | string, isDark: boolean) {
 
   return isDark ? conference.logoLight || conference.logo : conference.logo;
 }
+
+export const getCBBConference = (groupId: number | string) => {
+  if (groupId == null) return undefined;
+  return cbbConferences.find(
+    (c) => String(c.parentGroupId) === String(groupId),
+  );
+};
+
+export const getCBBConferenceName = (groupId: number | string) => {
+  if (groupId == null) return undefined;
+  const conference = cbbConferences.find(
+    (c) => String(c.parentGroupId) === String(groupId),
+  );
+
+  return conference?.name || conference?.shortName;
+};

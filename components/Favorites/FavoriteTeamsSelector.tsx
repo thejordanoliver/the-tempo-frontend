@@ -1,7 +1,8 @@
 import { Team } from "@/types/team";
-import SearchBar from "components/SearchBars/SearchBar";
 import React, { useCallback, useMemo } from "react";
 import { Animated, FlatList, StyleSheet } from "react-native";
+import SearchBar from "../Explore/SearchBar";
+import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import TeamCard from "./TeamCard";
 
 type LeagueTeamWithId = Team & { id: number };
@@ -27,6 +28,7 @@ const FavoriteTeamsSelector = ({
   search,
   itemWidth,
   setSearch,
+  loading,
 }: Props) => {
   const styles = useMemo(
     () => favoriteTeamsSelectorStyles(isGridView, itemWidth),
@@ -78,12 +80,24 @@ const FavoriteTeamsSelector = ({
     [],
   );
 
+  if (loading)
+    return (
+      <FavoriteTeamsSelectorSkeleton
+        isGridView={isGridView}
+        itemWidth={itemWidth}
+        fadeAnim={fadeAnim}
+      />
+    );
+
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <SearchBar
-        placeholder="Search teams or leagues..."
+        visible
         value={search}
+        onFocus={() => {}}
+        onBlur={() => {}}
         onChangeText={setSearch}
+        placeholder="Search teams or leagues..."
       />
 
       <FlatList
@@ -112,7 +126,6 @@ const favoriteTeamsSelectorStyles = (isGridView: boolean, itemWidth: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      gap: 12,
     },
     contentContainer: {
       flexGrow: 1,

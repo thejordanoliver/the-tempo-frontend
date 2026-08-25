@@ -10,14 +10,14 @@ import NewsList from "@/components/News/NewsList";
 import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
 import ConferenceListModal, {
   ConferenceListModalRef,
-} from "@/components/Sports/Football/ConferenceListModal";
+} from "@/components/League/ConferenceListModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { NFLPlayoffBracket } from "@/components/Sports/Football/NFLPlayoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
 import { CFBConferenceStandingsList } from "@/components/Sports/Football/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
-import { cfbConferences } from "@/constants/cfbConferences";
+import { getCFBConferenceSelectionName } from "@/constants/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
 import { useCFPBracket } from "@/hooks/FootballHooks/useCFPBracket";
@@ -142,7 +142,7 @@ export default function FootballLeagueScreen() {
   const [draftRound, setDraftRound] = useState("all");
 
   const [selectedConference, setSelectedConference] =
-    useState<SelectedConference>(null);
+    useState<SelectedConference>("top25");
   const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
 
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
@@ -158,23 +158,20 @@ export default function FootballLeagueScreen() {
   const { calendar } = useLeagueCalendar(league, "football");
 
   const selectedConferenceName = useMemo(() => {
-    if (!isCFB || !selectedConference) {
+    if (!isCFB) {
       return undefined;
     }
 
-    if (selectedConference === "top25") {
-      return "Top 25";
-    }
-
-    const conference = cfbConferences.find(
-      (item) => String(item.groupId) === String(selectedConference),
-    );
-
-    return conference?.shortName || conference?.name;
+    return getCFBConferenceSelectionName(selectedConference);
   }, [isCFB, selectedConference]);
 
   const selectedConferenceGroupId = useMemo(() => {
-    if (!isCFB || !selectedConference || selectedConference === "top25") {
+    if (
+      !isCFB ||
+      selectedConference == null ||
+      selectedConference === "top25" ||
+      Number(selectedConference) === 80
+    ) {
       return null;
     }
 
@@ -226,13 +223,13 @@ export default function FootballLeagueScreen() {
     week: selectedWeekNumber,
     seasontype: selectedSeasonType,
     conferenceId:
-      isCFB && selectedConference && selectedConference !== "top25"
-        ? String(selectedConference)
+      isCFB && selectedConference !== "top25" && selectedConference != null
+        ? selectedConference
         : undefined,
   });
 
   const displayedGames = useMemo(() => {
-    if (!isCFB || !selectedConference) {
+    if (!isCFB || selectedConference == null) {
       return selectedWeekGames;
     }
 
@@ -253,10 +250,6 @@ export default function FootballLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10);
 
-  /*
-   * Keep these hooks unconditional. Their results are only rendered
-   * for the leagues that use them.
-   */
   const {
     playoffData: nflPlayoffData,
     playoffLoading: nflPlayoffLoading,
@@ -326,13 +319,15 @@ export default function FootballLeagueScreen() {
   useEffect(() => {
     setSelectedWeekIndex(0);
     setStandingsYear(currentSeason.toString());
-    setSelectedConference(null);
+
+    setSelectedConference(isCFB ? "top25" : null);
+
     setIsConferenceModalOpen(false);
 
     if (league === "NFL") {
       setDraftYear(getDefaultDraftYear("nfl").toString());
     }
-  }, [currentSeason, league]);
+  }, [currentSeason, league, isCFB]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -573,15 +568,16 @@ export default function FootballLeagueScreen() {
         </PagerView>
       </View>
 
-      {isCFB ? (
+      {isCFB && (
         <ConferenceListModal
           ref={conferenceModalRef}
+          selectedConference={selectedConference}
           onSelect={setSelectedConference}
           onOpen={() => setIsConferenceModalOpen(true)}
           onClose={() => setIsConferenceModalOpen(false)}
           league="CFB"
         />
-      ) : null}
+      )}
     </>
   );
 }

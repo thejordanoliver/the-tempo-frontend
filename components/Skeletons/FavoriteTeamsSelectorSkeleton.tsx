@@ -2,7 +2,7 @@ import { Colors } from "@/constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import { Animated, FlatList, StyleSheet } from "react-native";
-import SearchBar from "../SearchBars/SearchBar";
+import SearchBar from "../Explore/SearchBar";
 import { SkeletonBlock, SkeletonCircle } from "./primitives";
 
 type Props = {
@@ -66,9 +66,12 @@ export default function FavoriteTeamsSelectorSkeleton({
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <SearchBar
-        placeholder="Search teams or leagues..."
+        visible
         value={""}
+        onFocus={() => {}}
+        onBlur={() => {}}
         onChangeText={() => {}}
+        placeholder="Search teams or leagues..."
       />
       <FlatList
         key={isGridView ? "grid" : "list"}
@@ -101,7 +104,7 @@ const favoriteTeamsSelectorSkeletonStyles = (
   return StyleSheet.create({
     container: {
       flex: 1,
-      gap: 12,
+
     },
     contentContainer: {
       flexGrow: 1,

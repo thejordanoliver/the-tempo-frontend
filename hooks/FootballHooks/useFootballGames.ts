@@ -2,6 +2,7 @@ import { FootballGame } from "@/types/football/football";
 import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 type UseFootballGamesParams = {
@@ -151,7 +152,7 @@ export function useFootballGames({
         }
       }
 
-      if (league === "cfb" && conferenceId) {
+      if (league === "cfb" && conferenceId != null && conferenceId !== "") {
         params.conferenceId = conferenceId;
       }
 
@@ -202,15 +203,27 @@ export function useFootballGames({
     return games.some(isGameLive);
   }, [games]);
 
-  useEffect(() => {
-    if (!hasLiveGame) return;
+  const scoreboardDate = useMemo(
+    () => (date ? dayjs(date).format("YYYYMMDD") : undefined),
+    [date],
+  );
 
-    const interval = setInterval(() => {
-      fetchGames({ silent: true });
-    }, 10_000);
-
-    return () => clearInterval(interval);
-  }, [hasLiveGame, fetchGames]);
+  useLiveSportsSubscription<FootballGamesResponse>({
+    enabled: hasLiveGame,
+    kind: "scoreboard",
+    payload: {
+      sport: "football",
+      league,
+      date: scoreboardDate,
+      week,
+      season,
+      seasontype,
+      conferenceId,
+    },
+    onUpdate: (payload) => {
+      setGroups(normalizeGroups(payload));
+    },
+  });
 
   return {
     games,

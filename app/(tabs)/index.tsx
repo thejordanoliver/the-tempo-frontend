@@ -1,13 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useCallback, useRef } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
-import PagerView from "react-native-pager-view";
-import { CustomHeader } from "../../components/CustomHeader";
+import { Animated, RefreshControl, ScrollView, View } from "react-native";
+import PagerView, {
+  type PagerViewOnPageScrollEvent,
+} from "react-native-pager-view";
+import {
+  CustomHeader,
+  type HomeHeaderTab,
+} from "../../components/CustomHeader";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
 import LeagueGamesList from "../../components/League/LeagueGamesList";
 import NewsList from "../../components/News/NewsList";
-import TabBar from "../../components/TabBars/TabBar";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useHomeData } from "../../hooks/useHomeData";
@@ -19,11 +23,23 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const styles = homeStyles(isDark);
   const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
-  const [selectedTab, setSelectedTab] = React.useState<"scores" | "news">(
-    "scores",
-  );
+  const [selectedTab, setSelectedTab] = React.useState<HomeHeaderTab>("scores");
 
   const pagerRef = useRef<PagerView>(null);
+  const homeTabScrollProgress = useRef(new Animated.Value(0)).current;
+
+  const handleHeaderTabPress = useCallback((tab: HomeHeaderTab) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
+  }, []);
+
+  const handlePageScroll = useCallback(
+    (event: PagerViewOnPageScrollEvent) => {
+      const { offset, position } = event.nativeEvent;
+      homeTabScrollProgress.setValue(position + offset);
+    },
+    [homeTabScrollProgress],
+  );
 
   const {
     favorites,
@@ -36,23 +52,20 @@ export default function HomeScreen() {
     loading: gamesLoading,
   } = useHomeData(selectedTab);
 
-React.useLayoutEffect(() => {
-  navigation.setOptions({
-    header: () => (
-      <CustomHeader
-        tabName="Home"
-        onNotificationsCenter={() =>
-          router.navigate("/notification-center")
-        }
-      />
-    ),
-  });
-}, [navigation]);
-
-  const handleTabPress = useCallback((tab: "scores" | "news") => {
-    setSelectedTab(tab);
-    pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
-  }, []);
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader
+          tabName="Home"
+          homeSelectedTab={selectedTab}
+          onHomeTabPress={handleHeaderTabPress}
+          homeScrollProgress={homeTabScrollProgress}
+          onNotificationsCenter={() => router.navigate("/notification-center")}
+          unreadNotificationCount={10}
+        />
+      ),
+    });
+  }, [handleHeaderTabPress, homeTabScrollProgress, navigation, selectedTab]);
 
   const refreshControl = useCallback(
     () => (
@@ -69,22 +82,15 @@ React.useLayoutEffect(() => {
   return (
     <View style={styles.container}>
       <View style={styles.contentArea}>
-        <View style={styles.tabBarWrapper}>
-          <TabBar
-            tabs={["scores", "news"]}
-            selected={selectedTab}
-            onTabPress={handleTabPress}
-            isDark={isDark}
-          />
-        </View>
-
         <PagerView
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
           scrollEnabled={!isDraggingFavorites}
+          onPageScroll={handlePageScroll}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
+            homeTabScrollProgress.setValue(index);
             setSelectedTab(index === 0 ? "scores" : "news");
           }}
         >

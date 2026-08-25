@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import {
   FetchRacingEventsOptions,
   RacingEvent,
@@ -508,31 +509,25 @@ export function useRacingEvents({
     return games.some(isLiveEvent);
   }, [games]);
 
-  useEffect(() => {
-    if (
-      !canFetch ||
-      !pollLiveEvents ||
-      !hasLiveEvent
-    ) {
-      return;
-    }
+  useLiveSportsSubscription<RacingEventsResponse>({
+    enabled: canFetch && pollLiveEvents && hasLiveEvent && pollIntervalMs > 0,
+    kind: "scoreboard",
+    payload: {
+      sport: "racing",
+      league: normalizedLeague,
+      feed: "eventList",
+      date: formattedDate,
+    },
+    onUpdate: (payload) => {
+      const rawEvents = Array.isArray(payload?.events) ? payload.events : [];
+      const sessionEvents = sortSessions(flattenRacingSessions(rawEvents));
 
-    const interval = setInterval(() => {
-      void fetchEvents({
-        silent: true,
-      });
-    }, pollIntervalMs);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [
-    canFetch,
-    fetchEvents,
-    hasLiveEvent,
-    pollIntervalMs,
-    pollLiveEvents,
-  ]);
+      setResponse(payload);
+      setWeekendEvents(rawEvents);
+      setGames(sessionEvents);
+      setError(null);
+    },
+  });
 
   return {
     /*

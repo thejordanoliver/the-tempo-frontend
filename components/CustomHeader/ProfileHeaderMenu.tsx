@@ -9,6 +9,7 @@ type ProfileHeaderMenuProps = {
   isDark: boolean;
   onSettings?: () => void;
   onLogout?: () => void;
+  onEdit?: () => void;
 };
 
 export function ProfileHeaderMenu({
@@ -16,11 +17,12 @@ export function ProfileHeaderMenu({
   isDark,
   onSettings,
   onLogout,
+  onEdit,
 }: ProfileHeaderMenuProps) {
   const progress = useRef(new Animated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
 
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   useEffect(() => {
     if (visible) {
@@ -81,6 +83,46 @@ export function ProfileHeaderMenu({
         },
       ]}
     >
+      {onEdit ? (
+        <>
+          <TouchableOpacity
+            activeOpacity={activeOpacity}
+            style={styles.profileSubmenuItem}
+            onPress={onEdit}
+          >
+            <View style={styles.profileSubmenuIconWrap}>
+              <Ionicons
+                name="create-outline"
+                size={24}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </View>
+
+            <Text
+              style={[
+                styles.profileSubmenuText,
+                {
+                  color: isDark ? Colors.white : Colors.black,
+                },
+              ]}
+            >
+              Edit Profile
+            </Text>
+          </TouchableOpacity>
+
+          {(onSettings || onLogout) && (
+            <View
+              style={[
+                styles.profileSubmenuSeparator,
+                {
+                  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+                },
+              ]}
+            />
+          )}
+        </>
+      ) : null}
+
       {onSettings ? (
         <TouchableOpacity
           activeOpacity={activeOpacity}

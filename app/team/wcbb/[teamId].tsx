@@ -27,6 +27,7 @@ import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
+import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -74,6 +75,8 @@ export default function TeamDetailScreen() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
   const indexToTab = (index: number) => tabs[index];
   const handleTabPress = (tab: (typeof tabs)[number]) => {
@@ -81,6 +84,7 @@ export default function TeamDetailScreen() {
     pagerRef.current?.setPage(tabToIndex(tab));
   };
   const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
     setSelectedTab(indexToTab(index));
   };
 
@@ -254,12 +258,14 @@ export default function TeamDetailScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <PagerView
         ref={pagerRef}
         style={styles.contentArea}
         initialPage={tabToIndex(selectedTab)}
+        onPageScroll={handlePageScroll}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
         <View key="schedule" style={styles.contentArea}>

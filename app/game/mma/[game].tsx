@@ -1,6 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
-  FanPredictionVote,
+  FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
@@ -273,7 +273,7 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <FanPredictionVote
+            <FanPrediction
               gameId={gameId}
               awayId={secondFighterId}
               awayCode={secondFighterLastName}

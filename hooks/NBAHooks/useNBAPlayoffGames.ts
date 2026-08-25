@@ -8,6 +8,7 @@ import {
   UseNBAPlayoffGamesOptions,
 } from "@/types/basketball/basketball";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 const ROUND_ORDER: RoundDefinition[] = [
@@ -514,15 +515,28 @@ export function useNBAPlayoffGames({
     return games.some(isLiveNBAPlayoffGame);
   }, [games]);
 
-  useEffect(() => {
-    if (!enabled || !pollLiveGames || !hasLiveGame) return;
+  useLiveSportsSubscription<any>({
+    enabled: enabled && pollLiveGames && hasLiveGame && pollIntervalMs > 0,
+    kind: "scoreboard",
+    payload: {
+      sport: "basketball",
+      league: "nba",
+      feed: "nbaPlayoffs",
+      season,
+      dates,
+    },
+    onUpdate: (payload) => {
+      const normalizedGames = getAllGamesFromResponse(payload);
+      const normalizedRounds = getRoundsFromResponse(payload, normalizedGames);
 
-    const interval = setInterval(() => {
-      fetchPlayoffGames({ silent: true });
-    }, pollIntervalMs);
-
-    return () => clearInterval(interval);
-  }, [enabled, pollLiveGames, hasLiveGame, pollIntervalMs, fetchPlayoffGames]);
+      setGames(normalizedGames);
+      setRounds(normalizedRounds);
+      setSeasonData(payload?.season ?? null);
+      setLeagueInfo(payload?.leagueInfo ?? null);
+      setCount(normalizedGames.length);
+      setRoundCount(normalizedRounds.length);
+    },
+  });
 
   return {
     games,

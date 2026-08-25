@@ -23,6 +23,7 @@ import {
 } from "hooks/BaseballHooks/useBaseballTeamGames";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
+import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -69,6 +70,8 @@ export default function TeamDetailScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
 
   const { teamDetails } = useTeamDetails(league, teamIdNum);
 
@@ -99,6 +102,7 @@ export default function TeamDetailScreen() {
   };
 
   const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
     const nextTab = indexToTab(index);
 
     if (nextTab) {
@@ -221,12 +225,14 @@ export default function TeamDetailScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <PagerView
         ref={pagerRef}
         style={{ flex: 1 }}
         initialPage={tabToIndex(selectedTab)}
+        onPageScroll={handlePageScroll}
         onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
       >
         {/* SCHEDULE */}

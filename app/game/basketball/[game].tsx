@@ -10,7 +10,7 @@ import {
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
-import FanPredictionVote from "@/components/Sports/Basketball/GameDetails/FanPredictionVote";
+import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
 import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
 import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
 import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
@@ -402,7 +402,7 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
-              <FanPredictionVote
+              <FanPrediction
                 gameId={gameId}
                 awayId={awayId}
                 awayCode={awayCode}
@@ -416,12 +416,16 @@ export default function GameDetailsScreen(
               />
 
               <MatchupPredictor
+                homeId={homeId}
                 homeCode={homeCode}
                 homeLogo={homeLogo}
+                homeHeaderLogo={homeHeaderLogo}
                 homeChance={homeChance}
                 homeColor={homeColor}
+                awayId={awayId}
                 awayCode={awayCode}
                 awayLogo={awayLogo}
+                awayHeaderLogo={awayHeaderLogo}
                 awayChance={awayChance}
                 awayColor={awayColor}
                 size={180}

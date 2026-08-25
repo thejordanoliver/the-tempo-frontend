@@ -26,7 +26,7 @@ export function TeamBackground({
   isPlayerScreen,
 }: TeamBackgroundProps) {
   const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   if (!(isTeamScreen || isPlayerScreen)) {
     return (

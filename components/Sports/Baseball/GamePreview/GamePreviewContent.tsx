@@ -118,17 +118,21 @@ export default function GamePreviewContent({
     >
       <View style={styles.bottomSheetScrollViewWrapper}>
         <MatchupPredictor
+          homeId={homeId}
           homeCode={homeCode}
           homeLogo={homeLogo}
+          homeHeaderLogo={homeLogo}
           homeChance={homeChance}
           homeColor={homeColor}
           awayCode={awayCode}
+          awayId={awayId}
           awayLogo={awayLogo}
+          awayHeaderLogo={awayLogo}
           awayChance={awayChance}
           awayColor={awayColor}
           size={180}
-          isDark
           state={state}
+          isDark
         />
 
         <LineScore

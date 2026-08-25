@@ -3928,6 +3928,7 @@ export const cfbTeams: Team[] = [
     id: 61,
     espnId: 197,
     name: "Oklahoma State",
+    shortName: "Oklahoma St",
     fullName: "Oklahoma State Cowboys",
     code: "OKST",
     color: "#000000",

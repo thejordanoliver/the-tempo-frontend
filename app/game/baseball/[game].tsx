@@ -17,7 +17,7 @@ import { CustomHeader } from "../../../components/CustomHeader";
 import GameHeader from "../../../components/Sports/Baseball/GameDetails/GameHeader";
 import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
-  FanPredictionVote,
+  FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
@@ -374,7 +374,7 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
 
-            <FanPredictionVote
+            <FanPrediction
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
@@ -388,12 +388,16 @@ export default function GameDetailsScreen(
             />
 
             <MatchupPredictor
+              homeId={homeId}
               homeCode={homeCode}
               homeLogo={homeLogo}
+              homeHeaderLogo={homeHeaderLogo}
               homeChance={homeChance}
               homeColor={homeColor}
+              awayId={awayId}
               awayCode={awayCode}
               awayLogo={awayLogo}
+              awayHeaderLogo={awayHeaderLogo}
               awayChance={awayChance}
               awayColor={awayColor}
               size={180}

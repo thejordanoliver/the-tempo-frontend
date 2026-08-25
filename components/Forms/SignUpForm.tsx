@@ -1,11 +1,11 @@
 // components/SignupSteps.tsx
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Colors, globalStyles } from "constants/styles";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import Button from "@/components/Buttons/Button";
+import { useFavoriteTeamsContext } from "@/contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useTeams as useLeagueTeams } from "hooks/LeagueHooks/useTeams";
 import {
   Animated,
   Easing,
@@ -18,8 +18,7 @@ import {
   View,
 } from "react-native";
 import { formStyles } from "styles/FormStyles";
-import type { LeagueType, WCBBTeam } from "types/types";
-import { getFavoriteTeamsList } from "utils/teams";
+import type { LeagueType } from "types/types";
 
 type SignupData = {
   fullName: string;
@@ -38,7 +37,7 @@ export type SignupStepsProps = {
   onChangeSignupData: (data: Partial<SignupData>) => void;
   onNextStep: () => void;
   onPreviousStep: () => void;
-  onToggleFavorite: (league: LeagueType, id: string) => void;
+  onToggleFavorite: (league: string, id: string) => void;
   onOpenImagePickerFor: (target: "profile" | "banner") => void;
   toggleLayout: () => void;
   isGridView: boolean;
@@ -57,8 +56,6 @@ export default function SignUpForm({
   onNextStep,
   onToggleFavorite,
   onOpenImagePickerFor,
-  isGridView,
-  fadeAnim,
   selectedTab,
   isSubmitting,
   onSubmit,
@@ -88,17 +85,22 @@ export default function SignUpForm({
   const totalSpacing = columnGap * (numColumns - 1);
   const itemWidth =
     (screenWidth - containerPadding - totalSpacing) / numColumns;
-  const [search, setSearch] = useState("");
 
   const isSignUp = selectedTab === "sign up";
   const showProgress = isSignUp && signupStep > 0;
-  const { teams: wcbbTeams, loading: wcbbTeamsLoading } =
-    useLeagueTeams("WCBB");
-  const favoriteTeamsList = getFavoriteTeamsList(wcbbTeams as WCBBTeam[]);
+
+  const { search, setSearch, isGridView, fadeAnim, filteredTeams, allTeams } =
+    useFavoriteTeamsContext();
+
   const findFavoriteTeam = (league: LeagueType | null, id: string) =>
-    favoriteTeamsList.find((team) => {
+    allTeams.find((team) => {
+      if (team.id == null) {
+        return false;
+      }
+
       const leagueMatches = league ? team.league === league : true;
-      return leagueMatches && String(team.id) === id;
+
+      return leagueMatches && String(team.id) === String(id);
     });
 
   return (
@@ -182,7 +184,7 @@ export default function SignUpForm({
             return (
               <View style={styles.sectionContainer}>
                 <FavoriteTeamsSelector
-                  teams={favoriteTeamsList}
+                  teams={filteredTeams}
                   favorites={signupData.favorites}
                   toggleFavorite={onToggleFavorite}
                   isGridView={isGridView}
@@ -190,7 +192,6 @@ export default function SignUpForm({
                   search={search}
                   itemWidth={itemWidth}
                   setSearch={setSearch}
-                  loading={wcbbTeamsLoading}
                 />
               </View>
             );

@@ -13,7 +13,6 @@ import { usePreferences } from "../contexts/PreferencesContext";
 import { useAuth } from "../hooks/UserHooks/useAuth";
 import { formStyles } from "../styles/FormStyles";
 import { AlertConfig } from "../types/alert";
-import { LeagueType } from "../types/types";
 
 const SIGNUP_HEADER_TITLES: Record<number, string> = {
   0: "Create Account",
@@ -207,7 +206,7 @@ export default function LoginScreen() {
     }
   };
 
-  const handleToggleFavorite = (league: LeagueType, id: string) => {
+  const handleToggleFavorite = (league: string, id: string) => {
     const key = `${league}:${id}`;
 
     setSignupData((prev) => {

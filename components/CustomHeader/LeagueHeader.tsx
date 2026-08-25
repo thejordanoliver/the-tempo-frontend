@@ -21,7 +21,7 @@ export function LeagueHeader({
   rotate,
   isDark,
 }: LeagueHeaderProps) {
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   const textStyle = {
     fontFamily: Fonts.REGULAR,

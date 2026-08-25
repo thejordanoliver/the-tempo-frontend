@@ -22,7 +22,7 @@ export function HeaderLeftActions({
   isDark,
   headerIconColor,
 }: HeaderLeftActionsProps) {
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   if (tabName === "Profile") {
     return onProfileMessages ? (

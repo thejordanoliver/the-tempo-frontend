@@ -1,6 +1,7 @@
 import {
   cfbConferences,
   getCFBConferenceLogo,
+  getCFBConferenceSelectionName,
 } from "@/constants/cfbConferences";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -8,17 +9,13 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import type { ImageSourcePropType } from "react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
 import { snapPoints } from "utils/modalUtils";
@@ -30,11 +27,23 @@ export type ConferenceListModalRef = {
 
 type ConferenceOption = {
   label: string;
-  value: number | string | null;
-  logo?: any;
+  value: number | string;
+  logo?: ImageSourcePropType | string | null;
 };
 
+type FBSConference = (typeof cfbConferences)[number] & { groupId: number };
+
+function isFBSConferenceOption(
+  conference: (typeof cfbConferences)[number],
+): conference is FBSConference {
+  return (
+    conference.groupId !== null &&
+    (conference.groupId === 80 || conference.parentGroupId === 80)
+  );
+}
+
 type Props = {
+  selectedConference: number | string | null;
   onSelect: (conference: number | string | null) => void;
   onOpen?: () => void;
   onClose?: () => void;
@@ -42,8 +51,10 @@ type Props = {
 };
 
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
-  function ConferenceListModal({ onSelect, onOpen, onClose }, ref) {
-    const [selected, setSelected] = useState<number | string | null>(null);
+  function ConferenceListModal(
+    { selectedConference, onSelect, onOpen, onClose },
+    ref,
+  ) {
     const { resolvedColorScheme } = usePreferences();
     const isDark = resolvedColorScheme === "dark";
     const styles = conferenceListModalStyles(isDark);
@@ -58,19 +69,17 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
     const conferences = useMemo<ConferenceOption[]>(() => {
       return [
         {
-          label: "All Conferences",
-          value: null,
-          logo: null,
-        },
-        {
           label: "Top 25",
           value: "top25",
-          logo: null,
+          logo: CFBLogo,
         },
         ...cfbConferences
-          .filter((conference) => conference.parentGroupId !== null)
+          .filter(isFBSConferenceOption)
           .map((conference) => ({
-            label: conference.shortName || conference.name,
+            label:
+              getCFBConferenceSelectionName(conference.groupId) ||
+              conference.shortName ||
+              conference.name,
             value: conference.groupId,
             logo: getCFBConferenceLogo(conference.groupId, isDark),
           })),
@@ -113,13 +122,12 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             contentContainerStyle={styles.contentContainerStyle}
           >
             {conferences.map((conf) => {
-              const isSelected = selected === conf.value;
+              const isSelected = selectedConference === conf.value;
 
               return (
                 <TouchableOpacity
                   key={`${conf.label}-${conf.value}`}
                   onPress={() => {
-                    setSelected(conf.value);
                     onSelect(conf.value);
                     modalRef.current?.close();
                   }}

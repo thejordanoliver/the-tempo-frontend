@@ -22,12 +22,13 @@ import CustomActivityIndicator from "../../../components/CustomActivityIndicator
 import { CustomHeader } from "../../../components/CustomHeader";
 import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
-  FanPredictionVote,
+  FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
   Highlights,
   LastFiveGames,
   LineScore,
+  MatchupPredictor,
   Officials,
 } from "../../../components/Sports/Basketball/GameDetails";
 import { Colors } from "../../../constants/styles";
@@ -189,7 +190,6 @@ export default function GameDetailsScreen(
         away: score.periodScores.map((p) => p.away.toString()),
       }
     : undefined;
-
   const period = formatPeriod({ period: score?.status.period, isSOCC: true });
   const clock = score?.status.displayClock ?? "00'";
   const lastPlay = score?.lastPlay;
@@ -197,7 +197,8 @@ export default function GameDetailsScreen(
   const highlights = details?.highlights ?? [];
   const shotMap = score?.shotMap ?? [];
   const keyEvents = score?.keyEvents ?? [];
-
+  const homeChance = Number(details?.predictor?.homeTeam?.gameProjection) || 0;
+  const awayChance = Number(details?.predictor?.awayTeam?.gameProjection) || 0;
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const { venue } = useVenue({ sport: "soccer", id: venueId });
@@ -332,7 +333,16 @@ export default function GameDetailsScreen(
               league={LEAGUE}
             />
 
-            <FanPredictionVote
+            <LineScore
+              linescore={lineScore}
+              homeCode={homeCode}
+              awayCode={awayCode}
+              isDark={isDark}
+              state={state}
+              league={"soccer"}
+            />
+
+            <FanPrediction
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}
@@ -345,13 +355,22 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <LineScore
-              linescore={lineScore}
+            <MatchupPredictor
+              homeId={homeId}
               homeCode={homeCode}
+              homeLogo={homeLogo}
+              homeHeaderLogo={homeHeaderLogo}
+              homeChance={homeChance}
+              homeColor={homeColor}
+              awayId={awayId}
               awayCode={awayCode}
+              awayLogo={awayLogo}
+              awayHeaderLogo={awayHeaderLogo}
+              awayChance={awayChance}
+              awayColor={awayColor}
+              size={180}
               isDark={isDark}
               state={state}
-              league={"soccer"}
             />
 
             <GameTeamStats

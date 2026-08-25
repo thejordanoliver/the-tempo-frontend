@@ -16,7 +16,7 @@ import MMAGamesList from "../../components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueTabs } from "../../hooks/LeagueHooks/useLeagueTabs";
-import { useMMAGames } from "../../hooks/MMAHooks/useMMAEvents";
+import { useMMAEvents } from "../../hooks/MMAHooks/useMMAEvents";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
@@ -68,7 +68,7 @@ export default function UFCLeagueScreen() {
     refreshing: refreshingGames,
     refreshGames,
     error,
-  } = useMMAGames({
+  } = useMMAEvents({
     league: "ufc",
     date: selectedEventDate,
     enabled: Boolean(selectedEventDate),

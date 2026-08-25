@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 type Team = {
@@ -181,6 +182,20 @@ export type Shot = {
   coordinates: ShotCoordinates;
 };
 
+export type Predictor = {
+  header: string;
+  homeTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+  awayTeam: {
+    id: string;
+    gameProjection: string;
+    teamChanceLoss: string;
+  };
+};
+
 /* -------------------------------------------------------------------------- */
 /* Score                                                                      */
 /* -------------------------------------------------------------------------- */
@@ -200,7 +215,7 @@ export type Score = {
   status: {
     id: string;
     name: "STATUS_SCHEDULED" | "STATUS_FULL_TIME" | "STATUS_FINAL_PEN";
-    state?:string | null;
+    state?: string | null;
     completed: boolean;
     gameStatusDescription: string;
     gameStatusDetail: string;
@@ -294,7 +309,7 @@ export type Details = {
   headline?: string | null;
 
   officials: any[];
-  predictor: any[];
+  predictor: Predictor;
   injuries: any[];
   highlights: any[];
   odds?: any;
@@ -363,8 +378,6 @@ export const useSoccerGameDetails = (
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
-
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const skipFetch = !enabled || !league || !gameId;
 
@@ -439,29 +452,29 @@ export const useSoccerGameDetails = (
     });
   }, [skipFetch, fetchDetails]);
 
-  useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+  useLiveSportsSubscription<GameDetailsResponse>({
+    enabled:
+      !skipFetch && pollLiveGames && pollIntervalMs > 0 && isLiveScore(score),
+    kind: "game",
+    payload: {
+      sport: "soccer",
+      league: league || "epl",
+      gameId: gameId || "",
+    },
+    onUpdate: (payload) => {
+      if (!payload?.score) return;
 
-    if (!pollLiveGames || !isLiveScore(score) || pollIntervalMs <= 0) {
-      return;
-    }
-
-    intervalRef.current = setInterval(() => {
-      void fetchDetails({
-        silent: true,
+      setScore({
+        ...payload.score,
+        shotMapAvailable: payload.score.shotMapAvailable === true,
+        shotMap: Array.isArray(payload.score.shotMap)
+          ? payload.score.shotMap
+          : [],
       });
-    }, pollIntervalMs);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [score, pollLiveGames, pollIntervalMs, fetchDetails]);
+      setDetails(payload.details);
+      setLastRefresh(new Date());
+    },
+  });
 
   const refresh = useCallback(() => {
     if (!skipFetch) {

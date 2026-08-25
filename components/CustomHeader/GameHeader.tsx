@@ -21,6 +21,7 @@ type GameHeaderProps = {
   racingLeague?: RacingLeague | null;
   eventTitle?: string;
   eventLogo?: HeaderImageSource;
+  isDark: boolean;
 };
 
 export function GameHeader({
@@ -34,12 +35,9 @@ export function GameHeader({
   homeColor,
   awayColor,
   isNeutralSite,
-  isEvent,
-  racingLeague,
-  eventTitle,
-  eventLogo,
+  isDark,
 }: GameHeaderProps) {
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
   const dividerText = isNeutralSite ? "vs" : "@";
 
   const scaleHome = useRef(new Animated.Value(0.6)).current;

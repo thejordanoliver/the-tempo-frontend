@@ -1,4 +1,7 @@
-import { cfbConferences } from "@/constants/cfbConferences";
+import {
+  cfbConferences,
+  resolveCFBConferenceSelection,
+} from "@/constants/cfbConferences";
 import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
 import { HeaderTitle } from "@react-navigation/elements";
@@ -23,6 +26,7 @@ import { ConferenceBackground } from "./ConferenceBackground";
 import { GameHeader } from "./GameHeader";
 import { HeaderLeftActions } from "./HeaderLeftActions";
 import { HeaderRightActions } from "./HeaderRightActions";
+import { HomeHeader } from "./HomeHeader";
 import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
 import { resolveRacingLeague } from "./racingConfig";
@@ -39,16 +43,20 @@ export function CustomHeader({
   tabName,
   onLogout,
   onSettings,
+  onEdit,
   onMessages,
   onCreateMessage,
   onBack,
   onOpenLeagueModal,
+  onHomeTabPress,
+  homeScrollProgress,
   onToggleLayout,
   isGrid,
   teamColor,
   isTeamScreen = false,
   onSearchToggle,
   onNotificationsCenter,
+  unreadNotificationCount,
   onOpenThemesSettings,
   onAddWidget,
   teamId,
@@ -80,12 +88,13 @@ export function CustomHeader({
   messageFullName,
   messageIsOnline,
   messageIsVerified,
+  homeSelectedTab = "scores",
 }: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
 
@@ -107,6 +116,11 @@ export function CustomHeader({
     onSettings?.();
   }, [closeProfileMenu, onSettings]);
 
+  const handleEditProfile = useCallback(() => {
+    closeProfileMenu();
+    onEdit?.();
+  }, [closeProfileMenu, onEdit]);
+
   const handleProfileLogout = useCallback(() => {
     closeProfileMenu();
     onLogout?.();
@@ -123,15 +137,20 @@ export function CustomHeader({
       return null;
     }
 
+    if (tabName === "College Football") {
+      return resolveCFBConferenceSelection(selectedConferenceName) ?? null;
+    }
+
     return (
       cfbConferences.find(
         (conference) =>
-          conference.shortName === selectedConferenceName ||
-          conference.name === selectedConferenceName ||
-          String(conference.groupId) === String(selectedConferenceName),
+          conference.uid !== "top25" &&
+          (conference.shortName === selectedConferenceName ||
+            conference.name === selectedConferenceName ||
+            String(conference.groupId) === String(selectedConferenceName)),
       ) ?? null
     );
-  }, [selectedConferenceName]);
+  }, [selectedConferenceName, tabName]);
 
   const conferenceLogo = selectedConference?.logoLight ?? null;
 
@@ -299,7 +318,9 @@ export function CustomHeader({
         overflow: "visible",
       }}
     >
-      {tabName === "League" ? (
+      {tabName === "College Football" ||
+      tabName === "Men's College Basketball" ||
+      tabName === "Women's College Basketball" ? (
         <ConferenceBackground
           insets={insets}
           isDark={isDark}
@@ -355,6 +376,7 @@ export function CustomHeader({
             racingLeague={resolvedRacingLeague}
             eventTitle={title}
             eventLogo={logo ?? homeLogo}
+            isDark={false}
           />
         ) : isConferenceSelectorTab(tabName) ? (
           <LeagueHeader
@@ -373,6 +395,13 @@ export function CustomHeader({
             isOnline={messageIsOnline}
             isVerified={messageIsVerified}
             isDark={isDark}
+          />
+        ) : tabName === "Home" ? (
+          <HomeHeader
+            isDark={isDark}
+            selectedTab={homeSelectedTab}
+            onTabPress={onHomeTabPress ?? (() => undefined)}
+            scrollProgress={homeScrollProgress}
           />
         ) : (
           <View style={styles.defaultHeaderTitleContainer}>
@@ -395,9 +424,11 @@ export function CustomHeader({
           profileMenuVisible={profileMenuVisible}
           onToggleProfileMenu={toggleProfileMenu}
           onProfileSettings={handleProfileSettings}
+          onEditProfile={handleEditProfile}
           onProfileLogout={handleProfileLogout}
           onSearchToggle={onSearchToggle}
           onNotificationsCenter={onNotificationsCenter}
+          unreadNotificationCount={unreadNotificationCount}
           onOpenThemesSettings={onOpenThemesSettings}
           isMessagesListScreen={isMessagesListScreen}
           onCreateMessage={onCreateMessage}

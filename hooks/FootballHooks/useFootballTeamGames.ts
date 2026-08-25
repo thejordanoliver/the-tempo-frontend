@@ -1,6 +1,7 @@
 import { FootballGame } from "@/types/football/football";
 import { isGameLive } from "@/utils/games";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
 type FetchTeamGamesOptions = {
@@ -102,15 +103,20 @@ export function useFootballTeamGames(
     return games.some(isGameLive);
   }, [games]);
 
-  useEffect(() => {
-    if (!hasLiveGame) return;
-
-    const interval = setInterval(() => {
-      fetchGames({ silent: true });
-    }, 10_000);
-
-    return () => clearInterval(interval);
-  }, [hasLiveGame, fetchGames]);
+  useLiveSportsSubscription<FootballTeamGamesResponse>({
+    enabled: Boolean(teamId && league && hasLiveGame),
+    kind: "scoreboard",
+    payload: {
+      sport: "football",
+      league,
+      feed: "teamSchedule",
+      teamId: teamId || "",
+      season,
+    },
+    onUpdate: (payload) => {
+      setGames(Array.isArray(payload?.games) ? payload.games : []);
+    },
+  });
 
   const refreshGames = useCallback(async () => {
     await fetchGames({ forceRefresh: true });

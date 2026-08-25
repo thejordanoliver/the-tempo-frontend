@@ -24,7 +24,7 @@ export function ConferenceBackground({
   isConferenceScreen,
 }: ConferenceBackgroundProps) {
   const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   if (!isConferenceScreen) {
     return (

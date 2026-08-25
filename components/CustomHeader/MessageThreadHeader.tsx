@@ -21,7 +21,7 @@ export function MessageThreadHeader({
   isVerified,
   isDark,
 }: MessageThreadHeaderProps) {
-  const styles = customHeaderStyles;
+  const styles = customHeaderStyles(isDark);
 
   const avatarSource = resolveImage(avatar) ?? {
     uri: FALLBACK_MESSAGE_AVATAR,
