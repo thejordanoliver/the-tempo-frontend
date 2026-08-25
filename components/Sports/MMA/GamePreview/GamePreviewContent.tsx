@@ -1,7 +1,7 @@
 import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
-import MatchupComparison from "../GameDetails/MatchupComparison/MatchupComparison";
+import MatchupComparison from "../GameDetails/MatchupComparison";
 
 type GamePreviewContentProps = {
   firstFighterId: number;

@@ -1,6 +1,5 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { Colors, Fonts } from "@/constants/styles";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
 import {
@@ -17,9 +16,7 @@ import {
 export const MATCHUP_COMPARISON_VARIANTS = [
   "corner-cards",
   "tale-of-tape",
-  "stat-grid",
   "spotlight",
-  "meter-board",
 ] as const;
 
 export type MatchupComparisonVariant =
@@ -110,40 +107,6 @@ const getFighterId = (id: number | string | null | undefined) => {
   return fighterId;
 };
 
-const getNumericValue = (value: ComparisonValue) => {
-  const text = formatComparisonValue(value).replace(/,/g, "");
-  const heightMatch = text.match(/(\d+)\s*'\s*(\d+)?/);
-
-  if (heightMatch) {
-    const feet = Number(heightMatch[1]);
-    const inches = Number(heightMatch[2] ?? 0);
-
-    return feet * 12 + inches;
-  }
-
-  const numberMatch = text.match(/-?\d+(\.\d+)?/);
-
-  if (!numberMatch) return null;
-
-  return Number(numberMatch[0]);
-};
-
-const getMeterShare = (value: ComparisonValue, otherValue: ComparisonValue) => {
-  const currentValue = getNumericValue(value);
-  const opponentValue = getNumericValue(otherValue);
-
-  if (
-    currentValue === null ||
-    opponentValue === null ||
-    currentValue + opponentValue <= 0
-  )
-    return 0.5;
-
-  const share = currentValue / (currentValue + opponentValue);
-
-  return Math.min(Math.max(share, 0.18), 0.82);
-};
-
 export default function MatchupComparison({
   firstFighterId,
   secondFighterId,
@@ -172,10 +135,11 @@ export default function MatchupComparison({
   secondFighterIsChampion,
   firstFighterIsChampion,
   isDark,
-  variant = "corner-cards",
+  variant = "spotlight",
 }: Props) {
   const router = useRouter();
   const styles = matchupComparisonStyles(isDark);
+
   const leftFighter: FighterViewModel = {
     id: secondFighterId,
     stanceImage: secondFighterStance,
@@ -191,6 +155,7 @@ export default function MatchupComparison({
     isWinner: secondFighterIsWinner,
     isChampion: secondFighterIsChampion,
   };
+
   const rightFighter: FighterViewModel = {
     id: firstFighterId,
     stanceImage: firstFighterStance,
@@ -279,8 +244,6 @@ export default function MatchupComparison({
   const renderStanceImage = (
     fighter: FighterViewModel,
     imageStyle: StyleProp<ImageStyle>,
-    fallbackStyle: StyleProp<ViewStyle>,
-    iconSize: number,
   ) => {
     if (hasImageUri(fighter.stanceImage)) {
       return (
@@ -292,16 +255,6 @@ export default function MatchupComparison({
         />
       );
     }
-
-    return (
-      <View style={[fallbackStyle, styles.stanceFallback]}>
-        <Ionicons
-          name="person"
-          size={iconSize}
-          color={isDark ? Colors.lightGray : Colors.darkGray}
-        />
-      </View>
-    );
   };
 
   const renderFlag = (fighter: FighterViewModel) => {
@@ -345,20 +298,10 @@ export default function MatchupComparison({
     );
   };
 
-  const getAlignmentTextStyle = (alignment: "left" | "center" | "right") => {
-    if (alignment === "left") return styles.leftText;
-    if (alignment === "right") return styles.rightText;
-
-    return styles.centerText;
-  };
-
-  const renderNameBlock = (
-    fighter: FighterViewModel,
-    alignment: "left" | "center" | "right" = "center",
-  ) => (
+  const renderNameBlock = (fighter: FighterViewModel) => (
     <View style={styles.nameBlock}>
       <Text
-        style={[styles.fighterName, getAlignmentTextStyle(alignment)]}
+        style={styles.fighterName}
         numberOfLines={2}
         adjustsFontSizeToFit
         minimumFontScale={0.76}
@@ -379,112 +322,52 @@ export default function MatchupComparison({
     </View>
   );
 
-  const renderCornerFighter = (
-    fighter: FighterViewModel,
-    alignment: "left" | "right",
-  ) =>
+  const renderCornerFighter = (fighter: FighterViewModel) =>
     renderFighterPressable(
       fighter,
       <>
         {renderBadges(fighter)}
         <View style={styles.cornerImageFrame}>
-          {renderStanceImage(
-            fighter,
-            styles.cornerImage,
-            styles.cornerImageFrame,
-            36,
-          )}
+          {renderStanceImage(fighter, styles.cornerImage)}
         </View>
-        {renderNameBlock(fighter, alignment)}
+        {renderNameBlock(fighter)}
       </>,
       styles.cornerFighterCard,
     );
 
-  const renderTapeFighter = (
-    fighter: FighterViewModel,
-    alignment: "left" | "right",
-  ) =>
+  const renderTapeFighter = (fighter: FighterViewModel) =>
     renderFighterPressable(
       fighter,
       <>
         <View style={styles.tapeImageFrame}>
-          {renderStanceImage(
-            fighter,
-            styles.tapeImage,
-            styles.tapeImageFrame,
-            48,
-          )}
+          {renderStanceImage(fighter, styles.tapeImage)}
         </View>
         {renderBadges(fighter)}
-        {renderNameBlock(fighter, alignment)}
+        {renderNameBlock(fighter)}
       </>,
       styles.tapeFighterCard,
     );
 
-  const renderSpotlightFighter = (
-    fighter: FighterViewModel,
-    alignment: "left" | "right",
-  ) =>
+  const renderSpotlightFighter = (fighter: FighterViewModel) =>
     renderFighterPressable(
       fighter,
       <>
         <View style={styles.spotlightImageFrame}>
-          {renderStanceImage(
-            fighter,
-            styles.spotlightImage,
-            styles.spotlightImageFrame,
-            58,
-          )}
+          {renderStanceImage(fighter, styles.spotlightImage)}
         </View>
         <View style={styles.spotlightNamePlate}>
           {renderBadges(fighter)}
-          {renderNameBlock(fighter, alignment)}
+          {renderNameBlock(fighter)}
         </View>
       </>,
       styles.spotlightFighter,
     );
 
-  const renderIdentityPill = (
-    fighter: FighterViewModel,
-    alignment: "left" | "right",
-  ) =>
-    renderFighterPressable(
-      fighter,
-      <View
-        style={[
-          styles.identityPillInner,
-          alignment === "right" && styles.identityPillRight,
-        ]}
-      >
-        {renderFlag(fighter)}
-        <View style={styles.identityTextBlock}>
-          <Text
-            style={[styles.identityName, getAlignmentTextStyle(alignment)]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={0.78}
-          >
-            {fighter.name}
-          </Text>
-          <Text
-            style={[styles.identityRecord, getAlignmentTextStyle(alignment)]}
-          >
-            {fighter.record}
-          </Text>
-        </View>
-      </View>,
-      styles.identityPill,
-    );
-
-  const renderValue = (
-    value: ComparisonValue,
-    fighter: FighterViewModel,
-    alignment: "left" | "center" | "right" = "center",
-  ) => (
+  const renderValue = (value: ComparisonValue, fighter: FighterViewModel) => (
     <Text
       style={[
         styles.valueText,
-        getAlignmentTextStyle(alignment),
+        ,
         fighter.isWinner && styles.winnerText,
         fighter.isChampion && styles.championText,
       ]}
@@ -504,7 +387,7 @@ export default function MatchupComparison({
           style={[styles.statRow, index === rows.length - 1 && styles.lastRow]}
         >
           <View style={styles.statValueCell}>
-            {renderValue(row.leftValue, leftFighter, "left")}
+            {renderValue(row.leftValue, leftFighter)}
           </View>
           <View style={styles.statLabelCell}>
             <Text
@@ -517,101 +400,19 @@ export default function MatchupComparison({
             </Text>
           </View>
           <View style={styles.statValueCell}>
-            {renderValue(row.rightValue, rightFighter, "right")}
+            {renderValue(row.rightValue, rightFighter)}
           </View>
         </View>
       ))}
-    </View>
-  );
-
-  const renderCompactStatRail = () => (
-    <View style={styles.compactStatRail}>
-      {rows.map((row) => (
-        <View key={row.label} style={styles.compactStatRow}>
-          {renderValue(row.leftValue, leftFighter)}
-          <Text style={styles.compactStatLabel}>{row.label}</Text>
-          {renderValue(row.rightValue, rightFighter)}
-        </View>
-      ))}
-    </View>
-  );
-
-  const renderStatGrid = () => (
-    <View style={styles.grid}>
-      {rows.map((row) => (
-        <View key={row.label} style={styles.gridCard}>
-          <Text style={styles.gridLabel}>{row.label}</Text>
-          <View style={styles.gridValues}>
-            <View style={styles.gridValueCell}>
-              {renderValue(row.leftValue, leftFighter)}
-            </View>
-            <View style={styles.gridDivider} />
-            <View style={styles.gridValueCell}>
-              {renderValue(row.rightValue, rightFighter)}
-            </View>
-          </View>
-        </View>
-      ))}
-    </View>
-  );
-
-  const renderMeterRows = () => (
-    <View style={styles.meterList}>
-      {rows.map((row) => {
-        const leftShare = getMeterShare(row.leftValue, row.rightValue);
-        const rightShare = getMeterShare(row.rightValue, row.leftValue);
-
-        return (
-          <View key={row.label} style={styles.meterRow}>
-            <View style={styles.meterRowHeader}>
-              <Text style={styles.meterLabel}>{row.label}</Text>
-            </View>
-
-            <View style={styles.meterValues}>
-              <View style={styles.meterValueCell}>
-                {renderValue(row.leftValue, leftFighter, "left")}
-              </View>
-              <View style={styles.meterValueCell}>
-                {renderValue(row.rightValue, rightFighter, "right")}
-              </View>
-            </View>
-
-            <View style={styles.meterTracks}>
-              <View style={styles.meterTrack}>
-                <View
-                  style={[
-                    styles.meterFill,
-                    styles.leftMeterFill,
-                    { flex: leftShare },
-                  ]}
-                />
-                <View style={{ flex: 1 - leftShare }} />
-              </View>
-              <View style={styles.meterTrack}>
-                <View
-                  style={[
-                    styles.meterFill,
-                    styles.rightMeterFill,
-                    { flex: rightShare },
-                  ]}
-                />
-                <View style={{ flex: 1 - rightShare }} />
-              </View>
-            </View>
-          </View>
-        );
-      })}
     </View>
   );
 
   const renderCornerCards = () => (
     <View style={styles.wrapper}>
       <View style={styles.cornerHeader}>
-        {renderCornerFighter(leftFighter, "left")}
-        <View style={styles.vsStack}>
-          <Text style={styles.vsText}>VS</Text>
-        </View>
-        {renderCornerFighter(rightFighter, "right")}
+        {renderCornerFighter(leftFighter)}
+
+        {renderCornerFighter(rightFighter)}
       </View>
       {renderFullStatRows()}
     </View>
@@ -620,46 +421,19 @@ export default function MatchupComparison({
   const renderTaleOfTape = () => (
     <View style={[styles.wrapper, styles.tapeWrapper]}>
       <View style={styles.tapeContainer}>
-        {renderTapeFighter(leftFighter, "left")}
-        {renderCompactStatRail()}
-        {renderTapeFighter(rightFighter, "right")}
+        {renderTapeFighter(leftFighter)}
+        {renderTapeFighter(rightFighter)}
       </View>
-    </View>
-  );
-
-  const renderStatGridDesign = () => (
-    <View style={[styles.wrapper, styles.gridWrapper]}>
-      <View style={styles.identityRow}>
-        {renderIdentityPill(leftFighter, "left")}
-        <View style={styles.identityVs}>
-          <Text style={styles.identityVsText}>VS</Text>
-        </View>
-        {renderIdentityPill(rightFighter, "right")}
-      </View>
-      {renderStatGrid()}
     </View>
   );
 
   const renderSpotlight = () => (
-    <View style={[styles.wrapper, styles.spotlightWrapper]}>
+    <View style={styles.wrapper}>
       <View style={styles.spotlightStage}>
-        {renderSpotlightFighter(leftFighter, "left")}
-        <View style={styles.spotlightVsBadge}>
-          <Text style={styles.spotlightVsText}>VS</Text>
-        </View>
-        {renderSpotlightFighter(rightFighter, "right")}
+        {renderSpotlightFighter(leftFighter)}
+        {renderSpotlightFighter(rightFighter)}
       </View>
       {renderFullStatRows()}
-    </View>
-  );
-
-  const renderMeterBoard = () => (
-    <View style={[styles.wrapper, styles.meterWrapper]}>
-      <View style={styles.meterHeader}>
-        {renderIdentityPill(leftFighter, "left")}
-        {renderIdentityPill(rightFighter, "right")}
-      </View>
-      {renderMeterRows()}
     </View>
   );
 
@@ -667,12 +441,8 @@ export default function MatchupComparison({
     switch (variant) {
       case "tale-of-tape":
         return renderTaleOfTape();
-      case "stat-grid":
-        return renderStatGridDesign();
       case "spotlight":
         return renderSpotlight();
-      case "meter-board":
-        return renderMeterBoard();
       case "corner-cards":
       default:
         return renderCornerCards();
@@ -692,15 +462,10 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       width: "100%",
     },
     wrapper: {
-      gap: 10,
       width: "100%",
-      padding: 10,
       borderWidth: 1,
       borderColor: Colors.midTone,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
     },
     badgesRow: {
       flexDirection: "row",
@@ -758,12 +523,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       gap: 6,
       minWidth: 0,
       padding: 8,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
     },
     cornerImageFrame: {
       alignItems: "center",
@@ -774,27 +533,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     cornerImage: {
       width: "100%",
       height: "100%",
-    },
-    vsStack: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 40,
-    },
-    vsText: {
-      minWidth: 34,
-      minHeight: 34,
-      paddingTop: 7,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-      overflow: "hidden",
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
     },
     nameBlock: {
       alignItems: "center",
@@ -830,18 +568,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
-    stanceFallback: {
-      alignItems: "center",
-      justifyContent: "center",
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? Colors.dark.transparentWhite
-        : Colors.light.transparentBlack,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
-    },
+
     statList: {
       width: "100%",
       borderWidth: StyleSheet.hairlineWidth,
@@ -859,9 +586,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       borderBottomColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
     },
     lastRow: {
       borderBottomWidth: 0,
@@ -909,17 +633,9 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     championText: {
       fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.yellow : Colors.light.gold,
+      color: isDark ? Colors.dark.gold : Colors.light.gold,
     },
-    leftText: {
-      textAlign: "left",
-    },
-    centerText: {
-      textAlign: "center",
-    },
-    rightText: {
-      textAlign: "right",
-    },
+
     tapeWrapper: {
       padding: 8,
     },
@@ -956,148 +672,10 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       width: "100%",
       height: "100%",
     },
-    compactStatRail: {
-      flex: 1.08,
-      justifyContent: "center",
-      gap: 4,
-      minWidth: 0,
-    },
-    compactStatRow: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 35,
-      paddingHorizontal: 4,
-      paddingVertical: 3,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? Colors.dark.transparentWhite
-        : Colors.transparentBlack,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-    },
-    compactStatLabel: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 10,
-      lineHeight: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    gridWrapper: {
-      gap: 9,
-    },
-    identityRow: {
-      flexDirection: "row",
-      alignItems: "stretch",
-      gap: 7,
-      width: "100%",
-      minHeight: 48,
-    },
-    identityPill: {
-      flex: 1,
-      justifyContent: "center",
-      minWidth: 0,
-      paddingHorizontal: 8,
-      paddingVertical: 7,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-    },
-    identityPillInner: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 6,
-      width: "100%",
-    },
-    identityPillRight: {
-      flexDirection: "row-reverse",
-    },
-    identityTextBlock: {
-      flex: 1,
-      gap: 1,
-      minWidth: 0,
-    },
-    identityName: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      lineHeight: 16,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-    },
-    identityRecord: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 11,
-      lineHeight: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    identityVs: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 34,
-    },
-    identityVsText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 8,
-      width: "100%",
-    },
-    gridCard: {
-      justifyContent: "space-between",
-      gap: 7,
-      width: "48.7%",
-      minHeight: 72,
-      padding: 8,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? Colors.dark.transparentWhite
-        : Colors.transparentBlack,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-    },
-    gridLabel: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      lineHeight: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    gridValues: {
-      flexDirection: "row",
-      alignItems: "stretch",
-      minHeight: 34,
-    },
-    gridValueCell: {
-      flex: 1,
-      justifyContent: "center",
-      minWidth: 0,
-      paddingHorizontal: 3,
-    },
-    gridDivider: {
-      width: StyleSheet.hairlineWidth,
-      backgroundColor: isDark
-        ? Colors.dark.transparentWhite
-        : Colors.transparentBlack,
-    },
-    spotlightWrapper: {
-      gap: 10,
-    },
+
     spotlightStage: {
       flexDirection: "row",
       alignItems: "stretch",
-      gap: 8,
       minHeight: 220,
     },
     spotlightFighter: {
@@ -1105,10 +683,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       minWidth: 0,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
       overflow: "hidden",
     },
     spotlightImageFrame: {
@@ -1125,7 +699,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     },
     spotlightNamePlate: {
       justifyContent: "center",
-      gap: 4,
       minHeight: 68,
       paddingHorizontal: 8,
       paddingVertical: 8,
@@ -1133,101 +706,5 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       borderTopColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-    },
-    spotlightVsBadge: {
-      position: "absolute",
-      top: 72,
-      left: "50%",
-      zIndex: 2,
-      alignItems: "center",
-      justifyContent: "center",
-      width: 42,
-      height: 42,
-      marginLeft: -21,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.background
-        : Colors.light.background,
-    },
-    spotlightVsText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-    },
-    meterWrapper: {
-      gap: 9,
-    },
-    meterHeader: {
-      flexDirection: "row",
-      alignItems: "stretch",
-      gap: 8,
-      width: "100%",
-      minHeight: 52,
-    },
-    meterList: {
-      gap: 8,
-      width: "100%",
-    },
-    meterRow: {
-      gap: 5,
-      minHeight: 68,
-      padding: 8,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark
-        ? Colors.dark.transparentWhite
-        : Colors.transparentBlack,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-    },
-    meterRowHeader: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    meterLabel: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      lineHeight: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    meterValues: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-      minHeight: 20,
-    },
-    meterValueCell: {
-      flex: 1,
-      minWidth: 0,
-    },
-    meterTracks: {
-      flexDirection: "row",
-      gap: 8,
-    },
-    meterTrack: {
-      flex: 1,
-      flexDirection: "row",
-      height: 5,
-      borderRadius: 4,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
-      overflow: "hidden",
-    },
-    meterFill: {
-      height: "100%",
-      borderRadius: 4,
-    },
-    leftMeterFill: {
-      backgroundColor: isDark ? Colors.dark.transparentWhite : Colors.darkGray,
-    },
-    rightMeterFill: {
-      backgroundColor: isDark ? Colors.dark.transparentWhite : Colors.darkGray,
     },
   });

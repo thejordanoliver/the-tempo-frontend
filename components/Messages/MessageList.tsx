@@ -27,6 +27,7 @@ type Props = {
   search: string;
   isLoading?: boolean;
   isRefreshing?: boolean;
+  isLoadingMore?: boolean;
   error?: string | null;
   shouldShowPinned: boolean;
   shouldShowEmptyState: boolean;
@@ -36,6 +37,8 @@ type Props = {
   onTogglePinConversation: (item: MessageItem) => void;
   onSwipeableOpen: (id: string, close: () => void) => void;
   onRefresh: () => void;
+  onLoadMore: () => void;
+  hasMore: boolean;
   onRetry: () => void;
 };
 
@@ -45,6 +48,7 @@ export default function MessageList({
   search,
   isLoading = false,
   isRefreshing = false,
+  isLoadingMore = false,
   error = null,
   shouldShowPinned,
   shouldShowEmptyState,
@@ -54,6 +58,8 @@ export default function MessageList({
   onTogglePinConversation,
   onSwipeableOpen,
   onRefresh,
+  onLoadMore,
+  hasMore,
   onRetry,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
@@ -144,6 +150,16 @@ export default function MessageList({
     styles.emptyTitle,
   ]);
 
+  const renderFooter = useCallback(() => {
+    if (!isLoadingMore) return null;
+
+    return (
+      <View style={styles.footerLoader}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }, [isLoadingMore, styles.footerLoader]);
+
   if (isLoading) {
     return (
       <View style={global.emptyContainer}>
@@ -192,11 +208,14 @@ export default function MessageList({
         renderItem={renderItem}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyState}
+        ListFooterComponent={renderFooter}
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         refreshing={isRefreshing}
         onRefresh={onRefresh}
+        onEndReached={hasMore ? onLoadMore : undefined}
+        onEndReachedThreshold={0.45}
         contentContainerStyle={[
           styles.contentContainer,
           shouldShowEmptyState && styles.emptyContentContainer,
@@ -234,6 +253,10 @@ const messageListStyles = (isDark: boolean) =>
       justifyContent: "center",
       paddingHorizontal: 24,
       paddingBottom: 80,
+    },
+
+    footerLoader: {
+      paddingVertical: 18,
     },
 
     emptyIconContainer: {

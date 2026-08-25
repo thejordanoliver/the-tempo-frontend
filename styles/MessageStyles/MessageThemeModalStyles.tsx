@@ -40,13 +40,14 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
 
     header: {
       flexDirection: "row",
-      alignItems: "flex-start",
-      justifyContent: "space-between",
+      alignItems: "center",
+      justifyContent: "center",
       gap: 12,
       marginBottom: 14,
     },
 
     title: {
+      textAlign: "center",
       fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
@@ -58,14 +59,6 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textTransform: "uppercase",
-    },
-
-    closeButton: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 36,
-      height: 36,
-      borderRadius: 18,
     },
 
     scrollContent: {
@@ -207,28 +200,16 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
-    actions: {
+    buttonContainer: {
       flexDirection: "row",
-      gap: 10,
-      padding: 12,
-    },
-
-    actionButton: {
-      flex: 1,
       alignItems: "center",
-      justifyContent: "center",
-      minHeight: 44,
-      borderRadius: 8,
+      gap: 12,
+      marginVertical: 12,
+      paddingHorizontal: 12,
     },
 
-    cancelButton: {
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      backgroundColor: "transparent",
-    },
-
-    saveButton: {
-      backgroundColor: isDark ? Colors.white : Colors.black,
+    button: {
+      flex: 1,
     },
 
     actionButtonDisabled: {

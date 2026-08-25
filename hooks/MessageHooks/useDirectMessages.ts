@@ -1,23 +1,14 @@
+import { useMessagesContext } from "contexts/MessagesContext";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import {
-  getConversation,
-  getMessages,
-  markConversationRead,
-  normalizeConversation,
-  normalizeMessage,
-  sendMessageRest,
   updateConversationThemePreference,
 } from "services/messagesApi";
 import {
-  emitConversationRead,
-  emitMessageSend,
   emitTypingStart,
   emitTypingStop,
   getMessagesSocket,
 } from "services/messagesSocket";
 import {
-  DirectMessageItem,
-  MessageItem,
   MessageThemePreference,
   SendDirectMessagePayload,
 } from "types/messages";
@@ -27,52 +18,23 @@ import {
   resolveMessageAccent,
 } from "utils/messageTheme";
 
-const createClientId = () =>
-  `dm-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-
-const formatTimestamp = (date: Date) =>
-  date.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
-
-const upsertMessage = (
-  messages: DirectMessageItem[],
-  nextMessage: DirectMessageItem,
-): DirectMessageItem[] => {
-  const byClientId =
-    nextMessage.clientId &&
-    messages.findIndex((message) => message.clientId === nextMessage.clientId);
-
-  if (typeof byClientId === "number" && byClientId >= 0) {
-    return messages.map((message, index) =>
-      index === byClientId
-        ? { ...nextMessage, status: "sent" as const }
-        : message,
-    );
-  }
-
-  if (messages.some((message) => message.id === nextMessage.id)) {
-    return messages.map((message) =>
-      message.id === nextMessage.id ? { ...message, ...nextMessage } : message,
-    );
-  }
-
-  return [...messages, nextMessage];
-};
-
-const getSocketAckMessage = (response: any) =>
-  response?.message ?? response?.data?.message ?? response?.data ?? response;
-
 export const useDirectMessages = (conversationId: string) => {
-  const { token, user } = useAuth();
+  const { token } = useAuth();
+  const {
+    getConversationById,
+    getMessageState,
+    loadConversationMessages,
+    loadOlderMessages,
+    sendDirectMessage,
+    markRead,
+    upsertConversation,
+  } = useMessagesContext();
 
-  const [conversation, setConversation] = useState<MessageItem | null>(null);
-  const [messages, setMessages] = useState<DirectMessageItem[]>([]);
+  const conversation = getConversationById(conversationId);
+  const messageState = getMessageState(conversationId);
+
   const [messageThemePreference, setMessageThemePreference] =
     useState<MessageThemePreference>(DEFAULT_MESSAGE_THEME_PREFERENCE);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [
     isUpdatingMessageThemePreference,
@@ -82,6 +44,7 @@ export const useDirectMessages = (conversationId: string) => {
 
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingRef = useRef(false);
+  const didRequestInitialLoadRef = useRef<Record<string, boolean>>({});
 
   const socket = useMemo(() => getMessagesSocket(token), [token]);
   const messageAccent = useMemo(
@@ -89,51 +52,48 @@ export const useDirectMessages = (conversationId: string) => {
     [messageThemePreference],
   );
 
-  const markRead = useCallback(async () => {
+  useEffect(() => {
+    setMessageThemePreference(
+      conversation?.messageThemePreference ??
+        DEFAULT_MESSAGE_THEME_PREFERENCE,
+    );
+  }, [conversation?.messageThemePreference]);
+
+  useEffect(() => {
     if (!conversationId) return;
 
-    emitConversationRead(conversationId);
+    const hasCachedMessages = messageState.messages.length > 0;
+    const hasRequested = didRequestInitialLoadRef.current[conversationId];
 
-    try {
-      await markConversationRead(conversationId);
-    } catch {
-      // Read state is best-effort and will be corrected by later refreshes.
-    }
-  }, [conversationId]);
+    if (hasRequested) return;
 
-  const loadMessages = useCallback(async () => {
-    if (!conversationId) return;
+    didRequestInitialLoadRef.current[conversationId] = true;
 
-    setIsLoading(true);
-    setError(null);
+    void loadConversationMessages(conversationId, {
+      background: hasCachedMessages,
+    }).then(() => {
+      void markRead(conversationId);
+    });
+  }, [
+    conversationId,
+    loadConversationMessages,
+    markRead,
+    messageState.messages.length,
+  ]);
 
-    try {
-      const [nextMessages, nextConversation] = await Promise.all([
-        getMessages(conversationId),
-        getConversation(conversationId, user?.id),
-      ]);
+  useEffect(() => {
+    if (!conversationId || messageState.messages.length === 0) return;
 
-      setMessages(nextMessages);
-      setConversation(nextConversation);
-      setMessageThemePreference(
-        nextConversation?.messageThemePreference ??
-          DEFAULT_MESSAGE_THEME_PREFERENCE,
-      );
-      await markRead();
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.error ??
-          err.message ??
-          "Messages failed to load.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [conversationId, markRead, user?.id]);
+    void markRead(conversationId);
+  }, [conversationId, markRead, messageState.messages.length]);
 
   const refresh = useCallback(() => {
-    loadMessages();
-  }, [loadMessages]);
+    return loadConversationMessages(conversationId, { background: true });
+  }, [conversationId, loadConversationMessages]);
+
+  const loadOlder = useCallback(() => {
+    return loadOlderMessages(conversationId);
+  }, [conversationId, loadOlderMessages]);
 
   const stopTyping = useCallback(() => {
     if (!conversationId || !isTypingRef.current) return;
@@ -167,94 +127,22 @@ export const useDirectMessages = (conversationId: string) => {
 
   const sendMessage = useCallback(
     async (payload: Omit<SendDirectMessagePayload, "clientId">) => {
-      const text = payload.text?.trim() ?? "";
-      const attachment = payload.attachment ?? null;
-
-      if (!conversationId || (!text && !attachment)) return false;
-
-      if (
-        attachment?.type === "image" &&
-        !/^https?:\/\//i.test(attachment.uri)
-      ) {
-        setSendError("Image uploads are not available yet.");
-        return false;
-      }
-
-      const clientId = createClientId();
-
-      const optimisticMessage: DirectMessageItem = {
-        id: clientId,
-        conversationId,
-        text,
-        attachment,
-        timestamp: formatTimestamp(new Date()),
-        createdAt: new Date().toISOString(),
-        isCurrentUser: true,
-        clientId,
-        status: "pending",
-      };
-
       setSendError(null);
-      setMessages((current) => upsertMessage(current, optimisticMessage));
-      stopTyping();
-
-      const requestPayload = {
-        conversationId,
-        text,
-        attachment,
-        clientId,
-      };
-
-      const handleFailure = (message: string) => {
-        setMessages((current) =>
-          current.filter((item) => item.clientId !== clientId),
-        );
-        setSendError(message);
-      };
-
-      if (socket?.connected) {
-        emitMessageSend(requestPayload, (response: any) => {
-          if (response?.error) {
-            handleFailure(response.error);
-            return;
-          }
-
-          const rawMessage = getSocketAckMessage(response);
-
-          if (!rawMessage) return;
-
-          const savedMessage = normalizeMessage({
-            ...rawMessage,
-            conversationId: rawMessage.conversationId ?? conversationId,
-          });
-
-          setMessages((current) => upsertMessage(current, savedMessage));
-        });
-
-        return true;
-      }
 
       try {
-        const savedMessage = await sendMessageRest(conversationId, {
-          text,
-          attachment,
-          clientId,
-        });
+        const didSend = await sendDirectMessage(conversationId, payload);
 
-        setMessages((current) => upsertMessage(current, savedMessage));
+        if (didSend) {
+          stopTyping();
+        }
 
-        return true;
-      } catch (err: any) {
-        handleFailure(
-          err?.response?.data?.error ??
-            err.message ??
-            "Message failed to send.",
-        );
-
+        return didSend;
+      } catch (error: any) {
+        setSendError(error?.message ?? "Message failed to send.");
         return false;
       }
     },
-    [conversationId, socket?.connected, stopTyping],
+    [conversationId, sendDirectMessage, stopTyping],
   );
 
   const updateMessageThemePreference = useCallback(
@@ -272,47 +160,24 @@ export const useDirectMessages = (conversationId: string) => {
         );
 
         setMessageThemePreference(savedPreference);
-        setConversation((current) =>
-          current
-            ? {
-                ...current,
-                messageThemePreference: savedPreference,
-              }
-            : current,
-        );
+
+        if (conversation) {
+          upsertConversation({
+            ...conversation,
+            messageThemePreference: savedPreference,
+          });
+        }
 
         return savedPreference;
       } finally {
         setIsUpdatingMessageThemePreference(false);
       }
     },
-    [conversationId],
+    [conversation, conversationId, upsertConversation],
   );
 
   useEffect(() => {
-    loadMessages();
-  }, [loadMessages]);
-
-  useEffect(() => {
     if (!socket || !conversationId) return;
-
-    const handleNewMessage = (payload: any) => {
-      const rawMessage = payload?.message
-        ? {
-            ...payload.message,
-            conversationId:
-              payload.message.conversationId ?? payload.conversationId,
-          }
-        : payload;
-
-      const message = normalizeMessage(rawMessage);
-
-      if (message.conversationId !== conversationId) return;
-
-      setMessages((current) => upsertMessage(current, message));
-      setIsOtherUserTyping(false);
-      markRead();
-    };
 
     const handleTypingUpdate = (payload: any) => {
       const payloadConversationId = String(payload?.conversationId ?? "");
@@ -329,50 +194,12 @@ export const useDirectMessages = (conversationId: string) => {
       }
     };
 
-    const handleConversationUpdate = (payload: any) => {
-      const rawConversation = payload?.conversation ?? payload;
-      const nextConversation = normalizeConversation(rawConversation, user?.id);
-
-      if (nextConversation.id === conversationId) {
-        setConversation(nextConversation);
-        setMessageThemePreference(
-          nextConversation.messageThemePreference ??
-            DEFAULT_MESSAGE_THEME_PREFERENCE,
-        );
-      }
-    };
-
-    const handlePresenceUpdate = (payload: any) => {
-      const userId = payload?.userId ?? payload?.id ?? payload?.user?.id;
-
-      if (!userId || String(userId) !== String(conversation?.userId)) return;
-
-      setConversation((current) =>
-        current
-          ? {
-              ...current,
-              isOnline: Boolean(
-                payload?.isOnline ??
-                  payload?.online ??
-                  payload?.user?.isOnline,
-              ),
-            }
-          : current,
-      );
-    };
-
-    socket.on("message:new", handleNewMessage);
     socket.on("typing:update", handleTypingUpdate);
-    socket.on("conversation:update", handleConversationUpdate);
-    socket.on("presence:update", handlePresenceUpdate);
 
     return () => {
-      socket.off("message:new", handleNewMessage);
       socket.off("typing:update", handleTypingUpdate);
-      socket.off("conversation:update", handleConversationUpdate);
-      socket.off("presence:update", handlePresenceUpdate);
     };
-  }, [conversation?.userId, conversationId, markRead, socket, user?.id]);
+  }, [conversation?.userId, conversationId, socket]);
 
   useEffect(() => {
     return () => {
@@ -386,16 +213,20 @@ export const useDirectMessages = (conversationId: string) => {
 
   return {
     conversation,
-    messages,
+    messages: messageState.messages,
     messageThemePreference,
     messageAccent,
     updateMessageThemePreference,
     isUpdatingMessageThemePreference,
-    isLoading,
-    error,
+    isLoading: messageState.isLoading,
+    isRefreshing: messageState.isRefreshing,
+    isLoadingMore: messageState.isLoadingMore,
+    hasMore: messageState.hasMore,
+    error: messageState.error,
     sendError,
     isOtherUserTyping,
     refresh,
+    loadOlder,
     sendMessage,
     notifyTyping,
   };

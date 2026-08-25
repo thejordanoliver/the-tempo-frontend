@@ -2,11 +2,12 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
+
 const RADIUS = {
   sm: 8,
   md: 12,
   lg: 16,
-  full: 100,
+  full: 999,
 };
 
 const SPACING = {
@@ -20,44 +21,84 @@ const SPACING = {
 
 const INPUT_HEIGHT = 54;
 
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
 export const formStyles = (isDark: boolean) => {
+  const background = isDark ? Colors.black : Colors.white;
+
   const surface = isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
+
   const text = isDark ? Colors.white : Colors.black;
-  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
-  const focusBorder = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
-  const subtleText = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)";
-  const divider = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)";
+
+  const border = isDark
+    ? "rgba(255,255,255,0.08)"
+    : "rgba(0,0,0,0.08)";
+
+  const focusBorder = isDark
+    ? "rgba(255,255,255,0.25)"
+    : "rgba(0,0,0,0.25)";
+
+  const subtleText = isDark
+    ? "rgba(255,255,255,0.4)"
+    : "rgba(0,0,0,0.4)";
+
+  const divider = isDark
+    ? "rgba(255,255,255,0.08)"
+    : "rgba(0,0,0,0.07)";
 
   return StyleSheet.create({
+    // ─── Layout ──────────────────────────────────────────────────────────────
+
     container: {
       flex: 1,
+      padding: SPACING.md,
       marginBottom: 40,
-      padding: 12,
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: background,
     },
+
     sectionContainer: {
       flex: 1,
     },
+
     formWrapper: {
       flex: 1,
       justifyContent: "center",
-      gap: 12,
+      gap: SPACING.md,
+    },
+
+    row: {
+      flexDirection: "column",
+      gap: SPACING.sm,
+    },
+
+    buttonContainer: {
+      justifyContent: "center",
+    },
+
+    favoritesContainer: {
+      flex: 1,
+    },
+
+    reviewContainer: {
+      justifyContent: "center",
+    },
+
+    // ─── Inputs ──────────────────────────────────────────────────────────────
+
+    input: {
+      height: INPUT_HEIGHT,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: SPACING.lg,
+      borderRadius: RADIUS.sm,
+      backgroundColor: surface,
     },
 
     inputFocused: {
       borderWidth: 1,
       borderColor: focusBorder,
-    },
-
-    input: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: INPUT_HEIGHT,
-      paddingHorizontal: SPACING.lg,
-      borderRadius: 8,
-      backgroundColor: surface,
     },
 
     inputText: {
@@ -66,6 +107,18 @@ export const formStyles = (isDark: boolean) => {
       fontSize: 16,
       color: text,
     },
+
+    reviewInput: {
+      marginTop: SPACING.xs,
+      paddingVertical: SPACING.md,
+      paddingHorizontal: SPACING.lg,
+      borderWidth: 1,
+      borderColor: border,
+      borderRadius: RADIUS.md,
+      backgroundColor: surface,
+    },
+
+    // ─── Links ───────────────────────────────────────────────────────────────
 
     forgotPasswordLink: {
       alignSelf: "center",
@@ -79,7 +132,14 @@ export const formStyles = (isDark: boolean) => {
       color: Colors.midTone,
     },
 
-    // ── Progress Bar ───────────────────────────────────────────────────────
+    skipText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: Colors.midTone,
+    },
+
+    // ─── Progress Bar ────────────────────────────────────────────────────────
+
     progressContainer: {
       gap: SPACING.xs,
       paddingTop: SPACING.sm,
@@ -112,13 +172,11 @@ export const formStyles = (isDark: boolean) => {
     progressBarFill: {
       height: "100%",
       borderRadius: RADIUS.full,
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      backgroundColor: text,
     },
 
-    row: {
-      flexDirection: "column",
-      justifyContent: "space-between",
-    },
+    // ─── Team ────────────────────────────────────────────────────────────────
+
     logo: {
       width: 50,
       height: 50,
@@ -126,17 +184,27 @@ export const formStyles = (isDark: boolean) => {
     },
 
     teamName: {
-      marginLeft: 16,
+      marginLeft: SPACING.lg,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      color: Colors.white,
+      color: text,
     },
 
-    // ── Image Upload ───────────────────────────────────────────────────────
+    teamCardList: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: SPACING.md,
+      padding: SPACING.md,
+      borderRadius: RADIUS.sm,
+      backgroundColor: surface,
+    },
+
+    // ─── Image Upload ────────────────────────────────────────────────────────
+
     imageUploadBox: {
+      height: 100,
       alignItems: "center",
       justifyContent: "center",
-      height: 100,
       borderWidth: 1,
       borderColor: border,
       borderStyle: "dashed",
@@ -146,11 +214,11 @@ export const formStyles = (isDark: boolean) => {
     },
 
     profileImageUploadBox: {
-      alignItems: "center",
-      alignSelf: "center",
-      justifyContent: "center",
       width: 110,
       height: 110,
+      alignSelf: "center",
+      alignItems: "center",
+      justifyContent: "center",
       marginVertical: SPACING.sm,
       borderWidth: 1,
       borderColor: border,
@@ -159,13 +227,29 @@ export const formStyles = (isDark: boolean) => {
       backgroundColor: surface,
       overflow: "hidden",
     },
+
     bannerImage: {
       width: "100%",
       height: "100%",
-      borderRadius: 10,
+      borderRadius: RADIUS.md,
     },
 
-    // ── Section Headings ───────────────────────────────────────────────────
+    imagePreview: {
+      width: 120,
+      height: 120,
+      alignSelf: "center",
+      borderRadius: RADIUS.full,
+    },
+
+    imagePlaceholder: {
+      fontFamily: Fonts.LIGHT,
+      fontSize: 12,
+      color: subtleText,
+      textAlign: "center",
+    },
+
+    // ─── Section / Review ────────────────────────────────────────────────────
+
     heading: {
       marginTop: SPACING.lg,
       marginBottom: SPACING.xs,
@@ -177,63 +261,21 @@ export const formStyles = (isDark: boolean) => {
     },
 
     divider: {
-      height: 1,
+      height: StyleSheet.hairlineWidth,
       marginVertical: SPACING.xs,
       backgroundColor: divider,
     },
 
-    reviewInput: {
-      marginTop: SPACING.xs,
-      paddingVertical: SPACING.md,
-      paddingHorizontal: SPACING.lg,
-      borderWidth: 1,
-      borderColor: border,
-      borderRadius: RADIUS.md,
-      backgroundColor: surface,
-    },
-
-    reviewContainer: {
-      alignContent: "center",
-      justifyContent: "center",
-    },
-    favoritesContainer: {
-      flex: 1,
-    },
-    imagePreview: {
-      alignSelf: "center",
-      width: 120,
-      height: 120,
-      borderRadius: 100,
-    },
-    imagePlaceholder: {
-      fontFamily: Fonts.LIGHT,
-      fontSize: 12,
-      color: isDark ? Colors.darkGray : Colors.lightGray,
-      textAlign: "center",
-    },
     reviewText: {
-      marginVertical: 8,
+      marginVertical: SPACING.sm,
       fontFamily: Fonts.REGULAR,
       color: Colors.midTone,
     },
 
-    skipText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: Colors.midTone,
-    },
-    teamCardList: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 12,
-      padding: 12,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
+    // ─── Tabs ────────────────────────────────────────────────────────────────
 
-    tabBarWrapper: { paddingHorizontal: 80 },
+    tabBarWrapper: {
+      paddingHorizontal: 80,
+    },
   });
 };

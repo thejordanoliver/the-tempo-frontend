@@ -16,7 +16,6 @@ import {
   useState,
 } from "react";
 import { Alert, LayoutAnimation, StyleSheet, View } from "react-native";
-import { createConversation } from "services/messagesApi";
 import type { UserSearchResult } from "services/usersApi";
 import type { MessageItem } from "types/messages";
 
@@ -44,10 +43,14 @@ export default function MessageListScreen() {
     conversations,
     isLoading,
     isRefreshing,
+    isLoadingMore,
     error,
     refresh,
+    loadMore,
+    hasMore,
     togglePinConversation,
     deleteConversation,
+    createConversation,
   } = useConversations(search);
 
   const trimmedSearch = search.trim();
@@ -172,22 +175,14 @@ export default function MessageListScreen() {
         return;
       }
 
-      setIsCreatingConversation(true);
+        setIsCreatingConversation(true);
 
       try {
         const result = await createConversation(user.id);
-
-        const conversationId =
-          result.conversationId ?? result.conversation?.id ?? result.id;
-
-        if (!conversationId) {
-          throw new Error("Conversation could not be opened.");
-        }
+        const conversationId = result.conversationId;
 
         setSearch("");
         newMessageModalRef.current?.close();
-
-        await refresh();
 
         router.push({
           pathname: "/messages/[id]",
@@ -195,6 +190,8 @@ export default function MessageListScreen() {
             id: String(conversationId),
           },
         });
+
+        void refresh();
       } catch (err: any) {
         Alert.alert(
           "Could not start message",
@@ -206,7 +203,7 @@ export default function MessageListScreen() {
         setIsCreatingConversation(false);
       }
     },
-    [isCreatingConversation, refresh, router],
+    [createConversation, isCreatingConversation, refresh, router],
   );
 
   /* ----------------------------- Derived Lists ----------------------------- */
@@ -264,6 +261,7 @@ export default function MessageListScreen() {
         search={search}
         isLoading={isLoading}
         isRefreshing={isRefreshing}
+        isLoadingMore={isLoadingMore}
         error={visibleError}
         shouldShowPinned={shouldShowPinned}
         shouldShowEmptyState={shouldShowEmptyState}
@@ -273,6 +271,8 @@ export default function MessageListScreen() {
         onTogglePinConversation={handleTogglePinConversation}
         onSwipeableOpen={handleSwipeableOpen}
         onRefresh={refresh}
+        onLoadMore={loadMore}
+        hasMore={hasMore}
         onRetry={refresh}
       />
 

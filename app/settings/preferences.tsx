@@ -5,8 +5,12 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLayoutEffect } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  getActivityStatusPreference,
+  updateActivityStatusPreference,
+} from "services/usersApi";
 import { settingsStyles } from "styles/SettingsStyles";
 
 const PreferencesScreen = () => {
@@ -20,6 +24,9 @@ const PreferencesScreen = () => {
   const isDark = resolvedColorScheme === "dark";
   const styles = settingsStyles(isDark);
   const navigation = useNavigation();
+  const [showActivityStatus, setShowActivityStatus] = useState(true);
+  const [isUpdatingActivityStatus, setIsUpdatingActivityStatus] =
+    useState(false);
   const textColor = isDark ? Colors.white : Colors.black;
   const notSelected = isDark
     ? Colors.transparentLightGray
@@ -30,6 +37,41 @@ const PreferencesScreen = () => {
       header: () => <CustomHeader title="Preferences" onBack={goBack} />,
     });
   }, [navigation, isDark]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getActivityStatusPreference()
+      .then((value) => {
+        if (isMounted) {
+          setShowActivityStatus(value);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleToggleActivityStatus = useCallback(async () => {
+    if (isUpdatingActivityStatus) return;
+
+    const previous = showActivityStatus;
+    const next = !previous;
+
+    setShowActivityStatus(next);
+    setIsUpdatingActivityStatus(true);
+
+    try {
+      const saved = await updateActivityStatusPreference(next);
+      setShowActivityStatus(saved);
+    } catch {
+      setShowActivityStatus(previous);
+    } finally {
+      setIsUpdatingActivityStatus(false);
+    }
+  }, [isUpdatingActivityStatus, showActivityStatus]);
 
   return (
     <View style={styles.container}>
@@ -164,6 +206,34 @@ const PreferencesScreen = () => {
             {colorScheme === "system" && (
               <Ionicons name="checkmark" size={24} color={textColor} />
             )}
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.seperator} />
+
+        <HeadingTwo isDark={isDark}>Activity Status</HeadingTwo>
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            onPress={handleToggleActivityStatus}
+            style={styles.optionButton}
+            disabled={isUpdatingActivityStatus}
+          >
+            <Text
+              style={[
+                styles.optionText,
+                {
+                  color: showActivityStatus ? textColor : notSelected,
+                },
+              ]}
+            >
+              Show Activity Status
+            </Text>
+
+            <Ionicons
+              name={showActivityStatus ? "toggle" : "toggle-outline"}
+              size={28}
+              color={showActivityStatus ? textColor : notSelected}
+            />
           </TouchableOpacity>
         </View>
       </ScrollView>

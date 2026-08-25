@@ -1,4 +1,4 @@
-import { activeOpacity, Colors } from "@/constants/styles";
+import { Colors } from "@/constants/styles";
 import { useFavoriteTeamsContext } from "@/contexts/FavoriteTeamsContext";
 import { MessageThemeModalStyles } from "@/styles/MessageStyles/MessageThemeModalStyles";
 import { Team } from "@/types/team";
@@ -6,20 +6,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import type { RefObject } from "react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import type { MessageThemePreference } from "types/messages";
 import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
   normalizeMessageThemePreference,
 } from "utils/messageTheme";
 import { snapPoints } from "utils/modalUtils";
+import Button from "../Buttons/Button";
 import CustomActivityIndicator from "../CustomActivityIndicator";
 
 type Props = {
@@ -163,7 +157,7 @@ export default function MessageThemeModal({
     <BottomSheetModal
       ref={sheetRef}
       index={0}
-      snapPoints={snapPoints}
+      snapPoints={[snapPoints[4]]}
       enableDynamicSizing={false}
       enablePanDownToClose
       onDismiss={onClose}
@@ -182,19 +176,6 @@ export default function MessageThemeModal({
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Message Theme</Text>
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            onPress={handleClose}
-            style={styles.closeButton}
-            accessibilityRole="button"
-            accessibilityLabel="Close message theme settings"
-          >
-            <Ionicons
-              name="close"
-              size={22}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -319,41 +300,27 @@ export default function MessageThemeModal({
 
         {!!saveError && <Text style={styles.errorText}>{saveError}</Text>}
 
-        <View style={styles.actions}>
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            onPress={handleClose}
-            disabled={isSaving}
-            style={[styles.actionButton, styles.cancelButton]}
-            accessibilityRole="button"
-            accessibilityLabel="Cancel theme changes"
-          >
-            <Text style={styles.cancelText}>Cancel</Text>
-          </TouchableOpacity>
+       <View style={styles.buttonContainer}>
+        <Button
+          isDark={isDark}
+          onPress={handleClose}
+          disabled={isLoading}
+          variant="outline"
+          style={styles.button}
+        >
+          Cancel
+        </Button>
 
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            onPress={handleSave}
-            disabled={isSaving || isFavoriteSelectionIncomplete}
-            style={[
-              styles.actionButton,
-              styles.saveButton,
-              (isSaving || isFavoriteSelectionIncomplete) &&
-                styles.actionButtonDisabled,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Save message theme"
-            accessibilityState={{
-              disabled: isSaving || isFavoriteSelectionIncomplete,
-            }}
-          >
-            {isSaving ? (
-              <CustomActivityIndicator />
-            ) : (
-              <Text style={styles.saveText}>Save</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+        <Button
+          isDark={isDark}
+          onPress={handleSave}
+          disabled={isLoading}
+          variant="filled"
+          style={styles.button}
+        >
+          Save
+        </Button>
+      </View>
       </View>
     </BottomSheetModal>
   );

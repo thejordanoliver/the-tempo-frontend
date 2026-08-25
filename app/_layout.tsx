@@ -25,6 +25,7 @@ import CustomTabBar from "../components/CustomTabBar";
 import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
+import { MessagesProvider } from "../contexts/MessagesContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
 import {
   PreferencesProvider,
@@ -188,64 +189,76 @@ function AppLayout() {
 
   return (
     <ThemeProvider value={isDark ? CustomDarkTheme : CustomLightTheme}>
-      <Stack
-        screenOptions={({ route, navigation }) => {
-          const isTabScreen = route.name === "(tabs)";
-          const isSplashScreen = route.name === "signup/success";
-          const isProfileScreen = route.name === "profile";
-
-          return {
-            headerShown: !isSplashScreen && !isTabScreen,
-            header: !isSplashScreen
-              ? () => (
-                  <CustomHeader
-                    title={route.name}
-                    onBack={
-                      navigation.canGoBack() ? navigation.goBack : undefined
-                    }
-                  />
-                )
-              : undefined,
-            gestureEnabled: !isTabScreen,
-            animation: isProfileScreen
-              ? "fade"
-              : isSplashScreen
-                ? "fade"
-                : isTabScreen
-                  ? "none"
-                  : "default",
-            gestureDirection: "horizontal",
-          };
-        }}
+      <MessagesProvider
+        enabled={!isPublicRoute && Boolean(user && token)}
+        token={token}
+        userId={user?.id}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" options={{ title: "Page Not Found" }} />
-        <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
-        <Stack.Screen name="signup/success" />
-      </Stack>
+        <Stack
+          screenOptions={({ route, navigation }) => {
+            const isTabScreen = route.name === "(tabs)";
+            const isSplashScreen = route.name === "signup/success";
+            const isProfileScreen = route.name === "profile";
 
-      <StatusBar style={isDark ? "light" : "dark"} />
-
-      {!shouldHideTabBar && visibleTabBar && (
-        <Animated.View
-          style={{
-            opacity,
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
+            return {
+              headerShown: !isSplashScreen && !isTabScreen,
+              header: !isSplashScreen
+                ? () => (
+                    <CustomHeader
+                      title={route.name}
+                      onBack={
+                        navigation.canGoBack() ? navigation.goBack : undefined
+                      }
+                    />
+                  )
+                : undefined,
+              gestureEnabled: !isTabScreen,
+              animation: isProfileScreen
+                ? "fade"
+                : isSplashScreen
+                  ? "fade"
+                  : isTabScreen
+                    ? "none"
+                    : "default",
+              gestureDirection: "horizontal",
+            };
           }}
         >
-          <CustomTabBar isDark={isDark} />
-        </Animated.View>
-      )}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="+not-found"
+            options={{ title: "Page Not Found" }}
+          />
+          <Stack.Screen
+            name="forgot-password"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="signup/success" />
+        </Stack>
 
-      {!isPublicRoute && (
-        <>
-          <BadgeRealtimeBridge token={token} userId={user?.id} />
-          <BadgeUnlockedModal />
-        </>
-      )}
+        <StatusBar style={isDark ? "light" : "dark"} />
+
+        {!shouldHideTabBar && visibleTabBar && (
+          <Animated.View
+            style={{
+              opacity,
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
+          >
+            <CustomTabBar isDark={isDark} />
+          </Animated.View>
+        )}
+
+        {!isPublicRoute && (
+          <>
+            <BadgeRealtimeBridge token={token} userId={user?.id} />
+            <BadgeUnlockedModal />
+          </>
+        )}
+      </MessagesProvider>
     </ThemeProvider>
   );
 }

@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
+
 import Button from "../components/Buttons/Button";
 import { CustomHeader } from "../components/CustomHeader";
 import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
@@ -11,6 +11,7 @@ import { usePreferences } from "../contexts/PreferencesContext";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
 
 export default function EditFavoritesScreen() {
+  const styles = editFavoritesStyles
   const {
     search,
     setSearch,
@@ -28,12 +29,11 @@ export default function EditFavoritesScreen() {
 
   const navigation = useNavigation();
   const router = useRouter();
+
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
 
-  /**
-   * 🚀 Prevent unnecessary recalculation on every render
-   */
   const itemWidth = useMemo(() => {
     const numColumns = 3;
     const containerPadding = 40;
@@ -43,17 +43,12 @@ export default function EditFavoritesScreen() {
     return (screenWidth - containerPadding - totalSpacing) / numColumns;
   }, [screenWidth]);
 
-  const styles = useMemo(
-    () => editFavoritesStyles(isDark, isGridView),
-    [isDark, isGridView],
-  );
-
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeader
           title="Edit Favorites"
-          onBack={goBack}
+          onBack={() => router.back()}
           onToggleLayout={toggleLayout}
           isGrid={isGridView}
         />
@@ -63,7 +58,10 @@ export default function EditFavoritesScreen() {
 
   const handleSave = useCallback(async () => {
     const success = await saveFavorites();
-    if (success) router.back();
+
+    if (success) {
+      router.back();
+    }
   }, [router, saveFavorites]);
 
   return (
@@ -81,7 +79,25 @@ export default function EditFavoritesScreen() {
       />
 
       <View style={styles.buttonContainer}>
-        <Button onPress={handleSave} isDark={isDark} disabled={isLoading} />
+        <Button
+          isDark={isDark}
+          onPress={() => router.back()}
+          disabled={isLoading}
+          variant="outline"
+          style={styles.button}
+        >
+          Cancel
+        </Button>
+
+        <Button
+          isDark={isDark}
+          onPress={handleSave}
+          disabled={isLoading}
+          variant="filled"
+          style={styles.button}
+        >
+          Save
+        </Button>
       </View>
     </View>
   );

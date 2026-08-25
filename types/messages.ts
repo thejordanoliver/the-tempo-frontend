@@ -3,6 +3,9 @@ export type MessageAttachmentType = "image" | "gif";
 export type MessageAttachment = {
   type: MessageAttachmentType;
   uri: string;
+  mimeType?: string | null;
+  width?: number | null;
+  height?: number | null;
 };
 
 export type MessageThemePreference = {
@@ -20,6 +23,7 @@ export type MessageAccent = {
 
 export type MessageItem = {
   id: string;
+  dmKey?: string;
   userId?: number | string;
   username: string;
   fullName?: string;
@@ -34,6 +38,7 @@ export type MessageItem = {
   unreadCount: number;
   lastMessageAt?: string;
   updatedAt?: string;
+  activityAt?: string;
   messageThemePreference?: MessageThemePreference;
 };
 

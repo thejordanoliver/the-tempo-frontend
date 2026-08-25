@@ -8,6 +8,7 @@ import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useDirectMessages } from "hooks/MessageHooks/useDirectMessages";
 import {
@@ -33,6 +34,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { uploadMessageImage } from "services/messagesApi";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DirectMessageItem, MessageAttachment } from "types/messages";
 import { getContrastingTextColor } from "utils/color";
@@ -69,12 +71,15 @@ export default function ConversationScreen() {
     updateMessageThemePreference,
     isUpdatingMessageThemePreference,
     isLoading,
+    isLoadingMore,
+    hasMore,
     error,
     sendError,
     isOtherUserTyping,
     sendMessage,
     notifyTyping,
     refresh,
+    loadOlder,
   } = useDirectMessages(conversationId);
 
   const [draftMessage, setDraftMessage] = useState("");
@@ -84,9 +89,12 @@ export default function ConversationScreen() {
   const [themeModalVisible, setThemeModalVisible] = useState(false);
   const [gifModalVisible, setGifModalVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const didInitialScrollRef = useRef(false);
 
   const isSendDisabled =
-    draftMessage.trim().length === 0 && selectedAttachment === null;
+    isUploadingImage ||
+    (draftMessage.trim().length === 0 && selectedAttachment === null);
 
   const displayUsername = conversation?.username ?? "Messages";
   const displayFullName =
@@ -103,6 +111,23 @@ export default function ConversationScreen() {
       listRef.current?.scrollToEnd({ animated: true });
     });
   }, []);
+
+  useEffect(() => {
+    didInitialScrollRef.current = false;
+  }, [conversationId]);
+
+  useEffect(() => {
+    if (
+      didInitialScrollRef.current ||
+      isLoading ||
+      messages.length === 0
+    ) {
+      return;
+    }
+
+    didInitialScrollRef.current = true;
+    scrollToBottom();
+  }, [isLoading, messages.length, scrollToBottom]);
 
   const closeAttachmentMenu = useCallback(() => {
     setAttachmentMenuVisible(false);
@@ -130,16 +155,55 @@ export default function ConversationScreen() {
     });
   }, []);
 
-  const handlePickImage = useCallback(() => {
+  const handlePickImage = useCallback(async () => {
     closeAttachmentMenu();
-    Alert.alert(
-      "Image upload unavailable",
-      "Direct message image uploads need an upload endpoint before local photos can be sent.",
-    );
 
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        Alert.alert(
+          "Photo access needed",
+          "Please allow photo access to send an image.",
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 0.85,
+      });
+
+      if (result.canceled || !result.assets?.[0]?.uri) {
+        return;
+      }
+
+      const asset = result.assets[0];
+      setIsUploadingImage(true);
+
+      const attachment = await uploadMessageImage({
+        uri: asset.uri,
+        name: asset.fileName ?? asset.uri.split("/").pop() ?? "message.jpg",
+        type: asset.mimeType ?? "image/jpeg",
+      });
+
+      setSelectedAttachment(attachment);
+    } catch (err: any) {
+      Alert.alert(
+        "Image upload failed",
+        err?.response?.data?.error ??
+          err?.message ??
+          "Please try another image.",
+      );
+    } finally {
+      setIsUploadingImage(false);
+
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    }
   }, [closeAttachmentMenu]);
 
   const handleOpenGifPicker = useCallback(() => {
@@ -207,6 +271,19 @@ export default function ConversationScreen() {
       inputRef.current?.focus();
     });
   }, [draftMessage, scrollToBottom, selectedAttachment, sendMessage]);
+
+  const handleMessagesScroll = useCallback(
+    (event: any) => {
+      if (!hasMore || isLoadingMore || messages.length === 0) return;
+
+      const offsetY = event.nativeEvent.contentOffset.y;
+
+      if (offsetY <= 48) {
+        void loadOlder();
+      }
+    },
+    [hasMore, isLoadingMore, loadOlder, messages.length],
+  );
 
   const renderMessage: ListRenderItem<DirectMessageItem> = useCallback(
     ({ item }) => {
@@ -418,6 +495,16 @@ export default function ConversationScreen() {
     styles.typingBubbleText,
   ]);
 
+  const renderOlderMessagesLoader = useCallback(() => {
+    if (!isLoadingMore) return null;
+
+    return (
+      <View style={styles.olderMessagesLoader}>
+        <CustomActivityIndicator />
+      </View>
+    );
+  }, [isLoadingMore, styles.olderMessagesLoader]);
+
   useEffect(() => {
     if (isOtherUserTyping) {
       scrollToBottom();
@@ -498,13 +585,16 @@ export default function ConversationScreen() {
           data={messages}
           keyExtractor={keyExtractor}
           renderItem={renderMessage}
+          ListHeaderComponent={renderOlderMessagesLoader}
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={renderTypingIndicator}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           contentContainerStyle={styles.messagesContent}
-          onContentSizeChange={scrollToBottom}
+          maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
+          onScroll={handleMessagesScroll}
+          scrollEventThrottle={16}
           onScrollBeginDrag={closeAttachmentMenu}
         />
 
@@ -521,6 +611,10 @@ export default function ConversationScreen() {
             },
           ]}
         >
+          {isUploadingImage && (
+            <Text style={styles.uploadStatusText}>Uploading image...</Text>
+          )}
+
           {selectedAttachment && (
             <View style={styles.previewContainer}>
               <Image
@@ -655,6 +749,12 @@ const messageDetailStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
       paddingTop: 12,
       paddingBottom: 120,
+    },
+
+    olderMessagesLoader: {
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 12,
     },
 
     messageRow: {
@@ -826,6 +926,14 @@ const messageDetailStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       overflow: "hidden",
+    },
+
+    uploadStatusText: {
+      marginBottom: 8,
+      paddingHorizontal: 8,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     previewMedia: {

@@ -23,6 +23,11 @@ export type PaginatedConversationsResponse = {
   nextCursor: string | null;
 };
 
+export type PaginatedMessagesResponse = {
+  messages: DirectMessageItem[];
+  nextCursor: string | null;
+};
+
 const getFirstArray = (payload: any, keys: string[]) => {
   if (Array.isArray(payload)) return payload;
 
@@ -160,6 +165,9 @@ const normalizeAttachment = (
   return {
     type,
     uri,
+    mimeType: raw.mimeType ?? raw.mime_type ?? null,
+    width: raw.width ?? null,
+    height: raw.height ?? null,
   };
 };
 
@@ -191,6 +199,7 @@ export const normalizeConversation = (
 
   return {
     id: String(raw.id ?? raw.conversationId ?? raw._id ?? ""),
+    dmKey: raw.dmKey ?? raw.dm_key,
     userId:
       raw.userId ??
       raw.recipientId ??
@@ -215,6 +224,7 @@ export const normalizeConversation = (
     unreadCount: Number(raw.unreadCount ?? raw.unread_count ?? 0),
     lastMessageAt: raw.lastMessageAt ?? lastMessage?.createdAt,
     updatedAt: raw.updatedAt,
+    activityAt: raw.activityAt,
     messageThemePreference: normalizeMessageThemePreference(
       getRawThemePreference(raw, currentUserId),
     ),
@@ -330,12 +340,24 @@ export const getMessages = async (
   conversationId: string,
   options?: { limit?: number; before?: string },
 ): Promise<DirectMessageItem[]> => {
+  const response = await getMessagesPage(conversationId, options);
+
+  return response.messages;
+};
+
+export const getMessagesPage = async (
+  conversationId: string,
+  options?: { limit?: number; before?: string; cursor?: string },
+): Promise<PaginatedMessagesResponse> => {
   const response = await apiClient.get(
     `/api/messages/conversations/${conversationId}/messages`,
     { params: options },
   );
 
-  return getFirstArray(response.data, ["messages"]).map(normalizeMessage);
+  return {
+    messages: getFirstArray(response.data, ["messages"]).map(normalizeMessage),
+    nextCursor: response.data?.nextCursor ?? null,
+  };
 };
 
 export const sendMessageRest = async (
@@ -394,4 +416,32 @@ export const pinConversation = async (
 
 export const deleteConversation = async (conversationId: string) => {
   await apiClient.delete(`/api/messages/conversations/${conversationId}`);
+};
+
+export const uploadMessageImage = async (
+  image: { uri: string; name?: string; type?: string },
+): Promise<MessageAttachment> => {
+  const filename = image.name || image.uri.split("/").pop() || "message.jpg";
+  const mimeType = image.type || "image/jpeg";
+  const formData = new FormData();
+
+  formData.append("image", {
+    uri: image.uri,
+    name: filename,
+    type: mimeType,
+  } as unknown as Blob);
+
+  const response = await apiClient.post("/api/messages/attachments", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  const attachment = normalizeAttachment(response.data?.attachment);
+
+  if (!attachment) {
+    throw new Error("Image upload response was missing an attachment.");
+  }
+
+  return attachment;
 };

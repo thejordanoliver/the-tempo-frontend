@@ -28,7 +28,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
-import MatchupComparison from "../../../components/Sports/MMA/GameDetails/MatchupComparison/MatchupComparison";
+import MatchupComparison from "../../../components/Sports/MMA/GameDetails/MatchupComparison";
 const LEAGUE = "MMA";
 
 const leftStancePlaceholder =
@@ -297,8 +297,8 @@ export default function GameDetailsScreen(
               secondFighterHeight={secondFighterHeight}
               firstFighterWeight={firstFighterWeight}
               secondFighterWeight={secondFighterWeight}
-              firstFighterName={firstFighterLastName}
-              secondFighterName={secondFighterLastName}
+              firstFighterName={firstFighterName}
+              secondFighterName={secondFighterName}
               firstFighterFlag={firstFighterFlag}
               secondFighterFlag={secondFighterFlag}
               firstFighterCountry={firstFighterCountry}

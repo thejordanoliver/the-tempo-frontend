@@ -1,5 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import FollowButton from "components/Profile/FollowButton";
-import { Text, View } from "react-native";
+import { activeOpacity, Colors } from "constants/styles";
+import { Pressable, Text, View } from "react-native";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 
 type Props = {
@@ -34,7 +36,22 @@ export default function ProfileHeader({
         </Text>
       </View>
 
-      {!isCurrentUser && (
+      {isCurrentUser ? (
+        <Pressable
+          style={({ pressed }) => [
+            { opacity: pressed ? activeOpacity : 1 },
+            styles.editProfileBtn,
+          ]}
+          onPress={onEditPress}
+        >
+          <Text style={styles.editProfileText}>Edit Profile</Text>
+          <Ionicons
+            name="create"
+            size={18}
+            color={isDark ? Colors.black : Colors.white}
+          />
+        </Pressable>
+      ) : (
         <FollowButton
           isFollowing={!!isFollowing}
           loading={!!loading}

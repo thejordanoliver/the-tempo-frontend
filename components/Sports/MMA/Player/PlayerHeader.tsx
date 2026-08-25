@@ -1,12 +1,10 @@
-import { Fighter } from "@/hooks/MMAHooks/useMMAFighter";
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import { calculateAge, formatBirth } from "utils/dateUtils";
 
 type Props = {
-  player: Fighter | null;
+  player: any | null;
   isDark: boolean;
-  isCollegePlayer?: boolean;
 };
 
 export default function PlayerHeader({ player, isDark }: Props) {
@@ -50,8 +48,7 @@ export default function PlayerHeader({ player, isDark }: Props) {
 
       <View style={styles.nameContainer}>
         <Text style={styles.name}>
-          {firstName}{" "}
-          {nickname && `"${nickname}" `}
+          {firstName} {nickname && `"${nickname}" `}
           {lastName}
         </Text>
       </View>
@@ -85,7 +82,7 @@ export default function PlayerHeader({ player, isDark }: Props) {
           <Text style={styles.infoValue}>{association}</Text>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Stance</Text>
+          <Text style={styles.infoLabel}>STANCE</Text>
           <Text style={styles.infoValue}>{stance}</Text>
         </View>
         <View style={styles.infoRow}>
