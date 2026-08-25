@@ -111,7 +111,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     leftFighterFlag: {
       position: "absolute",
       bottom: 14,
-      left: 4,
+      left: 10,
       zIndex: 99,
       width: 20,
       height: 20,
@@ -119,7 +119,7 @@ export const gameCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     rightFighterFlag: {
       position: "absolute",
-      right: 4,
+      right: 10,
       bottom: 14,
       zIndex: 99,
       width: 20,
