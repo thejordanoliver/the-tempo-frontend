@@ -90,32 +90,6 @@ export default function LoginScreen() {
     setCropTarget(null);
   };
 
-  const getLoginErrorMessage = (err: any) => {
-    if (err?.code === "USERNAME_NOT_FOUND") {
-      return "Username does not exist.";
-    }
-
-    if (err?.code === "WRONG_PASSWORD") {
-      return "Wrong password.";
-    }
-
-    const message = String(err?.message || "").toLowerCase();
-
-    if (message.includes("username") || message.includes("does not exist")) {
-      return "Username does not exist.";
-    }
-
-    if (message.includes("password")) {
-      return "Wrong password.";
-    }
-
-    if (message.includes("invalid credentials")) {
-      return "Username or password is incorrect.";
-    }
-
-    return err?.message || "Something went wrong. Please try again.";
-  };
-
   const handleLogin = async () => {
     const trimmedUsername = username?.trim().toLowerCase();
 
@@ -141,7 +115,7 @@ export default function LoginScreen() {
     } catch (err: any) {
       showAlert({
         title: "Login failed",
-        message: getLoginErrorMessage(err),
+        message: err?.message ?? "Something went wrong. Please try again.",
       });
     } finally {
       setIsSubmitting(false);

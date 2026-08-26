@@ -1,8 +1,8 @@
+import { nbaPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import { NBAPlayoffTeam } from "@/types/basketball/basketball";
 import { Colors } from "constants/styles";
 import { getNBATeam, getTeamLogo } from "constants/teams";
 import { Image, Text, View } from "react-native";
-import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
 
 export const TeamRow = ({
   team,

@@ -7,12 +7,14 @@ import {
 import {
   disconnectNotificationSocket,
   getNotificationSocket,
+  type NotificationSocket,
 } from "@/services/notificationSocket";
 import { useBadgeNotificationStore } from "@/store/badgeNotificationStore";
 import type {
   BadgeEarnedSocketPayload,
   BadgeNotification,
 } from "@/types/badges";
+import { getAccessToken } from "@/utils/apiClient";
 
 type UseBadgeRealtimeNotificationsOptions = {
   token?: string | null;
@@ -29,6 +31,12 @@ type RetryReadOptions = {
     notificationIds?: string[] | string | null,
   ) => void;
   markRead?: typeof markBadgeNotificationsRead;
+};
+
+type PrepareNotificationSocketAccessOptions = {
+  token: string;
+  recoverPendingNotifications: () => Promise<unknown>;
+  getStoredAccessToken?: typeof getAccessToken;
 };
 
 export const normalizeAuthenticatedUserId = (
@@ -133,6 +141,18 @@ export const retryBadgeNotificationReadAcks = async ({
   }
 };
 
+export const prepareNotificationSocketAccess = async ({
+  token,
+  recoverPendingNotifications,
+  getStoredAccessToken = getAccessToken,
+}: PrepareNotificationSocketAccessOptions): Promise<string | null> => {
+  await recoverPendingNotifications();
+
+  const latestToken = await getStoredAccessToken();
+
+  return latestToken && latestToken === token ? latestToken : null;
+};
+
 export function useBadgeRealtimeNotifications({
   token,
   userId,
@@ -155,14 +175,13 @@ export function useBadgeRealtimeNotifications({
       return;
     }
 
-    const socket = getNotificationSocket(token);
-
-    if (!socket) {
-      return;
-    }
-
     let isActive = true;
     let appState: AppStateStatus = AppState.currentState;
+    let activeSocket: NotificationSocket | null = null;
+    let activeSocketToken: string | null = null;
+    let appStateSubscription: ReturnType<
+      typeof AppState.addEventListener
+    > | null = null;
 
     const recoverPendingNotifications = async () => {
       try {
@@ -213,10 +232,6 @@ export function useBadgeRealtimeNotifications({
       }
     };
 
-    const handleReconnect = () => {
-      void recoverPendingNotifications();
-    };
-
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       const wasBackgrounded =
         appState === "inactive" || appState === "background";
@@ -228,33 +243,55 @@ export function useBadgeRealtimeNotifications({
       }
     };
 
-    socket.on("badge:earned", handleBadgeEarned);
-    socket.on("connect", handleConnect);
-    socket.on("connect_error", handleConnectError);
-    socket.io.on("reconnect", handleReconnect);
+    const initializeSocket = async () => {
+      const latestToken = await prepareNotificationSocketAccess({
+        token,
+        // This authenticated request refreshes an expired persisted access token
+        // before Socket.IO attempts its one-shot namespace authentication.
+        recoverPendingNotifications,
+      });
 
-    const appStateSubscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange,
-    );
+      if (!isActive || !latestToken) {
+        return;
+      }
 
-    if (socket.connected) {
-      void recoverPendingNotifications();
-    } else {
-      socket.connect();
-    }
+      const socket = getNotificationSocket(latestToken);
+
+      if (!socket) {
+        return;
+      }
+
+      activeSocket = socket;
+      activeSocketToken = latestToken;
+
+      socket.on("badge:earned", handleBadgeEarned);
+      socket.on("connect", handleConnect);
+      socket.on("connect_error", handleConnectError);
+
+      appStateSubscription = AppState.addEventListener(
+        "change",
+        handleAppStateChange,
+      );
+
+      if (socket.connected) {
+        void recoverPendingNotifications();
+      } else {
+        socket.connect();
+      }
+    };
+
+    void initializeSocket();
 
     return () => {
       isActive = false;
 
-      socket.off("badge:earned", handleBadgeEarned);
-      socket.off("connect", handleConnect);
-      socket.off("connect_error", handleConnectError);
-      socket.io.off("reconnect", handleReconnect);
+      activeSocket?.off("badge:earned", handleBadgeEarned);
+      activeSocket?.off("connect", handleConnect);
+      activeSocket?.off("connect_error", handleConnectError);
 
-      appStateSubscription.remove();
+      appStateSubscription?.remove();
 
-      disconnectNotificationSocket(token);
+      disconnectNotificationSocket(activeSocketToken);
     };
   }, [normalizedUserId, token]);
 }

@@ -210,7 +210,6 @@ export function useAuth() {
 
       router.replace("/(tabs)/profile");
     } catch (err: any) {
-      const status = err.response?.status;
       const message =
         err.response?.data?.error ||
         err.response?.data?.message ||
@@ -219,22 +218,7 @@ export function useAuth() {
 
       console.warn("Login failed:", message);
 
-      const loginError = new Error(message) as Error & {
-        status?: number;
-        code?: "USERNAME_NOT_FOUND" | "WRONG_PASSWORD";
-      };
-
-      loginError.status = status;
-
-      if (status === 404 || message.toLowerCase().includes("username")) {
-        loginError.code = "USERNAME_NOT_FOUND";
-        loginError.message = "Username does not exist.";
-      } else if (status === 401 || message.toLowerCase().includes("password")) {
-        loginError.code = "WRONG_PASSWORD";
-        loginError.message = "Wrong password.";
-      }
-
-      throw loginError;
+      throw new Error(message);
     } finally {
       setLoadingAction(false);
     }

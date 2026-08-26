@@ -1,9 +1,9 @@
+import { nbaPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import { NBABracketMatchup } from "@/types/basketball/basketball";
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Colors } from "constants/styles";
 import { getNBATeam } from "constants/teams";
 import { Text, View } from "react-native";
-import { nbaPlayoffBracketStyles } from "styles/NBAPlayoffBraketStyles";
 import { TeamRow } from "./TeamRow";
 
 type CardLayout = {

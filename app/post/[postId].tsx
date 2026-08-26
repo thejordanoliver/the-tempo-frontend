@@ -2,7 +2,7 @@
 
 import { CustomHeader } from "@/components/CustomHeader";
 import { PostItem } from "@/components/Forum/PostItem/PostItem";
-import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchModal";
+import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import CustomActivityIndicator from "components/CustomActivityIndicator";

@@ -33,9 +33,9 @@ import type { ChatMessageItem } from "types/chat";
 import type { ChatSendPayload } from "utils/chatPayload";
 import { createMessageKey } from "utils/chatUtils";
 import { snapPoints } from "utils/modalUtils";
+import { GiphySearchModal } from "../../../../Messages/GiphySearchModal";
 import ChatInputBar from "./ChatInputBar";
 import ChatMessage from "./ChatMessage";
-import { GiphySearchModal } from "./GiphySearchModal";
 
 const EMOJIS = ["😂", "😱", "😳", "🔥"];
 const FALLBACK_INPUT_HEIGHT = 84;

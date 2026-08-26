@@ -1,6 +1,3 @@
-import { CardLayout } from "@/types/basketball/basketball";
-import { Colors } from "constants/styles";
-import { StyleSheet, View } from "react-native";
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -13,7 +10,10 @@ import {
   ROUND2_WIDTH,
   ROUND3_HEIGHT,
   ROUND3_WIDTH,
-} from "styles/NBAPlayoffBraketStyles";
+} from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
+import { CardLayout } from "@/types/basketball/basketball";
+import { Colors } from "constants/styles";
+import { StyleSheet, View } from "react-native";
 export const centerY = (layout?: CardLayout) =>
   layout ? layout.y + layout.height / 2 : 0;
 export const rightX = (layout: CardLayout) => layout.x + layout.width;

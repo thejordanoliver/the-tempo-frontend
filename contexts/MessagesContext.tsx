@@ -17,6 +17,7 @@ import {
   getMessagesPage,
   markConversationRead,
   normalizeConversation,
+  normalizeConversationReadPayload,
   normalizeMessage,
   pinConversation,
   sendMessageRest,
@@ -30,6 +31,8 @@ import {
   getMessagesSocket,
 } from "services/messagesSocket";
 import type {
+  ConversationReadPayload,
+  ConversationReadPosition,
   DirectMessageItem,
   MessageItem,
   SendDirectMessagePayload,
@@ -114,6 +117,15 @@ const upsertConversationInList = (
       ? {
           ...item,
           ...next,
+          readReceipts: {
+            ...(item.readReceipts ?? {}),
+            ...(next.readReceipts ?? {}),
+          },
+          currentUserLastReadAt:
+            next.currentUserLastReadAt ?? item.currentUserLastReadAt,
+          otherParticipantLastReadAt:
+            next.otherParticipantLastReadAt ??
+            item.otherParticipantLastReadAt,
           isPinned: next.isPinned ?? item.isPinned,
         }
       : item,
@@ -197,6 +209,32 @@ const removeMessageFromList = (
   messages.filter(
     (message) => normalizeId(message.id) !== normalizeId(messageId),
   );
+
+type ConversationReadReceiptMap = Record<string, ConversationReadPosition>;
+
+const hasReadReceipts = (
+  receipts?: ConversationReadReceiptMap,
+) => Boolean(receipts && Object.keys(receipts).length > 0);
+
+const mergeReadReceipts = (
+  current?: ConversationReadReceiptMap,
+  incoming?: ConversationReadReceiptMap,
+) => ({
+  ...(current ?? {}),
+  ...(incoming ?? {}),
+});
+
+const applyReadReceiptsToConversation = (
+  conversation: MessageItem,
+  receipts?: ConversationReadReceiptMap,
+) => {
+  if (!hasReadReceipts(receipts)) return conversation;
+
+  return {
+    ...conversation,
+    readReceipts: mergeReadReceipts(conversation.readReceipts, receipts),
+  };
+};
 
 type ConversationListState = {
   items: MessageItem[];
@@ -289,11 +327,14 @@ export function MessagesProvider({
   const [messageCache, setMessageCache] = useState<
     Record<string, MessageCacheState>
   >({});
+  const [readReceiptsByConversation, setReadReceiptsByConversation] =
+    useState<Record<string, ConversationReadReceiptMap>>({});
 
   const conversationListsRef = useRef(conversationLists);
   const messageCacheRef = useRef(messageCache);
   const socketRef = useRef<ReturnType<typeof getMessagesSocket>>(null);
   const conversationRequestIdsRef = useRef<Record<string, number>>({});
+  const activeConversationLoadsRef = useRef<Record<string, number>>({});
   const messageRequestIdsRef = useRef<Record<string, number>>({});
   const loadingMoreConversationsRef = useRef<Record<string, boolean>>({});
   const loadingOlderMessagesRef = useRef<Record<string, boolean>>({});
@@ -307,9 +348,21 @@ export function MessagesProvider({
   }, [messageCache]);
 
   const getConversationList = useCallback(
-    (search = "") =>
-      conversationLists[search.trim()] ?? createConversationListState(),
-    [conversationLists],
+    (search = "") => {
+      const state =
+        conversationLists[search.trim()] ?? createConversationListState();
+
+      return {
+        ...state,
+        items: state.items.map((conversation) =>
+          applyReadReceiptsToConversation(
+            conversation,
+            readReceiptsByConversation[normalizeId(conversation.id)],
+          ),
+        ),
+      };
+    },
+    [conversationLists, readReceiptsByConversation],
   );
 
   const getConversationById = useCallback(
@@ -321,12 +374,17 @@ export function MessagesProvider({
           (item) => normalizeId(item.id) === normalizedConversationId,
         );
 
-        if (conversation) return conversation;
+        if (conversation) {
+          return applyReadReceiptsToConversation(
+            conversation,
+            readReceiptsByConversation[normalizedConversationId],
+          );
+        }
       }
 
       return null;
     },
-    [conversationLists],
+    [conversationLists, readReceiptsByConversation],
   );
 
   const getMessageState = useCallback(
@@ -354,10 +412,112 @@ export function MessagesProvider({
     [],
   );
 
+  const cacheConversationReadReceipts = useCallback(
+    (conversation: MessageItem | null | undefined) => {
+      const conversationId = normalizeId(conversation?.id);
+      const readReceipts = conversation?.readReceipts;
+
+      if (!conversationId || !hasReadReceipts(readReceipts)) return;
+
+      setReadReceiptsByConversation((current) => ({
+        ...current,
+        [conversationId]: mergeReadReceipts(
+          current[conversationId],
+          readReceipts,
+        ),
+      }));
+    },
+    [],
+  );
+
+  const clearConversationUnread = useCallback((conversationId: string) => {
+    const normalizedConversationId = normalizeId(conversationId);
+    if (!normalizedConversationId) return;
+
+    setConversationLists((current) => {
+      const next = { ...current };
+
+      Object.entries(current).forEach(([key, state]) => {
+        next[key] = {
+          ...state,
+          items: state.items.map((conversation) =>
+            normalizeId(conversation.id) === normalizedConversationId
+              ? { ...conversation, unreadCount: 0 }
+              : conversation,
+          ),
+        };
+      });
+
+      return next;
+    });
+  }, []);
+
+  const applyConversationReadReceipt = useCallback(
+    (payload: ConversationReadPayload | null) => {
+      if (!payload) return;
+
+      const conversationId = normalizeId(payload.conversationId);
+      const readerId = normalizeId(payload.readerId);
+      const readAt = normalizeId(payload.readAt);
+
+      if (!conversationId || !readerId || !readAt) return;
+
+      const receipt: ConversationReadPosition = {
+        userId: payload.readerId,
+        readAt,
+        lastReadMessageId: payload.lastReadMessageId ?? null,
+      };
+      const isCurrentUserReader = readerId === normalizeId(userId);
+
+      setReadReceiptsByConversation((current) => ({
+        ...current,
+        [conversationId]: mergeReadReceipts(current[conversationId], {
+          [readerId]: receipt,
+        }),
+      }));
+
+      setConversationLists((current) => {
+        const next = { ...current };
+
+        Object.entries(current).forEach(([key, state]) => {
+          next[key] = {
+            ...state,
+            items: state.items.map((conversation) => {
+              if (normalizeId(conversation.id) !== conversationId) {
+                return conversation;
+              }
+
+              return {
+                ...conversation,
+                unreadCount: isCurrentUserReader
+                  ? 0
+                  : conversation.unreadCount,
+                currentUserLastReadAt: isCurrentUserReader
+                  ? readAt
+                  : conversation.currentUserLastReadAt,
+                otherParticipantLastReadAt: isCurrentUserReader
+                  ? conversation.otherParticipantLastReadAt
+                  : readAt,
+                readReceipts: mergeReadReceipts(conversation.readReceipts, {
+                  [readerId]: receipt,
+                }),
+              };
+            }),
+          };
+        });
+
+        return next;
+      });
+    },
+    [userId],
+  );
+
   const upsertConversation = useCallback((conversation: MessageItem) => {
     const normalized = conversation;
 
     if (!normalizeId(normalized.id)) return;
+
+    cacheConversationReadReceipts(normalized);
 
     setConversationLists((current) => {
       const next = { ...current };
@@ -374,7 +534,7 @@ export function MessagesProvider({
 
       return next;
     });
-  }, []);
+  }, [cacheConversationReadReceipts]);
 
   const removeConversation = useCallback((conversationId: string) => {
     const normalizedConversationId = normalizeId(conversationId);
@@ -395,6 +555,15 @@ export function MessagesProvider({
     });
 
     setMessageCache((current) => {
+      if (!current[normalizedConversationId]) return current;
+
+      const next = { ...current };
+      delete next[normalizedConversationId];
+
+      return next;
+    });
+
+    setReadReceiptsByConversation((current) => {
       if (!current[normalizedConversationId]) return current;
 
       const next = { ...current };
@@ -488,8 +657,14 @@ export function MessagesProvider({
       if (!enabled || !token) return;
 
       const key = search.trim();
+
+      if (!refresh && activeConversationLoadsRef.current[key]) {
+        return;
+      }
+
       const requestId = (conversationRequestIdsRef.current[key] ?? 0) + 1;
       conversationRequestIdsRef.current[key] = requestId;
+      activeConversationLoadsRef.current[key] = requestId;
 
       const currentState =
         conversationListsRef.current[key] ?? createConversationListState();
@@ -507,6 +682,7 @@ export function MessagesProvider({
           key,
           undefined,
           CONVERSATION_PAGE_SIZE,
+          userId,
         );
 
         if (conversationRequestIdsRef.current[key] !== requestId) return;
@@ -522,6 +698,8 @@ export function MessagesProvider({
           error: null,
           loaded: true,
         }));
+
+        response.items.forEach(cacheConversationReadReceipts);
       } catch (error: any) {
         if (conversationRequestIdsRef.current[key] !== requestId) return;
 
@@ -536,9 +714,19 @@ export function MessagesProvider({
         }));
 
         throw error;
+      } finally {
+        if (activeConversationLoadsRef.current[key] === requestId) {
+          delete activeConversationLoadsRef.current[key];
+        }
       }
     },
-    [enabled, token, updateConversationList],
+    [
+      cacheConversationReadReceipts,
+      enabled,
+      token,
+      updateConversationList,
+      userId,
+    ],
   );
 
   const loadMoreConversations = useCallback(
@@ -572,6 +760,7 @@ export function MessagesProvider({
           key,
           cursor,
           CONVERSATION_PAGE_SIZE,
+          userId,
         );
 
         updateConversationList(key, (state) => ({
@@ -581,6 +770,8 @@ export function MessagesProvider({
           hasMore: Boolean(response.nextCursor),
           isLoadingMore: false,
         }));
+
+        response.items.forEach(cacheConversationReadReceipts);
       } catch {
         updateConversationList(key, (state) => ({
           ...state,
@@ -590,7 +781,13 @@ export function MessagesProvider({
         loadingMoreConversationsRef.current[key] = false;
       }
     },
-    [enabled, token, updateConversationList],
+    [
+      cacheConversationReadReceipts,
+      enabled,
+      token,
+      updateConversationList,
+      userId,
+    ],
   );
 
   const togglePinConversation = useCallback(
@@ -857,30 +1054,54 @@ export function MessagesProvider({
       const normalizedConversationId = normalizeId(conversationId);
       if (!normalizedConversationId) return;
 
-      emitConversationRead(normalizedConversationId);
+      clearConversationUnread(normalizedConversationId);
 
-      setConversationLists((current) => {
-        const next = { ...current };
+      if (socketRef.current?.connected) {
+        try {
+          const readPayload = await new Promise<ConversationReadPayload | null>(
+            (resolve, reject) => {
+              const timeout = setTimeout(() => {
+                reject(new Error("Timed out marking conversation read."));
+              }, 4000);
 
-        Object.entries(current).forEach(([key, state]) => {
-          next[key] = {
-            ...state,
-            items: state.items.map((conversation) =>
-              normalizeId(conversation.id) === normalizedConversationId
-                ? { ...conversation, unreadCount: 0 }
-                : conversation,
-            ),
-          };
-        });
+              const didEmit = emitConversationRead(
+                normalizedConversationId,
+                (response: any) => {
+                  clearTimeout(timeout);
 
-        return next;
-      });
+                  if (response?.error) {
+                    reject(new Error(String(response.error)));
+                    return;
+                  }
+
+                  resolve(normalizeConversationReadPayload(response));
+                },
+              );
+
+              if (!didEmit) {
+                clearTimeout(timeout);
+                reject(new Error("Messages socket is not connected."));
+              }
+            },
+          );
+
+          applyConversationReadReceipt(readPayload);
+          return;
+        } catch {}
+      }
 
       try {
-        await markConversationRead(normalizedConversationId);
+        const readPayload = await markConversationRead(
+          normalizedConversationId,
+        );
+
+        applyConversationReadReceipt(readPayload);
       } catch {}
     },
-    [],
+    [
+      applyConversationReadReceipt,
+      clearConversationUnread,
+    ],
   );
 
   const sendDirectMessage = useCallback(
@@ -1025,29 +1246,7 @@ export function MessagesProvider({
     };
 
     const handleConversationRead = (payload: any) => {
-      const conversationId = normalizeId(
-        payload?.conversationId ?? payload?.conversation?.id ?? payload?.id,
-      );
-      const readerId = normalizeId(payload?.userId ?? payload?.readerId);
-
-      if (!conversationId || readerId !== normalizeId(userId)) return;
-
-      setConversationLists((current) => {
-        const next = { ...current };
-
-        Object.entries(current).forEach(([key, state]) => {
-          next[key] = {
-            ...state,
-            items: state.items.map((conversation) =>
-              normalizeId(conversation.id) === conversationId
-                ? { ...conversation, unreadCount: 0 }
-                : conversation,
-            ),
-          };
-        });
-
-        return next;
-      });
+      applyConversationReadReceipt(normalizeConversationReadPayload(payload));
     };
 
     const handleNewMessage = (payload: any) => {
@@ -1112,6 +1311,7 @@ export function MessagesProvider({
       socket.off("message:deleted", handleMessageDeleted);
     };
   }, [
+    applyConversationReadReceipt,
     enabled,
     loadConversations,
     removeConversation,

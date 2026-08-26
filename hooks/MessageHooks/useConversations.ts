@@ -20,7 +20,6 @@ export const useConversations = (search: string) => {
       () => {
         void loadConversations({
           search: normalizedSearch,
-          background: state.items.length > 0,
         }).catch(() => {});
       },
       normalizedSearch ? 250 : 0,
@@ -29,15 +28,14 @@ export const useConversations = (search: string) => {
     return () => {
       clearTimeout(timeout);
     };
-  }, [loadConversations, normalizedSearch, state.items.length]);
+  }, [loadConversations, normalizedSearch]);
 
   const refresh = useCallback(async () => {
     await loadConversations({
       search: normalizedSearch,
       refresh: true,
-      background: state.items.length > 0,
     }).catch(() => {});
-  }, [loadConversations, normalizedSearch, state.items.length]);
+  }, [loadConversations, normalizedSearch]);
 
   const loadMore = useCallback(async () => {
     await loadMoreConversations(normalizedSearch);
@@ -59,6 +57,7 @@ export const useConversations = (search: string) => {
     isRefreshing: state.isRefreshing,
     isLoadingMore: state.isLoadingMore,
     error: state.error,
+    hasLoadedSuccessfully: state.loaded,
     refresh,
     loadMore,
     hasMore: state.hasMore,

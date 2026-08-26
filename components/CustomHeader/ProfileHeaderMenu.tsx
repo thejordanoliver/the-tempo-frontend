@@ -61,10 +61,6 @@ export function ProfileHeaderMenu({
       style={[
         styles.profileSubmenu,
         {
-          backgroundColor: isDark
-            ? Colors.dark.itemBackground
-            : Colors.light.itemBackground,
-          borderColor: isDark ? Colors.darkGray : Colors.lightGray,
           opacity: progress,
           transform: [
             {
@@ -85,40 +81,8 @@ export function ProfileHeaderMenu({
     >
       {onEdit ? (
         <>
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
-            style={styles.profileSubmenuItem}
-            onPress={onEdit}
-          >
-            <View style={styles.profileSubmenuIconWrap}>
-              <Ionicons
-                name="create-outline"
-                size={24}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </View>
-
-            <Text
-              style={[
-                styles.profileSubmenuText,
-                {
-                  color: isDark ? Colors.white : Colors.black,
-                },
-              ]}
-            >
-              Edit Profile
-            </Text>
-          </TouchableOpacity>
-
           {(onSettings || onLogout) && (
-            <View
-              style={[
-                styles.profileSubmenuSeparator,
-                {
-                  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-                },
-              ]}
-            />
+            <View style={styles.profileSubmenuSeparator} />
           )}
         </>
       ) : null}
@@ -137,31 +101,13 @@ export function ProfileHeaderMenu({
             />
           </View>
 
-          <Text
-            style={[
-              styles.profileSubmenuText,
-              {
-                color: isDark ? Colors.dark.text : Colors.light.text,
-              },
-            ]}
-          >
-            Settings
-          </Text>
+          <Text style={styles.profileSubmenuText}>Settings</Text>
         </TouchableOpacity>
       ) : null}
 
       {onLogout ? (
         <>
-          {onSettings ? (
-            <View
-              style={[
-                styles.profileSubmenuSeparator,
-                {
-                  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-                },
-              ]}
-            />
-          ) : null}
+          {onSettings ? <View style={styles.profileSubmenuSeparator} /> : null}
 
           <TouchableOpacity
             activeOpacity={activeOpacity}

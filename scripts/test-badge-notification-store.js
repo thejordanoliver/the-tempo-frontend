@@ -475,6 +475,9 @@ async function testRealtimeHelpers() {
       "@/store/badgeNotificationStore": {
         useBadgeNotificationStore: store,
       },
+      "@/utils/apiClient": {
+        getAccessToken: async () => null,
+      },
     },
   );
 
@@ -562,6 +565,29 @@ async function testRealtimeHelpers() {
 
   assertArrayEqual(failedAcknowledgedIds, []);
   assertArrayEqual(failedRetryQueue, [["read-3"]]);
+
+  const preparationOrder = [];
+  const currentToken = await realtime.prepareNotificationSocketAccess({
+    token: "fresh-token",
+    recoverPendingNotifications: async () => {
+      preparationOrder.push("recover");
+    },
+    getStoredAccessToken: async () => {
+      preparationOrder.push("token");
+      return "fresh-token";
+    },
+  });
+
+  assert.equal(currentToken, "fresh-token");
+  assertArrayEqual(preparationOrder, ["recover", "token"]);
+
+  const replacedToken = await realtime.prepareNotificationSocketAccess({
+    token: "expired-token",
+    recoverPendingNotifications: async () => {},
+    getStoredAccessToken: async () => "refreshed-token",
+  });
+
+  assert.equal(replacedToken, null);
 }
 
 function testBadgeAwardResponsesOnlyRefresh() {

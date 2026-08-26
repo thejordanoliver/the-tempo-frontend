@@ -21,6 +21,19 @@ export type MessageAccent = {
   secondary: string;
 };
 
+export type ConversationReadPosition = {
+  userId: number | string;
+  readAt: string | null;
+  lastReadMessageId?: string | null;
+};
+
+export type ConversationReadPayload = {
+  conversationId: string;
+  readerId: number | string;
+  readAt: string;
+  lastReadMessageId?: string | null;
+};
+
 export type MessageItem = {
   id: string;
   dmKey?: string;
@@ -39,6 +52,9 @@ export type MessageItem = {
   lastMessageAt?: string;
   updatedAt?: string;
   activityAt?: string;
+  currentUserLastReadAt?: string | null;
+  otherParticipantLastReadAt?: string | null;
+  readReceipts?: Record<string, ConversationReadPosition>;
   messageThemePreference?: MessageThemePreference;
 };
 

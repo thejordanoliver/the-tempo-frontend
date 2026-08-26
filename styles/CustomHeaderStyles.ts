@@ -294,6 +294,10 @@ export const customHeaderStyles = (isDark: boolean) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderRadius: 14,
       overflow: "hidden",
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       shadowColor: Colors.black,
       shadowOffset: {
         width: 0,
@@ -324,11 +328,13 @@ export const customHeaderStyles = (isDark: boolean) =>
       flex: 1,
       fontFamily: Fonts.BOLD,
       fontSize: 12,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     profileSubmenuSeparator: {
       height: StyleSheet.hairlineWidth,
       marginLeft: 42,
+      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     headerActionButton: {

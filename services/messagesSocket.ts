@@ -1,5 +1,8 @@
 import { io, Socket } from "socket.io-client";
-import { SendDirectMessagePayload } from "types/messages";
+import {
+  ConversationReadPayload,
+  SendDirectMessagePayload,
+} from "types/messages";
 
 const SOCKET_URL =
   process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "") ??
@@ -53,8 +56,15 @@ export const emitTypingStop = (conversationId: string) => {
   messagesSocket?.emit("typing:stop", { conversationId });
 };
 
-export const emitConversationRead = (conversationId: string) => {
-  messagesSocket?.emit("conversation:read", { conversationId });
+export const emitConversationRead = (
+  conversationId: string,
+  callback?: (response?: ConversationReadPayload | unknown) => void,
+) => {
+  if (!messagesSocket?.connected) return false;
+
+  messagesSocket.emit("conversation:read", { conversationId }, callback);
+
+  return true;
 };
 
 export const emitConversationPin = (

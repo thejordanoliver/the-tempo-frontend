@@ -18,8 +18,12 @@ import {
   resolveMessageAccent,
 } from "utils/messageTheme";
 
-export const useDirectMessages = (conversationId: string) => {
+export const useDirectMessages = (
+  conversationId: string,
+  options: { isVisible?: boolean } = {},
+) => {
   const { token } = useAuth();
+  const isVisible = options.isVisible ?? true;
   const {
     getConversationById,
     getMessageState,
@@ -71,21 +75,20 @@ export const useDirectMessages = (conversationId: string) => {
 
     void loadConversationMessages(conversationId, {
       background: hasCachedMessages,
-    }).then(() => {
-      void markRead(conversationId);
     });
   }, [
     conversationId,
     loadConversationMessages,
-    markRead,
     messageState.messages.length,
   ]);
 
   useEffect(() => {
-    if (!conversationId || messageState.messages.length === 0) return;
+    if (!conversationId || !isVisible || messageState.messages.length === 0) {
+      return;
+    }
 
     void markRead(conversationId);
-  }, [conversationId, markRead, messageState.messages.length]);
+  }, [conversationId, isVisible, markRead, messageState.messages.length]);
 
   const refresh = useCallback(() => {
     return loadConversationMessages(conversationId, { background: true });

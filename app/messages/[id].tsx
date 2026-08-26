@@ -1,9 +1,10 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
+import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
 import MessageThemeModal from "@/components/Messages/MessageThemeModal";
-import { GiphySearchModal } from "@/components/Sports/Basketball/GameDetails/GameChat/GiphySearchModal";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "@react-navigation/native";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -19,13 +20,15 @@ import {
   useRef,
   useState,
 } from "react";
-import type { ListRenderItem } from "react-native";
 import {
   Alert,
   Animated,
+  AppState,
+  type AppStateStatus,
   Easing,
   FlatList,
   Keyboard,
+  type ListRenderItem,
   Platform,
   StyleSheet,
   Text,
@@ -34,13 +37,152 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { uploadMessageImage } from "services/messagesApi";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DirectMessageItem, MessageAttachment } from "types/messages";
+import { uploadMessageImage } from "services/messagesApi";
+import {
+  ConversationReadPosition,
+  DirectMessageItem,
+  MessageAttachment,
+  MessageItem,
+} from "types/messages";
 import { getContrastingTextColor } from "utils/color";
 
 const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
+
+const normalizeId = (value: unknown) => String(value ?? "").trim();
+
+const getMessageTime = (message: DirectMessageItem) => {
+  if (!message.createdAt) return null;
+
+  const time = new Date(message.createdAt).getTime();
+
+  return Number.isNaN(time) ? null : time;
+};
+
+const isPersistedOutgoingMessage = (message: DirectMessageItem) => {
+  const id = normalizeId(message.id);
+  const clientId = normalizeId(message.clientId);
+
+  return (
+    message.isCurrentUser &&
+    message.status !== "pending" &&
+    Boolean(id) &&
+    (!clientId || id !== clientId) &&
+    Boolean(message.createdAt)
+  );
+};
+
+const hasReadMessageCursor = (
+  receipt: ConversationReadPosition | null | undefined,
+) =>
+  Boolean(
+    receipt &&
+    Object.prototype.hasOwnProperty.call(receipt, "lastReadMessageId"),
+  );
+
+type ParticipantReadPosition = {
+  readAt: number | null;
+  lastReadMessageId?: string | null;
+  hasMessageCursor: boolean;
+};
+
+const formatReadReceiptTime = (readAt: number | null | undefined) => {
+  if (readAt === null || readAt === undefined) return null;
+
+  const date = new Date(readAt);
+
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+};
+
+const getParticipantReadPosition = (
+  conversation?: MessageItem | null,
+): ParticipantReadPosition | null => {
+  const otherUserId = normalizeId(conversation?.userId);
+
+  if (!conversation || !otherUserId) return null;
+
+  const receipt = conversation.readReceipts?.[otherUserId];
+  const readAt = receipt?.readAt ?? conversation.otherParticipantLastReadAt;
+  const hasMessageCursor = hasReadMessageCursor(receipt);
+
+  if (!readAt && !hasMessageCursor) return null;
+
+  const time = readAt ? new Date(readAt).getTime() : null;
+
+  return {
+    readAt: time === null || Number.isNaN(time) ? null : time,
+    lastReadMessageId: hasMessageCursor
+      ? (receipt?.lastReadMessageId ?? null)
+      : undefined,
+    hasMessageCursor,
+  };
+};
+
+const getMessageReceiptLabels = (
+  messages: DirectMessageItem[],
+  otherParticipantReadPosition: ParticipantReadPosition | null,
+) => {
+  let latestOutgoingMessage: DirectMessageItem | null = null;
+  let latestReadOutgoingMessage: DirectMessageItem | null = null;
+  const readMessageId = otherParticipantReadPosition?.hasMessageCursor
+    ? normalizeId(otherParticipantReadPosition.lastReadMessageId)
+    : "";
+
+  for (const message of messages) {
+    if (!isPersistedOutgoingMessage(message)) continue;
+
+    latestOutgoingMessage = message;
+
+    if (readMessageId) {
+      if (normalizeId(message.id) === readMessageId) {
+        latestReadOutgoingMessage = message;
+      }
+
+      continue;
+    }
+
+    if (otherParticipantReadPosition?.hasMessageCursor) {
+      continue;
+    }
+
+    const messageTime = getMessageTime(message);
+
+    if (
+      otherParticipantReadPosition?.readAt !== null &&
+      otherParticipantReadPosition?.readAt !== undefined &&
+      messageTime !== null &&
+      messageTime <= otherParticipantReadPosition.readAt
+    ) {
+      latestReadOutgoingMessage = message;
+    }
+  }
+
+  const labels: Record<string, string> = {};
+  const renderedReadMessageId = latestReadOutgoingMessage
+    ? normalizeId(latestReadOutgoingMessage.id)
+    : "";
+  const sentMessageId = latestOutgoingMessage
+    ? normalizeId(latestOutgoingMessage.id)
+    : "";
+
+  if (renderedReadMessageId) {
+    const readTime = formatReadReceiptTime(
+      otherParticipantReadPosition?.readAt,
+    );
+
+    labels[renderedReadMessageId] = readTime ? `Read ${readTime}` : "Read";
+  } else if (sentMessageId) {
+    labels[sentMessageId] = "Sent";
+  }
+
+  return labels;
+};
 
 export default function ConversationScreen() {
   const router = useRouter();
@@ -62,6 +204,29 @@ export default function ConversationScreen() {
   const listRef = useRef<FlatList<DirectMessageItem>>(null);
   const inputRef = useRef<TextInput>(null);
   const keyboardOffset = useRef(new Animated.Value(0)).current;
+  const [isScreenFocused, setIsScreenFocused] = useState(false);
+  const [appState, setAppState] = useState<AppStateStatus>(
+    AppState.currentState,
+  );
+  const isConversationVisible = isScreenFocused && appState === "active";
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsScreenFocused(true);
+
+      return () => {
+        setIsScreenFocused(false);
+      };
+    }, []),
+  );
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", setAppState);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   const {
     conversation,
@@ -80,7 +245,9 @@ export default function ConversationScreen() {
     notifyTyping,
     refresh,
     loadOlder,
-  } = useDirectMessages(conversationId);
+  } = useDirectMessages(conversationId, {
+    isVisible: isConversationVisible,
+  });
 
   const [draftMessage, setDraftMessage] = useState("");
   const [selectedAttachment, setSelectedAttachment] =
@@ -101,6 +268,14 @@ export default function ConversationScreen() {
     conversation?.fullName ?? conversation?.full_name ?? "Direct message";
   const displayAvatar = conversation?.profileImageUrl || FALLBACK_AVATAR;
   const usesCustomMessageAccent = messageThemePreference.mode !== "default";
+  const otherParticipantReadPosition = useMemo(
+    () => getParticipantReadPosition(conversation),
+    [conversation],
+  );
+  const messageReceiptLabels = useMemo(
+    () => getMessageReceiptLabels(messages, otherParticipantReadPosition),
+    [messages, otherParticipantReadPosition],
+  );
 
   const handleBack = useCallback(() => {
     router.back();
@@ -117,11 +292,7 @@ export default function ConversationScreen() {
   }, [conversationId]);
 
   useEffect(() => {
-    if (
-      didInitialScrollRef.current ||
-      isLoading ||
-      messages.length === 0
-    ) {
+    if (didInitialScrollRef.current || isLoading || messages.length === 0) {
       return;
     }
 
@@ -289,6 +460,7 @@ export default function ConversationScreen() {
     ({ item }) => {
       const hasText = item.text.trim().length > 0;
       const hasAttachment = Boolean(item.attachment);
+      const receiptLabel = messageReceiptLabels[normalizeId(item.id)];
 
       const customBubbleColor = item.isCurrentUser
         ? messageAccent.primary
@@ -320,56 +492,69 @@ export default function ConversationScreen() {
 
           <View
             style={[
-              styles.messageBubble,
-              hasAttachment && styles.attachmentMessageBubble,
+              styles.messageStack,
               item.isCurrentUser
-                ? styles.currentUserBubble
-                : styles.otherUserBubble,
-              usesCustomMessageAccent && {
-                backgroundColor: customBubbleColor,
-              },
+                ? styles.currentUserMessageStack
+                : styles.otherUserMessageStack,
             ]}
           >
-            {item.attachment && (
-              <Image
-                source={{ uri: item.attachment.uri }}
-                style={styles.messageAttachment}
-                contentFit="cover"
-              />
-            )}
-
-            {hasText && (
-              <Text
-                style={[
-                  styles.messageText,
-                  hasAttachment && styles.attachmentCaptionText,
-                  item.isCurrentUser &&
-                    !usesCustomMessageAccent &&
-                    styles.currentUserMessageText,
-                  usesCustomMessageAccent && {
-                    color: customTextColor,
-                  },
-                ]}
-              >
-                {item.text}
-              </Text>
-            )}
-
-            <Text
+            <View
               style={[
-                styles.messageTime,
-                hasAttachment && styles.attachmentMessageTime,
-                item.isCurrentUser &&
-                  !usesCustomMessageAccent &&
-                  styles.currentUserMessageTime,
+                styles.messageBubble,
+                hasAttachment && styles.attachmentMessageBubble,
+                item.isCurrentUser
+                  ? styles.currentUserBubble
+                  : styles.otherUserBubble,
                 usesCustomMessageAccent && {
-                  color: customTextColor,
-                  opacity: 0.72,
+                  backgroundColor: customBubbleColor,
                 },
               ]}
             >
-              {item.timestamp}
-            </Text>
+              {item.attachment && (
+                <Image
+                  source={{ uri: item.attachment.uri }}
+                  style={styles.messageAttachment}
+                  contentFit="cover"
+                />
+              )}
+
+              {hasText && (
+                <Text
+                  style={[
+                    styles.messageText,
+                    hasAttachment && styles.attachmentCaptionText,
+                    item.isCurrentUser &&
+                      !usesCustomMessageAccent &&
+                      styles.currentUserMessageText,
+                    usesCustomMessageAccent && {
+                      color: customTextColor,
+                    },
+                  ]}
+                >
+                  {item.text}
+                </Text>
+              )}
+
+              <Text
+                style={[
+                  styles.messageTime,
+                  hasAttachment && styles.attachmentMessageTime,
+                  item.isCurrentUser &&
+                    !usesCustomMessageAccent &&
+                    styles.currentUserMessageTime,
+                  usesCustomMessageAccent && {
+                    color: customTextColor,
+                    opacity: 0.72,
+                  },
+                ]}
+              >
+                {item.timestamp}
+              </Text>
+            </View>
+
+            {item.isCurrentUser && Boolean(receiptLabel) && (
+              <Text style={styles.messageReceiptText}>{receiptLabel}</Text>
+            )}
           </View>
         </View>
       );
@@ -378,6 +563,7 @@ export default function ConversationScreen() {
       conversation?.profileImageUrl,
       messageAccent.primary,
       messageAccent.secondary,
+      messageReceiptLabels,
       usesCustomMessageAccent,
       styles.attachmentCaptionText,
       styles.attachmentMessageBubble,
@@ -385,13 +571,17 @@ export default function ConversationScreen() {
       styles.currentUserBubble,
       styles.currentUserMessageText,
       styles.currentUserMessageTime,
+      styles.currentUserMessageStack,
       styles.currentUserRow,
       styles.messageAttachment,
       styles.messageAvatar,
       styles.messageBubble,
+      styles.messageReceiptText,
       styles.messageRow,
+      styles.messageStack,
       styles.messageText,
       styles.messageTime,
+      styles.otherUserMessageStack,
       styles.otherUserBubble,
       styles.otherUserRow,
     ],
@@ -583,6 +773,7 @@ export default function ConversationScreen() {
         <FlatList
           ref={listRef}
           data={messages}
+          extraData={messageReceiptLabels}
           keyExtractor={keyExtractor}
           renderItem={renderMessage}
           ListHeaderComponent={renderOlderMessagesLoader}
@@ -779,8 +970,19 @@ const messageDetailStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
-    messageBubble: {
+    messageStack: {
       maxWidth: "78%",
+    },
+
+    currentUserMessageStack: {
+      alignItems: "flex-end",
+    },
+
+    otherUserMessageStack: {
+      alignItems: "flex-start",
+    },
+
+    messageBubble: {
       paddingHorizontal: 13,
       paddingVertical: 10,
       borderWidth: StyleSheet.hairlineWidth,
@@ -848,6 +1050,15 @@ const messageDetailStyles = (isDark: boolean) =>
       color: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
+    messageReceiptText: {
+      alignSelf: "flex-end",
+      marginTop: 4,
+      marginRight: 2,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
     emptyState: {
       flex: 1,
       alignItems: "center",
@@ -888,6 +1099,7 @@ const messageDetailStyles = (isDark: boolean) =>
     },
 
     typingBubble: {
+      maxWidth: "78%",
       justifyContent: "center",
       minHeight: 40,
       paddingHorizontal: 13,

@@ -1,9 +1,9 @@
-import { Text } from "react-native";
 import {
   LABEL_TOP,
   LABEL_WIDTH,
   nbaPlayoffBracketStyles,
-} from "styles/NBAPlayoffBraketStyles";
+} from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
+import { Text } from "react-native";
 
 export const RoundLabel = ({
   title,

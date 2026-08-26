@@ -9,7 +9,6 @@ import { useNavigation, useRouter } from "expo-router";
 import { useConversations } from "hooks/MessageHooks/useConversations";
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -30,7 +29,6 @@ export default function MessageListScreen() {
 
   const [search, setSearch] = useState("");
   const [isCreatingConversation, setIsCreatingConversation] = useState(false);
-  const [hasLoadedSuccessfully, setHasLoadedSuccessfully] = useState(false);
 
   const newMessageModalRef = useRef<NewMessageModalRef>(null);
 
@@ -48,22 +46,13 @@ export default function MessageListScreen() {
     refresh,
     loadMore,
     hasMore,
+    hasLoadedSuccessfully,
     togglePinConversation,
     deleteConversation,
     createConversation,
   } = useConversations(search);
 
   const trimmedSearch = search.trim();
-
-  /*
-   * Once the list has loaded successfully, subsequent action or refresh
-   * failures should not replace the entire screen with an error state.
-   */
-  useEffect(() => {
-    if (!isLoading && !error) {
-      setHasLoadedSuccessfully(true);
-    }
-  }, [error, isLoading]);
 
   /* ----------------------------- Swipeables ----------------------------- */
 

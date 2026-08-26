@@ -1,5 +1,7 @@
 import { apiClient } from "utils/apiClient";
 import {
+  ConversationReadPayload,
+  ConversationReadPosition,
   DirectMessageItem,
   MessageAttachment,
   MessageItem,
@@ -9,6 +11,13 @@ import {
 import { normalizeMessageThemePreference } from "utils/messageTheme";
 
 type RawRecord = Record<string, any>;
+type ApiRequestError = {
+  response?: {
+    status?: number;
+    data?: unknown;
+  };
+  message?: string;
+};
 
 export type CreateConversationResponse = {
   success?: boolean;
@@ -152,6 +161,14 @@ const formatTimestamp = (value?: string | number | Date | null) => {
   });
 };
 
+const normalizeDateTime = (value?: string | number | Date | null) => {
+  if (!value) return null;
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString();
+};
+
 const normalizeAttachment = (
   raw?: RawRecord | null,
 ): MessageAttachment | null => {
@@ -169,6 +186,187 @@ const normalizeAttachment = (
     width: raw.width ?? null,
     height: raw.height ?? null,
   };
+};
+
+const getMemberUserId = (member?: RawRecord | null) =>
+  member?.userId ??
+  member?.user_id ??
+  member?.readerId ??
+  member?.reader_id ??
+  member?.profileId ??
+  member?.profile_id ??
+  member?.user?.id;
+
+const getMemberReadAt = (member?: RawRecord | null) =>
+  member?.readAt ??
+  member?.read_at ??
+  member?.lastReadAt ??
+  member?.last_read_at;
+
+const getFirstExistingValue = (
+  record: RawRecord | null | undefined,
+  keys: string[],
+) => {
+  if (!record) return undefined;
+
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(record, key)) {
+      return record[key];
+    }
+  }
+
+  return undefined;
+};
+
+const getMemberLastReadMessageId = (member?: RawRecord | null) =>
+  getFirstExistingValue(member, [
+    "lastReadMessageId",
+    "last_read_message_id",
+    "messageId",
+    "message_id",
+  ]);
+
+const addReadPosition = (
+  receipts: Record<string, ConversationReadPosition>,
+  userId: unknown,
+  readAt: unknown,
+  lastReadMessageId?: unknown,
+) => {
+  const normalizedUserId = String(userId ?? "").trim();
+
+  if (!normalizedUserId) return;
+
+  const receipt: ConversationReadPosition = {
+    userId: userId as string | number,
+    readAt: normalizeDateTime(readAt as string | number | Date | null),
+  };
+
+  if (lastReadMessageId !== undefined) {
+    receipt.lastReadMessageId =
+      lastReadMessageId === null ? null : String(lastReadMessageId);
+  }
+
+  receipts[normalizedUserId] = receipt;
+};
+
+const normalizeReadReceipts = (
+  raw: RawRecord = {},
+  currentUserId?: number | string | null,
+) => {
+  const receipts: Record<string, ConversationReadPosition> = {};
+  const rawReceipts =
+    raw.readReceipts ??
+    raw.read_receipts ??
+    raw.readPositions ??
+    raw.read_positions;
+
+  if (Array.isArray(rawReceipts)) {
+    rawReceipts.forEach((receipt) => {
+      addReadPosition(
+        receipts,
+        getMemberUserId(receipt),
+        getMemberReadAt(receipt),
+        getMemberLastReadMessageId(receipt),
+      );
+    });
+  } else if (rawReceipts && typeof rawReceipts === "object") {
+    Object.entries(rawReceipts).forEach(([key, value]) => {
+      const receipt = value as RawRecord | null;
+
+      addReadPosition(
+        receipts,
+        getMemberUserId(receipt) ?? key,
+        getMemberReadAt(receipt),
+        getMemberLastReadMessageId(receipt),
+      );
+    });
+  }
+
+  const currentMember =
+    raw.currentMember ??
+    raw.current_member ??
+    raw.currentUserMember ??
+    raw.current_user_member ??
+    raw.member ??
+    raw.membership ??
+    raw.conversationMember ??
+    raw.conversation_member;
+
+  addReadPosition(
+    receipts,
+    getMemberUserId(currentMember) ?? currentUserId,
+    getMemberReadAt(currentMember) ??
+      raw.currentUserLastReadAt ??
+      raw.current_user_last_read_at,
+    getMemberLastReadMessageId(currentMember),
+  );
+
+  const otherMember =
+    raw.otherMember ??
+    raw.other_member ??
+    raw.otherParticipant ??
+    raw.other_participant ??
+    raw.participant ??
+    raw.user ??
+    raw.recipient;
+
+  addReadPosition(
+    receipts,
+    getMemberUserId(otherMember) ??
+      raw.userId ??
+      raw.user_id ??
+      raw.recipientId ??
+      raw.recipient_id,
+    getMemberReadAt(otherMember) ??
+      raw.otherParticipantLastReadAt ??
+      raw.other_participant_last_read_at ??
+      raw.otherLastReadAt ??
+      raw.other_last_read_at,
+    getMemberLastReadMessageId(otherMember),
+  );
+
+  return receipts;
+};
+
+export const normalizeConversationReadPayload = (
+  payload: any,
+): ConversationReadPayload | null => {
+  const raw = getFirstObject(payload, [
+    "readReceipt",
+    "read_receipt",
+    "receipt",
+  ]) as RawRecord;
+
+  const conversationId = String(
+    raw?.conversationId ?? raw?.conversation_id ?? "",
+  ).trim();
+  const readerId =
+    raw?.readerId ?? raw?.reader_id ?? raw?.userId ?? raw?.user_id;
+  const readAt = normalizeDateTime(
+    raw?.readAt ?? raw?.read_at ?? raw?.lastReadAt ?? raw?.last_read_at,
+  );
+  const lastReadMessageId = getFirstExistingValue(raw, [
+    "lastReadMessageId",
+    "last_read_message_id",
+    "lastReadMessageID",
+  ]);
+
+  if (!conversationId || !String(readerId ?? "").trim() || !readAt) {
+    return null;
+  }
+
+  const normalized: ConversationReadPayload = {
+    conversationId,
+    readerId,
+    readAt,
+  };
+
+  if (lastReadMessageId !== undefined) {
+    normalized.lastReadMessageId =
+      lastReadMessageId === null ? null : String(lastReadMessageId);
+  }
+
+  return normalized;
 };
 
 export const normalizeConversation = (
@@ -196,6 +394,7 @@ export const normalizeConversation = (
     raw.updatedAt ??
     lastMessage?.createdAt ??
     raw.createdAt;
+  const readReceipts = normalizeReadReceipts(raw, currentUserId);
 
   return {
     id: String(raw.id ?? raw.conversationId ?? raw._id ?? ""),
@@ -225,6 +424,16 @@ export const normalizeConversation = (
     lastMessageAt: raw.lastMessageAt ?? lastMessage?.createdAt,
     updatedAt: raw.updatedAt,
     activityAt: raw.activityAt,
+    currentUserLastReadAt: normalizeDateTime(
+      raw.currentUserLastReadAt ?? raw.current_user_last_read_at,
+    ),
+    otherParticipantLastReadAt: normalizeDateTime(
+      raw.otherParticipantLastReadAt ??
+        raw.other_participant_last_read_at ??
+        raw.otherLastReadAt ??
+        raw.other_last_read_at,
+    ),
+    readReceipts,
     messageThemePreference: normalizeMessageThemePreference(
       getRawThemePreference(raw, currentUserId),
     ),
@@ -268,6 +477,7 @@ export const getConversations = async (
   search?: string,
   cursor?: string,
   limit: number = 50,
+  currentUserId?: number | string | null,
 ): Promise<PaginatedConversationsResponse> => {
   const params: Record<string, any> = {};
 
@@ -276,16 +486,32 @@ export const getConversations = async (
   if (cursor) params.cursor = cursor;
   params.limit = limit;
 
-  const response = await apiClient.get("/api/messages/conversations", {
-    params,
-  });
+  let response;
+
+  try {
+    response = await apiClient.get("/api/messages/conversations", {
+      params,
+    });
+  } catch (error) {
+    if (__DEV__) {
+      const requestError = error as ApiRequestError;
+
+      console.error("Failed to fetch conversations", {
+        status: requestError.response?.status,
+        data: requestError.response?.data,
+        message: requestError.message,
+      });
+    }
+
+    throw error;
+  }
 
   const data = response.data ?? {};
+  const rawItems = getFirstArray(data, ["items", "conversations"]);
 
-  const rawItems =
-    data.items ?? getFirstArray(data, ["conversations", "items"]);
-
-  const items = rawItems.map((raw: RawRecord) => normalizeConversation(raw));
+  const items = rawItems.map((raw: RawRecord) =>
+    normalizeConversation(raw, currentUserId),
+  );
 
   const nextCursor = data.nextCursor ?? null;
 
@@ -374,8 +600,14 @@ export const sendMessageRest = async (
   );
 };
 
-export const markConversationRead = async (conversationId: string) => {
-  await apiClient.patch(`/api/messages/conversations/${conversationId}/read`);
+export const markConversationRead = async (
+  conversationId: string,
+): Promise<ConversationReadPayload | null> => {
+  const response = await apiClient.patch(
+    `/api/messages/conversations/${conversationId}/read`,
+  );
+
+  return normalizeConversationReadPayload(response.data);
 };
 
 export const updateConversationThemePreference = async (

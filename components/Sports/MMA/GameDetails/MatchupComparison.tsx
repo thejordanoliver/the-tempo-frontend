@@ -348,19 +348,20 @@ export default function MatchupComparison({
       styles.tapeFighterCard,
     );
 
-  const renderSpotlightFighter = (fighter: FighterViewModel) =>
+  const renderSpotlightFighter = (fighter: FighterViewModel, isLeft: boolean) =>
     renderFighterPressable(
       fighter,
       <>
         <View style={styles.spotlightImageFrame}>
           {renderStanceImage(fighter, styles.spotlightImage)}
         </View>
+
         <View style={styles.spotlightNamePlate}>
           {renderBadges(fighter)}
           {renderNameBlock(fighter)}
         </View>
       </>,
-      styles.spotlightFighter,
+      [styles.spotlightFighter, isLeft && styles.spotlightLeftFighter],
     );
 
   const renderValue = (value: ComparisonValue, fighter: FighterViewModel) => (
@@ -430,9 +431,10 @@ export default function MatchupComparison({
   const renderSpotlight = () => (
     <View style={styles.wrapper}>
       <View style={styles.spotlightStage}>
-        {renderSpotlightFighter(leftFighter)}
-        {renderSpotlightFighter(rightFighter)}
+        {renderSpotlightFighter(leftFighter, true)}
+        {renderSpotlightFighter(rightFighter, false)}
       </View>
+
       {renderFullStatRows()}
     </View>
   );
@@ -462,6 +464,7 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       width: "100%",
     },
     wrapper: {
+      overflow: "hidden",
       width: "100%",
       borderWidth: 1,
       borderColor: Colors.midTone,
@@ -575,7 +578,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       borderColor: isDark
         ? Colors.dark.transparentWhite
         : Colors.transparentBlack,
-      borderRadius: 8,
       overflow: "hidden",
     },
     statRow: {
@@ -681,9 +683,12 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     spotlightFighter: {
       flex: 1,
       minWidth: 0,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
       overflow: "hidden",
+    },
+
+    spotlightLeftFighter: {
+      borderRightWidth: StyleSheet.hairlineWidth,
+      borderRightColor: isDark ? Colors.dark.icon : Colors.light.icon,
     },
     spotlightImageFrame: {
       alignItems: "center",

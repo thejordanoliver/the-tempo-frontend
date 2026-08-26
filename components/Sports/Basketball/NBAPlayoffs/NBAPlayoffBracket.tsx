@@ -4,6 +4,10 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 
+import {
+  getColCenter,
+  nbaPlayoffBracketStyles,
+} from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import type {
   NBABracketMatchup,
   NBAPlayoffGame,
@@ -16,10 +20,6 @@ import type {
 import { useMemo } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import {
-  getColCenter,
-  nbaPlayoffBracketStyles,
-} from "styles/NBAPlayoffBraketStyles";
 
 import {
   COLS,

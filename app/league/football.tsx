@@ -1,5 +1,8 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
+import ConferenceListModal, {
+  ConferenceListModalRef,
+} from "@/components/League/ConferenceListModal";
 import Draft, { getDefaultDraftYear } from "@/components/League/Draft/Draft";
 import RecruitsList from "@/components/League/Recruiting/RecruitsList";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
@@ -7,10 +10,7 @@ import WeekSelector, {
   FootballWeekGroup,
 } from "@/components/League/WeekSelector";
 import NewsList from "@/components/News/NewsList";
-import { CFBPlayoffBracket } from "@/components/Sports/Football/CFBPlayoffs/CFBPlayoffBracket";
-import ConferenceListModal, {
-  ConferenceListModalRef,
-} from "@/components/League/ConferenceListModal";
+import { CFPBracket } from "@/components/Sports/Football/CFBPlayoffs/CFPBracket";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { NFLPlayoffBracket } from "@/components/Sports/Football/NFLPlayoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
@@ -20,7 +20,7 @@ import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
-import { useCFPBracket } from "@/hooks/FootballHooks/useCFPBracket";
+import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
 import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";
 import { useSeasonLeaders } from "@/hooks/FootballHooks/useSeasonLeaders";
@@ -103,11 +103,9 @@ export default function FootballLeagueScreen() {
   }>();
 
   const normalizedLeague = normalizeLeagueParam(params.league);
-
   const parsedLeague: League = isLeague(normalizedLeague)
     ? normalizedLeague
     : "NFL";
-
   const league: SupportedFootballLeague = isSupportedFootballLeague(
     parsedLeague,
   )
@@ -259,12 +257,15 @@ export default function FootballLeagueScreen() {
   } = useNFLPlayoffs(currentSeason);
 
   const {
-    data: cfbPlayoffData,
-    playoffLoading: cfbPlayoffLoading,
-    playoffError: cfbPlayoffError,
-    playoffRefreshing: cfbPlayoffRefreshing,
-    onRefresh: refreshCFBPlayoffs,
-  } = useCFPBracket();
+    games: cfpGames,
+    loading: cfpLoading,
+    refreshing: cfpRefreshing,
+    error: cfpError,
+    refetch: refetchCFPPlayoffs,
+  } = useCFBPlayoffs({
+    season: currentSeason,
+    enabled: isCFB,
+  });
 
   const {
     categories,
@@ -495,12 +496,14 @@ export default function FootballLeagueScreen() {
     </View>,
 
     <View key="playoffs" style={styles.contentArea}>
-      <CFBPlayoffBracket
-        bracket={cfbPlayoffData}
-        loading={cfbPlayoffLoading}
-        error={cfbPlayoffError}
-        refreshing={cfbPlayoffRefreshing}
-        onRefresh={refreshCFBPlayoffs}
+      <CFPBracket
+        games={cfpGames}
+        loading={cfpLoading}
+        refreshing={cfpRefreshing}
+        error={cfpError}
+        onRetry={() => {
+          void refetchCFPPlayoffs();
+        }}
       />
     </View>,
 
@@ -553,7 +556,7 @@ export default function FootballLeagueScreen() {
         <PagerView
           key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
+          style={styles.container}
           initialPage={0}
           onPageSelected={(event) => {
             const pageIndex = event.nativeEvent.position;

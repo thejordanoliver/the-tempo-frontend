@@ -3,6 +3,7 @@ import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useLayoutEffect, useState } from "react";
 import {
   Animated,
@@ -23,17 +24,13 @@ import CustomActivityIndicator from "../components/CustomActivityIndicator";
 import { CustomHeader } from "../components/CustomHeader";
 import PollEditorModal from "../components/Forum/PollEditorModal";
 import VideoEditorModal from "../components/Forum/VideoEditorModal";
-import { GiphySearchModal } from "../components/Sports/Basketball/GameDetails/GameChat/GiphySearchModal";
+import { GiphySearchModal } from "../components/Messages/GiphySearchModal";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { useCreatePost } from "../hooks/ForumHooks/useCreatePost";
 import { useAuth } from "../hooks/UserHooks/useAuth";
 import { createPostStyles } from "../styles/ForumStyles/CreatePostStyles";
-import type {
-  ForumComposerMediaItem,
-  ForumPollDraft,
-} from "../types/forum";
+import type { ForumComposerMediaItem, ForumPollDraft } from "../types/forum";
 import { LeagueType } from "../types/types";
-import { goBack } from "expo-router/build/global-state/routing";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // COMPONENT
@@ -106,7 +103,7 @@ export default function CreatePostScreen() {
   const profileImage =
     Number(currentUserId) === user?.id ? user?.profile_image : null;
   const charCount = newPostText.length;
-  const charLimit = 280;
+  const charLimit = 5000;
   const charsRemaining = charLimit - charCount;
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -115,9 +112,7 @@ export default function CreatePostScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => (
-        <CustomHeader title="New post" onBack={goBack} />
-      ),
+      header: () => <CustomHeader title="New post" onBack={goBack} />,
     });
   }, [navigation, router, createPost, loading, newPostText, poll, media]);
 
@@ -355,11 +350,7 @@ export default function CreatePostScreen() {
               style={styles.pollRemoveContainer}
               activeOpacity={activeOpacity}
             >
-              <Ionicons
-                name="trash-outline"
-                size={12}
-                color={Colors.midTone}
-              />
+              <Ionicons name="trash-outline" size={12} color={Colors.midTone} />
               <Text style={styles.pollRemoveButton}>Remove poll</Text>
             </TouchableOpacity>
           </View>
@@ -369,7 +360,8 @@ export default function CreatePostScreen() {
   );
 
   const renderMediaStrip = () =>
-    !poll && media.length > 0 && (
+    !poll &&
+    media.length > 0 && (
       <DraggableFlatList
         horizontal
         data={media}
@@ -405,11 +397,7 @@ export default function CreatePostScreen() {
             accessibilityRole="button"
             activeOpacity={0.7}
           >
-            <Ionicons
-              name="image-outline"
-              size={22}
-              color={toolbarIconColor}
-            />
+            <Ionicons name="image-outline" size={22} color={toolbarIconColor} />
           </TouchableOpacity>
         )}
 
@@ -429,9 +417,7 @@ export default function CreatePostScreen() {
 
         {/* Poll Button */}
         <TouchableOpacity
-          onPress={
-            poll ? () => setPollEditorVisible(true) : handleAddPollPress
-          }
+          onPress={poll ? () => setPollEditorVisible(true) : handleAddPollPress}
           disabled={loading}
           style={[styles.toolBtn, poll ? styles.toolBtnActive : undefined]}
           accessibilityLabel={poll ? "Edit poll" : "Add poll"}
