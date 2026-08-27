@@ -3,14 +3,14 @@ import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
-import { useNavigation } from "expo-router";
+import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeader } from "../../components/CustomHeader";
 import ForumFeed from "../../components/Forum/ForumFeed";
-
 import NewsList from "../../components/News/NewsList";
 import MMAGamesList from "../../components/Sports/MMA/Games/MMAGamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
@@ -20,12 +20,46 @@ import { useMMAEvents } from "../../hooks/MMAHooks/useMMAEvents";
 import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 
-export default function UFCLeagueScreen() {
+type SupportedMMALeague = Extract<League, "UFC">;
+
+/* -------------------------------------------------------------------------- */
+/*                                   Helpers                                  */
+/* -------------------------------------------------------------------------- */
+
+function isSupportedHockeyLeague(league: League): league is SupportedMMALeague {
+  return league === "UFC";
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                 Main Route                                 */
+/* -------------------------------------------------------------------------- */
+
+export default function MMALeagueScreen() {
+  const params = useLocalSearchParams<{
+    league?: string | string[];
+    leagueLabel?: string;
+  }>();
+
+  const normalizedLeague = normalizeLeagueParam(params.league);
+
+  const parsedLeague: League = isLeague(normalizedLeague)
+    ? normalizedLeague
+    : "UFC";
+
+  const league: SupportedMMALeague = isSupportedHockeyLeague(parsedLeague)
+    ? parsedLeague
+    : "UFC";
+
+  if (league === "UFC") return <UFCLeagueScreen />;
+
+  return <UFCLeagueScreen />;
+}
+
+function UFCLeagueScreen() {
   const league = "UFC";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-
   const navigation = useNavigation();
 
   const pagerRef = useRef<PagerView>(null);
@@ -85,7 +119,7 @@ export default function UFCLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="League" league={league} onBack={goBack} />
+        <CustomHeader tabName={league} league={league} onBack={goBack} />
       ),
     });
   }, [navigation, league]);

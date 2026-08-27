@@ -35,10 +35,13 @@ export default function MainScrollTabBar<T extends string>({
 }: TabBarProps<T>) {
   const underlineX = useRef(new Animated.Value(0)).current;
   const underlineWidth = useRef(new Animated.Value(0)).current;
+
   const textMeasurements = useRef<{ width: number }[]>([]);
   const pressableMeasurements = useRef<{ x: number; width: number }[]>([]);
+
   const isInitialized = useRef(false);
   const [isMeasured, setIsMeasured] = useState(false);
+
   const scrollRef = useRef<ScrollView>(null);
 
   const getUnderlineMetrics = useCallback((index: number) => {
@@ -55,10 +58,29 @@ export default function MainScrollTabBar<T extends string>({
     };
   }, []);
 
+  const scrollToActive = useCallback((index: number) => {
+    const pressable = pressableMeasurements.current[index];
+
+    if (!pressable) {
+      return;
+    }
+
+    scrollRef.current?.scrollTo({
+      x: Math.max(pressable.x - 50, 0),
+      animated: true,
+    });
+  }, []);
+
   const setUnderlineProgress = useCallback(
     (progress: number) => {
       const maxIndex = tabs.length - 1;
+
+      if (maxIndex < 0) {
+        return;
+      }
+
       const clampedProgress = Math.min(maxIndex, Math.max(0, progress));
+
       const startIndex = Math.floor(clampedProgress);
       const endIndex = Math.min(maxIndex, startIndex + 1);
       const amount = clampedProgress - startIndex;
@@ -71,89 +93,124 @@ export default function MainScrollTabBar<T extends string>({
       }
 
       underlineX.setValue(start.x + (end.x - start.x) * amount);
+
       underlineWidth.setValue(start.width + (end.width - start.width) * amount);
     },
     [getUnderlineMetrics, tabs.length, underlineWidth, underlineX],
   );
 
+  const initializeUnderline = useCallback(() => {
+    const index = tabs.indexOf(selected);
+
+    if (index < 0) {
+      return;
+    }
+
+    const metrics = getUnderlineMetrics(index);
+
+    if (!metrics) {
+      return;
+    }
+
+    // Initial render should appear immediately,
+    // not animate from width 0.
+    underlineX.setValue(metrics.x);
+    underlineWidth.setValue(metrics.width);
+
+    isInitialized.current = true;
+    setIsMeasured(true);
+
+    scrollToActive(index);
+  }, [
+    getUnderlineMetrics,
+    scrollToActive,
+    selected,
+    tabs,
+    underlineWidth,
+    underlineX,
+  ]);
+
   const onTextLayout = (index: number) => (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout;
+
     textMeasurements.current[index] = { width };
-    maybeInitializeUnderline();
+
+    initializeUnderline();
   };
 
   const onPressableLayout = (index: number) => (event: LayoutChangeEvent) => {
     const { x, width } = event.nativeEvent.layout;
-    pressableMeasurements.current[index] = { x, width };
-    maybeInitializeUnderline();
+
+    pressableMeasurements.current[index] = {
+      x,
+      width,
+    };
+
+    initializeUnderline();
   };
 
-  const maybeInitializeUnderline = () => {
+  // Important:
+  // Try initialization again when selected/tabs change.
+  // This fixes the missing underline on initial load.
+  useEffect(() => {
+    initializeUnderline();
+  }, [initializeUnderline]);
+
+  useEffect(() => {
+    if (!isMeasured || scrollProgress) {
+      return;
+    }
+
     const index = tabs.indexOf(selected);
-    if (index === -1) return;
 
-    const text = textMeasurements.current[index];
-    const pressable = pressableMeasurements.current[index];
+    if (index < 0) {
+      return;
+    }
 
-    if (!text || !pressable || isInitialized.current) return;
+    const metrics = getUnderlineMetrics(index);
 
-    setUnderlineProgress(index);
+    if (!metrics) {
+      return;
+    }
 
-    isInitialized.current = true;
-    setIsMeasured(true);
+    if (!isInitialized.current) {
+      initializeUnderline();
+      return;
+    }
+
+    Animated.parallel([
+      Animated.timing(underlineX, {
+        toValue: metrics.x,
+        duration: 250,
+        easing: Easing.bezier(0.25, 1, 0.5, 1),
+        useNativeDriver: false,
+      }),
+
+      Animated.timing(underlineWidth, {
+        toValue: metrics.width,
+        duration: 250,
+        easing: Easing.bezier(0.25, 1, 0.5, 1),
+        useNativeDriver: false,
+      }),
+    ]).start();
+
     scrollToActive(index);
-  };
-
-  const calculateUnderlineX = (index: number) => {
-    const text = textMeasurements.current[index];
-    const pressable = pressableMeasurements.current[index];
-
-    if (!text || !pressable) {
-      return 0; // safe fallback
-    }
-
-    return pressable.x + (pressable.width - text.width) / 2;
-  };
-
-  const scrollToActive = (index: number) => {
-    const pressable = pressableMeasurements.current[index];
-    if (!pressable) return;
-
-    scrollRef.current?.scrollTo({
-      x: Math.max(pressable.x - 50, 0),
-      animated: true,
-    });
-  };
+  }, [
+    getUnderlineMetrics,
+    initializeUnderline,
+    isMeasured,
+    scrollProgress,
+    scrollToActive,
+    selected,
+    tabs,
+    underlineWidth,
+    underlineX,
+  ]);
 
   useEffect(() => {
-    const index = tabs.indexOf(selected);
-    const textMeasurement = textMeasurements.current[index];
-    const pressableMeasurement = pressableMeasurements.current[index];
-
-    if (!scrollProgress && textMeasurement && pressableMeasurement) {
-      const x = calculateUnderlineX(index);
-
-      Animated.parallel([
-        Animated.timing(underlineX, {
-          toValue: x,
-          duration: 250,
-          easing: Easing.bezier(0.25, 1, 0.5, 1),
-          useNativeDriver: false,
-        }),
-        Animated.timing(underlineWidth, {
-          toValue: textMeasurement.width,
-          duration: 250,
-          easing: Easing.bezier(0.25, 1, 0.5, 1),
-          useNativeDriver: false,
-        }),
-      ]).start();
-
-      scrollToActive(index);
+    if (!isMeasured || !scrollProgress) {
+      return;
     }
-  }, [scrollProgress, selected, tabs, underlineWidth, underlineX]);
-
-  useEffect(() => {
-    if (!isMeasured || !scrollProgress) return;
 
     const listenerId = scrollProgress.addListener(({ value }) => {
       setUnderlineProgress(value);
@@ -163,34 +220,23 @@ export default function MainScrollTabBar<T extends string>({
       scrollProgress.removeListener(listenerId);
     };
   }, [isMeasured, scrollProgress, setUnderlineProgress]);
-
   useEffect(() => {
-    if (!isMeasured || !scrollProgress) return;
+    if (!isMeasured) {
+      return;
+    }
 
     const index = tabs.indexOf(selected);
-    scrollToActive(index);
-  }, [isMeasured, scrollProgress, selected, tabs]);
+
+    if (index >= 0) {
+      scrollToActive(index);
+    }
+  }, [isMeasured, scrollToActive, selected, tabs]);
 
   const defaultLabelStyle = (tab: T, isSelected: boolean): TextStyle => ({
     fontSize: tab.toLowerCase() === "home" ? 20 : 18,
     color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.midTone,
     fontFamily: Fonts.REGULAR,
   });
-
-  const underlineStyle: ViewStyle = {
-    width: underlineWidth,
-    transform: [{ translateX: underlineX }],
-    height: 2,
-    borderRadius: 100,
-    backgroundColor: isDark
-      ? Colors.white
-      : isDark
-        ? Colors.white
-        : Colors.black,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-  };
 
   return (
     <View style={style}>
@@ -201,17 +247,18 @@ export default function MainScrollTabBar<T extends string>({
         bounces={false}
         contentContainerStyle={styles.scrollContainer}
       >
-        <View style={[styles.tabs]}>
-          {tabs.map((tab, i) => {
+        <View style={styles.tabs}>
+          {tabs.map((tab, index) => {
             const isSelected = selected === tab;
+
             return (
               <Pressable
                 key={tab}
                 onPress={() => onTabPress(tab)}
-                onLayout={onPressableLayout(i)}
+                onLayout={onPressableLayout(index)}
                 style={styles.tabPressable}
               >
-                <View onLayout={onTextLayout(i)}>
+                <View onLayout={onTextLayout(index)}>
                   {renderLabel ? (
                     renderLabel(tab, isSelected)
                   ) : (
@@ -223,7 +270,22 @@ export default function MainScrollTabBar<T extends string>({
               </Pressable>
             );
           })}
-          <Animated.View style={underlineStyle} />
+
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.underline,
+              {
+                width: underlineWidth,
+                transform: [
+                  {
+                    translateX: underlineX,
+                  },
+                ],
+                backgroundColor: isDark ? Colors.white : Colors.black,
+              },
+            ]}
+          />
         </View>
       </ScrollView>
     </View>
@@ -235,11 +297,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     marginBottom: 10,
   },
+
   tabs: {
     flexDirection: "row",
     justifyContent: "center",
     position: "relative",
-    minWidth: "100%", // ⭐ MAKES CENTERING WORK
+    minWidth: "100%",
   },
 
   tabPressable: {
@@ -247,5 +310,13 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 4,
     paddingHorizontal: 16,
+  },
+
+  underline: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    height: 2,
+    borderRadius: 100,
   },
 });

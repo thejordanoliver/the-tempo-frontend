@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
 import { useCallback, useMemo } from "react";
+import type { ListRenderItem } from "react-native";
 import {
   ActivityIndicator,
   FlatList,
@@ -11,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import type { ListRenderItem } from "react-native";
 import type { ForumPost, ForumProps } from "types/forum";
 import FloatingButton from "../Buttons/FloatingButton";
 import { PostItem } from "./PostItem/PostItem";
@@ -98,13 +98,15 @@ export default function Forum({
 
   const renderEmptyState = () => (
     <View style={global.emptyContainer}>
-      <Ionicons
-        name={emptyIcon as keyof typeof Ionicons.glyphMap}
-        size={48}
-        color={Colors.midTone}
-      />
-      <Text style={global.emptyText}>{emptyTitle}</Text>
-      <Text style={global.emptySubText}>{emptyMessage}</Text>
+      <View style={global.emptyIconContainer}>
+        <Ionicons
+          name={emptyIcon as keyof typeof Ionicons.glyphMap}
+          size={30}
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </View>
+      <Text style={global.emptyTitle}>{emptyTitle}</Text>
+      <Text style={global.emptyText}>{emptyMessage}</Text>
     </View>
   );
 
@@ -251,11 +253,7 @@ export default function Forum({
       />
 
       {shouldShowCreateButton && (
-        <FloatingButton
-          isOpen={false}
-          onPress={onCreatePost}
-          icon={"create"}
-        />
+        <FloatingButton isOpen={false} onPress={onCreatePost} icon={"create"} />
       )}
     </>
   );

@@ -25,6 +25,7 @@ import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getMLBStandingsSeason } from "@/utils/dateUtils";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
@@ -93,7 +94,7 @@ function MLBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-  const pagerRef = useRef<PagerView>(null);
+
   const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
   const navigation = useNavigation();
   const { categories, loading, error } = useSeasonLeaders(2025, league);
@@ -105,6 +106,20 @@ function MLBLeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
@@ -186,20 +201,6 @@ function MLBLeagueScreen() {
       dayjs(previousDate).add(days, "day").startOf("day").toDate(),
     );
   }, []);
-
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
 
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
@@ -291,23 +292,19 @@ function MLBLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          scrollEnabled={selectedTab !== "bracket"}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>
@@ -341,7 +338,6 @@ function CBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-  const pagerRef = useRef<PagerView>(null);
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
@@ -350,6 +346,19 @@ function CBLeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
@@ -436,19 +445,7 @@ function CBLeagueScreen() {
     );
   }, []);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
+ 
 
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
@@ -512,23 +509,19 @@ function CBLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          scrollEnabled={selectedTab !== "bracket"}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>
@@ -562,7 +555,7 @@ function SBLeagueScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-  const pagerRef = useRef<PagerView>(null);
+
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
@@ -571,6 +564,19 @@ function SBLeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
@@ -657,20 +663,6 @@ function SBLeagueScreen() {
     );
   }, []);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
-
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
   /* ------------------------------------------------------------------------ */
@@ -733,23 +725,19 @@ function SBLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          scrollEnabled={selectedTab !== "bracket"}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>

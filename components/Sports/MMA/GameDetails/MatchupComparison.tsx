@@ -287,7 +287,7 @@ export default function MatchupComparison({
         accessibilityState={{ disabled: !canOpenFighter }}
         style={({ pressed }) => [
           style,
-          fighter.isWinner && styles.winnerBorder,
+          fighter.isWinner && styles.winnerBackground,
           fighter.isChampion && styles.championBorder,
           !canOpenFighter && styles.disabled,
           pressed && styles.pressed,
@@ -365,17 +365,7 @@ export default function MatchupComparison({
     );
 
   const renderValue = (value: ComparisonValue, fighter: FighterViewModel) => (
-    <Text
-      style={[
-        styles.valueText,
-        ,
-        fighter.isWinner && styles.winnerText,
-        fighter.isChampion && styles.championText,
-      ]}
-      numberOfLines={2}
-      adjustsFontSizeToFit
-      minimumFontScale={0.72}
-    >
+    <Text style={[styles.valueText, fighter.isChampion && styles.championText]}>
       {formatComparisonValue(value)}
     </Text>
   );
@@ -400,7 +390,7 @@ export default function MatchupComparison({
               {row.label}
             </Text>
           </View>
-          <View style={styles.statValueCell}>
+          <View style={[styles.statValueCell]}>
             {renderValue(row.rightValue, rightFighter)}
           </View>
         </View>
@@ -499,9 +489,10 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       color: Colors.white,
       textAlign: "center",
     },
-    winnerBorder: {
-      borderWidth: 1,
-      borderColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+    winnerBackground: {
+      backgroundColor: isDark
+        ? Colors.dark.transparentGreen
+        : Colors.light.transparentGreen,
     },
     championBorder: {
       borderColor: isDark ? Colors.dark.yellow : Colors.light.gold,
@@ -625,14 +616,10 @@ export const matchupComparisonStyles = (isDark: boolean) =>
     valueText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      lineHeight: 15,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
-    winnerText: {
-      fontFamily: Fonts.BOLD,
-      color: isDark ? Colors.dark.limeGreen : Colors.light.green,
-    },
+
     championText: {
       fontFamily: Fonts.BOLD,
       color: isDark ? Colors.dark.gold : Colors.light.gold,
@@ -674,7 +661,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       width: "100%",
       height: "100%",
     },
-
     spotlightStage: {
       flexDirection: "row",
       alignItems: "stretch",
@@ -685,7 +671,6 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       minWidth: 0,
       overflow: "hidden",
     },
-
     spotlightLeftFighter: {
       borderRightWidth: StyleSheet.hairlineWidth,
       borderRightColor: isDark ? Colors.dark.icon : Colors.light.icon,

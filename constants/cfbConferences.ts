@@ -411,7 +411,7 @@ export const resolveCFBConferenceSelection = (
 
   const lowerSelection = normalizedSelection.toLowerCase();
 
-  if (lowerSelection === "all conferences") {
+  if (lowerSelection === "FBS") {
     return getCFBConference(80);
   }
 
@@ -436,7 +436,7 @@ export const getCFBConferenceSelectionName = (
   }
 
   if (conference.groupId === 80) {
-    return "All Conferences";
+    return "FBS";
   }
 
   return conference.shortName || conference.name;

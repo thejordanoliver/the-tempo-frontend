@@ -2,8 +2,6 @@ import MWCLogo from "assets/College_Logos/Conference_Logos/MWC.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import A10Logo from "../assets/College_Logos/Conference_Logos/A10.png";
 import ACCLogo from "../assets/College_Logos/Conference_Logos/ACC.png";
-import WACLogo from "../assets/College_Logos/Conference_Logos/WAC.png";
-import MAACLogo from "../assets/College_Logos/Conference_Logos/MAAC.png";
 import ACCLogoLight from "../assets/College_Logos/Conference_Logos/ACCLight.png";
 import AMEastLogo from "../assets/College_Logos/Conference_Logos/AmericaEast.png";
 import AACLogo from "../assets/College_Logos/Conference_Logos/American.png";
@@ -16,9 +14,11 @@ import BIG10Logo from "../assets/College_Logos/Conference_Logos/BigTen.png";
 import BIG10Logolight from "../assets/College_Logos/Conference_Logos/BIGTenLight.png";
 import BigWestLogo from "../assets/College_Logos/Conference_Logos/BigWest.png";
 import CAALogo from "../assets/College_Logos/Conference_Logos/CAA.png";
+import CBBLogo from "../assets/College_Logos/Conference_Logos/CBB.png";
 import CUSALogo from "../assets/College_Logos/Conference_Logos/CUSA.png";
 import CUSALogoLight from "../assets/College_Logos/Conference_Logos/CUSALight.png";
 import IvyLeagueLogo from "../assets/College_Logos/Conference_Logos/IvyLeague.png";
+import MAACLogo from "../assets/College_Logos/Conference_Logos/MAAC.png";
 import MACLogo from "../assets/College_Logos/Conference_Logos/MAC.png";
 import MEACLogo from "../assets/College_Logos/Conference_Logos/MEAC.png";
 import MVFCLogo from "../assets/College_Logos/Conference_Logos/MVFC.png";
@@ -30,14 +30,24 @@ import SLCLogo from "../assets/College_Logos/Conference_Logos/SLC.png";
 import SoConLogo from "../assets/College_Logos/Conference_Logos/SoCon.png";
 import SunBeltLogo from "../assets/College_Logos/Conference_Logos/SunBelt.png";
 import SWACLogo from "../assets/College_Logos/Conference_Logos/SWAC.png";
-
+import WACLogo from "../assets/College_Logos/Conference_Logos/WAC.png";
 import type { Conference } from "./cfbConferences";
 
-export type CBBConference = Omit<Conference, "groupId"> & {
-  groupId: number;
-};
+export type CBBConferenceSelection = number | string | null | undefined;
 
-export const cbbConferences: CBBConference[] = [
+export const cbbConferences: Conference[] = [
+  {
+    id: 0,
+    uid: "top25",
+    groupId: null,
+    name: "Top 25",
+    shortName: "Top 25",
+    logo: CBBLogo,
+    logoLight: CBBLogo,
+    parentGroupId: 80,
+    color: "#009CDE",
+    secondaryColor: "#000000",
+  },
   {
     id: 1,
     uid: "s:40~l:41~g:3",
@@ -412,28 +422,71 @@ export const cbbConferences: CBBConference[] = [
   },
 ];
 
-export function getCBBConferenceLogo(id: number | string, isDark: boolean) {
+function normalizeCBBConferenceselection(selection: CBBConferenceSelection) {
+  return String(selection ?? "").trim();
+}
+
+export const getCFBConference = (groupId: number | string | null) => {
+  if (groupId == null) return undefined;
+  return cbbConferences.find((c) => String(c.groupId) === String(groupId));
+};
+
+export const getCFBConferenceName = (groupId: number | string | null) => {
+  if (groupId == null) return undefined;
   const conference = cbbConferences.find(
-    (t) => String(t.groupId) === String(id),
+    (c) => String(c.groupId) === String(groupId),
+  );
+
+  return conference?.shortName || conference?.name;
+};
+
+export const resolveCBBConferenceselection = (selection: CBBConferenceSelection) => {
+  const normalizedSelection = normalizeCBBConferenceselection(selection);
+
+  if (!normalizedSelection) {
+    return undefined;
+  }
+
+  const lowerSelection = normalizedSelection.toLowerCase();
+
+  if (lowerSelection === "DIV I") {
+    return getCFBConference(50);
+  }
+
+  return cbbConferences.find((conference) => {
+    return (
+      conference.uid.toLowerCase() === lowerSelection ||
+      conference.shortName.toLowerCase() === lowerSelection ||
+      conference.name.toLowerCase() === lowerSelection ||
+      (conference.groupId != null &&
+        String(conference.groupId) === normalizedSelection)
+    );
+  });
+};
+
+export const getCBBConferenceSelectionName = (selection: CBBConferenceSelection) => {
+  const conference = resolveCBBConferenceselection(selection);
+
+  if (!conference) {
+    return undefined;
+  }
+
+  if (conference.groupId === 50) {
+    return "DIV I";
+  }
+
+  return conference.shortName || conference.name;
+};
+
+export function getCBBConferenceLogo(
+  groupId: number | string | null,
+  isDark: boolean,
+) {
+  const conference = cbbConferences.find(
+    (t) => String(t.groupId) === String(groupId),
   );
 
   if (!conference) return PlaceholderLogo;
 
   return isDark ? conference.logoLight || conference.logo : conference.logo;
 }
-
-export const getCBBConference = (groupId: number | string) => {
-  if (groupId == null) return undefined;
-  return cbbConferences.find(
-    (c) => String(c.parentGroupId) === String(groupId),
-  );
-};
-
-export const getCBBConferenceName = (groupId: number | string) => {
-  if (groupId == null) return undefined;
-  const conference = cbbConferences.find(
-    (c) => String(c.parentGroupId) === String(groupId),
-  );
-
-  return conference?.name || conference?.shortName;
-};

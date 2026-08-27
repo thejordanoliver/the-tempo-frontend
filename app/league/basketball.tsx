@@ -57,15 +57,16 @@ import { useSeasonLeaders as useNBASeasonLeaders } from "../../hooks/NBAHooks/us
 /*                                     CBB/WCBB                                    */
 /* -------------------------------------------------------------------------- */
 
-import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
 import ConferenceListModal, {
   ConferenceListModalRef,
-} from "../../components/Sports/Basketball/ConferenceListModal";
+} from "@/components/League/ConferenceListModal";
+import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
 import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 
-import { cbbConferences } from "../../constants/cbbConferences";
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
+import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
 import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import {
@@ -78,10 +79,7 @@ import {
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type SupportedBasketballLeague = Extract<
-  League,
-  "NBA" | "WNBA" | "CBB" | "WCBB"
->;
+type SupportedLeague = Extract<League, "NBA" | "WNBA" | "CBB" | "WCBB">;
 type SelectedConference = number | string | null;
 
 /* -------------------------------------------------------------------------- */
@@ -91,9 +89,7 @@ type SelectedConference = number | string | null;
 const getMonthAnchor = (value: Date | string) =>
   dayjs(value).startOf("month").format("YYYY-MM-DD");
 
-function isSupportedBasketballLeague(
-  league: League,
-): league is SupportedBasketballLeague {
+function isSupportedLeague(league: League): league is SupportedLeague {
   return (
     league === "NBA" ||
     league === "WNBA" ||
@@ -124,11 +120,13 @@ export default function BasketballLeagueScreen() {
     ? normalizedLeague
     : "NBA";
 
-  const league: SupportedBasketballLeague = isSupportedBasketballLeague(
-    parsedLeague,
-  )
+  const league: SupportedLeague = isSupportedLeague(parsedLeague)
     ? parsedLeague
     : "NBA";
+
+  const isWNBA = league === "WNBA";
+  const isCBB = league === "CBB";
+  const isWCBB = league === "WCBB";
 
   /*
    * Keep NBA and CBB hooks in separate child components.
@@ -138,13 +136,13 @@ export default function BasketballLeagueScreen() {
    * - NBA loading CBB tournament/recruiting data
    * - conditional hook-order problems
    */
-  if (league === "CBB") {
+  if (isCBB) {
     return <CBBLeagueScreen />;
   }
-  if (league === "WCBB") {
+  if (isWCBB) {
     return <WCBBLeagueScreen />;
   }
-  if (league === "WNBA") {
+  if (isWNBA) {
     return <WNBALeagueScreen />;
   }
 
@@ -163,7 +161,6 @@ function NBALeagueScreen() {
   const styles = LeagueScreenStyles(isDark);
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date>(() =>
     dayjs().startOf("day").toDate(),
@@ -190,6 +187,19 @@ function NBALeagueScreen() {
   const selectedSeason = getNBACalendarSeason();
 
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const {
     calendar,
@@ -387,20 +397,6 @@ function NBALeagueScreen() {
     );
   }, []);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
-
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
       (dates, calendarDate) => {
@@ -442,21 +438,19 @@ function NBALeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={styles.contentArea}
-          initialPage={0}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {/* SCORES */}
           <View key="scores">
@@ -564,6 +558,10 @@ function NBALeagueScreen() {
   );
 }
 
+/* ========================================================================== */
+/*                                    WNBA                                     */
+/* ========================================================================== */
+
 function WNBALeagueScreen() {
   const league = "WNBA";
 
@@ -572,7 +570,6 @@ function WNBALeagueScreen() {
   const styles = LeagueScreenStyles(isDark);
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date>(() =>
     dayjs().startOf("day").toDate(),
@@ -596,8 +593,20 @@ function WNBALeagueScreen() {
     getWNBASeason().toString(),
   );
 
-
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const {
     calendar,
@@ -606,7 +615,7 @@ function WNBALeagueScreen() {
   } = useLeagueCalendar(league, "raw", calendarAnchorDate);
 
   /* ------------------------------------------------------------------------ */
-  /*                                NBA Games                                 */
+  /*                                WNBA Games                                 */
   /* ------------------------------------------------------------------------ */
 
   const {
@@ -685,20 +694,6 @@ function WNBALeagueScreen() {
     );
   }, []);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
-
   const markedDates = useMemo(() => {
     return (calendar ?? []).reduce(
       (dates, calendarDate) => {
@@ -740,21 +735,19 @@ function WNBALeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={styles.contentArea}
-          initialPage={0}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {/* SCORES */}
           <View key="scores">
@@ -845,13 +838,11 @@ function WNBALeagueScreen() {
 /* ========================================================================== */
 /*                                    CBB                                     */
 /* ========================================================================== */
-
 function CBBLeagueScreen() {
   const league = "CBB";
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
 
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
 
@@ -867,54 +858,47 @@ function CBBLeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(() =>
     dayjs().startOf("day").toDate(),
   );
-
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-
   const [selectedConference, setSelectedConference] =
-    useState<SelectedConference>(null);
-
+    useState<SelectedConference>("top25");
   const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
-
   const [recruitTeam, setRecruitTeam] = useState("all");
-
   const [recruitYear, setRecruitYear] = useState(() =>
     String(getRecruitYear()),
   );
-
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
     "players",
   );
-
-  /* ------------------------------------------------------------------------ */
-  /*                                   Tabs                                   */
-  /* ------------------------------------------------------------------------ */
-
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   /* ------------------------------------------------------------------------ */
   /*                               Conference                                 */
   /* ------------------------------------------------------------------------ */
 
   const selectedConferenceName = useMemo(() => {
-    if (!selectedConference) {
-      return undefined;
-    }
-
-    if (selectedConference === "top25") {
-      return "Top 25";
-    }
-
-    const conference = cbbConferences.find(
-      (item) => String(item.groupId) === String(selectedConference),
-    );
-
-    return conference?.shortName || conference?.name;
+    return getCBBConferenceSelectionName(selectedConference);
   }, [selectedConference]);
 
   const selectedConferenceGroupId = useMemo(() => {
-    if (!selectedConference || selectedConference === "top25") {
+    if (
+      selectedConference == null ||
+      selectedConference === "top25" ||
+      Number(selectedConference) === 80
+    ) {
       return null;
     }
 
@@ -970,17 +954,8 @@ function CBBLeagueScreen() {
     error: cbbGamesError,
     refreshGames: refreshCBBGames,
     loading: cbbGamesLoading,
-  } = useBasketballGames(selectedDate, "cbb");
+  } = useBasketballGames(selectedDate, "cbb", selectedConferenceGroupId);
 
-  /*
-   * Same idea as CFB:
-   *
-   * All = normal CBB scoreboard
-   * Top 25 = games containing at least one Top-25 team
-   *
-   * Conference-specific scoreboard filtering can later be moved
-   * into useBasketballGames if you expose ESPN's groups parameter.
-   */
   const displayedGames = useMemo(() => {
     if (!selectedConference) {
       return cbbGames ?? [];
@@ -1037,8 +1012,8 @@ function CBBLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName="League"
-          league={"Men's College Basketball" as "CBB"}
+          tabName={"Men's College Basketball"}
+          league={"Men's Colege Basketball"}
           onBack={goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
@@ -1047,8 +1022,7 @@ function CBBLeagueScreen() {
         />
       ),
     });
-  }, [isConferenceModalOpen, navigation, selectedConferenceName]);
-
+  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
   /* ------------------------------------------------------------------------ */
@@ -1070,20 +1044,6 @@ function CBBLeagueScreen() {
       dayjs(previousDate).add(days, "day").startOf("day").toDate(),
     );
   }, []);
-
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
 
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
@@ -1206,23 +1166,19 @@ function CBBLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          scrollEnabled={selectedTab !== "bracket"}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>
@@ -1245,12 +1201,11 @@ function CBBLeagueScreen() {
 
       <ConferenceListModal
         ref={conferenceModalRef}
-        onSelect={(conference) => {
-          setSelectedConference(conference ?? null);
-        }}
+        selectedConference={selectedConference}
+        onSelect={setSelectedConference}
         onOpen={() => setIsConferenceModalOpen(true)}
         onClose={() => setIsConferenceModalOpen(false)}
-        league={league}
+        league="CBB"
       />
     </>
   );
@@ -1265,7 +1220,6 @@ function WCBBLeagueScreen() {
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
 
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
 
@@ -1281,44 +1235,40 @@ function WCBBLeagueScreen() {
   const [selectedDate, setSelectedDate] = useState<Date>(() =>
     dayjs().startOf("day").toDate(),
   );
-
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-
   const [showCalendarModal, setShowCalendarModal] = useState(false);
-
   const [selectedConference, setSelectedConference] =
-    useState<SelectedConference>(null);
-
+    useState<SelectedConference>("top25");
   const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
-
-  /* ------------------------------------------------------------------------ */
-  /*                                   Tabs                                   */
-  /* ------------------------------------------------------------------------ */
-
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   /* ------------------------------------------------------------------------ */
   /*                               Conference                                 */
   /* ------------------------------------------------------------------------ */
 
   const selectedConferenceName = useMemo(() => {
-    if (!selectedConference) {
-      return undefined;
-    }
-
-    if (selectedConference === "top25") {
-      return "Top 25";
-    }
-
-    const conference = cbbConferences.find(
-      (item) => String(item.groupId) === String(selectedConference),
-    );
-
-    return conference?.shortName || conference?.name;
+    return getCBBConferenceSelectionName(selectedConference);
   }, [selectedConference]);
 
   const selectedConferenceGroupId = useMemo(() => {
-    if (!selectedConference || selectedConference === "top25") {
+    if (
+      selectedConference == null ||
+      selectedConference === "top25" ||
+      Number(selectedConference) === 80
+    ) {
       return null;
     }
 
@@ -1373,18 +1323,9 @@ function WCBBLeagueScreen() {
     games: wcbbGames,
     error: wcbbGamesError,
     refreshGames: refreshWCBBGames,
-    loading: cbbGamesLoading,
-  } = useBasketballGames(selectedDate, "wcbb");
+    loading: wcbbGamesLoading,
+  } = useBasketballGames(selectedDate, "wcbb", selectedConferenceGroupId);
 
-  /*
-   * Same idea as CFB:
-   *
-   * All = normal CBB scoreboard
-   * Top 25 = games containing at least one Top-25 team
-   *
-   * Conference-specific scoreboard filtering can later be moved
-   * into useBasketballGames if you expose ESPN's groups parameter.
-   */
   const displayedGames = useMemo(() => {
     if (!selectedConference) {
       return wcbbGames ?? [];
@@ -1441,8 +1382,8 @@ function WCBBLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName="League"
-          league={"Women's College Basketball" as "WCBB"}
+          tabName={"Women's College Basketball"}
+          league={"Women's Colege Basketball"}
           onBack={goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
@@ -1451,8 +1392,7 @@ function WCBBLeagueScreen() {
         />
       ),
     });
-  }, [isConferenceModalOpen, navigation, selectedConferenceName]);
-
+  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
   /* ------------------------------------------------------------------------ */
@@ -1475,20 +1415,6 @@ function WCBBLeagueScreen() {
     );
   }, []);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
-
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
   /* ------------------------------------------------------------------------ */
@@ -1505,7 +1431,7 @@ function WCBBLeagueScreen() {
       <GamesList
         games={displayedGames}
         error={wcbbGamesError}
-        loading={cbbGamesLoading}
+        loading={wcbbGamesLoading}
         refreshing={gamesRefreshing}
         onRefresh={handleScoresRefresh}
         showHeaders={false}
@@ -1595,23 +1521,19 @@ function WCBBLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          scrollEnabled={selectedTab !== "bracket"}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>
@@ -1634,12 +1556,11 @@ function WCBBLeagueScreen() {
 
       <ConferenceListModal
         ref={conferenceModalRef}
-        onSelect={(conference) => {
-          setSelectedConference(conference ?? null);
-        }}
+        selectedConference={selectedConference}
+        onSelect={setSelectedConference}
         onOpen={() => setIsConferenceModalOpen(true)}
         onClose={() => setIsConferenceModalOpen(false)}
-        league={league}
+        league="WCBB"
       />
     </>
   );

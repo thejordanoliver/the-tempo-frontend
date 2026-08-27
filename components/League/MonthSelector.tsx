@@ -251,12 +251,13 @@ export const monthSelectorStyles = (
       left: horizontalPadding,
       width: ITEM_WIDTH,
       height: ITEM_HEIGHT,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: 1,
       borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 12,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
     monthButton: {
       zIndex: 2,

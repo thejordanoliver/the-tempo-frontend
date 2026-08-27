@@ -27,6 +27,7 @@ import { useSeasonLeaders } from "@/hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "@/hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "@/hooks/NewsHooks/useLeaguesNews";
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason, getRecruitYear } from "@/utils/dateUtils";
 import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
@@ -53,13 +54,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-type SupportedFootballLeague = Extract<League, "NFL" | "CFB" | "UFL">;
-type FootballLeagueKey = "nfl" | "cfb" | "ufl";
+type SupportedLeague = Extract<League, "NFL" | "CFB" | "UFL">;
+type LeagueKey = "nfl" | "cfb" | "ufl";
 type SelectedConference = number | string | null;
 
-function isSupportedFootballLeague(
-  league: League,
-): league is SupportedFootballLeague {
+function isSupportedLeague(league: League): league is SupportedLeague {
   return league === "NFL" || league === "CFB" || league === "UFL";
 }
 
@@ -101,48 +100,35 @@ export default function FootballLeagueScreen() {
   const params = useLocalSearchParams<{
     league?: string | string[];
   }>();
-
   const normalizedLeague = normalizeLeagueParam(params.league);
   const parsedLeague: League = isLeague(normalizedLeague)
     ? normalizedLeague
     : "NFL";
-  const league: SupportedFootballLeague = isSupportedFootballLeague(
-    parsedLeague,
-  )
+  const league: SupportedLeague = isSupportedLeague(parsedLeague)
     ? parsedLeague
     : "NFL";
 
-  const leagueKey = league.toLowerCase() as FootballLeagueKey;
-
+  const leagueKey = league.toLowerCase() as LeagueKey;
   const isNFL = league === "NFL";
   const isCFB = league === "CFB";
   const isUFL = league === "UFL";
-
   const currentSeason = getFootballSeason();
-
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-
   const [screenRefreshing, setScreenRefreshing] = useState(false);
   const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
-
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
-
   const [draftYear, setDraftYear] = useState(() =>
     getDefaultDraftYear("nfl").toString(),
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-
   const [selectedConference, setSelectedConference] =
     useState<SelectedConference>("top25");
   const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
-
   const [recruitView, setRecruitView] = useState<"players" | "teams">(
     "players",
   );
@@ -150,8 +136,20 @@ export default function FootballLeagueScreen() {
     String(getRecruitYear()),
   );
   const [recruitTeam, setRecruitTeam] = useState("all");
-
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const { calendar } = useLeagueCalendar(league, "football");
 
@@ -365,20 +363,6 @@ export default function FootballLeagueScreen() {
     }
   }, [league, refreshGames]);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof tabs)[number]) => {
-      const pageIndex = tabs.indexOf(tab);
-
-      if (pageIndex < 0) {
-        return;
-      }
-
-      setSelectedTab(tab);
-      pagerRef.current?.setPage(pageIndex);
-    },
-    [setSelectedTab, tabs],
-  );
-
   const scoresPage = (
     <View key="scores" style={styles.contentArea}>
       <WeekSelector
@@ -550,6 +534,7 @@ export default function FootballLeagueScreen() {
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
@@ -557,15 +542,11 @@ export default function FootballLeagueScreen() {
           key={league}
           ref={pagerRef}
           style={styles.container}
-          initialPage={0}
-          onPageSelected={(event) => {
-            const pageIndex = event.nativeEvent.position;
-            const nextTab = tabs[pageIndex];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           {pagerPages}
         </PagerView>

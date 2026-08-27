@@ -50,6 +50,8 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const styles = gameCardStyles(isDark);
   const gameStatusDescription = game?.status?.description;
 
+  
+
   const isScheduled = gameStatusDescription === "Scheduled";
   const isPreFight = gameStatusDescription === "Pre-fight";
   const isCanceled = gameStatusDescription === "Canceled";
@@ -67,6 +69,7 @@ export default function MMAGameCard({ game }: MMAFightCardProps) {
   const period = formatPeriod({ period: game?.status?.period, isMMA: true });
   const clock = game?.status?.displayClock;
   const resultText = game.method;
+
   const results =
     resultText?.toLowerCase() === "submission"
       ? "SUB"

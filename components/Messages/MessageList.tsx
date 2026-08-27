@@ -64,7 +64,6 @@ export default function MessageList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const styles = useMemo(() => messageListStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -129,11 +128,11 @@ export default function MessageList({
           />
         </View>
 
-        <Text style={styles.emptyTitle}>
+        <Text style={global.emptyTitle}>
           {hasSearch ? "No conversations found" : "No messages yet"}
         </Text>
 
-        <Text style={styles.emptyText}>
+        <Text style={global.emptyText}>
           {hasSearch
             ? "Try searching for another username or conversation."
             : "Start a new conversation using the button above."}
@@ -146,8 +145,8 @@ export default function MessageList({
     shouldShowEmptyState,
     styles.emptyIconContainer,
     styles.emptyState,
-    styles.emptyText,
-    styles.emptyTitle,
+    global.emptyText,
+    global.emptyTitle,
   ]);
 
   const renderFooter = useCallback(() => {
@@ -171,7 +170,7 @@ export default function MessageList({
   if (error) {
     return (
       <View style={styles.emptyState}>
-        <View style={styles.emptyIconContainer}>
+        <View style={global.emptyIconContainer}>
           <Ionicons
             name="alert-circle-outline"
             size={30}
@@ -270,21 +269,7 @@ const messageListStyles = (isDark: boolean) =>
       borderRadius: 32,
     },
 
-    emptyTitle: {
-      marginBottom: 6,
-      fontFamily: Fonts.BOLD,
-      fontSize: 18,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlign: "center",
-    },
-
-    emptyText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      lineHeight: 20,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
+  
 
     retryButton: {
       marginTop: 16,

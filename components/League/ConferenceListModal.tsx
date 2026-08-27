@@ -1,4 +1,9 @@
 import {
+  cbbConferences,
+  getCBBConferenceLogo,
+  getCBBConferenceSelectionName,
+} from "@/constants/cbbConferences";
+import {
   cfbConferences,
   getCFBConferenceLogo,
   getCFBConferenceSelectionName,
@@ -9,7 +14,9 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
+import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
@@ -25,13 +32,29 @@ export type ConferenceListModalRef = {
   close: () => void;
 };
 
+type ConferenceLeague = "CFB" | "CBB" | "WCBB";
+
 type ConferenceOption = {
   label: string;
   value: number | string;
   logo?: ImageSourcePropType | string | null;
 };
 
-type FBSConference = (typeof cfbConferences)[number] & { groupId: number };
+type Props = {
+  selectedConference: number | string | null;
+  onSelect: (conference: number | string | null) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  league: ConferenceLeague;
+};
+
+type FBSConference = (typeof cfbConferences)[number] & {
+  groupId: number;
+};
+
+type CBBConference = (typeof cbbConferences)[number] & {
+  groupId: number;
+};
 
 function isFBSConferenceOption(
   conference: (typeof cfbConferences)[number],
@@ -42,40 +65,55 @@ function isFBSConferenceOption(
   );
 }
 
-type Props = {
-  selectedConference: number | string | null;
-  onSelect: (conference: number | string | null) => void;
-  onOpen?: () => void;
-  onClose?: () => void;
-  league?: string;
-};
+function isCBBConferenceOption(
+  conference: (typeof cbbConferences)[number],
+): conference is CBBConference {
+  return conference.groupId !== null;
+}
 
 const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
   function ConferenceListModal(
-    { selectedConference, onSelect, onOpen, onClose },
+    { selectedConference, onSelect, onOpen, onClose, league },
     ref,
   ) {
     const { resolvedColorScheme } = usePreferences();
+
     const isDark = resolvedColorScheme === "dark";
     const styles = conferenceListModalStyles(isDark);
 
     const modalRef = useRef<BottomSheetModal>(null);
+
+    const isCFB = league === "CFB";
+    const isCBB = league === "CBB";
+    const isWCBB = league === "WCBB";
 
     useImperativeHandle(ref, () => ({
       present: () => modalRef.current?.present(),
       close: () => modalRef.current?.close(),
     }));
 
+    const defaultLeagueLogo = useMemo(() => {
+      if (isCFB) {
+        return CFBLogo;
+      }
+
+      if (isWCBB) {
+        return WCBBLogo;
+      }
+
+      return CBBLogo;
+    }, [isCFB, isWCBB]);
+
     const conferences = useMemo<ConferenceOption[]>(() => {
-      return [
-        {
-          label: "Top 25",
-          value: "top25",
-          logo: CFBLogo,
-        },
-        ...cfbConferences
-          .filter(isFBSConferenceOption)
-          .map((conference) => ({
+      if (isCFB) {
+        return [
+          {
+            label: "Top 25",
+            value: "top25",
+            logo: defaultLeagueLogo,
+          },
+
+          ...cfbConferences.filter(isFBSConferenceOption).map((conference) => ({
             label:
               getCFBConferenceSelectionName(conference.groupId) ||
               conference.shortName ||
@@ -83,8 +121,34 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             value: conference.groupId,
             logo: getCFBConferenceLogo(conference.groupId, isDark),
           })),
-      ];
-    }, [isDark]);
+        ];
+      }
+
+      if (isCBB || isWCBB) {
+        return [
+          {
+            label: "Top 25",
+            value: "top25",
+            logo: defaultLeagueLogo,
+          },
+
+          ...cbbConferences.filter(isCBBConferenceOption).map((conference) => ({
+            label:
+              getCBBConferenceSelectionName(conference.groupId) ||
+              conference.shortName ||
+              conference.name,
+            value: conference.groupId,
+            logo: getCBBConferenceLogo(conference.groupId, isDark),
+          })),
+        ];
+      }
+
+      return [];
+    }, [defaultLeagueLogo, isCBB, isCFB, isDark, isWCBB]);
+
+    const fallbackIcon = isCFB
+      ? "american-football-outline"
+      : "basketball-outline";
 
     return (
       <BottomSheetModal
@@ -93,8 +157,11 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         enableDynamicSizing={false}
         snapPoints={snapPoints}
         onChange={(index) => {
-          if (index >= 0) onOpen?.();
-          else onClose?.();
+          if (index >= 0) {
+            onOpen?.();
+          } else {
+            onClose?.();
+          }
         }}
         backdropComponent={(props) => (
           <BottomSheetBackdrop
@@ -107,7 +174,8 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         handleComponent={() => (
           <View style={styles.header}>
             <View style={styles.handleIndicatorStyle} />
-            <Text style={styles.headerText}>Conferences</Text>
+
+            <Text style={styles.headerText}>{league} Conferences</Text>
           </View>
         )}
       >
@@ -121,23 +189,23 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
           <BottomSheetScrollView
             contentContainerStyle={styles.contentContainerStyle}
           >
-            {conferences.map((conf) => {
-              const isSelected = selectedConference === conf.value;
+            {conferences.map((conference) => {
+              const isSelected = selectedConference === conference.value;
 
               return (
                 <TouchableOpacity
-                  key={`${conf.label}-${conf.value}`}
+                  key={`${conference.label}-${conference.value}`}
                   onPress={() => {
-                    onSelect(conf.value);
+                    onSelect(conference.value);
                     modalRef.current?.close();
                   }}
                   activeOpacity={0.7}
                   style={styles.leagueButton}
                 >
                   <View style={styles.leftContent}>
-                    {conf.logo ? (
+                    {conference.logo ? (
                       <Image
-                        source={conf.logo}
+                        source={conference.logo}
                         style={styles.logo}
                         contentFit="contain"
                       />
@@ -145,9 +213,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                       <View style={styles.logoPlaceholder}>
                         <Ionicons
                           name={
-                            conf.value === "top25"
-                              ? "star"
-                              : "american-football-outline"
+                            conference.value === "top25" ? "star" : fallbackIcon
                           }
                           size={18}
                           color={isDark ? Colors.white : Colors.black}
@@ -155,7 +221,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                       </View>
                     )}
 
-                    <Text style={styles.leagueText}>{conf.label}</Text>
+                    <Text style={styles.leagueText}>{conference.label}</Text>
                   </View>
 
                   <Ionicons
