@@ -1,11 +1,12 @@
 import { Dropdown } from "components/Dropdown";
 import { Colors } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useAwardSchools } from "hooks/LeagueHooks/useAwardSchools";
@@ -19,7 +20,6 @@ import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
 import ChampionsTable from "./ChampionsTable";
 import TopThreeTeams from "./TopThreeTeams";
-import { getWCBBTeamLogo } from "constants/teamsWCBB";
 type ViewMode = "champions" | "players" | "teams";
 
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
@@ -196,7 +196,7 @@ export default function AwardSeasons({ league }: Props) {
             value: t.total_championships,
             logo:
               league === "NBA"
-                ? getTeamLogo(t.team.id, isDark)
+                ? getNBATeamLogo(t.team.id, isDark)
                 : league === "WNBA"
                   ? getWNBATeamLogo(t.team.id, isDark)
                   : league === "CFB"

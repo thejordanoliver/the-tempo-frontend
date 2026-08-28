@@ -9,8 +9,8 @@ import {
   getMessagesSocket,
 } from "services/messagesSocket";
 import {
+  ComposeDirectMessagePayload,
   MessageThemePreference,
-  SendDirectMessagePayload,
 } from "types/messages";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -129,7 +129,7 @@ export const useDirectMessages = (
   );
 
   const sendMessage = useCallback(
-    async (payload: Omit<SendDirectMessagePayload, "clientId">) => {
+    async (payload: ComposeDirectMessagePayload) => {
       setSendError(null);
 
       try {

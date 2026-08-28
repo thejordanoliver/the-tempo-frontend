@@ -10,9 +10,8 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
-  FlatList,
   SectionList,
   SectionListData,
   Text,
@@ -76,7 +75,6 @@ export default function GamesList({
   const [modalVisible, setModalVisible] = useState(false);
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
-  const league = isNFL ? "NFL" : isCFB ? "CFB" : "UFL";
 
   const chunkIntoRows = (
     data: FootballGame[],
@@ -224,112 +222,106 @@ export default function GamesList({
     );
   };
 
-  const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
+  const renderSkeletons = useCallback(
+    (count: number) => {
+      if (viewMode === "list") {
+        return (
+          <View style={styles.skeletonWrapper}>
+            {Array.from({ length: count }).map((_, i) => (
+              <GameCardSkeleton key={`list-skel-${i}`} />
+            ))}
+          </View>
+        );
+      }
+
+      if (viewMode === "grid") {
+        const pairs: number[][] = [];
+        for (let i = 0; i < count; i += 2) {
+          pairs.push(i + 1 < count ? [i, i + 1] : [i]);
+        }
+
+        return (
+          <View style={styles.skeletonGridWrapper}>
+            {pairs.map((pair, rowIndex) => (
+              <View key={`skel-row-${rowIndex}`} style={styles.gridRow}>
+                <SquareGameCardSkeleton style={{ flex: 1 }} />
+                {pair.length === 2 ? (
+                  <SquareGameCardSkeleton style={{ flex: 1 }} />
+                ) : (
+                  <View style={{ flex: 1 }} />
+                )}
+              </View>
+            ))}
+          </View>
+        );
+      }
+
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, i) => (
-            <GameCardSkeleton key={`list-skel-${i}`} />
+            <StackedGameCardSkeleton key={`stack-skel-${i}`} />
           ))}
         </View>
       );
-    }
+    },
+    [viewMode, styles],
+  );
 
-    if (viewMode === "grid") {
-      const skeletons = Array.from({ length: count }).map((_, i) => ({
-        _id: `grid-skel-${i}`,
-      }));
+ 
 
-      // Add placeholder if odd count
-      const dataWithPlaceholder =
-        count % 2 === 1
-          ? [...skeletons, { _id: `grid-skel-placeholder` }]
-          : skeletons;
+ if (loading) {
+   const totalSkeletonCount = expectedCount ?? 4;
 
-      return (
-        <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(item) => item._id}
-          numColumns={2}
-          renderItem={({ item, index }) => {
-            if (item._id.includes("placeholder")) {
-              return (
-                <View
-                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
-                />
-              );
-            }
+   // When we already have games, preserve their real season sections.
+   if (sections.length > 0) {
+     return (
+       <View>
+         {showCountdown && countdownGame && (
+           <CountdownClock
+             game={countdownGame}
+             loading
+             teamLogo={teamLogo}
+             teamName={teamName}
+             teamColor={teamColor}
+             teamSecondaryColor={teamSecondaryColor}
+           />
+         )}
 
-            const isLastOdd = count % 2 === 1 && index === count - 1;
+         {sections.map((section, sectionIndex) => (
+           <View
+             key={`skel-section-${section.title}`}
+             style={{ marginTop: sectionIndex > 0 ? 12 : 0 }}
+           >
+             {showHeaders && (
+               <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+             )}
 
-            const itemStyle: ViewStyle = {
-              flex: 1,
-              marginLeft: isLastOdd ? 12 : index % 2 === 0 ? 12 : 6,
-              marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
-            };
+             {renderSkeletons(section.data.length)}
+           </View>
+         ))}
+       </View>
+     );
+   }
 
-            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
-          }}
-          scrollEnabled={false}
-          contentContainerStyle={styles.skeletonGridWrapper}
-        />
-      );
-    }
+   // Initial load: games/sections do not exist yet,
+   // so always render a fallback set of skeletons.
+   return (
+     <View>
+       {showCountdown && countdownGame && (
+         <CountdownClock
+           game={countdownGame}
+           loading
+           teamLogo={teamLogo}
+           teamName={teamName}
+           teamColor={teamColor}
+           teamSecondaryColor={teamSecondaryColor}
+         />
+       )}
 
-    return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, i) => (
-          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
-        ))}
-      </View>
-    );
-  };
-
-  // --- Inside the loading check ---
-  if (loading) {
-    return (
-      <View>
-        {sections.map((section) => {
-          const count =
-            section.data.length > 0
-              ? section.data.length
-              : (expectedCount ?? 4);
-
-          return (
-            <View
-              key={`skel-section-${section.title}`}
-              style={{ marginBottom: 16 }}
-            >
-              {showHeaders && (
-                <HeadingTwo isDark={isDark} style={{ marginHorizontal: 12 }}>
-                  {section.title}
-                </HeadingTwo>
-              )}
-              {renderSkeletons(count)}
-            </View>
-          );
-        })}
-      </View>
-    );
-  }
-
-  if (loading) {
-    const totalSkeletonCount =
-      games.length > 0 ? games.length : (expectedCount ?? 4);
-    return (
-      <View>
-        {sections.map((section) => (
-          <View key={`skel-section-${section.title}`}>
-            {showHeaders && (
-              <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
-            )}
-            {renderSkeletons(section.data.length || totalSkeletonCount)}
-          </View>
-        ))}
-      </View>
-    );
-  }
-
+       {renderSkeletons(totalSkeletonCount)}
+     </View>
+   );
+ }
   if (error) return <Text style={global.errorText}>Error: {error}</Text>;
 
   return (
@@ -364,11 +356,14 @@ export default function GamesList({
           onEndReachedThreshold={0.3}
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <View style={{ marginTop: 10 }}>
-              <Text style={global.emptyText}>
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? `No ${league}  games found for today or tomorrow.`
-                  : `No ${league} games found.`}
+                  ? "No kickoffs on the schedule today."
+                  : "No football was played on this date."}
+              </Text>
+              <Text style={global.emptyText}>
+                The next drive is just downfield.
               </Text>
             </View>
           }
@@ -382,7 +377,7 @@ export default function GamesList({
           renderItem={({ item, index }) => renderGameCard(item, index)}
           ListHeaderComponent={
             showHeaders && showCountdown && countdownGame ? (
-               <CountdownClock
+              <CountdownClock
                 game={countdownGame}
                 loading={loading}
                 teamLogo={teamLogo}
@@ -421,11 +416,14 @@ export default function GamesList({
             ) : null
           }
           ListEmptyComponent={
-            <View>
-              <Text style={global.emptyText}>
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? `No ${league}  games found for today or tomorrow.`
-                  : `No ${league} games found.`}
+                  ? "No kickoffs on the schedule today."
+                  : "No football was played on this date."}
+              </Text>
+              <Text style={global.emptyText}>
+                The next drive is just downfield.
               </Text>
             </View>
           }

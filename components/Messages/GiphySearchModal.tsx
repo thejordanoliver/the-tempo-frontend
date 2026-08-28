@@ -38,7 +38,7 @@ type GifItem = {
 type Props = {
   visible: boolean;
   onClose: () => void;
-  onGifSelected: (gifUrl: string) => void;
+  onGifSelected: (gifUrl: string, giphyId: string) => void;
   gifsCount: number;
 };
 
@@ -110,7 +110,7 @@ export const GiphySearchModal: React.FC<Props> = ({
       }
 
       Keyboard.dismiss();
-      onGifSelected(gif.images.original.url);
+      onGifSelected(gif.images.original.url, gif.id);
       sheetRef.current?.dismiss();
     },
     [gifsCount, onGifSelected],

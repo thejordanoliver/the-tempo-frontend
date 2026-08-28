@@ -1,6 +1,6 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
@@ -63,7 +63,7 @@ export default function ChampionsTable({
             row.team && league === "CFB"
               ? getCFBTeamLogo(row.team.id, isDark)
               : row.team && league === "NBA"
-                ? getTeamLogo(row.team.id, isDark)
+                ? getNBATeamLogo(row.team.id, isDark)
                 : row.team && league === "WNBA"
                   ? getWNBATeamLogo(row.team.id, isDark)
                   : row.team && league === "MLB"

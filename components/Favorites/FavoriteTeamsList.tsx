@@ -6,7 +6,7 @@ import { isFavoriteLeague } from "@/types/favorites";
 import { Ionicons } from "@expo/vector-icons";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
 import { Colors } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -94,7 +94,7 @@ export default function FavoriteTeamsList({
               logo = getNFLTeamLogo(Number(id), true);
               break;
             case "NBA":
-              logo = getTeamLogo(Number(id), true);
+              logo = getNBATeamLogo(Number(id), true);
               break;
             case "WNBA":
               logo = getWNBATeamLogo(Number(id), true);

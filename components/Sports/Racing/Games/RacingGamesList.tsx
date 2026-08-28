@@ -216,11 +216,14 @@ export default function GamesList({
 
   if (safeGames.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
-        <Text style={global.emptyText}>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>
           {day === "todayTomorrow"
-            ? "No events found for today or tomorrow."
-            : "No events found on this date."}
+            ? "No engines firing up today."
+            : "The track was quiet on this date."}
+        </Text>
+        <Text style={global.emptyText}>
+          The next green flag is coming up.
         </Text>
       </View>
     );

@@ -1,7 +1,7 @@
 // components/NBA/DraftCard.tsx
 import playerPlaceholder from "assets/Placeholders/playerPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
 import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -89,7 +89,7 @@ export default function DraftCard({
     ? getWNBATeamLogo(team?.id, isDark)
     : isNFL
       ? getNFLTeamLogo(team?.id, isDark)
-      : getTeamLogo(team?.id, isDark);
+      : getNBATeamLogo(team?.id, isDark);
 
   const athlete = player.athlete;
   const pickIsIn = player.status === "PICK_IS_IN";

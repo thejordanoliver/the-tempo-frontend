@@ -45,8 +45,8 @@ type LeagueRoute =
   | "/league/basketball"
   | "/league/football"
   | "/league/baseball"
-  | "/league/nhl"
-  | "/league/ufc"
+  | "/league/hockey"
+  | "/league/mma"
   | "/league/racing"
   | "/league/socc";
 
@@ -204,8 +204,8 @@ const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
   CB: "/league/baseball",
   SB: "/league/baseball",
   MLB: "/league/baseball",
-  NHL: "/league/nhl",
-  UFC: "/league/ufc",
+  NHL: "/league/hockey",
+  UFC: "/league/mma",
   F1: "/league/racing",
   NASCARPREMIER: "/league/racing",
   EPL: "/league/socc",
@@ -224,11 +224,19 @@ export default function LeagueScreen() {
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const styles = LeagueScreenStyles(isDark);
   const global = globalStyles(isDark);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const leagueLogos = useMemo<Record<LeagueType, ImageSourcePropType>>(() => {
+    return Object.fromEntries(
+      Object.entries(leagueConfig).map(([league, config]) => [
+        league,
+        isDark ? config.logoLight : config.logo,
+      ]),
+    ) as Record<LeagueType, ImageSourcePropType>;
+  }, [isDark]);
 
   const handleSearchToggle = useCallback(() => {
     setIsSearchVisible((current) => {
@@ -291,45 +299,42 @@ export default function LeagueScreen() {
     [router],
   );
 
-  const renderLeague: ListRenderItem<LeagueType> = useCallback(
-    ({ item: league, index }) => {
-      const { label, logo, logoLight } = leagueConfig[league];
-      const isLastRow = index === filteredLeagues.length - 1;
+const renderLeague: ListRenderItem<LeagueType> = useCallback(
+  ({ item: league, index }) => {
+    const { label } = leagueConfig[league];
+    const logo = leagueLogos[league];
+    const isLastRow = index === filteredLeagues.length - 1;
 
-      return (
-        <View
-          style={[
-            styles.buttonContainer,
-            isLastRow && { borderBottomWidth: 0 },
-          ]}
+    return (
+      <View
+        style={[styles.buttonContainer, isLastRow && { borderBottomWidth: 0 }]}
+      >
+        <TouchableOpacity
+          onPress={() => goToLeague(league)}
+          style={styles.leagueButton}
+          activeOpacity={activeOpacity}
         >
-          <TouchableOpacity
-            onPress={() => goToLeague(league)}
-            style={styles.leagueButton}
-            activeOpacity={activeOpacity}
-          >
-            <View style={styles.buttonWrapper}>
-              <Image
-                source={isDark ? logoLight : logo}
-                style={styles.leagueLogo}
-                resizeMode="contain"
-              />
-
-              <Text style={styles.leagueText}>{label}</Text>
-            </View>
-
-            <Ionicons
-              name="chevron-forward"
-              size={20}
-              color={isDark ? Colors.white : Colors.black}
+          <View style={styles.buttonWrapper}>
+            <Image
+              source={logo}
+              style={styles.leagueLogo}
+              resizeMode="contain"
             />
-          </TouchableOpacity>
-        </View>
-      );
-    },
-    [filteredLeagues.length, goToLeague, isDark, styles],
-  );
 
+            <Text style={styles.leagueText}>{label}</Text>
+          </View>
+
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  },
+  [filteredLeagues.length, goToLeague, isDark, leagueLogos, styles],
+);
   const renderEmptyResults = useCallback(
     () => (
       <View style={global.emptyContainer}>

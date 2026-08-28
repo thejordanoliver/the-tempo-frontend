@@ -7,7 +7,13 @@ import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import {
+  FlatList,
+  SectionList,
+  SectionListData,
+  Text,
+  View,
+} from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import BaseballGamePreviewModal from "../GamePreview/BaseballGamePreviewModal";
@@ -36,10 +42,13 @@ type GamesListProps = {
   teamSecondaryColor?: string;
 };
 
+type GameSection = {
+  title: string;
+  data: BaseballGame[];
+};
+
 type PlaceholderGame = { _isPlaceholder: true; id: string };
 type GameListItem = BaseballGame | PlaceholderGame;
-
-const ItemSeparator = () => <View style={{ height: 12 }} />;
 
 function isPlaceholderGame(game: GameListItem): game is PlaceholderGame {
   return "_isPlaceholder" in game;
@@ -59,7 +68,7 @@ export default function GamesList({
   isCB = false,
   showCountdown = false,
   countdownGame = null,
-    teamLogo,
+  teamLogo,
   teamName,
   teamColor,
   teamSecondaryColor,
@@ -122,9 +131,19 @@ export default function GamesList({
     [viewMode, isMLB, isCB, isSB, styles.gridItem, handleLongPress],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: GameListItem }) => renderGameCard(item),
-    [renderGameCard],
+  /* ----------------------------- Sections ----------------------------- */
+
+  const sections: GameSection[] = useMemo(() => {
+    if (!showHeaders) return [{ title: "All", data: games }];
+    return [{ title: "Regular Season", data: games }];
+  }, [games, showHeaders]);
+
+  const gridData = useMemo<GameListItem[]>(
+    () =>
+      games.length % 2 === 1
+        ? [...games, { _isPlaceholder: true, id: "placeholder" }]
+        : games,
+    [games],
   );
 
   const renderSkeletons = useCallback(
@@ -172,14 +191,6 @@ export default function GamesList({
     [viewMode, styles],
   );
 
-  const gridData = useMemo<GameListItem[]>(
-    () =>
-      viewMode === "grid" && games.length % 2 === 1
-        ? [...games, { _isPlaceholder: true, id: "placeholder" }]
-        : games,
-    [games, viewMode],
-  );
-
   if (loading) {
     const count = games.length > 0 ? games.length : (expectedCount ?? 4);
     return renderSkeletons(count);
@@ -187,50 +198,84 @@ export default function GamesList({
 
   if (games.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
-        <Text style={global.emptyText}>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>
           {day === "todayTomorrow"
-            ? "No games found for today or tomorrow."
-            : "No games found on this date."}
+            ? "No games at the ballpark today."
+            : "The bases were empty on this date."}
         </Text>
+        <Text style={global.emptyText}>More first pitches are on deck.</Text>
       </View>
     );
   }
 
   return (
     <>
-      <FlatList
-        data={viewMode === "grid" ? gridData : games}
-        keyExtractor={(item, index) =>
-          isPlaceholderGame(item) ? `placeholder-${index}` : `game-${item.id}`
-        }
-        renderItem={renderItem}
-        numColumns={viewMode === "grid" ? 2 : 1}
-        key={viewMode}
-        columnWrapperStyle={viewMode === "grid" ? styles.gridRow : undefined}
-        ItemSeparatorComponent={viewMode !== "grid" ? ItemSeparator : undefined}
-        ListHeaderComponent={
-          showHeaders && showCountdown && countdownGame ? (
-            <CountdownClock
-              game={countdownGame}
-              loading={loading}
-              teamLogo={teamLogo}
-              teamName={teamName}
-              teamColor={teamColor}
-              teamSecondaryColor={teamSecondaryColor}
-            />
-          ) : null
-        }
-        contentContainerStyle={
-          viewMode === "grid"
-            ? styles.gridListContainer
-            : styles.contentContainer
-        }
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={scrollEnabled}
-      />
+      {viewMode === "grid" ? (
+        <FlatList
+          data={gridData}
+          keyExtractor={(item, index) =>
+            isPlaceholderGame(item)
+              ? `placeholder-${index}`
+              : `game-${item.id ?? index}`
+          }
+          numColumns={2}
+          columnWrapperStyle={styles.gridRow}
+          renderItem={({ item }) => renderGameCard(item)}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          scrollEnabled={scrollEnabled}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
+            ) : null
+          }
+          contentContainerStyle={styles.gridListContainer}
+          ListEmptyComponent={
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
+                {day === "todayTomorrow"
+                  ? "No games hitting the hardwood today."
+                  : "The court was quiet on this date."}
+              </Text>
+              <Text style={global.emptyText}>
+                The next tipoff won’t be far away.
+              </Text>
+            </View>
+          }
+        />
+      ) : (
+        <SectionList
+          sections={sections as SectionListData<BaseballGame, GameSection>[]}
+          keyExtractor={(item, index) => `${item.id ?? "game"}-${index}`}
+          renderItem={({ item }) => renderGameCard(item)}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          stickySectionHeadersEnabled={false}
+          ListHeaderComponent={
+            showHeaders && showCountdown && countdownGame ? (
+              <CountdownClock
+                game={countdownGame}
+                loading={loading}
+                teamLogo={teamLogo}
+                teamName={teamName}
+                teamColor={teamColor}
+                teamSecondaryColor={teamSecondaryColor}
+              />
+            ) : null
+          }
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          contentContainerStyle={styles.contentContainer}
+          scrollEnabled={scrollEnabled}
+        />
+      )}
 
       {modalVisible && previewGame && (
         <BaseballGamePreviewModal

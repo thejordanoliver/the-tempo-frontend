@@ -1,14 +1,8 @@
 import type { FootballGame } from "@/types/football/football";
 import { ScrollView, Text, View } from "react-native";
-
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import type {
-  CFPBracketData,
-  CFPRoundDates,
-  FootballTeam,
-} from "../../../../types/football/cfpBracketTypes";
 import {
   BYE_Y,
+  CFPBracketStyles,
   CHAMPIONSHIP_CARD_WIDTH,
   CHAMPIONSHIP_X,
   FIRST_ROUND_X,
@@ -18,7 +12,12 @@ import {
   SEMIFINAL_X,
   SEMIFINAL_Y,
   snapBracketOffsets,
-} from "../../../../utils/cfpBracketLayout";
+} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
+import type {
+  CFPBracketData,
+  CFPRoundDates,
+  FootballTeam,
+} from "../../../../types/football/cfpBracketTypes";
 import { BracketConnectors } from "./BracketConnectors";
 import { BracketGameCard } from "./BracketGameCard";
 import { BracketRoundHeader } from "./BracketRoundHeader";
@@ -43,7 +42,6 @@ export function CFPBracketCanvas({
   isDark,
 }: CFPBracketCanvasProps) {
   const styles = CFPBracketStyles(isDark);
-
 
   return (
     <View style={styles.wrapper}>

@@ -6,14 +6,13 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
   SectionList,
   SectionListData,
   Text,
   View,
-  ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
@@ -178,66 +177,50 @@ export default function GamesList({
 
   /* --------------------------- Skeletons ------------------------------- */
 
-  const renderSkeletons = (count: number) => {
-    if (viewMode === "list") {
+  const renderSkeletons = useCallback(
+    (count: number) => {
+      if (viewMode === "list") {
+        return (
+          <View style={styles.skeletonWrapper}>
+            {Array.from({ length: count }).map((_, i) => (
+              <GameCardSkeleton key={`list-skel-${i}`} />
+            ))}
+          </View>
+        );
+      }
+
+      if (viewMode === "grid") {
+        const pairs: number[][] = [];
+        for (let i = 0; i < count; i += 2) {
+          pairs.push(i + 1 < count ? [i, i + 1] : [i]);
+        }
+
+        return (
+          <View style={styles.skeletonGridWrapper}>
+            {pairs.map((pair, rowIndex) => (
+              <View key={`skel-row-${rowIndex}`} style={styles.gridRow}>
+                <SquareGameCardSkeleton style={{ flex: 1 }} />
+                {pair.length === 2 ? (
+                  <SquareGameCardSkeleton style={{ flex: 1 }} />
+                ) : (
+                  <View style={{ flex: 1 }} />
+                )}
+              </View>
+            ))}
+          </View>
+        );
+      }
+
       return (
         <View style={styles.skeletonWrapper}>
           {Array.from({ length: count }).map((_, i) => (
-            <GameCardSkeleton key={`list-skel-${i}`} />
+            <StackedGameCardSkeleton key={`stack-skel-${i}`} />
           ))}
         </View>
       );
-    }
-
-    if (viewMode === "grid") {
-      const skeletons = Array.from({ length: count }).map((_, i) => ({
-        _id: `grid-skel-${i}`,
-      }));
-
-      // Add placeholder if odd count
-      const dataWithPlaceholder =
-        count % 2 === 1
-          ? [...skeletons, { _id: `grid-skel-placeholder` }]
-          : skeletons;
-
-      return (
-        <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(item) => item._id}
-          numColumns={2}
-          renderItem={({ item, index }) => {
-            if (item._id.includes("placeholder")) {
-              return (
-                <View
-                  style={[styles.gridItem, { backgroundColor: "transparent" }]}
-                />
-              );
-            }
-
-            const isLastOdd = count % 2 === 1 && index === count - 1;
-
-            const itemStyle: ViewStyle = {
-              flex: 1,
-              marginLeft: isLastOdd ? 12 : index % 2 === 0 ? 12 : 6,
-              marginRight: isLastOdd ? 12 : index % 2 === 0 ? 6 : 12,
-            };
-
-            return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
-          }}
-          scrollEnabled={scrollEnabled}
-          contentContainerStyle={styles.skeletonGridWrapper}
-        />
-      );
-    }
-
-    return (
-      <View style={styles.skeletonWrapper}>
-        {Array.from({ length: count }).map((_, i) => (
-          <StackedGameCardSkeleton key={`stack-skel-${i}`} />
-        ))}
-      </View>
-    );
-  };
+    },
+    [viewMode, styles],
+  );
 
   /* ----------------------------- LOADING ------------------------------ */
 
@@ -248,12 +231,13 @@ export default function GamesList({
 
   if (!loading && games.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
-        <Text style={global.emptyText}>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>
           {day === "todayTomorrow"
-            ? "No games found for today or tomorrow."
-            : "No games found on this date."}
+            ? "No games hitting the hardwood today."
+            : "The court was quiet on this date."}
         </Text>
+        <Text style={global.emptyText}>The next tipoff won’t be far away.</Text>
       </View>
     );
   }
@@ -290,11 +274,16 @@ export default function GamesList({
           }
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <Text style={global.emptyText}>
-              {day === "todayTomorrow"
-                ? "No games found for today or tomorrow."
-                : "No games found."}
-            </Text>
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
+                {day === "todayTomorrow"
+                  ? "No games hitting the hardwood today."
+                  : "The court was quiet on this date."}
+              </Text>
+              <Text style={global.emptyText}>
+                The next tipoff won’t be far away.
+              </Text>
+            </View>
           }
         />
       ) : (

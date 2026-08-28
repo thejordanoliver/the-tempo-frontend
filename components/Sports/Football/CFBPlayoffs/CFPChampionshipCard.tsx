@@ -2,13 +2,12 @@ import CFPLogoLight from "@/assets/College_Logos/Conference_Logos/CFPLight.png";
 import CFPLogo from "@/assets/College_Logos/Conference_Logos/CFPLogo.png";
 import type { FootballGame } from "@/types/football/football";
 import { Image, Pressable, Text, View } from "react-native";
-
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
 import {
+  CFPBracketStyles,
   CHAMPIONSHIP_X,
   CHAMPIONSHIP_Y,
-} from "../../../../utils/cfpBracketLayout";
+} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
+import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
 import { BracketTeamRow } from "./BracketTeamRow";
 import { CFPTeamLogo } from "./CFPTeamLogo";
 

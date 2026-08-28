@@ -190,10 +190,13 @@ export default function GamesList({
   if (!loading && games.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>
+        <Text style={global.emptyTitle}>
           {day === "todayTomorrow"
-            ? "No games found for today or tomorrow."
-            : "No games found on this date."}
+            ? "No matches on the pitch today."
+            : "The pitch was quiet on this date."}
+        </Text>
+        <Text style={global.emptyText}>
+          More goals and matchday action are coming.
         </Text>
       </View>
     );
@@ -223,11 +226,16 @@ export default function GamesList({
           scrollEnabled={scrollEnabled}
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
-            <Text style={global.emptyText}>
-              {day === "todayTomorrow"
-                ? "No games found for today or tomorrow."
-                : "No games found."}
-            </Text>
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
+                {day === "todayTomorrow"
+                  ? "No matches on the pitch today."
+                  : "The pitch was quiet on this date."}
+              </Text>
+              <Text style={global.emptyText}>
+                More goals and matchday action are coming.
+              </Text>
+            </View>
           }
         />
       ) : (

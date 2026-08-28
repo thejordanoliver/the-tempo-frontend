@@ -99,7 +99,7 @@ function FootballStackedGameCard({
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
   const homeRank = game.home.rank ?? null;
-  const awayRank = game.home.rank ?? null;
+  const awayRank = game.away.rank ?? null;
 
   const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
@@ -210,7 +210,6 @@ function FootballStackedGameCard({
   const renderCardContent = () => (
     <>
       <View style={styles.cardWrapper}>
-        {/* Away Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image
@@ -237,7 +236,6 @@ function FootballStackedGameCard({
           />
         </View>
 
-        {/* Home Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
             <Image

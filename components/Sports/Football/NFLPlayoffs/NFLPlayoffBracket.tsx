@@ -1,4 +1,5 @@
-import { nflPlayoffBracketStyles } from "@/styles/PlayoffStyles/NFLPlayoffBracketStyles";
+import { snapBracketOffsets } from "@/styles/PlayoffStyles/CFPBracketStyles";
+import { NFLPlayoffBracketStyles } from "@/styles/PlayoffStyles/NFLPlayoffBracketStyles";
 import type { BracketApiResponse } from "@/types/football/football";
 import NFLPlayoffsLogo from "assets/Football/NFL_Logos/NFLPlayoffsLogo.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -6,14 +7,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 
 /* ---------------- TYPES ---------------- */
 
@@ -52,7 +46,7 @@ const FINALS_HEIGHT = 178;
 const COL_WIDTH = 220;
 const COL_GAP = 20;
 
-const LABEL_WIDTH = 180;
+const LABEL_WIDTH = 200;
 const LABEL_TOP = 28;
 
 const COLS = {
@@ -294,23 +288,6 @@ const orderWildCardGamesForBracket = (
 
 /* ---------------- TEAM ROW ---------------- */
 
-const getTeamLogoSource = (
-  team: PlayoffTeam | null | undefined,
-  isDark: boolean,
-): ImageSourcePropType | null => {
-  if (isTbdTeam(team)) {
-    return null;
-  }
-
-  if (team?.logo) {
-    return {
-      uri: team.logo,
-    };
-  }
-
-  return getNFLTeamLogo(Number(team?.id ?? 0), isDark) ?? null;
-};
-
 const TeamRow = ({
   team,
   gameCompleted,
@@ -320,20 +297,15 @@ const TeamRow = ({
   gameCompleted: boolean;
   isDark: boolean;
 }) => {
-  const styles = nflPlayoffBracketStyles(isDark);
+  const styles = NFLPlayoffBracketStyles(isDark);
 
   const isTbd = isTbdTeam(team);
 
   const isWinner = gameCompleted && !isTbd && team?.winner === true;
-
   const isLoser = gameCompleted && !isTbd && team?.winner === false;
-
-  const opacity = isTbd || isLoser ? 0.5 : 1;
-
-  const logoSource = getTeamLogoSource(team, isDark);
-
+  const opacity = isLoser ? 0.5 : 1;
+  const teamLogo = getNFLTeamLogo(team?.id, isDark);
   const teamCode = isTbd ? "TBD" : team?.code?.trim() || "TBD";
-
   const seed = isTbd ? "-" : (team?.rank ?? "-");
 
   /*
@@ -349,23 +321,13 @@ const TeamRow = ({
     <View style={styles.teamRow}>
       <Text style={[styles.seedText, { opacity }]}>{seed}</Text>
 
-      {logoSource ? (
+      {teamLogo && (
         <Image
-          source={logoSource}
+          source={typeof teamLogo === "string" ? { uri: teamLogo } : teamLogo}
           style={[styles.teamLogo, { opacity }]}
           resizeMode="contain"
         />
-      ) : (
-        <View
-          style={[
-            styles.teamLogo,
-            {
-              opacity: 0.25,
-            },
-          ]}
-        />
       )}
-
       <Text
         numberOfLines={1}
         style={[
@@ -400,7 +362,7 @@ const MatchupCard = ({
   isDark: boolean;
   finals?: boolean;
 }) => {
-  const styles = nflPlayoffBracketStyles(isDark);
+  const styles = NFLPlayoffBracketStyles(isDark);
 
   const gameCompleted = game.status?.completed ?? false;
 
@@ -450,22 +412,24 @@ const RoundLabel = ({
   x: number;
   isDark: boolean;
 }) => {
-  const styles = nflPlayoffBracketStyles(isDark);
+  const styles = NFLPlayoffBracketStyles(isDark);
 
   return (
-    <Text
-      style={[
-        styles.roundLabel,
-        {
-          top: LABEL_TOP,
-          left: x - LABEL_WIDTH / 2,
-          width: LABEL_WIDTH,
-          textAlign: "center",
-        },
-      ]}
-    >
-      {title}
-    </Text>
+    <View style={styles.roundHeader}>
+      <Text
+        style={[
+          styles.roundTitle,
+          {
+            top: LABEL_TOP,
+            left: x - LABEL_WIDTH / 2,
+            width: LABEL_WIDTH,
+            textAlign: "center",
+          },
+        ]}
+      >
+        {title}
+      </Text>
+    </View>
   );
 };
 
@@ -478,7 +442,7 @@ const ConnectorLayer = ({
   isDark: boolean;
   connections: ConnectorTarget[];
 }) => {
-  const styles = nflPlayoffBracketStyles(isDark);
+  const styles = NFLPlayoffBracketStyles(isDark);
 
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
 
@@ -576,7 +540,7 @@ export function NFLPlayoffBracket({
 
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = useMemo(() => nflPlayoffBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => NFLPlayoffBracketStyles(isDark), [isDark]);
 
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -857,7 +821,11 @@ export function NFLPlayoffBracket({
 
   return (
     <ScrollView
+      snapToOffsets={snapBracketOffsets}
+      snapToAlignment="start"
+      decelerationRate="fast"
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -868,7 +836,13 @@ export function NFLPlayoffBracket({
     >
       <ScrollView
         horizontal
+        snapToOffsets={snapBracketOffsets}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        disableIntervalMomentum
         showsHorizontalScrollIndicator={false}
+        nestedScrollEnabled
+        directionalLockEnabled
         contentContainerStyle={styles.container}
       >
         <View style={styles.canvas}>

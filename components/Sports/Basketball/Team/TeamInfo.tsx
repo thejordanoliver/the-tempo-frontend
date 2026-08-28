@@ -10,9 +10,7 @@ import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
-import { View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TeamInfoModalStyles } from "./TeamInfoModal";
+import { StyleSheet, View } from "react-native";
 
 type Props = {
   teamId?: string | number;
@@ -21,50 +19,29 @@ type Props = {
   isDark: boolean;
 };
 
-export default function TeamInfo({
-  teamId,
-  teamDetails,
-  league,
-  isDark,
-}: Props) {
-  const insets = useSafeAreaInsets();
-  const styles = TeamInfoModalStyles(isDark, insets);
-
+export default function TeamInfo({ teamId, teamDetails, league }: Props) {
   if (!teamId) return null;
-
-  // --------------------------------------------------
-  // UNIVERSAL TEAM LOOKUP
-  // --------------------------------------------------
 
   const team = (() => {
     switch (league) {
       case "NBA":
         return getNBATeam(teamId);
-
       case "CFB":
         return getCFBTeam(teamId);
-
       case "CBB":
         return getCBBTeam(teamId);
-
       case "WCBB":
         return getWCBBTeam(teamId);
-
       case "NFL":
         return getNFLTeam(teamId);
-
       case "MLB":
         return getMLBTeam(teamId);
-
       case "NHL":
         return getNHLTeam(teamId);
-
       case "WNBA":
         return getWNBATeam(teamId);
-
       case "SOCCER":
         return getSOCCTeam(teamId);
-
       default:
         return null;
     }
@@ -72,180 +49,41 @@ export default function TeamInfo({
 
   if (!team) return null;
 
-  // --------------------------------------------------
-  // LEAGUE RENDERING
-  // --------------------------------------------------
+  const t = team as Team;
+  const coachName = `${teamDetails?.coach?.firstName ?? ""} ${
+    teamDetails?.coach?.lastName ?? ""
+  }`.trim();
 
-  switch (league) {
-    case "NBA": {
-      const t = team as Team;
+  const showConference = ["CFB", "CBB", "WCBB"].includes(league);
 
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
+  return (
+    <View style={styles.infoCardContainer}>
+      <InfoCard
+        label={league === "MLB" ? "Manager" : "Coach"}
+        value={coachName}
+        image={teamDetails?.coach?.image}
+        team={t}
+      />
 
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-        </View>
-      );
-    }
+      <InfoCard label="Location" value={teamDetails?.location} team={t} />
 
-    case "CFB": {
-      const t = team as Team;
+      <InfoCard label="Established" value={teamDetails?.established} team={t} />
 
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
+      <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
 
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-          <InfoCard
-            label="Conference"
-            value={teamDetails?.conference?.shortName}
-            team={t}
-          />
-        </View>
-      );
-    }
-
-    case "CBB":
-    case "WCBB": {
-      const t = team as Team;
-
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
-
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-          <InfoCard
-            label="Conference"
-            value={teamDetails?.conference?.shortName}
-            team={t}
-          />
-        </View>
-      );
-    }
-
-    case "NFL": {
-      const t = team as Team;
-
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-        </View>
-      );
-    }
-
-    case "MLB": {
-      const t = team as Team;
-
-      return (
-        <View style={styles.infoCardContainer}>
-         <InfoCard
-            label="Manager"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
-
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-        </View>
-      );
-    }
-
-    case "NHL": {
-      const t = team as Team;
-
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            image={teamDetails?.coach?.image}
-            team={t}
-          />
-
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-        </View>
-      );
-    }
-    case "WNBA": {
-      const t = team as Team;
-
-      return (
-        <View style={styles.infoCardContainer}>
-          <InfoCard
-            label="Coach"
-            value={`${teamDetails?.coach?.firstName ?? ""} ${teamDetails?.coach?.lastName ?? ""}`}
-            team={t}
-          />
-          <InfoCard label="Location" value={teamDetails?.location} team={t} />
-          <InfoCard
-            label="Established"
-            value={teamDetails?.established}
-            team={t}
-          />
-          <InfoCard label="Venue" value={teamDetails?.venue?.name} team={t} />
-        </View>
-      );
-    }
-
-    default:
-      return null;
-  }
+      {showConference && (
+        <InfoCard
+          label="Conference"
+          value={teamDetails?.conference?.shortName}
+          team={t}
+        />
+      )}
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  infoCardContainer: {
+    width: "100%",
+  },
+});

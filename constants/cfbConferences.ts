@@ -380,6 +380,18 @@ export const cfbConferences: Conference[] = [
     color: null,
     secondaryColor: null,
   },
+  {
+    id: 40,
+    uid: "s:20~l:23",
+    groupId: 35,
+    name: "DIV II/III",
+    shortName: "DIV II/III",
+    logo: CFBLogo,
+    logoLight: CFBLogo,
+    parentGroupId: 81,
+    color: "#009CDE",
+    secondaryColor: "#000000",
+  },
 ];
 
 function normalizeCFBConferenceSelection(selection: CFBConferenceSelection) {
@@ -437,6 +449,9 @@ export const getCFBConferenceSelectionName = (
 
   if (conference.groupId === 80) {
     return "FBS";
+  }
+  if (conference.groupId === 35) {
+    return "DIV II/III";
   }
 
   return conference.shortName || conference.name;

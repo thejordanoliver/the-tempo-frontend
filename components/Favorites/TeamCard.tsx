@@ -1,6 +1,6 @@
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { Colors } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
@@ -52,7 +52,7 @@ function TeamCard({
     if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
     if (item.league === "CB") return getCBTeamLogo(item.id, useAltLogo);
     if (item.league === "SB") return getSBTeamLogo(item.id, useAltLogo);
-    if (item.league === "NBA") return getTeamLogo(item.id, useAltLogo);
+    if (item.league === "NBA") return getNBATeamLogo(item.id, useAltLogo);
     if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
     if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
     return getNHLTeamLogo(item.id, useAltLogo);

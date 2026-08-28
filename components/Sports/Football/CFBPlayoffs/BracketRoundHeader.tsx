@@ -1,7 +1,8 @@
 import { Text, View } from "react-native";
-
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import { CARD_WIDTH } from "../../../../utils/cfpBracketLayout";
+import {
+  CARD_WIDTH,
+  CFPBracketStyles,
+} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
 
 /*
 |--------------------------------------------------------------------------
@@ -18,15 +19,10 @@ export function BracketRoundHeader({
   isDark,
 }: {
   title: string;
-
   date: string;
-
   x: number;
-
   width?: number;
-
   championship?: boolean;
-
   isDark: boolean;
 }) {
   const styles = CFPBracketStyles(isDark);

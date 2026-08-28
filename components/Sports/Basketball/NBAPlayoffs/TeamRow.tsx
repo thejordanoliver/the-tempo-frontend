@@ -1,7 +1,7 @@
-import { nbaPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
+import { NBAPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import { NBAPlayoffTeam } from "@/types/basketball/basketball";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { Image, Text, View } from "react-native";
 
 export const TeamRow = ({
@@ -17,9 +17,9 @@ export const TeamRow = ({
   score: number | null;
   isDark: boolean;
 }) => {
-  const styles = nbaPlayoffBracketStyles(isDark);
+  const styles = NBAPlayoffBracketStyles(isDark);
   const teamId = team?.id;
-  const teamLogo = getTeamLogo(teamId, isDark);
+  const teamLogo = getNBATeamLogo(teamId, isDark);
   const teamData = teamId != null ? getNBATeam(teamId) : undefined;
   const teamName = teamData?.code || "TBD";
   const seed = team?.playoffSeed ?? team?.seed;

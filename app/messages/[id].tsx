@@ -1,6 +1,7 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
+import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
 import MessageThemeModal from "@/components/Messages/MessageThemeModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Ionicons } from "@expo/vector-icons";
@@ -38,7 +39,8 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { uploadMessageImage } from "services/messagesApi";
+import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
+import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
 import {
   ConversationReadPosition,
   DirectMessageItem,
@@ -386,13 +388,14 @@ useEffect(() => {
       const asset = result.assets[0];
       setIsUploadingImage(true);
 
-      const attachment = await uploadMessageImage({
+      const attachment = await uploadMessageImage(conversationId, {
         uri: asset.uri,
         name: asset.fileName ?? asset.uri.split("/").pop() ?? "message.jpg",
         type: asset.mimeType ?? "image/jpeg",
       });
+      const signed = await getAuthorizedMessageAttachment(attachment.id);
 
-      setSelectedAttachment(attachment);
+      setSelectedAttachment({ ...attachment, uri: signed.url });
     } catch (err: any) {
       Alert.alert(
         "Image upload failed",
@@ -407,7 +410,7 @@ useEffect(() => {
         inputRef.current?.focus();
       });
     }
-  }, [closeAttachmentMenu]);
+  }, [closeAttachmentMenu, conversationId]);
 
   const handleOpenGifPicker = useCallback(() => {
     closeAttachmentMenu();
@@ -425,17 +428,33 @@ useEffect(() => {
     });
   }, []);
 
-  const handleGifSelected = useCallback((gifUrl: string) => {
-    setSelectedAttachment({
-      type: "gif",
-      uri: gifUrl,
-    });
-    setGifModalVisible(false);
+  const handleGifSelected = useCallback(
+    async (_gifUrl: string, giphyId: string) => {
+      setGifModalVisible(false);
+      setIsUploadingImage(true);
 
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
-  }, []);
+      try {
+        const attachment = await uploadMessageGif(conversationId, giphyId);
+        const signed = await getAuthorizedMessageAttachment(attachment.id);
+
+        setSelectedAttachment({ ...attachment, uri: signed.url });
+      } catch (err: any) {
+        Alert.alert(
+          "GIF upload failed",
+          err?.response?.data?.error ??
+            err?.message ??
+            "Please try another GIF.",
+        );
+      } finally {
+        setIsUploadingImage(false);
+
+        requestAnimationFrame(() => {
+          inputRef.current?.focus();
+        });
+      }
+    },
+    [conversationId],
+  );
 
   const handleRemoveAttachment = useCallback(() => {
     setSelectedAttachment(null);
@@ -543,8 +562,8 @@ useEffect(() => {
               ]}
             >
               {item.attachment && (
-                <Image
-                  source={{ uri: item.attachment.uri }}
+                <AuthorizedMessageImage
+                  attachment={item.attachment}
                   style={styles.messageAttachment}
                   contentFit="cover"
                 />
@@ -836,13 +855,13 @@ useEffect(() => {
           ]}
         >
           {isUploadingImage && (
-            <Text style={styles.uploadStatusText}>Uploading image...</Text>
+            <Text style={styles.uploadStatusText}>Uploading attachment...</Text>
           )}
 
           {selectedAttachment && (
             <View style={styles.previewContainer}>
-              <Image
-                source={{ uri: selectedAttachment.uri }}
+              <AuthorizedMessageImage
+                attachment={selectedAttachment}
                 style={styles.previewMedia}
                 contentFit="cover"
               />

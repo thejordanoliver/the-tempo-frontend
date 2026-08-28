@@ -1,9 +1,11 @@
+import { resolveCBBConferenceselection } from "@/constants/cbbConferences";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
 } from "@/constants/cfbConferences";
 import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
+import { resolveWCBBConferenceselection } from "@/constants/wcbbConferences";
 import { HeaderTitle } from "@react-navigation/elements";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
@@ -139,6 +141,13 @@ export function CustomHeader({
 
     if (tabName === "College Football") {
       return resolveCFBConferenceSelection(selectedConferenceName) ?? null;
+    }
+
+    if (tabName === "Men's College Basketball") {
+      return resolveCBBConferenceselection(selectedConferenceName) ?? null;
+    }
+    if (tabName === "Women's College Basketball") {
+      return resolveWCBBConferenceselection(selectedConferenceName) ?? null;
     }
 
     return (
@@ -318,9 +327,7 @@ export function CustomHeader({
         overflow: "visible",
       }}
     >
-      {tabName === "College Football" ||
-      tabName === "Men's College Basketball" ||
-      tabName === "Women's College Basketball" ? (
+      {isConferenceSelectorTab(tabName) ? (
         <ConferenceBackground
           insets={insets}
           isDark={isDark}

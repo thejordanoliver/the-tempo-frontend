@@ -34,7 +34,6 @@ import TimberwolvesLogo from "../assets/NBA/Logos/Timberwolves.png";
 import TrailBlazersLogo from "../assets/NBA/Logos/TrailBlazers.png";
 import WarriorsLogo from "../assets/NBA/Logos/Warriors.png";
 import WizardsLogo from "../assets/NBA/Logos/Wizards.png";
-
 const placeholderLogo =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
 
@@ -58,7 +57,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 2,
@@ -79,7 +78,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 4,
@@ -100,7 +99,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 5,
@@ -121,7 +120,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 6,
@@ -142,7 +141,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 7,
@@ -163,7 +162,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 8,
@@ -184,7 +183,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 9,
@@ -205,7 +204,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 10,
@@ -226,7 +225,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 11,
@@ -247,29 +246,29 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
-   {
-     id: 132761,
-     espnId: 132761,
-     summerLeagueId: 132761,
-     name: "Warriors",
-     shortName: "Warriors Blue",
-     fullName: "Golden State Warriors",
-     code: "GSW",
-     location: "San Francisco, CA",
-     city: "San Francisco",
-     logo: WarriorsLogo,
-     logoLight: WarriorsLogo,
-     color: "#1d428a",
-     secondaryColor: "#ffc72c",
-     established: 1946,
-     conference: "Western",
-     isAllStar: false,
-     isActive: false,
-     isNational: false,
-     league: "NBA"
-   },
+  {
+    id: 132761,
+    espnId: 132761,
+    summerLeagueId: 132761,
+    name: "Warriors",
+    shortName: "Warriors Blue",
+    fullName: "Golden State Warriors",
+    code: "GSW",
+    location: "San Francisco, CA",
+    city: "San Francisco",
+    logo: WarriorsLogo,
+    logoLight: WarriorsLogo,
+    color: "#1d428a",
+    secondaryColor: "#ffc72c",
+    established: 1946,
+    conference: "Western",
+    isAllStar: false,
+    isActive: false,
+    isNational: false,
+    league: "NBA",
+  },
   {
     id: 14,
     espnId: 10,
@@ -289,7 +288,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 15,
@@ -310,7 +309,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 16,
@@ -331,7 +330,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 17,
@@ -352,7 +351,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 19,
@@ -373,7 +372,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 20,
@@ -394,7 +393,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 21,
@@ -415,7 +414,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 22,
@@ -436,7 +435,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
 
   {
@@ -458,7 +457,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 24,
@@ -479,7 +478,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 25,
@@ -500,7 +499,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
 
   {
@@ -522,7 +521,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 27,
@@ -543,7 +542,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 28,
@@ -564,7 +563,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 29,
@@ -585,7 +584,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 30,
@@ -606,7 +605,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 31,
@@ -627,7 +626,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 38,
@@ -648,7 +647,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 40,
@@ -669,7 +668,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
   {
     id: 41,
@@ -690,7 +689,7 @@ export const teams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "NBA"
+    league: "NBA",
   },
 ];
 
@@ -706,7 +705,7 @@ export const getNBATeam = (id: number | string) => {
   return teams.find((t) => String(t.id) === String(id));
 };
 
-export function getTeamLogo(
+export function getNBATeamLogo(
   id: number | string | undefined,
   isDark: boolean,
 ) {
@@ -727,6 +726,6 @@ export function getTeamLogo(
   }
 
   return isDark
-    ? team.logoLight ?? team.logo ?? placeholderLogo
-    : team.logo ?? placeholderLogo;
+    ? (team.logoLight ?? team.logo ?? placeholderLogo)
+    : (team.logo ?? placeholderLogo);
 }

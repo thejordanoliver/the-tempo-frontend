@@ -235,7 +235,6 @@ function FootballGameCard({
         )}
       </View>
 
-      {/* headline */}
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headline}</Text>
       </View>

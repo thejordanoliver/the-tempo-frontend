@@ -5,7 +5,7 @@ import {
   FINALS_WIDTH,
   getCenteredX,
   getX,
-  nbaPlayoffBracketStyles,
+  NBAPlayoffBracketStyles,
   ROUND2_HEIGHT,
   ROUND2_WIDTH,
   ROUND3_HEIGHT,
@@ -99,13 +99,13 @@ export const FINALS_LAYOUT: CardLayout = {
 
 export const ConnectorLayer = ({ isDark }: { isDark: boolean }) => {
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
-  const styles = nbaPlayoffBracketStyles(isDark);
+  const styles = NBAPlayoffBracketStyles(isDark);
   const renderLeftPair = (source: CardLayout[], target: CardLayout[]) =>
     source.map((layout, index) => {
       const targetIndex = Math.floor(index / 2);
       const targetLayout = target[targetIndex];
       const nextLayout = source[index + 1];
-      const styles = nbaPlayoffBracketStyles(isDark);
+      const styles = NBAPlayoffBracketStyles(isDark);
       // ❌ Skip anything invalid OR non-pair starters
       if (!layout || !targetLayout || index % 2 !== 0 || !nextLayout)
         return null;
@@ -171,7 +171,7 @@ export const ConnectorLayer = ({ isDark }: { isDark: boolean }) => {
 
   const renderRightPair = (source: CardLayout[], target: CardLayout[]) =>
     source.map((layout, index) => {
-      const styles = nbaPlayoffBracketStyles(isDark);
+      const styles = NBAPlayoffBracketStyles(isDark);
       const targetIndex = Math.floor(index / 2);
       const targetLayout = target[targetIndex];
       const nextLayout = source[index + 1];

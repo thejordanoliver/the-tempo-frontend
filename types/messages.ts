@@ -1,9 +1,11 @@
 export type MessageAttachmentType = "image" | "gif";
 
 export type MessageAttachment = {
+  id?: string;
   type: MessageAttachmentType;
-  uri: string;
+  uri?: string;
   mimeType?: string | null;
+  sizeBytes?: number | null;
   width?: number | null;
   height?: number | null;
 };
@@ -75,6 +77,11 @@ export type DirectMessageItem = {
 
 export type SendDirectMessagePayload = {
   text?: string;
-  attachment?: MessageAttachment | null;
+  attachmentId?: string;
   clientId?: string;
+};
+
+export type ComposeDirectMessagePayload = {
+  text?: string;
+  attachment?: MessageAttachment | null;
 };

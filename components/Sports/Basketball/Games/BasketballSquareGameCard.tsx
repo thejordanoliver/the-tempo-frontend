@@ -3,11 +3,8 @@ import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
-import {
-  getWCBBTeamLogo,
-  getWCBBTeam,
-} from "constants/teamsWCBB";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -79,7 +76,7 @@ export default function BasketballSquareGameCard({
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getTeamLogo(homeId, isDark);
+        : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -87,7 +84,7 @@ export default function BasketballSquareGameCard({
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getTeamLogo(awayId, isDark);
+        : getNBATeamLogo(awayId, isDark);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship =
@@ -165,8 +162,9 @@ export default function BasketballSquareGameCard({
   const renderStatus = () => {
     if (inProgress)
       return (
-        <View>
+        <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
+          <View style={styles.divider} />
           <Text style={styles.clock}>{clock}</Text>
         </View>
       );

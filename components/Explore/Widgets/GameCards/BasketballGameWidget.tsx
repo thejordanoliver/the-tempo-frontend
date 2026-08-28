@@ -1,5 +1,5 @@
 import { BasketballGame } from "@/types/basketball/basketball";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
@@ -67,7 +67,7 @@ export default function BasketballGameWidget({
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getTeamLogo(homeId, isDark);
+        : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -75,7 +75,7 @@ export default function BasketballGameWidget({
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getTeamLogo(awayId, isDark);
+        : getNBATeamLogo(awayId, isDark);
 
   const homeRank = home?.rank;
   const awayRank = away?.rank;

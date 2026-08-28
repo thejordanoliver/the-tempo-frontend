@@ -10,7 +10,7 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
@@ -124,7 +124,7 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
-        : getTeamLogo(homeId, true);
+        : getNBATeamLogo(homeId, true);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
@@ -132,7 +132,7 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
-        : getTeamLogo(awayId, true);
+        : getNBATeamLogo(awayId, true);
 
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||

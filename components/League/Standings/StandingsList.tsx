@@ -4,7 +4,7 @@ import { Dropdown } from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamByESPNId, getNFLTeamLogo } from "constants/teamsNFL";
 import {
@@ -383,7 +383,7 @@ export const StandingsList = ({
 
     const teamLogo =
       league === "NBA"
-        ? getTeamLogo(team?.id, isDark)
+        ? getNBATeamLogo(team?.id, isDark)
         : league === "WNBA"
           ? getWNBATeamLogo(team?.id, isDark)
           : league === "NFL"

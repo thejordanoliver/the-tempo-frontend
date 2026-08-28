@@ -33,9 +33,9 @@ import {
 import type {
   ConversationReadPayload,
   ConversationReadPosition,
+  ComposeDirectMessagePayload,
   DirectMessageItem,
   MessageItem,
-  SendDirectMessagePayload,
 } from "types/messages";
 
 const CONVERSATION_PAGE_SIZE = 50;
@@ -281,7 +281,7 @@ type MessagesContextValue = {
   loadOlderMessages: (conversationId: string) => Promise<void>;
   sendDirectMessage: (
     conversationId: string,
-    payload: Omit<SendDirectMessagePayload, "clientId">,
+    payload: ComposeDirectMessagePayload,
   ) => Promise<boolean>;
   markRead: (conversationId: string) => Promise<void>;
 };
@@ -1107,13 +1107,19 @@ export function MessagesProvider({
   const sendDirectMessage = useCallback(
     async (
       conversationId: string,
-      payload: Omit<SendDirectMessagePayload, "clientId">,
+      payload: ComposeDirectMessagePayload,
     ) => {
       const normalizedConversationId = normalizeId(conversationId);
       const text = payload.text?.trim() ?? "";
       const attachment = payload.attachment ?? null;
 
       if (!normalizedConversationId || (!text && !attachment)) return false;
+
+      const attachmentId = normalizeId(attachment?.id);
+
+      if (attachment && !attachmentId) {
+        throw new Error("Attachment is not ready to send.");
+      }
 
       const clientId = createClientId();
       const optimisticMessage: DirectMessageItem = {
@@ -1137,7 +1143,7 @@ export function MessagesProvider({
       const requestPayload = {
         conversationId: normalizedConversationId,
         text,
-        attachment,
+        ...(attachmentId ? { attachmentId } : {}),
         clientId,
       };
 
@@ -1196,7 +1202,7 @@ export function MessagesProvider({
       try {
         const savedMessage = await sendMessageRest(normalizedConversationId, {
           text,
-          attachment,
+          ...(attachmentId ? { attachmentId } : {}),
           clientId,
         });
 

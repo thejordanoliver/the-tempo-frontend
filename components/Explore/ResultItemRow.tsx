@@ -2,7 +2,7 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { Ionicons } from "@expo/vector-icons";
 import playerPlaceholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { Colors } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -64,7 +64,7 @@ export default function ResultItemRow({
       teamLogo = team.logo
         ? { uri: team.logo }
         : getWCBBTeamLogo(team.id, isDark);
-    else if (team.id != null) teamLogo = getTeamLogo(team.id, isDark);
+    else if (team.id != null) teamLogo = getNBATeamLogo(team.id, isDark);
 
     return (
       <View style={styles.itemRow}>

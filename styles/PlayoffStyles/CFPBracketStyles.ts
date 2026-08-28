@@ -1,16 +1,88 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { StyleSheet } from "react-native";
 
-import {
-  BYE_CARD_HEIGHT,
-  BYE_CARD_WIDTH,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  CARD_HEIGHT,
-  CARD_WIDTH,
-  CHAMPIONSHIP_CARD_HEIGHT,
-  CHAMPIONSHIP_CARD_WIDTH,
-} from "../../utils/cfpBracketLayout";
+/*
+|--------------------------------------------------------------------------
+| Layout
+|--------------------------------------------------------------------------
+*/
+
+export const CANVAS_WIDTH = 1600;
+export const CANVAS_HEIGHT = 1250;
+
+export const CARD_WIDTH = 176;
+export const CARD_HEIGHT = 142;
+
+export const BYE_CARD_WIDTH = CARD_WIDTH;
+export const BYE_CARD_HEIGHT = 88;
+
+export const CHAMPIONSHIP_CARD_WIDTH = 250;
+export const CHAMPIONSHIP_CARD_HEIGHT = 260;
+
+export const FIRST_ROUND_X = 30;
+export const QUARTERFINAL_X = 430;
+export const SEMIFINAL_X = 825;
+export const CHAMPIONSHIP_X = 1220;
+
+export const FIRST_ROUND_Y = [90, 350, 610, 870];
+
+export const BYE_Y = [245, 505, 765, 1025];
+
+export const QUARTERFINAL_Y = [165, 425, 685, 945];
+
+export const SEMIFINAL_Y = [300, 820];
+
+export const CHAMPIONSHIP_Y = 510;
+
+const HORIZONTAL_SNAP_OFFSET = 20;
+
+export const snapBracketOffsets = [
+  FIRST_ROUND_X,
+  QUARTERFINAL_X,
+  SEMIFINAL_X,
+  CHAMPIONSHIP_X,
+].map((x) => Math.max(0, x - HORIZONTAL_SNAP_OFFSET));
+
+/*
+|--------------------------------------------------------------------------
+| Layout Helpers
+|--------------------------------------------------------------------------
+*/
+
+export function getGameCardCenterY(y: number) {
+  return y + CARD_HEIGHT / 2;
+}
+
+export function getByeCardCenterY(y: number) {
+  return y + BYE_CARD_HEIGHT / 2;
+}
+
+export function buildMergeConnectorPath(
+  topStartX: number,
+  topStartY: number,
+  bottomStartX: number,
+  bottomStartY: number,
+  endX: number,
+  endY: number,
+) {
+  const furthestStartX = Math.max(topStartX, bottomStartX);
+
+  const mergeX = furthestStartX + (endX - furthestStartX) * 0.5;
+
+  return `
+    M ${topStartX} ${topStartY}
+    H ${mergeX}
+
+    M ${bottomStartX} ${bottomStartY}
+    H ${mergeX}
+
+    M ${mergeX} ${topStartY}
+    V ${bottomStartY}
+
+    M ${mergeX} ${endY}
+    H ${endX}
+  `;
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -48,69 +120,47 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     stateContainer: {
       minHeight: 300,
-
       alignItems: "center",
-
       justifyContent: "center",
-
       paddingHorizontal: 20,
     },
 
     stateText: {
       color: isDark ? Colors.white : Colors.black,
-
       fontFamily: Fonts.REGULAR,
-
       fontSize: 14,
-
       textAlign: "center",
     },
 
     errorText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-
       fontFamily: Fonts.REGULAR,
-
       fontSize: 14,
-
       textAlign: "center",
-
       marginBottom: 14,
     },
 
     retryButton: {
       paddingHorizontal: 18,
-
       paddingVertical: 10,
-
       borderRadius: 8,
-
       borderWidth: 1,
-
       borderColor: Colors.midTone,
     },
 
     retryText: {
       color: isDark ? Colors.white : Colors.black,
-
       fontFamily: Fonts.BOLD,
-
       fontSize: 14,
     },
 
     refreshingBadge: {
       position: "absolute",
-
       top: 12,
-
       right: 12,
-
       paddingHorizontal: 10,
-
       paddingVertical: 6,
-
       borderRadius: 12,
-
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -118,9 +168,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     refreshingText: {
       color: Colors.midTone,
-
       fontFamily: Fonts.REGULAR,
-
       fontSize: 10,
     },
 
@@ -132,20 +180,15 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     roundHeader: {
       position: "absolute",
-
       top: 20,
-
       alignItems: "center",
     },
 
     roundTitle: {
       color: isDark ? Colors.white : Colors.black,
-
-      fontSize: 13,
-
-      fontFamily: Fonts.BOLD,
-
-      letterSpacing: 1.2,
+      fontSize: 16,
+      fontFamily: Fonts.MEDIUM,
+      textTransform: "uppercase",
     },
 
     championshipRoundTitle: {
@@ -154,11 +197,8 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     roundDate: {
       color: Colors.midTone,
-
       fontFamily: Fonts.REGULAR,
-
       fontSize: 12,
-
       marginTop: 7,
     },
 
@@ -170,34 +210,18 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     gameCard: {
       position: "absolute",
-
       width: CARD_WIDTH,
-
       height: CARD_HEIGHT,
-
+      justifyContent: "space-around",
+      paddingHorizontal: 10,
+      paddingVertical: 10,
       borderWidth: 1,
-
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-
-      borderRadius: 10,
-
+      borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-
-      shadowColor: "#000000",
-
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-
-      shadowOpacity: 0.06,
-
-      shadowRadius: 10,
-
-      elevation: 2,
-
+      elevation: 5,
       overflow: "hidden",
     },
 
@@ -212,21 +236,22 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     statusContainer: {
-      paddingTop: 6,
-      paddingHorizontal: 12,
-    },
-    footerContainer: {
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+    },
+
+    footerContainer: {
       flexDirection: "row",
-      paddingVertical: 6,
-      paddingHorizontal: 12,
+      alignItems: "center",
+      justifyContent: "space-between",
     },
 
     statusText: {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      fontSize: 10,
       fontFamily: Fonts.BOLD,
+      fontSize: 12,
+      textTransform: "uppercase",
     },
 
     infoWrapper: {
@@ -237,14 +262,16 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     headline: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontSize: 8,
+      color: Colors.midTone,
+      textAlign: "center",
     },
 
     date: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 12,
+      fontSize: 10,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     downDistance: {
@@ -257,14 +284,14 @@ export const CFPBracketStyles = (isDark: boolean) =>
     statusDivider: {
       width: 1,
       height: 10,
-      marginHorizontal: 4,
+      marginHorizontal: 3,
       backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     finalStatusDivider: {
       width: 1,
       height: 10,
-      marginHorizontal: 4,
+      marginHorizontal: 3,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -272,6 +299,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
     },
 
     finalText: {
@@ -291,7 +319,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
     broadcast: {
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
 
@@ -303,7 +331,6 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     teamRow: {
       flex: 1,
-      paddingHorizontal: 12,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -315,12 +342,9 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     teamInfo: {
       flex: 1,
-
       flexDirection: "row",
-
       alignItems: "center",
-
-      marginRight: 10,
+      marginRight: 8,
     },
 
     /*
@@ -330,21 +354,19 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     seedContainer: {
-      width: 25,
-
-      alignItems: "flex-start",
+      width: 22,
+      alignItems: "center",
     },
 
     seedPlaceholder: {
-      width: 25,
+      width: 22,
     },
 
     seedText: {
       color: Colors.midTone,
-
-      fontSize: 14,
-
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      textAlign: "center",
     },
 
     /*
@@ -354,21 +376,17 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     teamLogo: {
-      width: 20,
-      height: 20,
-      marginRight: 10,
+      width: 30,
+      height: 30,
+      marginRight: 8,
     },
 
     logoPlaceholder: {
-      width: 31,
-
-      height: 31,
-
-      borderRadius: 16,
-
+      width: 30,
+      height: 30,
+      marginRight: 8,
+      borderRadius: 15,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
-      marginRight: 10,
     },
 
     /*
@@ -379,20 +397,18 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     teamName: {
       flex: 1,
-
+      marginRight: 6,
       color: isDark ? Colors.white : Colors.black,
-
-      fontSize: 14,
-
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
     },
 
     tbdText: {
+      flex: 1,
+      marginRight: 6,
       color: Colors.midTone,
-
-      fontSize: 14,
-
-      fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      fontFamily: Fonts.BOLD,
     },
 
     /*
@@ -402,28 +418,25 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     score: {
-      minWidth: 24,
-
+      minWidth: 22,
+      marginLeft: 4,
       color: isDark ? Colors.white : Colors.black,
-
-      fontSize: 15,
-
+      fontSize: 18,
       fontFamily: Fonts.BOLD,
-
-      textAlign: "right",
+      textAlign: "center",
     },
 
     scorePlaceholder: {
+      minWidth: 22,
+      marginLeft: 4,
       color: Colors.midTone,
-
-      fontSize: 15,
-
+      fontSize: 18,
       fontFamily: Fonts.REGULAR,
+      textAlign: "center",
     },
 
     winnerText: {
       color: isDark ? Colors.light.gold : Colors.dark.gold,
-
       fontFamily: Fonts.BOLD,
     },
 
@@ -435,10 +448,8 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     divider: {
       height: StyleSheet.hairlineWidth,
-
-      marginHorizontal: 12,
-
-      backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+      marginVertical: 8,
+      backgroundColor: Colors.midTone,
     },
 
     /*
@@ -449,94 +460,65 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     byeCard: {
       position: "absolute",
-
       width: BYE_CARD_WIDTH,
-
       height: BYE_CARD_HEIGHT,
-
+      justifyContent: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 10,
       borderWidth: 1,
-
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-
-      borderRadius: 10,
-
+      borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
 
-      justifyContent: "center",
-
-      shadowColor: "#000000",
-
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-
-      shadowOpacity: 0.05,
-
-      shadowRadius: 8,
-
-      elevation: 2,
+      elevation: 5,
     },
 
     byeTeamContent: {
       flexDirection: "row",
-
       alignItems: "center",
-
-      paddingHorizontal: 12,
     },
 
     byeSeedContainer: {
-      width: 27,
+      width: 22,
 
-      alignItems: "flex-start",
+      alignItems: "center",
     },
 
     byeSeed: {
       color: Colors.midTone,
-
-      fontSize: 14,
-
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
+      textAlign: "center",
     },
 
     byeLogo: {
-      width: 38,
-
-      height: 38,
-
-      marginRight: 10,
+      width: 30,
+      height: 30,
+      marginRight: 8,
     },
 
     byeLogoPlaceholder: {
-      width: 38,
-
-      height: 38,
-
-      borderRadius: 19,
-
+      width: 30,
+      height: 30,
+      marginRight: 8,
+      borderRadius: 15,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-
-      marginRight: 10,
     },
 
     byeTeamName: {
       flex: 1,
-
+      marginRight: 8,
       color: isDark ? Colors.white : Colors.black,
-
-      fontSize: 14,
-
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
     },
 
     byeLabel: {
+      marginLeft: 4,
       color: Colors.midTone,
-
       fontSize: 14,
-
       fontFamily: Fonts.BOLD,
     },
 
@@ -548,37 +530,18 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     championshipCard: {
       position: "absolute",
-
       width: CHAMPIONSHIP_CARD_WIDTH,
-
       height: CHAMPIONSHIP_CARD_HEIGHT,
-
       borderWidth: 1.5,
-
       borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
-
-      borderRadius: 14,
-
+      borderRadius: 16,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-
       alignItems: "center",
-
       justifyContent: "center",
 
-      shadowColor: "#000000",
-
-      shadowOffset: {
-        width: 0,
-        height: 4,
-      },
-
-      shadowOpacity: 0.07,
-
-      shadowRadius: 12,
-
-      elevation: 3,
+      elevation: 5,
     },
 
     /*
@@ -589,39 +552,28 @@ export const CFPBracketStyles = (isDark: boolean) =>
 
     cfpLogo: {
       width: 62,
-
       height: 70,
-
       justifyContent: "center",
-
       alignItems: "center",
-
       marginBottom: 10,
     },
 
     championshipLabel: {
       color: isDark ? Colors.dark.gold : Colors.light.gold,
-
       fontSize: 13,
-
       fontFamily: Fonts.BOLD,
-
       letterSpacing: 0.8,
     },
 
     championshipDivider: {
       width: 115,
-
-      height: 1,
-
+      height: StyleSheet.hairlineWidth,
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
-
       marginVertical: 16,
     },
 
     championshipTeams: {
       width: "100%",
-
       height: 90,
     },
 
@@ -632,44 +584,31 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     championTeam: {
-      flexDirection: "row",
-
-      alignItems: "center",
-
-      paddingHorizontal: 18,
-
       width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 4,
     },
 
     championLogo: {
       width: 42,
-
       height: 42,
-
-      marginRight: 10,
     },
 
-    championTextContainer: {
-      flex: 1,
-    },
+    championTextContainer: {},
 
     championName: {
       color: isDark ? Colors.dark.gold : Colors.light.gold,
-
       fontSize: 16,
-
       fontFamily: Fonts.BOLD,
     },
 
     championSubtext: {
       color: isDark ? Colors.light.gold : Colors.dark.gold,
-
       fontSize: 8,
-
       fontFamily: Fonts.BOLD,
-
       letterSpacing: 0.7,
-
       marginTop: 3,
     },
 
@@ -682,12 +621,10 @@ export const CFPBracketStyles = (isDark: boolean) =>
     infoBadge: {
       position: "absolute",
 
-      bottom: 12,
-
+      bottom: 90,
       left: CANVAS_WIDTH / 2 - 140,
 
       minWidth: 280,
-
       height: 38,
 
       paddingHorizontal: 16,
@@ -695,7 +632,6 @@ export const CFPBracketStyles = (isDark: boolean) =>
       borderRadius: 19,
 
       borderWidth: 1,
-
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
 
       backgroundColor: isDark
@@ -703,37 +639,27 @@ export const CFPBracketStyles = (isDark: boolean) =>
         : Colors.light.itemBackground,
 
       flexDirection: "row",
-
       alignItems: "center",
-
       justifyContent: "center",
     },
 
     infoIcon: {
       color: Colors.midTone,
-
       fontSize: 14,
-
       marginRight: 7,
     },
 
     infoText: {
       color: Colors.midTone,
-
       fontFamily: Fonts.REGULAR,
-
       fontSize: 11,
     },
 
     infoDot: {
       width: 3,
-
       height: 3,
-
       borderRadius: 2,
-
       backgroundColor: Colors.midTone,
-
       marginHorizontal: 9,
     },
   });

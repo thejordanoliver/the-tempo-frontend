@@ -1,7 +1,8 @@
 import { Colors } from "@/constants/styles";
 import { useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
-import { fanPredictionStyles } from "./FanPrediction";
+import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
+
 type PredictionCardProps = {
   code?: string;
   name?: string;
@@ -31,7 +32,7 @@ export default function PredictionCard({
   isDark,
   style,
 }: PredictionCardProps) {
-  const styles = fanPredictionStyles(isDark);
+  const styles = FanPredictionStyles(isDark);
   const teamLabel = name || code;
 
   const [cardHeight, setCardHeight] = useState(0);

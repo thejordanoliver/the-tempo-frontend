@@ -54,6 +54,8 @@ export type SoccerGame = {
     code: string;
     location: string;
     logo: string;
+    primaryColor: string;
+    secondaryColor: string;
     record: string;
     score: number;
     winner: boolean;
@@ -66,6 +68,8 @@ export type SoccerGame = {
     code: string;
     location: string;
     logo: string;
+    primaryColor: string;
+    secondaryColor: string;
     record: string;
     score: number;
     winner: boolean;

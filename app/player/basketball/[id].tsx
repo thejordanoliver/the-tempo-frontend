@@ -4,7 +4,7 @@ import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardLi
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
-import { getNBATeam, getTeamLogo } from "@/constants/teams";
+import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePlayerSeasons } from "@/hooks/BasketballHooks/usePlayerSeasons";
@@ -47,7 +47,7 @@ export default function PlayerDetailScreen() {
             ? getWCBBTeam(teamId)
             : null;
   const teamLogo = isNBA
-    ? getTeamLogo(teamId, true)
+    ? getNBATeamLogo(teamId, true)
     : isWNBA
       ? getWNBATeamLogo(teamId, true)
       : isWCBB

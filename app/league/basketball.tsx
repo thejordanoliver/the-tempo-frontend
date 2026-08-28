@@ -64,7 +64,6 @@ import TournamentBracket from "../../components/Sports/Basketball/CBBTournament"
 import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
-
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
 import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
@@ -75,6 +74,7 @@ import {
   getRecruitYear,
   getWNBASeason,
 } from "../../utils/dateUtils";
+import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -897,7 +897,7 @@ function CBBLeagueScreen() {
     if (
       selectedConference == null ||
       selectedConference === "top25" ||
-      Number(selectedConference) === 80
+      Number(selectedConference) === 50
     ) {
       return null;
     }
@@ -1260,14 +1260,14 @@ function WCBBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   const selectedConferenceName = useMemo(() => {
-    return getCBBConferenceSelectionName(selectedConference);
+    return getWCBBConferenceSelectionName(selectedConference);
   }, [selectedConference]);
 
   const selectedConferenceGroupId = useMemo(() => {
     if (
       selectedConference == null ||
       selectedConference === "top25" ||
-      Number(selectedConference) === 80
+      Number(selectedConference) === 50
     ) {
       return null;
     }

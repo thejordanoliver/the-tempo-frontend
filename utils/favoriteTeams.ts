@@ -1,5 +1,5 @@
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -69,7 +69,7 @@ export function getFavoriteTeamLogo(
 
   switch (team.league) {
     case "NBA":
-      return getTeamLogo(teamId, true);
+      return getNBATeamLogo(teamId, true);
 
     case "WNBA":
       return getWNBATeamLogo(teamId, true);

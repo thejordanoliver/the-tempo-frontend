@@ -4,6 +4,11 @@ import {
   getCBBConferenceSelectionName,
 } from "@/constants/cbbConferences";
 import {
+  wcbbConferences,
+  getWCBBConferenceLogo,
+  getWCBBConferenceSelectionName,
+} from "@/constants/wcbbConferences";
+import {
   cfbConferences,
   getCFBConferenceLogo,
   getCFBConferenceSelectionName,
@@ -55,19 +60,29 @@ type FBSConference = (typeof cfbConferences)[number] & {
 type CBBConference = (typeof cbbConferences)[number] & {
   groupId: number;
 };
+type WCBBConference = (typeof wcbbConferences)[number] & {
+  groupId: number;
+};
 
 function isFBSConferenceOption(
   conference: (typeof cfbConferences)[number],
 ): conference is FBSConference {
   return (
     conference.groupId !== null &&
-    (conference.groupId === 80 || conference.parentGroupId === 80)
+    (conference.groupId === 80 ||
+      conference.parentGroupId === 80 ||
+      conference.groupId === 35)
   );
 }
-
 function isCBBConferenceOption(
   conference: (typeof cbbConferences)[number],
 ): conference is CBBConference {
+  return conference.groupId !== null;
+}
+
+function isWCBBConferenceOption(
+  conference: (typeof wcbbConferences)[number],
+): conference is WCBBConference {
   return conference.groupId !== null;
 }
 
@@ -124,7 +139,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         ];
       }
 
-      if (isCBB || isWCBB) {
+      if (isCBB) {
         return [
           {
             label: "Top 25",
@@ -140,6 +155,26 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             value: conference.groupId,
             logo: getCBBConferenceLogo(conference.groupId, isDark),
           })),
+        
+        ];
+      }
+      if (isWCBB) {
+        return [
+          {
+            label: "Top 25",
+            value: "top25",
+            logo: defaultLeagueLogo,
+          },
+
+          ...wcbbConferences.filter(isWCBBConferenceOption).map((conference) => ({
+            label:
+              getWCBBConferenceSelectionName(conference.groupId) ||
+              conference.shortName ||
+              conference.name,
+            value: conference.groupId,
+            logo: getWCBBConferenceLogo(conference.groupId, isDark),
+          })),
+        
         ];
       }
 

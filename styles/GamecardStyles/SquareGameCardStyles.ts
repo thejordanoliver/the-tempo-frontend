@@ -77,7 +77,7 @@ export const squareGameCardStyles = (
     },
     rank: {
       fontSize: 8,
-      color: borderColor,
+      color: subTextColor,
     },
 
     teamScore: {
@@ -101,6 +101,12 @@ export const squareGameCardStyles = (
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
+    },
+    divider: {
+      width: 0.5,
+      height: 12,
+      marginHorizontal: 4,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
     date: {
       fontFamily: Fonts.REGULAR,
@@ -128,7 +134,7 @@ export const squareGameCardStyles = (
     },
     clock: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 14,
+      fontSize: 12,
       color: accentRed,
       textAlign: "center",
     },
@@ -166,11 +172,10 @@ export const squareGameCardStyles = (
       fontSize: 8,
       color: headlineColor,
     },
-
     downDistance: {
       fontFamily: Fonts.MEDIUM,
       fontSize: 10,
-      color: borderColor,
+      color: subTextColor,
       textAlign: "center",
     },
     notificationBell: {

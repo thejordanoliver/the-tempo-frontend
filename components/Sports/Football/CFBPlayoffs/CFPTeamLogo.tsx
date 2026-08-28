@@ -1,6 +1,5 @@
 import { getCFBTeamLogo } from "@/constants/teamsCFB";
 import { Image, type ImageStyle, type StyleProp } from "react-native";
-
 import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
 
 /*

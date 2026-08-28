@@ -4,7 +4,7 @@ import CBBCourtImage from "assets/Placeholders/CBBCourtPlaceholder.png";
 import CourtImage from "assets/Placeholders/CourtPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
-import { getTeamByESPNId, getTeamLogo } from "constants/teams";
+import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
@@ -127,7 +127,7 @@ export default function ShotChart({
       return getWNBATeamLogo(homeId, false);
     }
 
-    return getTeamLogo(homeId, false);
+    return getNBATeamLogo(homeId, false);
   }, [homeId, isMensCBB, isWCBB, isWNBA]);
 
   const courtImage = isCollegeBasketball ? CBBCourtImage : CourtImage;

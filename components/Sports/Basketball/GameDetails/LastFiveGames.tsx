@@ -7,7 +7,7 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -148,7 +148,7 @@ export default function LastFiveGames({
       case "summercalifornia":
       case "summervegas":
       case "summerutah":
-        return getTeamLogo(teamId, isDark);
+        return getNBATeamLogo(teamId, isDark);
 
       case "wnba":
         return getWNBATeamLogo(teamId, isDark);

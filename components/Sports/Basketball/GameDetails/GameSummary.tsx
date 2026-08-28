@@ -2,7 +2,7 @@ import { Team } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getNBATeam, getTeamLogo, teams as nbaTeams } from "constants/teams";
+import { getNBATeam, getNBATeamLogo, teams as nbaTeams } from "constants/teams";
 import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeamLogo, wcbbTeams } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
@@ -211,7 +211,7 @@ export default function GameSummary({
 
             const teamLogo =
               league === "NBA"
-                ? getTeamLogo(team?.id, isDark)
+                ? getNBATeamLogo(team?.id, isDark)
                 : league === "WNBA"
                   ? getWNBATeamLogo(team?.id, isDark)
                   : league === "WCBB"

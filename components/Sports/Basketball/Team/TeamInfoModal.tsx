@@ -181,5 +181,4 @@ export const TeamInfoModalStyles = (isDark: boolean, insets: any) =>
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
-    infoCardContainer: { width: "100%" },
   });

@@ -20,7 +20,7 @@ import {
   buildMergeConnectorPath,
   getByeCardCenterY,
   getGameCardCenterY,
-} from "../../../../utils/cfpBracketLayout";
+} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
 
 /*
 |--------------------------------------------------------------------------

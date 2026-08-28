@@ -19,7 +19,7 @@ import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import PlayersInFoulTrouble from "@/components/Sports/Basketball/GameDetails/PlayersInFoulTrouble";
 import PlayersOnCourt from "@/components/Sports/Basketball/GameDetails/PlayersOnCourt";
 import ShotChart from "@/components/Sports/Basketball/GameDetails/ShotChart";
-import { getNBATeam, getTeamLogo } from "@/constants/teams";
+import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
@@ -186,7 +186,7 @@ export default function GameDetailsScreen(
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getTeamLogo(homeId, isDark);
+        : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -194,7 +194,7 @@ export default function GameDetailsScreen(
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getTeamLogo(awayId, isDark);
+        : getNBATeamLogo(awayId, isDark);
 
   const homeHeaderLogo = isCBB
     ? getCBBTeamLogo(homeId, true)
@@ -202,14 +202,14 @@ export default function GameDetailsScreen(
       ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
-        : getTeamLogo(homeId, true);
+        : getNBATeamLogo(homeId, true);
   const awayHeaderLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
     : isWCBB
       ? getWCBBTeamLogo(awayId, true)
       : isWNBA
         ? getWNBATeamLogo(awayId, true)
-        : getTeamLogo(awayId, true);
+        : getNBATeamLogo(awayId, true);
 
   const homeLastGames = useLastFiveGames(homeId, "basketball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "basketball", LEAGUE).games;

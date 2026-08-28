@@ -75,8 +75,8 @@ export default function SoccerGamePreviewModal({
   const awayName = useMemo(() => awayTeam?.name ?? "", [awayTeam?.name]);
   const homeName = useMemo(() => homeTeam?.name ?? "", [homeTeam?.name]);
 
-  const awayColor = awayTeam?.color ?? Colors.midTone;
-  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = game.away?.primaryColor ?? Colors.midTone;
+  const homeColor = game.home?.primaryColor ?? Colors.midTone;
 
   const isHomeNational = useMemo(
     () => homeTeam?.isNational,

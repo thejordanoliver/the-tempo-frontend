@@ -164,11 +164,14 @@ export default function MMAGamesList({
 
   if (loading && games.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
-        <Text style={global.emptyText}>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>
           {day === "todayTomorrow"
-            ? "No games found for today or tomorrow."
-            : "No games found on this date."}
+            ? "No one is stepping into the Octagon today."
+            : "No fights were booked for this date."}
+        </Text>
+        <Text style={global.emptyText}>
+          The next showdown is worth the wait.
         </Text>
       </View>
     );

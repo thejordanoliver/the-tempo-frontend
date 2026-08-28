@@ -6,7 +6,8 @@ import { usePreferences } from "contexts/PreferencesContext";
 
 import {
   getColCenter,
-  nbaPlayoffBracketStyles,
+  NBAPlayoffBracketStyles,
+  snapBracketOffsets,
 } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import type {
   NBABracketMatchup,
@@ -716,7 +717,7 @@ export function NBAPlayoffBracket({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = useMemo(() => nbaPlayoffBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => NBAPlayoffBracketStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const bracket = useMemo(
     () => buildPlayoffBracketFromRounds(rounds),
@@ -754,7 +755,11 @@ export function NBAPlayoffBracket({
 
   return (
     <ScrollView
+      snapToOffsets={snapBracketOffsets}
+      snapToAlignment="start"
+      decelerationRate="fast"
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -765,8 +770,13 @@ export function NBAPlayoffBracket({
     >
       <ScrollView
         horizontal
+        snapToOffsets={snapBracketOffsets}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        disableIntervalMomentum
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.container}
+        nestedScrollEnabled
+        directionalLockEnabled
       >
         <View style={styles.canvas}>
           <Text style={[styles.sideLabel, styles.westLabel]}>WEST</Text>

@@ -2,7 +2,7 @@ import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { Colors, activeOpacity } from "constants/styles";
-import { getNBATeam, getTeamBySummerId, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
@@ -81,7 +81,7 @@ export default function BasketballGameCard({
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getTeamLogo(homeId, isDark);
+        : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -89,7 +89,7 @@ export default function BasketballGameCard({
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getTeamLogo(awayId, isDark);
+        : getNBATeamLogo(awayId, isDark);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship =

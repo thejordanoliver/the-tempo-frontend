@@ -1,4 +1,4 @@
-import { nbaPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
+import { NBAPlayoffBracketStyles } from "@/styles/PlayoffStyles/NBAPlayoffBraketStyles";
 import { NBABracketMatchup } from "@/types/basketball/basketball";
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Colors } from "constants/styles";
@@ -68,7 +68,7 @@ const getGameStatus = (
   game: NBABracketMatchup["games"][number] | undefined | null,
   isDark: boolean,
 ) => {
-  const styles = nbaPlayoffBracketStyles(isDark);
+  const styles = NBAPlayoffBracketStyles(isDark);
 
   if (!game) {
     return null;
@@ -200,7 +200,7 @@ export const GameCard = ({
   isDark: boolean;
   finals?: boolean;
 }) => {
-  const styles = nbaPlayoffBracketStyles(isDark);
+  const styles = NBAPlayoffBracketStyles(isDark);
   const { topWins, bottomWins } = getSeriesRecord(matchup);
 
   const recentGame = getRecentGame(matchup);

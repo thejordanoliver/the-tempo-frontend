@@ -1,7 +1,7 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import HeadToHeadSkeleton from "components/Skeletons/GameDetails/HeadToHeadSkeleton";
 import { globalStyles } from "constants/styles";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import {
   HeadToHead,
   useHeadToHeadGames,
@@ -30,8 +30,8 @@ export default function HeadToHeadGames({
   const homeTeam = getNBATeam(homeTeamId);
   const awayTeam = getNBATeam(awayTeamId);
 
-  const homeLogo = getTeamLogo(homeTeamId, isDark);
-  const awayLogo = getTeamLogo(awayTeamId, isDark);
+  const homeLogo = getNBATeamLogo(homeTeamId, isDark);
+  const awayLogo = getNBATeamLogo(awayTeamId, isDark);
 
   const homeTeamCode = homeTeam?.code;
   const awayTeamCode = awayTeam?.code;

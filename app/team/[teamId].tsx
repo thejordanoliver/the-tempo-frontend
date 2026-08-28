@@ -20,7 +20,7 @@ import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { getNBATeam, getTeamLogo } from "constants/teams";
+import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -68,7 +68,7 @@ export default function TeamDetailScreen() {
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const espnId = team?.espnId ?? 0;
-  const teamLogo = getTeamLogo(teamIdNum, true);
+  const teamLogo = getNBATeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());

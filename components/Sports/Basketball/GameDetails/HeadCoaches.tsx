@@ -47,7 +47,7 @@ export default function HeadCoaches({
   const getCoachName = (coach: Coach | null | undefined) => {
     const name = `${coach?.firstName ?? ""} ${coach?.lastName ?? ""}`.trim();
 
-    return name || "Coach TBD";
+    return name || "Coach";
   };
 
   const getCoachAge = (coach: Coach | null | undefined) => {
@@ -77,12 +77,14 @@ export default function HeadCoaches({
           >
             {getCoachName(coach)}
           </Text>
-          <Text
-            style={[styles.teamName, isHome && styles.homeText]}
-            numberOfLines={2}
-          >
-            {teamName}
-          </Text>
+          {teamName && (
+            <Text
+              style={[styles.teamName, isHome && styles.homeText]}
+              numberOfLines={2}
+            >
+              {teamName}
+            </Text>
+          )}
         </View>
         {isHome && <Image source={teamLogo} style={styles.teamLogo} />}
       </View>

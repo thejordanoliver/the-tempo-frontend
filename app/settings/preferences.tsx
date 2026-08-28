@@ -140,6 +140,7 @@ const PreferencesScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
+
         <View style={styles.seperator} />
 
         <HeadingTwo isDark={isDark}>Theme</HeadingTwo>
@@ -228,12 +229,13 @@ const PreferencesScreen = () => {
             >
               Show Activity Status
             </Text>
-
-            <Ionicons
-              name={showActivityStatus ? "toggle" : "toggle-outline"}
-              size={28}
-              color={showActivityStatus ? textColor : notSelected}
-            />
+            {showActivityStatus && (
+              <Ionicons
+                name={"checkmark"}
+                size={24}
+                color={showActivityStatus ? textColor : notSelected}
+              />
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>

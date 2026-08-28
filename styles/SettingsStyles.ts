@@ -30,7 +30,6 @@ export const settingsStyles = (isDark: boolean) =>
     },
     optionButtonContainer: {
       justifyContent: "space-between",
-      paddingVertical: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark
         ? Colors.transparentLightGray
@@ -38,6 +37,7 @@ export const settingsStyles = (isDark: boolean) =>
     },
     optionButton: {
       flex: 1,
+      paddingVertical: 12,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",

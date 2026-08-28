@@ -79,14 +79,14 @@ function FootballSquareGameCard({
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
-  const downDistanceText = game.situation.downDistanceText;
+  const downDistanceText = game.situation.shortDownDistanceText;
   const possessionTeamId = game.situation.possession;
   const homeRecord = game.home.record;
   const awayRecord = game.away.record;
   const homeScore = game.home.score ?? 0;
   const awayScore = game.away.score ?? 0;
   const homeRank = game.home.rank ?? null;
-  const awayRank = game.home.rank ?? null;
+  const awayRank = game.away.rank ?? null;
   const headlineMatch = game?.headline?.toLowerCase();
   const isChampionship =
     headlineMatch?.includes("super bowl") ||
@@ -159,8 +159,9 @@ function FootballSquareGameCard({
   const renderStatus = () => {
     if (inProgress)
       return (
-        <View>
+        <View style={styles.infoWrapper}>
           <Text style={styles.period}>{period}</Text>
+          <View style={styles.divider} />
           <Text style={styles.clock}>{displayClock}</Text>
         </View>
       );
@@ -206,13 +207,13 @@ function FootballSquareGameCard({
               {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
               {awayName}
             </Text>
-            {inProgress && awayHasPossession && (
-              <Image
-                source={isDark ? FootballLight : Football}
-                style={styles.possession}
-              />
-            )}
           </View>
+          {inProgress && awayHasPossession && (
+            <Image
+              source={isDark ? FootballLight : Football}
+              style={styles.possession}
+            />
+          )}
           <ScoreText
             score={awayScore}
             record={awayRecord}
@@ -233,13 +234,13 @@ function FootballSquareGameCard({
               {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
               {homeName}
             </Text>
-            {inProgress && homeHasPossession && (
-              <Image
-                source={isDark ? FootballLight : Football}
-                style={styles.possession}
-              />
-            )}
           </View>
+          {inProgress && homeHasPossession && (
+            <Image
+              source={isDark ? FootballLight : Football}
+              style={styles.possession}
+            />
+          )}
           <ScoreText
             score={homeScore}
             record={homeRecord}
@@ -248,10 +249,8 @@ function FootballSquareGameCard({
         </View>
       </View>
 
-      {/* headlineText */}
       <Text style={[styles.headlineText]}>{headline}</Text>
 
-      {/* Center Info */}
       <View style={styles.info}>
         {renderStatus()}
         {renderDownAndDistance()}

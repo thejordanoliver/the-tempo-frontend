@@ -1,7 +1,7 @@
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { Team } from "@/types/types";
 import { Colors } from "constants/styles";
-import { getTeamLogo } from "constants/teams";
+import { getNBATeamLogo } from "constants/teams";
 import { getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
@@ -66,7 +66,7 @@ export default function TeamPreviewModal({
         : isWCBB
           ? getWCBBTeamLogo(team.id, isDark)
           : isNBA
-            ? getTeamLogo(team.id, isDark)
+            ? getNBATeamLogo(team.id, isDark)
             : isWNBA
               ? getWNBATeamLogo(team.id, isDark)
               : isCFB

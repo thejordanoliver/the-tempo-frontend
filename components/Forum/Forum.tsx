@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import type { ForumPost, ForumProps } from "types/forum";
+import Button from "../Buttons/Button";
 import FloatingButton from "../Buttons/FloatingButton";
 import { PostItem } from "./PostItem/PostItem";
 import PostItemSkeleton from "./PostItemSkeleton";
@@ -165,22 +166,14 @@ export default function Forum({
           {error}
         </Text>
 
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Retry loading forum posts"
-          accessibilityState={{
-            disabled: retryDisabled,
-            busy: retryDisabled,
-          }}
-          activeOpacity={activeOpacity}
+        <Button
           disabled={retryDisabled}
           onPress={onRetry}
-          style={[styles.actionButton, retryDisabled && styles.disabledButton]}
+          isDark={isDark}
+          variant="outline"
         >
-          <Text style={styles.actionButtonText}>
-            {retryDisabled ? "Retrying..." : "Retry"}
-          </Text>
-        </TouchableOpacity>
+          {retryDisabled ? "Retrying..." : "Retry"}
+        </Button>
       </View>
     );
   };

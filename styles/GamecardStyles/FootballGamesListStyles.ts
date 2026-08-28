@@ -20,7 +20,7 @@ export const footballGamesListStyle = StyleSheet.create({
   },
 
   skeletonGridWrapper: {
-    gap: 12,
+    paddingHorizontal: 12,
   },
 
   /* ---------- Grid ---------- */

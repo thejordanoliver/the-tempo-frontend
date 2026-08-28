@@ -174,15 +174,18 @@ const normalizeAttachment = (
 ): MessageAttachment | null => {
   if (!raw) return null;
 
+  const id = String(raw.id ?? raw.attachmentId ?? raw.attachment_id ?? "").trim();
   const uri = raw.uri ?? raw.url ?? raw.imageUrl ?? raw.gifUrl;
   const type = raw.type;
 
-  if (!uri || (type !== "image" && type !== "gif")) return null;
+  if ((!id && !uri) || (type !== "image" && type !== "gif")) return null;
 
   return {
+    ...(id ? { id } : {}),
     type,
-    uri,
+    ...(uri ? { uri: String(uri) } : {}),
     mimeType: raw.mimeType ?? raw.mime_type ?? null,
+    sizeBytes: raw.sizeBytes ?? raw.size_bytes ?? null,
     width: raw.width ?? null,
     height: raw.height ?? null,
   };
@@ -651,8 +654,9 @@ export const deleteConversation = async (conversationId: string) => {
 };
 
 export const uploadMessageImage = async (
+  conversationId: string,
   image: { uri: string; name?: string; type?: string },
-): Promise<MessageAttachment> => {
+): Promise<MessageAttachment & { id: string }> => {
   const filename = image.name || image.uri.split("/").pop() || "message.jpg";
   const mimeType = image.type || "image/jpeg";
   const formData = new FormData();
@@ -663,17 +667,39 @@ export const uploadMessageImage = async (
     type: mimeType,
   } as unknown as Blob);
 
-  const response = await apiClient.post("/api/messages/attachments", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
+  const response = await apiClient.post(
+    `/api/messages/conversations/${conversationId}/attachments`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     },
-  });
+  );
 
   const attachment = normalizeAttachment(response.data?.attachment);
 
-  if (!attachment) {
+  if (!attachment?.id) {
     throw new Error("Image upload response was missing an attachment.");
   }
 
-  return attachment;
+  return { ...attachment, id: attachment.id };
+};
+
+export const uploadMessageGif = async (
+  conversationId: string,
+  giphyId: string,
+): Promise<MessageAttachment & { id: string }> => {
+  const response = await apiClient.post(
+    `/api/messages/conversations/${conversationId}/attachments`,
+    { giphyId },
+  );
+
+  const attachment = normalizeAttachment(response.data?.attachment);
+
+  if (!attachment?.id || attachment.type !== "gif") {
+    throw new Error("GIF upload response was missing an attachment.");
+  }
+
+  return { ...attachment, id: attachment.id };
 };

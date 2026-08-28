@@ -367,6 +367,7 @@ import WisconsinRiverFallsLogo from "../assets/College_Logos/WisconsinRiverFalls
 import WoffordLogo from "../assets/College_Logos/Wofford.png";
 import YaleLogo from "../assets/College_Logos/Yale.png";
 import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
+import MITLogo from "../assets/College_Logos/MIT.png";
 
 export const cfbTeams: Team[] = [
   {
@@ -5992,6 +5993,25 @@ export const cfbTeams: Team[] = [
     location: "Youngstown, OH",
     city: "Youngstown",
     established: 1938,
+    isActive: true,
+    isAllStar: false,
+    isNational: false,
+    league: "CFB",
+  },
+  {
+    id: 112335,
+    espnId: 109,
+    name: "MIT",
+    fullName: "MIT Engineers",
+    shortName: "MIT",
+    code: "MIT",
+    color: "#A31F34",
+    secondaryColor: "#8A8B8C",
+    logo: MITLogo,
+    logoLight: MITLogo,
+    location: "Cambridge, MA",
+    city: "Cambridge",
+    established: 1882,
     isActive: true,
     isAllStar: false,
     isNational: false,

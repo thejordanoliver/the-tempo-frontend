@@ -261,7 +261,7 @@ export default function FootballLeagueScreen() {
     error: cfpError,
     refetch: refetchCFPPlayoffs,
   } = useCFBPlayoffs({
-    season: currentSeason,
+    season: 2025,
     enabled: isCFB,
   });
 
