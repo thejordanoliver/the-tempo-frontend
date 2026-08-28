@@ -259,7 +259,7 @@ const matchupPredictorStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderRadius: 23,
       overflow: "hidden",
-      transform: [{ translateX: -0 }],
+      transform: [{ translateX: -10 }],
     },
     homeLogoMarker: {
       borderColor: Colors.white,
