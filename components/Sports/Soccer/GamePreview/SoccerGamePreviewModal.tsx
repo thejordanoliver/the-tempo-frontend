@@ -3,7 +3,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { SoccerGame } from "@/types/soccer/soccer";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -101,7 +101,7 @@ export default function SoccerGamePreviewModal({
 
   const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
 
   const isGameLoading = !score || !details || !homeTeam || !awayTeam;
   const broadcast = getBroadcastDisplay(game?.broadcasts);

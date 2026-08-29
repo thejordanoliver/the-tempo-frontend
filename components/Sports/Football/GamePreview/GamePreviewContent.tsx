@@ -15,11 +15,11 @@ import {
   TeamLeaders,
 } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Coach } from "@/hooks/useTeams";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
@@ -68,7 +68,6 @@ type GamePreviewContentProps = {
   weather?: any;
   state?: "pre" | "in" | "post" | null;
   league: string;
-  isChampionship: boolean;
 };
 
 export default function GamePreviewContent({
@@ -104,11 +103,10 @@ export default function GamePreviewContent({
   venueAttendance,
   highlights,
   weather,
-  isChampionship,
   state,
   league,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({});
 
   return (
     <BottomSheetScrollView

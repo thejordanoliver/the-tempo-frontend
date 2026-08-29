@@ -3,6 +3,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BaseballGame } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -20,7 +21,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetails";
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
@@ -61,7 +61,7 @@ export default function BaseballGamePreviewModal({
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline || holidayLabel;
   const isChampionship = game?.season.slug === "championship-series";
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
 
   const LEAGUE = game?.league?.code ?? "mlb";
   const gameId = game?.id;

@@ -5,7 +5,7 @@ import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballG
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -144,7 +144,7 @@ export default function GamePreviewModal({
       "Women's Basketball Championship - National Championship",
     );
 
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
   const isLoading = !!details;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({

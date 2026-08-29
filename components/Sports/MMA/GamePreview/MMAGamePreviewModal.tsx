@@ -13,7 +13,7 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma/mma";
 import {
   formatPeriod,
@@ -21,8 +21,8 @@ import {
   getBroadcastDisplay,
 } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
-import CenterInfo from "./CenterInfo";
-import FighterInfo from "./FighterInfo";
+import { FighterRow } from "../GameDetails/FighterRow";
+import { GameInfo } from "../GameDetails/GameInfo";
 import GamePreviewContent from "./GamePreviewContent";
 
 const leftStancePlaceholder =
@@ -53,7 +53,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline || holidayLabel;
 
-  const styles = gamePreviewModalStyle();
+  const styles = gamePreviewModalStyle({});
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
@@ -185,34 +185,39 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
           {headline && <Text style={styles.headlineText}>{headline}</Text>}
 
           <View style={styles.gameHeaderContainer}>
-            <FighterInfo
-              side="away"
+            <FighterRow
+              id={secondFighterId}
               headshot={secondFighterPhoto}
-              flag={secondFighterFlag}
               name={secondFighterName}
               record={secondFighterRecord}
-              gameStatusDescription={gameStatusDescription}
+              flag={secondFighterFlag}
               isWinner={secondFighterWinner}
+              gameStatusDescription={gameStatusDescription}
+              isFirstFighter={false}
+              isDark
             />
 
-            <CenterInfo
-              time={formattedTime}
+            <GameInfo
               date={formattedDate}
+              time={formattedTime}
               period={period}
               clock={clock}
               broadcast={broadcast}
-              results={results}
               gameStatusDescription={gameStatusDescription}
+              results={results}
+              isDark
             />
 
-            <FighterInfo
-              side="home"
+            <FighterRow
+              id={firstFighterId}
               headshot={firstFighterPhoto}
-              flag={firstFighterFlag}
               name={firstFighterName}
               record={firstFighterRecord}
-              gameStatusDescription={gameStatusDescription}
+              flag={firstFighterFlag}
               isWinner={firstFighterWinner}
+              gameStatusDescription={gameStatusDescription}
+              isFirstFighter={true}
+              isDark
             />
           </View>
 

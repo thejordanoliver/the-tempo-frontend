@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import React, { ReactNode } from "react";
 import {
   Pressable,
@@ -37,7 +37,7 @@ export default function Button({
       style={({ pressed }) => [
         styles.button,
         {
-          opacity: pressed || disabled ? 0.7 : 1,
+          opacity: pressed || disabled ? activeOpacity : 1,
         },
         style,
       ]}

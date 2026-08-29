@@ -4,7 +4,7 @@ import {
   LineScore,
   Officials,
 } from "@/components/Sports/Basketball/GameDetails";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
@@ -65,7 +65,8 @@ export default function GamePreviewContent({
   state,
   league,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle();
+  const styles = gamePreviewModalStyle({});
+  
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
@@ -104,7 +105,7 @@ export default function GamePreviewContent({
           state={state}
           isDark
         />
-        
+
         <Officials officials={officials} state={state} isDark />
 
         <GameLocation

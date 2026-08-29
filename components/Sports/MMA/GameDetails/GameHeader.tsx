@@ -2,6 +2,7 @@ import { Text, View } from "react-native";
 import { gameHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
 import { FighterRow } from "./FighterRow";
 import { GameInfo } from "./GameInfo";
+
 type Props = {
   headline?: string | null;
   firstFighterId?: number;

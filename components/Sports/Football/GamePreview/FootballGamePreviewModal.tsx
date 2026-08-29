@@ -7,7 +7,7 @@ import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { FootballGame } from "@/types/football/football";
 import {
   formatPeriod,
@@ -115,7 +115,7 @@ export default function FootballGamePreviewModal({
   const isChampionship =
     game?.headline?.includes("Super Bowl") ??
     game?.headline?.includes("Championship");
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
   const state = score?.status.state ?? "pre";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
@@ -365,7 +365,6 @@ export default function FootballGamePreviewModal({
                   leaders={leaders}
                   weather={weather}
                   league={LEAGUE}
-                  isChampionship={isChampionship}
                 />
               )}
             </>

@@ -11,11 +11,11 @@ import {
   TeamStat,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { Coach } from "@/hooks/useTeams";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import BoxScore from "../GameDetails/BoxScore";
 import TeamInjuries from "../GameDetails/InjuryReport/TeamInjuries";
@@ -109,7 +109,7 @@ export default function GamePreviewContent({
   league,
   isMLB,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({});
 
   return (
     <BottomSheetScrollView

@@ -1,8 +1,7 @@
 import { useMessagesContext } from "contexts/MessagesContext";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import {
-  updateConversationThemePreference,
-} from "services/messagesApi";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { updateConversationThemePreference } from "services/messagesApi";
 import {
   emitTypingStart,
   emitTypingStop,
@@ -12,7 +11,6 @@ import {
   ComposeDirectMessagePayload,
   MessageThemePreference,
 } from "types/messages";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
   resolveMessageAccent,
@@ -58,8 +56,7 @@ export const useDirectMessages = (
 
   useEffect(() => {
     setMessageThemePreference(
-      conversation?.messageThemePreference ??
-        DEFAULT_MESSAGE_THEME_PREFERENCE,
+      conversation?.messageThemePreference ?? DEFAULT_MESSAGE_THEME_PREFERENCE,
     );
   }, [conversation?.messageThemePreference]);
 
@@ -76,20 +73,26 @@ export const useDirectMessages = (
     void loadConversationMessages(conversationId, {
       background: hasCachedMessages,
     });
-  }, [
-    conversationId,
-    loadConversationMessages,
-    messageState.messages.length,
-  ]);
+  }, [conversationId, loadConversationMessages, messageState.messages.length]);
 
   useEffect(() => {
-    if (!conversationId || !isVisible || messageState.messages.length === 0) {
+    if (
+      !conversationId ||
+      !isVisible ||
+      messageState.messages.length === 0 ||
+      !conversation?.unreadCount
+    ) {
       return;
     }
 
     void markRead(conversationId);
-  }, [conversationId, isVisible, markRead, messageState.messages.length]);
-
+  }, [
+    conversation?.unreadCount,
+    conversationId,
+    isVisible,
+    markRead,
+    messageState.messages.length,
+  ]);
   const refresh = useCallback(() => {
     return loadConversationMessages(conversationId, { background: true });
   }, [conversationId, loadConversationMessages]);

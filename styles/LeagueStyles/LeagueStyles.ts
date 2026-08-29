@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const LeagueScreenStyles = (isDark: boolean) =>
@@ -23,20 +23,24 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
-      paddingVertical: 8,
+      paddingVertical: 14,
     },
     buttonContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: "transparent",
     },
     buttonWrapper: {
       flexDirection: "row",
       alignItems: "center",
     },
+    buttonPressed: {
+      opacity: activeOpacity,
+    },
+
     leagueLogo: {
       width: 36,
       height: 36,

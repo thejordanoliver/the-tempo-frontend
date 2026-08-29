@@ -4,15 +4,15 @@ import {
   getCBBConferenceSelectionName,
 } from "@/constants/cbbConferences";
 import {
-  wcbbConferences,
-  getWCBBConferenceLogo,
-  getWCBBConferenceSelectionName,
-} from "@/constants/wcbbConferences";
-import {
   cfbConferences,
   getCFBConferenceLogo,
   getCFBConferenceSelectionName,
 } from "@/constants/cfbConferences";
+import {
+  getWCBBConferenceLogo,
+  getWCBBConferenceSelectionName,
+  wcbbConferences,
+} from "@/constants/wcbbConferences";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,
@@ -22,14 +22,13 @@ import {
 import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import type { ImageSourcePropType } from "react-native";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { conferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
+import { Pressable, Text, View } from "react-native";
+import { ConferenceListModalStyles } from "styles/ModalsStyles/ConferenceListModalStyles";
 import { snapPoints } from "utils/modalUtils";
 
 export type ConferenceListModalRef = {
@@ -94,7 +93,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
     const { resolvedColorScheme } = usePreferences();
 
     const isDark = resolvedColorScheme === "dark";
-    const styles = conferenceListModalStyles(isDark);
+    const styles = ConferenceListModalStyles(isDark);
 
     const modalRef = useRef<BottomSheetModal>(null);
 
@@ -155,7 +154,6 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             value: conference.groupId,
             logo: getCBBConferenceLogo(conference.groupId, isDark),
           })),
-        
         ];
       }
       if (isWCBB) {
@@ -166,15 +164,16 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             logo: defaultLeagueLogo,
           },
 
-          ...wcbbConferences.filter(isWCBBConferenceOption).map((conference) => ({
-            label:
-              getWCBBConferenceSelectionName(conference.groupId) ||
-              conference.shortName ||
-              conference.name,
-            value: conference.groupId,
-            logo: getWCBBConferenceLogo(conference.groupId, isDark),
-          })),
-        
+          ...wcbbConferences
+            .filter(isWCBBConferenceOption)
+            .map((conference) => ({
+              label:
+                getWCBBConferenceSelectionName(conference.groupId) ||
+                conference.shortName ||
+                conference.name,
+              value: conference.groupId,
+              logo: getWCBBConferenceLogo(conference.groupId, isDark),
+            })),
         ];
       }
 
@@ -209,18 +208,11 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         handleComponent={() => (
           <View style={styles.header}>
             <View style={styles.handleIndicatorStyle} />
-
-            <Text style={styles.headerText}>{league} Conferences</Text>
+            <Text style={styles.headerText}>Conferences</Text>
           </View>
         )}
       >
         <View style={styles.container}>
-          <BlurView
-            intensity={100}
-            tint="systemThinMaterial"
-            style={StyleSheet.absoluteFill}
-          />
-
           <BottomSheetScrollView
             contentContainerStyle={styles.contentContainerStyle}
           >
@@ -228,43 +220,51 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
               const isSelected = selectedConference === conference.value;
 
               return (
-                <TouchableOpacity
+                <View
                   key={`${conference.label}-${conference.value}`}
-                  onPress={() => {
-                    onSelect(conference.value);
-                    modalRef.current?.close();
-                  }}
-                  activeOpacity={0.7}
-                  style={styles.leagueButton}
+                  style={styles.row}
                 >
-                  <View style={styles.leftContent}>
-                    {conference.logo ? (
-                      <Image
-                        source={conference.logo}
-                        style={styles.logo}
-                        contentFit="contain"
-                      />
-                    ) : (
-                      <View style={styles.logoPlaceholder}>
-                        <Ionicons
-                          name={
-                            conference.value === "top25" ? "star" : fallbackIcon
-                          }
-                          size={18}
-                          color={isDark ? Colors.white : Colors.black}
+                  <Pressable
+                    onPress={() => {
+                      onSelect(conference.value);
+                      modalRef.current?.close();
+                    }}
+                    style={({ pressed }) => [
+                      styles.option,
+                      { opacity: pressed ? activeOpacity : 1 },
+                    ]}
+                  >
+                    <View style={styles.leftContent}>
+                      {conference.logo ? (
+                        <Image
+                          source={conference.logo}
+                          style={styles.logo}
+                          contentFit="contain"
                         />
-                      </View>
-                    )}
+                      ) : (
+                        <View style={styles.logoPlaceholder}>
+                          <Ionicons
+                            name={
+                              conference.value === "top25"
+                                ? "star"
+                                : fallbackIcon
+                            }
+                            size={18}
+                            color={isDark ? Colors.white : Colors.black}
+                          />
+                        </View>
+                      )}
 
-                    <Text style={styles.leagueText}>{conference.label}</Text>
-                  </View>
+                      <Text style={styles.leagueText}>{conference.label}</Text>
+                    </View>
 
-                  <Ionicons
-                    name={isSelected ? "checkmark" : "chevron-forward"}
-                    size={20}
-                    color={isDark ? Colors.white : Colors.black}
-                  />
-                </TouchableOpacity>
+                    <Ionicons
+                      name={isSelected ? "checkmark" : "chevron-forward"}
+                      size={20}
+                      color={isDark ? Colors.white : Colors.black}
+                    />
+                  </Pressable>
+                </View>
               );
             })}
           </BottomSheetScrollView>

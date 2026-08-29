@@ -14,11 +14,11 @@ import LastFiveGames, {
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Coach } from "@/hooks/useTeams";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 
 type GamePreviewContentProps = {
   homeId: any;
@@ -91,7 +91,8 @@ export default function GamePreviewContent({
   state,
   league,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle();
+  const styles = gamePreviewModalStyle({});
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}

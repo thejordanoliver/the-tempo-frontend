@@ -1,13 +1,13 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const conferenceListModalStyles = (isDark: boolean) =>
+export const ConferenceListModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     backgroundStyle: {
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      backgroundColor: "transparent",
       overflow: "hidden",
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     handleStyle: {
       position: "absolute",
@@ -27,17 +27,7 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       borderRadius: 2,
       backgroundColor: Colors.midTone,
     },
-    blurContainer: {
-      flex: 1,
-      paddingHorizontal: 16,
-      paddingTop: 60,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      overflow: "hidden",
-    },
-    scrollContent: {
-      paddingBottom: 40,
-    },
+
     header: {
       position: "absolute",
       top: 0,
@@ -48,13 +38,15 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       paddingVertical: 12,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     headerText: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: Fonts.BOLD,
+      fontFamily: Fonts.REGULAR,
       fontSize: 18,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
@@ -66,18 +58,20 @@ export const conferenceListModalStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
     contentContainerStyle: {
-      padding: 16,
+      paddingHorizontal: 12,
       paddingTop: 60,
-      paddingBottom: 80,
     },
-    leagueButton: {
+    row: {
+      flex: 1,
+      paddingVertical: 12,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.midTone,
+      backgroundColor: "transparent",
+    },
+    option: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.midTone,
-      backgroundColor: "transparent",
     },
     leagueText: {
       fontFamily: Fonts.REGULAR,

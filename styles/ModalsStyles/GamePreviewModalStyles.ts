@@ -1,7 +1,11 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const gamePreviewModalStyle = (isChampionship?: boolean) =>
+export const gamePreviewModalStyle = ({
+  isChampionship,
+}: {
+  isChampionship?: boolean;
+}) =>
   StyleSheet.create({
     handleStyle: {
       position: "absolute",
@@ -19,7 +23,11 @@ export const gamePreviewModalStyle = (isChampionship?: boolean) =>
       borderRadius: 2,
       backgroundColor: isChampionship ? Colors.lightGray : Colors.midTone,
     },
-    backgroundStyle: { backgroundColor: "transparent" },
+    backgroundStyle: {
+      backgroundColor: Colors.black,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
     container: {
       flex: 1,
       borderTopLeftRadius: 20,
@@ -28,6 +36,9 @@ export const gamePreviewModalStyle = (isChampionship?: boolean) =>
     },
     blurViewContainer: {
       flex: 1,
+      top: 0,
+      left: 0,
+      right: 0,
       padding: 12,
       paddingTop: 40,
       borderTopLeftRadius: 20,

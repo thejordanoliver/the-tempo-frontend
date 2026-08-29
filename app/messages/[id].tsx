@@ -1,7 +1,8 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
-import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
 import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
+import ConversationMessageItem from "@/components/Messages/ConversationMessageItem";
+import { GiphySearchModal } from "@/components/Messages/GiphySearchModal";
 import MessageThemeModal from "@/components/Messages/MessageThemeModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Ionicons } from "@expo/vector-icons";
@@ -39,15 +40,14 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
 import { getAuthorizedMessageAttachment } from "services/messageAttachmentUrls";
+import { uploadMessageGif, uploadMessageImage } from "services/messagesApi";
 import {
   ConversationReadPosition,
   DirectMessageItem,
   MessageAttachment,
   MessageItem,
 } from "types/messages";
-import { getContrastingTextColor } from "utils/color";
 
 const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder_nmzv2o.png";
@@ -284,55 +284,55 @@ export default function ConversationScreen() {
     router.back();
   }, [router]);
 
-const scrollToBottom = useCallback((animated = true) => {
-  requestAnimationFrame(() => {
-    listRef.current?.scrollToEnd({ animated });
-  });
-}, []);
-
-const handleInitialScrollToBottom = useCallback(() => {
-  if (
-    didInitialScrollRef.current ||
-    !pendingInitialScrollRef.current ||
-    messages.length === 0
-  ) {
-    return;
-  }
-
-  pendingInitialScrollRef.current = false;
-  didInitialScrollRef.current = true;
-
-  // Give FlatList one extra frame to finish measuring all message rows.
-  requestAnimationFrame(() => {
+  const scrollToBottom = useCallback((animated = true) => {
     requestAnimationFrame(() => {
-      listRef.current?.scrollToEnd({
-        animated: true,
+      listRef.current?.scrollToEnd({ animated });
+    });
+  }, []);
+
+  const handleInitialScrollToBottom = useCallback(() => {
+    if (
+      didInitialScrollRef.current ||
+      !pendingInitialScrollRef.current ||
+      messages.length === 0
+    ) {
+      return;
+    }
+
+    pendingInitialScrollRef.current = false;
+    didInitialScrollRef.current = true;
+
+    // Give FlatList one extra frame to finish measuring all message rows.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        listRef.current?.scrollToEnd({
+          animated: true,
+        });
       });
     });
-  });
-}, [messages.length]);
+  }, [messages.length]);
 
-useEffect(() => {
-  didInitialScrollRef.current = false;
-  pendingInitialScrollRef.current = false;
-}, [conversationId]);
+  useEffect(() => {
+    didInitialScrollRef.current = false;
+    pendingInitialScrollRef.current = false;
+  }, [conversationId]);
 
-useEffect(() => {
-  if (isLoading || messages.length === 0 || didInitialScrollRef.current) {
-    return;
-  }
+  useEffect(() => {
+    if (isLoading || messages.length === 0 || didInitialScrollRef.current) {
+      return;
+    }
 
-  pendingInitialScrollRef.current = true;
+    pendingInitialScrollRef.current = true;
 
-  // Fallback in case FlatList already reported its content size.
-  const timeout = setTimeout(() => {
-    handleInitialScrollToBottom();
-  }, 100);
+    // Fallback in case FlatList already reported its content size.
+    const timeout = setTimeout(() => {
+      handleInitialScrollToBottom();
+    }, 100);
 
-  return () => {
-    clearTimeout(timeout);
-  };
-}, [handleInitialScrollToBottom, isLoading, messages.length]);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [handleInitialScrollToBottom, isLoading, messages.length]);
 
   const closeAttachmentMenu = useCallback(() => {
     setAttachmentMenuVisible(false);
@@ -508,133 +508,25 @@ useEffect(() => {
   );
 
   const renderMessage: ListRenderItem<DirectMessageItem> = useCallback(
-    ({ item }) => {
-      const hasText = item.text.trim().length > 0;
-      const hasAttachment = Boolean(item.attachment);
-      const receiptLabel = messageReceiptLabels[normalizeId(item.id)];
-
-      const customBubbleColor = item.isCurrentUser
-        ? messageAccent.primary
-        : messageAccent.secondary;
-
-      const customTextColor = usesCustomMessageAccent
-        ? getContrastingTextColor(customBubbleColor)
-        : undefined;
-
-      return (
-        <View
-          style={[
-            styles.messageRow,
-            item.isCurrentUser ? styles.currentUserRow : styles.otherUserRow,
-          ]}
-        >
-          {!item.isCurrentUser && (
-            <Image
-              source={{
-                uri:
-                  item.senderProfileImageUrl ||
-                  conversation?.profileImageUrl ||
-                  FALLBACK_AVATAR,
-              }}
-              style={styles.messageAvatar}
-              contentFit="cover"
-            />
-          )}
-
-          <View
-            style={[
-              styles.messageStack,
-              item.isCurrentUser
-                ? styles.currentUserMessageStack
-                : styles.otherUserMessageStack,
-            ]}
-          >
-            <View
-              style={[
-                styles.messageBubble,
-                hasAttachment && styles.attachmentMessageBubble,
-                item.isCurrentUser
-                  ? styles.currentUserBubble
-                  : styles.otherUserBubble,
-                usesCustomMessageAccent && {
-                  backgroundColor: customBubbleColor,
-                },
-              ]}
-            >
-              {item.attachment && (
-                <AuthorizedMessageImage
-                  attachment={item.attachment}
-                  style={styles.messageAttachment}
-                  contentFit="cover"
-                />
-              )}
-
-              {hasText && (
-                <Text
-                  style={[
-                    styles.messageText,
-                    hasAttachment && styles.attachmentCaptionText,
-                    item.isCurrentUser &&
-                      !usesCustomMessageAccent &&
-                      styles.currentUserMessageText,
-                    usesCustomMessageAccent && {
-                      color: customTextColor,
-                    },
-                  ]}
-                >
-                  {item.text}
-                </Text>
-              )}
-
-              <Text
-                style={[
-                  styles.messageTime,
-                  hasAttachment && styles.attachmentMessageTime,
-                  item.isCurrentUser &&
-                    !usesCustomMessageAccent &&
-                    styles.currentUserMessageTime,
-                  usesCustomMessageAccent && {
-                    color: customTextColor,
-                    opacity: 0.72,
-                  },
-                ]}
-              >
-                {item.timestamp}
-              </Text>
-            </View>
-
-            {item.isCurrentUser && Boolean(receiptLabel) && (
-              <Text style={styles.messageReceiptText}>{receiptLabel}</Text>
-            )}
-          </View>
-        </View>
-      );
-    },
+    ({ item }) => (
+      <ConversationMessageItem
+        item={item}
+        styles={styles}
+        receiptLabel={messageReceiptLabels[normalizeId(item.id)]}
+        conversationProfileImageUrl={conversation?.profileImageUrl}
+        fallbackAvatar={FALLBACK_AVATAR}
+        primaryAccent={messageAccent.primary}
+        secondaryAccent={messageAccent.secondary}
+        usesCustomMessageAccent={usesCustomMessageAccent}
+      />
+    ),
     [
       conversation?.profileImageUrl,
       messageAccent.primary,
       messageAccent.secondary,
       messageReceiptLabels,
+      styles,
       usesCustomMessageAccent,
-      styles.attachmentCaptionText,
-      styles.attachmentMessageBubble,
-      styles.attachmentMessageTime,
-      styles.currentUserBubble,
-      styles.currentUserMessageText,
-      styles.currentUserMessageTime,
-      styles.currentUserMessageStack,
-      styles.currentUserRow,
-      styles.messageAttachment,
-      styles.messageAvatar,
-      styles.messageBubble,
-      styles.messageReceiptText,
-      styles.messageRow,
-      styles.messageStack,
-      styles.messageText,
-      styles.messageTime,
-      styles.otherUserMessageStack,
-      styles.otherUserBubble,
-      styles.otherUserRow,
     ],
   );
 
@@ -840,7 +732,7 @@ useEffect(() => {
           scrollEventThrottle={16}
           onScrollBeginDrag={closeAttachmentMenu}
         />
-        
+
         <Animated.View
           style={[
             styles.composerOuter,

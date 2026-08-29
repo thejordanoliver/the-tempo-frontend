@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 
 const tintColorLight = "#0a7ea4";
 const tintColorDark = "#fff";
-export const activeOpacity = 0.75;
+export const activeOpacity = 0.7;
 export const PLACEHOLDER_COLOR = "#888";
 export const PLACEHOLDER_AVATAR =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393743/ProfilePlaceholder.png";

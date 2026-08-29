@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType, ListRenderItem } from "react-native";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
@@ -36,7 +36,7 @@ import WNBALogo from "assets/WNBA/Logos/WNBA.png";
 
 import SearchBar from "@/components/Explore/SearchBar";
 import { CustomHeader } from "../../components/CustomHeader";
-import { activeOpacity, Colors, globalStyles } from "../../constants/styles";
+import { Colors, globalStyles } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { LeagueType } from "../../types/types";
@@ -299,42 +299,47 @@ export default function LeagueScreen() {
     [router],
   );
 
-const renderLeague: ListRenderItem<LeagueType> = useCallback(
-  ({ item: league, index }) => {
-    const { label } = leagueConfig[league];
-    const logo = leagueLogos[league];
-    const isLastRow = index === filteredLeagues.length - 1;
+  const renderLeague: ListRenderItem<LeagueType> = useCallback(
+    ({ item: league, index }) => {
+      const { label } = leagueConfig[league];
+      const logo = leagueLogos[league];
+      const isLastRow = index === filteredLeagues.length - 1;
 
-    return (
-      <View
-        style={[styles.buttonContainer, isLastRow && { borderBottomWidth: 0 }]}
-      >
-        <TouchableOpacity
-          onPress={() => goToLeague(league)}
-          style={styles.leagueButton}
-          activeOpacity={activeOpacity}
+      return (
+        <View
+          style={[
+            styles.buttonContainer,
+            isLastRow && { borderBottomWidth: 0 },
+          ]}
         >
-          <View style={styles.buttonWrapper}>
-            <Image
-              source={logo}
-              style={styles.leagueLogo}
-              resizeMode="contain"
+          <Pressable
+            onPress={() => goToLeague(league)}
+            style={({ pressed }) => [
+              styles.leagueButton,
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <View style={styles.buttonWrapper}>
+              <Image
+                source={logo}
+                style={styles.leagueLogo}
+                resizeMode="contain"
+              />
+
+              <Text style={styles.leagueText}>{label}</Text>
+            </View>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={isDark ? Colors.white : Colors.black}
             />
-
-            <Text style={styles.leagueText}>{label}</Text>
-          </View>
-
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  },
-  [filteredLeagues.length, goToLeague, isDark, leagueLogos, styles],
-);
+          </Pressable>
+        </View>
+      );
+    },
+    [filteredLeagues.length, goToLeague, isDark, leagueLogos, styles],
+  );
   const renderEmptyResults = useCallback(
     () => (
       <View style={global.emptyContainer}>

@@ -4,6 +4,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { HockeyGame } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -18,7 +19,6 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewStyles/GamePreviewModalStyles";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -85,7 +85,7 @@ export default function HockeyGamePreviewModal({
   const isLoading = !!details;
 
   const isChampionship = headline?.includes("Stanley Cup Final");
-  const styles = gamePreviewModalStyle(isChampionship);
+  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const state = score?.status?.state;
   const gameStatusDescription = game.status.description ?? "";
