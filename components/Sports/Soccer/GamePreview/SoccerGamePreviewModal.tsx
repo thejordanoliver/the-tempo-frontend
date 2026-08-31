@@ -1,4 +1,5 @@
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useVenue } from "@/hooks/useVenue";
@@ -9,9 +10,8 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   formatDate,
   formatTime,
@@ -39,6 +39,8 @@ export default function SoccerGamePreviewModal({
   game,
   onClose,
 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -75,9 +77,6 @@ export default function SoccerGamePreviewModal({
   const awayName = useMemo(() => awayTeam?.name ?? "", [awayTeam?.name]);
   const homeName = useMemo(() => homeTeam?.name ?? "", [homeTeam?.name]);
 
-  const awayColor = game.away?.primaryColor ?? Colors.midTone;
-  const homeColor = game.home?.primaryColor ?? Colors.midTone;
-
   const isHomeNational = useMemo(
     () => homeTeam?.isNational,
     [homeTeam?.isNational],
@@ -101,8 +100,16 @@ export default function SoccerGamePreviewModal({
 
   const headline = game.headline || holidayLabel;
   const isChampionship = headline?.includes("Final");
-  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
 
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    isChampionship: isChampionship,
+    homeColor: homeColor,
+    awayColor: awayColor,
+  });
   const isGameLoading = !score || !details || !homeTeam || !awayTeam;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({ period: game.status.period, isSOCC: true });
@@ -182,23 +189,10 @@ export default function SoccerGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        {/* Background gradients */}
-        <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <BlurView
-          intensity={100}
-          tint={"systemUltraThinMaterialDark"}
-          style={styles.blurViewContainer}
-        >
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
+
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {isGameLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -218,7 +212,7 @@ export default function SoccerGamePreviewModal({
                   isTie={isTie}
                   isWinner={awayWins}
                   record={awayRecord}
-                  isDark
+                  isDark={isDark}
                   isHome={false}
                   league={LEAGUE}
                   state={state}
@@ -235,7 +229,7 @@ export default function SoccerGamePreviewModal({
                   clock={clock}
                   time={formattedTime}
                   date={formattedDate}
-                  isDark
+                  isDark={isDark}
                 />
 
                 <TeamRow
@@ -248,7 +242,7 @@ export default function SoccerGamePreviewModal({
                   isWinner={homeWins}
                   record={homeRecord}
                   isHome={true}
-                  isDark
+                  isDark={isDark}
                   league={LEAGUE}
                   state={state}
                   gameStatusDescription={gameStatusDescription}
@@ -284,6 +278,7 @@ export default function SoccerGamePreviewModal({
                   state={state}
                   weather={weather}
                   league={LEAGUE}
+                  isDark={isDark}
                 />
               )}
             </>

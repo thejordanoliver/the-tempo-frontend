@@ -108,18 +108,14 @@ export default function LeagueScreen() {
           <Pressable
             onPress={() => goToLeague(league)}
             style={({ pressed }) => [
-              styles.leagueButton,
+              styles.button,
               pressed && styles.buttonPressed,
             ]}
           >
             <View style={styles.buttonWrapper}>
-              <Image
-                source={logo}
-                style={styles.leagueLogo}
-                resizeMode="contain"
-              />
+              <Image source={logo} style={styles.logo} resizeMode="contain" />
 
-              <Text style={styles.leagueText}>{label}</Text>
+              <Text style={styles.buttonText}>{label}</Text>
             </View>
 
             <Ionicons

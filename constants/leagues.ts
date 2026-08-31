@@ -311,6 +311,31 @@ export const LEAGUE_CONFIG = {
 } as const satisfies Record<LeagueType, LeagueDefinition>;
 export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
 
+export const HOME_SCORE_LEAGUES = [
+  "nba",
+  "nfl",
+  "ufl",
+  "mlb",
+  "nhl",
+  "cfb",
+  "mls",
+  "leaguescup",
+  "fifa",
+  "europa",
+  "champions",
+  "epl",
+  "bundesliga",
+  "cbb",
+  "wcbb",
+  "wnba",
+  "ufc",
+] as const satisfies readonly FavoriteSportId[];
+
+export type HomeLeagueId = (typeof HOME_SCORE_LEAGUES)[number];
+
+export const MY_TEAMS_SECTION_ID = "my-teams" as const;
+export const MY_TEAMS_SECTION_TITLE = "My Teams";
+
 export const FAVORITE_SPORT_OPTIONS = BROWSEABLE_LEAGUES.map((league) => ({
   league,
   ...LEAGUE_CONFIG[league],

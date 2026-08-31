@@ -15,6 +15,8 @@ import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import type { FavoriteLeague } from "types/favorites";
 import { isFavoriteLeague } from "types/favorites";
+import type { Team as TeamConfig } from "types/team";
+import type { Team } from "types/types";
 import { apiClient } from "utils/apiClient";
 import {
   clearExpiredUserProfileCache,
@@ -25,13 +27,7 @@ import {
   type UserProfileCacheState,
 } from "utils/userProfileCache";
 
-type TeamLookupItem = {
-  id: number | string | null;
-};
-
-type FavoriteTeamWithLeague = TeamLookupItem & {
-  league: FavoriteLeague;
-};
+type TeamLookupItem = TeamConfig;
 
 type UserProfileResponse = {
   id?: number | string | null;
@@ -214,16 +210,16 @@ export function useUserProfile(userId?: string) {
     Record<FavoriteLeague, Map<string, TeamLookupItem>>
   >(
     () => ({
-      NBA: createTeamLookup(teams),
-      WNBA: createTeamLookup(wnbaTeams),
-      NFL: createTeamLookup(nflTeams),
-      CFB: createTeamLookup(cfbTeams),
-      CBB: createTeamLookup(cbbTeams),
-      WCBB: createTeamLookup(wcbbTeams),
-      MLB: createTeamLookup(mlbTeams),
-      CB: createTeamLookup(cbTeams),
-      SB: createTeamLookup(sbTeams),
-      NHL: createTeamLookup(nhlTeams),
+      nba: createTeamLookup(teams),
+      wnba: createTeamLookup(wnbaTeams),
+      nfl: createTeamLookup(nflTeams),
+      cfb: createTeamLookup(cfbTeams),
+      cbb: createTeamLookup(cbbTeams),
+      wcbb: createTeamLookup(wcbbTeams),
+      mlb: createTeamLookup(mlbTeams),
+      cb: createTeamLookup(cbTeams),
+      sb: createTeamLookup(sbTeams),
+      nhl: createTeamLookup(nhlTeams),
     }),
     [],
   );
@@ -517,19 +513,27 @@ export function useUserProfile(userId?: string) {
     }
   }, [currentUserId, fetchUserData, followersCount, isFollowing, userId]);
 
-  const favoriteTeamsWithLeague = useMemo(
+  const favoriteTeamsWithLeague = useMemo<Team[]>(
     () =>
       favorites
-        .map((favorite): FavoriteTeamWithLeague | null => {
+        .map((favorite): Team | null => {
           const [league, id] = favorite.split(":");
           if (!league || !id || !isFavoriteLeague(league)) {
             return null;
           }
 
           const team = teamLookups[league].get(id);
-          return team ? { ...team, league } : null;
+          return team
+            ? {
+                ...team,
+                espnId: team.espnId ?? null,
+                city: team.city ?? undefined,
+                location: team.location ?? undefined,
+                league,
+              }
+            : null;
         })
-        .filter((team): team is FavoriteTeamWithLeague => team !== null),
+        .filter((team): team is Team => team !== null),
     [favorites, teamLookups],
   );
 

@@ -39,15 +39,15 @@ if (
 }
 
 export type WidgetSlide =
-  | { type: "NBA"; data: BasketballGame }
-  | { type: "NFL"; data: FootballGame }
-  | { type: "CFB"; data: FootballGame }
-  | { type: "UFL"; data: FootballGame }
-  | { type: "MLB"; data: BaseballGame }
-  | { type: "CBB"; data: BasketballGame }
-  | { type: "WCBB"; data: BasketballGame }
-  | { type: "WNBA"; data: BasketballGame }
-  | { type: "NHL"; data: HockeyGame };
+  | { type: "nba"; data: BasketballGame }
+  | { type: "nfl"; data: FootballGame }
+  | { type: "cfb"; data: FootballGame }
+  | { type: "ufl"; data: FootballGame }
+  | { type: "mlb"; data: BaseballGame }
+  | { type: "cbb"; data: BasketballGame }
+  | { type: "wcbb"; data: BasketballGame }
+  | { type: "wnba"; data: BasketballGame }
+  | { type: "nhl"; data: HockeyGame };
 
 type WidgetSliderOrientation = "vertical" | "horizontal";
 
@@ -459,7 +459,7 @@ export default function WidgetSlider({
   const renderItem = useCallback(
     ({ item }: { item: WidgetSlide }) => {
       switch (item.type) {
-        case "NBA":
+        case "nba":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BasketballGameWidget
@@ -471,7 +471,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "NFL":
+        case "nfl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <FootballGameWidget
@@ -485,7 +485,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "CFB":
+        case "cfb":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <FootballGameWidget
@@ -499,7 +499,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "UFL":
+        case "ufl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <FootballGameWidget
@@ -513,7 +513,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "MLB":
+        case "mlb":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BaseballGameWidget
@@ -525,7 +525,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "CBB":
+        case "cbb":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BasketballGameWidget
@@ -538,7 +538,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "WCBB":
+        case "wcbb":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BasketballGameWidget
@@ -551,7 +551,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "WNBA":
+        case "wnba":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BasketballGameWidget
@@ -564,7 +564,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "NHL":
+        case "nhl":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <NHLGameWidget

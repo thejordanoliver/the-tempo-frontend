@@ -11,7 +11,7 @@ import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
-import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";

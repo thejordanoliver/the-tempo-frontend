@@ -1,6 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-export const combinedGameListStyles = (isDark: boolean) =>
+
+export const leagueGamesListStyles = (isDark: boolean) =>
   StyleSheet.create({
     skeletonWrapper: {
       gap: 12,

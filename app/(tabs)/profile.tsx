@@ -1,4 +1,5 @@
 // profile.tsx
+import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
 import TabBar from "@/components/TabBars/TabBar";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
@@ -10,7 +11,6 @@ import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import ConfirmModal from "../../components/ConfirmModal";
 import { CustomHeader } from "../../components/CustomHeader";
-import FavoriteTeamsSection from "../../components/Favorites/FavoriteTeamsSection";
 import Forum from "../../components/Forum/Forum";
 import BioSection from "../../components/Profile/BioSection";
 import FollowStats from "../../components/Profile/FollowStats";
@@ -26,7 +26,7 @@ import { useProfileRefreshStore } from "../../store/profileRefreshStore";
 import { useSettingsModalStore } from "../../store/settingsModalStore";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "../../types/forum";
-import type { LeagueType } from "../../types/types";
+import type { LeagueType, Team } from "../../types/types";
 
 type CachedUser = {
   id?: number;
@@ -348,9 +348,9 @@ export default function ProfileScreen() {
     profileImage,
   ]);
 
-  const favoriteTeamsWithLeague = useMemo(() => {
+  const favoriteTeamsWithLeague = useMemo<Team[]>(() => {
     return favorites
-      .map((favorite) => {
+      .map((favorite): Team | null => {
         const [league, id] = favorite.split(":");
 
         const team = allTeams.find(
@@ -363,10 +363,13 @@ export default function ProfileScreen() {
 
         return {
           ...team,
+          espnId: team.espnId ?? null,
+          city: team.city ?? undefined,
+          location: team.location ?? undefined,
           league: league as LeagueType,
         };
       })
-      .filter((team): team is NonNullable<typeof team> => team !== null);
+      .filter((team): team is Team => team !== null);
   }, [allTeams, favorites]);
 
   const onFollowersPress = useCallback(() => {
@@ -447,16 +450,15 @@ export default function ProfileScreen() {
         />
 
         {selectedTab === "favorites" && (
-          <View style={styles.favoritesContainer}>
-            <FavoriteTeamsSection
-              favorites={favoriteTeamsWithLeague}
+          <View style={styles.contentContainer}>
+            <FavoritesSection
+              favoriteTeams={favoriteTeamsWithLeague}
               favoriteSports={favoriteSports}
               favoriteSportsLoading={favoriteSportsLoading}
               favoriteSportsReady={favoriteSportsReady}
               isGridView={isGridView}
               fadeAnim={fadeAnim}
-              toggleFavoriteTeamsView={toggleFavoriteTeamsView}
-              styles={styles}
+              onToggleView={toggleFavoriteTeamsView}
               itemWidth={itemWidth}
               isCurrentUser={currentUserId === viewedUserId}
             />
@@ -464,7 +466,7 @@ export default function ProfileScreen() {
         )}
 
         {selectedTab === "badges" && (
-          <View style={styles.favoritesContainer}>
+          <View style={styles.contentContainer}>
             <BadgePreviewSection
               badges={featuredBadges}
               earnedCount={summary.earnedCount}

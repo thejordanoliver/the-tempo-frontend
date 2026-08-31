@@ -1,5 +1,6 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
@@ -44,6 +45,8 @@ export default function HockeyGamePreviewModal({
   visible,
   onClose,
 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   const gameDateObj = new Date(game.date);
@@ -75,8 +78,8 @@ export default function HockeyGamePreviewModal({
   const awayCode = awayTeam?.code ?? "";
   const homeName = homeTeam?.fullName ?? "";
   const awayName = awayTeam?.fullName ?? "";
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
+ const homeColor = homeTeam?.color ?? Colors.midTone;
+ const awayColor = awayTeam?.color ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
@@ -85,7 +88,13 @@ export default function HockeyGamePreviewModal({
   const isLoading = !!details;
 
   const isChampionship = headline?.includes("Stanley Cup Final");
-  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    isChampionship: isChampionship,
+    homeColor: homeColor,
+    awayColor: awayColor,
+  });
+
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const state = score?.status?.state;
   const gameStatusDescription = game.status.description ?? "";
@@ -168,17 +177,10 @@ export default function HockeyGamePreviewModal({
           style={StyleSheet.absoluteFill}
         />
 
-        <LinearGradient
-          colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <BlurView
-          intensity={100}
-          tint={"systemUltraThinMaterialDark"}
-          style={styles.blurViewContainer}
-        >
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
+
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -260,6 +262,7 @@ export default function HockeyGamePreviewModal({
                   venueAttendance={venueAttendance}
                   weather={weather}
                   league={LEAGUE}
+                  isDark={isDark}
                 />
               )}
             </>

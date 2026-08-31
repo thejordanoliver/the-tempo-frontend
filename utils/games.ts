@@ -1,32 +1,22 @@
 // utils/games.ts
 
 import { Colors } from "@/constants/styles";
-import { LeagueType } from "@/types/types";
+import type { LeagueType } from "@/types/types";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const normalizeGames = (games: any[], leagueType: LeagueType) =>
-  games
-    .map((game: any) => {
-      let home, away;
+export const normalizeGames = <Game extends object, League extends LeagueType>(
+  games: readonly Game[],
+  leagueId: League,
+): (Game & { leagueId: League })[] =>
+  games.map((game) => ({ ...game, leagueId }));
 
-      if (leagueType) {
-        home = { ...game.home };
-        away = { ...game.away };
-      }
-
-      return {
-        ...game,
-        home,
-        away,
-      };
-    })
-    .filter(Boolean);
-
-export function isGameLive(game: any) {
+export function isGameLive(
+  game: { status?: { state?: unknown } | null } | null | undefined,
+) {
   const status = String(game?.status?.state).toLowerCase();
 
   if (status === "in") return true;
@@ -234,5 +224,3 @@ export const winnerStyle = ({
   color: isDark ? Colors.white : Colors.black,
   opacity: isTie ? 1 : isWinner ? 1 : 0.5,
 });
-
-

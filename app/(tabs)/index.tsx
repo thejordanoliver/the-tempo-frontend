@@ -45,7 +45,7 @@ export default function HomeScreen() {
     favorites,
     refreshing,
     handleRefresh,
-    gamesByCategory,
+    homeGameSections,
     articles,
     newsError,
     newsLoading,
@@ -108,10 +108,8 @@ export default function HomeScreen() {
               />
 
               <LeagueGamesList
-                gamesByCategory={gamesByCategory}
+                sections={homeGameSections}
                 loading={gamesLoading}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
                 isDark={isDark}
                 viewMode={viewMode}
               />

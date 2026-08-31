@@ -7,7 +7,7 @@ import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import {
   StandingConference,
   StandingTeam,
-} from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+} from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";

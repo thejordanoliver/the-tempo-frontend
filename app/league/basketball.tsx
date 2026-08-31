@@ -61,7 +61,7 @@ import ConferenceListModal, {
 } from "@/components/League/ConferenceListModal";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
-import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";

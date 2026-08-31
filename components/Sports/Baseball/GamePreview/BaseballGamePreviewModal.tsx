@@ -1,4 +1,6 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { Colors } from "@/constants/styles";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -12,15 +14,13 @@ import {
   safeDate,
 } from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { useBaseballGameDetails } from "hooks/BaseballHooks/useBaseballGameDetails";
 import { useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo } from "../GameDetails/CenterInfo";
@@ -44,6 +44,8 @@ export default function BaseballGamePreviewModal({
   isCB = false,
   isSB = false,
 }: BaseballGameCardProps) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
   useEffect(() => {
     if (!sheetRef.current) return;
@@ -61,7 +63,6 @@ export default function BaseballGamePreviewModal({
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline || holidayLabel;
   const isChampionship = game?.season.slug === "championship-series";
-  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
 
   const LEAGUE = game?.league?.code ?? "mlb";
   const gameId = game?.id;
@@ -91,19 +92,37 @@ export default function BaseballGamePreviewModal({
   const awayName = awayTeam?.fullName ?? awayTeam?.shortName ?? "";
 
   const homeLogo = isSB
+    ? getSBTeamLogo(homeId, isDark)
+    : isCB
+      ? getCBTeamLogo(homeId, isDark)
+      : getMLBTeamLogo(homeTeamId, isDark);
+
+  const awayLogo = isSB
+    ? getSBTeamLogo(awayId, isDark)
+    : isCB
+      ? getCBTeamLogo(awayId, isDark)
+      : getMLBTeamLogo(awayTeamId, isDark);
+  const homeHeaderLogo = isSB
     ? getSBTeamLogo(homeId, true)
     : isCB
       ? getCBTeamLogo(homeId, true)
       : getMLBTeamLogo(homeTeamId, true);
 
-  const awayLogo = isSB
+  const awayHeaderLogo = isSB
     ? getSBTeamLogo(awayId, true)
     : isCB
       ? getCBTeamLogo(awayId, true)
       : getMLBTeamLogo(awayTeamId, true);
 
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    isChampionship: isChampionship,
+    homeColor: homeColor,
+    awayColor: awayColor,
+  });
 
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE).games;
@@ -213,30 +232,10 @@ export default function BaseballGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <LinearGradient
-          colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-
-        <BlurView
-          intensity={100}
-          tint="systemUltraThinMaterialDark"
-          style={styles.blurViewContainer}
-        >
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -259,7 +258,7 @@ export default function BaseballGamePreviewModal({
                   record={awayRecord}
                   gameStatusDescription={gameStatusDescription}
                   isHome={false}
-                  isDark
+                  isDark={isDark}
                   league={LEAGUE}
                 />
 
@@ -275,7 +274,7 @@ export default function BaseballGamePreviewModal({
                   isBottomInning={isBottomInning}
                   outs={outs}
                   bases={bases}
-                  isDark
+                  isDark={isDark}
                 />
 
                 {/* Home Team Row */}
@@ -290,7 +289,7 @@ export default function BaseballGamePreviewModal({
                   record={homeRecord}
                   gameStatusDescription={gameStatusDescription}
                   isHome={true}
-                  isDark
+                  isDark={isDark}
                   league={LEAGUE}
                 />
               </View>
@@ -301,11 +300,13 @@ export default function BaseballGamePreviewModal({
                   homeId={homeId}
                   awayId={awayId}
                   homeLogo={homeLogo}
+                  homeHeaderLogo={homeHeaderLogo}
                   homeCode={homeCode}
                   homeName={homeName}
                   homeColor={homeColor}
                   homeLastGames={homeLastGames}
                   awayLogo={awayLogo}
+                  awayHeaderLogo={awayHeaderLogo}
                   awayCode={awayCode}
                   awayName={awayName}
                   awayColor={awayColor}
@@ -338,6 +339,7 @@ export default function BaseballGamePreviewModal({
                   isChampionship={isChampionship}
                   league={LEAGUE}
                   isMLB={isMLB}
+                  isDark={isDark}
                 />
               )}
             </>

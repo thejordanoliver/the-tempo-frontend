@@ -297,7 +297,9 @@ export const formatTime = (date: Date) => {
   );
 };
 
-export function filterByDate(games: any[], date: Date) {
+export function filterByDate<
+  Game extends { date?: string | number | Date | null },
+>(games: readonly Game[], date: Date): Game[] {
   const selectedLocal = dayjs(date).format("YYYY-MM-DD");
 
   return games.filter((g) => {

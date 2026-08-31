@@ -1,8 +1,8 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import FavoriteTeamsSection from "@/components/Favorites/FavoritesSection";
 import TabBar from "@/components/TabBars/TabBar";
 import { globalStyles } from "@/constants/styles";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
-import FavoriteTeamsSection from "components/Favorites/FavoriteTeamsSection";
 import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
 import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
@@ -226,13 +226,12 @@ export default function UserProfileScreen() {
       />
 
       {selectedTab === "favorite teams" && (
-        <View style={styles.favoritesContainer}>
+        <View style={styles.contentContainer}>
           <FavoriteTeamsSection
-            favorites={favoriteTeamsWithLeague}
+            favoriteTeams={favoriteTeamsWithLeague}
             isGridView={isGridView}
             fadeAnim={fadeAnim}
-            toggleFavoriteTeamsView={toggleFavoriteTeamsView}
-            styles={styles}
+            onToggleView={toggleFavoriteTeamsView}
             itemWidth={itemWidth}
             isCurrentUser={isCurrentUser}
           />
@@ -240,7 +239,7 @@ export default function UserProfileScreen() {
       )}
 
       {selectedTab === "badges" && (
-        <View style={styles.favoritesContainer}>
+        <View style={styles.contentContainer}>
           <BadgePreviewSection
             badges={featuredBadges}
             earnedCount={summary.earnedCount}

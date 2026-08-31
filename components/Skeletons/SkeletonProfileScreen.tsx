@@ -140,7 +140,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
       </View>
 
       {/* Favorites */}
-      <View style={[styles.favoritesContainer, { marginTop: 60 }]}>
+      <View style={[styles.contentContainer, { marginTop: 60 }]}>
         <View style={styles.favoritesHeader}>
           <ShimmerBlock
             style={{ height: 20, width: 150 }}

@@ -44,27 +44,27 @@ export function buildLeagueTeams<T>({
 
 export function getTeamRoute(league: LeagueType): string {
   switch (league) {
-    case "NBA":
+    case "nba":
       return "/team/[teamId]";
-    case "WNBA":
+    case "wnba":
       return "/team/wnba/[teamId]";
-    case "NFL":
+    case "nfl":
       return "/team/nfl/[teamId]";
-    case "CFB":
+    case "cfb":
       return "/team/cfb/[teamId]";
-    case "CBB":
+    case "cbb":
       return "/team/cbb/[teamId]";
-    case "WCBB":
+    case "wcbb":
       return "/team/wcbb/[teamId]";
-    case "MLB":
+    case "mlb":
       return "/team/mlb/[teamId]";
-    case "CB":
+    case "cb":
       return "/team/cb/[teamId]";
-    case "SB":
+    case "sb":
       return "/team/sb/[teamId]";
-    case "NHL":
+    case "nhl":
       return "/team/nhl/[teamId]";
-    case "UFC":
+    case "ufc":
       return "/player/mma/[id]";
     default:
       throw new Error(`Invalid league: ${league}`);
@@ -74,60 +74,60 @@ export function getTeamRoute(league: LeagueType): string {
 const staticFavoriteTeamsList = [
   ...buildLeagueTeams({
     teams,
-    league: "NBA",
+    league: "nba",
     sportTerms: "NBA basketball",
   }),
 
   ...buildLeagueTeams({
     teams: wnbaTeams,
-    league: "WNBA",
+    league: "wnba",
     sportTerms: "WNBA women's basketball",
   }),
 
   ...buildLeagueTeams({
     teams: nflTeams,
-    league: "NFL",
+    league: "nfl",
     sportTerms: "NFL football",
   }),
 
   ...buildLeagueTeams({
     teams: mlbTeams,
-    league: "MLB",
+    league: "mlb",
     sportTerms: "MLB baseball",
   }),
 
   ...buildLeagueTeams({
     teams: cbTeams,
-    league: "CB",
+    league: "cb",
     sportTerms: "college baseball NCAA",
   }),
 
   ...buildLeagueTeams({
     teams: sbTeams,
-    league: "SB",
+    league: "sb",
     sportTerms: "college softball NCAA",
   }),
 
   ...buildLeagueTeams({
     teams: nhlTeams,
-    league: "NHL",
+    league: "nhl",
     sportTerms: "NHL hockey",
   }),
 
   ...buildLeagueTeams({
     teams: cfbTeams,
-    league: "CFB",
+    league: "cfb",
     sportTerms: "CFB college football NCAA",
   }),
 
   ...buildLeagueTeams({
     teams: cbbTeams,
-    league: "CBB",
+    league: "cbb",
     sportTerms: "CBB college basketball NCAA",
   }),
   ...buildLeagueTeams({
     teams: wcbbTeams,
-    league: "WCBB",
+    league: "wcbb",
     sportTerms: "WCBB college basketball NCAA",
   }),
 ];

@@ -19,7 +19,7 @@ import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStan
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
 import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";

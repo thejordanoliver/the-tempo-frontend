@@ -26,6 +26,8 @@ type GamePreviewContentProps = {
   homeName: string;
   homeCode: string;
   homeLogo: any;
+  homeHeaderLogo: any;
+  awayHeaderLogo: any;
   awayId: number;
   awayColor: string;
   awayName: string;
@@ -56,6 +58,7 @@ type GamePreviewContentProps = {
   weather?: any;
   state?: string | null;
   league: string;
+  isDark: boolean;
 };
 
 export default function GamePreviewContent({
@@ -64,6 +67,8 @@ export default function GamePreviewContent({
   homeName,
   homeCode,
   homeLogo,
+  homeHeaderLogo,
+  awayHeaderLogo,
   awayId,
   awayColor,
   awayName,
@@ -90,8 +95,9 @@ export default function GamePreviewContent({
   weather,
   state,
   league,
+  isDark,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle({});
+  const styles = gamePreviewModalStyle({ isDark: isDark });
 
   return (
     <BottomSheetScrollView
@@ -104,7 +110,7 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeCode={homeCode}
           league={league}
-          isDark
+          isDark={isDark}
           state={state}
         />
 
@@ -112,18 +118,18 @@ export default function GamePreviewContent({
           homeId={homeId}
           homeCode={homeCode}
           homeLogo={homeLogo}
-          homeHeaderLogo={homeLogo}
+          homeHeaderLogo={homeHeaderLogo}
           homeChance={homeChance}
           homeColor={homeColor}
           awayCode={awayCode}
           awayId={awayId}
           awayLogo={awayLogo}
-          awayHeaderLogo={awayLogo}
+          awayHeaderLogo={awayHeaderLogo}
           awayChance={awayChance}
           awayColor={awayColor}
-          size={180}
           state={state}
-          isDark
+          isDark={isDark}
+          size={180}
         />
 
         <GameLeaders
@@ -133,7 +139,7 @@ export default function GamePreviewContent({
           awayId={awayId}
           awayLogo={awayLogo}
           state={state}
-          isDark
+          isDark={isDark}
         />
 
         <BoxScore
@@ -144,7 +150,7 @@ export default function GamePreviewContent({
           awayId={awayId}
           awayName={awayName}
           awayLogo={awayLogo}
-          isDark
+          isDark={isDark}
           league={league}
           state={state}
         />
@@ -158,7 +164,7 @@ export default function GamePreviewContent({
           homeLogo={homeLogo}
           homeColor={homeColor}
           state={state}
-          isDark
+          isDark={isDark}
         />
 
         <LastFiveGames
@@ -170,9 +176,9 @@ export default function GamePreviewContent({
           awayGames={awayLastGames}
           league={league}
           state={state}
-          isDark
+          isDark={isDark}
         />
-        <Highlights highlights={highlights} isDark />
+        <Highlights highlights={highlights} isDark={isDark} />
 
         <HeadCoaches
           homeCode={homeName}
@@ -181,10 +187,10 @@ export default function GamePreviewContent({
           awayCoach={awayCoach}
           homeLogo={homeLogo}
           awayLogo={awayLogo}
-          isDark
+          isDark={isDark}
         />
 
-        <Officials officials={officials} isDark state={state} />
+        <Officials officials={officials} isDark={isDark} state={state} />
 
         <GameLocation
           venueImage={venueImage}
@@ -194,7 +200,7 @@ export default function GamePreviewContent({
           venueCapacity={venueCapacity}
           venueAttendance={venueAttendance}
           weather={weather}
-          isDark
+          isDark={isDark}
         />
       </View>
     </BottomSheetScrollView>

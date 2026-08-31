@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const ConferenceListModalStyles = (isDark: boolean) =>
@@ -59,7 +59,7 @@ export const ConferenceListModalStyles = (isDark: boolean) =>
     },
     contentContainerStyle: {
       paddingHorizontal: 12,
-      paddingTop: 60,
+      paddingVertical: 60,
     },
     row: {
       flex: 1,
@@ -68,25 +68,38 @@ export const ConferenceListModalStyles = (isDark: boolean) =>
       borderBottomColor: isDark ? Colors.darkGray : Colors.midTone,
       backgroundColor: "transparent",
     },
-    option: {
+    button: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      width: "100%",
+      paddingVertical: 14,
     },
-    leagueText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 18,
-      color: isDark ? Colors.dark.text : Colors.light.text,
+    buttonContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: "transparent",
     },
-    leftContent: {
-      flex: 1,
+    buttonWrapper: {
       flexDirection: "row",
       alignItems: "center",
     },
+    buttonPressed: {
+      opacity: activeOpacity,
+    },
+
     logo: {
-      width: 28,
-      height: 28,
-      marginRight: 12,
+      width: 36,
+      height: 36,
+      marginRight: 8,
+    },
+    buttonText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
     },
     logoPlaceholder: {
       alignItems: "center",

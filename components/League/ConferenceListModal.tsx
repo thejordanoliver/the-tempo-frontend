@@ -22,7 +22,7 @@ import {
 import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
-import { activeOpacity, Colors } from "constants/styles";
+import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import React, { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
@@ -222,7 +222,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
               return (
                 <View
                   key={`${conference.label}-${conference.value}`}
-                  style={styles.row}
+                  style={styles.buttonContainer}
                 >
                   <Pressable
                     onPress={() => {
@@ -230,11 +230,11 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                       modalRef.current?.close();
                     }}
                     style={({ pressed }) => [
-                      styles.option,
-                      { opacity: pressed ? activeOpacity : 1 },
+                      styles.button,
+                      pressed && styles.buttonPressed,
                     ]}
                   >
-                    <View style={styles.leftContent}>
+                    <View style={styles.buttonWrapper}>
                       {conference.logo ? (
                         <Image
                           source={conference.logo}
@@ -255,7 +255,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
                         </View>
                       )}
 
-                      <Text style={styles.leagueText}>{conference.label}</Text>
+                      <Text style={styles.buttonText}>{conference.label}</Text>
                     </View>
 
                     <Ionicons

@@ -12,15 +12,15 @@ import { useMultipleFootballTeamGames } from "./useMultipleFootballTeamGames";
 import { useMultipleHockeyTeamGames } from "./useMultipleHockeyTeamGames";
 
 type SupportedGameLeague =
-  | "NBA"
-  | "MLB"
-  | "WNBA"
-  | "CBB"
-  | "WCBB"
-  | "NFL"
-  | "CFB"
-  | "UFL"
-  | "NHL";
+  | "nba"
+  | "mlb"
+  | "wnba"
+  | "cbb"
+  | "wcbb"
+  | "nfl"
+  | "cfb"
+  | "ufl"
+  | "nhl";
 
 type UseExploreWidgetGamesOptions = {
   enabledWidgetTypes?: ExploreGameWidgetType[];
@@ -34,15 +34,15 @@ export type ExploreFavoriteTeam = {
 };
 
 const SUPPORTED_LEAGUES = new Set<SupportedGameLeague>([
-  "NBA",
-  "MLB",
-  "WNBA",
-  "CBB",
-  "WCBB",
-  "NFL",
-  "CFB",
-  "UFL",
-  "NHL",
+  "nba",
+  "mlb",
+  "wnba",
+  "cbb",
+  "wcbb",
+  "nfl",
+  "cfb",
+  "ufl",
+  "nhl",
 ]);
 
 const normalizeLeague = (league: unknown): SupportedGameLeague | null => {
@@ -55,14 +55,7 @@ const normalizeLeague = (league: unknown): SupportedGameLeague | null => {
     : null;
 };
 
-const getObjectFavoriteId = (
-  favorite: Record<string, unknown>,
-  league: SupportedGameLeague | null,
-) => {
-  if (league === "WCBB") {
-    return favorite.id ?? favorite.team_id ?? favorite.teamId;
-  }
-
+const getObjectFavoriteId = (favorite: Record<string, unknown>) => {
   return (
     favorite.id ??
     favorite.team_id ??
@@ -98,7 +91,7 @@ export const normalizeExploreFavoriteTeam = (
     favoriteObject.league ?? favoriteObject.type ?? favoriteObject.sport,
   );
 
-  const idValue = getObjectFavoriteId(favoriteObject, league);
+  const idValue = getObjectFavoriteId(favoriteObject);
   const id = String(idValue ?? "").trim();
 
   if (!league || !id) return null;
@@ -161,35 +154,35 @@ export function useExploreWidgetGames({
   );
 
   const nbaTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "NBA"),
+    () => getIdsByLeague(favoriteTeams, "nba"),
     [favoriteTeams],
   );
   const mlbTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "MLB"),
+    () => getIdsByLeague(favoriteTeams, "mlb"),
     [favoriteTeams],
   );
   const wnbaTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "WNBA"),
+    () => getIdsByLeague(favoriteTeams, "wnba"),
     [favoriteTeams],
   );
   const cbbTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "CBB"),
+    () => getIdsByLeague(favoriteTeams, "cbb"),
     [favoriteTeams],
   );
   const wcbbTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "WCBB"),
+    () => getIdsByLeague(favoriteTeams, "wcbb"),
     [favoriteTeams],
   );
   const nflTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "NFL"),
+    () => getIdsByLeague(favoriteTeams, "nfl"),
     [favoriteTeams],
   );
   const cfbTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "CFB"),
+    () => getIdsByLeague(favoriteTeams, "cfb"),
     [favoriteTeams],
   );
   const nhlTeamIds = useMemo(
-    () => getIdsByLeague(favoriteTeams, "NHL"),
+    () => getIdsByLeague(favoriteTeams, "nhl"),
     [favoriteTeams],
   );
 

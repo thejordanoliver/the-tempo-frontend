@@ -12,6 +12,9 @@ export const favoriteTeamsListStyles = (
   isGridView: boolean,
 ) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
@@ -19,6 +22,7 @@ export const favoriteTeamsListStyles = (
       justifyContent: "flex-start",
       rowGap: GRID_GAP,
       columnGap: GRID_GAP,
+      marginBottom: 12,
     },
     gridItem: {
       position: "relative",
@@ -95,12 +99,10 @@ export const favoriteTeamsListStyles = (
     toggleIcon: {
       paddingHorizontal: 4,
     },
-
     teamItem: {
       flexDirection: isGridView ? "column" : "row",
       alignItems: isGridView ? "center" : "center",
     },
-
     teamLogo: {
       width: 50,
       height: 50,
@@ -123,25 +125,11 @@ export const favoriteTeamsListStyles = (
     },
     sectionTitle: {
       marginBottom: 8,
-      fontFamily: Fonts.SEMIBOLD,
+      fontFamily: Fonts.MEDIUM,
       fontSize: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     nextSectionTitle: {
-      marginTop: 20,
-    },
-    emptyText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    loadingIndicator: {
-      alignSelf: "flex-start",
-      paddingVertical: 12,
-    },
-    teamCard: {
-      alignItems: "center",
-      width: 80,
-      marginRight: 16,
+      marginTop: 12,
     },
   });

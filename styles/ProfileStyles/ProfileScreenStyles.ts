@@ -153,7 +153,7 @@ export const profileStyles = (
       fontSize: 16,
       color: isDark ? Colors.black : Colors.white,
     },
-    favoritesContainer: {
+    contentContainer: {
       marginTop: 20,
       paddingHorizontal: 12,
       paddingBottom: 100,

@@ -5,7 +5,7 @@ import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
-import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";

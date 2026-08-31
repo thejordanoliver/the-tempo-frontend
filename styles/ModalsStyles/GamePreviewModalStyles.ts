@@ -2,9 +2,15 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const gamePreviewModalStyle = ({
+  isDark,
   isChampionship,
+  awayColor,
+  homeColor,
 }: {
+  isDark: boolean;
   isChampionship?: boolean;
+  awayColor?: string;
+  homeColor?: string;
 }) =>
   StyleSheet.create({
     handleStyle: {
@@ -24,9 +30,10 @@ export const gamePreviewModalStyle = ({
       backgroundColor: isChampionship ? Colors.lightGray : Colors.midTone,
     },
     backgroundStyle: {
-      backgroundColor: Colors.black,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
+      overflow: "hidden",
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
     container: {
       flex: 1,
@@ -50,7 +57,7 @@ export const gamePreviewModalStyle = ({
     headlineText: {
       fontFamily: Fonts.LIGHT,
       fontSize: 12,
-      color: Colors.dark.white,
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
     gameHeaderContainer: {
@@ -75,10 +82,22 @@ export const gamePreviewModalStyle = ({
       alignItems: "center",
       justifyContent: "center",
     },
-    headlineDivider: {
-      width: 1,
-      height: 14,
-      marginHorizontal: 4,
-      backgroundColor: Colors.white,
+    leftCircle: {
+      position: "absolute",
+      top: -70,
+      left: -70,
+      width: 140,
+      height: 140,
+      borderRadius: 999,
+      backgroundColor: awayColor,
+    },
+    rightCircle: {
+      position: "absolute",
+      top: -70,
+      right: -70,
+      width: 140,
+      height: 140,
+      borderRadius: 999,
+      backgroundColor: homeColor,
     },
   });

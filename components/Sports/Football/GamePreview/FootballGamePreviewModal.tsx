@@ -1,7 +1,9 @@
 // ./NFL/GamePreview/NFLGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { Colors } from "@/constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
@@ -15,12 +17,10 @@ import {
   getBroadcastDisplay,
 } from "@/utils/games";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Colors } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   formatDate,
   formatTime,
@@ -48,6 +48,8 @@ export default function FootballGamePreviewModal({
   visible,
   onClose,
 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const currentSeason = getFootballSeason();
   const sheetRef = useRef<BottomSheetModal>(null);
   useEffect(() => {
@@ -64,6 +66,9 @@ export default function FootballGamePreviewModal({
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
+  const isChampionship =
+    game?.headline?.includes("Super Bowl") ??
+    game?.headline?.includes("Championship");
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "nfl";
@@ -86,18 +91,37 @@ export default function FootballGamePreviewModal({
   const awayCode = awayTeam?.code ?? "";
 
   const homeLogo = isNFL
+    ? getNFLTeamLogo(homeId, isDark)
+    : isCFB
+      ? getCFBTeamLogo(homeId, isDark)
+      : getUFLTeamLogo(homeId, isDark);
+  const awayLogo = isNFL
+    ? getNFLTeamLogo(awayId, isDark)
+    : isCFB
+      ? getCFBTeamLogo(awayId, isDark)
+      : getUFLTeamLogo(awayId, isDark);
+
+  const homeHeaderLogo = isNFL
     ? getNFLTeamLogo(homeId, true)
     : isCFB
       ? getCFBTeamLogo(homeId, true)
       : getUFLTeamLogo(homeId, true);
-  const awayLogo = isNFL
+
+  const awayHeaderLogo = isNFL
     ? getNFLTeamLogo(awayId, true)
     : isCFB
       ? getCFBTeamLogo(awayId, true)
       : getUFLTeamLogo(awayId, true);
 
-  const homeColor = homeTeam?.color ?? "";
-  const awayColor = awayTeam?.color ?? "";
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam?.color ?? Colors.midTone;
+
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    isChampionship: isChampionship,
+    homeColor: homeColor,
+    awayColor: awayColor,
+  });
 
   const homeName = homeTeam?.fullName ?? "";
   const awayName = awayTeam?.fullName ?? "";
@@ -112,10 +136,6 @@ export default function FootballGamePreviewModal({
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const isChampionship =
-    game?.headline?.includes("Super Bowl") ??
-    game?.headline?.includes("Championship");
-  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
   const state = score?.status.state ?? "pre";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
@@ -242,29 +262,10 @@ export default function FootballGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <LinearGradient
-          colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <BlurView
-          intensity={100}
-          tint={"systemUltraThinMaterialDark"}
-          style={styles.blurViewContainer}
-        >
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -290,7 +291,7 @@ export default function FootballGamePreviewModal({
                   hasPossession={awayHasPossession}
                   league={LEAGUE}
                   isHome={false}
-                  isDark
+                  isDark={isDark}
                 />
 
                 <CenterInfo
@@ -304,7 +305,7 @@ export default function FootballGamePreviewModal({
                   period={period}
                   clock={clock}
                   state={state}
-                  isDark
+                  isDark={isDark}
                 />
 
                 <TeamRow
@@ -322,7 +323,7 @@ export default function FootballGamePreviewModal({
                   hasPossession={homeHasPossession}
                   league={LEAGUE}
                   isHome={true}
-                  isDark
+                  isDark={isDark}
                 />
               </View>
 
@@ -336,6 +337,8 @@ export default function FootballGamePreviewModal({
                   homeName={homeName}
                   homeLogo={homeLogo}
                   awayLogo={awayLogo}
+                  homeHeaderLogo={homeHeaderLogo}
+                  awayHeaderLogo={awayHeaderLogo}
                   awayCode={awayCode}
                   awayColor={awayColor}
                   awayName={awayName}
@@ -363,6 +366,7 @@ export default function FootballGamePreviewModal({
                   leaders={leaders}
                   weather={weather}
                   league={LEAGUE}
+                  isDark={isDark}
                 />
               )}
             </>

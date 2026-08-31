@@ -1,5 +1,6 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import useTeamDetails from "@/hooks/useTeams";
@@ -13,9 +14,8 @@ import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   formatDate,
   formatTime,
@@ -52,6 +52,8 @@ export default function GamePreviewModal({
   isWNBA,
   isGLEAGUE,
 }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
@@ -108,19 +110,26 @@ export default function GamePreviewModal({
   const homeName =
     homeTeam?.fullName ?? homeTeam?.name ?? home?.name ?? "Home Team";
 
-  const awayColor =
-    awayTeam?.color ??
-    away?.primaryColor ??
-    away?.secondaryColor ??
-    Colors.midTone;
-
-  const homeColor =
-    homeTeam?.color ??
-    home?.primaryColor ??
-    home?.secondaryColor ??
-    Colors.midTone;
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam?.color ?? Colors.midTone;
 
   const homeLogo = isCBB
+    ? getCBBTeamLogo(homeId, isDark)
+    : isWCBB
+      ? getWCBBTeamLogo(homeId, isDark)
+      : isWNBA
+        ? getWNBATeamLogo(homeId, isDark)
+        : getNBATeamLogo(homeId, isDark);
+
+  const awayLogo = isCBB
+    ? getCBBTeamLogo(awayId, isDark)
+    : isWCBB
+      ? getWCBBTeamLogo(awayId, isDark)
+      : isWNBA
+        ? getWNBATeamLogo(awayId, isDark)
+        : getNBATeamLogo(awayId, isDark);
+
+  const homeHeaderLogo = isCBB
     ? getCBBTeamLogo(homeId, true)
     : isWCBB
       ? getWCBBTeamLogo(homeId, true)
@@ -128,7 +137,7 @@ export default function GamePreviewModal({
         ? getWNBATeamLogo(homeId, true)
         : getNBATeamLogo(homeId, true);
 
-  const awayLogo = isCBB
+  const awayHeaderLogo = isCBB
     ? getCBBTeamLogo(awayId, true)
     : isWCBB
       ? getWCBBTeamLogo(awayId, true)
@@ -146,7 +155,12 @@ export default function GamePreviewModal({
       "Women's Basketball Championship - National Championship",
     );
 
-  const styles = gamePreviewModalStyle({ isChampionship: isChampionship });
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    isChampionship: isChampionship,
+    homeColor: homeColor,
+    awayColor: awayColor,
+  });
   const isLoading = !!details;
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({
@@ -247,30 +261,10 @@ export default function GamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        {/* Background gradients */}
-        <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <LinearGradient
-          colors={["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, .8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <BlurView
-          intensity={100}
-          tint={"systemUltraThinMaterialDark"}
-          style={styles.blurViewContainer}
-        >
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {!isLoading ? (
             <View style={styles.loadingContainer}>
               <CustomActivityIndicator />
@@ -295,7 +289,7 @@ export default function GamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={false}
                   league={LEAGUE}
-                  isDark
+                  isDark={isDark}
                 />
 
                 {/* Game Info */}
@@ -307,7 +301,7 @@ export default function GamePreviewModal({
                   broadcast={broadcast}
                   gameStatusShortDescription={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
-                  isDark
+                  isDark={isDark}
                 />
 
                 {/* Home Team Row */}
@@ -324,7 +318,7 @@ export default function GamePreviewModal({
                   gameStatusDescription={gameStatusDescription}
                   isHome={true}
                   league={LEAGUE}
-                  isDark
+                  isDark={isDark}
                 />
               </View>
 
@@ -338,6 +332,8 @@ export default function GamePreviewModal({
                   homeName={homeName}
                   homeLogo={homeLogo}
                   awayLogo={awayLogo}
+                  homeHeaderLogo={homeHeaderLogo}
+                  awayHeaderLogo={awayHeaderLogo}
                   awayCode={awayCode}
                   awayColor={awayColor}
                   awayName={awayName}
@@ -362,6 +358,7 @@ export default function GamePreviewModal({
                   leaders={leaders}
                   weather={weather}
                   league={LEAGUE}
+                  isDark={isDark}
                 />
               )}
             </>

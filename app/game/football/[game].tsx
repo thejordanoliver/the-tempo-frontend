@@ -113,7 +113,7 @@ export default function GameDetailsScreen(
   const currentSeason = getFootballSeason();
   const LEAGUE = game?.league?.code ?? "nfl";
   const isCFB = LEAGUE === "cfb";
-  const isUFL = LEAGUE === "ufl";
+  const isNFL = LEAGUE === "ufl";
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -132,41 +132,40 @@ export default function GameDetailsScreen(
   const homeId = home?.id ?? 0;
   const awayId = away?.id ?? 0;
 
-  const homeTeam = isUFL
+  const homeTeam = isNFL
     ? getUFLTeam(homeId)
     : isCFB
       ? getCFBTeam(homeId)
       : getNFLTeam(homeId);
 
-  const awayTeam = isUFL
+  const awayTeam = isNFL
     ? getUFLTeam(awayId)
     : isCFB
       ? getCFBTeam(awayId)
       : getNFLTeam(awayId);
 
-  const homeLogo = isUFL
-    ? getUFLTeamLogo(homeId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(homeId, isDark)
-      : getNFLTeamLogo(homeId, isDark);
+const homeLogo = isNFL
+  ? getNFLTeamLogo(homeId, isDark)
+  : isCFB
+    ? getCFBTeamLogo(homeId, isDark)
+    : getUFLTeamLogo(homeId, isDark);
+const awayLogo = isNFL
+  ? getNFLTeamLogo(awayId, isDark)
+  : isCFB
+    ? getCFBTeamLogo(awayId, isDark)
+    : getUFLTeamLogo(awayId, isDark);
 
-  const awayLogo = isUFL
-    ? getUFLTeamLogo(awayId, isDark)
-    : isCFB
-      ? getCFBTeamLogo(awayId, isDark)
-      : getNFLTeamLogo(awayId, isDark);
+const homeHeaderLogo = isNFL
+  ? getNFLTeamLogo(homeId, true)
+  : isCFB
+    ? getCFBTeamLogo(homeId, true)
+    : getUFLTeamLogo(homeId, true);
 
-  const homeHeaderLogo = isUFL
-    ? getUFLTeamLogo(homeId, true)
-    : isCFB
-      ? getCFBTeamLogo(homeId, true)
-      : getNFLTeamLogo(homeId, true);
-
-  const awayHeaderLogo = isUFL
-    ? getUFLTeamLogo(awayId, true)
-    : isCFB
-      ? getCFBTeamLogo(awayId, true)
-      : getNFLTeamLogo(awayId, true);
+const awayHeaderLogo = isNFL
+  ? getNFLTeamLogo(awayId, true)
+  : isCFB
+    ? getCFBTeamLogo(awayId, true)
+    : getUFLTeamLogo(awayId, true);
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);

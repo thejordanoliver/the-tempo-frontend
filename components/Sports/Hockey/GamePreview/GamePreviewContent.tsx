@@ -34,6 +34,7 @@ type GamePreviewContentProps = {
   gameStatusDescription: string;
   state?: string;
   league: string;
+  isDark: boolean
 };
 
 export default function GamePreviewContent({
@@ -55,20 +56,25 @@ export default function GamePreviewContent({
   weather,
   state,
   league,
+  isDark,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle({});
+  const styles = gamePreviewModalStyle({isDark: isDark});
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.contentContainerStyle}
     >
       <View style={styles.bottomSheetScrollViewWrapper}>
+
+
+
+        
         <LineScore
           linescore={lineScore}
           awayCode={awayCode}
           homeCode={homeCode}
           league={league}
-          isDark
+          isDark={isDark}
           state={state}
         />
 
@@ -79,9 +85,9 @@ export default function GamePreviewContent({
           awayCode={awayCode}
           homeGames={homeLastGames}
           awayGames={awayLastGames}
-          league={"soccer"}
+          league={league}
           state={state}
-          isDark
+          isDark={isDark}
         />
         <GameLocation
           venueImage={venueImage}
@@ -91,7 +97,7 @@ export default function GamePreviewContent({
           venueCapacity={venueCapacity}
           venueAttendance={venueAttendance}
           weather={weather}
-          isDark
+          isDark={isDark}
         />
       </View>
     </BottomSheetScrollView>

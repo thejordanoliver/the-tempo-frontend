@@ -1,11 +1,17 @@
-import { CombinedGamesSection } from "@/types/leagues";
+import type { HomeLeagueSource, LeagueGame } from "@/types/leagues";
 import { filterByDate, getFootballSeason } from "@/utils/dateUtils";
+import {
+  HOME_SCORE_LEAGUES,
+  type HomeLeagueId,
+} from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useMemo, useState } from "react";
-import { isGameLive, normalizeGames } from "utils/games";
+import { normalizeGames } from "utils/games";
+import { buildHomeGameSections } from "utils/homeGames";
+
 import { useBaseballGames } from "./BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
@@ -21,7 +27,8 @@ const getStartOfToday = () => dayjs().startOf("day").toDate();
 
 export function useHomeData(selectedTab: "scores" | "news") {
   const currentFootballSeason = getFootballSeason();
-  const { favorites } = useFavoriteTeamsContext();
+  const { favorites, favoriteSports, favoriteSportsReady } =
+    useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
 
@@ -29,12 +36,8 @@ export function useHomeData(selectedTab: "scores" | "news") {
     articles,
     loading: newsLoading,
     error: newsError,
-    refresh,
+    refresh: refreshNews,
   } = useAllNews(30);
-
-  // ===========================
-  // DATA SOURCES
-  // ===========================
 
   const {
     games: nbaGames,
@@ -154,57 +157,44 @@ export function useHomeData(selectedTab: "scores" | "news") {
     refreshGames: refreshBundesligaGames,
   } = useSoccerGames(selectedDate, "bundesliga");
 
-  // ===========================
-  // NORMALIZED DATA
-  // ===========================
-
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
     [nbaGames],
   );
-
-  const normalizedMLB = useMemo(
-    () => normalizeGames(mlbGames, "mlb"),
-    [mlbGames],
-  );
-
-  const normalizedNHL = useMemo(
-    () => normalizeGames(nhlGames, "nhl"),
-    [nhlGames],
-  );
-
   const normalizedNFL = useMemo(
     () => normalizeGames(nflGames, "nfl"),
     [nflGames],
   );
-
   const normalizedUFL = useMemo(
     () => normalizeGames(uflGames, "ufl"),
     [uflGames],
   );
-
+  const normalizedMLB = useMemo(
+    () => normalizeGames(mlbGames, "mlb"),
+    [mlbGames],
+  );
+  const normalizedNHL = useMemo(
+    () => normalizeGames(nhlGames, "nhl"),
+    [nhlGames],
+  );
   const normalizedCFB = useMemo(
     () => normalizeGames(cfbGames, "cfb"),
     [cfbGames],
   );
-
   const normalizedMensCBB = useMemo(
     () => normalizeGames(mensBasketballGames, "cbb"),
     [mensBasketballGames],
   );
-
   const normalizedWomensCBB = useMemo(
     () => normalizeGames(womensBasketballGames, "wcbb"),
     [womensBasketballGames],
   );
-
   const normalizedWNBA = useMemo(
     () => normalizeGames(wnbaGames, "wnba"),
     [wnbaGames],
   );
-
   const normalizedMLS = useMemo(
-    () => normalizeGames(mlsGames, "mlb"),
+    () => normalizeGames(mlsGames, "mls"),
     [mlsGames],
   );
   const normalizedLeaguesCup = useMemo(
@@ -215,44 +205,36 @@ export function useHomeData(selectedTab: "scores" | "news") {
     () => normalizeGames(fifaGames, "fifa"),
     [fifaGames],
   );
-
   const normalizedEuropa = useMemo(
     () => normalizeGames(europaGames, "europa"),
     [europaGames],
   );
-
   const normalizedChampions = useMemo(
     () => normalizeGames(championsGames, "champions"),
     [championsGames],
   );
-
   const normalizedEPL = useMemo(
     () => normalizeGames(eplGames, "epl"),
     [eplGames],
   );
-
   const normalizedBundesliga = useMemo(
     () => normalizeGames(bundesligaGames, "bundesliga"),
     [bundesligaGames],
   );
-
-  const normalizedMMA = useMemo(() => {
-    return Array.isArray(mmaGames) ? mmaGames : [];
-  }, [mmaGames]);
-
-  // ===========================
-  // SAFE DATE FILTER
-  // ===========================
-  // Some hooks already fetch by selectedDate.
-  // If the backend already returns date-scoped games, do not let a timezone mismatch
-  // wipe out the section completely.
+  const normalizedMMA = useMemo(
+    () => normalizeGames(mmaGames, "ufc"),
+    [mmaGames],
+  );
 
   const safeFilterByDate = useCallback(
-    (games: any[], alreadyDateScoped = false) => {
+    <Game extends LeagueGame>(
+      games: readonly Game[],
+      alreadyDateScoped = false,
+    ): Game[] => {
       const filtered = filterByDate(games, selectedDate);
 
       if (alreadyDateScoped && games.length > 0 && filtered.length === 0) {
-        return games;
+        return [...games];
       }
 
       return filtered;
@@ -260,282 +242,138 @@ export function useHomeData(selectedTab: "scores" | "news") {
     [selectedDate],
   );
 
-  // ===========================
-  // FILTERED
-  // ===========================
-
   const filteredNBA = useMemo(
     () => safeFilterByDate(normalizedNBA, true),
     [normalizedNBA, safeFilterByDate],
   );
-
   const filteredNFL = useMemo(
     () => safeFilterByDate(normalizedNFL, true),
     [normalizedNFL, safeFilterByDate],
   );
-
   const filteredUFL = useMemo(
     () => safeFilterByDate(normalizedUFL, true),
     [normalizedUFL, safeFilterByDate],
   );
-
   const filteredMLB = useMemo(
     () => safeFilterByDate(normalizedMLB, true),
     [normalizedMLB, safeFilterByDate],
   );
-
   const filteredNHL = useMemo(
     () => safeFilterByDate(normalizedNHL, true),
     [normalizedNHL, safeFilterByDate],
   );
-
   const filteredCFB = useMemo(
     () => safeFilterByDate(normalizedCFB, true),
     [normalizedCFB, safeFilterByDate],
   );
-
   const filteredMensCBB = useMemo(
-    () => safeFilterByDate(normalizedMensCBB, false),
+    () => safeFilterByDate(normalizedMensCBB),
     [normalizedMensCBB, safeFilterByDate],
   );
-
   const filteredWomensCBB = useMemo(
-    () => safeFilterByDate(normalizedWomensCBB, false),
+    () => safeFilterByDate(normalizedWomensCBB),
     [normalizedWomensCBB, safeFilterByDate],
   );
-
   const filteredWNBA = useMemo(
-    () => safeFilterByDate(normalizedWNBA, false),
+    () => safeFilterByDate(normalizedWNBA),
     [normalizedWNBA, safeFilterByDate],
   );
-
   const filteredMLS = useMemo(
-    () => safeFilterByDate(normalizedMLS, false),
+    () => safeFilterByDate(normalizedMLS),
     [normalizedMLS, safeFilterByDate],
   );
-
-  const filteredLEAGUESCUP = useMemo(
-    () => safeFilterByDate(normalizedLeaguesCup, false),
+  const filteredLeaguesCup = useMemo(
+    () => safeFilterByDate(normalizedLeaguesCup),
     [normalizedLeaguesCup, safeFilterByDate],
   );
-
   const filteredFIFA = useMemo(
-    () => safeFilterByDate(normalizedFIFA, false),
+    () => safeFilterByDate(normalizedFIFA),
     [normalizedFIFA, safeFilterByDate],
   );
-
   const filteredEPL = useMemo(
-    () => safeFilterByDate(normalizedEPL, false),
+    () => safeFilterByDate(normalizedEPL),
     [normalizedEPL, safeFilterByDate],
   );
-
-  const filteredCHAMPIONS = useMemo(
-    () => safeFilterByDate(normalizedChampions, false),
+  const filteredChampions = useMemo(
+    () => safeFilterByDate(normalizedChampions),
     [normalizedChampions, safeFilterByDate],
   );
-
-  const filteredEUROPA = useMemo(
-    () => safeFilterByDate(normalizedEuropa, false),
+  const filteredEuropa = useMemo(
+    () => safeFilterByDate(normalizedEuropa),
     [normalizedEuropa, safeFilterByDate],
   );
-
-  const filteredBUNDESLIGA = useMemo(
-    () => safeFilterByDate(normalizedBundesliga, false),
+  const filteredBundesliga = useMemo(
+    () => safeFilterByDate(normalizedBundesliga),
     [normalizedBundesliga, safeFilterByDate],
   );
-
   const filteredMMA = useMemo(
     () => safeFilterByDate(normalizedMMA, true),
     [normalizedMMA, safeFilterByDate],
   );
 
-  // ===========================
-  // HELPERS
-  // ===========================
+  const homeLeagueSources = useMemo<HomeLeagueSource[]>(
+    () => {
+      const gamesByLeague: Record<HomeLeagueId, readonly LeagueGame[]> = {
+        nba: filteredNBA,
+        nfl: filteredNFL,
+        ufl: filteredUFL,
+        mlb: filteredMLB,
+        nhl: filteredNHL,
+        cfb: filteredCFB,
+        mls: filteredMLS,
+        leaguescup: filteredLeaguesCup,
+        fifa: filteredFIFA,
+        europa: filteredEuropa,
+        champions: filteredChampions,
+        epl: filteredEPL,
+        bundesliga: filteredBundesliga,
+        cbb: filteredMensCBB,
+        wcbb: filteredWomensCBB,
+        wnba: filteredWNBA,
+        ufc: filteredMMA,
+      };
 
-  const isFavoriteGame = useCallback(
-    (g: any, prefix: string) => {
-      const homeId = g?.home?.id;
-      const awayId = g?.away?.id;
-
-      return (
-        (homeId && favorites.includes(`${prefix}:${String(homeId)}`)) ||
-        (awayId && favorites.includes(`${prefix}:${String(awayId)}`))
-      );
+      return HOME_SCORE_LEAGUES.map((id) => ({
+        id,
+        games: gamesByLeague[id],
+      }));
     },
-    [favorites],
+    [
+      filteredNBA,
+      filteredNFL,
+      filteredUFL,
+      filteredMLB,
+      filteredNHL,
+      filteredCFB,
+      filteredMLS,
+      filteredLeaguesCup,
+      filteredFIFA,
+      filteredEuropa,
+      filteredChampions,
+      filteredEPL,
+      filteredBundesliga,
+      filteredMensCBB,
+      filteredWomensCBB,
+      filteredWNBA,
+      filteredMMA,
+    ],
   );
 
-  const sortLiveFirst = useCallback(
-    (games: any[]) =>
-      [...games].sort((a, b) => Number(isGameLive(b)) - Number(isGameLive(a))),
-    [],
+  const homeGameSections = useMemo(
+    () =>
+      buildHomeGameSections({
+        sources: homeLeagueSources,
+        favoriteTeams: favorites,
+        favoriteSports,
+        favoriteSportsReady,
+      }),
+    [
+      favoriteSports,
+      favoriteSportsReady,
+      favorites,
+      homeLeagueSources,
+    ],
   );
-
-  const limitNonFavorites = useCallback(
-    (games: any[], prefix: string, max = 5) =>
-      sortLiveFirst(games.filter((g) => !isFavoriteGame(g, prefix))).slice(
-        0,
-        max,
-      ),
-    [isFavoriteGame, sortLiveFirst],
-  );
-
-  // ===========================
-  // FAVORITES
-  // ===========================
-
-  const favoriteGames = useMemo(() => {
-    const collect = (games: any[], prefix: string) =>
-      games.filter((g) => isFavoriteGame(g, prefix));
-
-    return [
-      ...collect(filteredNBA, "nba"),
-      ...collect(filteredNFL, "nfl"),
-      ...collect(filteredUFL, "ufl"),
-      ...collect(filteredMLB, "mlb"),
-      ...collect(filteredNHL, "nhl"),
-      ...collect(filteredCFB, "cfb"),
-      ...collect(filteredMensCBB, "cbb"),
-      ...collect(filteredWomensCBB, "wcbb"),
-      ...collect(filteredWNBA, "wnba"),
-      ...collect(filteredMLS, "mls"),
-      ...collect(filteredFIFA, "fifa"),
-      ...collect(filteredEPL, "epl"),
-      ...collect(filteredLEAGUESCUP, "leaguescup"),
-      ...collect(filteredCHAMPIONS, "champions"),
-      ...collect(filteredEUROPA, "europa"),
-      ...collect(filteredBUNDESLIGA, "bundesliga"),
-      ...collect(filteredMMA, "mma"),
-    ];
-  }, [
-    isFavoriteGame,
-    filteredNBA,
-    filteredNFL,
-    filteredUFL,
-    filteredMLB,
-    filteredNHL,
-    filteredCFB,
-    filteredMensCBB,
-    filteredWomensCBB,
-    filteredWNBA,
-    filteredMLS,
-    filteredLEAGUESCUP,
-    filteredFIFA,
-    filteredEPL,
-    filteredCHAMPIONS,
-    filteredEUROPA,
-    filteredBUNDESLIGA,
-    filteredMMA,
-  ]);
-
-  // ===========================
-  // FINAL SECTIONS
-  // ===========================
-
-  const gamesByCategory: CombinedGamesSection[] = useMemo(() => {
-    const sections: CombinedGamesSection[] = [
-      {
-        category: "Favorites",
-        data: sortLiveFirst(favoriteGames),
-      },
-      {
-        category: "NBA",
-        data: limitNonFavorites(filteredNBA, "nba"),
-      },
-      {
-        category: "NFL",
-        data: limitNonFavorites(filteredNFL, "nfl"),
-      },
-      {
-        category: "UFL",
-        data: limitNonFavorites(filteredUFL, "ufl"),
-      },
-      {
-        category: "MLB",
-        data: limitNonFavorites(filteredMLB, "mlb"),
-      },
-      {
-        category: "NHL",
-        data: limitNonFavorites(filteredNHL, "nhl"),
-      },
-      {
-        category: "College Football",
-        data: limitNonFavorites(filteredCFB, "cfb"),
-      },
-      {
-        category: "MLS",
-        data: limitNonFavorites(filteredMLS, "mls"),
-      },
-      {
-        category: "Leagues Cup",
-        data: limitNonFavorites(filteredLEAGUESCUP, "leaguescup"),
-      },
-      {
-        category: "FIFA World Cup",
-        data: limitNonFavorites(filteredFIFA, "fifa"),
-      },
-      {
-        category: "UEFA Europa League",
-        data: limitNonFavorites(filteredEUROPA, "europa"),
-      },
-      {
-        category: "UEFA Champions League",
-        data: limitNonFavorites(filteredCHAMPIONS, "champions"),
-      },
-      {
-        category: "English Premier League",
-        data: limitNonFavorites(filteredEPL, "epl"),
-      },
-      {
-        category: "German Bundesliga",
-        data: limitNonFavorites(filteredBUNDESLIGA, "bundesliga"),
-      },
-      {
-        category: "Men's College Basketball",
-        data: limitNonFavorites(filteredMensCBB, "cbb"),
-      },
-      {
-        category: "Women's College Basketball",
-        data: limitNonFavorites(filteredWomensCBB, "wcbb"),
-      },
-      {
-        category: "WNBA",
-        data: limitNonFavorites(filteredWNBA, "wnba"),
-      },
-      {
-        category: "MMA",
-        data: limitNonFavorites(filteredMMA, "mma"),
-      },
-    ];
-
-    return sections.filter((section) => section.data.length > 0);
-  }, [
-    sortLiveFirst,
-    limitNonFavorites,
-    favoriteGames,
-    filteredNBA,
-    filteredNFL,
-    filteredUFL,
-    filteredMLB,
-    filteredNHL,
-    filteredCFB,
-    filteredMensCBB,
-    filteredWomensCBB,
-    filteredWNBA,
-    filteredMLS,
-    filteredLEAGUESCUP,
-    filteredEPL,
-    filteredFIFA,
-    filteredEUROPA,
-    filteredCHAMPIONS,
-    filteredBUNDESLIGA,
-    filteredMMA,
-  ]);
-
-  // ===========================
-  // REFRESH
-  // ===========================
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -550,9 +388,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
       if (shouldUpdateSelectedDate) {
         setSelectedDate(today);
 
-        if (selectedTab === "scores") {
-          return;
-        }
+        if (selectedTab === "scores") return;
       }
 
       if (selectedTab === "scores") {
@@ -575,10 +411,8 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshBundesligaGames(),
           refreshMMAGames(),
         ]);
-      }
-
-      if (selectedTab === "news") {
-        await Promise.allSettled([refresh()]);
+      } else {
+        await refreshNews();
       }
     } finally {
       setRefreshing(false);
@@ -603,7 +437,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     bundesligaLoading &&
     championsLoading &&
     mmaLoading &&
-    gamesByCategory.length === 0;
+    homeGameSections.length === 0;
 
   return {
     selectedDate,
@@ -611,7 +445,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     favorites,
     refreshing,
     handleRefresh,
-    gamesByCategory,
+    homeGameSections,
     newsError,
     errorFights: mmaError,
     newsLoading,

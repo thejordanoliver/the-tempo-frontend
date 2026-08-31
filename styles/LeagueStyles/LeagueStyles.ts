@@ -18,7 +18,7 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       paddingHorizontal: 12,
     },
 
-    leagueButton: {
+    button: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -41,12 +41,12 @@ export const LeagueScreenStyles = (isDark: boolean) =>
       opacity: activeOpacity,
     },
 
-    leagueLogo: {
+    logo: {
       width: 36,
       height: 36,
       marginRight: 8,
     },
-    leagueText: {
+    buttonText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
