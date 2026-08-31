@@ -51,7 +51,7 @@ const CACHE_TTL = 6 * 60 * 60 * 1000;
    HOOK
 ===================================================== */
 
-export const useCBBRankings = (league: "CBB" | "WCBB") => {
+export const useCBBRankings = (league: "cbb" | "wcbb") => {
   const CACHE_KEY = `cbb_rankings_cache_${league}`;
   const LAST_REFRESH_KEY = `cbb_rankings_last_refresh_${league}`;
 

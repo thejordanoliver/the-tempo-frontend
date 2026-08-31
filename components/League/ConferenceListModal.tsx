@@ -36,7 +36,7 @@ export type ConferenceListModalRef = {
   close: () => void;
 };
 
-type ConferenceLeague = "CFB" | "CBB" | "WCBB";
+type ConferenceLeague = "cfb" | "cbb" | "wcbb";
 
 type ConferenceOption = {
   label: string;
@@ -97,9 +97,9 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
 
     const modalRef = useRef<BottomSheetModal>(null);
 
-    const isCFB = league === "CFB";
-    const isCBB = league === "CBB";
-    const isWCBB = league === "WCBB";
+    const isCFB = league === "cfb";
+    const isCBB = league === "cbb";
+    const isWCBB = league === "wcbb";
 
     useImperativeHandle(ref, () => ({
       present: () => modalRef.current?.present(),

@@ -1,5 +1,5 @@
 // hooks/TeamHooks/useTeams.ts
-import { LeagueType, WCBBTeam } from "@/types/types";
+import { LeagueType } from "@/types/types";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -21,7 +21,7 @@ export type BaseTeam = {
   [key: string]: unknown;
 };
 
-export type Team = BaseTeam | WCBBTeam;
+export type Team = BaseTeam;
 
 type TeamsResponse = {
   success: boolean;

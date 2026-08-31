@@ -22,22 +22,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 type Props = {
-  league: "CBB" | "WCBB";
+  league: "cbb" | "wcbb";
 };
 
-export const CBBStandingsList = ({ league = "CBB" }: Props) => {
+export const CBBStandingsList = ({ league = "cbb" }: Props) => {
   const { rankings, loading, error, refresh } = useCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
-  const isWCBB = league === "WCBB";
+  const isWCBB = league === "wcbb";
   const getRankedTeam = (espnId: string | number) =>
     isWCBB ? getWCBBTeamByESPNId(espnId) : getCBBTeamByESPNId(espnId ?? "");
   const getRankedTeamLogo = (teamId?: string | number) =>

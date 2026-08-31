@@ -1,98 +1,146 @@
-// hooks/CBB/useCBBConferenceStandings.ts
+// hooks//useConferenceStandings.ts
+
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export interface CBBStandingTeam {
-  teamId: string;
-  name: string;
-  abbreviation: string;
-  rank: string;
-  overall: string;
-  confOverall: string;
-  homeOverall: string;
-  awayOverall: string;
-  streak: string;
-  gamesBehind: string;
-  vsAPTop25: string;
-  pointsFor: string;
-  pointsAgainst: string;
-}
-
-export interface CBBStandingDivision {
-  name: string;
-  teams: CBBStandingTeam[];
-}
-
-export interface CBBStandingConference {
+export interface StandingTeam {
   id: string;
   name: string;
-  abbreviation: string;
-  shortName: string;
-  divisions: CBBStandingDivision[];
+  code: string | null;
+  rank: string | number | null;
+  overall: string | null;
+  confOverall: string | null;
+  homeOverall: string | null;
+  awayOverall: string | null;
+  divisionOverall?: string | null;
+  divWins?: string | number | null;
+  divLosses?: string | number | null;
+  winPercent?: string | number | null;
+  confWinPercent?: string | number | null;
+  streak: string | null;
+  gamesBehind: string | number | null;
+  vsAPTop25: string | null;
+  pointsFor: string | number | null;
+  pointsAgainst: string | number | null;
 }
 
-interface CBBConferenceStandingsResponse {
-  conferences: Partial<CBBStandingConference>[];
+export interface StandingDivision {
+  name: string;
+  teams: StandingTeam[];
 }
 
-export const useCBBConferenceStandings = (league: "CBB" | "WCBB" = "CBB") => {
-  const [conferences, setConferences] = useState<CBBStandingConference[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export interface StandingConference {
+  id: string;
+  name: string;
+  code: string | null;
+  shortName: string | null;
+  divisions: StandingDivision[];
+}
 
-  const fetchStandings = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
+interface ConferenceStandingsResponse {
+  group: string | null;
+  conference: StandingConference | null;
+  conferences: StandingConference[];
+}
+
+export const useConferenceStandings = (league: string, group?: number | string | null, ) => {
+  const [conference, setConference] = useState<StandingConference | null>(
+    null,
+  );
+  const [conferences, setConferences] = useState<StandingConference[]>([]);
+  const [conferencesLoading, setConferencesLoading] = useState(false);
+  const [ConferencesRefreshing, setConferencesRefreshing] = useState(false);
+  const [conferencesError, setConferencesError] = useState<string | null>(null);
+
+  const normalizedGroup = String(group ?? "").trim();
+  const canFetch = /^\d+$/.test(normalizedGroup);
+
+  const fetchStandings = useCallback(
+    async (isRefresh = false) => {
+      if (!canFetch) {
+        setConference(null);
+        setConferences([]);
+        setConferencesLoading(false);
+        setConferencesRefreshing(false);
+        setConferencesError(null);
+        return;
       }
 
-      setError(null);
+      try {
+        if (isRefresh) {
+          setConferencesRefreshing(true);
+        } else {
+          setConferencesLoading(true);
+        }
 
-      const response = await apiClient.get<CBBConferenceStandingsResponse>(
-        `api/standings/${league.toLowerCase()}/conference`,
-      );
+        setConferencesError(null);
 
-      const rawConferences = response.data?.conferences ?? [];
+        const { data } = await apiClient.get<ConferenceStandingsResponse>(
+          `/api/standings/${league}/conference`,
+          {
+            params: {
+              group: normalizedGroup,
+            },
+          },
+        );
 
-      const cleanedConferences = rawConferences.filter(
-        (conference): conference is CBBStandingConference =>
-          Boolean(
-            conference &&
-            conference.id &&
-            conference.name &&
-            conference.abbreviation &&
-            conference.shortName &&
-            Array.isArray(conference.divisions),
-          ),
-      );
+        const rawConferences = Array.isArray(data?.conferences)
+          ? data.conferences
+          : [];
 
-      setConferences(cleanedConferences);
-    } catch (err) {
-      console.error(`🔥 ${league} CONFERENCE STANDINGS ERROR:`, err);
-      setError(`Failed to load ${league} conference standings`);
-      setConferences([]);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [league]);
+        const validConferences = rawConferences.filter(
+          (item): item is StandingConference =>
+            Boolean(
+              item && item.id && item.name && Array.isArray(item.divisions),
+            ),
+        );
+
+        const selectedConference =
+          data?.conference ??
+          validConferences.find(
+            (item) => String(item.id) === normalizedGroup,
+          ) ??
+          validConferences[0] ??
+          null;
+
+        setConference(selectedConference);
+        setConferences(validConferences);
+      } catch (requestError: unknown) {
+        console.error("🔥 CONFERENCE STANDINGS ERROR:", requestError);
+
+        const message =
+          requestError instanceof Error
+            ? requestError.message
+            : "Failed to load  conference standings";
+
+        setConferencesError(message);
+        setConference(null);
+        setConferences([]);
+      } finally {
+        setConferencesLoading(false);
+        setConferencesRefreshing(false);
+      }
+    },
+    [canFetch, league, normalizedGroup],
+  );
 
   useEffect(() => {
-    fetchStandings();
+    fetchStandings(false);
   }, [fetchStandings]);
 
   const refresh = useCallback(() => {
-    fetchStandings(true);
+    return fetchStandings(true);
   }, [fetchStandings]);
 
   return {
+    conference,
     conferences,
-    loading,
-    refreshing,
-    error,
+    standings: conference?.divisions ?? [],
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
     refresh,
   };
 };
+
+export default useConferenceStandings;

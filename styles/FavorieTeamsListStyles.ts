@@ -51,18 +51,19 @@ export const favoriteTeamsListStyles = (
       opacity: 0.6,
     },
 
-    leagueBadge: {
+    sportTag: {
       position: "absolute",
       top: 0,
       right: 0,
       zIndex: 2,
-      paddingLeft: 12,
+      paddingLeft: 14,
       paddingRight: 6,
       paddingVertical: 4,
       borderTopLeftRadius: 6,
       borderBottomLeftRadius: 100,
     },
-    leagueBadgeText: {
+    sportTagText: {
+      textTransform: "uppercase",
       fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: Colors.white,
@@ -125,6 +126,18 @@ export const favoriteTeamsListStyles = (
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 18,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    nextSectionTitle: {
+      marginTop: 20,
+    },
+    emptyText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    loadingIndicator: {
+      alignSelf: "flex-start",
+      paddingVertical: 12,
     },
     teamCard: {
       alignItems: "center",

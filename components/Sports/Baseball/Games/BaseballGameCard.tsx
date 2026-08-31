@@ -16,7 +16,7 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { getBroadcastDisplay } from "utils/games";
+import { getBroadcastDisplay, winnerStyle } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
 function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
@@ -121,19 +121,14 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed;
 
@@ -142,7 +137,14 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -261,7 +263,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
         </Text>
       </View>
 
-      <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
+      <ScoreText score={awayScore} record={awayRecord} isWinner={awayWins} />
 
       <View style={styles.headlineContainer}>
         <Text style={[styles.headlineText]}>{headline}</Text>
@@ -274,7 +276,7 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
         )}
       </View>
 
-      <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
+      <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
         <Image

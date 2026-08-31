@@ -1,84 +1,91 @@
-import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { SelectionCardStyles } from "@/styles/TeamStyles/SelectionCardStyles";
 import { Colors } from "constants/styles";
-import { getNBATeamLogo } from "constants/teams";
-import { getCBTeamLogo } from "constants/teamsCB";
-import { getCBBTeamLogo } from "constants/teamsCBB";
-import { getCFBTeamLogo } from "constants/teamsCFB";
-import { getMLBTeamLogo } from "constants/teamsMLB";
-import { getNFLTeamLogo } from "constants/teamsNFL";
-import { getNHLTeamLogo } from "constants/teamsNHL";
-import { getSBTeamLogo } from "constants/teamsSB";
-import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useCallback, useMemo } from "react";
-import { Image, Pressable, Text, View } from "react-native";
-import { teamCardStyles } from "styles/TeamStyles/TeamCardStyles";
-import { Team } from "types/team";
+import React, { useCallback } from "react";
+import {
+  Image,
+  type ImageSourcePropType,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 
-type TeamWithLeague = Team & { id: number };
+export type SelectionCardItem = {
+  id: string | number;
+  league: string;
+  name?: string | null;
+  fullName?: string | null;
+  shortName?: string | null;
+  code?: string | null;
+  color?: string | null;
+};
 
 type Props = {
-  item: TeamWithLeague;
+  item: SelectionCardItem;
+  logo?: ImageSourcePropType;
   isSelected: boolean;
   isGridView: boolean;
   onPress: (league: string, id: string) => void;
   itemWidth: number;
   onImageLoad?: () => void;
+  showSportTag?: boolean;
 };
 
-function TeamCard({
+function SelectionCard({
   item,
+  logo,
   isSelected,
   isGridView,
   onPress,
   itemWidth,
   onImageLoad,
+  showSportTag = false,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
-  const styles = teamCardStyles;
+  const styles = SelectionCardStyles;
 
   const selectedColor =
     typeof item.color === "string" && item.color.startsWith("#")
       ? item.color
       : Colors.midTone;
 
-  const useAltLogo = isDark || isSelected;
-
-  const logo = useMemo(() => {
-    if (item.league === "CFB") return getCFBTeamLogo(item.id, useAltLogo);
-    if (item.league === "CBB") return getCBBTeamLogo(item.id, useAltLogo);
-    if (item.league === "WCBB") return getWCBBTeamLogo(item.id, useAltLogo);
-    if (item.league === "MLB") return getMLBTeamLogo(item.id, useAltLogo);
-    if (item.league === "CB") return getCBTeamLogo(item.id, useAltLogo);
-    if (item.league === "SB") return getSBTeamLogo(item.id, useAltLogo);
-    if (item.league === "NBA") return getNBATeamLogo(item.id, useAltLogo);
-    if (item.league === "WNBA") return getWNBATeamLogo(item.id, useAltLogo);
-    if (item.league === "NFL") return getNFLTeamLogo(item.id, useAltLogo);
-    return getNHLTeamLogo(item.id, useAltLogo);
-  }, [item.id, item.league, useAltLogo]);
-
   const handlePress = useCallback(() => {
-    onPress(item.league, item.id.toString());
+    onPress(item.league, String(item.id));
   }, [item.id, item.league, onPress]);
 
   const logoSize = isGridView ? 50 : 40;
+
   const displayName =
     item.name ??
     item.fullName ??
     item.shortName ??
     item.code ??
     String(item.id);
+
   const backgroundColor = isSelected
     ? selectedColor
     : isDark
       ? Colors.dark.itemBackground
       : Colors.light.itemBackground;
+
   const textColor = isSelected
     ? Colors.dark.text
     : isDark
       ? Colors.dark.text
       : Colors.light.text;
+
+  const sportTagColor =
+    item.league === "cfb"
+      ? "#228B22"
+      : item.league === "wcbb"
+        ? "#C2185B"
+        : item.league === "cb"
+          ? "#0F766E"
+          : item.league === "sb"
+            ? "#B45309"
+            : "#1E90FF";
 
   return (
     <Pressable
@@ -91,7 +98,7 @@ function TeamCard({
     >
       <View
         style={[
-          styles.teamCard,
+          styles.selectionCard,
           {
             width: isGridView ? itemWidth : "100%",
             backgroundColor,
@@ -104,25 +111,12 @@ function TeamCard({
           },
         ]}
       >
-        {(item.league === "CFB" ||
-          item.league === "CBB" ||
-          item.league === "WCBB" ||
-          item.league === "CB" ||
-          item.league === "SB") && (
+        {showSportTag && (
           <View
             style={[
               styles.sportTag,
               {
-                backgroundColor:
-                  item.league === "CFB"
-                    ? "#228B22"
-                    : item.league === "WCBB"
-                      ? "#C2185B"
-                      : item.league === "CB"
-                        ? "#0F766E"
-                        : item.league === "SB"
-                          ? "#B45309"
-                          : "#1E90FF",
+                backgroundColor: sportTagColor,
               },
             ]}
           >
@@ -141,11 +135,19 @@ function TeamCard({
             },
           ]}
         >
-          <Image
-            source={logo}
-            style={[styles.logo, { width: logoSize, height: logoSize }]}
-            onLoad={onImageLoad}
-          />
+          {logo ? (
+            <Image
+              source={logo}
+              style={[
+                styles.logo,
+                {
+                  width: logoSize,
+                  height: logoSize,
+                },
+              ]}
+              onLoad={onImageLoad}
+            />
+          ) : null}
         </View>
 
         <View
@@ -165,14 +167,16 @@ function TeamCard({
 }
 
 export default React.memo(
-  TeamCard,
+  SelectionCard,
   (prevProps, nextProps) =>
     prevProps.item.id === nextProps.item.id &&
     prevProps.item.league === nextProps.item.league &&
     prevProps.item.name === nextProps.item.name &&
     prevProps.item.fullName === nextProps.item.fullName &&
     prevProps.item.color === nextProps.item.color &&
+    prevProps.logo === nextProps.logo &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.isGridView === nextProps.isGridView &&
-    prevProps.itemWidth === nextProps.itemWidth,
+    prevProps.itemWidth === nextProps.itemWidth &&
+    prevProps.showSportTag === nextProps.showSportTag,
 );

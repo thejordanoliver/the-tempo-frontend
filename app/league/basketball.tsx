@@ -1,5 +1,4 @@
 import { useBasketballGames } from "@/hooks/BasketballHooks/useBasketballGames";
-import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -60,11 +59,13 @@ import { useSeasonLeaders as useNBASeasonLeaders } from "../../hooks/NBAHooks/us
 import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/League/ConferenceListModal";
+import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
+import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
-import { CBBConferenceStandingsList } from "../../components/Sports/Basketball/Standings/CBBConferenceStandingsList";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
-import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
 import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
@@ -74,12 +75,10 @@ import {
   getRecruitYear,
   getWNBASeason,
 } from "../../utils/dateUtils";
-import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type SupportedLeague = Extract<League, "NBA" | "WNBA" | "CBB" | "WCBB">;
 type SelectedConference = number | string | null;
 
 /* -------------------------------------------------------------------------- */
@@ -88,15 +87,6 @@ type SelectedConference = number | string | null;
 
 const getMonthAnchor = (value: Date | string) =>
   dayjs(value).startOf("month").format("YYYY-MM-DD");
-
-function isSupportedLeague(league: League): league is SupportedLeague {
-  return (
-    league === "NBA" ||
-    league === "WNBA" ||
-    league === "CBB" ||
-    league === "WCBB"
-  );
-}
 
 function isTop25Rank(rank: unknown) {
   const parsedRank = Number(rank);
@@ -114,28 +104,13 @@ export default function BasketballLeagueScreen() {
     leagueLabel?: string;
   }>();
 
-  const normalizedLeague = normalizeLeagueParam(params.league);
+  const league = params.league;
 
-  const parsedLeague: League = isLeague(normalizedLeague)
-    ? normalizedLeague
-    : "NBA";
+  const isWNBA = league === "wnba";
+  const isCBB = league === "cbb";
+  const isWCBB = league === "wcbb";
+  const isGLEAGUE = league === "gleague";
 
-  const league: SupportedLeague = isSupportedLeague(parsedLeague)
-    ? parsedLeague
-    : "NBA";
-
-  const isWNBA = league === "WNBA";
-  const isCBB = league === "CBB";
-  const isWCBB = league === "WCBB";
-
-  /*
-   * Keep NBA and CBB hooks in separate child components.
-   *
-   * This prevents:
-   * - CBB loading NBA Summer League feeds
-   * - NBA loading CBB tournament/recruiting data
-   * - conditional hook-order problems
-   */
   if (isCBB) {
     return <CBBLeagueScreen />;
   }
@@ -144,6 +119,9 @@ export default function BasketballLeagueScreen() {
   }
   if (isWNBA) {
     return <WNBALeagueScreen />;
+  }
+  if (isGLEAGUE) {
+    return <GLeagueScreen />;
   }
 
   return <NBALeagueScreen />;
@@ -154,7 +132,7 @@ export default function BasketballLeagueScreen() {
 /* ========================================================================== */
 
 function NBALeagueScreen() {
-  const league = "NBA";
+  const league = "nba";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -177,7 +155,7 @@ function NBALeagueScreen() {
   const [draftRound, setDraftRound] = useState("all");
 
   const [draftYear, setDraftYear] = useState(() =>
-    getDefaultDraftYear("nba").toString(),
+    getDefaultDraftYear(league).toString(),
   );
 
   const [standingsYear, setStandingsYear] = useState(() =>
@@ -216,7 +194,7 @@ function NBALeagueScreen() {
     error: nbaGamesError,
     refreshGames: refreshNBAGames,
     loading: loadingNBAGames,
-  } = useBasketballGames(selectedDate, "nba");
+  } = useBasketballGames(selectedDate, league);
 
   const {
     games: summerVegasGames,
@@ -239,12 +217,6 @@ function NBALeagueScreen() {
     loading: loadingSummerCaliforniaGames,
   } = useBasketballGames(selectedDate, "summercalifornia");
 
-  /*
-   * NBA + all Summer League feeds.
-   *
-   * Dedupe by ESPN game ID because an event could theoretically
-   * appear in more than one feed.
-   */
   const combinedGames = useMemo(() => {
     const allGames = [
       ...(nbaGames ?? []),
@@ -349,7 +321,11 @@ function NBALeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league} league={league} onBack={goBack} />
+        <CustomHeader
+          tabName={league.toUpperCase()}
+          league={league}
+          onBack={goBack}
+        />
       ),
     });
   }, [league, navigation]);
@@ -522,7 +498,7 @@ function NBALeagueScreen() {
               onYearChange={setDraftYear}
               onTeamChange={setDraftTeam}
               onRoundChange={setDraftRound}
-              league="nba"
+              league={league}
             />
           </View>
 
@@ -563,7 +539,7 @@ function NBALeagueScreen() {
 /* ========================================================================== */
 
 function WNBALeagueScreen() {
-  const league = "WNBA";
+  const league = "wnba";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -586,7 +562,7 @@ function WNBALeagueScreen() {
   const [draftRound, setDraftRound] = useState("all");
 
   const [draftYear, setDraftYear] = useState(() =>
-    getDefaultDraftYear("wnba").toString(),
+    getDefaultDraftYear(league).toString(),
   );
 
   const [standingsYear, setStandingsYear] = useState(
@@ -623,7 +599,7 @@ function WNBALeagueScreen() {
     error: wnbaGamesError,
     refreshGames: refreshWNBAGames,
     loading: loadingWNBAGames,
-  } = useBasketballGames(selectedDate, "wnba");
+  } = useBasketballGames(selectedDate, league);
 
   /* ------------------------------------------------------------------------ */
   /*                                  News                                    */
@@ -658,7 +634,11 @@ function WNBALeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league} league={league} onBack={goBack} />
+        <CustomHeader
+          tabName={league.toUpperCase()}
+          league={league}
+          onBack={goBack}
+        />
       ),
     });
   }, [league, navigation]);
@@ -836,10 +816,253 @@ function WNBALeagueScreen() {
 }
 
 /* ========================================================================== */
+/*                                    G League                                     */
+/* ========================================================================== */
+
+function GLeagueScreen() {
+  const league = "gleague";
+
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+
+  const navigation = useNavigation();
+
+  const [selectedDate, setSelectedDate] = useState<Date>(() =>
+    dayjs().startOf("day").toDate(),
+  );
+
+  const [calendarAnchorDate, setCalendarAnchorDate] = useState(() =>
+    getMonthAnchor(new Date()),
+  );
+
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
+
+  const {
+    calendar,
+    error: calendarError,
+    refresh: refreshCalendar,
+  } = useLeagueCalendar(league, "raw", calendarAnchorDate);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                WNBA Games                                 */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    games: gLeagueGames,
+    error: gLeagueGamesError,
+    refreshGames: refreshGLeagueGames,
+    loading: loadingGLeagueGames,
+  } = useBasketballGames(selectedDate, "gleague");
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  News                                    */
+  /* ------------------------------------------------------------------------ */
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                 Effects                                  */
+  /* ------------------------------------------------------------------------ */
+
+  useEffect(() => {
+    const nextAnchor = getMonthAnchor(selectedDate);
+
+    setCalendarAnchorDate((previousAnchor) =>
+      previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
+    );
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (calendarError) {
+      console.warn("GLEAGUE calendar error:", calendarError);
+    }
+  }, [calendarError]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader
+          tabName={"NBA G League"}
+          league={league}
+          onBack={goBack}
+        />
+      ),
+    });
+  }, [league, navigation]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                Handlers                                  */
+  /* ------------------------------------------------------------------------ */
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    try {
+      await Promise.all([refreshGLeagueGames(), refreshCalendar()]);
+    } catch (refreshError) {
+      console.warn(
+        "Failed to refresh one or more GLEAGUE game feeds:",
+        refreshError,
+      );
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refreshGLeagueGames, refreshCalendar]);
+
+  const changeDateByDays = useCallback((days: number) => {
+    setSelectedDate((previousDate) =>
+      dayjs(previousDate).add(days, "day").startOf("day").toDate(),
+    );
+  }, []);
+
+  const handleCalendarMonthChange = useCallback((anchorDate: string) => {
+    setCalendarAnchorDate((previousAnchor) =>
+      previousAnchor === anchorDate ? previousAnchor : anchorDate,
+    );
+  }, []);
+
+  const markedDates = useMemo(() => {
+    return (calendar ?? []).reduce(
+      (dates, calendarDate) => {
+        if (typeof calendarDate !== "string") {
+          return dates;
+        }
+
+        const dateKey = getLeagueCalendarDateKey(calendarDate);
+
+        if (!dateKey) {
+          return dates;
+        }
+
+        dates[dateKey] = {
+          marked: true,
+          dotColor: isDark ? Colors.white : Colors.black,
+        };
+
+        return dates;
+      },
+      {} as Record<
+        string,
+        {
+          marked: boolean;
+          dotColor: string;
+        }
+      >,
+    );
+  }, [calendar, isDark]);
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Render                                  */
+  /* ------------------------------------------------------------------------ */
+
+  return (
+    <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+        scrollProgress={scrollProgress}
+      />
+
+      <View style={styles.container}>
+        <PagerView
+          key={league}
+          ref={pagerRef}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
+        >
+          {/* SCORES */}
+          <View key="scores">
+            <DateNavigator
+              selectedDate={selectedDate}
+              onChangeDate={changeDateByDays}
+              onOpenCalendar={() => setShowCalendarModal(true)}
+              isDark={isDark}
+            />
+
+            <GamesList
+              games={gLeagueGames}
+              error={gLeagueGamesError}
+              loading={loadingGLeagueGames}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              showHeaders={false}
+              scrollEnabled
+            />
+          </View>
+
+          {/* NEWS */}
+          <View key="news" style={styles.contentArea}>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum" style={styles.contentArea}>
+            <ForumFeed league={league} />
+          </View>
+        </PagerView>
+      </View>
+
+      <CalendarModal
+        visible={showCalendarModal}
+        selectedDate={dayjs(selectedDate).format("YYYY-MM-DD")}
+        onClose={() => setShowCalendarModal(false)}
+        onMonthChange={handleCalendarMonthChange}
+        onSelectDate={(dateString) => {
+          const nextDate = dayjs(dateString, "YYYY-MM-DD")
+            .startOf("day")
+            .toDate();
+
+          setSelectedDate(nextDate);
+          setCalendarAnchorDate(getMonthAnchor(nextDate));
+          setShowCalendarModal(false);
+        }}
+        markedDates={markedDates}
+      />
+    </>
+  );
+}
+
+/* ========================================================================== */
 /*                                    CBB                                     */
 /* ========================================================================== */
 function CBBLeagueScreen() {
-  const league = "CBB";
+  const league = "cbb";
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
@@ -906,6 +1129,9 @@ function CBBLeagueScreen() {
 
     return Number.isFinite(conferenceId) ? conferenceId : null;
   }, [selectedConference]);
+
+  const { conferences, conferencesLoading, conferencesError } =
+    useConferenceStandings(league, selectedConferenceGroupId);
 
   /* ------------------------------------------------------------------------ */
   /*                                Calendar                                  */
@@ -1088,8 +1314,11 @@ function CBBLeagueScreen() {
       {!selectedConferenceGroupId ? (
         <CBBStandingsList league={league} />
       ) : (
-        <CBBConferenceStandingsList
-          selectedConference={String(selectedConferenceGroupId)}
+        <ConferenceStandingsList
+          conferences={conferences}
+          loading={conferencesLoading}
+          error={conferencesError}
+          league={league}
         />
       )}
     </View>
@@ -1205,7 +1434,7 @@ function CBBLeagueScreen() {
         onSelect={setSelectedConference}
         onOpen={() => setIsConferenceModalOpen(true)}
         onClose={() => setIsConferenceModalOpen(false)}
-        league="CBB"
+        league={league}
       />
     </>
   );
@@ -1216,7 +1445,7 @@ function CBBLeagueScreen() {
 /* ========================================================================== */
 
 function WCBBLeagueScreen() {
-  const league = "WCBB";
+  const league = "wcbb";
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
@@ -1277,6 +1506,9 @@ function WCBBLeagueScreen() {
     return Number.isFinite(conferenceId) ? conferenceId : null;
   }, [selectedConference]);
 
+  const { conferences, conferencesLoading, conferencesError } =
+    useConferenceStandings(league, selectedConferenceGroupId);
+
   /* ------------------------------------------------------------------------ */
   /*                                Calendar                                  */
   /* ------------------------------------------------------------------------ */
@@ -1324,7 +1556,7 @@ function WCBBLeagueScreen() {
     error: wcbbGamesError,
     refreshGames: refreshWCBBGames,
     loading: wcbbGamesLoading,
-  } = useBasketballGames(selectedDate, "wcbb", selectedConferenceGroupId);
+  } = useBasketballGames(selectedDate, league, selectedConferenceGroupId);
 
   const displayedGames = useMemo(() => {
     if (!selectedConference) {
@@ -1458,8 +1690,11 @@ function WCBBLeagueScreen() {
       {!selectedConferenceGroupId ? (
         <CBBStandingsList league={league} />
       ) : (
-        <CBBConferenceStandingsList
-          selectedConference={String(selectedConferenceGroupId)}
+        <ConferenceStandingsList
+          conferences={conferences}
+          loading={conferencesLoading}
+          error={conferencesError}
+          league={league}
         />
       )}
     </View>
@@ -1560,7 +1795,7 @@ function WCBBLeagueScreen() {
         onSelect={setSelectedConference}
         onOpen={() => setIsConferenceModalOpen(true)}
         onClose={() => setIsConferenceModalOpen(false)}
-        league="WCBB"
+        league={league}
       />
     </>
   );

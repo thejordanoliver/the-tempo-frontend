@@ -1,11 +1,16 @@
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
-import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
-import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
+
+import { getCBBTeamByESPNId, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getCFBTeamByESPNId, getCFBTeamLogo } from "@/constants/teamsCFB";
+import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import {
+  StandingConference,
+  StandingTeam,
+} from "@/hooks/BasketballHooks/useCBBConferenceStandings";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useCBBConferenceStandings } from "hooks/BasketballHooks/useCBBConferenceStandings";
 import {
   FlatList,
   Image,
@@ -14,44 +19,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
-  league?: "CBB" | "WCBB";
-  selectedConference?: string;
+  league: "cfb" | "cbb" | "wcbb";
+  selectedConference?: string | number;
+  conferences: StandingConference[];
+  loading: boolean;
+  error: string | null;
   onlyTeamConference?: boolean;
-  teamName?: string;
 };
 
-type ConferenceTeam = {
-  teamId?: number | string | null;
-  name?: string | null;
-  abbreviation?: string | null;
-  rank?: number | string | null;
-  overall?: string | null;
-  confOverall?: string | null;
-  divisionOverall?: string | null;
-  homeOverall?: string | null;
-  awayOverall?: string | null;
-  gamesBehind?: string | number | null;
-  streak?: string | number | null;
-  vsAPTop25?: string | null;
-  pointsFor?: string | number | null;
-  pointsAgainst?: string | number | null;
-};
-
-type ConferenceDivision = {
-  name: string;
-  teams: ConferenceTeam[];
-};
-
-type ConferenceStanding = {
-  id: string;
-  name: string;
-  abbreviation: string;
-  shortName: string;
-  divisions: ConferenceDivision[];
-};
+type ConferenceTeam = StandingTeam;
+type ConferenceStanding = StandingConference;
 
 function getStandingRankValue(rank: ConferenceTeam["rank"]) {
   const value = Number(rank);
@@ -74,109 +54,18 @@ function getStreakText(streak: ConferenceTeam["streak"]) {
   return String(streak);
 }
 
-function normalizeValue(value: unknown) {
-  return String(value ?? "")
-    .trim()
-    .toLowerCase();
-}
-
-function findTeamConferenceId(
-  conferences: ConferenceStanding[],
-  teamName?: string,
-) {
-  if (!teamName) return null;
-
-  const target = normalizeValue(teamName);
-
-  for (const conference of conferences) {
-    for (const division of conference.divisions ?? []) {
-      const foundTeam = division.teams?.find((team) => {
-        return (
-          normalizeValue(team.name) === target ||
-          normalizeValue(team.abbreviation) === target
-        );
-      });
-
-      if (foundTeam) {
-        return conference.id;
-      }
-    }
-  }
-
-  return null;
-}
-
-export const CBBConferenceStandingsList = ({
-  league = "CBB",
-  selectedConference,
-  teamName,
-  onlyTeamConference = false,
+export const ConferenceStandingsList = ({
+  league,
+  conferences,
+  loading,
+  error,
 }: Props) => {
-  const { conferences, loading, error } = useCBBConferenceStandings(league);
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
   const { isFavorite } = useFavoriteTeamsContext();
-  const isWCBB = league === "WCBB";
-  const getStandingTeam = (espnId?: string | number | null) =>
-    isWCBB ? getWCBBTeamByESPNId(espnId ?? 0) : getCBBTeamByESPNId(espnId ?? 0);
-
-  const safeConferences = Array.isArray(conferences)
-    ? (conferences as ConferenceStanding[])
-    : [];
-
-  const teamConferenceId = findTeamConferenceId(safeConferences, teamName);
-
-  const selectedConferenceId = onlyTeamConference
-    ? teamConferenceId
-    : selectedConference;
-
-  const selectedConferenceData =
-    selectedConferenceId && selectedConferenceId !== "top25"
-      ? safeConferences.find(
-          (conference) =>
-            String(conference.id) === String(selectedConferenceId),
-        )
-      : null;
-
-  const conferenceSections =
-    selectedConferenceId && selectedConferenceId !== "top25"
-      ? selectedConferenceData
-        ? [selectedConferenceData]
-        : []
-      : safeConferences;
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <StandingsSkeleton />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error}</Text>
-      </View>
-    );
-  }
-
-  if (conferenceSections.length < 0)
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>
-          No standings found for{" "}
-          {onlyTeamConference
-            ? "team conference"
-            : selectedConference || "selected conference"}
-          .
-        </Text>
-      </View>
-    );
 
   const renderLeftItem = ({
     item,
@@ -186,26 +75,29 @@ export const CBBConferenceStandingsList = ({
     index: number;
     isLastRow: boolean;
   }) => {
-    const espnId = item.teamId;
-    const team = getStandingTeam(espnId);
+    const espnId = item.id;
+    const team =
+      league === "cfb"
+        ? getCFBTeamByESPNId(espnId ?? 0)
+        : league === "cbb"
+          ? getCBBTeamByESPNId(espnId ?? 0)
+          : getWCBBTeamByESPNId(espnId ?? 0);
+
     const teamId = team?.id;
+
     const teamLogo =
-      espnId && teamId != null
-        ? isWCBB
-          ? getWCBBTeamLogo(teamId, isDark)
-          : getCBBTeamLogo(Number(teamId), isDark)
-        : null;
-    const teamCode = item.abbreviation || "-";
-    const favorited =
-      teamId != null ? isFavorite(league, String(teamId)) : false;
+      teamId && league === "cfb"
+        ? getCFBTeamLogo(teamId ?? 0, isDark)
+        : teamId && league === "cbb"
+          ? getCBBTeamLogo(teamId ?? 0, isDark)
+          : getWCBBTeamLogo(teamId ?? 0, isDark);
+
+    const teamCode = item.code || "-";
+    const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
 
     const handleTeamPress = () => {
-      if (teamId == null) return;
-
-      router.push({
-        pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/cbb/[teamId]",
-        params: { teamId: String(teamId) },
-      });
+      if (!teamId) return;
+      router.push(`/team/cfb/${teamId}`);
     };
 
     return (
@@ -227,11 +119,7 @@ export const CBBConferenceStandingsList = ({
           <Text style={styles.rankText}>{item.rank ?? "-"}</Text>
         </View>
 
-        <TouchableOpacity
-          disabled={teamId == null}
-          onPress={handleTeamPress}
-          style={styles.teamInfo}
-        >
+        <TouchableOpacity onPress={handleTeamPress} style={styles.teamInfo}>
           {teamLogo && <Image source={teamLogo} style={styles.logo} />}
 
           <Text style={styles.collegeTeamName}>{teamCode}</Text>
@@ -249,11 +137,10 @@ export const CBBConferenceStandingsList = ({
     isLastRow: boolean;
     showDivision: boolean;
   }) => {
-    const espnId = item.teamId;
-    const team = getStandingTeam(espnId);
+    const espnId = item.id;
+    const team = getCFBTeamByESPNId(espnId ?? 0);
     const teamId = team?.id;
-    const favorited =
-      teamId != null ? isFavorite(league, String(teamId)) : false;
+    const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
     const streakText = getStreakText(item.streak);
 
     const streakColor = streakText.startsWith("W")
@@ -405,7 +292,7 @@ export const CBBConferenceStandingsList = ({
               <View style={{ flexDirection: "row" }}>
                 <FlatList
                   data={sortedTeams}
-                  keyExtractor={(item) => String(item.teamId)}
+                  keyExtractor={(item) => String(item.id)}
                   renderItem={({ item, index }) =>
                     renderLeftItem({
                       item,
@@ -425,7 +312,7 @@ export const CBBConferenceStandingsList = ({
                 >
                   <FlatList
                     data={sortedTeams}
-                    keyExtractor={(item) => String(item.teamId)}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item, index }) =>
                       renderRightItem({
                         item,
@@ -446,21 +333,37 @@ export const CBBConferenceStandingsList = ({
     );
   }
 
-  if (conferenceSections.length < 0) {
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <StandingsSkeleton />
+      </View>
+    );
+  }
+
+  if (error) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyText}>No standings found for</Text>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (conferences.length < 0) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No standings found.</Text>
       </View>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
-      {conferenceSections.map((conference, index) => (
+      {conferences.map((conference, index) => (
         <ConferenceSection
           key={conference.id}
           conference={conference}
-          isLast={index === conferenceSections.length - 1}
+          isLast={index === conferences.length - 1}
         />
       ))}
     </ScrollView>

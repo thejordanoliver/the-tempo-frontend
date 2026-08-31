@@ -51,7 +51,7 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "CB";
+  const league = "cb";
   const currentSeason = getWNBASeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();

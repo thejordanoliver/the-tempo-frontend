@@ -6,14 +6,14 @@ import {
   getHolidayLabel,
   safeDate,
 } from "@/utils/dateUtils";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useRouter();
@@ -80,18 +80,14 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -100,7 +96,14 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -161,7 +164,7 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           <ScoreText
             score={awayScore}
             record={awayRecord}
-            teamWins={awayWins}
+            isWinner={awayWins}
           />
         </View>
 
@@ -179,7 +182,7 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           <ScoreText
             score={homeScore}
             record={homeRecord}
-            teamWins={homeWins}
+            isWinner={homeWins}
           />
         </View>
       </View>

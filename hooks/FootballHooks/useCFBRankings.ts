@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
+
 import { apiClient } from "utils/apiClient";
 
 /* ----------------------------- Types ----------------------------- */
@@ -15,7 +15,8 @@ export type CFBTeamRank = {
     id: string;
     nickname?: string;
     name?: string;
-    abbreviation: string;
+    code?: string;
+    abbreviation?: string;
     shortDisplayName?: string;
     location?: string;
     logos?: { href: string }[];
@@ -35,16 +36,198 @@ export type CFBTeamRank = {
 };
 
 export type CFBRankPoll = {
-  type: "ap" | "coaches" | "cfp";
+  type: "ap" | "coaches" | "cfp" | "fcs";
   shortName: string;
   ranks: CFBTeamRank[];
   droppedOut: CFBTeamRank[];
 };
 
+type PollType = CFBRankPoll["type"];
+
+type RawRankingsResponse = {
+  ap?: unknown;
+  associatedPress?: unknown;
+  apTop25?: unknown;
+  coaches?: unknown;
+  coachesPoll?: unknown;
+  cfp?: unknown;
+  playoff?: unknown;
+  cfpRankings?: unknown;
+  fcs?: unknown;
+  fcsCoaches?: unknown;
+  fcsCoachesPoll?: unknown;
+  fcsPoll?: unknown;
+  all?: unknown;
+};
+
 /* ----------------------------- Config ----------------------------- */
 
-const CACHE_KEY = "cfb_rankings_cache_v1";
-const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+const RANKINGS_ENDPOINT = "/api/standings/cfb/rankings";
+
+const POLL_NAMES: Record<PollType, string> = {
+  ap: "AP Poll",
+  coaches: "Coaches Poll",
+  cfp: "CFP Rankings",
+  fcs: "FCS Coaches Poll",
+};
+
+/* ----------------------------- Helpers ----------------------------- */
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const toStringValue = (value: unknown): string => {
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value);
+  }
+
+  return "";
+};
+
+const getPollSearchText = (poll: Record<string, unknown>): string => {
+  return [
+    poll.type,
+    poll.name,
+    poll.shortName,
+    poll.displayName,
+    poll.headline,
+    poll.description,
+    poll.id,
+  ]
+    .map(toStringValue)
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+};
+
+const containsFCSTeams = (poll: Record<string, unknown>): boolean => {
+  if (!Array.isArray(poll.ranks)) {
+    return false;
+  }
+
+  return poll.ranks.some((rank) => {
+    if (!isRecord(rank) || !isRecord(rank.team)) {
+      return false;
+    }
+
+    const groups = rank.team.groups;
+
+    if (!isRecord(groups)) {
+      return false;
+    }
+
+    const parent = groups.parent;
+
+    if (!isRecord(parent)) {
+      return false;
+    }
+
+    return toStringValue(parent.shortName).trim().toUpperCase() === "FCS";
+  });
+};
+
+const matchesPollType = (
+  poll: Record<string, unknown>,
+  type: PollType,
+): boolean => {
+  const searchText = getPollSearchText(poll);
+
+  const isFCS = searchText.includes("fcs") || containsFCSTeams(poll);
+
+  switch (type) {
+    case "fcs":
+      return isFCS;
+
+    case "ap":
+      return (
+        !isFCS &&
+        (searchText.includes("associated press") || /\bap\b/.test(searchText))
+      );
+
+    case "coaches":
+      return !isFCS && searchText.includes("coaches");
+
+    case "cfp":
+      return (
+        searchText.includes("cfp") ||
+        searchText.includes("college football playoff") ||
+        searchText.includes("playoff rankings")
+      );
+
+    default:
+      return false;
+  }
+};
+
+const hasPollData = (value: unknown): boolean => {
+  if (!isRecord(value)) {
+    return false;
+  }
+
+  if (Array.isArray(value.ranks)) {
+    return true;
+  }
+
+  if (!Array.isArray(value.polls)) {
+    return false;
+  }
+
+  return value.polls.some(
+    (poll) => isRecord(poll) && Array.isArray(poll.ranks),
+  );
+};
+
+const getAllPollCandidates = (
+  raw: RawRankingsResponse,
+): Record<string, unknown>[] => {
+  if (Array.isArray(raw.all)) {
+    return raw.all.filter(isRecord);
+  }
+
+  if (isRecord(raw.all)) {
+    return Object.values(raw.all).filter(isRecord);
+  }
+
+  return [];
+};
+
+const getDirectPollCandidates = (
+  raw: RawRankingsResponse,
+  type: PollType,
+): unknown[] => {
+  switch (type) {
+    case "ap":
+      return [raw.ap, raw.associatedPress, raw.apTop25];
+
+    case "coaches":
+      return [raw.coaches, raw.coachesPoll];
+
+    case "cfp":
+      return [raw.cfp, raw.playoff, raw.cfpRankings];
+
+    case "fcs":
+      return [raw.fcs, raw.fcsCoaches, raw.fcsCoachesPoll, raw.fcsPoll];
+
+    default:
+      return [];
+  }
+};
+
+const findPollData = (raw: RawRankingsResponse, type: PollType): unknown => {
+  const directMatch = getDirectPollCandidates(raw, type).find(hasPollData);
+
+  if (directMatch) {
+    return directMatch;
+  }
+
+  return getAllPollCandidates(raw).find(
+    (poll) => hasPollData(poll) && matchesPollType(poll, type),
+  );
+};
+
+const toTeamRanks = (value: unknown): CFBTeamRank[] => {
+  return Array.isArray(value) ? (value as CFBTeamRank[]) : [];
+};
 
 /* ----------------------------- Hook ----------------------------- */
 
@@ -53,162 +236,130 @@ export const useCFBRankings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /* ---------------- Cache Helpers ---------------- */
-
-  const saveCache = useCallback(async (data: CFBRankPoll[]) => {
-    try {
-      await AsyncStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({ timestamp: Date.now(), data }),
-      );
-    } catch (err) {
-      console.warn("⚠️ Failed to cache CFB rankings:", err);
-    }
-  }, []);
-
-  const loadCache = useCallback(async (): Promise<CFBRankPoll[] | null> => {
-    try {
-      const cached = await AsyncStorage.getItem(CACHE_KEY);
-      if (!cached) return null;
-
-      const { timestamp, data } = JSON.parse(cached);
-      if (Date.now() - timestamp < CACHE_TTL) {
-        return data;
-      }
-
-      console.log("⚠️ Cache expired — will refetch");
-      return null;
-    } catch (err) {
-      console.warn("⚠️ Failed to read CFB cache:", err);
-      return null;
-    }
-  }, []);
-
   /* ---------------- Normalize ---------------- */
 
-  const normalizePoll = useCallback((raw: any, type: CFBRankPoll["type"]): CFBRankPoll => {
-    if (!raw) {
+  const normalizePoll = useCallback(
+    (rawValue: unknown, type: PollType): CFBRankPoll => {
+      if (!isRecord(rawValue)) {
+        return {
+          type,
+          shortName: POLL_NAMES[type],
+          ranks: [],
+          droppedOut: [],
+        };
+      }
+
+      let pollData = rawValue;
+
+      if (Array.isArray(rawValue.polls)) {
+        const matchingNestedPoll = rawValue.polls.find(
+          (poll) => isRecord(poll) && matchesPollType(poll, type),
+        );
+
+        const firstNestedPoll = rawValue.polls.find(isRecord);
+
+        if (isRecord(matchingNestedPoll)) {
+          pollData = matchingNestedPoll;
+        } else if (isRecord(firstNestedPoll)) {
+          pollData = firstNestedPoll;
+        }
+      }
+
+      const shortName =
+        toStringValue(pollData.shortName) ||
+        toStringValue(pollData.name) ||
+        toStringValue(rawValue.shortName) ||
+        toStringValue(rawValue.name) ||
+        POLL_NAMES[type];
+
       return {
+        // The API currently labels the FCS poll as "ap".
+        // Always use the frontend's normalized poll type.
         type,
-        shortName:
-          type === "ap"
-            ? "AP Poll"
-            : type === "coaches"
-            ? "Coaches Poll"
-            : "CFP Rankings",
-        ranks: [],
-        droppedOut: [],
+        shortName,
+        ranks: toTeamRanks(pollData.ranks),
+        droppedOut: toTeamRanks(pollData.droppedOut),
       };
-    }
+    },
+    [],
+  );
 
-    const nested = raw.polls?.[0] || {};
+  const normalizeRankings = useCallback(
+    (rawValue: unknown): CFBRankPoll[] => {
+      const raw: RawRankingsResponse = isRecord(rawValue) ? rawValue : {};
 
-    return {
-      type,
-      shortName:
-        raw.shortName ||
-        nested.shortName ||
-        (type === "ap"
-          ? "AP Poll"
-          : type === "coaches"
-          ? "Coaches Poll"
-          : "CFP Rankings"),
-      ranks:
-        (Array.isArray(raw.ranks)
-          ? raw.ranks
-          : Array.isArray(nested.ranks)
-          ? nested.ranks
-          : []) || [],
-      droppedOut:
-        (Array.isArray(raw.droppedOut)
-          ? raw.droppedOut
-          : Array.isArray(nested.droppedOut)
-          ? nested.droppedOut
-          : []) || [],
-    };
-  }, []);
+      return (["ap", "coaches", "cfp", "fcs"] as const).map((type) =>
+        normalizePoll(findPollData(raw, type), type),
+      );
+    },
+    [normalizePoll],
+  );
+
+  /* ---------------- Request ---------------- */
+
+  const requestRankings = useCallback(async () => {
+    const response = await apiClient.get(RANKINGS_ENDPOINT);
+
+    const raw = response.data?.rankings ?? response.data ?? {};
+
+    return normalizeRankings(raw);
+  }, [normalizeRankings]);
 
   /* ---------------- Fetch Latest ---------------- */
 
   const fetchLatest = useCallback(async () => {
-    try {
-      const res = await apiClient.get("api/standings/cfb/rankings");
-
-      const raw = res.data.rankings || {};
-
-      const apData = raw.ap || raw.associatedPress || raw.apTop25;
-      const coachesData = raw.coaches || raw.coachesPoll;
-      const cfpData = raw.cfp || raw.playoff || raw.cfpRankings;
-
-      const polls = [
-        normalizePoll(apData, "ap"),
-        normalizePoll(coachesData, "coaches"),
-        normalizePoll(cfpData, "cfp"),
-      ];
-
-      setRankings(polls);
-      await saveCache(polls);
-    } catch (err: any) {
-      console.error("❌ Fetch latest rankings failed:", err);
-      setError(err.message || "Failed to fetch rankings");
-    }
-  }, [normalizePoll, saveCache]);
-
-  /* ---------------- Background Refresh ---------------- */
-
-  const fetchLatestInBackground = useCallback(async () => {
-    try {
-      const res = await apiClient.get("/api/cfb-rankings");
-
-      const raw = res.data.rankings || {};
-
-      const apData = raw.ap || raw.associatedPress || raw.apTop25;
-      const coachesData = raw.coaches || raw.coachesPoll;
-      const cfpData = raw.cfp || raw.playoff || raw.cfpRankings;
-
-      const polls = [
-        normalizePoll(apData, "ap"),
-        normalizePoll(coachesData, "coaches"),
-        normalizePoll(cfpData, "cfp"),
-      ];
-
-      setRankings(polls);
-      await saveCache(polls);
-    } catch (err) {
-      console.warn("⚠️ Background refresh failed:", err);
-    }
-  }, [normalizePoll, saveCache]);
-
-  /* ---------------- Main Fetch ---------------- */
-
-  const fetchRankings = useCallback(async () => {
-    setLoading(true);
     setError(null);
 
     try {
-      const cached = await loadCache();
+      const polls = await requestRankings();
+      setRankings(polls);
+    } catch (err: unknown) {
+      console.error("❌ Fetch CFB rankings failed:", err);
 
-      if (cached) {
-        setRankings(cached);
-        setLoading(false);
+      const message =
+        err instanceof Error ? err.message : "Failed to fetch rankings";
 
-        // 🔥 refresh silently
-        fetchLatestInBackground();
-        return;
-      }
-
-      await fetchLatest();
-    } catch (err: any) {
-      console.error("❌ useCFBRankings error:", err);
-      setError(err.message || "Failed to fetch rankings");
-    } finally {
-      setLoading(false);
+      setError(message);
     }
-  }, [fetchLatest, fetchLatestInBackground, loadCache]);
+  }, [requestRankings]);
+
+  /* ---------------- Initial Fetch ---------------- */
 
   useEffect(() => {
-    fetchRankings();
-  }, [fetchRankings]);
+    let isMounted = true;
+
+    const loadRankings = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const polls = await requestRankings();
+
+        if (isMounted) {
+          setRankings(polls);
+        }
+      } catch (err: unknown) {
+        console.error("❌ Initial CFB rankings fetch failed:", err);
+
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Failed to fetch rankings";
+
+          setError(message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadRankings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [requestRankings]);
 
   return {
     rankings,

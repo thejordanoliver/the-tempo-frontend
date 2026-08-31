@@ -6,7 +6,7 @@ const RANK_WIDTH = 40;
 const TEAM_COL_WIDTH = 60; // Increased to fit badge
 const STAT_COL_WIDTH = 70;
 
-export const standingsStyles = (isDark: boolean) =>
+export const StandingsStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainer: {
       paddingBottom: 100,
@@ -53,6 +53,8 @@ export const standingsStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       height: ROW_HEIGHT,
+      minHeight: ROW_HEIGHT,
+      maxHeight: ROW_HEIGHT,
       paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
@@ -200,20 +202,6 @@ export const standingsStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    errorText: {
-      marginTop: 20,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
-    emptyText: {
-      marginTop: 20,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
   });
 
-export const getStyles = standingsStyles;
+export const getStyles = StandingsStyles;

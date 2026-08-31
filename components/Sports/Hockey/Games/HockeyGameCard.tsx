@@ -5,7 +5,7 @@ import {
   getHolidayLabel,
   safeDate,
 } from "@/utils/dateUtils";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const router = useRouter();
@@ -81,19 +81,14 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -102,7 +97,14 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -158,7 +160,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
         <Text style={styles.teamName}>{awayName}</Text>
       </View>
       {/* Away Score / Record */}
-      <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
+      <ScoreText score={awayScore} record={awayRecord} isWinner={awayWins} />
 
       {/* headlineText */}
       <View style={styles.headlineContainer}>
@@ -174,7 +176,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
       </View>
 
       {/* Home Score / Record */}
-      <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
+      <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       {/* Home Team */}
       <View style={styles.teamSection}>

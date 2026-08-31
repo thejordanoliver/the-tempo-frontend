@@ -29,7 +29,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import { StatusBadge } from "./StatusBadge";
 import { PlayoffLeague, StatusLegend } from "./StatusLegend";
 
@@ -99,7 +99,7 @@ type LeagueConferenceConfig = {
 };
 
 export const leagueConferences: LeagueConferenceConfig = {
-  MLB: {
+  mlb: {
     conferences: {
       conferenceA: {
         name: "American League",
@@ -120,7 +120,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     },
   },
 
-  NFL: {
+  nfl: {
     conferences: {
       conferenceA: {
         name: "American Football Conference",
@@ -133,7 +133,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     },
   },
 
-  UFL: {
+  ufl: {
     conferences: {
       conferenceA: {
         name: "United Football League",
@@ -142,7 +142,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     },
   },
 
-  NBA: {
+  nba: {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
@@ -155,7 +155,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     },
   },
 
-  WNBA: {
+  wnba: {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
@@ -168,7 +168,7 @@ export const leagueConferences: LeagueConferenceConfig = {
     },
   },
 
-  NHL: {
+  nhl: {
     conferences: {
       conferenceA: {
         name: "Eastern Conference",
@@ -199,7 +199,7 @@ export const StandingsList = ({
   const { isFavorite } = useFavoriteTeamsContext();
 
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
 
@@ -322,23 +322,23 @@ export const StandingsList = ({
   }
 
   const getTeam = (item: StandingsTeam) => {
-    if (league === "NBA") {
+    if (league === "nba") {
       return getTeamByESPNId(Number(item.id));
     }
 
-    if (league === "WNBA") {
+    if (league === "wnba") {
       return getWNBATeamByESPNId(Number(item.id));
     }
 
-    if (league === "NFL") {
+    if (league === "nfl") {
       return getNFLTeamByESPNId(Number(item.id));
     }
 
-    if (league === "UFL") {
+    if (league === "ufl") {
       return getUFLTeam(Number(item.id));
     }
 
-    if (league === "MLB") {
+    if (league === "mlb") {
       return getMLBTeamByEspnId(item.id);
     }
 
@@ -346,23 +346,23 @@ export const StandingsList = ({
   };
 
   const getTeamRoute = () => {
-    if (league === "NBA") {
+    if (league === "nba") {
       return "/team/[teamId]" as const;
     }
 
-    if (league === "NFL") {
+    if (league === "nfl") {
       return "/team/nfl/[teamId]" as const;
     }
 
-    if (league === "UFL") {
+    if (league === "ufl") {
       return "/team/ufl/[teamId]" as const;
     }
 
-    if (league === "WNBA") {
+    if (league === "wnba") {
       return "/team/wnba/[teamId]" as const;
     }
 
-    if (league === "MLB") {
+    if (league === "mlb") {
       return "/team/mlb/[teamId]" as const;
     }
 
@@ -382,15 +382,15 @@ export const StandingsList = ({
     const route = getTeamRoute();
 
     const teamLogo =
-      league === "NBA"
+      league === "nba"
         ? getNBATeamLogo(team?.id, isDark)
-        : league === "WNBA"
+        : league === "wnba"
           ? getWNBATeamLogo(team?.id, isDark)
-          : league === "NFL"
+          : league === "nfl"
             ? getNFLTeamLogo(team?.id, isDark)
-            : league === "MLB"
+            : league === "mlb"
               ? getMLBTeamLogo(team?.id, isDark)
-              : league === "NHL"
+              : league === "nhl"
                 ? getNHLTeamLogo(team?.id, isDark)
                 : null;
     const id = team?.id ?? item.id;
@@ -660,7 +660,7 @@ export const StandingsList = ({
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>
-        {league !== "WNBA" && (
+        {league !== "wnba" && (
           <Dropdown
             options={viewOptions}
             selectedValue={sortMode}

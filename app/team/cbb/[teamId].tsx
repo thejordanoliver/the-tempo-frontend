@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
+import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -11,10 +11,12 @@ import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
+import { getCBBSeason } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
@@ -53,8 +55,8 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "CBB";
-  const currentSeason = 2027;
+  const league = "cbb";
+  const currentSeason = getCBBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
@@ -66,6 +68,11 @@ export default function TeamDetailScreen() {
   const team = getCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
+  const { teamDetails } = useTeamDetails(league, teamIdNum);
+  const conferenceId = teamDetails?.conferenceId;
+  const { conferences, conferencesLoading, conferencesError } =
+    useConferenceStandings(league, conferenceId);
+
   const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
@@ -86,8 +93,6 @@ export default function TeamDetailScreen() {
     syncPageScrollProgress(index);
     setSelectedTab(indexToTab(index));
   };
-
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
 
   const {
     articles,
@@ -130,7 +135,7 @@ export default function TeamDetailScreen() {
     error: gamesError,
     refresh: refreshTeamGames,
     season: scheduleSeason,
-  } = useBasketballTeamGames("cbb", espnId, currentSeason);
+  } = useBasketballTeamGames(league, espnId, currentSeason);
 
   const monthGroups = useMemo(() => {
     return months
@@ -330,9 +335,11 @@ export default function TeamDetailScreen() {
 
         {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
-          <CBBConferenceStandingsList
-            onlyTeamConference={true}
-            teamName={team.fullName}
+          <ConferenceStandingsList
+            conferences={conferences}
+            loading={conferencesLoading}
+            error={conferencesError}
+            league={league}
           />
         </View>
 

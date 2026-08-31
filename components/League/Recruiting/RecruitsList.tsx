@@ -32,7 +32,7 @@ import TeamRankCard from "./TeamRankCard";
 type Props = {
   year: string;
   team: string;
-  league: "CBB" | "CFB";
+  league: "cbb" | "cfb";
   view: "players" | "teams";
   onYearChange: (y: string) => void;
   onTeamChange: (t: string) => void;

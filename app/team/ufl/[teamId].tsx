@@ -26,7 +26,7 @@ import { CustomHeader } from "../../../components/CustomHeader";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
-  const league = "UFL";
+  const league = "ufl";
   const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

@@ -2,12 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { LEAGUE_TABS, TEAM_TABS } from "utils/tabs";
 
-const FALLBACK_LEAGUE_TABS = [
-  "scores",
-  "news",
-  "standings",
-  "forum",
-] as const;
+const FALLBACK_LEAGUE_TABS = ["scores", "news", "standings", "forum"] as const;
 
 const FALLBACK_TEAM_TABS = [
   "schedule",
@@ -19,19 +14,13 @@ const FALLBACK_TEAM_TABS = [
 ] as const;
 
 export function useLeagueTabs(league: string) {
-  const normalizedLeague = league.toUpperCase();
-
   const tabs = useMemo<readonly string[]>(() => {
     return (
-      LEAGUE_TABS[
-        normalizedLeague as keyof typeof LEAGUE_TABS
-      ] ?? FALLBACK_LEAGUE_TABS
+      LEAGUE_TABS[league as keyof typeof LEAGUE_TABS] ?? FALLBACK_LEAGUE_TABS
     );
-  }, [normalizedLeague]);
+  }, [league]);
 
-  const [selectedTab, setSelectedTab] = useState<string>(
-    tabs[0],
-  );
+  const [selectedTab, setSelectedTab] = useState<string>(tabs[0]);
 
   useEffect(() => {
     setSelectedTab(tabs[0]);
@@ -49,15 +38,11 @@ export function useTeamTabs(team: string) {
 
   const tabs = useMemo<readonly string[]>(() => {
     return (
-      TEAM_TABS[
-        normalizedTeam as keyof typeof TEAM_TABS
-      ] ?? FALLBACK_TEAM_TABS
+      TEAM_TABS[normalizedTeam as keyof typeof TEAM_TABS] ?? FALLBACK_TEAM_TABS
     );
   }, [normalizedTeam]);
 
-  const [selectedTab, setSelectedTab] = useState<string>(
-    tabs[0],
-  );
+  const [selectedTab, setSelectedTab] = useState<string>(tabs[0]);
 
   useEffect(() => {
     setSelectedTab(tabs[0]);

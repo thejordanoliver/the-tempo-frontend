@@ -16,11 +16,11 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { rosterStyles } from "styles/TeamStyles/RosterStyles";
 
 type SupportedRosterLeague =
-  | "MLB"
-  | "NHL"
-  | "NFL"
-  | "CFB"
-  | "SOCCER";
+  | "mlb"
+  | "nhl"
+  | "nfl"
+  | "cfb"
+  | "soccer";
 
 interface RosterProps {
   players: Player[];
@@ -92,7 +92,7 @@ function getPositionGroup(
 ) {
   const pos = (position ?? "").trim().toUpperCase();
 
-  if (league === "MLB") {
+  if (league === "mlb") {
     if (
       [
         "P",
@@ -147,7 +147,7 @@ function getPositionGroup(
     return "Other";
   }
 
-  if (league === "NHL") {
+  if (league === "nhl") {
     if (
       [
         "C",
@@ -185,7 +185,7 @@ function getPositionGroup(
     return "Other";
   }
 
-  if (league === "NFL" || league === "CFB") {
+  if (league === "nfl" || league === "cfb") {
     if (pos === "QB") return "QB";
     if (pos === "RB") return "RB";
     if (pos === "FB") return "FB";
@@ -219,7 +219,7 @@ function getPositionGroup(
 
   // This must come before basketball grouping because soccer uses
   // overlapping abbreviations such as G and F.
-  if (league === "SOCCER") {
+  if (league === "soccer") {
     if (
       ["F", "FW", "FORWARD", "ST", "STRIKER"].includes(pos)
     ) {
@@ -312,14 +312,14 @@ function sortPlayers(players: Player[]) {
 }
 
 function getGroupOrder(league?: SupportedRosterLeague) {
-  if (league === "MLB") return MLB_GROUP_ORDER;
-  if (league === "NHL") return NHL_GROUP_ORDER;
+  if (league === "mlb") return MLB_GROUP_ORDER;
+  if (league === "nhl") return NHL_GROUP_ORDER;
 
-  if (league === "NFL" || league === "CFB") {
+  if (league === "nfl" || league === "cfb") {
     return FOOTBALL_POSITION_ORDER;
   }
 
-  if (league === "SOCCER") {
+  if (league === "soccer") {
     return SOCCER_GROUP_ORDER;
   }
 

@@ -1,11 +1,25 @@
-import { Team } from "@/types/team";
+import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { getNBATeamLogo } from "constants/teams";
+import { getCBTeamLogo } from "constants/teamsCB";
+import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getCFBTeamLogo } from "constants/teamsCFB";
+import { getMLBTeamLogo } from "constants/teamsMLB";
+import { getNFLTeamLogo } from "constants/teamsNFL";
+import { getNHLTeamLogo } from "constants/teamsNHL";
+import { getSBTeamLogo } from "constants/teamsSB";
+import { getWNBATeamLogo } from "constants/teamsWNBA";
+import { usePreferences } from "contexts/PreferencesContext";
 import React, { useCallback, useMemo } from "react";
+import type { ImageSourcePropType } from "react-native";
 import { Animated, FlatList, StyleSheet } from "react-native";
+import { Team } from "types/team";
 import SearchBar from "../Explore/SearchBar";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
-import TeamCard from "./TeamCard";
+import SelectionCard from "./SelectionCard";
 
-type LeagueTeamWithId = Team & { id: number };
+type LeagueTeamWithId = Team & {
+  id: number;
+};
 
 type Props = {
   teams: Team[];
@@ -19,6 +33,49 @@ type Props = {
   setSearch: (t: string) => void;
 };
 
+const getTeamLogo = (
+  league: string,
+  id: number,
+  useAltLogo: boolean,
+): ImageSourcePropType | undefined => {
+  switch (league) {
+    case "cfb":
+      return getCFBTeamLogo(id, useAltLogo);
+
+    case "cbb":
+      return getCBBTeamLogo(id, useAltLogo);
+
+    case "wcbb":
+      return getWCBBTeamLogo(id, useAltLogo);
+
+    case "mlb":
+      return getMLBTeamLogo(id, useAltLogo);
+
+    case "cb":
+      return getCBTeamLogo(id, useAltLogo);
+
+    case "sb":
+      return getSBTeamLogo(id, useAltLogo);
+
+    case "nba":
+      return getNBATeamLogo(id, useAltLogo);
+
+    case "wnba":
+      return getWNBATeamLogo(id, useAltLogo);
+
+    case "nfl":
+      return getNFLTeamLogo(id, useAltLogo);
+
+    case "nhl":
+      return getNHLTeamLogo(id, useAltLogo);
+
+    default:
+      return undefined;
+  }
+};
+
+const COLLEGE_LEAGUES = new Set(["cfb", "cbb", "wcbb", "cb", "sb"]);
+
 const FavoriteTeamsSelector = ({
   teams,
   favorites,
@@ -30,8 +87,11 @@ const FavoriteTeamsSelector = ({
   setSearch,
   loading,
 }: Props) => {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+
   const styles = useMemo(
-    () => favoriteTeamsSelectorStyles(isGridView, itemWidth),
+    () => FavoritesSelectorStyles(isGridView, itemWidth),
     [isGridView, itemWidth],
   );
 
@@ -47,18 +107,25 @@ const FavoriteTeamsSelector = ({
   const renderItem = useCallback(
     ({ item }: { item: Team }) => {
       const key = `${item.league}:${item.id}`;
+      const isSelected = favoritesSet.has(key);
+
+      const useAltLogo = isDark || isSelected;
+
+      const logo = getTeamLogo(item.league, Number(item.id), useAltLogo);
 
       return (
-        <TeamCard
+        <SelectionCard
           item={item}
-          isSelected={favoritesSet.has(key)}
+          logo={logo}
+          isSelected={isSelected}
           onPress={handleToggle}
           isGridView={isGridView}
           itemWidth={itemWidth}
+          showSportTag={COLLEGE_LEAGUES.has(item.league)}
         />
       );
     },
-    [favoritesSet, handleToggle, isGridView, itemWidth],
+    [favoritesSet, handleToggle, isDark, isGridView, itemWidth],
   );
 
   const keyExtractor = useCallback(
@@ -80,7 +147,7 @@ const FavoriteTeamsSelector = ({
     [],
   );
 
-  if (loading)
+  if (loading) {
     return (
       <FavoriteTeamsSelectorSkeleton
         isGridView={isGridView}
@@ -88,6 +155,7 @@ const FavoriteTeamsSelector = ({
         fadeAnim={fadeAnim}
       />
     );
+  }
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
@@ -97,7 +165,7 @@ const FavoriteTeamsSelector = ({
         onFocus={() => {}}
         onBlur={() => {}}
         onChangeText={setSearch}
-        placeholder="Search teams or leagues..."
+        placeholder="Search teams..."
       />
 
       <FlatList
@@ -122,16 +190,18 @@ const FavoriteTeamsSelector = ({
   );
 };
 
-const favoriteTeamsSelectorStyles = (isGridView: boolean, itemWidth: number) =>
+export const FavoritesSelectorStyles = (isGridView: boolean, itemWidth: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
     },
+
     contentContainer: {
       flexGrow: 1,
       alignItems: isGridView ? "center" : "stretch",
       paddingBottom: 20,
     },
+
     columnWrapper: {
       justifyContent: "flex-start",
       gap: 12,

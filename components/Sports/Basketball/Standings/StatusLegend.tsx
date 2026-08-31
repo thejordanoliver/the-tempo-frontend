@@ -1,6 +1,6 @@
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 import HeadingTwo from "../../../Headings/HeadingTwo";
 import { StatusBadge } from "./StatusBadge";
 
@@ -32,7 +32,7 @@ export const statusCodeToColor: Record<string, string> = {
 export const StatusLegend = () => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
 
   return (
     <View style={styles.legendContainer}>

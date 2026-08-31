@@ -459,7 +459,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 60,
@@ -477,7 +477,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 58,
@@ -495,7 +495,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 55,
@@ -513,7 +513,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 56,
@@ -531,7 +531,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 86,
@@ -549,7 +549,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 61,
@@ -567,7 +567,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 65,
@@ -585,7 +585,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 98,
@@ -603,7 +603,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 100,
@@ -621,7 +621,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 93,
@@ -639,7 +639,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 94,
@@ -657,7 +657,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 75,
@@ -675,7 +675,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 72,
@@ -693,7 +693,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 71,
@@ -711,7 +711,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 78,
@@ -729,7 +729,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 77,
@@ -747,7 +747,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 70,
@@ -765,7 +765,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 79,
@@ -783,7 +783,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 73,
@@ -801,7 +801,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 82,
@@ -819,7 +819,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 85,
@@ -837,7 +837,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 83,
@@ -855,7 +855,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 87,
@@ -873,7 +873,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 88,
@@ -891,7 +891,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 89,
@@ -909,7 +909,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 90,
@@ -927,7 +927,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 91,
@@ -945,7 +945,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 95,
@@ -963,7 +963,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 99,
@@ -981,7 +981,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 104,
@@ -999,7 +999,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 103,
@@ -1017,7 +1017,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 96,
@@ -1035,7 +1035,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 81,
@@ -1053,7 +1053,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 92,
@@ -1071,7 +1071,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 101,
@@ -1089,7 +1089,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 102,
@@ -1107,7 +1107,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 62,
@@ -1125,7 +1125,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 63,
@@ -1143,7 +1143,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 57,
@@ -1161,7 +1161,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 76,
@@ -1179,7 +1179,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 64,
@@ -1197,7 +1197,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 74,
@@ -1215,7 +1215,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 67,
@@ -1233,7 +1233,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 66,
@@ -1251,7 +1251,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 69,
@@ -1269,7 +1269,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 80,
@@ -1287,7 +1287,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 68,
@@ -1305,7 +1305,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 97,
@@ -1323,7 +1323,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 84,
@@ -1341,7 +1341,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 148,
@@ -1359,7 +1359,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 151,
@@ -1377,7 +1377,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 127,
@@ -1395,7 +1395,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 121,
@@ -1413,7 +1413,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 106,
@@ -1431,7 +1431,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 116,
@@ -1449,7 +1449,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 118,
@@ -1467,7 +1467,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 117,
@@ -1485,7 +1485,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 146,
@@ -1503,7 +1503,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 149,
@@ -1521,7 +1521,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 137,
@@ -1539,7 +1539,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 138,
@@ -1557,7 +1557,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 124,
@@ -1575,7 +1575,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 153,
@@ -1593,7 +1593,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 139,
@@ -1611,7 +1611,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129,
@@ -1629,7 +1629,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 145,
@@ -1647,7 +1647,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 141,
@@ -1665,7 +1665,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 144,
@@ -1683,7 +1683,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 119,
@@ -1701,7 +1701,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 107,
@@ -1719,7 +1719,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 135,
@@ -1737,7 +1737,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 150,
@@ -1755,7 +1755,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 109,
@@ -1773,7 +1773,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 108,
@@ -1791,7 +1791,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 112,
@@ -1809,7 +1809,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 110,
@@ -1827,7 +1827,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 140,
@@ -1845,7 +1845,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 111,
@@ -1863,7 +1863,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 113,
@@ -1881,7 +1881,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 115,
@@ -1899,7 +1899,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 122,
@@ -1917,7 +1917,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 130,
@@ -1935,7 +1935,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 143,
@@ -1953,7 +1953,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 105,
@@ -1971,7 +1971,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 114,
@@ -1989,7 +1989,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 123,
@@ -2007,7 +2007,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 126,
@@ -2025,7 +2025,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 147,
@@ -2043,7 +2043,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 154,
@@ -2061,7 +2061,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 142,
@@ -2079,7 +2079,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 152,
@@ -2097,7 +2097,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 125,
@@ -2115,7 +2115,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 128,
@@ -2133,7 +2133,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 120,
@@ -2151,7 +2151,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 131,
@@ -2169,7 +2169,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 132,
@@ -2187,7 +2187,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 133,
@@ -2205,7 +2205,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 134,
@@ -2223,7 +2223,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 136,
@@ -2241,7 +2241,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 155,
@@ -2259,7 +2259,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 156,
@@ -2277,7 +2277,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 157,
@@ -2295,7 +2295,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 158,
@@ -2313,7 +2313,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 165,
@@ -2331,7 +2331,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 185,
@@ -2349,7 +2349,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 159,
@@ -2367,7 +2367,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 180,
@@ -2385,7 +2385,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 161,
@@ -2403,7 +2403,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 162,
@@ -2421,7 +2421,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 163,
@@ -2439,7 +2439,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 164,
@@ -2457,7 +2457,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 166,
@@ -2475,7 +2475,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 167,
@@ -2493,7 +2493,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 168,
@@ -2511,7 +2511,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 169,
@@ -2529,7 +2529,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Kent",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 170,
@@ -2547,7 +2547,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Beaumont",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 171,
@@ -2565,7 +2565,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 172,
@@ -2583,7 +2583,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lynchburg",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 173,
@@ -2601,7 +2601,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Ruston",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 174,
@@ -2619,7 +2619,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 175,
@@ -2637,7 +2637,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 176,
@@ -2655,7 +2655,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 177,
@@ -2673,7 +2673,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 197,
@@ -2691,7 +2691,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 178,
@@ -2709,7 +2709,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 179,
@@ -2727,7 +2727,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 183,
@@ -2745,7 +2745,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 184,
@@ -2763,7 +2763,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 186,
@@ -2781,7 +2781,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 187,
@@ -2799,7 +2799,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 188,
@@ -2817,7 +2817,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 189,
@@ -2835,7 +2835,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 190,
@@ -2853,7 +2853,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 193,
@@ -2871,7 +2871,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 191,
@@ -2890,7 +2890,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Cape Girardeau",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 194,
@@ -2909,7 +2909,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Baton Rouge",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 192,
@@ -2927,7 +2927,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Hattiesburg",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 195,
@@ -2945,7 +2945,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 196,
@@ -2963,7 +2963,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Stony Brook",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 198,
@@ -2981,7 +2981,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 199,
@@ -2999,7 +2999,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 200,
@@ -3017,7 +3017,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Houston",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 201,
@@ -3035,7 +3035,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lubbock",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 202,
@@ -3053,7 +3053,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 203,
@@ -3071,7 +3071,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "New Orleans",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 160,
@@ -3089,7 +3089,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Orlando",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 181,
@@ -3107,7 +3107,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 182,
@@ -3125,7 +3125,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 204,
@@ -3143,7 +3143,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 260,
@@ -3161,7 +3161,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 271,
@@ -3179,7 +3179,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 262,
@@ -3197,7 +3197,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 292,
@@ -3215,7 +3215,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 299,
@@ -3233,7 +3233,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 293,
@@ -3251,7 +3251,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 298,
@@ -3269,7 +3269,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 306,
@@ -3287,7 +3287,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 284,
@@ -3305,7 +3305,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 263,
@@ -3323,7 +3323,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 304,
@@ -3341,7 +3341,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 303,
@@ -3359,7 +3359,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 291,
@@ -3377,7 +3377,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 287,
@@ -3395,7 +3395,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 288,
@@ -3413,7 +3413,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 294,
@@ -3431,7 +3431,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 308,
@@ -3449,7 +3449,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 285,
@@ -3467,7 +3467,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 264,
@@ -3485,7 +3485,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 307,
@@ -3503,7 +3503,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 261,
@@ -3521,7 +3521,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 259,
@@ -3539,7 +3539,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 265,
@@ -3557,7 +3557,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 295,
@@ -3575,7 +3575,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 310,
@@ -3593,7 +3593,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 296,
@@ -3611,7 +3611,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 273,
@@ -3629,7 +3629,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 309,
@@ -3647,7 +3647,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 266,
@@ -3665,7 +3665,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 300,
@@ -3683,7 +3683,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 274,
@@ -3701,7 +3701,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 267,
@@ -3719,7 +3719,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 286,
@@ -3737,7 +3737,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 268,
@@ -3755,7 +3755,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 311,
@@ -3773,7 +3773,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 301,
@@ -3791,7 +3791,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 305,
@@ -3809,7 +3809,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 269,
@@ -3827,7 +3827,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 290,
@@ -3845,7 +3845,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 272,
@@ -3863,7 +3863,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 297,
@@ -3881,7 +3881,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 302,
@@ -3899,7 +3899,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 205,
@@ -3917,7 +3917,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 206,
@@ -3935,7 +3935,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 289,
@@ -3953,7 +3953,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 207,
@@ -3971,7 +3971,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 208,
@@ -3989,7 +3989,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 270,
@@ -4007,7 +4007,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 312,
@@ -4025,7 +4025,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 209,
@@ -4043,7 +4043,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 315,
@@ -4061,7 +4061,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 316,
@@ -4079,7 +4079,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 317,
@@ -4097,7 +4097,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 318,
@@ -4115,7 +4115,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 319,
@@ -4133,7 +4133,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 320,
@@ -4151,7 +4151,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 321,
@@ -4169,7 +4169,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 322,
@@ -4187,7 +4187,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 323,
@@ -4205,7 +4205,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 324,
@@ -4223,7 +4223,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 313,
@@ -4241,7 +4241,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Lewisburg",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 325,
@@ -4259,7 +4259,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 326,
@@ -4277,7 +4277,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 327,
@@ -4295,7 +4295,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 328,
@@ -4313,7 +4313,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 329,
@@ -4331,7 +4331,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 330,
@@ -4349,7 +4349,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 331,
@@ -4367,7 +4367,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 332,
@@ -4385,7 +4385,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 333,
@@ -4403,7 +4403,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 334,
@@ -4421,7 +4421,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 335,
@@ -4439,7 +4439,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 336,
@@ -4457,7 +4457,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 337,
@@ -4475,7 +4475,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 338,
@@ -4493,7 +4493,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 342,
@@ -4511,7 +4511,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 339,
@@ -4529,7 +4529,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 340,
@@ -4547,7 +4547,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 341,
@@ -4565,7 +4565,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 343,
@@ -4583,7 +4583,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 344,
@@ -4601,7 +4601,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 345,
@@ -4619,7 +4619,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 346,
@@ -4637,7 +4637,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 347,
@@ -4655,7 +4655,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 348,
@@ -4673,7 +4673,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 349,
@@ -4691,7 +4691,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 350,
@@ -4709,7 +4709,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 351,
@@ -4727,7 +4727,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 352,
@@ -4745,7 +4745,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 353,
@@ -4763,7 +4763,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 354,
@@ -4781,7 +4781,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 355,
@@ -4799,7 +4799,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 356,
@@ -4817,7 +4817,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 357,
@@ -4835,7 +4835,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 358,
@@ -4853,7 +4853,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 359,
@@ -4871,7 +4871,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 360,
@@ -4889,7 +4889,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 361,
@@ -4907,7 +4907,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 362,
@@ -4925,7 +4925,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 314,
@@ -4943,7 +4943,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 363,
@@ -4961,7 +4961,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 364,
@@ -4979,7 +4979,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 365,
@@ -4997,7 +4997,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 366,
@@ -5015,7 +5015,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 367,
@@ -5033,7 +5033,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 368,
@@ -5051,7 +5051,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 375,
@@ -5069,7 +5069,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 370,
@@ -5087,7 +5087,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 369,
@@ -5105,7 +5105,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 371,
@@ -5123,7 +5123,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 372,
@@ -5141,7 +5141,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 373,
@@ -5159,7 +5159,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 376,
@@ -5177,7 +5177,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 377,
@@ -5195,7 +5195,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 378,
@@ -5213,7 +5213,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 379,
@@ -5231,7 +5231,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 380,
@@ -5249,7 +5249,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 381,
@@ -5267,7 +5267,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 382,
@@ -5285,7 +5285,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 383,
@@ -5303,7 +5303,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 384,
@@ -5321,7 +5321,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 385,
@@ -5339,7 +5339,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 386,
@@ -5357,7 +5357,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 387,
@@ -5375,7 +5375,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 388,
@@ -5393,7 +5393,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 389,
@@ -5411,7 +5411,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 390,
@@ -5429,7 +5429,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 391,
@@ -5447,7 +5447,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 392,
@@ -5465,7 +5465,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 393,
@@ -5483,7 +5483,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 394,
@@ -5501,7 +5501,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 395,
@@ -5519,7 +5519,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 397,
@@ -5537,7 +5537,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 398,
@@ -5555,7 +5555,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 399,
@@ -5573,7 +5573,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 400,
@@ -5591,7 +5591,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 401,
@@ -5609,7 +5609,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 402,
@@ -5627,7 +5627,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 403,
@@ -5645,7 +5645,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 404,
@@ -5663,7 +5663,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 405,
@@ -5681,7 +5681,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 406,
@@ -5699,7 +5699,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 407,
@@ -5717,7 +5717,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 408,
@@ -5735,7 +5735,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 409,
@@ -5753,7 +5753,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 410,
@@ -5771,7 +5771,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 411,
@@ -5789,7 +5789,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 412,
@@ -5807,7 +5807,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 396,
@@ -5825,7 +5825,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 374,
@@ -5843,7 +5843,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 451,
@@ -5861,7 +5861,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 413,
@@ -5879,7 +5879,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 414,
@@ -5897,7 +5897,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 415,
@@ -5915,7 +5915,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 416,
@@ -5933,7 +5933,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 417,
@@ -5951,7 +5951,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 418,
@@ -5969,7 +5969,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 419,
@@ -5987,7 +5987,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 420,
@@ -6005,7 +6005,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 421,
@@ -6023,7 +6023,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 422,
@@ -6041,7 +6041,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 423,
@@ -6059,7 +6059,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 424,
@@ -6077,7 +6077,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 429,
@@ -6095,7 +6095,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 433,
@@ -6113,7 +6113,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 436,
@@ -6131,7 +6131,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 425,
@@ -6149,7 +6149,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 426,
@@ -6167,7 +6167,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 437,
@@ -6185,7 +6185,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 427,
@@ -6203,7 +6203,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 428,
@@ -6221,7 +6221,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 430,
@@ -6239,7 +6239,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 453,
@@ -6257,7 +6257,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 431,
@@ -6275,7 +6275,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 432,
@@ -6293,7 +6293,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 434,
@@ -6311,7 +6311,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 435,
@@ -6329,7 +6329,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 438,
@@ -6347,7 +6347,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 439,
@@ -6365,7 +6365,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 440,
@@ -6383,7 +6383,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 441,
@@ -6401,7 +6401,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Cookeville",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 443,
@@ -6419,7 +6419,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 444,
@@ -6437,7 +6437,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 445,
@@ -6455,7 +6455,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 446,
@@ -6473,7 +6473,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 447,
@@ -6491,7 +6491,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "Birmingham",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 448,
@@ -6509,7 +6509,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 450,
@@ -6527,7 +6527,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 449,
@@ -6545,7 +6545,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 452,
@@ -6563,7 +6563,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 442,
@@ -6581,7 +6581,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 456,
@@ -6599,7 +6599,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 454,
@@ -6617,7 +6617,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 455,
@@ -6635,7 +6635,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 459,
@@ -6653,7 +6653,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 457,
@@ -6671,7 +6671,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 458,
@@ -6689,7 +6689,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 460,
@@ -6707,7 +6707,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 461,
@@ -6725,7 +6725,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 462,
@@ -6743,7 +6743,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 821,
@@ -6761,7 +6761,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 822,
@@ -6779,7 +6779,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 824,
@@ -6797,7 +6797,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 825,
@@ -6815,7 +6815,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 833,
@@ -6833,7 +6833,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1143,
@@ -6851,7 +6851,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 826,
@@ -6869,7 +6869,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1139,
@@ -6887,7 +6887,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 827,
@@ -6905,7 +6905,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1105,
@@ -6923,7 +6923,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 828,
@@ -6941,7 +6941,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 829,
@@ -6959,7 +6959,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 836,
@@ -6977,7 +6977,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1067,
@@ -6995,7 +6995,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 928,
@@ -7013,7 +7013,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 830,
@@ -7031,7 +7031,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 935,
@@ -7049,7 +7049,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 831,
@@ -7067,7 +7067,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 847,
@@ -7085,7 +7085,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 832,
@@ -7103,7 +7103,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 834,
@@ -7121,7 +7121,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 926,
@@ -7139,7 +7139,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 929,
@@ -7157,7 +7157,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 823,
@@ -7175,7 +7175,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 837,
@@ -7193,7 +7193,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 838,
@@ -7211,7 +7211,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 849,
@@ -7229,7 +7229,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1103,
@@ -7247,7 +7247,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 839,
@@ -7265,7 +7265,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 840,
@@ -7283,7 +7283,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 835,
@@ -7301,7 +7301,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 842,
@@ -7319,7 +7319,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 841,
@@ -7337,7 +7337,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 843,
@@ -7355,7 +7355,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 844,
@@ -7373,7 +7373,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 850,
@@ -7391,7 +7391,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 845,
@@ -7409,7 +7409,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1145,
@@ -7427,7 +7427,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 846,
@@ -7445,7 +7445,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 924,
@@ -7463,7 +7463,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1147,
@@ -7481,7 +7481,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 932,
@@ -7499,7 +7499,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1146,
@@ -7517,7 +7517,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 851,
@@ -7535,7 +7535,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 852,
@@ -7553,7 +7553,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 463,
@@ -7571,7 +7571,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 853,
@@ -7589,7 +7589,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 464,
@@ -7607,7 +7607,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 465,
@@ -7625,7 +7625,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 466,
@@ -7643,7 +7643,7 @@ export const cbTeams: Team[] = [
     isAllStar: false,
     city: "New Haven",
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129701,
@@ -7661,7 +7661,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129702,
@@ -7679,7 +7679,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1281,
@@ -7697,7 +7697,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129760,
@@ -7715,7 +7715,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1248,
@@ -7733,7 +7733,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1280,
@@ -7751,7 +7751,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1286,
@@ -7769,7 +7769,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1282,
@@ -7787,7 +7787,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1274,
@@ -7805,7 +7805,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1190,
@@ -7823,7 +7823,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1276,
@@ -7841,7 +7841,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1247,
@@ -7859,7 +7859,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1189,
@@ -7877,7 +7877,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129698,
@@ -7895,7 +7895,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1148,
@@ -7913,7 +7913,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1277,
@@ -7931,7 +7931,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129706,
@@ -7949,7 +7949,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129700,
@@ -7967,7 +7967,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1279,
@@ -7985,7 +7985,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1238,
@@ -8003,7 +8003,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1191,
@@ -8021,7 +8021,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1275,
@@ -8039,7 +8039,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1278,
@@ -8057,7 +8057,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1197,
@@ -8075,7 +8075,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1246,
@@ -8093,7 +8093,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129762,
@@ -8111,7 +8111,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1273,
@@ -8129,7 +8129,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1287,
@@ -8147,7 +8147,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1245,
@@ -8165,7 +8165,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1153,
@@ -8183,7 +8183,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1154,
@@ -8201,7 +8201,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 1239,
@@ -8219,7 +8219,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129756,
@@ -8237,7 +8237,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129773,
@@ -8255,7 +8255,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129699,
@@ -8273,7 +8273,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
   {
     id: 129763,
@@ -8291,7 +8291,7 @@ export const cbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "CB"
+   league: "cb"
   },
 ];
 

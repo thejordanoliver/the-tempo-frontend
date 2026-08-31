@@ -40,7 +40,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 163,
@@ -59,7 +59,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 164,
@@ -78,7 +78,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 165,
@@ -97,7 +97,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 7326,
@@ -116,7 +116,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 166,
@@ -135,7 +135,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 167,
@@ -154,7 +154,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 168,
@@ -173,7 +173,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 169,
@@ -192,7 +192,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 170,
@@ -211,7 +211,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 171,
@@ -230,7 +230,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 7100,
@@ -249,7 +249,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 172,
@@ -268,7 +268,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 7870,
@@ -287,7 +287,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 175,
@@ -306,7 +306,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 3807,
@@ -325,7 +325,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 133384,
@@ -344,7 +344,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: true,
     isActive: false,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
   {
     id: 133383,
@@ -363,7 +363,7 @@ export const wnbaTeams: Team[] = [
     isAllStar: true,
     isActive: false,
     isNational: false,
-    league: "WNBA",
+   league: "wnba",
   },
 ];
 

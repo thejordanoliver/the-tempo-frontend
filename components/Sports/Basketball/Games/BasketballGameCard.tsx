@@ -1,7 +1,8 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -16,7 +17,7 @@ import {
   getHolidayLabel,
   safeDate,
 } from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 export default function BasketballGameCard({
   game,
@@ -24,6 +25,7 @@ export default function BasketballGameCard({
   isCBB,
   isWCBB,
   isWNBA,
+  isGLEAGUE,
 }: BasketballGameCardProps) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
@@ -60,7 +62,9 @@ export default function BasketballGameCard({
         ? getWNBATeam(homeId)
         : isSL
           ? getTeamBySummerId(homeId)
-          : getNBATeam(homeId);
+          : isGLEAGUE
+            ? getGLeagueTeam(homeId)
+            : getNBATeam(homeId);
 
   const awayTeam = isCBB
     ? getCBBTeam(awayId)
@@ -70,7 +74,11 @@ export default function BasketballGameCard({
         ? getWNBATeam(awayId)
         : isSL
           ? getTeamBySummerId(awayId)
-          : getNBATeam(awayId);
+          : isGLEAGUE
+            ? getGLeagueTeam(awayId)
+            : getNBATeam(awayId);
+
+            
 
   const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
   const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
@@ -81,7 +89,11 @@ export default function BasketballGameCard({
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getNBATeamLogo(homeId, isDark);
+        : isWNBA
+          ? getWNBATeamLogo(homeId, isDark)
+          : isGLEAGUE
+            ? getGLeagueTeamLogo(homeId, isDark)
+            : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -89,7 +101,9 @@ export default function BasketballGameCard({
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getNBATeamLogo(awayId, isDark);
+        : isGLEAGUE
+          ? getGLeagueTeamLogo(awayId, isDark)
+          : getNBATeamLogo(awayId, isDark);
 
   const headline = game?.headline || holidayLabel;
   const isChampionship =
@@ -138,19 +152,14 @@ export default function BasketballGameCard({
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -159,7 +168,14 @@ export default function BasketballGameCard({
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -218,7 +234,7 @@ export default function BasketballGameCard({
         </Text>
       </View>
       {/* Away Score / Record */}
-      <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
+      <ScoreText score={awayScore} record={awayRecord} isWinner={awayWins} />
 
       {/* headline */}
       <View style={styles.headlineContainer}>
@@ -234,7 +250,7 @@ export default function BasketballGameCard({
       </View>
 
       {/* Home Score / Record */}
-      <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
+      <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       {/* Home Team */}
       <View style={styles.teamSection}>

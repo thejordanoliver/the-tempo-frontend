@@ -14,7 +14,7 @@ type Props = {
 
 const CARD_HEIGHT = 130;
 
-export default function FavoriteTeamsSelectorSkeleton({
+export default function FavoritesSelectorSkeleton({
   isGridView,
   itemWidth,
   fadeAnim,
@@ -24,7 +24,7 @@ export default function FavoriteTeamsSelectorSkeleton({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(
-    () => favoriteTeamsSelectorSkeletonStyles(isDark, isGridView, itemWidth),
+    () => FavoritesSelectorSkeletonStyles(isDark, isGridView, itemWidth),
     [isDark, isGridView, itemWidth],
   );
 
@@ -94,7 +94,7 @@ export default function FavoriteTeamsSelectorSkeleton({
   );
 }
 
-const favoriteTeamsSelectorSkeletonStyles = (
+const FavoritesSelectorSkeletonStyles = (
   isDark: boolean,
   isGridView: boolean,
   itemWidth: number,
@@ -104,7 +104,6 @@ const favoriteTeamsSelectorSkeletonStyles = (
   return StyleSheet.create({
     container: {
       flex: 1,
-
     },
     contentContainer: {
       flexGrow: 1,

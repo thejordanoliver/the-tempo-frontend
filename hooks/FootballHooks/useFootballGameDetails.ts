@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import type { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import type { Predictor } from "../BasketballHooks/useBasketballGameDetails";
@@ -379,18 +379,6 @@ export type Score = {
   scoringPlays: ScoringPlays;
   plays?: PlayObject[];
   lastPlay: PlayObject | null;
-  possession?: {
-    teamId?: FootballId;
-    teamEspnId?: FootballId;
-    team?: FootballTeamReference | null;
-    shortDownDistanceText?: string | null;
-    downDistanceText?: string | null;
-    yardLine?: number | string | null;
-    down?: number | string | null;
-    distance?: number | string | null;
-    possessionText?: string | null;
-    isRedZone?: boolean | null;
-  } | null;
 
   drives: {
     previous: FootballDrive[];

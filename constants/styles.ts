@@ -188,7 +188,7 @@ export const globalStyles = (isDark: boolean) =>
     emptyText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      color: Colors.midTone,
+      color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
     emptySubText: {

@@ -52,6 +52,7 @@ import SoccerSquareGameCard from "../Sports/Soccer/Games/SoccerSquareGameCard";
 import SoccerStackedGameCard from "../Sports/Soccer/Games/SoccerStackedGameCard";
 
 const NBA_LEAGUE_ID = 46;
+const G_LEAGUE_ID = 69;
 const NBA_SUMMER_LEAGUE_ID = 46;
 const NCAA_FOOTBALL_LEAGUE_ID = 23;
 const NFL_FOOTBALL_LEAGUE_ID = 28;
@@ -72,6 +73,7 @@ const FOOTBALL_PREVIEW_CATEGORIES = ["NFL", "UFL", "College Football"];
 const HOCKEY_PREVIEW_CATEGORIES = ["NHL", "Men's College Hockey"];
 const BASKETBALL_PREVIEW_CATEGORIES = [
   "NBA",
+  "G League",
   "Men's College Basketball",
   "Women's College Basketball",
   "WNBA",
@@ -111,6 +113,10 @@ export const getCategoryForFavorites = (item: CombinedGame): LeagueCategory => {
   // NBA Summer League
   if (league.id === NBA_LEAGUE_ID) {
     return "NBA";
+  }
+  // NBA Summer League
+  if (league.id === G_LEAGUE_ID) {
+    return "G League";
   }
 
   // Women's CBB
@@ -181,7 +187,7 @@ export const getCategoryForFavorites = (item: CombinedGame): LeagueCategory => {
     return "German Bundesliga";
   }
 
-   // Leagues Cup
+  // Leagues Cup
   if (league.id === LEAGUES_CUP_ID) {
     return "Leagues Cup";
   }
@@ -360,6 +366,37 @@ export default function LeagueGamesList({
       if (viewMode === "grid")
         return wrapper(<BasketballSquareGameCard game={slGame} />, index);
       return wrapper(<BasketballStackedGameCard game={slGame} />);
+    }
+    // ✅ G League
+    if (category === "G League") {
+      const gLeagueGame = item as BasketballGame;
+      if (viewMode === "list")
+        return wrapper(
+          <BasketballGameCard
+            game={gLeagueGame}
+            isCBB={false}
+            isWCBB={false}
+            isGLEAGUE={true}
+          />,
+        );
+      if (viewMode === "grid")
+        return wrapper(
+          <BasketballSquareGameCard
+            game={gLeagueGame}
+            isCBB={false}
+            isWCBB={false}
+            isGLEAGUE={true}
+          />,
+          index,
+        );
+      return wrapper(
+        <BasketballStackedGameCard
+          game={gLeagueGame}
+          isCBB={false}
+          isWCBB={false}
+          isGLEAGUE={true}
+        />,
+      );
     }
 
     // ✅ NFL
@@ -636,6 +673,7 @@ export default function LeagueGamesList({
 
     switch (category) {
       case "NBA":
+      case "G League":
       case "WNBA":
       case "NBA Summer League":
       case "College Football":
@@ -797,6 +835,7 @@ export default function LeagueGamesList({
           isWCBB={previewCategory === "Women's College Basketball"}
           isWNBA={previewCategory === "WNBA"}
           isSL={previewCategory === "NBA Summer League"}
+          isGLEAGUE={previewCategory === "G League"}
           onClose={() => setModalVisible(false)}
         />
       )}

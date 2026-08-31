@@ -4,13 +4,8 @@ import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCar
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
+import React from "react";
 import { FlatList, Text, View, ViewStyle } from "react-native";
-import {
-  LongPressGestureHandler,
-  State,
-} from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import RacingGameCard from "./RacingGameCard";
 import RacingSquareGameCard from "./RacingSquareGameCard";
@@ -67,30 +62,11 @@ export default function GamesList({
    */
   const safeGames = Array.isArray(games) ? games : [];
 
-  const [previewGame, setPreviewGame] = useState<GameListItem | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleLongPress = (game: GameListItem) => {
-    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-    setPreviewGame(game);
-    setModalVisible(true);
-  };
-
   const renderGameCard = (game: GameListItem) => {
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <LongPressGestureHandler
-        minDurationMs={300}
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.ACTIVE) {
-            handleLongPress(game);
-          }
-        }}
-      >
-        <View style={viewMode === "grid" ? styles.gridItem : undefined}>
-          {children}
-        </View>
-      </LongPressGestureHandler>
+      <View style={viewMode === "grid" ? styles.gridItem : undefined}>
+        {children}
+      </View>
     );
 
     if (viewMode === "list") {
@@ -165,21 +141,12 @@ export default function GamesList({
               );
             }
 
-            const isLastOddItem =
-              count % 2 === 1 && index === count - 1;
+            const isLastOddItem = count % 2 === 1 && index === count - 1;
 
             const itemStyle: ViewStyle = {
               flex: 1,
-              marginLeft: isLastOddItem
-                ? 12
-                : index % 2 === 0
-                  ? 12
-                  : 6,
-              marginRight: isLastOddItem
-                ? 12
-                : index % 2 === 0
-                  ? 6
-                  : 12,
+              marginLeft: isLastOddItem ? 12 : index % 2 === 0 ? 12 : 6,
+              marginRight: isLastOddItem ? 12 : index % 2 === 0 ? 6 : 12,
             };
 
             return <SquareGameCardSkeleton style={itemStyle} />;
@@ -217,14 +184,8 @@ export default function GamesList({
   if (safeGames.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>
-          {day === "todayTomorrow"
-            ? "No engines firing up today."
-            : "The track was quiet on this date."}
-        </Text>
-        <Text style={global.emptyText}>
-          The next green flag is coming up.
-        </Text>
+        <Text style={global.emptyTitle}>No engines firing up today...</Text>
+        <Text style={global.emptyText}>The next green flag is coming up.</Text>
       </View>
     );
   }
@@ -245,9 +206,7 @@ export default function GamesList({
       <FlatList
         data={gridData}
         keyExtractor={(item, index) =>
-          isGridPlaceholder(item)
-            ? item.placeholderId
-            : getGameKey(item, index)
+          isGridPlaceholder(item) ? item.placeholderId : getGameKey(item, index)
         }
         numColumns={2}
         columnWrapperStyle={styles.gridRow}

@@ -22,7 +22,7 @@ import {
 
 type Props = {
   recruit: Recruit;
-  league: "CBB" | "CFB";
+  league: "cbb" | "cfb";
   index: number;
 };
 
@@ -108,7 +108,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
       }
 
       const logo =
-        league === "CFB"
+        league === "cfb"
           ? getCFBTeamLogo(committedTeamId, isDark)
           : getCBBTeamLogo(committedTeamId, isDark);
 
@@ -155,7 +155,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     }
 
     const logo =
-      league === "CFB"
+      league === "cfb"
         ? getCFBTeamLogo(teamId, isDark)
         : getCBBTeamLogo(teamId, isDark);
 

@@ -11,7 +11,7 @@ import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   item: RecruitTeamRanking;
-  league: "CBB" | "CFB";
+  league: "cbb" | "cfb";
   index: number;
 };
 
@@ -57,9 +57,9 @@ export default function TeamRankCard({ item, index, league }: Props) {
 
   const teamId = item.team_id ?? 0;
   const logo =
-    league === "CFB"
+    league === "cfb"
       ? getCFBTeamLogo(teamId, isDark)
-      : league === "CBB"
+      : league === "cbb"
         ? getCBBTeamLogo(teamId, isDark)
         : null;
 

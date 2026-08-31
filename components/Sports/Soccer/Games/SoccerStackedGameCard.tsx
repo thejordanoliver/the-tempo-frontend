@@ -6,11 +6,11 @@ import {
   getHolidayLabel,
   safeDate,
 } from "@/utils/dateUtils";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
@@ -71,36 +71,36 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
   const endOfPeriod = gameStatusDescription === "End of Period";
   const isTie = isFinal && !homeWins && !awayWins && homeScore === awayScore;
 
-  const winnerStyle = (teamWins: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: !isFinal || isTie ? 1 : teamWins ? 1 : 0.35,
-    fontWeight: isFinal && teamWins ? ("700" as const) : ("500" as const),
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins = false,
+    isWinner,
   }: {
     score: number;
-    record: string;
-    teamWins: boolean;
+    record: string | undefined;
+    isWinner: boolean;
   }) => {
-    const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
+    const showRecord = isScheduled;
 
     return (
       <Text
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
       </Text>
     );
   };
-
   const renderStatus = () => {
     if (inProgress && !endOfPeriod && !isDelayed && !isHalftime) {
       return (
@@ -153,7 +153,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
           <ScoreText
             score={awayScore}
             record={awayRecord}
-            teamWins={awayWins}
+            isWinner={awayWins}
           />
         </View>
 
@@ -172,7 +172,7 @@ export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
           <ScoreText
             score={homeScore}
             record={homeRecord}
-            teamWins={homeWins}
+            isWinner={homeWins}
           />
         </View>
       </View>

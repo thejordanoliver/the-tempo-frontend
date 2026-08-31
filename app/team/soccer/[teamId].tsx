@@ -170,7 +170,7 @@ export default function TeamDetailScreen() {
             error={playersError}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            league="SOCCER"
+            league={"soccer"}
           />
         </View>
       </PagerView>

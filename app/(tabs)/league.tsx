@@ -5,223 +5,20 @@ import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType, ListRenderItem } from "react-native";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
 
-import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
-import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
-import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
-import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
-import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
-import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
-import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
-import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
-import UFLLightLogo from "assets/Football/UFL_Logos/UFLLight.png";
-import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
-import UFCLogo from "assets/MMA/MMA_Logos/UFC.png";
-import NBALogo from "assets/NBA/Logos/NBA.png";
-import F1Logo from "assets/Racing/Logos/f1.png";
-import NascarLogo from "assets/Racing/Logos/Nascar.png";
-import NascarLightLogo from "assets/Racing/Logos/NascarLight.png";
-import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
-import BundesligaLightLogo from "assets/Soccer/Logos/BundesligaLight.png";
-import EPLLogo from "assets/Soccer/Logos/EPL.png";
-import LeaguesCupLogo from "assets/Soccer/Logos/LeaguesCup.png";
-import LeaguesCupLogoLight from "assets/Soccer/Logos/LeaguesCupLight.png";
-import MLSLogo from "assets/Soccer/Logos/MLS.png";
-import UEFAChampionsLogo from "assets/Soccer/Logos/UEFAChampions.png";
-import UEFAChampionsLightLogo from "assets/Soccer/Logos/UEFAChampionsLight.png";
-import UEFAEuropaLogo from "assets/Soccer/Logos/UEFAEuropa.png";
-import UEFAEuropaLightLogo from "assets/Soccer/Logos/UEFAEuropaLight.png";
-import WorldCupLogo from "assets/Soccer/Logos/WorldCup.png";
-import WorldCupLightLogo from "assets/Soccer/Logos/WorldCupLight.png";
-import WNBALogo from "assets/WNBA/Logos/WNBA.png";
-
 import SearchBar from "@/components/Explore/SearchBar";
+import {
+  BROWSEABLE_LEAGUES,
+  LEAGUE_CONFIG,
+} from "@/constants/leagues";
 import { CustomHeader } from "../../components/CustomHeader";
 import { Colors, globalStyles } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { LeagueType } from "../../types/types";
 
-type LeagueRoute =
-  | "/league/basketball"
-  | "/league/football"
-  | "/league/baseball"
-  | "/league/hockey"
-  | "/league/mma"
-  | "/league/racing"
-  | "/league/socc";
-
-type LeagueConfig = {
-  label: string;
-  logo: ImageSourcePropType;
-  logoLight: ImageSourcePropType;
-};
-
-const leagues: LeagueType[] = [
-  "NBA",
-  "WNBA",
-  "NFL",
-  "MLB",
-  "NHL",
-  "CFB",
-  "CB",
-  "SB",
-  "CBB",
-  "WCBB",
-  "UFC",
-  "UFL",
-  "EPL",
-  "MLS",
-  "CHAMPIONS",
-  "EUROPA",
-  "BUNDESLIGA",
-  "LEAGUESCUP",
-  "FIFA",
-  "F1",
-  "NASCARPREMIER",
-];
-
-const leagueConfig: Record<LeagueType, LeagueConfig> = {
-  NBA: {
-    label: "NBA",
-    logo: NBALogo,
-    logoLight: NBALogo,
-  },
-  WNBA: {
-    label: "WNBA",
-    logo: WNBALogo,
-    logoLight: WNBALogo,
-  },
-  NFL: {
-    label: "NFL",
-    logo: NFLLogo,
-    logoLight: NFLLogo,
-  },
-  MLB: {
-    label: "MLB",
-    logo: MLBLogo,
-    logoLight: MLBLogo,
-  },
-  NHL: {
-    label: "NHL",
-    logo: NHLLogo,
-    logoLight: NHLLogo,
-  },
-  CFB: {
-    label: "College Football",
-    logo: CFBLogo,
-    logoLight: CFBLogo,
-  },
-  CB: {
-    label: "College Baseball",
-    logo: CBLogo,
-    logoLight: CBLogo,
-  },
-  SB: {
-    label: "College Softball",
-    logo: SBLogo,
-    logoLight: SBLogo,
-  },
-  CBB: {
-    label: "Men's College Basketball",
-    logo: CBBLogo,
-    logoLight: CBBLogo,
-  },
-  WCBB: {
-    label: "Women's College Basketball",
-    logo: WCBBLogo,
-    logoLight: WCBBLogo,
-  },
-  UFC: {
-    label: "UFC",
-    logo: UFCLogo,
-    logoLight: UFCLogo,
-  },
-  UFL: {
-    label: "UFL",
-    logo: UFLLogo,
-    logoLight: UFLLightLogo,
-  },
-  EPL: {
-    label: "English Premier League",
-    logo: EPLLogo,
-    logoLight: EPLLogo,
-  },
-  MLS: {
-    label: "MLS",
-    logo: MLSLogo,
-    logoLight: MLSLogo,
-  },
-  CHAMPIONS: {
-    label: "UEFA Champions League",
-    logo: UEFAChampionsLogo,
-    logoLight: UEFAChampionsLightLogo,
-  },
-  EUROPA: {
-    label: "UEFA Europa League",
-    logo: UEFAEuropaLogo,
-    logoLight: UEFAEuropaLightLogo,
-  },
-  BUNDESLIGA: {
-    label: "German Bundesliga",
-    logo: BundesligaLogo,
-    logoLight: BundesligaLightLogo,
-  },
-  LEAGUESCUP: {
-    label: "Leagues Cup",
-    logo: LeaguesCupLogo,
-    logoLight: LeaguesCupLogoLight,
-  },
-  FIFA: {
-    label: "FIFA World Cup",
-    logo: WorldCupLogo,
-    logoLight: WorldCupLightLogo,
-  },
-  FIFAW: {
-    label: "FIFA Women's World Cup",
-    logo: WorldCupLogo,
-    logoLight: WorldCupLightLogo,
-  },
-  F1: {
-    label: "F1",
-    logo: F1Logo,
-    logoLight: F1Logo,
-  },
-  NASCARPREMIER: {
-    label: "NASCAR Premier",
-    logo: NascarLogo,
-    logoLight: NascarLightLogo,
-  },
-};
-
-const leagueRoutes: Partial<Record<LeagueType, LeagueRoute>> = {
-  NBA: "/league/basketball",
-  WNBA: "/league/basketball",
-  CBB: "/league/basketball",
-  WCBB: "/league/basketball",
-  NFL: "/league/football",
-  UFL: "/league/football",
-  CFB: "/league/football",
-  CB: "/league/baseball",
-  SB: "/league/baseball",
-  MLB: "/league/baseball",
-  NHL: "/league/hockey",
-  UFC: "/league/mma",
-  F1: "/league/racing",
-  NASCARPREMIER: "/league/racing",
-  EPL: "/league/socc",
-  MLS: "/league/socc",
-  CHAMPIONS: "/league/socc",
-  EUROPA: "/league/socc",
-  BUNDESLIGA: "/league/socc",
-  LEAGUESCUP: "/league/socc",
-  FIFA: "/league/socc",
-  FIFAW: "/league/socc",
-};
-
 export default function LeagueScreen() {
   const navigation = useNavigation();
   const router = useRouter();
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -231,7 +28,7 @@ export default function LeagueScreen() {
 
   const leagueLogos = useMemo<Record<LeagueType, ImageSourcePropType>>(() => {
     return Object.fromEntries(
-      Object.entries(leagueConfig).map(([league, config]) => [
+      Object.entries(LEAGUE_CONFIG).map(([league, config]) => [
         league,
         isDark ? config.logoLight : config.logo,
       ]),
@@ -262,11 +59,11 @@ export default function LeagueScreen() {
     const normalizedSearch = searchQuery.trim().toLowerCase();
 
     if (!normalizedSearch) {
-      return leagues;
+      return BROWSEABLE_LEAGUES;
     }
 
-    return leagues.filter((league) => {
-      const config = leagueConfig[league];
+    return BROWSEABLE_LEAGUES.filter((league) => {
+      const config = LEAGUE_CONFIG[league];
 
       const searchableText = [
         league,
@@ -282,17 +79,13 @@ export default function LeagueScreen() {
 
   const goToLeague = useCallback(
     (league: LeagueType) => {
-      const route = leagueRoutes[league];
-
-      if (!route) {
-        return;
-      }
+      const config = LEAGUE_CONFIG[league];
 
       router.push({
-        pathname: route,
+        pathname: config.route,
         params: {
           league,
-          leagueLabel: leagueConfig[league].label,
+          leagueLabel: config.label,
         },
       });
     },
@@ -301,7 +94,7 @@ export default function LeagueScreen() {
 
   const renderLeague: ListRenderItem<LeagueType> = useCallback(
     ({ item: league, index }) => {
-      const { label } = leagueConfig[league];
+      const { label } = LEAGUE_CONFIG[league];
       const logo = leagueLogos[league];
       const isLastRow = index === filteredLeagues.length - 1;
 

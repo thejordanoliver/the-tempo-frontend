@@ -75,6 +75,7 @@ export default function PlayerDetailScreen() {
     : getCFBTeamLogo(teamId, true);
   const isActive = player?.active;
 
+
   /* ---------------- Last game ---------------- */
   const {
     game,

@@ -30,7 +30,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 132261,
@@ -49,7 +49,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 112646,
@@ -68,7 +68,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 112647,
@@ -87,7 +87,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 126075,
@@ -106,7 +106,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 132262,
@@ -125,7 +125,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 132263,
@@ -144,7 +144,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
   {
     id: 112651,
@@ -163,7 +163,7 @@ export const uflTeams: Team[] = [
     isAllStar: false,
     isActive: false,
     isNational: false,
-    league: "UFL"
+   league: "ufl"
   },
 ];
 

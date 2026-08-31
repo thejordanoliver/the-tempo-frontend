@@ -5,6 +5,7 @@ import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEve
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
+import { useLiveVotes } from "@/hooks/useLiveVotes";
 import { useVenue } from "@/hooks/useVenue";
 import { SoccerGameCardProps } from "@/types/soccer/soccer";
 import {
@@ -160,6 +161,7 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
   const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
 
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
@@ -343,6 +345,8 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              votes={liveVotes}
+              castVote={castLiveVote}
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}

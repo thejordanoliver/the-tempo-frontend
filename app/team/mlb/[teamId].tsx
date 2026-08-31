@@ -55,7 +55,7 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "MLB";
+  const league = "mlb";
   const navigation = useNavigation();
   const currentSeason = getMLBSeason();
   const { resolvedColorScheme } = usePreferences();
@@ -342,7 +342,7 @@ export default function TeamDetailScreen() {
           <StandingsList
             year={standingsYear}
             onYearChange={setStandingsYear}
-            league="MLB"
+            league={league}
           />
         </View>
 

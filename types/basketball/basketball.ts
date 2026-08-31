@@ -99,6 +99,7 @@ export type BasketballGameCardProps = {
   isCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
+  isGLEAGUE?: boolean;
 };
 
 export type CardLayout = {

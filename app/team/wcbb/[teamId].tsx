@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/CBBConferenceStandingsList";
+import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";

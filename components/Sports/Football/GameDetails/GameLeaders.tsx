@@ -519,7 +519,7 @@ export default function GameLeaders({
           const player = entry.athlete;
 
           const playerId = player.id ?? player.espnId;
-
+        
           const playerName =
             player.shortName ??
             player.displayName ??

@@ -16,6 +16,7 @@ import { Animated } from "react-native";
 import type { Team } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
+import { useFavoriteSports } from "./useFavoriteSports";
 
 export type TeamWithLeague = Team & {
   league: string;
@@ -41,6 +42,8 @@ export function useFavoriteTeams() {
   const loadRequestId = useRef(0);
   const router = useRouter();
   const pathname = usePathname();
+  const favoriteSportsState = useFavoriteSports(userId);
+  const { clearFavoriteSports } = favoriteSportsState;
 
   /* ---------------- TEAM ID HELPER ---------------- */
 
@@ -100,7 +103,8 @@ const filteredTeams = useMemo(() => {
     setIsLoading(false);
     setPreviewTeam(null);
     setModalVisible(false);
-  }, []);
+    clearFavoriteSports();
+  }, [clearFavoriteSports]);
 
   /* ---------------- LOAD FAVORITES ---------------- */
 
@@ -505,5 +509,7 @@ const filteredTeams = useMemo(() => {
     handleLongPress,
     handleGoToTeam,
     handleRemoveFavorite,
+
+    ...favoriteSportsState,
   };
 }

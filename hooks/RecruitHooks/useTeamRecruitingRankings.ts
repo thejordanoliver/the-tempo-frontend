@@ -80,7 +80,7 @@ function normalizeTeamName(value: string | null | undefined) {
 
 export function useTeamRecruitingRankings(
   year: number | string | null | undefined,
-  league: "CBB" | "CFB",
+  league: "cbb" | "cfb",
 ): UseCFBTeamRecruitingRankingsResult {
   const [rankings, setRankings] = useState<RecruitTeamRanking[]>([]);
   const [loading, setLoading] = useState(Boolean(year));

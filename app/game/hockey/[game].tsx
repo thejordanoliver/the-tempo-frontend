@@ -19,6 +19,7 @@ import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
@@ -141,12 +142,13 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
-  const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
@@ -325,6 +327,8 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              votes={liveVotes}
+              castVote={castLiveVote}
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}

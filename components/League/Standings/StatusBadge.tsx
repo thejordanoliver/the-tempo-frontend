@@ -1,7 +1,7 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type StatusConfig = {
   colors: Record<string, string>;
@@ -9,7 +9,7 @@ type StatusConfig = {
 };
 
 export const statusConfigs: Record<string, StatusConfig> = {
-  MLB: {
+  mlb: {
     colors: {
       "*": Colors.dark.leafGreen,
       y: Colors.dark.blue,
@@ -24,7 +24,7 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
-  NFL: {
+  nfl: {
     colors: {
       "*": Colors.dark.leafGreen,
       z: Colors.dark.orange,
@@ -39,7 +39,7 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
-  UFL: {
+  ufl: {
     colors: {
       z: Colors.dark.blue,
       x: Colors.dark.leafGreen,
@@ -52,7 +52,7 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
-  NBA: {
+  nba: {
     colors: {
       "*": Colors.dark.leafGreen,
       z: Colors.dark.leafGreen,
@@ -72,7 +72,7 @@ export const statusConfigs: Record<string, StatusConfig> = {
       e: "Eliminated From Playoff",
     },
   },
-  WNBA: {
+  wnba: {
     colors: {
       "*": Colors.dark.leafGreen,
       cx: Colors.dark.leafGreen,
@@ -90,7 +90,7 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
-  NHL: {
+  nhl: {
     colors: {
       "*": Colors.dark.leafGreen,
       z: Colors.dark.leafGreen,
@@ -116,7 +116,7 @@ interface StatusBadgeProps {
 export const StatusBadge = ({ code, league }: StatusBadgeProps) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
 
   if (!code) return null;
 

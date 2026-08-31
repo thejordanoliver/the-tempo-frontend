@@ -15,7 +15,7 @@ import {
   getHolidayLabel,
   safeDate,
 } from "utils/dateUtils";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 import Football from "../../../../assets/icons8/Football.png";
 import FootballLight from "../../../../assets/icons8/FootballLight.png";
 
@@ -102,19 +102,14 @@ function FootballSquareGameCard({
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled;
 
@@ -123,7 +118,14 @@ function FootballSquareGameCard({
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -217,7 +219,7 @@ function FootballSquareGameCard({
           <ScoreText
             score={awayScore}
             record={awayRecord}
-            teamWins={awayWins}
+            isWinner={awayWins}
           />
         </View>
 
@@ -244,7 +246,7 @@ function FootballSquareGameCard({
           <ScoreText
             score={homeScore}
             record={homeRecord}
-            teamWins={homeWins}
+            isWinner={homeWins}
           />
         </View>
       </View>

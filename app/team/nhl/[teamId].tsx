@@ -48,7 +48,7 @@ function getMonthIndex(monthGroup: ScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "NHL";
+  const league = "nhl";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;

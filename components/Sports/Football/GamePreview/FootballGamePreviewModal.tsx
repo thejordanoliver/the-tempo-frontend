@@ -128,10 +128,8 @@ export default function FootballGamePreviewModal({
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-  const redzone = game?.situation?.isRedZone;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
-  const downDistance = game?.situation.downDistanceText;
   const homeHasPossession = score?.home?.possession ?? false;
   const awayHasPossession = score?.away?.possession ?? false;
   const homeTimeouts = score?.home?.timeouts ?? 0;
@@ -298,14 +296,14 @@ export default function FootballGamePreviewModal({
                 <CenterInfo
                   date={formattedDate}
                   time={formattedTime}
-                  period={period}
-                  clock={clock}
-                  broadcast={broadcast}
-                  downDistance={downDistance}
-                  state={state}
                   gameStatusShortDetail={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
-                  redzone={redzone}
+                  broadcast={broadcast}
+                  downDistance={null}
+                  redzone={false}
+                  period={period}
+                  clock={clock}
+                  state={state}
                   isDark
                 />
 

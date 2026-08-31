@@ -102,7 +102,6 @@ export default function HomeScreen() {
             >
               <FavoritesScroll
                 favoriteTeamIds={favorites}
-                loading={gamesLoading}
                 onDragStart={() => setIsDraggingFavorites(true)}
                 onDragEnd={() => setIsDraggingFavorites(false)}
                 isDark={isDark}

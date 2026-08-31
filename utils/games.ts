@@ -1,5 +1,6 @@
 // utils/games.ts
 
+import { Colors } from "@/constants/styles";
 import { LeagueType } from "@/types/types";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -220,3 +221,18 @@ export function getBroadcastDisplay(broadcasts?: string[]) {
   const first = broadcasts[0];
   return first ? first.replace(/\b\w/g, (c) => c.toUpperCase()) : "";
 }
+
+export const winnerStyle = ({
+  isWinner,
+  isDark,
+  isTie,
+}: {
+  isWinner: boolean;
+  isTie?: boolean;
+  isDark: boolean;
+}) => ({
+  color: isDark ? Colors.white : Colors.black,
+  opacity: isTie ? 1 : isWinner ? 1 : 0.5,
+});
+
+

@@ -40,7 +40,7 @@ import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type SupportedBaseballLeague = Extract<League, "MLB" | "CB" | "SB">;
+type SupportedBaseballLeague = Extract<League, "mlb" | "cb" | "sb">;
 
 /* -------------------------------------------------------------------------- */
 /*                                   Helpers                                  */
@@ -49,7 +49,7 @@ type SupportedBaseballLeague = Extract<League, "MLB" | "CB" | "SB">;
 function isSupportedBaseballLeague(
   league: League,
 ): league is SupportedBaseballLeague {
-  return league === "MLB" || league === "CB" || league === "SB";
+  return league === "mlb" || league === "cb" || league === "sb";
 }
 
 /* -------------------------------------------------------------------------- */
@@ -66,18 +66,18 @@ export default function BaseballLeagueScreen() {
 
   const parsedLeague: League = isLeague(normalizedLeague)
     ? normalizedLeague
-    : "MLB";
+    : "mlb";
 
   const league: SupportedBaseballLeague = isSupportedBaseballLeague(
     parsedLeague,
   )
     ? parsedLeague
-    : "MLB";
+    : "mlb";
 
-  if (league === "CB") {
+  if (league === "cb") {
     return <CBLeagueScreen />;
   }
-  if (league === "SB") {
+  if (league === "sb") {
     return <SBLeagueScreen />;
   }
 
@@ -89,7 +89,7 @@ export default function BaseballLeagueScreen() {
 /* ========================================================================== */
 
 function MLBLeagueScreen() {
-  const league = "MLB";
+  const league = "mlb";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -162,7 +162,7 @@ function MLBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, "mlb");
+  } = useBaseballGames(selectedDate, league);
 
   const {
     articles,
@@ -333,7 +333,7 @@ function MLBLeagueScreen() {
 /* ========================================================================== */
 
 function CBLeagueScreen() {
-  const league = "CB";
+  const league = "cb";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -401,7 +401,7 @@ function CBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, "cb");
+  } = useBaseballGames(selectedDate, league);
 
   const {
     articles,
@@ -445,8 +445,6 @@ function CBLeagueScreen() {
     );
   }, []);
 
- 
-
   /* ------------------------------------------------------------------------ */
   /*                                  Pages                                   */
   /* ------------------------------------------------------------------------ */
@@ -486,7 +484,7 @@ function CBLeagueScreen() {
 
   const standingsPage = (
     <View key="standings">
-      <CBStandingsList league="cb" />
+      <CBStandingsList league={league} />
     </View>
   );
 
@@ -550,7 +548,7 @@ function CBLeagueScreen() {
 /* ========================================================================== */
 
 function SBLeagueScreen() {
-  const league = "SB";
+  const league = "sb";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -619,7 +617,7 @@ function SBLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useBaseballGames(selectedDate, "sb");
+  } = useBaseballGames(selectedDate, league);
 
   const {
     articles,
@@ -702,7 +700,7 @@ function SBLeagueScreen() {
 
   const standingsPage = (
     <View key="standings">
-      <CBStandingsList league="sb" />
+      <CBStandingsList league={league} />
     </View>
   );
 

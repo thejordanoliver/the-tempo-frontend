@@ -123,19 +123,14 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins,
+    isWinner,
   }: {
     score: number | undefined;
     record: string | undefined;
-    teamWins: boolean;
+    isWinner: boolean;
   }) => {
     const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
 
@@ -144,7 +139,14 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -269,7 +271,7 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
           <ScoreText
             score={awayScore}
             record={awayRecord}
-            teamWins={awayWins}
+            isWinner={awayWins}
           />
         </View>
 
@@ -289,7 +291,7 @@ function BaseballStackedGameCard({ game, isSB, isCB }: BaseballGameCardProps) {
           <ScoreText
             score={homeScore}
             record={homeRecord}
-            teamWins={homeWins}
+            isWinner={homeWins}
           />
         </View>
       </View>

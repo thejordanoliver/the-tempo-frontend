@@ -1,8 +1,8 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const teamCardStyles = StyleSheet.create({
-  teamCard: {
+export const SelectionCardStyles = StyleSheet.create({
+  selectionCard: {
     borderRadius: 8,
     overflow: "hidden",
   },
@@ -27,15 +27,16 @@ export const teamCardStyles = StyleSheet.create({
     top: 0,
     right: 0,
     zIndex: 2,
-    paddingLeft: 12,
+    paddingLeft: 14,
     paddingRight: 6,
     paddingVertical: 4,
     borderTopLeftRadius: 6,
     borderBottomLeftRadius: 100,
   },
   sportTagText: {
+    textTransform: "uppercase",
     fontFamily: Fonts.BOLD,
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.white,
   },
 });

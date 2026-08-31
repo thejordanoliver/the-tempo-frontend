@@ -91,6 +91,19 @@ const AWAY_ENDZONE_CENTER_X =
 const HOME_ENDZONE_CENTER_X = VIEWBOX_WIDTH - AWAY_ENDZONE_CENTER_X;
 const ENDZONE_LOGO_Y = FIELD_MIDDLE_Y - ENDZONE_LOGO_HEIGHT / 2;
 const ENDZONE_TEXT_Y = FIELD_MIDDLE_Y + 4;
+const MIDFIELD_LOGO_WIDTH = 120;
+const MIDFIELD_LOGO_HEIGHT = 120;
+
+const MIDFIELD_LOGO_CENTER_X = VIEWBOX_WIDTH / 2;
+const MIDFIELD_LOGO_CENTER_Y = FIELD_MIDDLE_Y;
+
+const MIDFIELD_LOGO_X = MIDFIELD_LOGO_CENTER_X - MIDFIELD_LOGO_WIDTH / 2;
+
+const MIDFIELD_LOGO_Y = MIDFIELD_LOGO_CENTER_Y - MIDFIELD_LOGO_HEIGHT / 2;
+
+// Compresses the logo vertically so it appears painted onto the
+// perspective plane of the football field.
+const MIDFIELD_LOGO_PERSPECTIVE_SCALE_Y = 0.38;
 
 // Skew angle that "flattens" the endzone logo onto the field's perspective
 // plane. The goal line and back line of the endzone aren't vertical — they
@@ -742,6 +755,7 @@ function FootballField({
   league,
   neutralSite,
 }: FootballFieldProps) {
+
   const selectedPlay = useMemo(
     () =>
       findSelectedPlay({
@@ -814,12 +828,18 @@ function FootballField({
 
   const isHomePossession = teamMatches(possessionTeam, homeTeamId, homeCode);
   const isAwayPossession = teamMatches(possessionTeam, awayTeamId, awayCode);
+  const isCFB = league === "cfb";
 
-  const possessionLogo = isHomePossession
-    ? getNFLTeamLogo(homeTeamId ?? 0, true)
-    : isAwayPossession
-      ? getNFLTeamLogo(awayTeamId ?? 0, true)
-      : null;
+  const possessionLogo =
+    isHomePossession && isCFB
+      ? getCFBTeamLogo(homeTeamId ?? 0, true)
+      : isHomePossession
+        ? getNFLTeamLogo(homeTeamId ?? 0, true)
+        : isAwayPossession && isCFB
+          ? getCFBTeamLogo(awayTeamId ?? 0, true)
+          : isAwayPossession
+            ? getNFLTeamLogo(awayTeamId ?? 0, true)
+            : null;
 
   const possessionColor = isHomePossession
     ? homeColor
@@ -827,14 +847,16 @@ function FootballField({
       ? awayColor
       : Colors.midTone;
 
-  const isCFB = league === "cfb";
-
   const awayEndzoneLogo = isCFB
     ? getCFBTeamLogo(awayTeamId ?? 0, true)
     : getNFLTeamLogo(awayTeamId ?? 0, true);
   const homeEndzoneLogo = isCFB
     ? getCFBTeamLogo(homeTeamId ?? 0, true)
     : getNFLTeamLogo(homeTeamId ?? 0, true);
+  const midfieldLogo = isCFB
+    ? getCFBTeamLogo(homeTeamId ?? 0, true)
+    : getNFLTeamLogo(homeTeamId ?? 0, true);
+
   const selectedPlayAnimationKey = selectedPlay
     ? (normalizeId(selectedPlay.id) ??
       normalizeId(selectedPlay.sequenceNumber) ??
@@ -1019,6 +1041,29 @@ function FootballField({
             </G>
           ))}
         </G>
+
+        {/* Midfield logo painted onto field */}
+        {midfieldLogo && !neutralSite ? (
+          <G clipPath="url(#playingFieldClip)">
+            <G
+              transform={`
+        translate(${MIDFIELD_LOGO_CENTER_X} ${MIDFIELD_LOGO_CENTER_Y})
+        scale(1 ${MIDFIELD_LOGO_PERSPECTIVE_SCALE_Y})
+        translate(${-MIDFIELD_LOGO_CENTER_X} ${-MIDFIELD_LOGO_CENTER_Y})
+      `}
+            >
+              <Image
+                href={midfieldLogo}
+                x={MIDFIELD_LOGO_X}
+                y={MIDFIELD_LOGO_Y}
+                width={MIDFIELD_LOGO_WIDTH}
+                height={MIDFIELD_LOGO_HEIGHT}
+                opacity={1}
+                preserveAspectRatio="xMidYMid meet"
+              />
+            </G>
+          </G>
+        ) : null}
 
         {/* Ten-yard lines */}
         <G clipPath="url(#playingFieldClip)">

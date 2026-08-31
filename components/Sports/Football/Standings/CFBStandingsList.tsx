@@ -2,7 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -21,17 +21,37 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
+
+type PollMode = "ap" | "coaches" | "cfp" | "fcs";
+
+const POLL_OPTIONS: { label: string; value: PollMode }[] = [
+  { label: "AP Poll", value: "ap" },
+  { label: "Coaches Poll", value: "coaches" },
+  { label: "CFP Rankings", value: "cfp" },
+  { label: "FCS Coaches Poll", value: "fcs" },
+];
+
+const POLL_TITLES: Record<PollMode, string> = {
+  ap: "AP Poll",
+  coaches: "Coaches Poll",
+  cfp: "CFP Rankings",
+  fcs: "FCS Coaches Poll",
+};
 
 export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
   const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const router = useRouter();
-  const styles = standingsStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();
+
+  const isDark = resolvedColorScheme === "dark";
+  const global = globalStyles(isDark);
+  const styles = StandingsStyles(isDark);
+  const router = useRouter();
+
   const [refreshing, setRefreshing] = useState(false);
-  const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
+  const [pollMode, setPollMode] = useState<PollMode>("ap");
+
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
@@ -40,30 +60,25 @@ export const CFBStandingsList = () => {
       setRefreshing(false);
     }
   };
-  if (loading)
+
+  if (loading) {
+    return <StandingsSkeleton />;
+  }
+
+  if (error) {
     return (
-      <View style={{ flex: 1 }}>
-        <StandingsSkeleton />
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
+  }
 
-  if (error)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-
-  const selectedPoll = rankings.find((r) =>
-    pollMode === "ap"
-      ? r.shortName === "AP Poll"
-      : r.shortName === "Coaches Poll",
-  );
+  const selectedPoll = rankings.find((poll) => poll.type === pollMode);
 
   const filteredRankings = selectedPoll?.ranks ?? [];
   const droppedOutTeams = selectedPoll?.droppedOut ?? [];
+  const pollTitle = selectedPoll?.shortName || POLL_TITLES[pollMode];
 
-  // --- Render functions ---
   const renderLeftItem = ({
     item,
     index,
@@ -75,10 +90,24 @@ export const CFBStandingsList = () => {
     const team = getCFBTeamByESPNId(item.team?.id ?? "");
     const teamId = team?.id ?? 0;
     const teamLogo = getCFBTeamLogo(teamId, isDark);
-    const teamcode = team?.code || "N/A";
+    const teamCode =
+      team?.code ||
+      item.team?.abbreviation ||
+      item.team?.shortDisplayName ||
+      "N/A";
+
     const trendNum = Number(item.trend);
+    const hasTrend = Number.isFinite(trendNum) && trendNum !== 0;
     const isUp = trendNum > 0;
     const favorited = team ? isFavorite("CFB", team.id) : false;
+
+    const trendColor = isUp
+      ? isDark
+        ? Colors.dark.leafGreen
+        : Colors.light.green
+      : isDark
+        ? Colors.dark.lightRed
+        : Colors.light.red;
 
     return (
       <View
@@ -101,20 +130,30 @@ export const CFBStandingsList = () => {
 
         <View style={styles.teamInfo}>
           <TouchableOpacity
+            disabled={!teamId}
             onPress={() => {
               if (!teamId) return;
+
               router.push({
                 pathname: "/team/cfb/[teamId]",
-                params: { teamId },
+                params: { teamId: String(teamId) },
               });
             }}
             style={styles.teamInfoWrapper}
           >
-            {teamLogo && <Image source={teamLogo} style={styles.logo} />}
-            <Text style={styles.collegeTeamName}>{teamcode}</Text>
+            {teamLogo ? (
+              <Image source={teamLogo} style={styles.logo} />
+            ) : item.team?.logos?.[0]?.href ? (
+              <Image
+                source={{ uri: item.team.logos[0].href }}
+                style={styles.logo}
+              />
+            ) : null}
+
+            <Text style={styles.collegeTeamName}>{teamCode}</Text>
           </TouchableOpacity>
 
-          {trendNum !== 0 && !isNaN(trendNum) && (
+          {hasTrend && (
             <View
               style={{
                 flexDirection: "row",
@@ -124,15 +163,7 @@ export const CFBStandingsList = () => {
               <Ionicons
                 name={isUp ? "arrow-up" : "arrow-down"}
                 size={10}
-                color={
-                  isUp
-                    ? isDark
-                      ? Colors.dark.leafGreen
-                      : Colors.light.green // correct branch
-                    : isDark
-                      ? Colors.dark.lightRed
-                      : Colors.light.red
-                }
+                color={trendColor}
                 style={{ marginRight: 2 }}
               />
 
@@ -140,13 +171,7 @@ export const CFBStandingsList = () => {
                 style={[
                   styles.collegeTeamTrend,
                   {
-                    color: isUp
-                      ? isDark
-                        ? Colors.dark.leafGreen
-                        : Colors.light.green // correct branch
-                      : isDark
-                        ? Colors.dark.lightRed
-                        : Colors.light.red,
+                    color: trendColor,
                   },
                 ]}
               >
@@ -169,6 +194,7 @@ export const CFBStandingsList = () => {
     const isLastRow = index === filteredRankings.length - 1;
     const team = getCFBTeamByESPNId(item.team?.id ?? "");
     const favorited = team ? isFavorite("CFB", team.id) : false;
+
     return (
       <View
         style={[
@@ -187,15 +213,20 @@ export const CFBStandingsList = () => {
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.recordSummary || "N/A"}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.points ?? 0}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>{item.firstPlaceVotes ?? 0}</Text>
         </View>
+
         <View style={styles.statCell}>
           <Text style={styles.statText}>
-            {item.team?.groups?.shortName || "N/A"}
+            {item.team?.groups?.shortName ||
+              item.team?.groups?.parent?.shortName ||
+              "N/A"}
           </Text>
         </View>
       </View>
@@ -203,20 +234,12 @@ export const CFBStandingsList = () => {
   };
 
   const renderHeader = () => (
-    <View
-      style={[
-        styles.row,
-        {
-          borderBottomWidth: 1,
-          borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-          alignItems: "center",
-        },
-      ]}
-    >
+    <View style={styles.statsHeaderRow}>
       <View style={styles.rankContainer}>
-        <Text style={[styles.rankText, { fontFamily: Fonts.SEMIBOLD }]}>#</Text>
+        <Text style={styles.rankText}>#</Text>
       </View>
-      <Text style={[styles.teamHeaderText]}>Team</Text>
+
+      <Text style={styles.teamHeaderText}>Team</Text>
     </View>
   );
 
@@ -250,27 +273,21 @@ export const CFBStandingsList = () => {
   );
 
   const renderDroppedOut = () => {
-    if (!droppedOutTeams.length) return null;
+    if (!droppedOutTeams.length) {
+      return null;
+    }
 
     return (
       <View style={{ marginTop: 24 }}>
         <Text style={styles.droppedHeading}>Dropped From Rankings</Text>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {droppedOutTeams.map((item) => {
+          {droppedOutTeams.map((item, index) => {
             const team = getCFBTeamByESPNId(item.team?.id ?? "");
-            const teamName = team?.shortName || team?.name || "N/A";
+            const teamName =
+              team?.shortName || team?.name || item.team?.abbreviation || "N/A";
             return (
-              <Text
-                key={item.team?.id || `dropped-${item.previous}-${item.date}`}
-                style={{
-                  color: isDark ? Colors.white : Colors.black,
-                  fontFamily: Fonts.LIGHT,
-                  fontSize: 16,
-                  marginVertical: 2,
-                  marginRight: 8,
-                }}
-              >
+              <Text key={item.team?.id} style={styles.droppedoutNames}>
                 {teamName} ({item.previous})
               </Text>
             );
@@ -280,27 +297,34 @@ export const CFBStandingsList = () => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: CFBTeamRank[] }) {
+  const Section = ({ title, data }: { title: string; data: CFBTeamRank[] }) => {
     return (
-      <>
-        <View style={styles.wrapper}>
-          <View style={styles.header}>
-            <Text style={styles.heading}>{title}</Text>
-          </View>
+      <View style={styles.wrapper}>
+        <View style={styles.header}>
+          <Text style={styles.heading}>{title}</Text>
+        </View>
 
+        {data.length === 0 ? (
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyText}>
+              Rankings are not currently available.
+            </Text>
+          </View>
+        ) : (
           <View style={{ flexDirection: "row" }}>
             <FlatList
               data={data}
               keyExtractor={(item, index) =>
                 item.team?.id
                   ? String(item.team.id)
-                  : `fallback-${index}-${item.date}`
+                  : `left-${index}-${item.date}`
               }
               renderItem={renderLeftItem}
               scrollEnabled={false}
               ListHeaderComponent={renderHeader}
               stickyHeaderIndices={[0]}
             />
+
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -311,7 +335,7 @@ export const CFBStandingsList = () => {
                 keyExtractor={(item, index) =>
                   item.team?.id
                     ? String(item.team.id)
-                    : `fallback-${index}-${item.date}`
+                    : `right-${index}-${item.date}`
                 }
                 renderItem={renderRightItem}
                 scrollEnabled={false}
@@ -320,10 +344,10 @@ export const CFBStandingsList = () => {
               />
             </ScrollView>
           </View>
-        </View>
-      </>
+        )}
+      </View>
     );
-  }
+  };
 
   return (
     <ScrollView
@@ -334,21 +358,14 @@ export const CFBStandingsList = () => {
     >
       <View style={styles.dropdownRow}>
         <Dropdown
-          options={[
-            { label: "AP Poll", value: "ap" },
-            { label: "Coaches Poll", value: "coaches" },
-            { label: "CFP Rankings", value: "cfp" }, // 🏆 Added CFP
-          ]}
+          options={POLL_OPTIONS}
           selectedValue={pollMode}
-          onSelect={(value) => setPollMode(value as "ap" | "coaches")}
+          onSelect={(value) => setPollMode(value as PollMode)}
           isDark={isDark}
         />
       </View>
-      {/* --- Rankings Section --- */}
-      <Section
-        title={pollMode === "ap" ? "AP Poll" : "Coaches Poll"}
-        data={filteredRankings}
-      />
+
+      <Section title={pollTitle} data={filteredRankings} />
 
       {renderDroppedOut()}
     </ScrollView>

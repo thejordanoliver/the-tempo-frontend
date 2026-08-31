@@ -39,6 +39,7 @@ type Props = {
   isCBB: boolean;
   isWCBB: boolean;
   isWNBA: boolean;
+  isGLEAGUE: boolean;
 };
 
 export default function GamePreviewModal({
@@ -49,6 +50,7 @@ export default function GamePreviewModal({
   isCBB,
   isWCBB,
   isWNBA,
+  isGLEAGUE,
 }: Props) {
   const sheetRef = useRef<BottomSheetModal>(null);
 

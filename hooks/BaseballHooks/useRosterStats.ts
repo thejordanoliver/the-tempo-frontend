@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export type BaseballRosterLeague = "MLB";
+export type BaseballRosterLeague = "mlb";
 
 export type BaseballStatValue = string | number | null;
 export type BaseballStatMap = Record<string, BaseballStatValue>;

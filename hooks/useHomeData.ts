@@ -159,80 +159,80 @@ export function useHomeData(selectedTab: "scores" | "news") {
   // ===========================
 
   const normalizedNBA = useMemo(
-    () => normalizeGames(nbaGames, "NBA"),
+    () => normalizeGames(nbaGames, "nba"),
     [nbaGames],
   );
 
   const normalizedMLB = useMemo(
-    () => normalizeGames(mlbGames, "MLB"),
+    () => normalizeGames(mlbGames, "mlb"),
     [mlbGames],
   );
 
   const normalizedNHL = useMemo(
-    () => normalizeGames(nhlGames, "NHL"),
+    () => normalizeGames(nhlGames, "nhl"),
     [nhlGames],
   );
 
   const normalizedNFL = useMemo(
-    () => normalizeGames(nflGames, "NFL"),
+    () => normalizeGames(nflGames, "nfl"),
     [nflGames],
   );
 
   const normalizedUFL = useMemo(
-    () => normalizeGames(uflGames, "UFL"),
+    () => normalizeGames(uflGames, "ufl"),
     [uflGames],
   );
 
   const normalizedCFB = useMemo(
-    () => normalizeGames(cfbGames, "CFB"),
+    () => normalizeGames(cfbGames, "cfb"),
     [cfbGames],
   );
 
   const normalizedMensCBB = useMemo(
-    () => normalizeGames(mensBasketballGames, "CBB"),
+    () => normalizeGames(mensBasketballGames, "cbb"),
     [mensBasketballGames],
   );
 
   const normalizedWomensCBB = useMemo(
-    () => normalizeGames(womensBasketballGames, "WCBB"),
+    () => normalizeGames(womensBasketballGames, "wcbb"),
     [womensBasketballGames],
   );
 
   const normalizedWNBA = useMemo(
-    () => normalizeGames(wnbaGames, "WNBA"),
+    () => normalizeGames(wnbaGames, "wnba"),
     [wnbaGames],
   );
 
   const normalizedMLS = useMemo(
-    () => normalizeGames(mlsGames, "MLS"),
+    () => normalizeGames(mlsGames, "mlb"),
     [mlsGames],
   );
   const normalizedLeaguesCup = useMemo(
-    () => normalizeGames(leaguesCupGames, "LEAGUESCUP"),
+    () => normalizeGames(leaguesCupGames, "leaguescup"),
     [leaguesCupGames],
   );
   const normalizedFIFA = useMemo(
-    () => normalizeGames(fifaGames, "FIFA"),
+    () => normalizeGames(fifaGames, "fifa"),
     [fifaGames],
   );
 
   const normalizedEuropa = useMemo(
-    () => normalizeGames(europaGames, "EUROPA"),
+    () => normalizeGames(europaGames, "europa"),
     [europaGames],
   );
 
   const normalizedChampions = useMemo(
-    () => normalizeGames(championsGames, "CHAMPIONS"),
+    () => normalizeGames(championsGames, "champions"),
     [championsGames],
   );
 
   const normalizedEPL = useMemo(
-    () => normalizeGames(eplGames, "EPL"),
+    () => normalizeGames(eplGames, "epl"),
     [eplGames],
   );
 
   const normalizedBundesliga = useMemo(
-    () => normalizeGames(bundesligaGames, "BUNDESLIGA"),
+    () => normalizeGames(bundesligaGames, "bundesliga"),
     [bundesligaGames],
   );
 
@@ -390,23 +390,23 @@ export function useHomeData(selectedTab: "scores" | "news") {
       games.filter((g) => isFavoriteGame(g, prefix));
 
     return [
-      ...collect(filteredNBA, "NBA"),
-      ...collect(filteredNFL, "NFL"),
-      ...collect(filteredUFL, "UFL"),
-      ...collect(filteredMLB, "MLB"),
-      ...collect(filteredNHL, "NHL"),
-      ...collect(filteredCFB, "CFB"),
-      ...collect(filteredMensCBB, "CBB"),
-      ...collect(filteredWomensCBB, "WCBB"),
-      ...collect(filteredWNBA, "WNBA"),
-      ...collect(filteredMLS, "MLS"),
-      ...collect(filteredFIFA, "FIFA"),
-      ...collect(filteredEPL, "EPL"),
-      ...collect(filteredLEAGUESCUP, "LEAGUESCUP"),
-      ...collect(filteredCHAMPIONS, "CHAMPIONS"),
-      ...collect(filteredEUROPA, "EUROPA"),
-      ...collect(filteredBUNDESLIGA, "EUROPA"),
-      ...collect(filteredMMA, "MMA"),
+      ...collect(filteredNBA, "nba"),
+      ...collect(filteredNFL, "nfl"),
+      ...collect(filteredUFL, "ufl"),
+      ...collect(filteredMLB, "mlb"),
+      ...collect(filteredNHL, "nhl"),
+      ...collect(filteredCFB, "cfb"),
+      ...collect(filteredMensCBB, "cbb"),
+      ...collect(filteredWomensCBB, "wcbb"),
+      ...collect(filteredWNBA, "wnba"),
+      ...collect(filteredMLS, "mls"),
+      ...collect(filteredFIFA, "fifa"),
+      ...collect(filteredEPL, "epl"),
+      ...collect(filteredLEAGUESCUP, "leaguescup"),
+      ...collect(filteredCHAMPIONS, "champions"),
+      ...collect(filteredEUROPA, "europa"),
+      ...collect(filteredBUNDESLIGA, "bundesliga"),
+      ...collect(filteredMMA, "mma"),
     ];
   }, [
     isFavoriteGame,
@@ -441,71 +441,71 @@ export function useHomeData(selectedTab: "scores" | "news") {
       },
       {
         category: "NBA",
-        data: limitNonFavorites(filteredNBA, "NBA"),
+        data: limitNonFavorites(filteredNBA, "nba"),
       },
       {
         category: "NFL",
-        data: limitNonFavorites(filteredNFL, "NFL"),
+        data: limitNonFavorites(filteredNFL, "nfl"),
       },
       {
         category: "UFL",
-        data: limitNonFavorites(filteredUFL, "UFL"),
+        data: limitNonFavorites(filteredUFL, "ufl"),
       },
       {
         category: "MLB",
-        data: limitNonFavorites(filteredMLB, "MLB"),
+        data: limitNonFavorites(filteredMLB, "mlb"),
       },
       {
         category: "NHL",
-        data: limitNonFavorites(filteredNHL, "NHL"),
+        data: limitNonFavorites(filteredNHL, "nhl"),
       },
       {
         category: "College Football",
-        data: limitNonFavorites(filteredCFB, "CFB"),
+        data: limitNonFavorites(filteredCFB, "cfb"),
       },
       {
         category: "MLS",
-        data: limitNonFavorites(filteredMLS, "MLS"),
+        data: limitNonFavorites(filteredMLS, "mls"),
       },
       {
         category: "Leagues Cup",
-        data: limitNonFavorites(filteredLEAGUESCUP, "LEAGUESCUP"),
+        data: limitNonFavorites(filteredLEAGUESCUP, "leaguescup"),
       },
       {
         category: "FIFA World Cup",
-        data: limitNonFavorites(filteredFIFA, "FIFA"),
+        data: limitNonFavorites(filteredFIFA, "fifa"),
       },
       {
         category: "UEFA Europa League",
-        data: limitNonFavorites(filteredEUROPA, "EUROPA"),
+        data: limitNonFavorites(filteredEUROPA, "europa"),
       },
       {
         category: "UEFA Champions League",
-        data: limitNonFavorites(filteredCHAMPIONS, "CHAMPIONS"),
+        data: limitNonFavorites(filteredCHAMPIONS, "champions"),
       },
       {
         category: "English Premier League",
-        data: limitNonFavorites(filteredEPL, "EPL"),
+        data: limitNonFavorites(filteredEPL, "epl"),
       },
       {
         category: "German Bundesliga",
-        data: limitNonFavorites(filteredBUNDESLIGA, "BUNDESLIGA"),
+        data: limitNonFavorites(filteredBUNDESLIGA, "bundesliga"),
       },
       {
         category: "Men's College Basketball",
-        data: limitNonFavorites(filteredMensCBB, "CBB"),
+        data: limitNonFavorites(filteredMensCBB, "cbb"),
       },
       {
         category: "Women's College Basketball",
-        data: limitNonFavorites(filteredWomensCBB, "WCBB"),
+        data: limitNonFavorites(filteredWomensCBB, "wcbb"),
       },
       {
         category: "WNBA",
-        data: limitNonFavorites(filteredWNBA, "WNBA"),
+        data: limitNonFavorites(filteredWNBA, "wnba"),
       },
       {
         category: "MMA",
-        data: limitNonFavorites(filteredMMA, "MMA"),
+        data: limitNonFavorites(filteredMMA, "mma"),
       },
     ];
 

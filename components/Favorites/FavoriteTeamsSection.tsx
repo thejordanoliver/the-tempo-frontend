@@ -1,10 +1,14 @@
 import { Animated } from "react-native";
+import type { FavoriteSportId } from "../../constants/leagues";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
 import FavoriteTeamsList from "../Favorites/FavoriteTeamsList";
 import HeaderWithToggle from "../Headings/HeaderWithToggle";
 
 type Props = {
   favorites: any[];
+  favoriteSports?: FavoriteSportId[];
+  favoriteSportsLoading?: boolean;
+  favoriteSportsReady?: boolean;
   isGridView: boolean;
   fadeAnim: Animated.Value;
   toggleFavoriteTeamsView: () => void;
@@ -15,6 +19,9 @@ type Props = {
 
 export default function FavoriteTeamsSection({
   favorites,
+  favoriteSports,
+  favoriteSportsLoading,
+  favoriteSportsReady,
   isGridView,
   fadeAnim,
   toggleFavoriteTeamsView,
@@ -24,7 +31,7 @@ export default function FavoriteTeamsSection({
   return (
     <>
       <HeaderWithToggle
-        title="Favorite Teams"
+        title={favoriteSports === undefined ? "Favorite Teams" : "Favorites"}
         isGridView={isGridView}
         onToggleView={toggleFavoriteTeamsView}
       />
@@ -32,6 +39,9 @@ export default function FavoriteTeamsSection({
       <Animated.View style={{ opacity: fadeAnim, flex: 1 }}>
         <FavoriteTeamsList
           favoriteTeams={favorites}
+          favoriteSports={favoriteSports}
+          favoriteSportsLoading={favoriteSportsLoading}
+          favoriteSportsReady={favoriteSportsReady}
           isGridView={isGridView}
           itemWidth={itemWidth}
           key={isGridView ? "grid" : "list"}

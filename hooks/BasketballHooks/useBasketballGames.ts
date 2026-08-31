@@ -37,6 +37,9 @@ function getBasketballEndpoint(league: string) {
     case "summercalifornia":
       return "api/games/basketball/summercalifornia";
 
+    case "gleague":
+      return "api/games/basketball/gleague";
+
     default:
       return "api/games/basketball/nba";
   }

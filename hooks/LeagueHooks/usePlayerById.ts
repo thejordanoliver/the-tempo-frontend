@@ -18,23 +18,23 @@ export function usePlayerById(playerId?: number, league: string = "NFL") {
         setError(null);
 
         const url =
-          league === "NBA"
+          league === "nba"
             ? `api/roster/player/${playerId}`
-            : league === "CFB"
+            : league === "cfb"
               ? `api/roster/cfb/player/${playerId}`
-              : league === "CBB"
+              : league === "cbb"
                 ? `api/roster/cbb/player/${playerId}`
-                : league === "WCBB"
+                : league === "wcbb"
                   ? `api/roster/wcbb/player/${playerId}`
-                  : league === "MLB"
+                  : league === "mlb"
                     ? `api/roster/mlb/player/${playerId}`
-                    : league === "NHL"
+                    : league === "nhl"
                       ? `api/roster/nhl/player/${playerId}`
-                      : league === "WNBA"
+                      : league === "wnba"
                         ? `api/roster/wnba/player/${playerId}`
-                        : league === "SOCC"
+                        : league === "socc"
                           ? `api/roster/socc/player/${playerId}`
-                        : league === "MMA"
+                        : league === "mma"
                           ? `/api/roster/mma/player/${playerId}`
                           : `api/roster/nfl/player/${playerId}`;
 

@@ -35,25 +35,25 @@ export function getFavoriteBaseTeam(
   teamId: string,
 ): FavoriteBaseTeam | undefined {
   switch (league) {
-    case "NBA":
+    case "nba":
       return getNBATeam(teamId);
-    case "WNBA":
+    case "wnba":
       return getWNBATeam(teamId);
-    case "NFL":
+    case "nfl":
       return getNFLTeam(teamId);
-    case "CFB":
+    case "cfb":
       return getCFBTeam(teamId);
-    case "CBB":
+    case "cbb":
       return getCBBTeam(teamId);
-    case "WCBB":
+    case "wcbb":
       return getWCBBTeam(teamId);
-    case "MLB":
+    case "mlb":
       return getMLBTeam(teamId);
-    case "CB":
+    case "cb":
       return getCBTeam(teamId);
-    case "SB":
+    case "sb":
       return getSBTeam(teamId);
-    case "NHL":
+    case "nhl":
       return getNHLTeam(teamId);
   }
 }
@@ -68,34 +68,34 @@ export function getFavoriteTeamLogo(
   }
 
   switch (team.league) {
-    case "NBA":
+    case "nba":
       return getNBATeamLogo(teamId, true);
 
-    case "WNBA":
+    case "wnba":
       return getWNBATeamLogo(teamId, true);
 
-    case "NFL":
+    case "nfl":
       return getNFLTeamLogo(teamId, true);
 
-    case "CFB":
+    case "cfb":
       return getCFBTeamLogo(teamId, true);
 
-    case "CBB":
+    case "cbb":
       return getCBBTeamLogo(teamId, true);
 
-    case "WCBB":
+    case "wcbb":
       return team.logo ?? getWCBBTeamLogo(teamId, true);
 
-    case "MLB":
+    case "mlb":
       return getMLBTeamLogo(teamId, true);
 
-    case "CB":
+    case "cb":
       return getCBTeamLogo(teamId, true);
 
-    case "SB":
+    case "sb":
       return getSBTeamLogo(teamId, true);
 
-    case "NHL":
+    case "nhl":
       return getNHLTeamLogo(teamId, true);
 
     default:
@@ -105,34 +105,34 @@ export function getFavoriteTeamLogo(
 
 export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
   switch (league) {
-    case "NBA":
+    case "nba":
       return "/team/[teamId]";
 
-    case "WNBA":
+    case "wnba":
       return "/team/wnba/[teamId]";
 
-    case "NFL":
+    case "nfl":
       return "/team/nfl/[teamId]";
 
-    case "CFB":
+    case "cfb":
       return "/team/cfb/[teamId]";
 
-    case "CBB":
+    case "cbb":
       return "/team/cbb/[teamId]";
 
-    case "WCBB":
+    case "wcbb":
       return "/team/wcbb/[teamId]";
 
-    case "MLB":
+    case "mlb":
       return "/team/mlb/[teamId]";
 
-    case "CB":
+    case "cb":
       return "/team/cb/[teamId]";
 
-    case "SB":
+    case "sb":
       return "/team/sb/[teamId]";
 
-    case "NHL":
+    case "nhl":
       return "/team/nhl/[teamId]";
 
     default:
@@ -142,10 +142,10 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
 
 export function isCollegeFavoriteLeague(league: string): boolean {
   return (
-    league === "CFB" ||
-    league === "CBB" ||
-    league === "WCBB" ||
-    league === "CB" ||
-    league === "SB"
+    league === "cfb" ||
+    league === "cbb" ||
+    league === "wcbb" ||
+    league === "cb" ||
+    league === "sb"
   );
 }

@@ -561,7 +561,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -580,7 +580,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6754,
@@ -597,7 +597,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7242,
@@ -615,7 +615,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7071,
@@ -632,7 +632,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7063,
@@ -650,7 +650,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6880,
@@ -668,7 +668,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7040,
@@ -686,7 +686,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7227,
@@ -704,7 +704,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6932,
@@ -721,7 +721,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7095,
@@ -739,7 +739,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7238,
@@ -757,7 +757,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7219,
@@ -774,7 +774,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6935,
@@ -791,7 +791,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7286,
@@ -809,7 +809,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6892,
@@ -826,7 +826,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6868,
@@ -844,7 +844,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6888,
@@ -862,7 +862,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6817,
@@ -880,7 +880,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6978,
@@ -898,7 +898,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6769,
@@ -916,7 +916,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 178,
@@ -933,7 +933,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7163,
@@ -951,7 +951,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2081,
@@ -968,7 +968,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7116,
@@ -986,7 +986,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6806,
@@ -1004,7 +1004,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 108942,
@@ -1021,7 +1021,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6845,
@@ -1039,7 +1039,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7056,
@@ -1056,7 +1056,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7226,
@@ -1075,7 +1075,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6887,
@@ -1092,7 +1092,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7047,
@@ -1110,7 +1110,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7043,
@@ -1128,7 +1128,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7232,
@@ -1146,7 +1146,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7061,
@@ -1163,7 +1163,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6919,
@@ -1180,7 +1180,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7244,
@@ -1197,7 +1197,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7083,
@@ -1214,7 +1214,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6813,
@@ -1232,7 +1232,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7096,
@@ -1250,7 +1250,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7262,
@@ -1268,7 +1268,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7051,
@@ -1286,7 +1286,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7252,
@@ -1304,7 +1304,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -1321,7 +1321,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6730,
@@ -1338,7 +1338,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7413,
@@ -1356,7 +1356,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 111170,
@@ -1373,7 +1373,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7188,
@@ -1391,7 +1391,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6757,
@@ -1409,7 +1409,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7217,
@@ -1426,7 +1426,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7147,
@@ -1443,7 +1443,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6982,
@@ -1461,7 +1461,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7300,
@@ -1479,7 +1479,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7721,
@@ -1497,7 +1497,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7245,
@@ -1515,7 +1515,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 551,
@@ -1532,7 +1532,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 126751,
@@ -1549,7 +1549,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7091,
@@ -1567,7 +1567,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6891,
@@ -1585,7 +1585,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7646,
@@ -1603,7 +1603,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 123410,
@@ -1620,7 +1620,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 354,
@@ -1638,7 +1638,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7633,
@@ -1656,7 +1656,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2124,
@@ -1672,7 +1672,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6786,
@@ -1689,7 +1689,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7202,
@@ -1707,7 +1707,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6960,
@@ -1725,7 +1725,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6980,
@@ -1744,7 +1744,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6760,
@@ -1762,7 +1762,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7756,
@@ -1780,7 +1780,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6833,
@@ -1798,7 +1798,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7106,
@@ -1815,7 +1815,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7093,
@@ -1832,7 +1832,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7066,
@@ -1849,7 +1849,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6872,
@@ -1866,7 +1866,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7210,
@@ -1883,7 +1883,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7211,
@@ -1902,7 +1902,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -1921,7 +1921,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7020,
@@ -1938,7 +1938,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6984,
@@ -1956,7 +1956,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7015,
@@ -1974,7 +1974,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6745,
@@ -1991,7 +1991,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7064,
@@ -2009,7 +2009,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6895,
@@ -2026,7 +2026,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6795,
@@ -2043,7 +2043,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7292,
@@ -2060,7 +2060,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7010,
@@ -2079,7 +2079,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7268,
@@ -2096,7 +2096,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6874,
@@ -2114,7 +2114,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6873,
@@ -2132,7 +2132,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7084,
@@ -2149,7 +2149,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7248,
@@ -2167,7 +2167,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6994,
@@ -2185,7 +2185,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7014,
@@ -2203,7 +2203,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6909,
@@ -2222,7 +2222,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6987,
@@ -2240,7 +2240,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2397,
@@ -2257,7 +2257,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6988,
@@ -2275,7 +2275,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6989,
@@ -2293,7 +2293,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6804,
@@ -2311,7 +2311,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6898,
@@ -2329,7 +2329,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6867,
@@ -2347,7 +2347,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -2367,7 +2367,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7185,
@@ -2385,7 +2385,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6954,
@@ -2402,7 +2402,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7187,
@@ -2419,7 +2419,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6940,
@@ -2437,7 +2437,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7156,
@@ -2455,7 +2455,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7142,
@@ -2473,7 +2473,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6913,
@@ -2491,7 +2491,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6838,
@@ -2508,7 +2508,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7181,
@@ -2526,7 +2526,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6733,
@@ -2544,7 +2544,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7080,
@@ -2562,7 +2562,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7072,
@@ -2580,7 +2580,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6904,
@@ -2597,7 +2597,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7089,
@@ -2615,7 +2615,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7190,
@@ -2633,7 +2633,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7191,
@@ -2651,7 +2651,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6889,
@@ -2668,7 +2668,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7240,
@@ -2686,7 +2686,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6992,
@@ -2705,7 +2705,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7011,
@@ -2722,7 +2722,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6841,
@@ -2739,7 +2739,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7082,
@@ -2757,7 +2757,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6759,
@@ -2775,7 +2775,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6869,
@@ -2792,7 +2792,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7037,
@@ -2809,7 +2809,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7148,
@@ -2828,7 +2828,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7228,
@@ -2846,7 +2846,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7008,
@@ -2863,7 +2863,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -2882,7 +2882,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7002,
@@ -2900,7 +2900,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 524,
@@ -2917,7 +2917,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7283,
@@ -2934,7 +2934,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6936,
@@ -2951,7 +2951,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6748,
@@ -2969,7 +2969,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6747,
@@ -2987,7 +2987,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6998,
@@ -3005,7 +3005,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6946,
@@ -3023,7 +3023,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6825,
@@ -3041,7 +3041,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6957,
@@ -3059,7 +3059,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7007,
@@ -3076,7 +3076,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7086,
@@ -3094,7 +3094,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7206,
@@ -3111,7 +3111,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7038,
@@ -3129,7 +3129,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7234,
@@ -3146,7 +3146,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6926,
@@ -3163,7 +3163,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7153,
@@ -3180,7 +3180,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6756,
@@ -3198,7 +3198,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6811,
@@ -3216,7 +3216,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6943,
@@ -3234,7 +3234,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7151,
@@ -3252,7 +3252,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6996,
@@ -3269,7 +3269,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6789,
@@ -3286,7 +3286,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6776,
@@ -3304,7 +3304,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6777,
@@ -3323,7 +3323,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7120,
@@ -3340,7 +3340,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6742,
@@ -3357,7 +3357,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7039,
@@ -3374,7 +3374,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6859,
@@ -3391,7 +3391,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7247,
@@ -3409,7 +3409,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7138,
@@ -3427,7 +3427,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7115,
@@ -3445,7 +3445,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6729,
@@ -3463,7 +3463,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7067,
@@ -3480,7 +3480,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6793,
@@ -3498,7 +3498,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6793,
@@ -3516,7 +3516,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6944,
@@ -3533,7 +3533,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7122,
@@ -3551,7 +3551,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7218,
@@ -3569,7 +3569,7 @@ export const wcbbTeams: Team[] = [
     city: "",
     location: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6779,
@@ -3586,7 +3586,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7132,
@@ -3603,7 +3603,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6746,
@@ -3620,7 +3620,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7059,
@@ -3637,7 +3637,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7060,
@@ -3654,7 +3654,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6890,
@@ -3672,7 +3672,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7674,
@@ -3690,7 +3690,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 124809,
@@ -3708,7 +3708,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7825,
@@ -3726,7 +3726,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6995,
@@ -3743,7 +3743,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7052,
@@ -3760,7 +3760,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7208,
@@ -3778,7 +3778,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6800,
@@ -3796,7 +3796,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7214,
@@ -3814,7 +3814,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7216,
@@ -3832,7 +3832,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7136,
@@ -3850,7 +3850,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7215,
@@ -3868,7 +3868,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7212,
@@ -3886,7 +3886,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6767,
@@ -3903,7 +3903,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7146,
@@ -3920,7 +3920,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6922,
@@ -3939,7 +3939,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7291,
@@ -3956,7 +3956,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7196,
@@ -3973,7 +3973,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6901,
@@ -3990,7 +3990,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7029,
@@ -4007,7 +4007,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7077,
@@ -4024,7 +4024,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6948,
@@ -4041,7 +4041,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7012,
@@ -4059,7 +4059,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6753,
@@ -4077,7 +4077,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7004,
@@ -4094,7 +4094,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6877,
@@ -4111,7 +4111,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6953,
@@ -4129,7 +4129,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7152,
@@ -4146,7 +4146,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6832,
@@ -4163,7 +4163,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6752,
@@ -4180,7 +4180,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6771,
@@ -4197,7 +4197,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7158,
@@ -4214,7 +4214,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6972,
@@ -4231,7 +4231,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7207,
@@ -4248,7 +4248,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7224,
@@ -4265,7 +4265,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7139,
@@ -4283,7 +4283,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6882,
@@ -4301,7 +4301,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6942,
@@ -4319,7 +4319,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7103,
@@ -4337,7 +4337,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6831,
@@ -4355,7 +4355,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7222,
@@ -4373,7 +4373,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7223,
@@ -4391,7 +4391,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 108842,
@@ -4408,7 +4408,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7127,
@@ -4426,7 +4426,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6916,
@@ -4444,7 +4444,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7170,
@@ -4462,7 +4462,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2114,
@@ -4479,7 +4479,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7167,
@@ -4497,7 +4497,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7213,
@@ -4515,7 +4515,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6963,
@@ -4533,7 +4533,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7221,
@@ -4551,7 +4551,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6985,
@@ -4568,7 +4568,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7121,
@@ -4585,7 +4585,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6749,
@@ -4602,7 +4602,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7290,
@@ -4619,7 +4619,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7018,
@@ -4637,7 +4637,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7003,
@@ -4654,7 +4654,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7149,
@@ -4672,7 +4672,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6902,
@@ -4689,7 +4689,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6905,
@@ -4708,7 +4708,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7123,
@@ -4725,7 +4725,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7173,
@@ -4742,7 +4742,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6836,
@@ -4760,7 +4760,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7197,
@@ -4777,7 +4777,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7034,
@@ -4794,7 +4794,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7041,
@@ -4812,7 +4812,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7194,
@@ -4830,7 +4830,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6983,
@@ -4847,7 +4847,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7180,
@@ -4865,7 +4865,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6782,
@@ -4882,7 +4882,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 513,
@@ -4898,7 +4898,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7797,
@@ -4915,7 +4915,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6986,
@@ -4932,7 +4932,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7048,
@@ -4949,7 +4949,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6991,
@@ -4966,7 +4966,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7257,
@@ -4985,7 +4985,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6933,
@@ -5002,7 +5002,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7088,
@@ -5019,7 +5019,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7740,
@@ -5037,7 +5037,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2648,
@@ -5054,7 +5054,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6775,
@@ -5071,7 +5071,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7258,
@@ -5089,7 +5089,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6956,
@@ -5106,7 +5106,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6961,
@@ -5124,7 +5124,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6903,
@@ -5142,7 +5142,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6829,
@@ -5160,7 +5160,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7131,
@@ -5177,7 +5177,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6896,
@@ -5194,7 +5194,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6774,
@@ -5211,7 +5211,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7651,
@@ -5229,7 +5229,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7159,
@@ -5246,7 +5246,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6815,
@@ -5264,7 +5264,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6816,
@@ -5282,7 +5282,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6808,
@@ -5300,7 +5300,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6964,
@@ -5318,7 +5318,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6959,
@@ -5336,7 +5336,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7266,
@@ -5353,7 +5353,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6965,
@@ -5370,7 +5370,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7272,
@@ -5387,7 +5387,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6955,
@@ -5405,7 +5405,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6939,
@@ -5422,7 +5422,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7251,
@@ -5439,7 +5439,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7065,
@@ -5457,7 +5457,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6732,
@@ -5474,7 +5474,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6938,
@@ -5491,7 +5491,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6923,
@@ -5508,7 +5508,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7118,
@@ -5525,7 +5525,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7087,
@@ -5544,7 +5544,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6897,
@@ -5561,7 +5561,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7264,
@@ -5578,7 +5578,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7260,
@@ -5595,7 +5595,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6737,
@@ -5612,7 +5612,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6966,
@@ -5630,7 +5630,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7189,
@@ -5648,7 +5648,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6928,
@@ -5665,7 +5665,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7175,
@@ -5683,7 +5683,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7157,
@@ -5700,7 +5700,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2075,
@@ -5716,7 +5716,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7241,
@@ -5734,7 +5734,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7816,
@@ -5751,7 +5751,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7199,
@@ -5768,7 +5768,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7001,
@@ -5785,7 +5785,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6871,
@@ -5804,7 +5804,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2886,
@@ -5820,7 +5820,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7716,
@@ -5838,7 +5838,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6967,
@@ -5855,7 +5855,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6750,
@@ -5873,7 +5873,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7724,
@@ -5890,7 +5890,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7289,
@@ -5908,7 +5908,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6981,
@@ -5926,7 +5926,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7019,
@@ -5944,7 +5944,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7284,
@@ -5961,7 +5961,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6728,
@@ -5978,7 +5978,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2903,
@@ -5996,7 +5996,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7817,
@@ -6014,7 +6014,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6930,
@@ -6032,7 +6032,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7225,
@@ -6050,7 +6050,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7246,
@@ -6067,7 +6067,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7155,
@@ -6084,7 +6084,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7203,
@@ -6101,7 +6101,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7728,
@@ -6118,7 +6118,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6788,
@@ -6135,7 +6135,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7274,
@@ -6153,7 +6153,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7109,
@@ -6170,7 +6170,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7178,
@@ -6187,7 +6187,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6784,
@@ -6205,7 +6205,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7230,
@@ -6222,7 +6222,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7233,
@@ -6240,7 +6240,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7229,
@@ -6258,7 +6258,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6735,
@@ -6276,7 +6276,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7694,
@@ -6294,7 +6294,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7065,
@@ -6312,7 +6312,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6803,
@@ -6329,7 +6329,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6762,
@@ -6347,7 +6347,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6947,
@@ -6364,7 +6364,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7070,
@@ -6382,7 +6382,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7186,
@@ -6400,7 +6400,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7024,
@@ -6417,7 +6417,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7058,
@@ -6434,7 +6434,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6818,
@@ -6451,7 +6451,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6792,
@@ -6469,7 +6469,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6798,
@@ -6487,7 +6487,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7113,
@@ -6504,7 +6504,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2519,
@@ -6520,7 +6520,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2098,
@@ -6536,7 +6536,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2772,
@@ -6553,7 +6553,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2496,
@@ -6570,7 +6570,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6893,
@@ -6588,7 +6588,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6929,
@@ -6606,7 +6606,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7125,
@@ -6624,7 +6624,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6925,
@@ -6642,7 +6642,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2643,
@@ -6661,7 +6661,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7045,
@@ -6679,7 +6679,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7049,
@@ -6697,7 +6697,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7285,
@@ -6715,7 +6715,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2980,
@@ -6732,7 +6732,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6870,
@@ -6750,7 +6750,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7053,
@@ -6768,7 +6768,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7239,
@@ -6786,7 +6786,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7028,
@@ -6804,7 +6804,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7016,
@@ -6822,7 +6822,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7725,
@@ -6840,7 +6840,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7022,
@@ -6858,7 +6858,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7017,
@@ -6876,7 +6876,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6751,
@@ -6894,7 +6894,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 130195,
@@ -6911,7 +6911,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7117,
@@ -6929,7 +6929,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7791,
@@ -6947,7 +6947,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7006,
@@ -6965,7 +6965,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6856,
@@ -6984,7 +6984,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7164,
@@ -7003,7 +7003,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7220,
@@ -7021,7 +7021,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6780,
@@ -7039,7 +7039,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6993,
@@ -7057,7 +7057,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6900,
@@ -7075,7 +7075,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7126,
@@ -7093,7 +7093,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6790,
@@ -7111,7 +7111,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6854,
@@ -7129,7 +7129,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6858,
@@ -7147,7 +7147,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7280,
@@ -7165,7 +7165,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7177,
@@ -7183,7 +7183,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7023,
@@ -7202,7 +7202,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6866,
@@ -7220,7 +7220,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6865,
@@ -7238,7 +7238,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7176,
@@ -7256,7 +7256,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6740,
@@ -7274,7 +7274,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6920,
@@ -7293,7 +7293,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7143,
@@ -7312,7 +7312,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7294,
@@ -7330,7 +7330,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7100,
@@ -7348,7 +7348,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7099,
@@ -7366,7 +7366,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7171,
@@ -7384,7 +7384,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7105,
@@ -7402,7 +7402,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 112706,
@@ -7419,7 +7419,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7074,
@@ -7437,7 +7437,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6861,
@@ -7456,7 +7456,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2674,
@@ -7472,7 +7472,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7102,
@@ -7490,7 +7490,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2937,
@@ -7507,7 +7507,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 3107,
@@ -7525,7 +7525,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 111756,
@@ -7541,7 +7541,7 @@ export const wcbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7133,
@@ -7558,7 +7558,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -7577,7 +7577,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 353,
@@ -7594,7 +7594,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 108838,
@@ -7611,7 +7611,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 355,
@@ -7628,7 +7628,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2951,
@@ -7645,7 +7645,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6799,
@@ -7663,7 +7663,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7135,
@@ -7682,7 +7682,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6945,
@@ -7700,7 +7700,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 3229,
@@ -7717,7 +7717,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6977,
@@ -7735,7 +7735,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7107,
@@ -7753,7 +7753,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2355,
@@ -7770,7 +7770,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6915,
@@ -7787,7 +7787,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7104,
@@ -7804,7 +7804,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7094,
@@ -7821,7 +7821,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6847,
@@ -7838,7 +7838,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6853,
@@ -7856,7 +7856,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7288,
@@ -7874,7 +7874,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6883,
@@ -7892,7 +7892,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6971,
@@ -7910,7 +7910,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7282,
@@ -7929,7 +7929,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6843,
@@ -7947,7 +7947,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7184,
@@ -7965,7 +7965,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7108,
@@ -7982,7 +7982,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2370,
@@ -7999,7 +7999,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2699,
@@ -8016,7 +8016,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2274,
@@ -8032,7 +8032,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 83,
@@ -8048,7 +8048,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6857,
@@ -8066,7 +8066,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6862,
@@ -8084,7 +8084,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -8103,7 +8103,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7068,
@@ -8121,7 +8121,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -8140,7 +8140,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2079,
@@ -8157,7 +8157,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 18,
@@ -8174,7 +8174,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2884,
@@ -8190,7 +8190,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -8208,7 +8208,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7630,
@@ -8225,7 +8225,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6736,
@@ -8243,7 +8243,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7744,
@@ -8261,7 +8261,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7130,
@@ -8279,7 +8279,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7287,
@@ -8298,7 +8298,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 
   {
@@ -8318,7 +8318,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 3174,
@@ -8335,7 +8335,7 @@ export const wcbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7807,
@@ -8353,7 +8353,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6907,
@@ -8371,7 +8371,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6899,
@@ -8389,7 +8389,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7033,
@@ -8407,7 +8407,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6848,
@@ -8425,7 +8425,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7293,
@@ -8444,7 +8444,7 @@ export const wcbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2130,
@@ -8461,7 +8461,7 @@ export const wcbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7021,
@@ -8479,7 +8479,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6830,
@@ -8497,7 +8497,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 6927,
@@ -8515,7 +8515,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 130196,
@@ -8532,7 +8532,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7255,
@@ -8550,7 +8550,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 489,
@@ -8567,7 +8567,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 108806,
@@ -8584,7 +8584,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 7005,
@@ -8602,7 +8602,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 170,
@@ -8619,7 +8619,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 126821,
@@ -8638,7 +8638,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
   {
     id: 2242,
@@ -8655,7 +8655,7 @@ export const wcbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "WCBB",
+  league: "wcbb",
   },
 ];
 

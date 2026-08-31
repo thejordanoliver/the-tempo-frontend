@@ -267,61 +267,59 @@ export default function GamesList({
     [viewMode, styles],
   );
 
- 
+  if (loading) {
+    const totalSkeletonCount = expectedCount ?? 4;
 
- if (loading) {
-   const totalSkeletonCount = expectedCount ?? 4;
+    // When we already have games, preserve their real season sections.
+    if (sections.length > 0) {
+      return (
+        <View>
+          {showCountdown && countdownGame && (
+            <CountdownClock
+              game={countdownGame}
+              loading
+              teamLogo={teamLogo}
+              teamName={teamName}
+              teamColor={teamColor}
+              teamSecondaryColor={teamSecondaryColor}
+            />
+          )}
 
-   // When we already have games, preserve their real season sections.
-   if (sections.length > 0) {
-     return (
-       <View>
-         {showCountdown && countdownGame && (
-           <CountdownClock
-             game={countdownGame}
-             loading
-             teamLogo={teamLogo}
-             teamName={teamName}
-             teamColor={teamColor}
-             teamSecondaryColor={teamSecondaryColor}
-           />
-         )}
+          {sections.map((section, sectionIndex) => (
+            <View
+              key={`skel-section-${section.title}`}
+              style={{ marginTop: sectionIndex > 0 ? 12 : 0 }}
+            >
+              {showHeaders && (
+                <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+              )}
 
-         {sections.map((section, sectionIndex) => (
-           <View
-             key={`skel-section-${section.title}`}
-             style={{ marginTop: sectionIndex > 0 ? 12 : 0 }}
-           >
-             {showHeaders && (
-               <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
-             )}
+              {renderSkeletons(section.data.length)}
+            </View>
+          ))}
+        </View>
+      );
+    }
 
-             {renderSkeletons(section.data.length)}
-           </View>
-         ))}
-       </View>
-     );
-   }
+    // Initial load: games/sections do not exist yet,
+    // so always render a fallback set of skeletons.
+    return (
+      <View>
+        {showCountdown && countdownGame && (
+          <CountdownClock
+            game={countdownGame}
+            loading
+            teamLogo={teamLogo}
+            teamName={teamName}
+            teamColor={teamColor}
+            teamSecondaryColor={teamSecondaryColor}
+          />
+        )}
 
-   // Initial load: games/sections do not exist yet,
-   // so always render a fallback set of skeletons.
-   return (
-     <View>
-       {showCountdown && countdownGame && (
-         <CountdownClock
-           game={countdownGame}
-           loading
-           teamLogo={teamLogo}
-           teamName={teamName}
-           teamColor={teamColor}
-           teamSecondaryColor={teamSecondaryColor}
-         />
-       )}
-
-       {renderSkeletons(totalSkeletonCount)}
-     </View>
-   );
- }
+        {renderSkeletons(totalSkeletonCount)}
+      </View>
+    );
+  }
   if (error) return <Text style={global.errorText}>Error: {error}</Text>;
 
   return (
@@ -357,11 +355,7 @@ export default function GamesList({
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>
-                {day === "todayTomorrow"
-                  ? "No kickoffs on the schedule today."
-                  : "No football was played on this date."}
-              </Text>
+              <Text style={global.emptyTitle}>No kickoffs on the schedule...</Text>
               <Text style={global.emptyText}>
                 The next drive is just downfield.
               </Text>

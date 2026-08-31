@@ -168,14 +168,8 @@ export default function GamesList({
   if (games.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>
-          {day === "todayTomorrow"
-            ? "The ice is quiet today."
-            : "No one hit the ice on this date."}
-        </Text>
-        <Text style={global.emptyText}>
-          The puck will drop again soon.
-        </Text>
+        <Text style={global.emptyTitle}>The ice is quiet...</Text>
+        <Text style={global.emptyText}>The puck will drop again soon.</Text>
       </View>
     );
   }

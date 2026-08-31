@@ -35,7 +35,7 @@ type CachedUser = {
   profileImage?: string;
 };
 
-export type ProfileTab = "favorite teams" | "badges" | "bookmarks";
+export type ProfileTab = "favorites" | "badges" | "bookmarks";
 
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
@@ -51,8 +51,15 @@ export default function ProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
-  const { favorites, loadFavorites, clearFavorites, allTeams } =
-    useFavoriteTeamsContext();
+  const {
+    favorites,
+    favoriteSports,
+    favoriteSportsLoading,
+    favoriteSportsReady,
+    loadFavorites,
+    clearFavorites,
+    allTeams,
+  } = useFavoriteTeamsContext();
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
   const horizontalPadding = 24;
@@ -69,7 +76,7 @@ export default function ProfileScreen() {
   const [isGridView, setIsGridView] = useState(true);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);
-  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorite teams");
+  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
 
   const { shouldRefreshProfile, clearProfileRefresh } =
     useProfileRefreshStore();
@@ -325,7 +332,7 @@ export default function ProfileScreen() {
               },
             });
           }}
-           onEdit={() => {
+          onEdit={() => {
             router.push("/edit-profile");
           }}
         />
@@ -433,16 +440,19 @@ export default function ProfileScreen() {
         <BioSection bio={bio} isDark={isDark} />
 
         <TabBar
-          tabs={["favorite teams", "badges", "bookmarks"] as const}
+          tabs={["favorites", "badges", "bookmarks"] as const}
           selected={selectedTab}
           onTabPress={handleTabPress}
           isDark={isDark}
         />
 
-        {selectedTab === "favorite teams" && (
+        {selectedTab === "favorites" && (
           <View style={styles.favoritesContainer}>
             <FavoriteTeamsSection
               favorites={favoriteTeamsWithLeague}
+              favoriteSports={favoriteSports}
+              favoriteSportsLoading={favoriteSportsLoading}
+              favoriteSportsReady={favoriteSportsReady}
               isGridView={isGridView}
               fadeAnim={fadeAnim}
               toggleFavoriteTeamsView={toggleFavoriteTeamsView}

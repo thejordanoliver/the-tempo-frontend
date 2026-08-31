@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   FootballLeague,
   FootballRosterApiPlayer,
@@ -8,6 +7,7 @@ import type {
   FootballSeasonStats,
   FootballStatGroup,
 } from "@/types/football/stats";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type FootballRosterLeague = FootballLeague;
@@ -47,39 +47,6 @@ const EMPTY_ROSTER_STATS = (teamId: string): RosterStats => ({
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === "object" && !Array.isArray(value);
-
-const normalizeLeague = (value: unknown): FootballRosterLeague | "" => {
-  if (typeof value !== "string") return "";
-
-  const upperLeague = value.trim().toUpperCase();
-
-  return upperLeague === "NFL" || upperLeague === "CFB" ? upperLeague : "";
-};
-
-const resolveHookArgs = (
-  first: TeamIdInput | FootballRosterLeague,
-  second: TeamIdInput | FootballRosterLeague,
-) => {
-  const firstLeague = normalizeLeague(first);
-
-  if (firstLeague) {
-    return {
-      teamId: second as TeamIdInput,
-      league: firstLeague,
-    };
-  }
-
-  return {
-    teamId: first as TeamIdInput,
-    league: normalizeLeague(second),
-  };
-};
-
-const normalizeTeamId = (teamId: TeamIdInput) => {
-  if (teamId === null || teamId === undefined) return "";
-
-  return String(teamId).trim();
-};
 
 const parseNumber = (value: unknown): number | null => {
   if (typeof value === "number") {
@@ -135,7 +102,9 @@ const normalizeStatGroup = (value: unknown): FootballStatGroup | undefined => {
   );
 };
 
-const normalizeSeasonStatGroups = (value: unknown): FootballSeasonStatGroups => {
+const normalizeSeasonStatGroups = (
+  value: unknown,
+): FootballSeasonStatGroups => {
   if (!isRecord(value)) return {};
 
   const groups: FootballSeasonStatGroups = {};
@@ -229,10 +198,11 @@ const normalizePlayer = (
 ): FootballRosterStatsPlayer => {
   const fullName = toDisplayString(player.full_name ?? player.name);
   const nameParts = splitName(fullName);
-  const firstName = toDisplayString(player.first_name ?? player.firstName) ||
+  const firstName =
+    toDisplayString(player.first_name ?? player.firstName) ||
     nameParts.firstName;
-  const lastName = toDisplayString(player.last_name ?? player.lastName) ||
-    nameParts.lastName;
+  const lastName =
+    toDisplayString(player.last_name ?? player.lastName) || nameParts.lastName;
   const id = toIdValue(player.id ?? player.playerId ?? player.player_id) ?? "";
   const playerId =
     toIdValue(player.playerId ?? player.player_id ?? player.id) ?? id;
@@ -301,24 +271,7 @@ const getErrorObject = (err: unknown) => {
 export function useRosterStats(
   teamId: TeamIdInput,
   league: FootballRosterLeague,
-): UseRosterStatsResult;
-export function useRosterStats(
-  league: FootballRosterLeague,
-  teamId: TeamIdInput,
-): UseRosterStatsResult;
-export function useRosterStats(
-  first: TeamIdInput | FootballRosterLeague,
-  second: TeamIdInput | FootballRosterLeague,
 ): UseRosterStatsResult {
-  const { normalizedTeamId, normalizedLeague } = useMemo(() => {
-    const resolved = resolveHookArgs(first, second);
-
-    return {
-      normalizedTeamId: normalizeTeamId(resolved.teamId),
-      normalizedLeague: resolved.league,
-    };
-  }, [first, second]);
-
   const [teamRoster, setTeamRoster] = useState<RosterStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshingStats, setRefreshing] = useState(false);
@@ -326,7 +279,7 @@ export function useRosterStats(
 
   const fetchRoster = useCallback(
     async (isRefresh = false) => {
-      if (!normalizedTeamId || !normalizedLeague) {
+      if (!teamId || !league) {
         setTeamRoster(null);
         setLoading(false);
         setRefreshing(false);
@@ -342,21 +295,23 @@ export function useRosterStats(
       setError(null);
 
       try {
-        const url = `/api/team/stats/${normalizedLeague.toLowerCase()}/roster/${normalizedTeamId}`;
+        const url = `/api/team/stats/${league}/roster/${teamId}`;
 
         const response = await apiClient.get<Partial<RosterStats>>(url);
-        const normalizedRoster = normalizeRosterStatsResponse(
+
+        const roster = normalizeRosterStatsResponse(
           response.data,
-          normalizedTeamId,
+          String(teamId),
         );
 
-        setTeamRoster(normalizedRoster);
+        setTeamRoster(roster);
       } catch (err: unknown) {
         const errorObject = getErrorObject(err);
 
         console.error("Error fetching roster stats:", errorObject.message);
+
         setError(errorObject);
-        setTeamRoster(EMPTY_ROSTER_STATS(normalizedTeamId));
+        setTeamRoster(EMPTY_ROSTER_STATS(String(teamId)));
       } finally {
         if (isRefresh) {
           setRefreshing(false);
@@ -365,7 +320,7 @@ export function useRosterStats(
         }
       }
     },
-    [normalizedLeague, normalizedTeamId],
+    [league, teamId],
   );
 
   useEffect(() => {
@@ -373,6 +328,7 @@ export function useRosterStats(
   }, [fetchRoster]);
 
   const refresh = useCallback(() => fetchRoster(true), [fetchRoster]);
+
   const players = teamRoster?.players ?? [];
 
   return {

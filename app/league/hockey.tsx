@@ -1,5 +1,4 @@
 import { useHockeyGames } from "@/hooks/HockeyHooks/useHockeyGames";
-import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -40,18 +39,6 @@ import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-type SupportedHockeyLeague = Extract<League, "NHL" | "MCH" | "WCH">;
-
-/* -------------------------------------------------------------------------- */
-/*                                   Helpers                                  */
-/* -------------------------------------------------------------------------- */
-
-function isSupportedHockeyLeague(
-  league: League,
-): league is SupportedHockeyLeague {
-  return league === "NHL";
-}
-
 /* -------------------------------------------------------------------------- */
 /*                                 Main Route                                 */
 /* -------------------------------------------------------------------------- */
@@ -62,17 +49,10 @@ export default function HockeyLeagueScreen() {
     leagueLabel?: string;
   }>();
 
-  const normalizedLeague = normalizeLeagueParam(params.league);
+  const league = params.league;
+  const isNHL = league === "nhl";
 
-  const parsedLeague: League = isLeague(normalizedLeague)
-    ? normalizedLeague
-    : "NHL";
-
-  const league: SupportedHockeyLeague = isSupportedHockeyLeague(parsedLeague)
-    ? parsedLeague
-    : "NHL";
-
-  if (league === "NHL") return <NHLLeagueScreen />;
+  if (isNHL) return <NHLLeagueScreen />;
 
   return <NHLLeagueScreen />;
 }
@@ -82,7 +62,7 @@ export default function HockeyLeagueScreen() {
 /* ========================================================================== */
 
 function NHLLeagueScreen() {
-  const league = "NHL";
+  const league = "nhl";
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -151,7 +131,7 @@ function NHLLeagueScreen() {
     error: gamesError,
     refreshGames,
     loading: loadingGames,
-  } = useHockeyGames(selectedDate, "nhl");
+  } = useHockeyGames(selectedDate, league);
 
   const {
     articles,

@@ -7,6 +7,7 @@ import { SoccerGame } from "./soccer/soccer";
 
 export type LeagueCategory =
   | "NBA"
+  | "G League"
   | "WNBA"
   | "NFL"
   | "UFL"
@@ -31,6 +32,7 @@ export type LeagueCategory =
 
 export type CombinedGamesSection =
   | { category: "NBA"; data: BasketballGame[] }
+  | { category: "G League"; data: BasketballGame[] }
   | { category: "WNBA"; data: BasketballGame[] }
   | { category: "NFL"; data: FootballGame[] }
   | { category: "UFL"; data: FootballGame[] }

@@ -1,10 +1,11 @@
 import ForumFeed from "@/components/Forum/ForumFeed";
 import Roster from "@/components/Sports/Baseball/Team/Roster";
+import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
-import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
 import { useRosterStats } from "@/hooks/FootballHooks/useRosterStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -13,7 +14,6 @@ import { getFootballSeason } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import NewsList from "components/News/NewsList";
-import { CFBConferenceStandingsList } from "components/Sports/Football/Standings/CFBConferenceStandingsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -32,7 +32,7 @@ import { getFirstSeasonGame } from "utils/seasonGames";
 import { CustomHeader } from "../../../components/CustomHeader";
 
 export default function TeamDetailScreen() {
-  const league = "CFB";
+  const league = "cfb";
   const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -68,7 +68,7 @@ export default function TeamDetailScreen() {
   };
 
   const { conferences, conferencesLoading, conferencesError } =
-    useCFBConferenceStandings(conferenceId);
+    useConferenceStandings(league, conferenceId);
 
   const {
     articles,
@@ -239,10 +239,11 @@ export default function TeamDetailScreen() {
 
         {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
-          <CFBConferenceStandingsList
+          <ConferenceStandingsList
             conferences={conferences}
             loading={conferencesLoading}
             error={conferencesError}
+            league={league}
           />
         </View>
 

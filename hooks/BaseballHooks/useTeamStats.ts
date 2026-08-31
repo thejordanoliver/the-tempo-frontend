@@ -43,7 +43,7 @@ type TeamStatsApiResponse = {
 type UseTeamStatsOptions = {
   teamId: number;
   season?: string | number;
-  league?: "MLB";
+  league?: "mlb";
 };
 
 export type TeamAggregatedStats = {
@@ -143,7 +143,7 @@ const buildStatMap = (group?: StatGroup): Record<string, number> => {
 export function useTeamStats({
   teamId,
   season,
-  league = "MLB",
+  league = "mlb",
 }: UseTeamStatsOptions) {
   const [teamStats, setTeamStats] = useState<TeamAggregatedStats | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

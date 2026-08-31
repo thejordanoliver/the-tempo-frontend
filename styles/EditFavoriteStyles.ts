@@ -10,6 +10,14 @@ export const editFavoritesStyles = StyleSheet.create({
     padding: SPACING.md,
   },
 
+  tabs: {
+    marginBottom: SPACING.md,
+  },
+
+  selectorContainer: {
+    flex: 1,
+  },
+
   buttonContainer: {
     flexDirection: "row",
     alignItems: "center",

@@ -124,11 +124,6 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
@@ -265,7 +260,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
           <ScoreText
             score={awayScore}
             record={awayRecord}
-            teamWins={awayWins}
+            isWinner={awayWins}
           />
         </View>
 
@@ -285,7 +280,7 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
           <ScoreText
             score={homeScore}
             record={homeRecord}
-            teamWins={homeWins}
+            isWinner={homeWins}
           />
         </View>
       </View>

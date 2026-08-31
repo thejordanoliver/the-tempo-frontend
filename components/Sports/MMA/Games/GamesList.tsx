@@ -29,7 +29,7 @@ type GamesListProps = {
   error: Error | null;
 };
 
-export default function MMAGamesList({
+export default function GamesList({
   games,
   loading,
   error,
@@ -166,9 +166,7 @@ export default function MMAGamesList({
     return (
       <View style={global.emptyContainer}>
         <Text style={global.emptyTitle}>
-          {day === "todayTomorrow"
-            ? "No one is stepping into the Octagon today."
-            : "No fights were booked for this date."}
+          No one is stepping into the Octagon...
         </Text>
         <Text style={global.emptyText}>
           The next showdown is worth the wait.

@@ -11,7 +11,16 @@ export const favoritesScrollStyles = (isDark: boolean) =>
       paddingHorizontal: 16,
     },
 
-    teamContainer: { alignItems: "center" },
+    tabContainer: {
+      alignItems: "center",
+      width: 80,
+    },
+    activeTabContainer: {
+      zIndex: 10,
+    },
+    pressed: {
+      opacity: 0.6,
+    },
     logoWrapper: {
       alignItems: "center",
       justifyContent: "center",
@@ -39,12 +48,18 @@ export const favoritesScrollStyles = (isDark: boolean) =>
         : Colors.dark.background,
       overflow: "hidden",
     },
-    teamLabelContainer: {
+    labelContainer: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "center",
-      width: 60,
+      justifyContent: "flex-start",
+      minHeight: 30,
       marginTop: 4,
+    },
+    tabLabel: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+      textAlign: "center",
     },
     divider: {
       width: 1,
@@ -52,10 +67,31 @@ export const favoritesScrollStyles = (isDark: boolean) =>
       marginHorizontal: 4,
       backgroundColor: Colors.lightGray,
     },
-    teamLabel: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.dark.text : Colors.light.text,
-      textAlignVertical: "center",
+    leagueBadge: {
+      paddingHorizontal: 5,
+      paddingVertical: 2,
+      marginTop: 3,
+      borderRadius: 8,
+    },
+    leagueBadgeText: {
+      textTransform: "uppercase",
+      fontFamily: Fonts.BOLD,
+      fontSize: 9,
+      color: Colors.white,
+    },
+    dragPlaceholder: {
+      alignItems: "center",
+      width: 80,
+    },
+    dragPlaceholderCircle: {
+      width: 80,
+      height: 80,
+      borderWidth: 1.5,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderStyle: "dashed",
+      borderRadius: 40,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
   });

@@ -1,5 +1,5 @@
 export const LEAGUE_TABS = {
-  NBA: [
+  nba: [
     "scores",
     "news",
     "standings",
@@ -9,8 +9,12 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  WNBA: ["scores", "news", "standings", "draft", "awards", "forum"],
-  NFL: [
+
+  wnba: ["scores", "news", "standings", "draft", "awards", "forum"],
+
+  gleague: ["scores", "news", "forum"],
+
+  nfl: [
     "scores",
     "news",
     "standings",
@@ -20,10 +24,14 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  UFL: ["scores", "news", "standings", "stats", "forum"],
-  MLB: ["scores", "news", "standings", "stats", "awards", "forum"],
-  NHL: ["scores", "news", "standings", "stats", "awards", "forum"],
-  CFB: [
+
+  ufl: ["scores", "news", "standings", "stats", "forum"],
+
+  mlb: ["scores", "news", "standings", "stats", "awards", "forum"],
+
+  nhl: ["scores", "news", "standings", "stats", "awards", "forum"],
+
+  cfb: [
     "scores",
     "news",
     "standings",
@@ -33,7 +41,8 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  CBB: [
+
+  cbb: [
     "scores",
     "news",
     "standings",
@@ -43,38 +52,66 @@ export const LEAGUE_TABS = {
     "awards",
     "forum",
   ],
-  WCBB: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
-  CB: ["scores", "news", "standings", "forum"],
-  SB: ["scores", "news", "standings", "forum"],
-  UFC: ["fights", "news", "champions"],
-  MLS: ["scores", "news", "standings", "forum"],
-  EPL: ["scores", "news", "standings", "forum"],
-  EUROPA: ["scores", "news", "standings", "forum"],
-  CHAMPIONS: ["scores", "news", "standings", "forum"],
-  BUNDESLIGA: ["scores", "news", "standings", "forum"],
-  LEAGUESCUP: ["scores", "news", "standings", "forum"],
-  FIFA: ["scores", "news", "standings", "forum"],
-  F1: ["scores", "news", "standings", "forum"],
-  NASCARPREMIER: ["scores", "news", "standings", "forum"],
-  NASCARSECONDARY: ["scores", "news", "standings", "forum"],
-  NASCARTRUCK: ["scores", "news", "standings", "forum"],
-  FIFAF: ["scores", "news", "standings", "forum"],
-  FIFAW: ["scores", "news", "standings", "forum"],
+
+  wcbb: ["scores", "news", "standings", "stats", "bracket", "awards", "forum"],
+
+  cb: ["scores", "news", "standings", "forum"],
+
+  sb: ["scores", "news", "standings", "forum"],
+
+  ufc: ["fights", "news", "champions"],
+
+  mls: ["scores", "news", "standings", "forum"],
+
+  epl: ["scores", "news", "standings", "forum"],
+
+  europa: ["scores", "news", "standings", "forum"],
+
+  champions: ["scores", "news", "standings", "forum"],
+
+  bundesliga: ["scores", "news", "standings", "forum"],
+
+  leaguescup: ["scores", "news", "standings", "forum"],
+
+  fifa: ["scores", "news", "standings", "forum"],
+
+  f1: ["scores", "news", "standings", "forum"],
+
+  nascarpremier: ["scores", "news", "standings", "forum"],
+
+  nascarsecondary: ["scores", "news", "standings", "forum"],
+
+  nascartruck: ["scores", "news", "standings", "forum"],
+
+  fifaf: ["scores", "news", "standings", "forum"],
+
+  fifaw: ["scores", "news", "standings", "forum"],
 } as const;
 
 export const TEAM_TABS = {
-  NBA: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
-  WNBA: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  NFL: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
-  MLB: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  CB: ["schedule", "news", "standings", "forum"],
-  SB: ["schedule", "news", "standings", "forum"],
-  NHL: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  CFB: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  UFL: ["schedule", "news", "standings", "forum"],
-  CBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  WCBB: ["schedule", "news", "roster", "stats", "standings", "forum"],
-  SOCC: ["schedule", "news", "roster"],
+  nba: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
+
+  wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  nfl: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
+
+  mlb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  cb: ["schedule", "news", "standings", "forum"],
+
+  sb: ["schedule", "news", "standings", "forum"],
+
+  nhl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  cfb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  ufl: ["schedule", "news", "standings", "forum"],
+
+  cbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  socc: ["schedule", "news", "roster"],
 } as const;
 
 export type League = keyof typeof LEAGUE_TABS;
@@ -96,5 +133,5 @@ export function normalizeLeagueParam(value: string | string[] | undefined) {
 
   return String(rawValue || "")
     .trim()
-    .toUpperCase();
+
 }

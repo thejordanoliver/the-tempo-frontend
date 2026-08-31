@@ -21,7 +21,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
-import { ProfileTab } from "../(tabs)/profile";
+
+type UserProfileTab = "favorite teams" | "badges";
 
 type RouteParam = string | string[] | undefined;
 
@@ -47,7 +48,8 @@ export default function UserProfileScreen() {
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorite teams");
+  const [selectedTab, setSelectedTab] =
+    useState<UserProfileTab>("favorite teams");
   const [isGridView, setIsGridView] = useState(true);
   const isAnimatingRef = useRef(false);
 
@@ -91,7 +93,7 @@ export default function UserProfileScreen() {
     [currentUserIdString, userId],
   );
 
-  const handleTabPress = useCallback((tab: ProfileTab) => {
+  const handleTabPress = useCallback((tab: UserProfileTab) => {
     setSelectedTab(tab);
   }, []);
 

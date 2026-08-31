@@ -24,56 +24,29 @@ export type Team = {
 };
 
 export type LeagueType =
-  | "NBA"
-  | "WNBA"
-  | "NFL"
-  | "CFB"
-  | "UFL"
-  | "EPL"
-  | "MLS"
-  | "CHAMPIONS"
-  | "EUROPA"
-  | "FIFA"
-  | "FIFAW"
-  | "BUNDESLIGA"
-  | "CB"
-  | "SB"
-  | "CBB"
-  | "WCBB"
-  | "MLB"
-  | "NHL"
-  | "UFC"
-  | "F1"
-  | "NASCARPREMIER"
-  | "LEAGUESCUP";
-
-export type WCBBTeam = {
-  id: number;
-  espnId?: number | null;
-  /** @deprecated Compatibility only for converting old WCBB favorite keys. */
-  wid?: number | null;
-  league: "WCBB";
-  name: string | null;
-  shortName: string;
-  fullName?: string | null;
-  code: string | null;
-  primaryColor: string | null;
-  secondaryColor: string | null;
-  color: string | null;
-  city: string | null;
-  state: string | null;
-  location: string | null;
-  conferenceId: number | null;
-  venueId: number | null;
-  venueLeagueKey: "wcbb";
-  logo?: any;
-  logoLight?: any;
-  wLogo?: any;
-  isAllStar: boolean;
-  isActive: boolean;
-  searchTerms?: string;
-  [key: string]: unknown;
-};
+  | "nba"
+  | "gleague"
+  | "wnba"
+  | "nfl"
+  | "cfb"
+  | "ufl"
+  | "epl"
+  | "mls"
+  | "champions"
+  | "europa"
+  | "fifa"
+  | "fifaw"
+  | "bundesliga"
+  | "cb"
+  | "sb"
+  | "cbb"
+  | "wcbb"
+  | "mlb"
+  | "nhl"
+  | "ufc"
+  | "f1"
+  | "nascarpremier"
+  | "leaguescup";
 
 export type Venue = {
   id: string;

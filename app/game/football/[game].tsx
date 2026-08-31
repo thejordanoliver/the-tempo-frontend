@@ -6,6 +6,7 @@ import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamSco
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { FootballGameCardProps } from "@/types/football/football";
@@ -177,11 +178,13 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
+  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
+
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
 
-  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
-  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
   const { score, details, loading } = useFootballGameDetails(LEAGUE, gameId);
 
   const isLoading = loading || !game || !home || !away || !score || !details;
@@ -407,6 +410,8 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              votes={liveVotes}
+              castVote={castLiveVote}
               gameId={gameId}
               awayId={awayId}
               awayCode={awayCode}

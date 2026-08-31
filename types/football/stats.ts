@@ -13,7 +13,7 @@
  * Shared primitives
  * ========================================================================== */
 
-export type FootballLeague = "CFB" | "NFL";
+export type FootballLeague = "cfb" | "nfl";
 
 /**
  * Stat values can arrive as numbers, strings, or be missing/null depending on

@@ -34,6 +34,7 @@ type Props = {
   isCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
+  isGLEAGUE?: boolean;
   showCountdown?: boolean;
   countdownGame?: BasketballGame | null;
   teamLogo?: any;
@@ -87,6 +88,8 @@ export default function GamesList({
   const isCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
   const isWCBBGame = (game: BasketballGame) =>
     String(game?.league?.id) === "54";
+  const isGLEAGUEGame = (game: BasketballGame) =>
+    String(game?.league?.id) === "69";
   const isWNBAGame = (game: BasketballGame) =>
     String(game?.league?.id) === "59";
 
@@ -143,6 +146,7 @@ export default function GamesList({
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
+            isGLEAGUE={isGLEAGUEGame(game)}
           />
         </Wrapper>
       );
@@ -157,6 +161,7 @@ export default function GamesList({
             isCBB={isCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
+            isGLEAGUE={isGLEAGUEGame(game)}
           />
         </Wrapper>
       );
@@ -170,6 +175,7 @@ export default function GamesList({
           isCBB={isCBBGame(game)}
           isWNBA={isWNBAGame(game)}
           isWCBB={isWCBBGame(game)}
+          isGLEAGUE={isGLEAGUEGame(game)}
         />
       </Wrapper>
     );
@@ -232,11 +238,7 @@ export default function GamesList({
   if (!loading && games.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>
-          {day === "todayTomorrow"
-            ? "No games hitting the hardwood today."
-            : "The court was quiet on this date."}
-        </Text>
+        <Text style={global.emptyTitle}>The court is quiet...</Text>
         <Text style={global.emptyText}>The next tipoff won’t be far away.</Text>
       </View>
     );
@@ -276,9 +278,7 @@ export default function GamesList({
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
-                {day === "todayTomorrow"
-                  ? "No games hitting the hardwood today."
-                  : "The court was quiet on this date."}
+                No games hitting the hardwood today..
               </Text>
               <Text style={global.emptyText}>
                 The next tipoff won’t be far away.
@@ -321,6 +321,7 @@ export default function GamesList({
           isCBB={isCBBGame(previewGame)}
           isWCBB={isWCBBGame(previewGame)}
           isWNBA={isWNBAGame(previewGame)}
+          isGLEAGUE={isGLEAGUEGame(previewGame)}
         />
       )}
     </>

@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
   selectedConference?: string | number;
@@ -24,7 +24,6 @@ type Props = {
   loading: boolean;
   error: string | null;
   onlyTeamConference?: boolean;
- 
 };
 
 type ConferenceTeam = CFBStandingTeam;
@@ -58,7 +57,7 @@ export const CFBConferenceStandingsList = ({
 }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useRouter();
   const { isFavorite } = useFavoriteTeamsContext();

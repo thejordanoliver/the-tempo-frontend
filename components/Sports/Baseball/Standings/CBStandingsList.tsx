@@ -86,7 +86,7 @@ export const CBStandingsList = ({ league }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -465,7 +465,7 @@ export const CBStandingsList = ({ league }: Props) => {
   );
 };
 
-export const standingsStyles = (isDark: boolean) =>
+export const StandingsStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainer: {
       paddingBottom: 100,

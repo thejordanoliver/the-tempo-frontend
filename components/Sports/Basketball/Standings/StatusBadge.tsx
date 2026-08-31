@@ -1,7 +1,7 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { standingsStyles } from "styles/LeagueStyles/StandingsStyles";
+import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 // Simplified NFL-managed league status codes
 type StatusCode = "x" | "o" | "c" | "d" | "pi";
@@ -35,7 +35,7 @@ export const StatusBadge = ({
 }: StatusBadgeProps) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = standingsStyles(isDark);
+  const styles = StandingsStyles(isDark);
 
   if (!code && !clinchedConference) return null;
 

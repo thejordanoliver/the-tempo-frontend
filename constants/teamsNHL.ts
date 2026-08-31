@@ -82,7 +82,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 673,
@@ -100,7 +100,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 674,
@@ -118,7 +118,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 675,
@@ -136,7 +136,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 676,
@@ -154,7 +154,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 678,
@@ -172,7 +172,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 679,
@@ -190,7 +190,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 680,
@@ -208,7 +208,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 681,
@@ -226,7 +226,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 682,
@@ -244,7 +244,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 683,
@@ -262,7 +262,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 684,
@@ -280,7 +280,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 685,
@@ -298,7 +298,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 687,
@@ -316,7 +316,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 688,
@@ -334,7 +334,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 689,
@@ -352,7 +352,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 690,
@@ -370,7 +370,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 691,
@@ -388,7 +388,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 692,
@@ -406,7 +406,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 693,
@@ -424,7 +424,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 695,
@@ -442,7 +442,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 696,
@@ -460,7 +460,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 697,
@@ -478,7 +478,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 1436,
@@ -496,7 +496,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 698,
@@ -514,7 +514,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 699,
@@ -532,7 +532,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 700,
@@ -550,7 +550,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 2483,
@@ -568,7 +568,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 701,
@@ -586,7 +586,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 702,
@@ -604,7 +604,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 703,
@@ -622,7 +622,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
   {
     id: 704,
@@ -640,7 +640,7 @@ export const nhlTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-   league: "NHL"
+  league: "nhl"
   },
 ];
 

@@ -1,7 +1,6 @@
 import { FootballGame } from "@/types/football/football";
-import { isGameLive } from "@/utils/games";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 type FetchTeamGamesOptions = {
@@ -21,6 +20,33 @@ interface UseTeamGamesReturn {
   refreshGames: () => Promise<void>;
 }
 
+function mergeFootballGames(
+  currentGames: FootballGame[],
+  updatedGames: FootballGame[],
+): FootballGame[] {
+  if (updatedGames.length === 0) {
+    return currentGames;
+  }
+
+  const updates = new Map(updatedGames.map((game) => [String(game.id), game]));
+
+  const merged = currentGames.map((game) => {
+    const updatedGame = updates.get(String(game.id));
+
+    if (!updatedGame) {
+      return game;
+    }
+
+    updates.delete(String(game.id));
+
+    return updatedGame;
+  });
+
+  // Include any games returned by realtime that were not already
+  // present in the original schedule.
+  return [...merged, ...updates.values()];
+}
+
 export function useFootballTeamGames(
   teamId: string | number | null,
   league: string = "nfl",
@@ -36,7 +62,7 @@ export function useFootballTeamGames(
       forceRefresh = false,
       silent = false,
     }: FetchTeamGamesOptions = {}) => {
-      if (!teamId || !league) {
+      if (teamId == null || teamId === "" || !league) {
         if (!silent) {
           setGames([]);
           setError(null);
@@ -59,10 +85,12 @@ export function useFootballTeamGames(
           setLoading(true);
         }
 
-        const endpoint =
-          season !== undefined && season !== null && season !== ""
-            ? `/api/games/football/team/${league}/${teamId}/${season}`
-            : `/api/games/football/team/${league}/${teamId}`;
+        const hasSeason =
+          season !== undefined && season !== null && season !== "";
+
+        const endpoint = hasSeason
+          ? `/api/games/football/team/${league}/${teamId}/${season}`
+          : `/api/games/football/team/${league}/${teamId}`;
 
         const { data } =
           await apiClient.get<FootballTeamGamesResponse>(endpoint);
@@ -78,7 +106,7 @@ export function useFootballTeamGames(
 
         setError("Failed to load team games");
 
-        // Preserve the existing schedule if a background poll fails.
+        // Preserve existing schedule during silent/background refreshes.
         if (!silent) {
           setGames([]);
         }
@@ -99,27 +127,38 @@ export function useFootballTeamGames(
     fetchGames();
   }, [fetchGames]);
 
-  const hasLiveGame = useMemo(() => {
-    return games.some(isGameLive);
-  }, [games]);
+  const subscriptionEnabled =
+    teamId != null && teamId !== "" && Boolean(league);
 
   useLiveSportsSubscription<FootballTeamGamesResponse>({
-    enabled: Boolean(teamId && league && hasLiveGame),
+    enabled: subscriptionEnabled,
     kind: "scoreboard",
+
     payload: {
       sport: "football",
       league,
       feed: "teamSchedule",
-      teamId: teamId || "",
+      teamId: teamId ?? "",
       season,
     },
+
     onUpdate: (payload) => {
-      setGames(Array.isArray(payload?.games) ? payload.games : []);
+      const updatedGames = Array.isArray(payload?.games) ? payload.games : [];
+
+      if (updatedGames.length === 0) {
+        return;
+      }
+
+      setGames((currentGames) =>
+        mergeFootballGames(currentGames, updatedGames),
+      );
     },
   });
 
   const refreshGames = useCallback(async () => {
-    await fetchGames({ forceRefresh: true });
+    await fetchGames({
+      forceRefresh: true,
+    });
   }, [fetchGames]);
 
   return {

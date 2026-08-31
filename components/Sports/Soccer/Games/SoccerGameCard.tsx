@@ -5,14 +5,14 @@ import {
   getHolidayLabel,
   safeDate,
 } from "@/utils/dateUtils";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
-import { formatPeriod, getBroadcastDisplay } from "utils/games";
+import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerGameCard({ game }: SoccerGameCardProps) {
@@ -80,28 +80,30 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
 
-  const winnerStyle = (winner: boolean) => ({
-    color: isDark ? Colors.white : Colors.black,
-    opacity: isTie ? 1 : winner ? 1 : 0.5,
-  });
-
   const ScoreText = ({
     score,
     record,
-    teamWins = false,
+    isWinner,
   }: {
     score: number;
-    record: string;
-    teamWins: boolean;
+    record: string | undefined;
+    isWinner: boolean;
   }) => {
-    const showRecord = isScheduled || isCanceled || isPostponed || isDelayed;
+    const showRecord = isScheduled;
 
     return (
       <Text
         style={
           showRecord
             ? styles.teamRecord
-            : [styles.teamScore, winnerStyle(teamWins)]
+            : [
+                styles.teamScore,
+                winnerStyle({
+                  isWinner: isWinner,
+                  isTie: isTie,
+                  isDark: isDark,
+                }),
+              ]
         }
       >
         {showRecord ? record : score}
@@ -162,7 +164,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
         <Text style={styles.teamName}>{awayName}</Text>
       </View>
 
-      <ScoreText score={awayScore} record={awayRecord} teamWins={awayWins} />
+      <ScoreText score={awayScore} record={awayRecord} isWinner={awayWins} />
 
       <View style={styles.headlineContainer}>
         <Text style={styles.headlineText}>{headline}</Text>
@@ -175,7 +177,7 @@ export default function SoccerGameCard({ game }: SoccerGameCardProps) {
         )}
       </View>
 
-      <ScoreText score={homeScore} record={homeRecord} teamWins={homeWins} />
+      <ScoreText score={homeScore} record={homeRecord} isWinner={homeWins} />
 
       <View style={styles.teamSection}>
         <Image

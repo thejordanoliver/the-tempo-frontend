@@ -9,7 +9,6 @@ import * as React from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { LEAGUE_TABS, League } from "utils/tabs";
 import CalendarModal from "../../components/CalendarModal";
 import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
@@ -28,37 +27,17 @@ import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-function isLeague(value: unknown): value is League {
-  return (
-    typeof value === "string" &&
-    Object.prototype.hasOwnProperty.call(LEAGUE_TABS, value) &&
-    Array.isArray(LEAGUE_TABS[value as League])
-  );
-}
-
-function normalizeLeagueParam(value: string | string[] | undefined) {
-  const rawValue = Array.isArray(value) ? value[0] : value;
-
-  return String(rawValue || "")
-    .trim()
-    .toUpperCase();
-}
-
 export default function SoccerLeagueScreen() {
   const params = useLocalSearchParams<{
-    league?: string | string[];
+    league?: string;
     leagueLabel?: string;
   }>();
-  const normalizedParamLeague = normalizeLeagueParam(params.league);
-  const league: League = isLeague(normalizedParamLeague)
-    ? normalizedParamLeague
-    : "EPL";
+
+  const league = params.league ?? "mls";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-
-  console.log(league);
 
   const leagueLabel = params.leagueLabel;
 

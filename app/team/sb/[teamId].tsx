@@ -50,7 +50,7 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 }
 
 export default function SoftballTeamDetailScreen() {
-  const league = "SB";
+  const league = "sb";
   const currentSeason = getWNBASeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();

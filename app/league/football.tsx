@@ -10,16 +10,16 @@ import WeekSelector, {
   FootballWeekGroup,
 } from "@/components/League/WeekSelector";
 import NewsList from "@/components/News/NewsList";
+import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import { CFPBracket } from "@/components/Sports/Football/CFBPlayoffs/CFPBracket";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { NFLPlayoffBracket } from "@/components/Sports/Football/NFLPlayoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
-import { CFBConferenceStandingsList } from "@/components/Sports/Football/Standings/CFBConferenceStandingsList";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useCFBConferenceStandings } from "@/hooks/FootballHooks/useCFBConferenceStandings";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useCBBConferenceStandings";
 import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
 import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";
@@ -30,7 +30,6 @@ import { useLeaguesNews } from "@/hooks/NewsHooks/useLeaguesNews";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason, getRecruitYear } from "@/utils/dateUtils";
-import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -46,7 +45,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { CustomHeader } from "../../components/CustomHeader";
 
@@ -54,13 +53,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(isBetween);
 
-type SupportedLeague = Extract<League, "NFL" | "CFB" | "UFL">;
-type LeagueKey = "nfl" | "cfb" | "ufl";
 type SelectedConference = number | string | null;
-
-function isSupportedLeague(league: League): league is SupportedLeague {
-  return league === "NFL" || league === "CFB" || league === "UFL";
-}
 
 function getSeasonTypeFromStage(stage?: string): number {
   const normalizedStage = String(stage ?? "").toLowerCase();
@@ -96,25 +89,38 @@ function getSeasonSlugFromStage(stage?: string): string {
   return "regular-season";
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Main Route                                 */
+/* -------------------------------------------------------------------------- */
+
 export default function FootballLeagueScreen() {
   const params = useLocalSearchParams<{
     league?: string | string[];
+    leagueLabel?: string;
   }>();
-  const normalizedLeague = normalizeLeagueParam(params.league);
-  const parsedLeague: League = isLeague(normalizedLeague)
-    ? normalizedLeague
-    : "NFL";
-  const league: SupportedLeague = isSupportedLeague(parsedLeague)
-    ? parsedLeague
-    : "NFL";
 
-  const leagueKey = league.toLowerCase() as LeagueKey;
-  const isNFL = league === "NFL";
-  const isCFB = league === "CFB";
-  const isUFL = league === "UFL";
+  const league = params.league;
+  const isCFB = league === "cfb";
+  const isUFL = league === "ufl";
+
+  if (isCFB) {
+    return <CFBLeagueScreen />;
+  }
+  if (isUFL) {
+    return <UFLLeagueScreen />;
+  }
+
+  return <NFLLeagueScreen />;
+}
+
+/* ========================================================================== */
+/*                                    NFL                                     */
+/* ========================================================================== */
+
+function NFLLeagueScreen() {
+  const league = "nfl";
   const currentSeason = getFootballSeason();
   const navigation = useNavigation();
-  const conferenceModalRef = useRef<ConferenceListModalRef>(null);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -126,16 +132,7 @@ export default function FootballLeagueScreen() {
   );
   const [draftTeam, setDraftTeam] = useState("all");
   const [draftRound, setDraftRound] = useState("all");
-  const [selectedConference, setSelectedConference] =
-    useState<SelectedConference>("top25");
-  const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
-  const [recruitView, setRecruitView] = useState<"players" | "teams">(
-    "players",
-  );
-  const [recruitYear, setRecruitYear] = useState(() =>
-    String(getRecruitYear()),
-  );
-  const [recruitTeam, setRecruitTeam] = useState("all");
+
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
@@ -152,29 +149,6 @@ export default function FootballLeagueScreen() {
   };
 
   const { calendar } = useLeagueCalendar(league, "football");
-
-  const selectedConferenceName = useMemo(() => {
-    if (!isCFB) {
-      return undefined;
-    }
-
-    return getCFBConferenceSelectionName(selectedConference);
-  }, [isCFB, selectedConference]);
-
-  const selectedConferenceGroupId = useMemo(() => {
-    if (
-      !isCFB ||
-      selectedConference == null ||
-      selectedConference === "top25" ||
-      Number(selectedConference) === 80
-    ) {
-      return null;
-    }
-
-    const conferenceId = Number(selectedConference);
-
-    return Number.isFinite(conferenceId) ? conferenceId : null;
-  }, [isCFB, selectedConference]);
 
   const weekGroups = useMemo<FootballWeekGroup[]>(() => {
     if (!calendar?.length) {
@@ -214,29 +188,11 @@ export default function FootballLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
-    league: leagueKey,
+    league: league,
     season: currentSeason,
     week: selectedWeekNumber,
     seasontype: selectedSeasonType,
-    conferenceId:
-      isCFB && selectedConference !== "top25" && selectedConference != null
-        ? selectedConference
-        : undefined,
   });
-
-  const displayedGames = useMemo(() => {
-    if (!isCFB || selectedConference == null) {
-      return selectedWeekGames;
-    }
-
-    if (selectedConference === "top25") {
-      return selectedWeekGames.filter(
-        (game) => game.home?.rank != null || game.away?.rank != null,
-      );
-    }
-
-    return selectedWeekGames;
-  }, [isCFB, selectedConference, selectedWeekGames]);
 
   const {
     articles,
@@ -255,14 +211,306 @@ export default function FootballLeagueScreen() {
   } = useNFLPlayoffs(currentSeason);
 
   const {
+    categories,
+    loading: leadersLoading,
+    error: leadersError,
+  } = useSeasonLeaders(currentSeason, league);
+
+  useEffect(() => {
+    if (!weekGroups.length) {
+      setSelectedWeekIndex(0);
+      return;
+    }
+
+    setSelectedWeekIndex((currentIndex) =>
+      currentIndex < weekGroups.length ? currentIndex : 0,
+    );
+  }, [weekGroups.length]);
+
+  useEffect(() => {
+    if (!calendar?.length || !weekGroups.length) {
+      return;
+    }
+
+    const now = dayjs();
+
+    const activeCalendarWeek = calendar.find(
+      (week) =>
+        week.stage !== "Off Season" &&
+        now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
+    );
+
+    if (!activeCalendarWeek) {
+      return;
+    }
+
+    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
+
+    const matchingGroupIndex = weekGroups.findIndex(
+      (group) =>
+        group.week.number === activeCalendarWeek.weekNumber &&
+        group.season.type === activeSeasonType,
+    );
+
+    if (matchingGroupIndex >= 0) {
+      setSelectedWeekIndex(matchingGroupIndex);
+    }
+  }, [calendar, weekGroups]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader tabName={league.toUpperCase()} onBack={goBack} />
+      ),
+    });
+  }, [league, navigation]);
+
+  const handleRefresh = useCallback(async () => {
+    setScreenRefreshing(true);
+
+    try {
+      await refreshGames();
+    } catch (error) {
+      console.warn(`Failed to refresh ${league} games:`, error);
+    } finally {
+      setScreenRefreshing(false);
+    }
+  }, [league, refreshGames]);
+
+  return (
+    <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+        scrollProgress={scrollProgress}
+      />
+
+      <View style={styles.container}>
+        <PagerView
+          key={league}
+          ref={pagerRef}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
+        >
+          <View key="scores" style={styles.contentArea}>
+            <WeekSelector
+              groups={weekGroups}
+              loading={gamesLoading}
+              selectedWeekIndex={selectedWeekIndex}
+              onSelectWeek={setSelectedWeekIndex}
+              isDark={isDark}
+            />
+
+            <GamesList
+              games={selectedWeekGames}
+              loading={gamesLoading}
+              refreshing={screenRefreshing || gamesRefreshing}
+              onRefresh={handleRefresh}
+              showHeaders={false}
+              isNFL={true}
+            />
+          </View>
+          <View key="news" style={styles.contentArea}>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
+          </View>
+          <View key="playoffs" style={styles.contentArea}>
+            <NFLPlayoffBracket
+              bracket={nflPlayoffData}
+              loading={nflPlayoffLoading}
+              error={nflPlayoffError}
+              refreshing={nflPlayoffRefreshing}
+              onRefresh={refreshNFLPlayoffs}
+            />
+          </View>
+          <View key="stats" style={styles.contentArea}>
+            <SeasonLeadersList
+              loading={leadersLoading}
+              error={leadersError}
+              categories={categories}
+              league="NFL"
+            />
+          </View>
+
+          <ScrollView key="standings">
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league={league}
+            />
+          </ScrollView>
+
+          <View key="draft" style={styles.contentArea}>
+            <Draft
+              year={draftYear}
+              team={draftTeam}
+              round={draftRound}
+              onYearChange={setDraftYear}
+              onTeamChange={setDraftTeam}
+              onRoundChange={setDraftRound}
+              league="nfl"
+            />
+          </View>
+
+          <View key="awards" style={styles.contentArea}>
+            <AwardSeasons league="NFL" />
+          </View>
+
+          <View key="forum" style={styles.contentArea}>
+            <ForumFeed league={league} />
+          </View>
+        </PagerView>
+      </View>
+    </>
+  );
+}
+
+/* ========================================================================== */
+/*                                    CFB                                     */
+/* ========================================================================== */
+
+function CFBLeagueScreen() {
+  const league = "cfb";
+  const currentSeason = getFootballSeason();
+  const navigation = useNavigation();
+  const conferenceModalRef = useRef<ConferenceListModalRef>(null);
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+  const [screenRefreshing, setScreenRefreshing] = useState(false);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+  const [selectedConference, setSelectedConference] =
+    useState<SelectedConference>("top25");
+  const [isConferenceModalOpen, setIsConferenceModalOpen] = useState(false);
+  const [recruitView, setRecruitView] = useState<"players" | "teams">(
+    "players",
+  );
+  const [recruitYear, setRecruitYear] = useState(() =>
+    String(getRecruitYear()),
+  );
+  const [recruitTeam, setRecruitTeam] = useState("all");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
+
+  const { calendar } = useLeagueCalendar(league, "football");
+
+  const selectedConferenceName = useMemo(() => {
+    return getCFBConferenceSelectionName(selectedConference);
+  }, [selectedConference]);
+
+  const selectedConferenceGroupId = useMemo(() => {
+    if (
+      selectedConference == null ||
+      selectedConference === "top25" ||
+      Number(selectedConference) === 80
+    ) {
+      return null;
+    }
+
+    const conferenceId = Number(selectedConference);
+
+    return Number.isFinite(conferenceId) ? conferenceId : null;
+  }, [selectedConference]);
+
+  const weekGroups = useMemo<FootballWeekGroup[]>(() => {
+    if (!calendar?.length) {
+      return [];
+    }
+
+    return calendar
+      .filter((week) => week.stage !== "Off Season")
+      .map((week, index) => {
+        const seasonType = getSeasonTypeFromStage(week.stage);
+        const seasonSlug = getSeasonSlugFromStage(week.stage);
+
+        return {
+          key: `${seasonSlug}-week-${week.weekNumber}-${index}`,
+          label: week.label || `Week ${week.weekNumber}`,
+          season: {
+            year: currentSeason,
+            type: seasonType,
+            slug: seasonSlug,
+          },
+          week: {
+            number: week.weekNumber,
+          },
+          count: 0,
+          games: [],
+        };
+      });
+  }, [calendar, currentSeason]);
+
+  const selectedWeek = weekGroups[selectedWeekIndex];
+  const selectedWeekNumber = selectedWeek?.week.number ?? 1;
+  const selectedSeasonType = selectedWeek?.season.type ?? 2;
+
+  const {
+    games: selectedWeekGames,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    refreshGames,
+  } = useFootballGames({
+    league: league,
+    season: currentSeason,
+    week: selectedWeekNumber,
+    seasontype: selectedSeasonType,
+    conferenceId:
+      selectedConference !== "top25" && selectedConference != null
+        ? selectedConference
+        : undefined,
+  });
+
+  const displayedGames = useMemo(() => {
+    if (selectedConference === "top25") {
+      return selectedWeekGames.filter(
+        (game) => game.home?.rank != null || game.away?.rank != null,
+      );
+    }
+
+    return selectedWeekGames;
+  }, [selectedConference, selectedWeekGames]);
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
+  const {
     games: cfpGames,
     loading: cfpLoading,
     refreshing: cfpRefreshing,
     error: cfpError,
     refetch: refetchCFPPlayoffs,
   } = useCFBPlayoffs({
-    season: 2025,
-    enabled: isCFB,
+    season: currentSeason,
+    enabled: true,
   });
 
   const {
@@ -272,7 +520,7 @@ export default function FootballLeagueScreen() {
   } = useSeasonLeaders(currentSeason, league);
 
   const { conferences, conferencesLoading, conferencesError } =
-    useCFBConferenceStandings(isCFB ? selectedConferenceGroupId : null);
+    useConferenceStandings(league, selectedConferenceGroupId);
 
   useEffect(() => {
     if (!weekGroups.length) {
@@ -317,39 +565,26 @@ export default function FootballLeagueScreen() {
 
   useEffect(() => {
     setSelectedWeekIndex(0);
-    setStandingsYear(currentSeason.toString());
 
-    setSelectedConference(isCFB ? "top25" : null);
+    setSelectedConference("top25");
 
     setIsConferenceModalOpen(false);
-
-    if (league === "NFL") {
-      setDraftYear(getDefaultDraftYear("nfl").toString());
-    }
-  }, [currentSeason, league, isCFB]);
+  }, [currentSeason, league]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName={isCFB ? "College Football" : league}
+          tabName={"College Football"}
           onBack={goBack}
-          modalVisible={isCFB ? isConferenceModalOpen : undefined}
-          setModalVisible={isCFB ? setIsConferenceModalOpen : undefined}
-          onOpenLeagueModal={
-            isCFB ? () => conferenceModalRef.current?.present() : undefined
-          }
-          selectedConferenceName={isCFB ? selectedConferenceName : undefined}
+          modalVisible={isConferenceModalOpen}
+          setModalVisible={setIsConferenceModalOpen}
+          onOpenLeagueModal={() => conferenceModalRef.current?.present()}
+          selectedConferenceName={selectedConferenceName}
         />
       ),
     });
-  }, [
-    isCFB,
-    isConferenceModalOpen,
-    league,
-    navigation,
-    selectedConferenceName,
-  ]);
+  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);
@@ -362,170 +597,6 @@ export default function FootballLeagueScreen() {
       setScreenRefreshing(false);
     }
   }, [league, refreshGames]);
-
-  const scoresPage = (
-    <View key="scores" style={styles.contentArea}>
-      <WeekSelector
-        groups={weekGroups}
-        loading={gamesLoading}
-        selectedWeekIndex={selectedWeekIndex}
-        onSelectWeek={setSelectedWeekIndex}
-        isDark={isDark}
-      />
-
-      <GamesList
-        games={displayedGames}
-        loading={gamesLoading}
-        refreshing={screenRefreshing || gamesRefreshing}
-        onRefresh={handleRefresh}
-        showHeaders={false}
-        isNFL={isNFL}
-        isCFB={isCFB}
-      />
-    </View>
-  );
-
-  const newsPage = (
-    <View key="news" style={styles.contentArea}>
-      <NewsList
-        items={articles}
-        loading={newsLoading}
-        error={newsError}
-        refreshing={refreshingNews}
-        onRefresh={refreshNews}
-        isDark={isDark}
-      />
-    </View>
-  );
-
-  const forumPage = (
-    <View key="forum" style={styles.contentArea}>
-      <ForumFeed league={league} />
-    </View>
-  );
-
-  const nflPages = [
-    scoresPage,
-    newsPage,
-
-    <View key="standings" style={styles.contentArea}>
-      <StandingsList
-        year={standingsYear}
-        onYearChange={setStandingsYear}
-        league="NFL"
-      />
-    </View>,
-
-    <View key="playoffs" style={styles.contentArea}>
-      <NFLPlayoffBracket
-        bracket={nflPlayoffData}
-        loading={nflPlayoffLoading}
-        error={nflPlayoffError}
-        refreshing={nflPlayoffRefreshing}
-        onRefresh={refreshNFLPlayoffs}
-      />
-    </View>,
-
-    <View key="stats" style={styles.contentArea}>
-      <SeasonLeadersList
-        loading={leadersLoading}
-        error={leadersError}
-        categories={categories}
-        league="NFL"
-      />
-    </View>,
-
-    <View key="draft" style={styles.contentArea}>
-      <Draft
-        year={draftYear}
-        team={draftTeam}
-        round={draftRound}
-        onYearChange={setDraftYear}
-        onTeamChange={setDraftTeam}
-        onRoundChange={setDraftRound}
-        league="nfl"
-      />
-    </View>,
-
-    <View key="awards" style={styles.contentArea}>
-      <AwardSeasons league="NFL" />
-    </View>,
-
-    forumPage,
-  ];
-
-  const cfbPages = [
-    scoresPage,
-    newsPage,
-
-    <View key="standings" style={styles.contentArea}>
-      {!selectedConferenceGroupId ? (
-        <CFBStandingsList />
-      ) : (
-        <CFBConferenceStandingsList
-          conferences={conferences}
-          loading={conferencesLoading}
-          error={conferencesError}
-        />
-      )}
-    </View>,
-
-    <View key="stats" style={styles.contentArea}>
-      <SeasonLeadersList
-        loading={leadersLoading}
-        error={leadersError}
-        categories={categories}
-        league="CFB"
-      />
-    </View>,
-
-    <View key="playoffs" style={styles.contentArea}>
-      <CFPBracket
-        games={cfpGames}
-        loading={cfpLoading}
-        refreshing={cfpRefreshing}
-        error={cfpError}
-        onRetry={() => {
-          void refetchCFPPlayoffs();
-        }}
-      />
-    </View>,
-
-    <View key="recruits" style={styles.contentArea}>
-      <RecruitsList
-        year={recruitYear}
-        team={recruitTeam}
-        view={recruitView}
-        onYearChange={setRecruitYear}
-        onTeamChange={setRecruitTeam}
-        onViewChange={setRecruitView}
-        league="CFB"
-      />
-    </View>,
-
-    <View key="awards" style={styles.contentArea}>
-      <AwardSeasons league="CFB" />
-    </View>,
-
-    forumPage,
-  ];
-
-  const uflPages = [
-    scoresPage,
-    newsPage,
-
-    <View key="standings" style={styles.contentArea}>
-      <StandingsList
-        year={standingsYear}
-        onYearChange={setStandingsYear}
-        league="UFL"
-      />
-    </View>,
-
-    forumPage,
-  ];
-
-  const pagerPages = isCFB ? cfbPages : isUFL ? uflPages : nflPages;
 
   return (
     <>
@@ -548,20 +619,301 @@ export default function FootballLeagueScreen() {
             handlePageChange(event.nativeEvent.position)
           }
         >
-          {pagerPages}
+          <View key="scores" style={styles.contentArea}>
+            <WeekSelector
+              groups={weekGroups}
+              loading={gamesLoading}
+              selectedWeekIndex={selectedWeekIndex}
+              onSelectWeek={setSelectedWeekIndex}
+              isDark={isDark}
+            />
+
+            <GamesList
+              games={displayedGames}
+              loading={gamesLoading}
+              refreshing={screenRefreshing || gamesRefreshing}
+              onRefresh={handleRefresh}
+              showHeaders={false}
+              isCFB={true}
+            />
+          </View>
+          <View key="news" style={styles.contentArea}>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
+          </View>
+          <View key="standings" style={styles.contentArea}>
+            {!selectedConferenceGroupId ? (
+              <CFBStandingsList />
+            ) : (
+              <ConferenceStandingsList
+                conferences={conferences}
+                loading={conferencesLoading}
+                error={conferencesError}
+                league={league}
+              />
+            )}
+          </View>
+
+          <View key="stats" style={styles.contentArea}>
+            <SeasonLeadersList
+              loading={leadersLoading}
+              error={leadersError}
+              categories={categories}
+              league={league}
+            />
+          </View>
+
+          <View key="playoffs" style={styles.contentArea}>
+            <CFPBracket
+              games={cfpGames}
+              loading={cfpLoading}
+              refreshing={cfpRefreshing}
+              error={cfpError}
+              onRetry={() => {
+                void refetchCFPPlayoffs();
+              }}
+            />
+          </View>
+
+          <View key="recruits" style={styles.contentArea}>
+            <RecruitsList
+              year={recruitYear}
+              team={recruitTeam}
+              view={recruitView}
+              onYearChange={setRecruitYear}
+              onTeamChange={setRecruitTeam}
+              onViewChange={setRecruitView}
+              league={league}
+            />
+          </View>
+
+          <View key="awards" style={styles.contentArea}>
+            <AwardSeasons league={league} />
+          </View>
         </PagerView>
       </View>
 
-      {isCFB && (
-        <ConferenceListModal
-          ref={conferenceModalRef}
-          selectedConference={selectedConference}
-          onSelect={setSelectedConference}
-          onOpen={() => setIsConferenceModalOpen(true)}
-          onClose={() => setIsConferenceModalOpen(false)}
-          league="CFB"
-        />
-      )}
+      <ConferenceListModal
+        ref={conferenceModalRef}
+        selectedConference={selectedConference}
+        onSelect={setSelectedConference}
+        onOpen={() => setIsConferenceModalOpen(true)}
+        onClose={() => setIsConferenceModalOpen(false)}
+        league={league}
+      />
+    </>
+  );
+
+  /* ------------------------------------------------------------------------ */
+  /*                                  Render                                  */
+  /* ------------------------------------------------------------------------ */
+}
+
+/* ========================================================================== */
+/*                                    UFL                                     */
+/* ========================================================================== */
+
+function UFLLeagueScreen() {
+  const league = "ufl";
+  const currentSeason = getFootballSeason();
+  const navigation = useNavigation();
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
+  const [screenRefreshing, setScreenRefreshing] = useState(false);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
+
+  const { calendar } = useLeagueCalendar(league, "football");
+
+  const weekGroups = useMemo<FootballWeekGroup[]>(() => {
+    if (!calendar?.length) {
+      return [];
+    }
+
+    return calendar
+      .filter((week) => week.stage !== "Off Season")
+      .map((week, index) => {
+        const seasonType = getSeasonTypeFromStage(week.stage);
+        const seasonSlug = getSeasonSlugFromStage(week.stage);
+
+        return {
+          key: `${seasonSlug}-week-${week.weekNumber}-${index}`,
+          label: week.label || `Week ${week.weekNumber}`,
+          season: {
+            year: currentSeason,
+            type: seasonType,
+            slug: seasonSlug,
+          },
+          week: {
+            number: week.weekNumber,
+          },
+          count: 0,
+          games: [],
+        };
+      });
+  }, [calendar, currentSeason]);
+
+  const selectedWeek = weekGroups[selectedWeekIndex];
+  const selectedWeekNumber = selectedWeek?.week.number ?? 1;
+  const selectedSeasonType = selectedWeek?.season.type ?? 2;
+
+  const {
+    games: selectedWeekGames,
+    loading: gamesLoading,
+    refreshing: gamesRefreshing,
+    refreshGames,
+  } = useFootballGames({
+    league: league,
+    season: currentSeason,
+    week: selectedWeekNumber,
+    seasontype: selectedSeasonType,
+  });
+
+  const {
+    articles,
+    loading: newsLoading,
+    refreshing: refreshingNews,
+    error: newsError,
+    refresh: refreshNews,
+  } = useLeaguesNews(league, 10);
+
+  useEffect(() => {
+    if (!weekGroups.length) {
+      setSelectedWeekIndex(0);
+      return;
+    }
+
+    setSelectedWeekIndex((currentIndex) =>
+      currentIndex < weekGroups.length ? currentIndex : 0,
+    );
+  }, [weekGroups.length]);
+
+  useEffect(() => {
+    if (!calendar?.length || !weekGroups.length) {
+      return;
+    }
+
+    const now = dayjs();
+
+    const activeCalendarWeek = calendar.find(
+      (week) =>
+        week.stage !== "Off Season" &&
+        now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
+    );
+
+    if (!activeCalendarWeek) {
+      return;
+    }
+
+    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
+
+    const matchingGroupIndex = weekGroups.findIndex(
+      (group) =>
+        group.week.number === activeCalendarWeek.weekNumber &&
+        group.season.type === activeSeasonType,
+    );
+
+    if (matchingGroupIndex >= 0) {
+      setSelectedWeekIndex(matchingGroupIndex);
+    }
+  }, [calendar, weekGroups]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <CustomHeader tabName={league.toUpperCase()} onBack={goBack} />
+      ),
+    });
+  }, [league, navigation]);
+
+  const handleRefresh = useCallback(async () => {
+    setScreenRefreshing(true);
+
+    try {
+      await refreshGames();
+    } catch (error) {
+      console.warn(`Failed to refresh ${league} games:`, error);
+    } finally {
+      setScreenRefreshing(false);
+    }
+  }, [league, refreshGames]);
+
+  return (
+    <>
+      <MainScrollTabBar
+        tabs={tabs}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+        scrollProgress={scrollProgress}
+      />
+
+      <View style={styles.container}>
+        <PagerView
+          key={league}
+          ref={pagerRef}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
+        >
+          <View key="scores" style={styles.contentArea}>
+            <WeekSelector
+              groups={weekGroups}
+              loading={gamesLoading}
+              selectedWeekIndex={selectedWeekIndex}
+              onSelectWeek={setSelectedWeekIndex}
+              isDark={isDark}
+            />
+
+            <GamesList
+              games={selectedWeekGames}
+              loading={gamesLoading}
+              refreshing={screenRefreshing || gamesRefreshing}
+              onRefresh={handleRefresh}
+              showHeaders={false}
+              isNFL={true}
+            />
+          </View>
+          <View key="news" style={styles.contentArea}>
+            <NewsList
+              items={articles}
+              loading={newsLoading}
+              error={newsError}
+              refreshing={refreshingNews}
+              onRefresh={refreshNews}
+              isDark={isDark}
+            />
+          </View>
+
+          {/* FORUM */}
+          <View key="forum" style={styles.contentArea}>
+            <ForumFeed league={league} />
+          </View>
+        </PagerView>
+      </View>
     </>
   );
 }

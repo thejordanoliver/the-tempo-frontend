@@ -16,7 +16,6 @@ import {
 } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { LEAGUE_TABS, League } from "utils/tabs";
 import { CustomHeader } from "../../components/CustomHeader";
 import ForumFeed from "../../components/Forum/ForumFeed";
 import NewsList from "../../components/News/NewsList";
@@ -27,42 +26,19 @@ import { useLeaguesNews } from "../../hooks/NewsHooks/useLeaguesNews";
 import { LeagueScreenStyles } from "../../styles/LeagueStyles/LeagueStyles";
 import { formatDateToUTCYYYYMMDD } from "../../utils/dateUtils";
 
-function isLeague(value: unknown): value is League {
-  return (
-    typeof value === "string" &&
-    Object.prototype.hasOwnProperty.call(LEAGUE_TABS, value) &&
-    Array.isArray(LEAGUE_TABS[value as League])
-  );
-}
-
-function normalizeLeagueParam(value: string | string[] | undefined) {
-  const rawValue = Array.isArray(value) ? value[0] : value;
-
-  return String(rawValue || "")
-    .trim()
-    .toUpperCase();
-}
-
 export default function RacingLeagueScreen() {
   const params = useLocalSearchParams<{
-    league?: string | string[];
+    league?: string;
     leagueLabel?: string;
   }>();
 
-  const normalizedParamLeague = normalizeLeagueParam(params.league);
-  const leagueLabel = params.leagueLabel;
-
-  const league: League = isLeague(normalizedParamLeague)
-    ? normalizedParamLeague
-    : "F1";
+  const league = params.league ?? "f1";
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-
   const navigation = useNavigation();
   const pagerRef = useRef<PagerView>(null);
-
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
     null,
   );
@@ -70,7 +46,7 @@ export default function RacingLeagueScreen() {
   const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
 
   const { calendar, loading: calendarLoading } = useLeagueCalendar(
-    normalizedParamLeague,
+    league,
     "racing",
   );
 
@@ -140,7 +116,7 @@ export default function RacingLeagueScreen() {
     error: gamesError,
   } = useRacingEvents({
     date: selectedEventDate,
-    league,
+    league: league,
     enabled: Boolean(selectedEventDate),
   });
 
@@ -150,7 +126,7 @@ export default function RacingLeagueScreen() {
     refreshing: refreshingNews,
     error: newsError,
     refresh: refreshNews,
-  } = useLeaguesNews(normalizedParamLeague, 10);
+  } = useLeaguesNews(league, 10);
 
   const handleSelectEvent = useCallback(
     (index: number) => {
@@ -172,10 +148,10 @@ export default function RacingLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="League" league={leagueLabel} onBack={goBack} />
+        <CustomHeader tabName="League" league={league} onBack={goBack} />
       ),
     });
-  }, [navigation, leagueLabel]);
+  }, [navigation, league]);
 
   return (
     <>
