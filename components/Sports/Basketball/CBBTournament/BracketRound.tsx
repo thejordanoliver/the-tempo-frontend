@@ -1,8 +1,8 @@
 import React, { memo, useMemo } from "react";
 import { Text, View } from "react-native";
 
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketMatchup } from "./BracketMatchup";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketCardLayout,
   BracketGame,
@@ -34,7 +34,7 @@ function BracketRoundComponent({
   allGamesById,
   onGamePress,
 }: BracketRoundProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const orderedGames = useMemo(
     () =>
       games

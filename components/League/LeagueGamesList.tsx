@@ -410,6 +410,7 @@ export default function LeagueGamesList({
                     isWNBA={false}
                     isSL={false}
                     isGLEAGUE={false}
+                    isNHL={true}
                   />
                 )}
               </View>

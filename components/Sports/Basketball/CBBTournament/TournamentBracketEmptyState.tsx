@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 
 type TournamentBracketEmptyStateProps = {
   title: string;
@@ -18,7 +18,7 @@ function TournamentBracketEmptyStateComponent({
   retryLabel = "Retry",
   onRetry,
 }: TournamentBracketEmptyStateProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
 
   return (
     <View style={styles.emptyContainer}>

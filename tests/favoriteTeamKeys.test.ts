@@ -4,6 +4,7 @@ import test from "node:test";
 // @ts-expect-error Node's type-stripping test runner requires the .ts extension.
 import {
   buildFavoriteTeamKey,
+  groupFavoriteRailItems,
   normalizeFavoriteTeamKey,
   normalizeFavoriteTeamKeys,
   resolvePersistedFavoriteRailKeys,
@@ -85,6 +86,11 @@ test("combined rail reordering preserves independent team and sport order", () =
     favoriteTeamIds: ["nba:17", "nfl:2"],
     favoriteSports: ["nfl", "nba"],
   });
+
+  assert.deepEqual(
+    groupFavoriteRailItems(items).map((item) => item.key),
+    ["league:nfl", "league:nba", "nba:17", "nfl:2"],
+  );
 });
 
 test("a failed sport save restores only sport order in a mixed rail", () => {

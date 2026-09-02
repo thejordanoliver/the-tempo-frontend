@@ -5,13 +5,29 @@ import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { memo, useCallback, useMemo, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Pressable,
+  Text,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
 import DraggableFlatList, {
   type DragEndParams,
+  type DraggableFlatListProps,
   type RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { FavoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
+import Animated, {
+  useAnimatedReaction,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import {
+  FAVORITES_RAIL_GAP,
+  FAVORITES_RAIL_HORIZONTAL_PADDING,
+  FAVORITES_RAIL_ITEM_WIDTH,
+  FavoritesScrollStyles,
+} from "styles/HomeStyles/FavoritesScrollStyles";
 import type {
   FavoriteItem,
   FavoriteLeagueItem,
@@ -19,6 +35,7 @@ import type {
   FavoriteTeamItem,
 } from "types/favorites";
 import {
+  groupFavoriteRailItems,
   isFavoriteLeague,
   resolvePersistedFavoriteRailKeys,
   splitFavoriteRailOrder,
@@ -29,16 +46,116 @@ import { FavoritesTab } from "./FavoritesTab";
 type Props = {
   favoriteTeamIds: FavoriteTeamKey[];
   onFavoritesChange?: (ids: FavoriteTeamKey[]) => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
+  onInteractionStart?: () => void;
+  onInteractionEnd?: () => void;
   isDark: boolean;
 };
+
+const FAVORITES_SNAP_ANIMATION = {
+  damping: 24,
+  stiffness: 320,
+  mass: 0.3,
+  overshootClamping: true,
+  restDisplacementThreshold: 0.25,
+  restSpeedThreshold: 2,
+};
+
+type FavoriteDragAnimationValues = Parameters<
+  NonNullable<DraggableFlatListProps<FavoriteItem>["onAnimValInit"]>
+>[0];
+
+type FavoriteDragBoundaryProps = {
+  animationValues: FavoriteDragAnimationValues;
+  favoriteCount: number;
+  leagueCount: number;
+};
+
+function FavoriteDragBoundary({
+  animationValues,
+  favoriteCount,
+  leagueCount,
+}: FavoriteDragBoundaryProps) {
+  const {
+    activeCellSize,
+    activeIndexAnim,
+    autoScrollDistance,
+    spacerIndexAnim,
+    touchTranslate,
+  } = animationValues;
+
+  useAnimatedReaction(
+    () => ({
+      activeIndex: activeIndexAnim.value,
+      translatedDistance:
+        touchTranslate.value + autoScrollDistance.value,
+    }),
+    ({ activeIndex, translatedDistance }) => {
+      if (activeIndex < 0 || favoriteCount === 0) {
+        return;
+      }
+
+      const draggingLeague = activeIndex < leagueCount;
+      const minimumIndex = draggingLeague ? 0 : leagueCount;
+      const maximumIndex = draggingLeague
+        ? leagueCount - 1
+        : favoriteCount - 1;
+      const itemStep = activeCellSize.value + FAVORITES_RAIL_GAP;
+      const minimumTranslation = (minimumIndex - activeIndex) * itemStep;
+      const maximumTranslation = (maximumIndex - activeIndex) * itemStep;
+      const boundedTranslation = Math.min(
+        maximumTranslation,
+        Math.max(minimumTranslation, translatedDistance),
+      );
+
+      if (spacerIndexAnim.value < minimumIndex) {
+        spacerIndexAnim.value = minimumIndex;
+      } else if (spacerIndexAnim.value > maximumIndex) {
+        spacerIndexAnim.value = maximumIndex;
+      }
+
+      if (boundedTranslation !== translatedDistance) {
+        touchTranslate.value =
+          boundedTranslation - autoScrollDistance.value;
+      }
+    },
+    [favoriteCount, leagueCount],
+  );
+
+  return null;
+}
+
+type FavoriteSectionDividerProps = {
+  animationValues: FavoriteDragAnimationValues;
+  leagueCount: number;
+  style: StyleProp<ViewStyle>;
+};
+
+function FavoriteSectionDivider({
+  animationValues,
+  leagueCount,
+  style,
+}: FavoriteSectionDividerProps) {
+  const dividerContentPosition =
+    FAVORITES_RAIL_HORIZONTAL_PADDING +
+    leagueCount * (FAVORITES_RAIL_ITEM_WIDTH + FAVORITES_RAIL_GAP) -
+    FAVORITES_RAIL_GAP / 2;
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -animationValues.scrollOffset.value }],
+  }));
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[style, { left: dividerContentPosition }, animatedStyle]}
+    />
+  );
+}
 
 function FavoritesScrollComponent({
   favoriteTeamIds,
   onFavoritesChange,
-  onDragStart,
-  onDragEnd,
+  onInteractionStart,
+  onInteractionEnd,
   isDark,
 }: Props) {
   const router = useRouter();
@@ -51,6 +168,9 @@ function FavoritesScrollComponent({
   const lastPlaceholderHapticRef = useRef(0);
   const latestReorderIdRef = useRef(0);
   const reorderQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const interactionActiveRef = useRef(false);
+  const [dragAnimationValues, setDragAnimationValues] =
+    useState<FavoriteDragAnimationValues | null>(null);
 
   const {
     syncFavorites,
@@ -168,18 +288,49 @@ function FavoritesScrollComponent({
       itemsByKey.delete(key);
     }
 
-    return [...ordered, ...itemsByKey.values()];
+    return groupFavoriteRailItems([...ordered, ...itemsByKey.values()]);
   }, [availableData, railOrder, userId]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Interaction                                   */
+  /* -------------------------------------------------------------------------- */
+
+  const handleInteractionStart = useCallback(() => {
+    if (interactionActiveRef.current) {
+      return;
+    }
+
+    interactionActiveRef.current = true;
+    onInteractionStart?.();
+  }, [onInteractionStart]);
+
+  const handleInteractionEnd = useCallback(() => {
+    if (!interactionActiveRef.current) {
+      return;
+    }
+
+    interactionActiveRef.current = false;
+    onInteractionEnd?.();
+  }, [onInteractionEnd]);
+
+  useEffect(() => handleInteractionEnd, [handleInteractionEnd]);
 
   /* -------------------------------------------------------------------------- */
   /*                                   Drag                                     */
   /* -------------------------------------------------------------------------- */
 
   const handleDragBegin = useCallback(() => {
-    onDragStart?.();
+    handleInteractionStart();
 
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  }, [onDragStart]);
+  }, [handleInteractionStart]);
+
+  const handleAnimationValuesInit = useCallback(
+    (animationValues: FavoriteDragAnimationValues) => {
+      setDragAnimationValues(animationValues);
+    },
+    [],
+  );
 
   const handlePlaceholderChange = useCallback(() => {
     const now = Date.now();
@@ -194,13 +345,14 @@ function FavoritesScrollComponent({
   }, []);
 
   const handleDragEnd = useCallback(
-    ({ data: reordered, from, to }: DragEndParams<FavoriteItem>) => {
-      onDragEnd?.();
+    ({ data: draggedOrder, from, to }: DragEndParams<FavoriteItem>) => {
+      handleInteractionEnd();
 
       if (from === to) {
         return;
       }
 
+      const reordered = groupFavoriteRailItems(draggedOrder);
       const reorderId = ++latestReorderIdRef.current;
       const orderedKeys = reordered.map((item) => item.key);
 
@@ -282,7 +434,7 @@ function FavoritesScrollComponent({
     [
       favoriteSports,
       favoriteTeamIds,
-      onDragEnd,
+      handleInteractionEnd,
       onFavoritesChange,
       setFavorites,
       syncFavorites,
@@ -295,9 +447,10 @@ function FavoritesScrollComponent({
   /*                              Stable renders                                */
   /* -------------------------------------------------------------------------- */
 
-  const renderItem = useCallback((props: RenderItemParams<FavoriteItem>) => {
-    return <FavoritesTab {...props} />;
-  }, []);
+  const renderItem = useCallback(
+    (props: RenderItemParams<FavoriteItem>) => <FavoritesTab {...props} />,
+    [],
+  );
 
   const renderPlaceholder = useCallback(() => {
     return (
@@ -356,28 +509,51 @@ function FavoritesScrollComponent({
   /* -------------------------------------------------------------------------- */
 
   return (
-    <DraggableFlatList
-      data={data}
-      horizontal
-      keyExtractor={(item) => item.key}
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.container}
-      activationDistance={8}
-      autoscrollThreshold={56}
-      autoscrollSpeed={180}
-      dragItemOverflow
-      animationConfig={{
-        damping: 18,
-        stiffness: 220,
-        mass: 0.35,
-      }}
-      renderItem={renderItem}
-      onDragBegin={handleDragBegin}
-      onPlaceholderIndexChange={handlePlaceholderChange}
-      onDragEnd={handleDragEnd}
-      renderPlaceholder={renderPlaceholder}
-      ListFooterComponent={renderFooter}
-    />
+    <View style={styles.railContainer}>
+      {dragAnimationValues && (
+        <FavoriteDragBoundary
+          animationValues={dragAnimationValues}
+          favoriteCount={data.length}
+          leagueCount={leagueData.length}
+        />
+      )}
+
+      {dragAnimationValues &&
+        leagueData.length > 0 &&
+        teamData.length > 0 && (
+          <FavoriteSectionDivider
+            animationValues={dragAnimationValues}
+            leagueCount={leagueData.length}
+            style={styles.sectionDivider}
+          />
+        )}
+
+      <DraggableFlatList
+        data={data}
+        horizontal
+        keyExtractor={(item) => item.key}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
+        activationDistance={8}
+        autoscrollThreshold={56}
+        autoscrollSpeed={180}
+        dragItemOverflow={false}
+        animationConfig={FAVORITES_SNAP_ANIMATION}
+        renderItem={renderItem}
+        onTouchStart={handleInteractionStart}
+        onTouchEnd={handleInteractionEnd}
+        onTouchCancel={handleInteractionEnd}
+        onScrollBeginDrag={handleInteractionStart}
+        onScrollEndDrag={handleInteractionEnd}
+        onDragBegin={handleDragBegin}
+        onRelease={handleInteractionEnd}
+        onPlaceholderIndexChange={handlePlaceholderChange}
+        onDragEnd={handleDragEnd}
+        onAnimValInit={handleAnimationValuesInit}
+        renderPlaceholder={renderPlaceholder}
+        ListFooterComponent={renderFooter}
+      />
+    </View>
   );
 }
 
@@ -389,8 +565,8 @@ const FavoritesScroll = memo(FavoritesScrollComponent, (previous, next) => {
   return (
     previous.isDark === next.isDark &&
     previous.onFavoritesChange === next.onFavoritesChange &&
-    previous.onDragStart === next.onDragStart &&
-    previous.onDragEnd === next.onDragEnd &&
+    previous.onInteractionStart === next.onInteractionStart &&
+    previous.onInteractionEnd === next.onInteractionEnd &&
     previous.favoriteTeamIds.length === next.favoriteTeamIds.length &&
     previous.favoriteTeamIds.every(
       (favorite, index) => favorite === next.favoriteTeamIds[index],

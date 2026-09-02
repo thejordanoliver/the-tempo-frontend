@@ -336,6 +336,15 @@ function NFLLeagueScreen() {
               isDark={isDark}
             />
           </View>
+
+          <ScrollView key="standings">
+            <StandingsList
+              year={standingsYear}
+              onYearChange={setStandingsYear}
+              league={league}
+            />
+          </ScrollView>
+
           <View key="playoffs" style={styles.contentArea}>
             <NFLPlayoffBracket
               bracket={nflPlayoffData}
@@ -345,22 +354,15 @@ function NFLLeagueScreen() {
               onRefresh={refreshNFLPlayoffs}
             />
           </View>
+
           <View key="stats" style={styles.contentArea}>
             <SeasonLeadersList
               loading={leadersLoading}
               error={leadersError}
               categories={categories}
-              league="NFL"
-            />
-          </View>
-
-          <ScrollView key="standings">
-            <StandingsList
-              year={standingsYear}
-              onYearChange={setStandingsYear}
               league={league}
             />
-          </ScrollView>
+          </View>
 
           <View key="draft" style={styles.contentArea}>
             <Draft

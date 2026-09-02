@@ -2,10 +2,11 @@ import { Colors } from "constants/styles";
 import React, { memo, useMemo } from "react";
 import { View, useWindowDimensions } from "react-native";
 
+import { CARD_HEIGHT, CARD_WIDTH, CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketChampionship } from "./BracketChampionship";
 import { BracketConnectors } from "./BracketConnectors";
 import { BracketRegion } from "./BracketRegion";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
+import { OpeningRoundSection } from "./OpeningRoundSection";
 import type {
   BracketCardLayout,
   BracketConnectionLayout,
@@ -19,13 +20,14 @@ import type {
 } from "./tournamentBracket.types";
 import {
   BRACKET_LAYOUT,
-  REGIONAL_ROUND_BASE_COUNTS,
   REGIONAL_ROUNDS,
+  REGIONAL_ROUND_BASE_COUNTS,
   getBracketRegionPlacement,
   getRegionalGameCenterY,
   getRegionalRoundBaseSlots,
+  getTournamentSourceGameIds,
   groupGamesByRound,
-  sortBracketGames,
+  orderFinalFourGamesForChampionship,
 } from "./tournamentBracket.utils";
 
 type TournamentBracketCanvasProps = {
@@ -48,7 +50,6 @@ type BracketBoardLayout = {
   width: number;
   height: number;
   regionWidth: number;
-  centerWidth: number;
   topBandHeight: number;
   bottomBandHeight: number;
   regionLayouts: Partial<Record<RegionSlot, BracketRegionLayout>>;
@@ -69,10 +70,7 @@ const getRoundIndex = (round: TournamentRound) =>
 const getCardCenterY = (layout: BracketCardLayout) =>
   layout.y + layout.height / 2;
 
-const getNumericSlot = (
-  game: BracketGame,
-  fallbackSlot: number,
-): number => {
+const getNumericSlot = (game: BracketGame, fallbackSlot: number): number => {
   const value = game.bracketSlot ?? game.gameOrder ?? fallbackSlot;
   const slot = Number(value);
 
@@ -96,7 +94,7 @@ const getCardX = (
 
   return (
     visualIndex * (config.roundColumnWidth + config.horizontalRoundGap) +
-    (config.roundColumnWidth - config.gameCardWidth) / 2
+    (config.roundColumnWidth - CARD_WIDTH) / 2
   );
 };
 
@@ -126,7 +124,7 @@ const getRegionContentHeight = (
   const baseSlotCount = getRegionBaseSlotCount(region);
 
   return (
-    baseSlotCount * config.gameCardHeight +
+    baseSlotCount * CARD_HEIGHT +
     Math.max(0, baseSlotCount - 1) * config.baseVerticalGap
   );
 };
@@ -141,37 +139,12 @@ const getRegionHeight = (
 
 const getSourceLayouts = (
   sourceGames: readonly BracketGame[],
-  sourceLayouts: readonly BracketCardLayout[],
   targetGame: BracketGame,
-  targetIndex: number,
   allPreviousLayouts: ReadonlyMap<string, BracketCardLayout>,
 ) => {
-  const explicitSources = [
-    targetGame.topSourceGameId,
-    targetGame.bottomSourceGameId,
-  ]
-    .map((sourceId) =>
-      sourceId ? allPreviousLayouts.get(sourceId) ?? null : null,
-    )
+  return getTournamentSourceGameIds(targetGame, sourceGames)
+    .map((sourceId) => allPreviousLayouts.get(sourceId) ?? null)
     .filter((layout): layout is BracketCardLayout => Boolean(layout));
-
-  if (explicitSources.length >= 2) {
-    return explicitSources.slice(0, 2);
-  }
-
-  const relationshipSources = sourceGames
-    .filter((game) => game.nextGameId === targetGame.id)
-    .map((game, index) => allPreviousLayouts.get(game.id) ?? sourceLayouts[index])
-    .filter((layout): layout is BracketCardLayout => Boolean(layout));
-
-  if (relationshipSources.length >= 2) {
-    return relationshipSources.slice(0, 2);
-  }
-
-  const firstIndex = targetIndex * 2;
-  return [sourceLayouts[firstIndex], sourceLayouts[firstIndex + 1]].filter(
-    (layout): layout is BracketCardLayout => Boolean(layout),
-  );
 };
 
 const getFallbackCardLayout = (
@@ -186,9 +159,9 @@ const getFallbackCardLayout = (
 
   return {
     x: getCardX(side, round, config),
-    y: centerY - config.gameCardHeight / 2,
-    width: config.gameCardWidth,
-    height: config.gameCardHeight,
+    y: centerY - CARD_HEIGHT / 2,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
   };
 };
 
@@ -216,8 +189,6 @@ const createRegionLayout = ({
   REGIONAL_ROUNDS.forEach((round, roundIndex) => {
     const sourceRound = REGIONAL_ROUNDS[roundIndex - 1];
     const sourceGames = sourceRound ? groupedGames[sourceRound] : [];
-    const sourceLayouts = sourceRound ? roundLayouts[sourceRound] ?? [] : [];
-
     roundLayouts[round] = groupedGames[round].map((game, index) => {
       const fallbackLayout = getFallbackCardLayout(
         round,
@@ -228,13 +199,7 @@ const createRegionLayout = ({
       );
       const sourceCardLayouts =
         roundIndex > 0
-          ? getSourceLayouts(
-              sourceGames,
-              sourceLayouts,
-              game,
-              index,
-              localGameLayouts,
-            )
+          ? getSourceLayouts(sourceGames, game, localGameLayouts)
           : [];
       const layout =
         sourceCardLayouts.length >= 2
@@ -244,7 +209,7 @@ const createRegionLayout = ({
                 (getCardCenterY(sourceCardLayouts[0]) +
                   getCardCenterY(sourceCardLayouts[1])) /
                   2 -
-                config.gameCardHeight / 2,
+                CARD_HEIGHT / 2,
             }
           : fallbackLayout;
       const globalLayout = {
@@ -282,7 +247,7 @@ const createRegionLayout = ({
     globalRoundLayouts,
     gameLayouts: globalGameLayouts,
     championLayout: championGame
-      ? globalGameLayouts.get(championGame.id) ?? null
+      ? (globalGameLayouts.get(championGame.id) ?? null)
       : null,
   };
 };
@@ -314,7 +279,6 @@ const createRegionalConnections = (
     const nextRound = REGIONAL_ROUNDS[roundIndex + 1];
     const sourceGames = groupedGames[round];
     const targetGames = groupedGames[nextRound];
-    const sourceLayouts = regionLayout.globalRoundLayouts[round] ?? [];
     const targetLayouts = regionLayout.globalRoundLayouts[nextRound] ?? [];
 
     return targetGames
@@ -322,9 +286,7 @@ const createRegionalConnections = (
         const targetLayout = targetLayouts[targetIndex];
         const sources = getSourceLayouts(
           sourceGames,
-          sourceLayouts,
           targetGame,
-          targetIndex,
           regionLayout.gameLayouts,
         );
 
@@ -337,27 +299,11 @@ const createRegionalConnections = (
           targetLayout,
         };
       })
-      .filter(
-        (connection): connection is BracketConnectionLayout =>
-          Boolean(connection),
+      .filter((connection): connection is BracketConnectionLayout =>
+        Boolean(connection),
       );
   });
 };
-
-const getSemifinalSourceIds = (game: BracketGame) =>
-  [game.topSourceGameId, game.bottomSourceGameId].filter(
-    (sourceId): sourceId is string => Boolean(sourceId),
-  );
-
-const getFallbackSemifinalSources = (
-  champions: readonly PositionedChampion[],
-  semifinalIndex: number,
-) =>
-  champions.filter((champion) =>
-    semifinalIndex === 0
-      ? champion.slot === "leftTop" || champion.slot === "rightTop"
-      : champion.slot === "leftBottom" || champion.slot === "rightBottom",
-  );
 
 const buildBoardLayout = (
   tournament: TournamentBracketData,
@@ -377,8 +323,8 @@ const buildBoardLayout = (
   );
   const hasBottomBand = Boolean(
     placement.leftBottom ||
-      placement.rightBottom ||
-      tournament.finalFourGames.length > 1,
+    placement.rightBottom ||
+    tournament.finalFourGames.length > 1,
   );
   const bottomBandHeight = hasBottomBand
     ? Math.max(
@@ -446,32 +392,47 @@ const buildBoardLayout = (
   const championByGameId = new Map(
     champions.map((champion) => [champion.game.id, champion] as const),
   );
-  const semifinalGames = sortBracketGames(tournament.finalFourGames).slice(0, 2);
+  const championGames = champions.map((champion) => champion.game);
+  const semifinalGames = orderFinalFourGamesForChampionship(
+    tournament.finalFourGames,
+    tournament.championshipGame,
+  );
   const centerCardWidth = Math.min(
     config.centerColumnWidth,
-    config.gameCardWidth + 22,
+    CARD_WIDTH + 22,
   );
   const centerCardX = centerX + (centerWidth - centerCardWidth) / 2;
   const semifinalLayouts = semifinalGames.map((_, index) => {
-    const fallbackCenterY =
+    const semifinalCenterY =
       index === 0
         ? topBandHeight / 2
         : bottomY + Math.max(1, bottomBandHeight) / 2;
 
     return {
       x: centerCardX,
-      y: fallbackCenterY - config.gameCardHeight / 2,
+      y: semifinalCenterY - CARD_HEIGHT / 2,
       width: centerCardWidth,
-      height: config.gameCardHeight,
+      height: CARD_HEIGHT,
     };
   });
+  const semifinalLayoutByGameId = new Map(
+    semifinalGames.map((game, index) => [game.id, semifinalLayouts[index]]),
+  );
+  const championshipSourceLayouts = tournament.championshipGame
+    ? getTournamentSourceGameIds(tournament.championshipGame, semifinalGames)
+        .map((sourceId) => semifinalLayoutByGameId.get(sourceId))
+        .filter((cardLayout): cardLayout is BracketCardLayout =>
+          Boolean(cardLayout),
+        )
+    : [];
   const championshipCenterY =
-    semifinalLayouts.length >= 2
-      ? (getCardCenterY(semifinalLayouts[0]) +
-          getCardCenterY(semifinalLayouts[1])) /
-        2
+    championshipSourceLayouts.length > 0
+      ? championshipSourceLayouts.reduce(
+          (sum, cardLayout) => sum + getCardCenterY(cardLayout),
+          0,
+        ) / championshipSourceLayouts.length
       : height / 2;
-  const championshipHeight = config.gameCardHeight + 10;
+  const championshipHeight = CARD_HEIGHT + 10;
   const championshipLayout = {
     x: centerCardX,
     y: championshipCenterY - championshipHeight / 2,
@@ -483,15 +444,9 @@ const buildBoardLayout = (
       regionLayout ? createRegionalConnections(regionLayout) : [],
   );
   const centerConnections = semifinalGames.flatMap((game, semifinalIndex) => {
-    const sourceIds = getSemifinalSourceIds(game);
-    const sources =
-      sourceIds.length > 0
-        ? sourceIds
-            .map((sourceId) => championByGameId.get(sourceId))
-            .filter(
-              (champion): champion is PositionedChampion => Boolean(champion),
-            )
-        : getFallbackSemifinalSources(champions, semifinalIndex);
+    const sources = getTournamentSourceGameIds(game, championGames)
+      .map((sourceId) => championByGameId.get(sourceId))
+      .filter((champion): champion is PositionedChampion => Boolean(champion));
     const targetLayout = semifinalLayouts[semifinalIndex];
 
     if (!targetLayout) return [];
@@ -505,9 +460,12 @@ const buildBoardLayout = (
     }));
   });
   const championshipConnection =
-    semifinalLayouts.length >= 2 && tournament.championshipGame
+    championshipSourceLayouts.length === 2 && tournament.championshipGame
       ? {
-          sourceLayouts: [semifinalLayouts[0], semifinalLayouts[1]] as const,
+          sourceLayouts: [
+            championshipSourceLayouts[0],
+            championshipSourceLayouts[1],
+          ] as const,
           targetLayout: championshipLayout,
         }
       : null;
@@ -516,7 +474,6 @@ const buildBoardLayout = (
     width,
     height,
     regionWidth,
-    centerWidth,
     topBandHeight,
     bottomBandHeight,
     regionLayouts,
@@ -536,7 +493,7 @@ function TournamentBracketCanvasComponent({
   onGamePress,
 }: TournamentBracketCanvasProps) {
   const { width: viewportWidth } = useWindowDimensions();
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const layout = useMemo(
     () => buildBoardLayout(tournament, BRACKET_LAYOUT),
     [tournament],
@@ -549,6 +506,17 @@ function TournamentBracketCanvasComponent({
 
   return (
     <View style={{ width: contentWidth, alignItems: "center" }}>
+      <OpeningRoundSection
+        label={tournament.openingRoundLabel ?? "First Four"}
+        games={tournament.openingRoundGames}
+        isDark={isDark}
+        competition={tournament.competition}
+        regions={tournament.regions}
+        allGamesById={allGamesById}
+        onGamePress={onGamePress}
+        width={layout.width}
+      />
+
       <View
         style={[
           styles.bracketBoard,
@@ -559,12 +527,13 @@ function TournamentBracketCanvasComponent({
         ]}
       >
         <BracketConnectors
+          width={layout.width}
+          height={layout.height}
           connections={layout.regionalConnections}
           pathConnections={layout.centerConnections}
           championshipConnection={layout.championshipConnection}
           lineColor={lineColor}
           lineWidth={BRACKET_LAYOUT.connectorLineWidth}
-          isDark={isDark}
         />
 
         <View style={styles.bracketColumns}>

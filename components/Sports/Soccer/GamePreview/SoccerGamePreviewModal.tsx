@@ -127,8 +127,9 @@ export default function SoccerGamePreviewModal({
   const state = score?.status.state ?? "";
   const homeScore = score?.home?.score ?? 0;
   const awayScore = score?.away?.score ?? 0;
-  const homeRecord = score?.home?.record ?? "0—0-0";
-  const awayRecord = score?.away?.record ?? "0—0-0";
+  const homeRecord = score?.home?.record ?? "0-0-0";
+  const awayRecord = score?.away?.record ?? "0-0-0";
+
   const homeWins = score?.home?.winner;
   const awayWins = score?.away?.winner;
   const isTie = awayWins === homeWins;

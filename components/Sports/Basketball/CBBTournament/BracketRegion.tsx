@@ -1,8 +1,8 @@
 import React, { memo, useMemo } from "react";
 import { Text, View } from "react-native";
 
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketRound } from "./BracketRound";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketGame,
   BracketRegionLayout,
@@ -30,7 +30,7 @@ function BracketRegionComponent({
   allGamesById,
   onGamePress,
 }: BracketRegionProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const groupedGames = useMemo(
     () => groupGamesByRound(layout.region.games),
     [layout.region.games],
@@ -51,8 +51,7 @@ function BracketRegionComponent({
         style={[
           styles.regionRounds,
           {
-            height:
-              layout.contentHeight + BRACKET_LAYOUT.roundTitleHeight,
+            height: layout.contentHeight + BRACKET_LAYOUT.roundTitleHeight,
           },
         ]}
       >

@@ -3,12 +3,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { RefreshControl, ScrollView } from "react-native";
-import { OpeningRoundSection } from "./OpeningRoundSection";
-import { TournamentBracketCanvas } from "./TournamentBracketCanvas";
-import { TournamentBracketEmptyState } from "./TournamentBracketEmptyState";
-import { TournamentBracketHeader } from "./TournamentBracketHeader";
-import { TournamentBracketSkeleton } from "./TournamentBracketSkeleton";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import type {
   BracketGame,
   BracketTeam,
@@ -22,6 +17,10 @@ import {
   isLiveBracketGame,
   normalizeTournamentForBracket,
 } from "./tournamentBracket.utils";
+import { TournamentBracketCanvas } from "./TournamentBracketCanvas";
+import { TournamentBracketEmptyState } from "./TournamentBracketEmptyState";
+import { TournamentBracketHeader } from "./TournamentBracketHeader";
+import { TournamentBracketSkeleton } from "./TournamentBracketSkeleton";
 
 type RouteTeamPayload = {
   id: number;
@@ -110,9 +109,9 @@ type RouteGamePayload = {
 type LeagueRouteMetadata = {
   id: number;
   uid: string;
-  code: "cbb";
+  code: "cbb" | "wcbb";
   name: string;
-  slug: "mens-college-basketball";
+  slug: "mens-college-basketball" | "womens-college-basketball";
 };
 
 const CBB_LEAGUE_METADATA: LeagueRouteMetadata = {
@@ -121,6 +120,14 @@ const CBB_LEAGUE_METADATA: LeagueRouteMetadata = {
   code: "cbb",
   name: "Men's College Basketball",
   slug: "mens-college-basketball",
+};
+
+const WCBB_LEAGUE_METADATA: LeagueRouteMetadata = {
+  id: 54,
+  uid: "wcbb",
+  code: "wcbb",
+  name: "Women's College Basketball",
+  slug: "womens-college-basketball",
 };
 
 const EMPTY_GAME_MAP: ReadonlyMap<string, BracketGame> = new Map<
@@ -132,14 +139,8 @@ const EMPTY_GAME_MAP: ReadonlyMap<string, BracketGame> = new Map<
 /*                                   Helpers                                  */
 /* -------------------------------------------------------------------------- */
 
-function toNumber(
-  value: string | number | null | undefined,
-): number {
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
+function toNumber(value: string | number | null | undefined): number {
+  if (value === null || value === undefined || value === "") {
     return 0;
   }
 
@@ -172,15 +173,11 @@ function toRouteTeam(
 ): RouteTeamPayload {
   const displayTeam = getRenderableBracketTeam(team);
 
-  const displayName = getRouteTeamName(
-    displayTeam,
-    fallbackName,
-  );
+  const displayName = getRouteTeamName(displayTeam, fallbackName);
 
   const id = toNumber(displayTeam?.id);
 
-  const espnId =
-    toNumber(displayTeam?.espnId) || id;
+  const espnId = id;
 
   return {
     id,
@@ -193,49 +190,32 @@ function toRouteTeam(
 
     espnId,
 
-    uid: String(
-      espnId ||
-        displayTeam?.id ||
-        "",
-    ),
+    uid: String(espnId || displayTeam?.id || ""),
 
-    name:
-      displayTeam?.name ??
-      displayName,
+    name: displayTeam?.name ?? displayName,
 
-    shortName:
-      displayTeam?.shortName ??
-      displayName,
+    shortName: displayTeam?.shortName ?? displayName,
 
-    code:
-      displayTeam?.abbreviation ??
-      "TBD",
+    code: displayTeam?.abbreviation ?? "TBD",
 
     city: "",
     state: "",
     location: "",
 
-    logo:
-      displayTeam?.logo ??
-      "",
+    logo: displayTeam?.logo ?? "",
 
     primaryColor: "",
     secondaryColor: "",
 
     nbaAPIID: 0,
 
-    rank:
-      displayTeam?.seed ??
-      0,
+    rank: displayTeam?.seed ?? 0,
 
-    score: toNumber(
-      displayTeam?.score,
-    ),
+    score: toNumber(displayTeam?.score),
 
     record: "",
 
-    winner:
-      displayTeam?.winner === true,
+    winner: displayTeam?.winner === true,
   };
 }
 
@@ -243,14 +223,10 @@ function toRouteTeam(
 /*                                Route Status                                */
 /* -------------------------------------------------------------------------- */
 
-function getRouteStatus(
-  game: BracketGame,
-): RouteGamePayload["status"] {
-  const isFinal =
-    isFinalBracketGame(game);
+function getRouteStatus(game: BracketGame): RouteGamePayload["status"] {
+  const isFinal = isFinalBracketGame(game);
 
-  const isLive =
-    isLiveBracketGame(game);
+  const isLive = isLiveBracketGame(game);
 
   const fallbackStatus = isFinal
     ? "Final"
@@ -258,16 +234,10 @@ function getRouteStatus(
       ? "In Progress"
       : "Scheduled";
 
-  const statusText =
-    game.statusText?.trim() ||
-    fallbackStatus;
+  const statusText = game.statusText?.trim() || fallbackStatus;
 
   return {
-    state: isFinal
-      ? "post"
-      : isLive
-        ? "in"
-        : "pre",
+    state: isFinal ? "post" : isLive ? "in" : "pre",
 
     description: statusText,
     detail: statusText,
@@ -288,72 +258,48 @@ function getRouteStatus(
 function createRoutePayload(
   game: BracketGame,
   season: number,
+  competition: "cbb" | "wcbb",
 ): RouteGamePayload {
   const gameId = game.id;
 
-  const date =
-    game.date ?? "";
+  const date = game.date ?? "";
 
-  const parsedTimestamp = date
-    ? new Date(date).getTime()
-    : 0;
+  const parsedTimestamp = date ? new Date(date).getTime() : 0;
 
-  const timestamp =
-    Number.isFinite(parsedTimestamp)
-      ? parsedTimestamp
-      : 0;
+  const timestamp = Number.isFinite(parsedTimestamp) ? parsedTimestamp : 0;
 
-  const topTeam =
-    getRenderableBracketTeam(
-      game.topTeam,
-    );
+  const topTeam = getRenderableBracketTeam(game.topTeam);
 
-  const bottomTeam =
-    getRenderableBracketTeam(
-      game.bottomTeam,
-    );
+  const bottomTeam = getRenderableBracketTeam(game.bottomTeam);
 
-  const topTeamName =
-    topTeam?.name ??
-    topTeam?.shortName ??
-    "TBD";
+  const topTeamName = topTeam?.name ?? topTeam?.shortName ?? "TBD";
 
-  const bottomTeamName =
-    bottomTeam?.name ??
-    bottomTeam?.shortName ??
-    "TBD";
+  const bottomTeamName = bottomTeam?.name ?? bottomTeam?.shortName ?? "TBD";
 
   const topTeamAbbreviation =
-    topTeam?.abbreviation ??
-    topTeam?.shortName ??
-    "TBD";
+    topTeam?.abbreviation ?? topTeam?.shortName ?? "TBD";
 
   const bottomTeamAbbreviation =
-    bottomTeam?.abbreviation ??
-    bottomTeam?.shortName ??
-    "TBD";
+    bottomTeam?.abbreviation ?? bottomTeam?.shortName ?? "TBD";
 
   const venue = game.venue;
 
-  const isLive =
-    isLiveBracketGame(game);
+  const isLive = isLiveBracketGame(game);
+
+  const leagueMetadata =
+    competition === "wcbb" ? WCBB_LEAGUE_METADATA : CBB_LEAGUE_METADATA;
 
   return {
-    league: CBB_LEAGUE_METADATA,
+    league: leagueMetadata,
 
     id: gameId,
     uid: gameId,
 
-    name:
-      `${topTeamName} vs ${bottomTeamName}`,
+    name: `${topTeamName} vs ${bottomTeamName}`,
 
-    shortName:
-      `${topTeamAbbreviation} VS ${bottomTeamAbbreviation}`,
+    shortName: `${topTeamAbbreviation} VS ${bottomTeamAbbreviation}`,
 
-    headline:
-      game.headline ??
-      game.roundLabel ??
-      "",
+    headline: game.headline ?? game.roundLabel ?? "",
 
     date,
     startDate: date,
@@ -365,22 +311,17 @@ function createRoutePayload(
       slug: "post-season",
     },
 
-    status:
-      getRouteStatus(game),
+    status: getRouteStatus(game),
 
     venue: {
       id: venue?.id ?? "",
       name: venue?.name ?? "",
       city: venue?.city ?? "",
       state: venue?.state ?? "",
-      indoor:
-        venue?.indoor ?? true,
+      indoor: venue?.indoor ?? true,
     },
 
-    broadcasts:
-      game.broadcast
-        ? [game.broadcast]
-        : [],
+    broadcasts: game.broadcast ? [game.broadcast] : [],
 
     geoBroadcasts: [],
 
@@ -392,23 +333,16 @@ function createRoutePayload(
      * Keep bottom mapped to home and top mapped to away
      * because the basketball game route expects that shape.
      */
-    home: toRouteTeam(
-      bottomTeam,
-      "Home Team",
-    ),
+    home: toRouteTeam(bottomTeam, "Home Team"),
 
-    away: toRouteTeam(
-      topTeam,
-      "Away Team",
-    ),
+    away: toRouteTeam(topTeam, "Away Team"),
 
     isConferenceGame: false,
     isNeutralSite: true,
 
     attendance: 0,
 
-    playByPlayAvailable:
-      Boolean(gameId),
+    playByPlayAvailable: Boolean(gameId),
 
     recent: isLive,
 
@@ -434,46 +368,28 @@ export default function TournamentBracket({
 }: TournamentBracketProps) {
   const router = useRouter();
 
-  const {
-    resolvedColorScheme,
-  } = usePreferences();
+  const { resolvedColorScheme } = usePreferences();
 
-  const isDark =
-    resolvedColorScheme === "dark";
+  const isDark = resolvedColorScheme === "dark";
 
-  const styles = useMemo(
-    () =>
-      tournamentBracketStyles(
-        isDark,
-      ),
-    [isDark],
-  );
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
 
-  const horizontalScrollRef =
-    useRef<ScrollView>(null);
+  const horizontalScrollRef = useRef<ScrollView>(null);
 
   /* ------------------------------------------------------------------------ */
   /*                         Normalized Tournament                            */
   /* ------------------------------------------------------------------------ */
 
-  const bracketTournament =
-    useMemo(
-      () =>
-        tournament
-          ? normalizeTournamentForBracket(
-              tournament,
-            )
-          : null,
-      [tournament],
-    );
+  const bracketTournament = useMemo(
+    () => (tournament ? normalizeTournamentForBracket(tournament) : null),
+    [tournament],
+  );
 
-  const tournamentKey =
-    bracketTournament
-      ? `${
-          bracketTournament.tournamentId ??
-          bracketTournament.tournamentName
-        }-${bracketTournament.season}`
-      : null;
+  const tournamentKey = bracketTournament
+    ? `${
+        bracketTournament.tournamentId ?? bracketTournament.tournamentName
+      }-${bracketTournament.season}`
+    : null;
 
   /* ------------------------------------------------------------------------ */
   /*                            Reset Scrolling                               */
@@ -484,140 +400,95 @@ export default function TournamentBracket({
       return;
     }
 
-    const frame =
-      requestAnimationFrame(
-        () => {
-          horizontalScrollRef.current?.scrollTo(
-            {
-              x: 0,
-              animated: false,
-            },
-          );
-        },
-      );
+    const frame = requestAnimationFrame(() => {
+      horizontalScrollRef.current?.scrollTo({
+        x: 0,
+        animated: false,
+      });
+    });
 
-    return () =>
-      cancelAnimationFrame(frame);
+    return () => cancelAnimationFrame(frame);
   }, [tournamentKey]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Refresh                                   */
   /* ------------------------------------------------------------------------ */
 
-  const handleRefresh =
-    useCallback(() => {
-      if (
-        !onRefresh ||
-        refreshing
-      ) {
-        return;
-      }
+  const handleRefresh = useCallback(() => {
+    if (!onRefresh || refreshing) {
+      return;
+    }
 
-      void onRefresh();
-    }, [
-      onRefresh,
-      refreshing,
-    ]);
+    void onRefresh();
+  }, [onRefresh, refreshing]);
 
   /* ------------------------------------------------------------------------ */
   /*                            Game Navigation                               */
   /* ------------------------------------------------------------------------ */
 
-  const handleGamePress =
-    useCallback(
-      (game: BracketGame) => {
-        if (
-          !bracketTournament ||
-          !canNavigateToBracketGame(
-            game,
-          )
-        ) {
-          return;
-        }
+  const handleGamePress = useCallback(
+    (game: BracketGame) => {
+      if (!bracketTournament || !canNavigateToBracketGame(game)) {
+        return;
+      }
 
-        const routePayload =
-          createRoutePayload(
-            game,
-            bracketTournament.season,
-          );
+      const routePayload = createRoutePayload(
+        game,
+        bracketTournament.season,
+        bracketTournament.competition,
+      );
 
-        router.push({
-          pathname:
-            "/game/basketball/[game]",
+      router.push({
+        pathname: "/game/basketball/[game]",
 
-          params: {
-            game: game.id,
+        params: {
+          game: game.id,
 
-            leagueId: String(
-              CBB_LEAGUE_METADATA.id,
-            ),
+          leagueId: String(
+            bracketTournament.competition === "wcbb"
+              ? WCBB_LEAGUE_METADATA.id
+              : CBB_LEAGUE_METADATA.id,
+          ),
 
-            data: encodeURIComponent(
-              JSON.stringify(
-                routePayload,
-              ),
-            ),
-          },
-        });
-      },
-      [
-        bracketTournament,
-        router,
-      ],
-    );
+          data: encodeURIComponent(JSON.stringify(routePayload)),
+        },
+      });
+    },
+    [bracketTournament, router],
+  );
 
   /* ------------------------------------------------------------------------ */
   /*                                Game Map                                  */
   /* ------------------------------------------------------------------------ */
 
-  const gameById = useMemo<
-    ReadonlyMap<
-      string,
-      BracketGame
-    >
-  >(() => {
+  const gameById = useMemo<ReadonlyMap<string, BracketGame>>(() => {
     if (!bracketTournament) {
       return EMPTY_GAME_MAP;
     }
 
-    return createBracketGameMap(
-      bracketTournament,
-    );
+    return createBracketGameMap(bracketTournament);
   }, [bracketTournament]);
 
   /* ------------------------------------------------------------------------ */
   /*                            Refresh Control                               */
   /* ------------------------------------------------------------------------ */
 
-  const refreshControl =
-    useMemo(() => {
-      if (!onRefresh) {
-        return undefined;
-      }
+  const refreshControl = useMemo(() => {
+    if (!onRefresh) {
+      return undefined;
+    }
 
-      const indicatorColor =
-        isDark
-          ? Colors.white
-          : Colors.black;
+    const indicatorColor = isDark ? Colors.white : Colors.black;
 
-      return (
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          tintColor={
-            indicatorColor
-          }
-          colors={[
-            indicatorColor,
-          ]}
-        />
-      );
-    }, [
-      handleRefresh,
-      isDark,
-      onRefresh,
-      refreshing,
-    ]);
+    return (
+      <RefreshControl
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        tintColor={indicatorColor}
+        colors={[indicatorColor]}
+      />
+    );
+  }, [handleRefresh, isDark, onRefresh, refreshing]);
 
   /* ------------------------------------------------------------------------ */
   /*                               Loading                                    */
@@ -626,26 +497,15 @@ export default function TournamentBracket({
   /*
    * Keep an existing bracket visible during background refreshes.
    */
-  if (
-    loading &&
-    !bracketTournament
-  ) {
+  if (loading && !bracketTournament) {
     return (
       <ScrollView
         style={styles.root}
-        contentContainerStyle={
-          styles.verticalScrollContent
-        }
-        showsVerticalScrollIndicator={
-          false
-        }
-        refreshControl={
-          refreshControl
-        }
+        contentContainerStyle={styles.verticalScrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={refreshControl}
       >
-        <TournamentBracketSkeleton
-          isDark={isDark}
-        />
+        <TournamentBracketSkeleton isDark={isDark} />
       </ScrollView>
     );
   }
@@ -654,20 +514,13 @@ export default function TournamentBracket({
   /*                                 Error                                    */
   /* ------------------------------------------------------------------------ */
 
-  if (
-    error &&
-    !bracketTournament
-  ) {
+  if (error && !bracketTournament) {
     return (
       <TournamentBracketEmptyState
         title="Bracket unavailable"
         message={error}
         isDark={isDark}
-        onRetry={
-          onRefresh
-            ? handleRefresh
-            : undefined
-        }
+        onRetry={onRefresh ? handleRefresh : undefined}
       />
     );
   }
@@ -682,11 +535,7 @@ export default function TournamentBracket({
         title="No bracket selected"
         message="Tournament bracket data will appear here once it is available."
         isDark={isDark}
-        onRetry={
-          onRefresh
-            ? handleRefresh
-            : undefined
-        }
+        onRetry={onRefresh ? handleRefresh : undefined}
       />
     );
   }
@@ -696,18 +545,10 @@ export default function TournamentBracket({
   /* ------------------------------------------------------------------------ */
 
   const hasBracketData =
-    bracketTournament.regions
-      .length > 0 ||
-    bracketTournament
-      .openingRoundGames
-      .length > 0 ||
-    bracketTournament
-      .finalFourGames
-      .length > 0 ||
-    Boolean(
-      bracketTournament
-        .championshipGame,
-    );
+    bracketTournament.regions.length > 0 ||
+    bracketTournament.openingRoundGames.length > 0 ||
+    bracketTournament.finalFourGames.length > 0 ||
+    Boolean(bracketTournament.championshipGame);
 
   if (!hasBracketData) {
     return (
@@ -715,11 +556,7 @@ export default function TournamentBracket({
         title="Bracket not populated"
         message="Tournament games are unavailable for this bracket."
         isDark={isDark}
-        onRetry={
-          onRefresh
-            ? handleRefresh
-            : undefined
-        }
+        onRetry={onRefresh ? handleRefresh : undefined}
       />
     );
   }
@@ -731,75 +568,25 @@ export default function TournamentBracket({
   return (
     <ScrollView
       style={styles.root}
-      showsVerticalScrollIndicator={
-        false
-      }
-      contentContainerStyle={
-        styles.verticalScrollContent
-      }
-      refreshControl={
-        refreshControl
-      }
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.verticalScrollContent}
+      refreshControl={refreshControl}
       nestedScrollEnabled
     >
-      <TournamentBracketHeader
-        tournament={
-          bracketTournament
-        }
-        isDark={isDark}
-      />
-
-      <OpeningRoundSection
-        label={
-          bracketTournament
-            .openingRoundLabel ??
-          "Opening Round"
-        }
-        games={
-          bracketTournament
-            .openingRoundGames
-        }
-        isDark={isDark}
-
-        /*
-         * This component is now CBB-only.
-         */
-        competition="CBB"
-
-        regions={
-          bracketTournament.regions
-        }
-        allGamesById={
-          gameById
-        }
-        onGamePress={
-          handleGamePress
-        }
-      />
+      <TournamentBracketHeader tournament={bracketTournament} isDark={isDark} />
 
       <ScrollView
-        ref={
-          horizontalScrollRef
-        }
+        ref={horizontalScrollRef}
         horizontal
-        nestedScrollEnabled
         directionalLockEnabled
         showsHorizontalScrollIndicator
-        contentContainerStyle={
-          styles.horizontalScrollContent
-        }
+        contentContainerStyle={styles.horizontalScrollContent}
       >
         <TournamentBracketCanvas
-          tournament={
-            bracketTournament
-          }
+          tournament={bracketTournament}
           isDark={isDark}
-          allGamesById={
-            gameById
-          }
-          onGamePress={
-            handleGamePress
-          }
+          allGamesById={gameById}
+          onGamePress={handleGamePress}
         />
       </ScrollView>
     </ScrollView>

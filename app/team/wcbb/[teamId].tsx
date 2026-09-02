@@ -1,7 +1,7 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
-import { CBBConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
+import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
@@ -11,6 +11,7 @@ import {
   BasketballScheduleMonth,
   useBasketballTeamGames,
 } from "@/hooks/BasketballHooks/useBasketballTeamGames";
+import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import { useTeamMonthSelector } from "@/hooks/LeagueHooks/useMonthSelector";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
@@ -54,7 +55,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "WCBB";
+  const league = "wcbb";
   const currentSeason = getCBBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -89,6 +90,9 @@ export default function TeamDetailScreen() {
   };
 
   const { teamDetails } = useTeamDetails(league, teamIdNum);
+  const conferenceId = teamDetails?.conferenceId;
+  const { conferences, conferencesLoading, conferencesError } =
+    useConferenceStandings(league, conferenceId);
 
   const {
     articles,
@@ -331,9 +335,11 @@ export default function TeamDetailScreen() {
 
         {/* STANDINGS */}
         <View key="standings" style={styles.contentArea}>
-          <CBBConferenceStandingsList
-            onlyTeamConference={true}
-            teamName={team.fullName}
+          <ConferenceStandingsList
+            conferences={conferences}
+            loading={conferencesLoading}
+            error={conferencesError}
+            league={league}
           />
         </View>
 

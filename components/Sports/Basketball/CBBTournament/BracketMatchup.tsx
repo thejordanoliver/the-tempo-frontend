@@ -4,8 +4,8 @@ import { router } from "expo-router";
 import React, { memo, useMemo } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { Text, TouchableOpacity, View } from "react-native";
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketTeamRow } from "./BracketTeamRow";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketGame,
   BracketTeam,
@@ -14,8 +14,8 @@ import type {
 import {
   canNavigateToBracketGame,
   getBracketPositionLabel,
-  getBracketTeamDisplayName,
   getRenderableBracketTeam,
+  getTeamCode,
   getWinningTeam,
   isFinalBracketGame,
   isLiveBracketGame,
@@ -81,14 +81,12 @@ const getTeamSummary = (
       ? `${displayTeam.seed} seed `
       : "";
   const hasValidScore =
-    displayTeam.score === null ||
-    displayTeam.score === undefined ||
-    displayTeam.score === ""
+    displayTeam.score === null || displayTeam.score === undefined
       ? false
       : Number.isFinite(Number(displayTeam.score));
   const score = hasValidScore ? ` ${displayTeam.score}` : "";
 
-  return `${seed}${getBracketTeamDisplayName(displayTeam)}${score}`;
+  return `${seed}${getTeamCode(displayTeam)}${score}`;
 };
 
 const getAccessibilityLabel = (
@@ -99,9 +97,7 @@ const getAccessibilityLabel = (
   const top = getTeamSummary(game, game.topTeam, "top", gameById);
   const bottom = getTeamSummary(game, game.bottomTeam, "bottom", gameById);
   const winner = getWinningTeam(game);
-  const winnerText = winner
-    ? `. ${getBracketTeamDisplayName(winner)} advances.`
-    : "";
+  const winnerText = winner ? `. ${getTeamCode(winner)} advances.` : "";
 
   return `${status}: ${top}, ${bottom}${winnerText}`;
 };
@@ -112,21 +108,14 @@ const teamMatches = (team: BracketTeam | null, winner: BracketTeam | null) => {
 
   if (!displayTeam || !displayWinner) return false;
 
-  const teamIds = [displayTeam.id, displayTeam.espnId]
-    .filter((value) => value !== null && value !== undefined)
-    .map(String);
-  const winnerIds = [displayWinner.id, displayWinner.espnId]
-    .filter((value) => value !== null && value !== undefined)
-    .map(String);
-
-  return teamIds.some((teamId) => winnerIds.includes(teamId));
+  return String(displayTeam.id) === String(displayWinner.id);
 };
 
 function BracketMatchupComponent({
   game,
   side = "left",
   compact = false,
-  competition = "CBB",
+  competition = "cbb",
   style,
   allGamesById,
   onPress,
@@ -141,7 +130,7 @@ function BracketMatchupComponent({
       pathname: "/game/basketball/[game]",
       params: {
         game: String(game.id),
-        leagueId: String(competition),
+        leagueId: competition === "wcbb" ? "54" : "10",
         data: encodeURIComponent(JSON.stringify(game)),
       },
     });
@@ -149,7 +138,7 @@ function BracketMatchupComponent({
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const isFinal = isFinalBracketGame(game);
   const isLive = isLiveBracketGame(game);
   const winner = getWinningTeam(game);

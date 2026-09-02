@@ -257,9 +257,7 @@ export const NBAPlayoffBracketStyles = (isDark: boolean) =>
 
     teamCode: {
       flex: 1,
-
       marginLeft: 4,
-
       fontFamily: Fonts.BOLD,
       fontSize: 18,
     },
@@ -273,25 +271,21 @@ export const NBAPlayoffBracketStyles = (isDark: boolean) =>
     winsBadge: {
       minWidth: 30,
       height: 30,
-
       paddingHorizontal: 8,
-
       alignItems: "center",
       justifyContent: "center",
-
       borderRadius: 100,
-
       backgroundColor: isDark
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
     },
 
     score: {
+      minWidth: 22,
+      marginLeft: 4,
       color: isDark ? Colors.white : Colors.black,
-
-      fontFamily: Fonts.BOLD,
       fontSize: 18,
-
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
 
@@ -417,11 +411,11 @@ export const NBAPlayoffBracketStyles = (isDark: boolean) =>
 
     connectorH: {
       position: "absolute",
-      height: 2,
+      height: 1,
     },
 
     connectorV: {
       position: "absolute",
-      width: 2,
+      width: 1,
     },
   });

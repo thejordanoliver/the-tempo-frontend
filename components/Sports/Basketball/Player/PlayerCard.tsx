@@ -36,18 +36,21 @@ type PlayerRoutePathname =
   | "/player/soccer/[id]";
 
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
-  NBA: "/player/basketball/[id]",
-  WNBA: "/player/basketball/[id]",
-  CBB: "/player/basketball/[id]",
-  WCBB: "/player/basketball/[id]",
-  MLB: "/player/baseball/[id]",
-  CB: "/player/baseball/[id]",
-  SB: "/player/baseball/[id]",
-  NFL: "/player/football/[id]",
-  CFB: "/player/football/[id]",
-  UFC: "/player/mma/[id]",
-  NHL: "/player/hockey/[id]",
-  SOCCER: "/player/soccer/[id]",
+  nba: "/player/basketball/[id]",
+  wnba: "/player/basketball/[id]",
+  cbb: "/player/basketball/[id]",
+  wcbb: "/player/basketball/[id]",
+  mlb: "/player/baseball/[id]",
+  cb: "/player/baseball/[id]",
+  sb: "/player/baseball/[id]",
+  nfl: "/player/football/[id]",
+  cfb: "/player/football/[id]",
+  ufl: "/player/football/[id]",
+  ufc: "/player/mma/[id]",
+  nhl: "/player/hockey/[id]",
+  leaguescup: "/player/soccer/[id]",
+  bundesliga: "/player/soccer/[id]",
+  mls: "/player/soccer/[id]",
 };
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({

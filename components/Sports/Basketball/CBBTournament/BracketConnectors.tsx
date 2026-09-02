@@ -1,7 +1,7 @@
-import React, { memo } from "react";
-import { View } from "react-native";
+import React, { memo, useMemo } from "react";
+import { StyleSheet } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketCardLayout,
   BracketConnectionLayout,
@@ -9,6 +9,8 @@ import type {
 } from "./tournamentBracket.types";
 
 type BracketConnectorsProps = {
+  width: number;
+  height: number;
   connections: readonly BracketConnectionLayout[];
   pathConnections?: readonly BracketPathConnectionLayout[];
   championshipConnection?: {
@@ -17,260 +19,135 @@ type BracketConnectorsProps = {
   } | null;
   lineColor: string;
   lineWidth: number;
-  isDark: boolean;
 };
 
 const centerY = (layout: BracketCardLayout) => layout.y + layout.height / 2;
 const centerX = (layout: BracketCardLayout) => layout.x + layout.width / 2;
 const rightX = (layout: BracketCardLayout) => layout.x + layout.width;
-const positive = (value: number) => Math.max(1, Math.abs(value));
+const bottomY = (layout: BracketCardLayout) => layout.y + layout.height;
 
-function horizontalLine(
-  left: number,
-  top: number,
-  width: number,
-  lineWidth: number,
-  lineColor: string,
-) {
-  return {
-    left,
-    top: top - lineWidth / 2,
-    width: positive(width),
-    height: lineWidth,
-    backgroundColor: lineColor,
-  };
+function createMergePath(connection: BracketConnectionLayout): string {
+  const [topSource, bottomSource] = [...connection.sourceLayouts].sort(
+    (first, second) => centerY(first) - centerY(second),
+  );
+  const topAttachX =
+    connection.direction === "reverse" ? topSource.x : rightX(topSource);
+  const bottomAttachX =
+    connection.direction === "reverse" ? bottomSource.x : rightX(bottomSource);
+  const targetAttachX =
+    connection.direction === "reverse"
+      ? rightX(connection.targetLayout)
+      : connection.targetLayout.x;
+  const joinX = topAttachX + (targetAttachX - topAttachX) / 2;
+  const topSourceY = centerY(topSource);
+  const bottomSourceY = centerY(bottomSource);
+  const targetY = centerY(connection.targetLayout);
+
+  return [
+    `M ${topAttachX} ${topSourceY} H ${joinX}`,
+    `M ${bottomAttachX} ${bottomSourceY} H ${joinX}`,
+    `M ${joinX} ${topSourceY} V ${bottomSourceY}`,
+    `M ${joinX} ${targetY} H ${targetAttachX}`,
+  ].join(" ");
 }
 
-function verticalLine(
-  left: number,
-  top: number,
-  height: number,
-  lineWidth: number,
-  lineColor: string,
-) {
-  return {
-    left: left - lineWidth / 2,
-    top,
-    width: lineWidth,
-    height: positive(height),
-    backgroundColor: lineColor,
-  };
+function createPath(connection: BracketPathConnectionLayout): string {
+  const sourceAttachX =
+    connection.direction === "reverse"
+      ? connection.sourceLayout.x
+      : rightX(connection.sourceLayout);
+  const targetAttachX =
+    connection.direction === "reverse"
+      ? rightX(connection.targetLayout)
+      : connection.targetLayout.x;
+  const sourceY = centerY(connection.sourceLayout);
+  const targetY = centerY(connection.targetLayout);
+  const joinX = sourceAttachX + (targetAttachX - sourceAttachX) / 2;
+
+  return `M ${sourceAttachX} ${sourceY} H ${joinX} V ${targetY} H ${targetAttachX}`;
 }
 
-function getJoinX(
-  direction: BracketConnectionLayout["direction"],
-  firstSource: BracketCardLayout,
+function createChampionshipPath(
+  sourceLayouts: readonly [BracketCardLayout, BracketCardLayout],
   targetLayout: BracketCardLayout,
-) {
-  if (direction === "reverse") {
-    const targetAttachX = rightX(targetLayout);
-    return targetAttachX + (firstSource.x - targetAttachX) / 2;
-  }
-
-  const sourceAttachX = rightX(firstSource);
-  return sourceAttachX + (targetLayout.x - sourceAttachX) / 2;
+): string {
+  const [topSource, bottomSource] = [...sourceLayouts].sort(
+    (first, second) => centerY(first) - centerY(second),
+  );
+  return [
+    `M ${centerX(topSource)} ${bottomY(topSource)} V ${targetLayout.y}`,
+    `M ${centerX(bottomSource)} ${bottomSource.y} V ${bottomY(targetLayout)}`,
+  ].join(" ");
 }
 
 function BracketConnectorsComponent({
+  width,
+  height,
   connections,
   pathConnections = [],
   championshipConnection = null,
   lineColor,
   lineWidth,
-  isDark,
 }: BracketConnectorsProps) {
-  const styles = tournamentBracketStyles(isDark);
+  const regionalPaths = useMemo(
+    () => connections.map(createMergePath),
+    [connections],
+  );
+  const centerPaths = useMemo(
+    () => pathConnections.map(createPath),
+    [pathConnections],
+  );
+  const championshipPath = useMemo(
+    () =>
+      championshipConnection
+        ? createChampionshipPath(
+            championshipConnection.sourceLayouts,
+            championshipConnection.targetLayout,
+          )
+        : null,
+    [championshipConnection],
+  );
 
   return (
-    <View pointerEvents="none" style={styles.connectorLayer}>
-      {connections.flatMap((connection) => {
-        const [firstSource, secondSource] = connection.sourceLayouts;
-        const firstCenterY = centerY(firstSource);
-        const secondCenterY = centerY(secondSource);
-        const targetCenterY = centerY(connection.targetLayout);
-        const topY = Math.min(firstCenterY, secondCenterY);
-        const joinX = getJoinX(
-          connection.direction,
-          firstSource,
-          connection.targetLayout,
-        );
-
-        const firstAttachX =
-          connection.direction === "reverse"
-            ? firstSource.x
-            : rightX(firstSource);
-        const secondAttachX =
-          connection.direction === "reverse"
-            ? secondSource.x
-            : rightX(secondSource);
-        const targetAttachX =
-          connection.direction === "reverse"
-            ? rightX(connection.targetLayout)
-            : connection.targetLayout.x;
-
-        return [
-          <View
-            key={`${connection.id}-source-a`}
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(firstAttachX, joinX),
-                firstCenterY,
-                joinX - firstAttachX,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-          <View
-            key={`${connection.id}-source-b`}
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(secondAttachX, joinX),
-                secondCenterY,
-                joinX - secondAttachX,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-          <View
-            key={`${connection.id}-join`}
-            style={[
-              styles.connectorV,
-              verticalLine(
-                joinX,
-                topY,
-                secondCenterY - firstCenterY,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-          <View
-            key={`${connection.id}-target`}
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(joinX, targetAttachX),
-                targetCenterY,
-                targetAttachX - joinX,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-        ];
-      })}
-
-      {pathConnections.flatMap((connection) => {
-        const sourceAttachX =
-          connection.direction === "reverse"
-            ? connection.sourceLayout.x
-            : rightX(connection.sourceLayout);
-        const targetAttachX =
-          connection.direction === "reverse"
-            ? rightX(connection.targetLayout)
-            : connection.targetLayout.x;
-        const sourceCenterY = centerY(connection.sourceLayout);
-        const targetCenterY = centerY(connection.targetLayout);
-        const joinX = sourceAttachX + (targetAttachX - sourceAttachX) / 2;
-        const topY = Math.min(sourceCenterY, targetCenterY);
-
-        return [
-          <View
-            key={`${connection.id}-source`}
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(sourceAttachX, joinX),
-                sourceCenterY,
-                joinX - sourceAttachX,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-          <View
-            key={`${connection.id}-join`}
-            style={[
-              styles.connectorV,
-              verticalLine(
-                joinX,
-                topY,
-                targetCenterY - sourceCenterY,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-          <View
-            key={`${connection.id}-target`}
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(joinX, targetAttachX),
-                targetCenterY,
-                targetAttachX - joinX,
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />,
-        ];
-      })}
-
-      {championshipConnection ? (
-        <>
-          <View
-            style={[
-              styles.connectorV,
-              verticalLine(
-                centerX(championshipConnection.targetLayout),
-                centerY(championshipConnection.sourceLayouts[0]),
-                centerY(championshipConnection.sourceLayouts[1]) -
-                  centerY(championshipConnection.sourceLayouts[0]),
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />
-          <View
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(
-                  centerX(championshipConnection.sourceLayouts[0]),
-                  centerX(championshipConnection.targetLayout),
-                ),
-                centerY(championshipConnection.sourceLayouts[0]),
-                centerX(championshipConnection.targetLayout) -
-                  centerX(championshipConnection.sourceLayouts[0]),
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />
-          <View
-            style={[
-              styles.connectorH,
-              horizontalLine(
-                Math.min(
-                  centerX(championshipConnection.sourceLayouts[1]),
-                  centerX(championshipConnection.targetLayout),
-                ),
-                centerY(championshipConnection.sourceLayouts[1]),
-                centerX(championshipConnection.targetLayout) -
-                  centerX(championshipConnection.sourceLayouts[1]),
-                lineWidth,
-                lineColor,
-              ),
-            ]}
-          />
-        </>
+    <Svg
+      width={width}
+      height={height}
+      pointerEvents="none"
+      style={StyleSheet.absoluteFill}
+    >
+      {regionalPaths.map((path, index) => (
+        <Path
+          key={connections[index].id}
+          d={path}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+      {centerPaths.map((path, index) => (
+        <Path
+          key={pathConnections[index].id}
+          d={path}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      ))}
+      {championshipPath ? (
+        <Path
+          d={championshipPath}
+          fill="none"
+          stroke={lineColor}
+          strokeWidth={lineWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       ) : null}
-    </View>
+    </Svg>
   );
 }
 

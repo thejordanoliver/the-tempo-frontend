@@ -1,26 +1,21 @@
 import type {
   TournamentData,
   TournamentGame,
+  TournamentRegion,
+  TournamentRoundCode,
   TournamentTeam,
   TournamentVenue,
 } from "hooks/BasketballHooks/useTournamentBracket";
 
-export type TournamentRound = TournamentGame["round"];
+export type TournamentRound = TournamentRoundCode;
 export type BracketPosition = "top" | "bottom";
 export type BracketTeam = TournamentTeam;
 export type BracketVenue = TournamentVenue;
 export type BracketGame = TournamentGame;
-export type TournamentBracketCompetition = "CBB" | "WCBB";
+export type TournamentBracketCompetition = "cbb" | "wcbb";
 export type TournamentBracketSourceData = TournamentData;
 
-export type BracketRegion = {
-  id: string;
-  name: string;
-  order: number;
-  side: "left" | "right";
-  verticalPosition: "top" | "bottom";
-  games: BracketGame[];
-};
+export type BracketRegion = TournamentRegion;
 
 export type TournamentBracketData = {
   tournamentId: TournamentData["tournamentId"] | null;
@@ -43,19 +38,15 @@ export type RegionPlacement = {
 };
 
 export type BracketLayoutConfig = {
-  gameCardWidth: number;
-  gameCardHeight: number;
   roundColumnWidth: number;
   horizontalRoundGap: number;
   baseVerticalGap: number;
   regionGap: number;
   centerColumnWidth: number;
   centerGap: number;
-  connectorHorizontalLength: number;
   connectorLineWidth: number;
   regionHeaderHeight: number;
   roundTitleHeight: number;
-  regionPadding: number;
 };
 
 export type BracketCardLayout = {

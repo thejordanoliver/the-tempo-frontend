@@ -42,24 +42,24 @@ function getTeamByLeague(league: string, teamId?: string | number) {
   if (!teamId) return undefined;
 
   switch (league) {
-    case "NFL":
+    case "nfl":
       return getNFLTeam(teamId);
 
-    case "CFB":
+    case "cfb":
       return getCFBTeam(teamId);
 
-    case "CBB":
+    case "cbb":
       return getCBBTeam(teamId);
-    case "WCBB":
+    case "wcbb":
       return getWCBBTeam(teamId);
 
-    case "MLB":
+    case "mlb":
       return getMLBTeam(teamId);
 
-    case "NHL":
+    case "nhl":
       return getNHLTeam(teamId);
 
-    case "WNBA":
+    case "wnba":
       return getWNBATeam(teamId);
 
     default:
@@ -73,7 +73,7 @@ export default function ChampionshipBanner({
   teamId,
   teamName,
   teamLogo,
-  league = "NBA",
+  league = "nba",
 }: Props) {
   const team = getTeamByLeague(league, teamId);
   const styles = championshipBannerStyles(isDark);
@@ -101,7 +101,7 @@ export default function ChampionshipBanner({
       : championshipList.map((championship) => ({
           season: championship.season,
           displayValue:
-            league === "NFL"
+            league === "nfl"
               ? championship.notes || championship.season
               : championship.season,
           isCount: false,
@@ -114,16 +114,16 @@ export default function ChampionshipBanner({
           ? "NONE"
           : isCount
             ? `x${displayValue}`
-            : league === "NFL"
+            : league === "nfl"
               ? String(displayValue)
               : typeof displayValue === "number" ||
                   !Number.isNaN(Number(displayValue))
                 ? `'${String(displayValue).slice(-2)}`
                 : String(displayValue);
 
-        let label = `${league} CHAMPIONS`;
+        let label = `${league.toUpperCase()} CHAMPIONS`;
 
-        if (league === "CFB" && !isCount && season != null) {
+        if (league === "cfb" && !isCount && season != null) {
           const numericYear = Number(season);
 
           if (!Number.isNaN(numericYear)) {
@@ -131,19 +131,19 @@ export default function ChampionshipBanner({
           }
         }
 
-        if (league === "MLB") {
+        if (league === "mlb") {
           label = "WORLD SERIES CHAMPIONS";
         }
 
-        if (league === "NFL") {
+        if (league === "nfl") {
           label = "SUPER BOWL CHAMPIONS";
         }
 
-        if (league === "NHL") {
+        if (league === "nhl") {
           label = "STANLEY CUP CHAMPIONS";
         }
 
-        if (league === "WNBA") {
+        if (league === "wnba") {
           label = "WNBA CHAMPIONS";
         }
 

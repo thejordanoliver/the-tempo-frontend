@@ -269,18 +269,7 @@ export const useCFBRankings = () => {
 
     const normalized = normalizeRankings(response.data);
 
-    if (__DEV__) {
-      console.log(
-        "CFB rankings:",
-        normalized.map((poll) => ({
-          type: poll.type,
-          name: poll.shortName,
-          ranks: poll.ranks.length,
-          droppedOut: poll.droppedOut.length,
-        })),
-      );
-    }
-
+   
     return normalized;
   }, []);
 

@@ -1188,7 +1188,7 @@ function CBBLeagueScreen() {
     error: cbbGamesError,
     refreshGames: refreshCBBGames,
     loading: cbbGamesLoading,
-  } = useBasketballGames(selectedDate, "cbb", selectedConferenceGroupId);
+  } = useBasketballGames(selectedDate, league, selectedConferenceGroupId);
 
   const displayedGames = useMemo(() => {
     if (!selectedConference) {
@@ -1236,7 +1236,7 @@ function CBBLeagueScreen() {
     error: bracketError,
     refreshing: bracketRefreshing,
     refresh: refreshBracket,
-  } = useTournamentBracket(league, currentSeason);
+  } = useTournamentBracket(league, 2025);
 
   /* ------------------------------------------------------------------------ */
   /*                                  Header                                  */

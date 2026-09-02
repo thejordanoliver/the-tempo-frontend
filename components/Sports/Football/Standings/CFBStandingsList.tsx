@@ -43,7 +43,7 @@ export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
-  console.log(rankings)
+
 
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);

@@ -1,9 +1,9 @@
 import React, { memo, useMemo } from "react";
 import { Image, Text, View } from "react-native";
 
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketMatchup } from "./BracketMatchup";
 import { getBracketTeamLogoSource } from "./BracketTeamRow";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketCardLayout,
   BracketGame,
@@ -11,8 +11,8 @@ import type {
   TournamentBracketCompetition,
 } from "./tournamentBracket.types";
 import {
-  getBracketTeamDisplayName,
   getRenderableBracketTeam,
+  getTeamCode,
   getWinningTeam,
   isFinalBracketGame,
 } from "./tournamentBracket.utils";
@@ -46,18 +46,13 @@ function getChampionScoreText(
   const championScore =
     team.score === null ||
     team.score === undefined ||
-    team.score === "" ||
     !Number.isFinite(Number(team.score))
       ? null
       : String(team.score);
-  const opponent =
-    topTeam?.id === team.id || topTeam?.espnId === team.espnId
-      ? bottomTeam
-      : topTeam;
+  const opponent = topTeam?.id === team.id ? bottomTeam : topTeam;
   const opponentScore =
     opponent?.score === null ||
     opponent?.score === undefined ||
-    opponent?.score === "" ||
     !Number.isFinite(Number(opponent?.score))
       ? null
       : String(opponent?.score);
@@ -80,16 +75,14 @@ function BracketChampionshipComponent({
   allGamesById,
   onGamePress,
 }: BracketChampionshipProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const champion =
     championshipGame && isFinalBracketGame(championshipGame)
       ? getWinningTeam(championshipGame)
       : null;
   const championLogo = useMemo(
     () =>
-      champion
-        ? getBracketTeamLogoSource(champion, competition, isDark)
-        : null,
+      champion ? getBracketTeamLogoSource(champion, competition, isDark) : null,
     [champion, competition, isDark],
   );
   const championScoreText =
@@ -159,13 +152,24 @@ function BracketChampionshipComponent({
     semifinalLayouts,
   ]);
 
-  let previousBottom = 0;
-
   return (
     <View style={[styles.championshipColumn, { height: columnHeight }]}>
       <Text numberOfLines={1} style={styles.championshipLabel} selectable>
         {centerColumnLabel}
       </Text>
+
+      {championshipGame ? (
+        <Text
+          numberOfLines={1}
+          style={[
+            styles.nationalChampionshipLabel,
+            { top: Math.max(0, championshipLayout.y - 24) },
+          ]}
+          selectable
+        >
+          {championshipGame.roundLabel || "National Championship"}
+        </Text>
+      ) : null}
 
       {champion && championLogo && championshipGame ? (
         <View
@@ -179,7 +183,7 @@ function BracketChampionshipComponent({
         >
           <View
             style={styles.championPanel}
-            accessibilityLabel={`${getBracketTeamDisplayName(
+            accessibilityLabel={`${getTeamCode(
               champion,
             )} ${season} national champion`}
           >
@@ -193,7 +197,7 @@ function BracketChampionshipComponent({
             />
             <Text numberOfLines={1} style={styles.championName} selectable>
               {champion.seed ? `${champion.seed} ` : ""}
-              {getBracketTeamDisplayName(champion)}
+              {getTeamCode(champion)}
             </Text>
             <Text numberOfLines={1} style={styles.championMeta} selectable>
               {tournamentName}{" "}
@@ -205,19 +209,20 @@ function BracketChampionshipComponent({
         </View>
       ) : null}
 
-      {items.map((item) => {
-        const spacerHeight = Math.max(0, item.layout.y - previousBottom);
-        previousBottom = item.layout.y + item.layout.height;
-
-        return (
-          <React.Fragment key={item.id}>
-            {spacerHeight > 0 ? (
-              <View style={{ height: spacerHeight }} />
-            ) : null}
-            {item.render()}
-          </React.Fragment>
-        );
-      })}
+      {items.map((item) => (
+        <View
+          key={item.id}
+          style={[
+            styles.centerGameSlot,
+            {
+              top: item.layout.y,
+              height: item.layout.height,
+            },
+          ]}
+        >
+          {item.render()}
+        </View>
+      ))}
     </View>
   );
 }

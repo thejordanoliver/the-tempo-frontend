@@ -1,24 +1,20 @@
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import {
-  getCBBTeam,
-  getCBBTeamByESPNId,
-  getCBBTeamLogo,
-} from "constants/teamsCBB";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "constants/teamsWCBB";
 import React, { memo, useMemo } from "react";
 import type { ImageSourcePropType, StyleProp, TextStyle } from "react-native";
 import { Image, Text, View } from "react-native";
 
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import type {
   BracketGame,
   BracketTeam,
   TournamentBracketCompetition,
 } from "./tournamentBracket.types";
 import {
-  getBracketTeamDisplayName,
   getPlaceholderTeamLabel,
   getRenderableBracketTeam,
+  getTeamCode,
 } from "./tournamentBracket.utils";
 
 type BracketTeamRowProps = {
@@ -40,24 +36,20 @@ export const getBracketTeamLogoSource = (
   const displayTeam = getRenderableBracketTeam(team);
   if (!displayTeam) return PlaceholderLogo;
 
-  const isWCBB = competition === "WCBB";
+  const isWCBB = competition === "wcbb";
 
-  const teamByLocalId = isWCBB
-    ? getWCBBTeam(displayTeam.id)
-    : getCBBTeam(displayTeam.id);
 
-  const teamByEspnId =
-    displayTeam.espnId != null
-      ? getCBBTeamByESPNId(displayTeam.espnId)
-      : undefined;
-  const teamByIdAsEspn =
-    displayTeam.id != null ? getCBBTeamByESPNId(displayTeam.id) : undefined;
-  const localTeam = teamByLocalId ?? teamByEspnId ?? teamByIdAsEspn;
-  const localId = localTeam?.id;
+  const localTeam = isWCBB
+    ? getWCBBTeamByESPNId(displayTeam.id)
+    : getCBBTeamByESPNId(displayTeam.id);
 
-  if (isWCBB) return getWCBBTeamLogo(localId ?? displayTeam.id, isDark);
+  if (localTeam) {
+    return isWCBB
+      ? getWCBBTeamLogo(localTeam.id, isDark)
+      : getCBBTeamLogo(localTeam.id, isDark);
+  }
 
-  return getCBBTeamLogo(localId ?? displayTeam.id, isDark);
+  return displayTeam.logo ? { uri: displayTeam.logo } : PlaceholderLogo;
 };
 
 const getScoreText = (team: BracketTeam | null) => {
@@ -65,8 +57,7 @@ const getScoreText = (team: BracketTeam | null) => {
   if (
     !displayTeam ||
     displayTeam.score === null ||
-    displayTeam.score === undefined ||
-    displayTeam.score === ""
+    displayTeam.score === undefined
   ) {
     return "";
   }
@@ -86,14 +77,14 @@ function BracketTeamRowComponent({
   isWinner = false,
   isLoser = false,
 }: BracketTeamRowProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const displayTeam = getRenderableBracketTeam(team);
   const logoSource = useMemo(
     () => getBracketTeamLogoSource(displayTeam, competition, isDark),
     [competition, displayTeam, isDark],
   );
   const name = displayTeam
-    ? getBracketTeamDisplayName(displayTeam)
+    ? getTeamCode(displayTeam)
     : allGamesById
       ? getPlaceholderTeamLabel(game, position, allGamesById)
       : getPlaceholderTeamLabel(game, position);
@@ -102,7 +93,6 @@ function BracketTeamRowComponent({
       ? String(displayTeam.seed)
       : "";
   const scoreText = getScoreText(displayTeam);
-  const recordText = displayTeam?.record?.trim() || null;
   const textStyle: StyleProp<TextStyle> = [
     styles.teamName,
     !displayTeam ? styles.placeholderName : null,
@@ -110,28 +100,31 @@ function BracketTeamRowComponent({
     isLoser ? styles.loserText : null,
   ];
   const scoreStyle: StyleProp<TextStyle> = [
-    styles.teamScore,
+    styles.score,
     isWinner ? styles.winnerText : null,
     isLoser ? styles.loserText : null,
   ];
 
   return (
     <View style={styles.teamRow}>
-      <Text style={styles.seedText} selectable>
-        {seedText}
-      </Text>
-      <Image source={logoSource} style={styles.teamLogo} resizeMode="contain" />
-      <View style={styles.teamNameWrap}>
-        <Text numberOfLines={1} style={textStyle} selectable>
-          {name}
-        </Text>
-        {recordText ? (
-          <Text numberOfLines={1} style={styles.teamRecord} selectable>
-            {recordText}
+      <View style={styles.teamInfo}>
+        <View style={styles.seedContainer}>
+          <Text style={styles.seedText} selectable>
+            {seedText}
           </Text>
-        ) : null}
+        </View>
+        <Image
+          source={logoSource}
+          style={styles.teamLogo}
+          resizeMode="contain"
+        />
+        <View style={styles.teamNameWrap}>
+          <Text numberOfLines={1} style={textStyle} selectable>
+            {name}
+          </Text>
+        </View>
       </View>
-      <Text numberOfLines={1} style={scoreStyle} selectable>
+      <Text style={scoreStyle} selectable>
         {scoreText}
       </Text>
     </View>

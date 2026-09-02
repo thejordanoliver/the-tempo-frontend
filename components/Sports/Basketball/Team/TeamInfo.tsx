@@ -24,23 +24,23 @@ export default function TeamInfo({ teamId, teamDetails, league }: Props) {
 
   const team = (() => {
     switch (league) {
-      case "NBA":
+      case "nba":
         return getNBATeam(teamId);
-      case "CFB":
+      case "cfb":
         return getCFBTeam(teamId);
-      case "CBB":
+      case "cbb":
         return getCBBTeam(teamId);
-      case "WCBB":
+      case "wcbb":
         return getWCBBTeam(teamId);
-      case "NFL":
+      case "nfl":
         return getNFLTeam(teamId);
-      case "MLB":
+      case "mlb":
         return getMLBTeam(teamId);
-      case "NHL":
+      case "nhl":
         return getNHLTeam(teamId);
-      case "WNBA":
+      case "wnba":
         return getWNBATeam(teamId);
-      case "SOCCER":
+      case "soccer":
         return getSOCCTeam(teamId);
       default:
         return null;
@@ -54,12 +54,12 @@ export default function TeamInfo({ teamId, teamDetails, league }: Props) {
     teamDetails?.coach?.lastName ?? ""
   }`.trim();
 
-  const showConference = ["CFB", "CBB", "WCBB"].includes(league);
+  const showConference = ["cfb", "cbb", "wcbb"].includes(league);
 
   return (
     <View style={styles.infoCardContainer}>
       <InfoCard
-        label={league === "MLB" ? "Manager" : "Coach"}
+        label={league === "mlb" ? "Manager" : "Coach"}
         value={coachName}
         image={teamDetails?.coach?.image}
         team={t}

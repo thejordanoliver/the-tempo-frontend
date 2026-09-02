@@ -1,9 +1,11 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-import { BRACKET_LAYOUT } from "./tournamentBracket.utils";
+import { BRACKET_LAYOUT } from "../../components/Sports/Basketball/CBBTournament/tournamentBracket.utils";
+export const CARD_WIDTH = 176;
+export const CARD_HEIGHT = 142;
 
-export const tournamentBracketStyles = (isDark: boolean) => {
+export const CBBTournamentBracketStyles = (isDark: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const mutedTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const cardBackground = isDark
@@ -90,8 +92,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       justifyContent: "center",
       height: BRACKET_LAYOUT.regionHeaderHeight,
       paddingHorizontal: 12,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: borderColor,
+   
     },
     regionTitle: {
       fontFamily: Fonts.BOLD,
@@ -103,7 +104,6 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       flexDirection: "row",
       alignItems: "flex-start",
       gap: BRACKET_LAYOUT.horizontalRoundGap,
-
       overflow: "visible",
     },
     roundColumn: {
@@ -134,7 +134,7 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       overflow: "hidden",
     },
     matchupCardCompact: {
-      minHeight: BRACKET_LAYOUT.gameCardHeight,
+      minHeight: CARD_HEIGHT,
     },
     championshipCard: {
       borderColor: accentColor,
@@ -146,22 +146,48 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       opacity: 0.9,
     },
     teamRow: {
+      flex: 1,
       flexDirection: "row",
       alignItems: "center",
-      gap: 5,
-      height: 21,
+      justifyContent: "space-between",
     },
+
+    teamPressed: {
+      opacity: 0.65,
+    },
+
+    teamInfo: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      marginRight: 8,
+    },
+    /*
+    |--------------------------------------------------------------------------
+    | Seed
+    |--------------------------------------------------------------------------
+    */
+
+    seedContainer: {
+      width: 22,
+      alignItems: "center",
+    },
+
+    seedPlaceholder: {
+      width: 22,
+    },
+
     seedText: {
-      width: 18,
+      color: Colors.midTone,
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      fontVariant: ["tabular-nums"],
-      color: mutedTextColor,
       textAlign: "center",
     },
+
     teamLogo: {
-      width: 19,
-      height: 19,
+      width: 30,
+      height: 30,
+      marginRight: 8,
     },
     teamNameWrap: {
       flex: 1,
@@ -172,29 +198,22 @@ export const tournamentBracketStyles = (isDark: boolean) => {
     },
     teamName: {
       flex: 1,
-      minWidth: 0,
+      marginRight: 6,
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 16,
       fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: textColor,
-    },
-    teamRecord: {
-      flexShrink: 0,
-      maxWidth: 42,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 10,
-      color: mutedTextColor,
     },
     placeholderName: {
       fontFamily: Fonts.REGULAR,
       color: mutedTextColor,
     },
-    teamScore: {
-      width: 32,
+    score: {
+      minWidth: 22,
+      marginLeft: 4,
+      color: isDark ? Colors.white : Colors.black,
+      fontSize: 18,
       fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      fontVariant: ["tabular-nums"],
-      color: textColor,
-      textAlign: "right",
+      textAlign: "center",
     },
     winnerText: {
       color: winnerColor,
@@ -232,22 +251,16 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       color: mutedTextColor,
       textAlign: "right",
     },
-    connectorLayer: {
-      ...StyleSheet.absoluteFillObject,
-      overflow: "visible",
-    },
-    connectorH: {
-      position: "absolute",
-      borderRadius: BRACKET_LAYOUT.connectorLineWidth,
-    },
-    connectorV: {
-      position: "absolute",
-      borderRadius: BRACKET_LAYOUT.connectorLineWidth,
-    },
     championshipColumn: {
       alignItems: "center",
       width: BRACKET_LAYOUT.centerColumnWidth,
       overflow: "visible",
+    },
+    centerGameSlot: {
+      position: "absolute",
+      right: 0,
+      left: 0,
+      alignItems: "center",
     },
     championshipLabel: {
       position: "absolute",
@@ -262,11 +275,22 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       textAlign: "center",
       textTransform: "uppercase",
     },
+    nationalChampionshipLabel: {
+      position: "absolute",
+      right: 0,
+      left: 0,
+      height: 20,
+      fontFamily: Fonts.BOLD,
+      fontSize: 11,
+      color: accentColor,
+      textAlign: "center",
+      textTransform: "uppercase",
+    },
     championPanel: {
       alignItems: "center",
       justifyContent: "center",
       gap: 5,
-      width: BRACKET_LAYOUT.gameCardWidth + 22,
+      width: CARD_WIDTH + 22,
       padding: 10,
       borderWidth: 1,
       borderColor: accentColor,
@@ -304,37 +328,36 @@ export const tournamentBracketStyles = (isDark: boolean) => {
       textAlign: "center",
     },
     openingSection: {
-      gap: 10,
-      paddingHorizontal: 16,
+      gap: 12,
+      paddingHorizontal: 18,
+      paddingTop: 12,
+      paddingBottom: 24,
     },
     openingHeaderRow: {
-      flexDirection: "row",
       alignItems: "center",
-      justifyContent: "space-between",
-      gap: 8,
+      justifyContent: "center",
     },
     openingTitle: {
       fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: textColor,
+      textAlign: "center",
+      textTransform: "uppercase",
     },
-    openingCount: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: mutedTextColor,
-    },
-    openingScrollContent: {
-      gap: 10,
-      paddingRight: 16,
+    openingGamesRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-around",
     },
     openingCardWrap: {
       gap: 6,
-      width: BRACKET_LAYOUT.gameCardWidth,
+      width: CARD_WIDTH,
     },
     advanceText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 11,
       color: mutedTextColor,
+      textAlign: "center",
     },
     emptyContainer: {
       flex: 1,

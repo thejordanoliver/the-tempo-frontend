@@ -8,7 +8,6 @@ import { StyleSheet } from "react-native";
 */
 
 const CARD_WIDTH = 176;
-
 const CANVAS_SIDE_PADDING = 12;
 
 const COL_WIDTH = 220;
@@ -266,11 +265,11 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
 
     connectorH: {
       position: "absolute",
-      height: 2,
+      height: 1,
     },
 
     connectorV: {
       position: "absolute",
-      width: 2,
+      width: 1,
     },
   });

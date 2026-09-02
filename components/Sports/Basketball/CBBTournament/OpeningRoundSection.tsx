@@ -1,8 +1,8 @@
 import React, { memo, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
+import { CARD_HEIGHT, CARD_WIDTH, CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 import { BracketMatchup } from "./BracketMatchup";
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
 import type {
   BracketGame,
   BracketRegion,
@@ -21,6 +21,7 @@ type OpeningRoundSectionProps = {
   regions: readonly BracketRegion[];
   allGamesById?: ReadonlyMap<string, BracketGame>;
   onGamePress?: (game: BracketGame) => void;
+  width: number;
 };
 
 function OpeningRoundSectionComponent({
@@ -31,27 +32,21 @@ function OpeningRoundSectionComponent({
   regions,
   allGamesById,
   onGamePress,
+  width,
 }: OpeningRoundSectionProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
 
   if (games.length === 0) return null;
 
   return (
-    <View style={styles.openingSection}>
+    <View style={[styles.openingSection, { width }]}>
       <View style={styles.openingHeaderRow}>
         <Text style={styles.openingTitle} selectable>
           {label || "Opening Round"}
         </Text>
-        <Text style={styles.openingCount} selectable>
-          {games.length} {games.length === 1 ? "game" : "games"}
-        </Text>
       </View>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.openingScrollContent}
-      >
+      <View style={styles.openingGamesRow}>
         {games.map((game) => (
           <View key={game.id} style={styles.openingCardWrap}>
             <BracketMatchup
@@ -62,16 +57,16 @@ function OpeningRoundSectionComponent({
               allGamesById={allGamesById}
               onPress={onGamePress}
               style={{
-                width: BRACKET_LAYOUT.gameCardWidth,
-                height: BRACKET_LAYOUT.gameCardHeight,
+                width: CARD_WIDTH,
+                height: CARD_HEIGHT,
               }}
             />
             <Text numberOfLines={2} style={styles.advanceText} selectable>
-              {getOpeningRoundDestinationLabel(game, regions)}
+              {getOpeningRoundDestinationLabel(game, regions, allGamesById)}
             </Text>
           </View>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }

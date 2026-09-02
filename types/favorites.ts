@@ -112,6 +112,15 @@ export function splitFavoriteRailOrder(
   };
 }
 
+export function groupFavoriteRailItems(
+  items: readonly FavoriteItem[],
+): FavoriteItem[] {
+  return [
+    ...items.filter((item) => item.kind === "league"),
+    ...items.filter((item) => item.kind === "team"),
+  ];
+}
+
 export function resolvePersistedFavoriteRailKeys(
   orderedKeys: readonly string[],
   previousFavoriteTeamIds: readonly FavoriteTeamKey[],

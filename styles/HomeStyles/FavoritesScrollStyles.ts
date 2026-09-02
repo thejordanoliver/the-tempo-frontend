@@ -1,18 +1,26 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
+
+export const FAVORITES_RAIL_GAP = 12;
+export const FAVORITES_RAIL_HORIZONTAL_PADDING = 16;
+export const FAVORITES_RAIL_ITEM_WIDTH = 80;
+
 export const FavoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
+    railContainer: {
+      position: "relative",
+    },
     container: {
       flexDirection: "row",
-      gap: 12,
+      gap: FAVORITES_RAIL_GAP,
       marginBottom: 20,
       paddingTop: 24,
-      paddingHorizontal: 16,
+      paddingHorizontal: FAVORITES_RAIL_HORIZONTAL_PADDING,
     },
 
     tabContainer: {
       alignItems: "center",
-      width: 80,
+      width: FAVORITES_RAIL_ITEM_WIDTH,
     },
     activeTabContainer: {
       zIndex: 10,
@@ -65,6 +73,14 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
       height: 12,
       marginHorizontal: 4,
       backgroundColor: Colors.lightGray,
+    },
+    sectionDivider: {
+      position: "absolute",
+      top: 24,
+      zIndex: 20,
+      width: StyleSheet.hairlineWidth,
+      height: 80,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     dragPlaceholder: {

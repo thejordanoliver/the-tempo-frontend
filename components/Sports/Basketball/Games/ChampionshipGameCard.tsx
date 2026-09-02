@@ -32,6 +32,7 @@ interface ChampionshipGameCardProps {
   isNFL?: boolean;
   isCFB?: boolean;
 
+  isNHL?: boolean;
   isMLB?: boolean;
 }
 
@@ -54,6 +55,7 @@ export default function ChampionshipGameCard({
   isNFL = false,
   isCFB = false,
   isMLB = false,
+  isNHL = false,
 }: ChampionshipGameCardProps) {
   const router = useRouter();
 
@@ -168,6 +170,7 @@ export default function ChampionshipGameCard({
   const isTie = homeWins === awayWins;
 
   const status = game?.status ?? {};
+  const headline = game.headline
 
   const gameStatusDescription = status.description;
   const gameStatusDetail = status.shortDetail;
@@ -201,12 +204,15 @@ export default function ChampionshipGameCard({
     let pathname:
       | "/game/basketball/[game]"
       | "/game/football/[game]"
-      | "/game/baseball/[game]";
+      | "/game/baseball/[game]"
+      | "/game/hockey/[game]"
 
     if (isNFL || isCFB) {
       pathname = "/game/football/[game]";
     } else if (isMLB) {
       pathname = "/game/baseball/[game]";
+    } else if (isNHL) {
+      pathname = "/game/hockey/[game]";
     } else {
       pathname = "/game/basketball/[game]";
     }
@@ -321,10 +327,10 @@ export default function ChampionshipGameCard({
         }}
         style={styles.card}
       >
-        <View style={styles.topGlow} />
+  
 
         <View style={styles.badgeContainer}>
-          <Text style={styles.badge}>{"World Series"}</Text>
+          <Text style={styles.badge}>{headline}</Text>
         </View>
 
         <View style={styles.matchupRow}>
@@ -352,7 +358,7 @@ export default function ChampionshipGameCard({
 
           {/* Center */}
           <View style={styles.centerColumn}>
-            <Text style={styles.versus}>VS</Text>
+
             <View style={styles.info}>
               {renderStatus()}
               {!isFinal && broadcast ? (

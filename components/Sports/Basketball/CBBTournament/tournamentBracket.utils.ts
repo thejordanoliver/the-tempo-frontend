@@ -1,3 +1,4 @@
+import { CARD_HEIGHT } from "@/styles/PlayoffStyles/CBBTournamentBracketStyles";
 import type {
   BracketGame,
   BracketLayoutConfig,
@@ -10,8 +11,6 @@ import type {
   TournamentBracketSourceData,
   TournamentRound,
 } from "./tournamentBracket.types";
-
-type JsonRecord = Record<string, unknown>;
 
 export const REGIONAL_ROUNDS: TournamentRound[] = [
   "ROUND_OF_64",
@@ -26,19 +25,15 @@ export const RIGHT_VISUAL_ROUNDS: readonly TournamentRound[] = [
 ].reverse();
 
 export const BRACKET_LAYOUT: BracketLayoutConfig = {
-  gameCardWidth: 198,
-  gameCardHeight: 82,
   roundColumnWidth: 212,
   horizontalRoundGap: 20,
   baseVerticalGap: 20,
   regionGap: 60,
   centerColumnWidth: 238,
   centerGap: 30,
-  connectorHorizontalLength: 18,
-  connectorLineWidth: 2,
+  connectorLineWidth: 1,
   regionHeaderHeight: 34,
   roundTitleHeight: 28,
-  regionPadding: 8,
 };
 
 export const REGIONAL_ROUND_BASE_COUNTS: Record<string, number> = {
@@ -78,9 +73,6 @@ const ROUND_LABELS: Record<string, string> = {
   CHAMPIONSHIP: "National Championship",
 };
 
-const isRecord = (value: unknown): value is JsonRecord =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
 const asString = (value: unknown): string | null => {
   if (typeof value === "string") {
     const trimmed = value.trim();
@@ -94,17 +86,6 @@ const asString = (value: unknown): string | null => {
   return null;
 };
 
-const asNumber = (value: unknown): number | null => {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-
-  if (typeof value === "string" && value.trim().length > 0) {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  return null;
-};
-
 const normalizeText = (value: unknown) =>
   String(value ?? "")
     .replace(/[-_/]+/g, " ")
@@ -112,151 +93,22 @@ const normalizeText = (value: unknown) =>
     .trim()
     .toLowerCase();
 
-const getValue = (record: JsonRecord, keys: readonly string[]) => {
-  for (const key of keys) {
-    if (record[key] !== undefined && record[key] !== null) {
-      return record[key];
-    }
-  }
-
-  return undefined;
-};
-
-const normalizeCompetition = (
-  value: unknown,
-): TournamentBracketCompetition => {
+const normalizeCompetition = (value: unknown): TournamentBracketCompetition => {
   const text = normalizeText(value).toUpperCase();
-  return text === "WCBB" || text.includes("WOMEN") ? "WCBB" : "CBB";
-};
-
-const normalizeSide = (value: unknown): "left" | "right" | null => {
-  const text = normalizeText(value);
-  if (text === "left") return "left";
-  if (text === "right") return "right";
-  return null;
-};
-
-const normalizeVerticalPosition = (
-  value: unknown,
-): "top" | "bottom" | null => {
-  const text = normalizeText(value);
-  if (text === "top") return "top";
-  if (text === "bottom") return "bottom";
-  return null;
-};
-
-const isTournamentGame = (value: unknown): value is BracketGame => {
-  if (!isRecord(value)) return false;
-
-  return typeof value.id === "string" && typeof value.round === "string";
+  return text === "wcbb" || text.includes("WOMEN") ? "wcbb" : "cbb";
 };
 
 const getRoundSortOrder = (game: BracketGame) =>
   Number.isFinite(game.roundOrder)
     ? game.roundOrder
-    : ROUND_ORDER[game.round] ?? Number.MAX_SAFE_INTEGER;
+    : (ROUND_ORDER[game.round] ?? Number.MAX_SAFE_INTEGER);
 
 const getGameSortOrder = (game: BracketGame) =>
   Number.isFinite(game.gameOrder)
     ? game.gameOrder
-    : asNumber(game.bracketSlot) ?? Number.MAX_SAFE_INTEGER;
+    : (game.bracketSlot ?? Number.MAX_SAFE_INTEGER);
 
-const getRegionSortOrder = (region: JsonRecord, fallbackOrder: number) =>
-  asNumber(getValue(region, ["order", "regionOrder", "region_order"])) ??
-  fallbackOrder;
-
-const getRegionIdentity = (
-  region: JsonRecord,
-  games: readonly BracketGame[],
-  fallbackIndex: number,
-) => {
-  const id =
-    asString(getValue(region, ["id", "regionId", "regionID", "key"])) ??
-    games.find((game) => game.regionId)?.regionId ??
-    `region-${fallbackIndex + 1}`;
-  const name =
-    asString(getValue(region, ["name", "regionName", "label"])) ??
-    games.find((game) => game.regionName)?.regionName ??
-    `Region ${fallbackIndex + 1}`;
-
-  return { id, name };
-};
-
-const collectGamesFromRegionShape = (value: unknown): BracketGame[] => {
-  const gamesById = new Map<string, BracketGame>();
-  const visited = new WeakSet<object>();
-
-  const visit = (candidate: unknown) => {
-    if (candidate === null || candidate === undefined) return;
-
-    if (isTournamentGame(candidate)) {
-      gamesById.set(candidate.id, candidate);
-      return;
-    }
-
-    if (Array.isArray(candidate)) {
-      candidate.forEach(visit);
-      return;
-    }
-
-    if (!isRecord(candidate) || visited.has(candidate)) return;
-
-    visited.add(candidate);
-
-    [
-      "games",
-      "rounds",
-      "matchups",
-      "children",
-      "items",
-      "slots",
-      "bracket",
-    ].forEach((key) => visit(candidate[key]));
-  };
-
-  visit(value);
-
-  return sortBracketGames(Array.from(gamesById.values()));
-};
-
-const normalizeRegions = (
-  regions: readonly unknown[],
-): BracketRegion[] => {
-  return regions
-    .map((regionValue, index) => {
-      if (!isRecord(regionValue)) return null;
-
-      const regionalGames = collectGamesFromRegionShape(regionValue).filter(
-        (game) => REGIONAL_ROUNDS.includes(game.round),
-      );
-      const { id, name } = getRegionIdentity(regionValue, regionalGames, index);
-      const order = getRegionSortOrder(regionValue, index + 1);
-
-      return {
-        id,
-        name,
-        order,
-        side:
-          normalizeSide(getValue(regionValue, ["side"])) ??
-          (order <= 2 ? "left" : "right"),
-        verticalPosition:
-          normalizeVerticalPosition(
-            getValue(regionValue, [
-              "verticalPosition",
-              "position",
-              "vertical",
-            ]),
-          ) ?? (order % 2 === 1 ? "top" : "bottom"),
-        games: sortBracketGames(regionalGames),
-      } satisfies BracketRegion;
-    })
-    .filter((region): region is BracketRegion => Boolean(region))
-    .sort((first, second) => first.order - second.order);
-};
-
-export function sortBracketGames(
-  games: readonly BracketGame[],
-): BracketGame[] {
+export function sortBracketGames(games: readonly BracketGame[]): BracketGame[] {
   return [...games].sort((first, second) => {
     const firstRoundOrder = getRoundSortOrder(first);
     const secondRoundOrder = getRoundSortOrder(second);
@@ -295,7 +147,7 @@ export function groupGamesByRound(
       );
       return rounds;
     },
-    {},
+    {} as Record<TournamentRound, BracketGame[]>,
   );
 }
 
@@ -308,7 +160,14 @@ export function groupRegionGamesByRound(
 export function normalizeTournamentForBracket(
   tournament: TournamentBracketSourceData,
 ): TournamentBracketData {
-  const regions = normalizeRegions(tournament.regions ?? []);
+  const regions: BracketRegion[] = tournament.regions
+    .map((region) => ({
+      ...region,
+      games: sortBracketGames(
+        region.games.filter((game) => REGIONAL_ROUNDS.includes(game.round)),
+      ),
+    }))
+    .sort((first, second) => first.order - second.order);
   const regionalGames = regions.flatMap((region) => region.games);
   const explicitOpeningRoundGames = sortBracketGames(
     tournament.openingRoundGames ?? [],
@@ -411,13 +270,12 @@ export function hasRenderableBracketTeam(
 
   return Boolean(
     team.id ??
-      team.espnId ??
-      team.name ??
-      team.shortName ??
-      team.abbreviation ??
-      team.logo ??
-      team.seed ??
-      team.score,
+    team.name ??
+    team.shortName ??
+    team.abbreviation ??
+    team.logo ??
+    team.seed ??
+    team.score,
   );
 }
 
@@ -427,18 +285,11 @@ export function getRenderableBracketTeam(
   return hasRenderableBracketTeam(team) ? team : null;
 }
 
-export function getBracketTeamDisplayName(
-  team: BracketTeam | null | undefined,
-): string {
+export function getTeamCode(team: BracketTeam | null | undefined): string {
   const displayTeam = getRenderableBracketTeam(team);
   if (!displayTeam) return "TBD";
 
-  return (
-    displayTeam.shortName ||
-    displayTeam.abbreviation ||
-    displayTeam.name ||
-    "TBD"
-  );
+  return displayTeam.abbreviation || "TBD";
 }
 
 export function getPlaceholderTeamLabel(
@@ -474,7 +325,9 @@ export function getBracketPositionLabel(
   }
 
   if (game.round === "CHAMPIONSHIP") {
-    return position === "top" ? "Winner of Semifinal 1" : "Winner of Semifinal 2";
+    return position === "top"
+      ? "Winner of Semifinal 1"
+      : "Winner of Semifinal 2";
   }
 
   if (game.round === "FINAL_4") return "Winner of Elite Eight Game";
@@ -509,9 +362,7 @@ export function isLiveBracketGame(game: BracketGame): boolean {
 }
 
 const teamMatchesWinnerId = (team: BracketTeam, winnerTeamId: string) => {
-  return [team.id, team.espnId]
-    .filter((value) => value !== null && value !== undefined)
-    .some((value) => String(value) === winnerTeamId);
+  return String(team.id) === winnerTeamId;
 };
 
 export function getWinningTeam(game: BracketGame): BracketTeam | null {
@@ -546,22 +397,14 @@ export function getRoundDisplayLabel(
   return customLabel || ROUND_LABELS[round] || round;
 }
 
-export function getRoundVerticalSpacing(
-  roundIndex: number,
-  gameCardHeight: number,
-  baseGap: number,
-) {
-  return Math.pow(2, roundIndex) * (gameCardHeight + baseGap) - gameCardHeight;
-}
-
 export function getBaseGameCenterY(
   slot: number,
   layout: BracketLayoutConfig,
 ): number {
   const safeSlot = Math.max(1, Math.floor(slot));
-  const rowHeight = layout.gameCardHeight + layout.baseVerticalGap;
+  const rowHeight = CARD_HEIGHT + layout.baseVerticalGap;
 
-  return (safeSlot - 1) * rowHeight + layout.gameCardHeight / 2;
+  return (safeSlot - 1) * rowHeight + CARD_HEIGHT / 2;
 }
 
 export function getRegionalGameCenterY(
@@ -580,19 +423,9 @@ export function getRegionalGameCenterY(
   const lastBaseSlot = firstBaseSlot + coveredBaseSlots - 1;
 
   return (
-    getBaseGameCenterY(firstBaseSlot, layout) +
-    getBaseGameCenterY(lastBaseSlot, layout)
-  ) / 2;
-}
-
-export function getRegionalGameTop(
-  round: TournamentRound,
-  bracketSlot: number,
-  layout: BracketLayoutConfig,
-): number {
-  return (
-    getRegionalGameCenterY(round, bracketSlot, layout) -
-    layout.gameCardHeight / 2
+    (getBaseGameCenterY(firstBaseSlot, layout) +
+      getBaseGameCenterY(lastBaseSlot, layout)) /
+    2
   );
 }
 
@@ -620,21 +453,80 @@ export function createBracketGameMap(
   return new Map(allGames.map((game) => [game.id, game] as const));
 }
 
+export function getTournamentSourceGameIds(
+  game: BracketGame,
+  candidates: readonly BracketGame[],
+): string[] {
+  let topSourceId = game.topSourceGameId;
+  let bottomSourceId = game.bottomSourceGameId;
+
+  candidates.forEach((candidate) => {
+    if (candidate.nextGameId !== game.id) return;
+
+    if (candidate.nextGamePosition === "top" && !topSourceId) {
+      topSourceId = candidate.id;
+    }
+
+    if (candidate.nextGamePosition === "bottom" && !bottomSourceId) {
+      bottomSourceId = candidate.id;
+    }
+  });
+
+  return [topSourceId, bottomSourceId].filter((sourceId): sourceId is string =>
+    Boolean(sourceId),
+  );
+}
+
+export function orderFinalFourGamesForChampionship(
+  finalFourGames: readonly BracketGame[],
+  championshipGame: BracketGame | null,
+): BracketGame[] {
+  const sortedGames = sortBracketGames(finalFourGames).slice(0, 2);
+
+  if (!championshipGame) return sortedGames;
+
+  const gameById = new Map(sortedGames.map((game) => [game.id, game]));
+  const orderedGames = getTournamentSourceGameIds(championshipGame, sortedGames)
+    .map((sourceId) => gameById.get(sourceId))
+    .filter((game): game is BracketGame => Boolean(game));
+
+  sortedGames.forEach((game) => {
+    if (!orderedGames.some((orderedGame) => orderedGame.id === game.id)) {
+      orderedGames.push(game);
+    }
+  });
+
+  return orderedGames.slice(0, 2);
+}
+
 export function getOpeningRoundDestinationLabel(
   game: BracketGame,
   regions: readonly BracketRegion[],
+  gamesById?: ReadonlyMap<string, BracketGame>,
 ): string {
+  const destinationGame = game.nextGameId
+    ? (gamesById?.get(game.nextGameId) ?? null)
+    : null;
   const destinationRegion =
     regions.find((region) => region.id === game.destinationRegionId) ??
+    regions.find((region) => region.id === destinationGame?.regionId) ??
     regions.find((region) => region.id === game.regionId) ??
     null;
   const regionName =
-    destinationRegion?.name ?? game.regionName ?? "the main bracket";
+    destinationRegion?.name ??
+    destinationGame?.regionName ??
+    game.regionName ??
+    "Main bracket";
+  const round = game.destinationRound ?? destinationGame?.round ?? null;
+  const roundText = round ? ` • ${getRoundDisplayLabel(round)}` : "";
   const seedText = game.destinationSeed
-    ? `, No. ${game.destinationSeed} slot`
+    ? ` • Seed ${game.destinationSeed}`
+    : "";
+  const positionText = game.nextGamePosition
+    ? ` • ${game.nextGamePosition === "top" ? "Top" : "Bottom"} slot`
     : "";
 
-  return `Winner advanced to ${regionName}${seedText}`;
+  return `Winner → ${regionName}${roundText}${seedText}${positionText}`;
 }
 
 export function canNavigateToBracketGame(game: BracketGame): boolean {

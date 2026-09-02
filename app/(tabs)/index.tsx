@@ -22,7 +22,7 @@ export default function HomeScreen() {
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const styles = homeStyles(isDark);
-  const [isDraggingFavorites, setIsDraggingFavorites] = React.useState(false);
+  const [favoritesInteracting, setFavoritesInteracting] = React.useState(false);
   const [selectedTab, setSelectedTab] = React.useState<HomeHeaderTab>("scores");
 
   const pagerRef = useRef<PagerView>(null);
@@ -40,6 +40,14 @@ export default function HomeScreen() {
     },
     [homeTabScrollProgress],
   );
+
+  const handleFavoritesInteractionStart = useCallback(() => {
+    setFavoritesInteracting(true);
+  }, []);
+
+  const handleFavoritesInteractionEnd = useCallback(() => {
+    setFavoritesInteracting(false);
+  }, []);
 
   const {
     favorites,
@@ -86,7 +94,7 @@ export default function HomeScreen() {
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
-          scrollEnabled={!isDraggingFavorites}
+          scrollEnabled={!favoritesInteracting}
           onPageScroll={handlePageScroll}
           onPageSelected={(e) => {
             const index = e.nativeEvent.position;
@@ -102,8 +110,8 @@ export default function HomeScreen() {
             >
               <FavoritesScroll
                 favoriteTeamIds={favorites}
-                onDragStart={() => setIsDraggingFavorites(true)}
-                onDragEnd={() => setIsDraggingFavorites(false)}
+                onInteractionStart={handleFavoritesInteractionStart}
+                onInteractionEnd={handleFavoritesInteractionEnd}
                 isDark={isDark}
               />
 

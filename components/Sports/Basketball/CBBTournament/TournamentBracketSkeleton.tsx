@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { View } from "react-native";
 
-import { tournamentBracketStyles } from "./tournamentBracket.styles";
+import { CBBTournamentBracketStyles } from "../../../../styles/PlayoffStyles/CBBTournamentBracketStyles";
 
 type TournamentBracketSkeletonProps = {
   isDark: boolean;
@@ -10,7 +10,7 @@ type TournamentBracketSkeletonProps = {
 function TournamentBracketSkeletonComponent({
   isDark,
 }: TournamentBracketSkeletonProps) {
-  const styles = useMemo(() => tournamentBracketStyles(isDark), [isDark]);
+  const styles = useMemo(() => CBBTournamentBracketStyles(isDark), [isDark]);
   const regionKeys = ["left-top", "right-top", "left-bottom", "right-bottom"];
   const roundWidths = [190, 170, 150, 130];
 
