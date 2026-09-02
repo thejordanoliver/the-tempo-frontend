@@ -1,14 +1,14 @@
 import { Colors } from "constants/styles";
 import { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
-import { favoritesScrollSkeletonStyles } from "styles/HomeStyles/FavoritesScrollSkeletonStyles";
+import { FavoritesScrollSkeletonStyles } from "styles/HomeStyles/FavoritesScrollSkeletonStyles";
 
 type Props = {
   isDark: boolean;
 };
 
 export default function FavoritesScrollSkeleton({ isDark }: Props) {
-  const styles = favoritesScrollSkeletonStyles(isDark);
+  const styles = FavoritesScrollSkeletonStyles(isDark);
 
   // Smooth breathing shimmer animation
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
@@ -45,11 +45,11 @@ export default function FavoritesScrollSkeleton({ isDark }: Props) {
     : "rgba(136, 136, 136, 0.5)";
 
   return (
-    <View style={styles.wrapper}>
-      {Array.from({ length: 4 }).map((_, index) => (
-        <View key={index} style={styles.skeletonItem}>
+    <View style={styles.container}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <View key={index} style={styles.tabContainer}>
           {/* Circle (team logo placeholder) */}
-          <View style={styles.circleWrapper}>
+       
             <View
               style={[
                 styles.circle,
@@ -66,7 +66,7 @@ export default function FavoritesScrollSkeleton({ isDark }: Props) {
                 ]}
               />
             </View>
-          </View>
+  
 
           {/* Label (team name placeholder) */}
           <View style={styles.labelWrapper}>

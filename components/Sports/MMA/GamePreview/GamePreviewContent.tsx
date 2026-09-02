@@ -1,8 +1,10 @@
 import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
+import { View } from "react-native";
 import MatchupComparison from "../GameDetails/MatchupComparison";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+
 
 type GamePreviewContentProps = {
   firstFighterId: number;
@@ -40,7 +42,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   state: string;
-  isDark: boolean
+  isDark: boolean;
 };
 
 export default function GamePreviewContent({
@@ -87,47 +89,49 @@ export default function GamePreviewContent({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.contentContainerStyle}
     >
-      <MatchupComparison
-        firstFighterId={firstFighterId}
-        secondFighterId={secondFighterId}
-        firstFighterStance={firstFighterStance}
-        secondFighterStance={secondFighterStance}
-        firstFighterHeight={firstFighterHeight}
-        firstFighterAge={firstFighterAge}
-        secondFighterAge={secondFighterAge}
-        secondFighterHeight={secondFighterHeight}
-        firstFighterWeight={firstFighterWeight}
-        secondFighterWeight={secondFighterWeight}
-        firstFighterName={firstFighterName}
-        secondFighterName={secondFighterName}
-        firstFighterFlag={firstFighterFlag}
-        secondFighterFlag={secondFighterFlag}
-        firstFighterCountry={firstFighterCountry}
-        secondFighterCountry={secondFighterCountry}
-        firstFighterRecord={firstFighterRecord}
-        secondFighterRecord={secondFighterRecord}
-        firstFighterClass={firstFighterClass}
-        secondFighterClass={secondFighterClass}
-        firstFighterReach={firstFighterReach}
-        secondFighterReach={secondFighterReach}
-        firstFighterIsWinner={firstFighterIsWinner}
-        secondFighterIsWinner={secondFighterIsWinner}
-        secondFighterIsChampion={secondFighterIsChampion}
-        firstFighterIsChampion={firstFighterIsChampion}
-        gameStatusDescription={gameStatusDescription}
-        isDark={isDark}
-      />
+      <View style={styles.bottomSheetScrollViewWrapper}>
+        <MatchupComparison
+          firstFighterId={firstFighterId}
+          secondFighterId={secondFighterId}
+          firstFighterStance={firstFighterStance}
+          secondFighterStance={secondFighterStance}
+          firstFighterHeight={firstFighterHeight}
+          firstFighterAge={firstFighterAge}
+          secondFighterAge={secondFighterAge}
+          secondFighterHeight={secondFighterHeight}
+          firstFighterWeight={firstFighterWeight}
+          secondFighterWeight={secondFighterWeight}
+          firstFighterName={firstFighterName}
+          secondFighterName={secondFighterName}
+          firstFighterFlag={firstFighterFlag}
+          secondFighterFlag={secondFighterFlag}
+          firstFighterCountry={firstFighterCountry}
+          secondFighterCountry={secondFighterCountry}
+          firstFighterRecord={firstFighterRecord}
+          secondFighterRecord={secondFighterRecord}
+          firstFighterClass={firstFighterClass}
+          secondFighterClass={secondFighterClass}
+          firstFighterReach={firstFighterReach}
+          secondFighterReach={secondFighterReach}
+          firstFighterIsWinner={firstFighterIsWinner}
+          secondFighterIsWinner={secondFighterIsWinner}
+          secondFighterIsChampion={secondFighterIsChampion}
+          firstFighterIsChampion={firstFighterIsChampion}
+          gameStatusDescription={gameStatusDescription}
+          isDark={isDark}
+        />
 
-      <GameLocation
-        venueImage={venueImage}
-        venueName={venueName}
-        location={venueLocation}
-        address={venueAddress}
-        venueCapacity={venueCapacity}
-        venueAttendance={venueAttendance}
-        weather={weather}
-        isDark={isDark}
-      />
+        <GameLocation
+          venueImage={venueImage}
+          venueName={venueName}
+          location={venueLocation}
+          address={venueAddress}
+          venueCapacity={venueCapacity}
+          venueAttendance={venueAttendance}
+          weather={weather}
+          isDark={isDark}
+        />
+      </View>
     </BottomSheetScrollView>
   );
 }

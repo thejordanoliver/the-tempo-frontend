@@ -1,40 +1,43 @@
 import { Colors } from "constants/styles";
 import { StyleSheet } from "react-native";
-export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
+
+export const FavoritesScrollSkeletonStyles = (isDark: boolean) =>
   StyleSheet.create({
-    wrapper: {
+    container: {
       flexDirection: "row",
+      gap: 12,
       marginBottom: 20,
-      paddingHorizontal: 16,
       paddingTop: 24,
+      paddingHorizontal: 16,
     },
-    skeletonItem: {
+
+    tabContainer: {
       alignItems: "center",
-      marginRight: 16,
-    },
-    circleWrapper: {
-      position: "relative",
       width: 80,
-      height: 80,
-      marginBottom: 6,
-      borderRadius: 40,
-      overflow: "hidden",
     },
+
     circle: {
+      alignItems: "center",
+      justifyContent: "center",
       width: 80,
       height: 80,
+      borderWidth: 0.5,
+      borderColor: isDark ? Colors.light.background : Colors.dark.background,
       borderRadius: 40,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-    },
-    labelWrapper: {
-      position: "relative",
-      width: 50,
-      height: 12,
-      borderRadius: 4,
       overflow: "hidden",
     },
+
+    labelWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      height: 30,
+      marginTop: 4,
+    },
+
     label: {
       width: 50,
       height: 12,
@@ -42,7 +45,9 @@ export const favoritesScrollSkeletonStyles = (isDark: boolean) =>
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
+
     shimmer: {
       position: "absolute",
       top: 0,

@@ -2,8 +2,7 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 export const FavoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
-    favoritesWrapper: { padding: 0 },
-    favorites: {
+    container: {
       flexDirection: "row",
       gap: 12,
       marginBottom: 20,
@@ -52,7 +51,7 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "flex-start",
-      minHeight: 30,
+      height: 30,
       marginTop: 4,
     },
     tabLabel: {
@@ -67,18 +66,7 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
       marginHorizontal: 4,
       backgroundColor: Colors.lightGray,
     },
-    leagueBadge: {
-      paddingHorizontal: 5,
-      paddingVertical: 2,
-      marginTop: 3,
-      borderRadius: 8,
-    },
-    leagueBadgeText: {
-      textTransform: "uppercase",
-      fontFamily: Fonts.BOLD,
-      fontSize: 9,
-      color: Colors.white,
-    },
+
     dragPlaceholder: {
       alignItems: "center",
       width: 80,

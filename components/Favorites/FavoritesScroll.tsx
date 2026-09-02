@@ -361,7 +361,7 @@ function FavoritesScrollComponent({
       horizontal
       keyExtractor={(item) => item.key}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.favorites}
+      contentContainerStyle={styles.container}
       activationDistance={8}
       autoscrollThreshold={56}
       autoscrollSpeed={180}
