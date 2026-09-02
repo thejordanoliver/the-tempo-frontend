@@ -24,8 +24,8 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
     logoWrapper: {
       alignItems: "center",
       justifyContent: "center",
-      width: 70,
-      height: 70,
+      width: 80,
+      height: 80,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
       borderRadius: 40,
@@ -38,8 +38,8 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
     editIcon: {
       alignItems: "center",
       justifyContent: "center",
-      width: 70,
-      height: 70,
+      width: 80,
+      height: 80,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
       borderRadius: 40,
