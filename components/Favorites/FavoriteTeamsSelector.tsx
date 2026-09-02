@@ -12,6 +12,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React, { useCallback, useMemo } from "react";
 import type { ImageSourcePropType } from "react-native";
 import { Animated, FlatList, StyleSheet } from "react-native";
+import { buildFavoriteTeamKey } from "types/favorites";
 import { Team } from "types/team";
 import SearchBar from "../Explore/SearchBar";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
@@ -106,8 +107,8 @@ const FavoriteTeamsSelector = ({
 
   const renderItem = useCallback(
     ({ item }: { item: Team }) => {
-      const key = `${item.league}:${item.id}`;
-      const isSelected = favoritesSet.has(key);
+      const key = buildFavoriteTeamKey(item.league, item.id);
+      const isSelected = key ? favoritesSet.has(key) : false;
 
       const useAltLogo = isDark || isSelected;
 

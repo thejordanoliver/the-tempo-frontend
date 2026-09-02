@@ -3,6 +3,7 @@ import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -39,6 +40,7 @@ export default function MMALeagueScreen() {
 
 function UFCLeagueScreen() {
   const league = "ufc";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -101,10 +103,15 @@ function UFCLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league} league={league} onBack={goBack} />
+        <CustomHeader
+          tabName={league}
+          league={league}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   return (
     <>

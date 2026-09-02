@@ -25,6 +25,7 @@ import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { getNHLSeason } from "@/utils/dateUtils";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
@@ -63,6 +64,7 @@ export default function HockeyLeagueScreen() {
 
 function NHLLeagueScreen() {
   const league = "nhl";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -144,10 +146,15 @@ function NHLLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league} league={league} onBack={goBack} />
+        <CustomHeader
+          tabName={league}
+          league={league}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */

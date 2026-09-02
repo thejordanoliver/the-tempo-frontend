@@ -1,7 +1,9 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
-import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
+import PlayerHeader, {
+  BasketballLeague,
+} from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
@@ -23,7 +25,7 @@ export default function PlayerDetailScreen() {
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
     teamId: string;
-    league: any;
+    league: BasketballLeague;
   }>();
   const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
@@ -31,10 +33,11 @@ export default function PlayerDetailScreen() {
   const global = globalStyles(isDark);
   const navigation = useNavigation();
   const playerId = Number(id);
-  const isNBA = league === "NBA";
-  const isWNBA = league === "WNBA";
-  const isCBB = league === "CBB";
-  const isWCBB = league === "WCBB";
+  const isNBA = league === "nba";
+  const isWNBA = league === "wnba";
+  const isCBB = league === "cbb";
+  const isWCBB = league === "wcbb";
+
   const { player, loading, error } = usePlayerById(playerId, league);
   const team =
     teamId && isNBA
@@ -46,6 +49,7 @@ export default function PlayerDetailScreen() {
           : teamId && isWCBB
             ? getWCBBTeam(teamId)
             : null;
+
   const teamLogo = isNBA
     ? getNBATeamLogo(teamId, true)
     : isWNBA
@@ -67,9 +71,7 @@ export default function PlayerDetailScreen() {
     league,
   );
 
-  // -------------------------
-  // Header
-  // -------------------------
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (

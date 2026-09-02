@@ -2,6 +2,10 @@ import {
   isFavoriteSportId,
   type FavoriteSportId,
 } from "constants/leagues";
+import {
+  normalizeFavoriteTeamKeys,
+  type FavoriteTeamKey,
+} from "types/favorites";
 import { apiClient } from "utils/apiClient";
 
 export type UserSearchResult = {
@@ -42,8 +46,32 @@ export async function updateActivityStatusPreference(
   return Boolean(res.data?.showActivityStatus ?? showActivityStatus);
 }
 
+type FavoriteTeamsResponse = {
+  favoriteTeamIds?: unknown;
+};
+
+export async function getFavoriteTeams(): Promise<FavoriteTeamKey[]> {
+  const res = await apiClient.get<FavoriteTeamsResponse>(
+    "/api/users/me/favorites",
+  );
+
+  return normalizeFavoriteTeamKeys(res.data?.favoriteTeamIds);
+}
+
+export async function updateFavoriteTeams(
+  favoriteTeams: readonly FavoriteTeamKey[],
+): Promise<FavoriteTeamKey[]> {
+  const normalizedFavoriteTeams = normalizeFavoriteTeamKeys(favoriteTeams);
+  const res = await apiClient.patch<FavoriteTeamsResponse>(
+    "/api/users/me/favorites",
+    { favoriteTeams: normalizedFavoriteTeams },
+  );
+
+  return normalizeFavoriteTeamKeys(res.data?.favoriteTeamIds);
+}
+
 type FavoriteSportsResponse = {
-  favorites?: unknown;
+  favoriteSports?: unknown;
 };
 
 function normalizeFavoriteSportsResponse(value: unknown): FavoriteSportId[] {
@@ -57,17 +85,17 @@ export async function getFavoriteSports(): Promise<FavoriteSportId[]> {
     "/api/users/me/favorite-sports",
   );
 
-  return normalizeFavoriteSportsResponse(res.data?.favorites);
+  return normalizeFavoriteSportsResponse(res.data?.favoriteSports);
 }
 
 export async function updateFavoriteSports(
-  favorites: FavoriteSportId[],
+  favoriteSports: FavoriteSportId[],
 ): Promise<FavoriteSportId[]> {
-  const normalizedFavorites = Array.from(new Set(favorites));
+  const normalizedFavoriteSports = Array.from(new Set(favoriteSports));
   const res = await apiClient.put<FavoriteSportsResponse>(
     "/api/users/me/favorite-sports",
-    { favorites: normalizedFavorites },
+    { favoriteSports: normalizedFavoriteSports },
   );
 
-  return normalizeFavoriteSportsResponse(res.data?.favorites);
+  return normalizeFavoriteSportsResponse(res.data?.favoriteSports);
 }

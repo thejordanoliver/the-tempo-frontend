@@ -93,7 +93,7 @@ export const ConferenceStandingsList = ({
           : getWCBBTeamLogo(teamId ?? 0, isDark);
 
     const teamCode = item.code || "-";
-    const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
+    const favorited = teamId ? isFavorite(league, String(teamId)) : false;
 
     const handleTeamPress = () => {
       if (!teamId) return;
@@ -138,9 +138,16 @@ export const ConferenceStandingsList = ({
     showDivision: boolean;
   }) => {
     const espnId = item.id;
-    const team = getCFBTeamByESPNId(espnId ?? 0);
+    const team =
+      league === "cfb"
+        ? getCFBTeamByESPNId(espnId ?? 0)
+        : league === "cbb"
+          ? getCBBTeamByESPNId(espnId ?? 0)
+          : getWCBBTeamByESPNId(espnId ?? 0);
+
     const teamId = team?.id;
-    const favorited = teamId ? isFavorite("CFB", String(teamId)) : false;
+
+    const favorited = teamId ? isFavorite(league, String(teamId)) : false;
     const streakText = getStreakText(item.streak);
 
     const streakColor = streakText.startsWith("W")

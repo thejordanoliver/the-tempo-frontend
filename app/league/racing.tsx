@@ -3,6 +3,7 @@ import EventSelector, {
 } from "@/components/Sports/MMA/EventSelector";
 import GamesList from "@/components/Sports/Racing/Games/RacingGamesList";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useRacingEvents } from "@/hooks/RacingHooks/useRacingEvents";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -33,6 +34,7 @@ export default function RacingLeagueScreen() {
   }>();
 
   const league = params.league ?? "f1";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -148,10 +150,15 @@ export default function RacingLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="League" league={league} onBack={goBack} />
+        <CustomHeader
+          tabName="League"
+          league={league}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   return (
     <>

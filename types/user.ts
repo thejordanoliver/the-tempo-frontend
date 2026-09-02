@@ -10,7 +10,6 @@ export type User = {
   profile_image?: string;
   banner_image?: string | null; // add this
   bio?: string | null;
-  favorites?: string[];
 };
 
 export type Follow = {

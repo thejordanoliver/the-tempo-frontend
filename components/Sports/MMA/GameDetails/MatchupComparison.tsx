@@ -310,14 +310,7 @@ export default function MatchupComparison({
       </Text>
       <View style={styles.metaRow}>
         {renderFlag(fighter)}
-        <Text
-          style={styles.recordText}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.78}
-        >
-          {fighter.record}
-        </Text>
+
       </View>
     </View>
   );

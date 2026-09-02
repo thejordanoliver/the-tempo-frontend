@@ -3701,7 +3701,7 @@ export const cfbTeams: Team[] = [
     name: "North Texas",
     fullName: "North Texas Mean Green",
     code: "UNT",
-    color: "#000",
+    color: "#000000",
     secondaryColor: "#00853E",
     logo: NorthTexasLogo,
     logoLight: NorthTexasLogo,
@@ -6095,7 +6095,7 @@ export const CFB_RIVALRIES = [
 export const getCFBTeam = (id: string | number) =>
   cfbTeams.find((t) => String(t.id) === String(id));
 
-export function getCFBTeamLogo(id: number | string, isDark: boolean) {
+export function getCFBTeamLogo(id: number | string | undefined, isDark: boolean) {
   const team = cfbTeams.find((t) => String(t.id) === String(id));
 
   if (!team) return PlaceholderLogo;

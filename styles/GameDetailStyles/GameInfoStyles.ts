@@ -10,12 +10,12 @@ export const gameInfoStyles = (isDark: boolean) =>
     },
     date: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     time: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
     broadcasts: {
@@ -26,7 +26,7 @@ export const gameInfoStyles = (isDark: boolean) =>
     },
     clock: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
@@ -43,7 +43,7 @@ export const gameInfoStyles = (isDark: boolean) =>
     },
     finalText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
@@ -56,17 +56,17 @@ export const gameInfoStyles = (isDark: boolean) =>
     },
     statusDivider: {
       width: 1,
-      height: 16,
+      height: 14,
       backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
     },
     finalStatusDivider: {
       width: 1,
-      height: 16,
+      height: 14,
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     headlineText: {
       fontFamily: Fonts.EXTRALIGHT,
-      fontSize: 13,
+      fontSize: 12,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },

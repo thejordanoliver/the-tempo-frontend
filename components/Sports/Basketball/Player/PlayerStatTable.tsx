@@ -12,15 +12,15 @@ import { Season, StatValue } from "hooks/NBAHooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
+import { BasketballLeague } from "./PlayerHeader";
 
 interface Props {
   seasons: Season[];
   loading: boolean;
   error: string | null;
-  league: "NBA" | "WNBA" | "CBB" | "WCBB";
+  league: BasketballLeague;
 }
 
-type LeagueType = "NBA" | "WNBA" | "CBB" | "WCBB";
 type StatView = "totals" | "pergame" | "per36";
 type SeasonType = "regularseason" | "postseason";
 
@@ -90,7 +90,10 @@ const SEASON_TYPE_OPTIONS: { label: string; value: SeasonType }[] = [
   { label: "Postseason", value: "postseason" },
 ];
 
-const PRO_LEAGUES_WITH_POSTSEASON_TABS = new Set<LeagueType>(["NBA", "WNBA"]);
+const PRO_LEAGUES_WITH_POSTSEASON_TABS = new Set<BasketballLeague>([
+  "nba",
+  "wnba",
+]);
 
 const TABLE_HEADERS = [
   "GP",
@@ -362,15 +365,8 @@ const getRowDisplaySeason = (
   return row.displaySeason;
 };
 
-const getTeamCodeFromSeason = (season: Season, league: LeagueType) => {
-  const rawTeamId =
-    league === "WCBB"
-      ? ((season as any).teamEspnId ??
-        (season as any).team_espn_id ??
-        (season as any).espnTeamId ??
-        (season as any).espn_team_id)
-      : season.team_id;
-  const teamId = Number(rawTeamId);
+const getTeamCodeFromSeason = (season: Season, league: BasketballLeague) => {
+  const teamId = Number(season.team_id);
 
   const fallbackTeamCode = !isMissing(season.team_slug)
     ? String(season.team_slug).toUpperCase()
@@ -379,11 +375,11 @@ const getTeamCodeFromSeason = (season: Season, league: LeagueType) => {
   if (!Number.isFinite(teamId)) return fallbackTeamCode;
 
   const team =
-    league === "NBA"
+    league === "nba"
       ? getTeamByESPNId(teamId)
-      : league === "WNBA"
+      : league === "wnba"
         ? getWNBATeamByESPNId(teamId)
-        : league === "WCBB"
+        : league === "wcbb"
           ? getWCBBTeamByESPNId(teamId)
           : getCBBTeamByESPNId(teamId);
 
@@ -401,7 +397,7 @@ const getSeasonRowSortValue = (season: Season, index: number) => {
 const normalizeStatsRow = (
   season: Season,
   index: number,
-  league: LeagueType,
+  league: BasketballLeague,
 ): NormalizedSeasonRow => {
   const totals = season.totals ?? {};
   const averages = season.averages ?? {};
@@ -762,7 +758,7 @@ const hasUsableRowStats = (row: NormalizedSeasonRow) => {
   return hasPositiveNumber(row.averages.mp);
 };
 
-const normalizeStatsData = (seasons: Season[], league: LeagueType) => {
+const normalizeStatsData = (seasons: Season[], league: BasketballLeague) => {
   const rows = seasons.map((season, index) =>
     normalizeStatsRow(season, index, league),
   );

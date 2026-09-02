@@ -41,52 +41,52 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   {
     flag: "isNFL",
     pathname: "/player/football/[id]",
-    league: "NFL",
+    league: "nfl",
   },
   {
     flag: "isCFB",
     pathname: "/player/football/[id]",
-    league: "CFB",
+    league: "cfb",
   },
   {
     flag: "isMMA",
     pathname: "/player/mma/[id]",
-    league: "MMA",
+    league: "mma",
   },
   {
     flag: "isMLB",
     pathname: "/player/baseball/[id]",
-    league: "MLB",
+    league: "mla",
   },
   {
     flag: "isNHL",
     pathname: "/player/nhl/[id]",
-    league: "NHL",
+    league: "nhl",
   },
   {
     flag: "isNBA",
     pathname: "/player/basketball/[id]",
-    league: "NBA",
+    league: "nba",
   },
   {
     flag: "isCBB",
     pathname: "/player/basketball/[id]",
-    league: "CBB",
+    league: "cbb",
   },
   {
     flag: "isWCBB",
     pathname: "/player/basketball/[id]",
-    league: "WCBB",
+    league: "wcbb",
   },
   {
     flag: "isWNBA",
     pathname: "/player/basketball/[id]",
-    league: "WNBA",
+    league: "wnba",
   },
   {
     flag: "isSOCC",
     pathname: "/player/soccer/[id]",
-    league: "SOCC",
+    league: "socc",
   },
 ];
 
@@ -142,7 +142,7 @@ export function getExploreRouteForResult(
       params: {
         id: String(item.id),
         teamId: String(item.team_id ?? ""),
-        league: playerRoute.league,
+        league: String(item.affiliation),
       },
     };
   }
@@ -152,7 +152,7 @@ export function getExploreRouteForResult(
     params: {
       id: String(item.id),
       teamId: String(item.team_id ?? ""),
-      league: "NBA",
+      league: String(item.affiliation),
     },
   };
 }

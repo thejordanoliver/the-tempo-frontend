@@ -1,4 +1,5 @@
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
@@ -90,6 +91,7 @@ export default function BaseballLeagueScreen() {
 
 function MLBLeagueScreen() {
   const league = "mlb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -179,10 +181,11 @@ function MLBLeagueScreen() {
           tabName={league.toUpperCase()}
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -338,6 +341,7 @@ function MLBLeagueScreen() {
 
 function CBLeagueScreen() {
   const league = "cb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -422,10 +426,11 @@ function CBLeagueScreen() {
           tabName="College Baseball"
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
@@ -553,6 +558,7 @@ function CBLeagueScreen() {
 
 function SBLeagueScreen() {
   const league = "sb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -638,10 +644,11 @@ function SBLeagueScreen() {
           tabName="College Softball"
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [navigation, league]);
+  }, [favoriteHeaderProps, navigation, league]);
 
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */

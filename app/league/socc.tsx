@@ -1,4 +1,5 @@
 import { useSoccerGames } from "@/hooks/SoccerHooks/useSoccerGames";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -34,6 +35,7 @@ export default function SoccerLeagueScreen() {
   }>();
 
   const league = params.league ?? "mls";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -93,10 +95,15 @@ export default function SoccerLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="League" league={leagueLabel} onBack={goBack} />
+        <CustomHeader
+          tabName="League"
+          league={leagueLabel}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [navigation, leagueLabel]);
+  }, [favoriteHeaderProps, navigation, leagueLabel]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

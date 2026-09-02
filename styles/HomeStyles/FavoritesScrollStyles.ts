@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
-export const favoritesScrollStyles = (isDark: boolean) =>
+export const FavoritesScrollStyles = (isDark: boolean) =>
   StyleSheet.create({
     favoritesWrapper: { padding: 0 },
     favorites: {
@@ -24,8 +24,8 @@ export const favoritesScrollStyles = (isDark: boolean) =>
     logoWrapper: {
       alignItems: "center",
       justifyContent: "center",
-      width: 80,
-      height: 80,
+      width: 70,
+      height: 70,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
       borderRadius: 40,
@@ -38,8 +38,8 @@ export const favoritesScrollStyles = (isDark: boolean) =>
     editIcon: {
       alignItems: "center",
       justifyContent: "center",
-      width: 80,
-      height: 80,
+      width: 70,
+      height: 70,
       borderWidth: 0.5,
       borderColor: isDark ? Colors.light.background : Colors.dark.background,
       borderRadius: 40,

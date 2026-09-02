@@ -5,30 +5,36 @@ import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import DraggableFlatList, {
   type DragEndParams,
+  type RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
+import { FavoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import type {
   FavoriteItem,
   FavoriteLeagueItem,
+  FavoriteTeamKey,
   FavoriteTeamItem,
 } from "types/favorites";
-import { isFavoriteLeague } from "types/favorites";
+import {
+  isFavoriteLeague,
+  resolvePersistedFavoriteRailKeys,
+  splitFavoriteRailOrder,
+} from "types/favorites";
 import { getFavoriteBaseTeam } from "utils/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
 type Props = {
-  favoriteTeamIds: string[];
-  onFavoritesChange?: (ids: string[]) => void;
+  favoriteTeamIds: FavoriteTeamKey[];
+  onFavoritesChange?: (ids: FavoriteTeamKey[]) => void;
   onDragStart?: () => void;
   onDragEnd?: () => void;
   isDark: boolean;
 };
 
-export default function FavoritesScroll({
+function FavoritesScrollComponent({
   favoriteTeamIds,
   onFavoritesChange,
   onDragStart,
@@ -36,8 +42,15 @@ export default function FavoritesScroll({
   isDark,
 }: Props) {
   const router = useRouter();
-  const styles = favoritesScrollStyles(isDark);
+
+  /**
+   * Don't recreate the entire StyleSheet object on every render.
+   */
+  const styles = useMemo(() => FavoritesScrollStyles(isDark), [isDark]);
+
   const lastPlaceholderHapticRef = useRef(0);
+  const latestReorderIdRef = useRef(0);
+  const reorderQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   const {
     syncFavorites,
@@ -46,13 +59,21 @@ export default function FavoritesScroll({
     favoriteSports,
     favoriteSportsLoading,
     favoriteSportsReady,
+    updateFavoriteSports,
     userId,
   } = useFavoriteTeamsContext();
 
   const [railOrder, setRailOrder] = useState<{
     userId: number | null;
     keys: string[];
-  }>({ userId, keys: [] });
+  }>({
+    userId,
+    keys: [],
+  });
+
+  /* -------------------------------------------------------------------------- */
+  /*                                 Team data                                  */
+  /* -------------------------------------------------------------------------- */
 
   const teamData = useMemo<FavoriteTeamItem[]>(() => {
     return favoriteTeamIds.reduce<FavoriteTeamItem[]>((teams, favorite) => {
@@ -63,6 +84,7 @@ export default function FavoritesScroll({
       }
 
       const league = favorite.slice(0, separatorIndex);
+
       const favoriteId = favorite.slice(separatorIndex + 1);
 
       if (!isFavoriteLeague(league) || !favoriteId) {
@@ -90,49 +112,72 @@ export default function FavoritesScroll({
     }, []);
   }, [favoriteTeamIds, isDark]);
 
-  const leagueData = useMemo<FavoriteLeagueItem[]>(
-    () =>
-      favoriteSports.map((sport) => {
-        const config = LEAGUE_CONFIG[sport];
+  /* -------------------------------------------------------------------------- */
+  /*                                League data                                 */
+  /* -------------------------------------------------------------------------- */
 
-        return {
-          kind: "league",
-          id: sport,
-          league: sport,
-          name: config.label,
-          logo: config.logoLight,
-          color: config.color,
-          key: `league:${sport}`,
-          isDark,
-        };
-      }),
-    [favoriteSports, isDark],
-  );
+  const leagueData = useMemo<FavoriteLeagueItem[]>(() => {
+    return favoriteSports.map((sport) => {
+      const config = LEAGUE_CONFIG[sport];
+
+      return {
+        kind: "league",
+        id: sport,
+        league: sport,
+        name: config.label,
+        logo: config.logoLight,
+        color: config.color,
+        key: `league:${sport}`,
+        isDark,
+      };
+    });
+  }, [favoriteSports, isDark]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Available items                               */
+  /* -------------------------------------------------------------------------- */
 
   const availableData = useMemo<FavoriteItem[]>(
     () => [...leagueData, ...teamData],
     [leagueData, teamData],
   );
 
+  /* -------------------------------------------------------------------------- */
+  /*                                Rail order                                  */
+  /* -------------------------------------------------------------------------- */
+
   const data = useMemo<FavoriteItem[]>(() => {
+    if (!availableData.length) {
+      return [];
+    }
+
     const itemsByKey = new Map(availableData.map((item) => [item.key, item]));
+
     const activeKeys = railOrder.userId === userId ? railOrder.keys : [];
-    const ordered = activeKeys.flatMap((key) => {
+
+    const ordered: FavoriteItem[] = [];
+
+    for (const key of activeKeys) {
       const item = itemsByKey.get(key);
 
       if (!item) {
-        return [];
+        continue;
       }
 
+      ordered.push(item);
       itemsByKey.delete(key);
-      return [item];
-    });
+    }
 
     return [...ordered, ...itemsByKey.values()];
   }, [availableData, railOrder, userId]);
 
+  /* -------------------------------------------------------------------------- */
+  /*                                   Drag                                     */
+  /* -------------------------------------------------------------------------- */
+
   const handleDragBegin = useCallback(() => {
     onDragStart?.();
+
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   }, [onDragStart]);
 
@@ -144,6 +189,7 @@ export default function FavoritesScroll({
     }
 
     lastPlaceholderHapticRef.current = now;
+
     void Haptics.selectionAsync();
   }, []);
 
@@ -155,35 +201,148 @@ export default function FavoritesScroll({
         return;
       }
 
+      const reorderId = ++latestReorderIdRef.current;
+      const orderedKeys = reordered.map((item) => item.key);
+
       setRailOrder({
         userId,
-        keys: reordered.map((item) => item.key),
+        keys: orderedKeys,
       });
 
-      const orderedTeamFavorites = reordered.flatMap((item) =>
-        item.kind === "team" ? [`${item.league}:${item.id}`] : [],
-      );
-      const teamOrderChanged = orderedTeamFavorites.some(
-        (favorite, index) => favorite !== favoriteTeamIds[index],
-      ) || orderedTeamFavorites.length !== favoriteTeamIds.length;
+      const {
+        favoriteTeamIds: orderedTeamFavorites,
+        favoriteSports: orderedFavoriteSports,
+      } = splitFavoriteRailOrder(reordered);
+
+      const teamOrderChanged =
+        orderedTeamFavorites.length !== favoriteTeamIds.length ||
+        orderedTeamFavorites.some(
+          (favorite, index) => favorite !== favoriteTeamIds[index],
+        );
 
       if (teamOrderChanged) {
         setFavorites(orderedTeamFavorites);
+
         onFavoritesChange?.(orderedTeamFavorites);
-        void syncFavorites(orderedTeamFavorites);
       }
 
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      const sportOrderChanged =
+        orderedFavoriteSports.length !== favoriteSports.length ||
+        orderedFavoriteSports.some(
+          (sport, index) => sport !== favoriteSports[index],
+        );
+
+      const persistReorder = async () => {
+        const [teamOrderSaved, sportOrderSaved] = await Promise.all([
+          teamOrderChanged
+            ? syncFavorites(orderedTeamFavorites)
+            : Promise.resolve(true),
+          sportOrderChanged
+            ? updateFavoriteSports(orderedFavoriteSports)
+            : Promise.resolve(true),
+        ]);
+
+        if (reorderId !== latestReorderIdRef.current) {
+          return;
+        }
+
+        if (teamOrderSaved && sportOrderSaved) {
+          void Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success,
+          );
+          return;
+        }
+
+        const persistedKeys = resolvePersistedFavoriteRailKeys(
+          orderedKeys,
+          favoriteTeamIds,
+          favoriteSports,
+          teamOrderSaved,
+          sportOrderSaved,
+        );
+
+        setRailOrder({
+          userId,
+          keys: persistedKeys,
+        });
+
+        if (!teamOrderSaved) {
+          setFavorites(favoriteTeamIds);
+          onFavoritesChange?.(favoriteTeamIds);
+        }
+
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      };
+
+      reorderQueueRef.current = reorderQueueRef.current.then(
+        persistReorder,
+        persistReorder,
+      );
     },
     [
+      favoriteSports,
       favoriteTeamIds,
       onDragEnd,
       onFavoritesChange,
       setFavorites,
       syncFavorites,
+      updateFavoriteSports,
       userId,
     ],
   );
+
+  /* -------------------------------------------------------------------------- */
+  /*                              Stable renders                                */
+  /* -------------------------------------------------------------------------- */
+
+  const renderItem = useCallback((props: RenderItemParams<FavoriteItem>) => {
+    return <FavoritesTab {...props} />;
+  }, []);
+
+  const renderPlaceholder = useCallback(() => {
+    return (
+      <View style={styles.dragPlaceholder}>
+        <View style={styles.dragPlaceholderCircle} />
+      </View>
+    );
+  }, [styles]);
+
+  const handleEditFavorites = useCallback(() => {
+    void Haptics.selectionAsync();
+
+    router.push("/edit-favorites");
+  }, [router]);
+
+  const renderFooter = useCallback(() => {
+    const hasFavorites = data.length > 0;
+
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Edit favorites"
+        onPress={handleEditFavorites}
+        style={styles.tabContainer}
+      >
+        <View style={styles.editIcon}>
+          <Ionicons
+            name={hasFavorites ? "create" : "add"}
+            size={28}
+            color={isDark ? Colors.dark.background : Colors.light.background}
+          />
+        </View>
+
+        <View style={styles.labelContainer}>
+          <Text style={styles.tabLabel}>
+            {hasFavorites ? "Edit" : "Add favorites"}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  }, [data.length, handleEditFavorites, isDark, styles]);
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Loading                                   */
+  /* -------------------------------------------------------------------------- */
 
   const favoritesLoading =
     isLoading || (favoriteSportsLoading && !favoriteSportsReady);
@@ -191,6 +350,10 @@ export default function FavoritesScroll({
   if (favoritesLoading) {
     return <FavoritesScrollSkeleton isDark={isDark} />;
   }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                   Render                                   */
+  /* -------------------------------------------------------------------------- */
 
   return (
     <DraggableFlatList
@@ -208,41 +371,31 @@ export default function FavoritesScroll({
         stiffness: 220,
         mass: 0.35,
       }}
-      renderItem={FavoritesTab}
+      renderItem={renderItem}
       onDragBegin={handleDragBegin}
       onPlaceholderIndexChange={handlePlaceholderChange}
       onDragEnd={handleDragEnd}
-      renderPlaceholder={() => (
-        <View style={styles.dragPlaceholder}>
-          <View style={styles.dragPlaceholderCircle} />
-        </View>
-      )}
-      ListFooterComponent={() => (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Edit favorites"
-          onPress={() => {
-            void Haptics.selectionAsync();
-
-            router.push("/edit-favorites");
-          }}
-          style={styles.tabContainer}
-        >
-          <View style={styles.editIcon}>
-            <Ionicons
-              name={data.length === 0 ? "add" : "create"}
-              size={28}
-              color={isDark ? Colors.dark.background : Colors.light.background}
-            />
-          </View>
-
-          <View style={styles.labelContainer}>
-            <Text style={styles.tabLabel}>
-              {data.length === 0 ? "Add favorites" : "Edit"}
-            </Text>
-          </View>
-        </Pressable>
-      )}
+      renderPlaceholder={renderPlaceholder}
+      ListFooterComponent={renderFooter}
     />
   );
 }
+
+/**
+ * Prevent parent rerenders from rerendering FavoritesScroll
+ * when none of its actual props changed.
+ */
+const FavoritesScroll = memo(FavoritesScrollComponent, (previous, next) => {
+  return (
+    previous.isDark === next.isDark &&
+    previous.onFavoritesChange === next.onFavoritesChange &&
+    previous.onDragStart === next.onDragStart &&
+    previous.onDragEnd === next.onDragEnd &&
+    previous.favoriteTeamIds.length === next.favoriteTeamIds.length &&
+    previous.favoriteTeamIds.every(
+      (favorite, index) => favorite === next.favoriteTeamIds[index],
+    )
+  );
+});
+
+export default FavoritesScroll;

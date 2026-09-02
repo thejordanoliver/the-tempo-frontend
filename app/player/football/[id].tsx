@@ -63,18 +63,17 @@ export default function PlayerDetailScreen() {
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const navigation = useNavigation();
-  const isNFL = league === "NFL";
-  const isCFB = league === "CFB";
+  const isNFL = league === "nfl";
+  const isCFB = league === "cfb";
   const styles = playerScreenStyles;
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
+  const isActive = player?.active;
   const team = isNFL ? getNFLTeam(teamId) : getCFBTeam(teamId);
   const teamColor = team?.color ?? Colors.midTone;
   const teamLogo = isNFL
     ? getNFLTeamLogo(teamId, true)
     : getCFBTeamLogo(teamId, true);
-  const isActive = player?.active;
-
 
   /* ---------------- Last game ---------------- */
   const {
@@ -82,8 +81,6 @@ export default function PlayerDetailScreen() {
     loading: gameLoading,
     error: gameError,
   } = useTeamLatestGame(league, teamId);
-
- 
 
   const {
     data: seasons,

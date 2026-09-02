@@ -39,13 +39,6 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation]);
 
-  if (!playerId)
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Athlete Not Found</Text>
-      </View>
-    );
-
   if (loading)
     return (
       <View style={global.emptyContainer}>
@@ -53,10 +46,10 @@ export default function PlayerDetailScreen() {
       </View>
     );
 
-  if (error)
+  if (error || !player)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error ?? "Athlete not found"}</Text>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
 

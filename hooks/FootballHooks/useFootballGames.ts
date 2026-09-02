@@ -1,8 +1,8 @@
 import { FootballGame } from "@/types/football/football";
 import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 type UseFootballGamesParams = {
@@ -12,6 +12,14 @@ type UseFootballGamesParams = {
   seasontype?: number | string | null;
   league?: string;
   conferenceId?: number | string | null;
+
+  /**
+   * Controls whether the hook is allowed to fetch.
+   *
+   * Useful when the selected week depends on calendar data that
+   * has not finished resolving yet.
+   */
+  enabled?: boolean;
 };
 
 type FetchGamesOptions = {
@@ -22,40 +30,42 @@ type FetchGamesOptions = {
 export type FootballGameGroup = {
   key: string;
   label: string;
+
   season: {
     year: number | null;
     type: number | null;
     slug: string | null;
   };
+
   week: {
     number: number | null;
   };
+
   count: number;
   games: FootballGame[];
 };
 
 type FootballGamesResponse = {
   league?: string;
+
   season?: {
     year?: number | null;
     type?: number | null;
     slug?: string | null;
   } | null;
+
   week?: {
     number?: number | null;
   } | null;
+
   date?: string | null;
   count?: number;
   games?: FootballGame[];
   groups?: FootballGameGroup[];
 };
 
-function getEndpoint(league: string) {
-  return league === "cfb"
-    ? "/api/games/football/cfb"
-    : league === "nfl"
-      ? "/api/games/football/nfl"
-      : "/api/games/football/ufl";
+function getEndpoint(league: string): string {
+  return `/api/games/football/${league}`;
 }
 
 function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
@@ -69,17 +79,21 @@ function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
           `${group.season?.slug ?? "season"}-week-${
             group.week?.number ?? "unknown"
           }`,
+
         label:
           group.label ||
           (group.week?.number ? `Week ${group.week.number}` : "Games"),
+
         season: {
           year: group.season?.year ?? null,
           type: group.season?.type ?? null,
           slug: group.season?.slug ?? null,
         },
+
         week: {
           number: group.week?.number ?? null,
         },
+
         count: games.length,
         games,
       };
@@ -90,15 +104,19 @@ function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
     return [
       {
         key: "all-games",
+
         label: data.week?.number ? `Week ${data.week.number}` : "All Games",
+
         season: {
           year: data.season?.year ?? null,
           type: data.season?.type ?? null,
           slug: data.season?.slug ?? null,
         },
+
         week: {
           number: data.week?.number ?? null,
         },
+
         count: data.games.length,
         games: data.games,
       },
@@ -115,9 +133,10 @@ export function useFootballGames({
   seasontype = null,
   league = "nfl",
   conferenceId = null,
+  enabled = true,
 }: UseFootballGamesParams = {}) {
   const [groups, setGroups] = useState<FootballGameGroup[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -130,24 +149,38 @@ export function useFootballGames({
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
+      if (!enabled) {
+        return;
+      }
+
       const endpoint = getEndpoint(league);
+
       const params: Record<string, string | number> = {};
 
-      if (week) {
+      /*
+       * A week-based request should only be made once the
+       * requested week is actually known.
+       */
+      if (week != null && week !== "") {
         params.week = week;
-        params.season = season || dayjs().year();
 
-        if (seasontype) {
+        if (season != null && season !== "") {
+          params.season = season;
+        } else {
+          params.season = dayjs().year();
+        }
+
+        if (seasontype != null && seasontype !== "") {
           params.seasontype = seasontype;
         }
       } else if (date) {
         params.date = dayjs(date).format("YYYYMMDD");
 
-        if (season) {
+        if (season != null && season !== "") {
           params.season = season;
         }
 
-        if (seasontype) {
+        if (seasontype != null && seasontype !== "") {
           params.seasontype = seasontype;
         }
       }
@@ -172,9 +205,11 @@ export function useFootballGames({
         setGroups(normalizeGroups(data));
       } catch (err) {
         console.error(err);
+
         setError(new Error(`Failed to fetch ${league.toUpperCase()} games`));
 
-        // Preserve existing games if a background refresh temporarily fails.
+        // Preserve existing games if a background refresh
+        // temporarily fails.
         if (!silent) {
           setGroups([]);
         }
@@ -188,16 +223,27 @@ export function useFootballGames({
         }
       }
     },
-    [date, week, season, seasontype, league, conferenceId],
+    [enabled, date, week, season, seasontype, league, conferenceId],
   );
 
   const refreshGames = useCallback(async () => {
-    await fetchGames({ forceRefresh: true });
-  }, [fetchGames]);
+    if (!enabled) {
+      return;
+    }
+
+    await fetchGames({
+      forceRefresh: true,
+    });
+  }, [enabled, fetchGames]);
 
   useEffect(() => {
-    fetchGames();
-  }, [fetchGames]);
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
+    void fetchGames();
+  }, [enabled, fetchGames]);
 
   const hasLiveGame = useMemo(() => {
     return games.some(isGameLive);
@@ -209,8 +255,10 @@ export function useFootballGames({
   );
 
   useLiveSportsSubscription<FootballGamesResponse>({
-    enabled: hasLiveGame,
+    enabled: enabled && hasLiveGame,
+
     kind: "scoreboard",
+
     payload: {
       sport: "football",
       league,
@@ -220,7 +268,8 @@ export function useFootballGames({
       seasontype,
       conferenceId,
     },
-    onUpdate: (payload) => {
+
+    onUpdate: (payload: FootballGamesResponse) => {
       setGroups(normalizeGroups(payload));
     },
   });

@@ -13,8 +13,11 @@ import { wnbaTeams } from "constants/teamsWNBA";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
-import type { FavoriteLeague } from "types/favorites";
-import { isFavoriteLeague } from "types/favorites";
+import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
+import {
+  isFavoriteLeague,
+  normalizeFavoriteTeamKeys,
+} from "types/favorites";
 import type { Team as TeamConfig } from "types/team";
 import type { Team } from "types/types";
 import { apiClient } from "utils/apiClient";
@@ -41,7 +44,7 @@ type UserProfileResponse = {
   banner_image?: string | null;
   followersCount?: number | null;
   followingCount?: number | null;
-  favorites?: unknown;
+  favoriteTeams?: unknown;
   isFollowing?: boolean | null;
   updatedAt?: string | null;
   updated_at?: string | null;
@@ -54,7 +57,7 @@ type DisplayProfile = {
   bio: string | null;
   profileImage: string | null;
   bannerImage: string | null;
-  favorites: string[];
+  favoriteTeams: FavoriteTeamKey[];
   updatedAt: string | null;
 };
 
@@ -93,12 +96,8 @@ function parseStoredUserId(id: string | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-function normalizeFavorites(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(
-    (favorite): favorite is string =>
-      typeof favorite === "string" && favorite.includes(":"),
-  );
+function normalizeFavoriteTeams(value: unknown): FavoriteTeamKey[] {
+  return normalizeFavoriteTeamKeys(value);
 }
 
 function parseProfileId(value: unknown, fallback: string): string {
@@ -128,7 +127,7 @@ function normalizeDisplayProfile(
     bio: parseString(data.bio),
     profileImage: parseImageUrl(data.profileImage ?? data.profile_image),
     bannerImage: parseImageUrl(data.bannerImage ?? data.banner_image),
-    favorites: normalizeFavorites(data.favorites),
+    favoriteTeams: normalizeFavoriteTeams(data.favoriteTeams),
     updatedAt: parseUpdatedAt(data),
   };
 }
@@ -143,7 +142,7 @@ function buildCachedProfilePayload(
     bio: profile.bio,
     profileImage: profile.profileImage,
     bannerImage: profile.bannerImage,
-    favorites: profile.favorites,
+    favoriteTeams: profile.favoriteTeams,
     updatedAt: profile.updatedAt,
     cachedAt: Date.now(),
     version: USER_PROFILE_CACHE_VERSION,
@@ -191,7 +190,7 @@ export function useUserProfile(userId?: string) {
 
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
 
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
@@ -237,7 +236,7 @@ export function useUserProfile(userId?: string) {
     setBannerImage(null);
     setFollowersCount(0);
     setFollowingCount(0);
-    setFavorites([]);
+    setFavoriteTeams([]);
     setIsFollowing(false);
   }, []);
 
@@ -248,7 +247,7 @@ export function useUserProfile(userId?: string) {
       setBio(profile.bio);
       setProfileImage(profile.profileImage);
       setBannerImage(profile.bannerImage);
-      setFavorites(profile.favorites);
+      setFavoriteTeams(profile.favoriteTeams);
     },
     [],
   );
@@ -515,7 +514,7 @@ export function useUserProfile(userId?: string) {
 
   const favoriteTeamsWithLeague = useMemo<Team[]>(
     () =>
-      favorites
+      favoriteTeams
         .map((favorite): Team | null => {
           const [league, id] = favorite.split(":");
           if (!league || !id || !isFavoriteLeague(league)) {
@@ -534,7 +533,7 @@ export function useUserProfile(userId?: string) {
             : null;
         })
         .filter((team): team is Team => team !== null),
-    [favorites, teamLookups],
+    [favoriteTeams, teamLookups],
   );
 
   const refreshProfile = useCallback(

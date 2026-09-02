@@ -201,166 +201,169 @@ export function GameHeader({
   const awayLogoSource = resolveImage(awayLogo);
   const homeLogoSource = resolveImage(homeLogo);
 
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[
-        StyleSheet.absoluteFillObject,
-        {
-          flexDirection: "row",
-          zIndex: -10,
-          opacity,
-        },
-      ]}
-    >
-      <LinearGradient
-        colors={[
-          resolvedAwayColor,
-          resolvedAwayColor,
-          resolvedHomeColor,
-          resolvedHomeColor,
-        ]}
-        locations={[0, 0.5, 0.5, 1]}
-        start={{
-          x: 0,
-          y: -2,
-        }}
-        end={{
-          x: 1.08,
-          y: 1.2,
-        }}
-        style={StyleSheet.absoluteFillObject}
-      />
+ return (
+   <Animated.View
+     pointerEvents="none"
+     style={[
+       StyleSheet.absoluteFillObject,
+       {
+         flexDirection: "row",
+         zIndex: -10,
+         opacity,
+       },
+     ]}
+   >
+     {/* Team colors */}
+     <LinearGradient
+       colors={[
+         resolvedAwayColor,
+         resolvedAwayColor,
+         resolvedHomeColor,
+         resolvedHomeColor,
+       ]}
+       locations={[0, 0.5, 0.5, 1]}
+       start={{
+         x: 0,
+         y: -2,
+       }}
+       end={{
+         x: 1.08,
+         y: 1.2,
+       }}
+       style={StyleSheet.absoluteFillObject}
+     />
 
-      <View style={styles.teamHalfWrapper}>
-        <Animated.View
-          style={[
-            styles.teamHalfContent,
-            {
-              transform: [
-                {
-                  scale: scaleAway,
-                },
-              ],
-            },
-          ]}
-        >
-          {awayLogoSource ? (
-            <Image
-              source={awayLogoSource}
-              style={styles.bgLogo}
-              resizeMode="contain"
-            />
-          ) : null}
+     {/* Header readability overlay */}
+     <LinearGradient
+       colors={[
+         "rgba(0,0,0,0.48)",
+         "rgba(0,0,0,0.28)",
+         "rgba(0,0,0,0.08)",
+         "transparent",
+       ]}
+       locations={[0, 0.35, 0.72, 1]}
+       start={{ x: 0.5, y: 0 }}
+       end={{ x: 0.5, y: 1 }}
+       style={StyleSheet.absoluteFillObject}
+     />
 
-          <View style={styles.teamCodeRow}>
-            {awayLetters.map((character, index) => {
-              const animation = awayLetterAnims[index];
+     <View style={styles.teamHalfWrapper}>
+       <Animated.View
+         style={[
+           styles.teamHalfContent,
+           {
+             transform: [{ scale: scaleAway }],
+           },
+         ]}
+       >
+         {awayLogoSource ? (
+           <Image
+             source={awayLogoSource}
+             style={styles.bgLogo}
+             resizeMode="contain"
+           />
+         ) : null}
 
-              return (
-                <Animated.Text
-                  key={`away-${character}-${index}`}
-                  style={[
-                    styles.teamCode,
-                    {
-                      opacity: animation,
-                      transform: [
-                        {
-                          scale: animation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.7, 1],
-                          }),
-                        },
-                        {
-                          translateY: animation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [10, 0],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}
-                >
-                  {character}
-                </Animated.Text>
-              );
-            })}
-          </View>
-        </Animated.View>
-      </View>
+         <View style={styles.teamCodeRow}>
+           {awayLetters.map((character, index) => {
+             const animation = awayLetterAnims[index];
 
-      <Animated.View
-        style={[
-          styles.dividerWrapper,
-          {
-            opacity,
-            transform: [
-              {
-                scale: dividerScale,
-              },
-            ],
-          },
-        ]}
-      >
-        <Text style={styles.dividerText}>{dividerText}</Text>
-      </Animated.View>
+             return (
+               <Animated.Text
+                 key={`away-${character}-${index}`}
+                 style={[
+                   styles.teamCode,
+                   {
+                     opacity: animation,
+                     transform: [
+                       {
+                         scale: animation.interpolate({
+                           inputRange: [0, 1],
+                           outputRange: [0.7, 1],
+                         }),
+                       },
+                       {
+                         translateY: animation.interpolate({
+                           inputRange: [0, 1],
+                           outputRange: [10, 0],
+                         }),
+                       },
+                     ],
+                   },
+                 ]}
+               >
+                 {character}
+               </Animated.Text>
+             );
+           })}
+         </View>
+       </Animated.View>
+     </View>
 
-      <View style={styles.teamHalfWrapper}>
-        <Animated.View
-          style={[
-            styles.teamHalfContent,
-            {
-              transform: [
-                {
-                  scale: scaleHome,
-                },
-              ],
-            },
-          ]}
-        >
-          {homeLogoSource ? (
-            <Image
-              source={homeLogoSource}
-              style={styles.bgLogo}
-              resizeMode="contain"
-            />
-          ) : null}
+     <Animated.View
+       style={[
+         styles.dividerWrapper,
+         {
+           opacity,
+           transform: [{ scale: dividerScale }],
+         },
+       ]}
+     >
+       <Text style={styles.dividerText}>{dividerText}</Text>
+     </Animated.View>
 
-          <View style={styles.teamCodeRow}>
-            {homeLetters.map((character, index) => {
-              const animation = homeLetterAnims[index];
+     <View style={styles.teamHalfWrapper}>
+       <Animated.View
+         style={[
+           styles.teamHalfContent,
+           {
+             transform: [{ scale: scaleHome }],
+           },
+         ]}
+       >
+         {homeLogoSource ? (
+           <Image
+             source={homeLogoSource}
+             style={styles.bgLogo}
+             resizeMode="contain"
+           />
+         ) : null}
 
-              return (
-                <Animated.Text
-                  key={`home-${character}-${index}`}
-                  style={[
-                    styles.teamCode,
-                    {
-                      opacity: animation,
-                      transform: [
-                        {
-                          scale: animation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0.7, 1],
-                          }),
-                        },
-                        {
-                          translateY: animation.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [10, 0],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}
-                >
-                  {character}
-                </Animated.Text>
-              );
-            })}
-          </View>
-        </Animated.View>
-      </View>
-    </Animated.View>
-  );
+         <View style={styles.teamCodeRow}>
+           {homeLetters.map((character, index) => {
+             const animation = homeLetterAnims[index];
+
+             return (
+               <Animated.Text
+                 key={`home-${character}-${index}`}
+                 style={[
+                   styles.teamCode,
+                   {
+                     opacity: animation,
+                     transform: [
+                       {
+                         scale: animation.interpolate({
+                           inputRange: [0, 1],
+                           outputRange: [0.7, 1],
+                         }),
+                       },
+                       {
+                         translateY: animation.interpolate({
+                           inputRange: [0, 1],
+                           outputRange: [10, 0],
+                         }),
+                       },
+                     ],
+                   },
+                 ]}
+               >
+                 {character}
+               </Animated.Text>
+             );
+           })}
+         </View>
+       </Animated.View>
+     </View>
+   </Animated.View>
+ );
 }

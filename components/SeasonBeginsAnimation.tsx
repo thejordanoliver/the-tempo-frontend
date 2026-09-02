@@ -437,7 +437,7 @@ const animationStyles = (
       height: CONTAINER_HEIGHT,
       borderCurve: "continuous",
       borderRadius: 14,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       overflow: "hidden",
     },
 
@@ -481,7 +481,7 @@ const animationStyles = (
       justifyContent: "center",
       gap: 2,
       paddingHorizontal: 18,
-      backgroundColor: Colors.white,
+      backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
     teamName: {
@@ -498,7 +498,7 @@ const animationStyles = (
       fontFamily: Fonts.BOLD,
       fontSize: 30,
       letterSpacing: 0.5,
-      color: Colors.black,
+      color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
 

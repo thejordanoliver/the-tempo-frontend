@@ -61,17 +61,10 @@ export const getNotificationSocket = (
     },
     transports: ["websocket", "polling"],
     autoConnect: true,
-    reconnection: true,
+    // Keep this connection attempt one-shot. A later authenticated lifecycle
+    // call can explicitly try again without Socket.IO retrying forever.
+    reconnection: false,
   });
-
-  if (__DEV__) {
-    notificationSocket.on("connect_error", (error) => {
-      console.warn("[BadgeSocket] Connection failed", {
-        message: error.message,
-        namespace: namespaceUrl,
-      });
-    });
-  }
 
   return notificationSocket;
 };

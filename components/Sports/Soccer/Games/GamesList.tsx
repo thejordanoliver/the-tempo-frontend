@@ -190,7 +190,7 @@ export default function GamesList({
   if (!loading && games.length === 0) {
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>No matches on the pitch today...</Text>
+        <Text style={global.emptyTitle}>No matches on the pitch...</Text>
         <Text style={global.emptyText}>
           More goals and matchday action are coming.
         </Text>

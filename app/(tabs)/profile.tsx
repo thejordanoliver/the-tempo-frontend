@@ -4,6 +4,7 @@ import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection
 import TabBar from "@/components/TabBars/TabBar";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
+import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
@@ -35,7 +36,7 @@ type CachedUser = {
   profileImage?: string;
 };
 
-export type ProfileTab = "favorites" | "badges" | "bookmarks";
+export type ProfileTab = "favorites" | "badges" | "posts" | "bookmarks";
 
 const normalizeCachedString = (value?: string | null) => {
   const trimmed = value?.trim() ?? "";
@@ -114,6 +115,22 @@ export default function ProfileScreen() {
   });
 
   const {
+    posts: userPosts,
+    loading: userPostsLoading,
+    refreshing: userPostsRefreshing,
+    error: userPostsError,
+    hasMore: hasMoreUserPosts,
+    refresh: refreshUserPosts,
+    loadMore: loadMoreUserPosts,
+    updatePost: updateUserPost,
+    deletePost: deleteUserPost,
+    editPost: editUserPost,
+  } = useUserPosts({
+    userId: currentUserId,
+    enabled: selectedTab === "posts" && Boolean(currentUserId),
+  });
+
+  const {
     posts: bookmarkedPosts,
     loading: bookmarksLoading,
     refreshing: bookmarksRefreshing,
@@ -134,6 +151,16 @@ export default function ProfileScreen() {
   }, []);
 
   const handleBookmarkedImagePress = useCallback(() => {}, []);
+
+  const handleUserPostBookmarkChange = useCallback(
+    (post: ForumPost, bookmarked: boolean) => {
+      updateUserPost({
+        ...post,
+        bookmarked,
+      });
+    },
+    [updateUserPost],
+  );
 
   const handleBookmarkedBookmarkChange = useCallback(
     (post: ForumPost, bookmarked: boolean) => {
@@ -378,7 +405,7 @@ export default function ProfileScreen() {
     }
 
     router.push({
-      pathname: "/user/followers",
+      pathname: "/followers",
       params: {
         type: "followers",
         currentUserId: String(currentUserId),
@@ -393,7 +420,7 @@ export default function ProfileScreen() {
     }
 
     router.push({
-      pathname: "/user/followers",
+      pathname: "/followers",
       params: {
         type: "following",
         currentUserId: String(currentUserId),
@@ -443,7 +470,7 @@ export default function ProfileScreen() {
         <BioSection bio={bio} isDark={isDark} />
 
         <TabBar
-          tabs={["favorites", "badges", "bookmarks"] as const}
+          tabs={["favorites", "badges", "posts", "bookmarks"] as const}
           selected={selectedTab}
           onTabPress={handleTabPress}
           isDark={isDark}
@@ -482,6 +509,33 @@ export default function ProfileScreen() {
             />
           </View>
         )}
+        {selectedTab === "posts" && (
+          <View style={styles.bookmarkContainer}>
+            <Forum
+              posts={userPosts}
+              currentUserId={currentUserId}
+              isDark={isDark}
+              loading={userPostsLoading}
+              refreshing={userPostsRefreshing}
+              error={userPostsError}
+              hasMore={hasMoreUserPosts}
+              onRetry={refreshUserPosts}
+              onLoadMore={loadMoreUserPosts}
+              onBookmarkChange={handleUserPostBookmarkChange}
+              onDeletePost={deleteUserPost}
+              onEditPost={editUserPost}
+              onImagePress={handleBookmarkedImagePress}
+              showCreateButton={false}
+              emptyTitle="No posts yet"
+              emptyMessage="Posts you create will appear here."
+              emptyIcon="chatbubble-outline"
+              scrollEnabled={false}
+              loadMoreMode="button"
+              skeletonCount={3}
+            />
+          </View>
+        )}
+
         {selectedTab === "bookmarks" && (
           <View style={styles.bookmarkContainer}>
             <Forum

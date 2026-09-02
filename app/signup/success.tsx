@@ -1,4 +1,4 @@
-import { Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -9,9 +9,9 @@ export default function SignupSuccessScreen() {
   const { token, id } = useLocalSearchParams();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const screenFade = useRef(new Animated.Value(0)).current;
   const textFade = useRef(new Animated.Value(0)).current;
+  const styles = SignupSuccessScreenStyles(isDark, screenFade, textFade);
 
   useEffect(() => {
     // Step 1: Fade in screen
@@ -54,35 +54,29 @@ export default function SignupSuccessScreen() {
   }, [id, router, screenFade, textFade, token]);
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: screenFade,
-          backgroundColor: isDark ? "#1d1d1d" : "#fff",
-        },
-      ]}
-    >
-      <Animated.Text
-        style={[
-          styles.text,
-          { color: isDark ? "#fff" : "#1d1d1d", opacity: textFade },
-        ]}
-      >
-        {"You're All Set!"}
-      </Animated.Text>
+    <Animated.View style={styles.container}>
+      <Animated.Text style={styles.text}>{"You're All Set!"}</Animated.Text>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  text: {
-    fontFamily: Fonts.BOLD,
-    fontSize: 32,
-  },
-});
+const SignupSuccessScreenStyles = (
+  isDark: boolean,
+  screenFade: Animated.Value,
+  textFade: Animated.Value,
+) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      opacity: screenFade,
+    },
+    text: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 32,
+      color: isDark ? Colors.white : Colors.black,
+      opacity: textFade,
+    },
+  });

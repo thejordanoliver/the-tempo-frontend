@@ -4,6 +4,10 @@ import {
   updateFavoriteSports as updateFavoriteSportsRequest,
 } from "services/usersApi";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  executeFavoriteSportToggle,
+  restoreFavoriteSportMembership,
+} from "utils/favoriteSports";
 
 function getFavoriteSportsErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "response" in error) {
@@ -42,6 +46,7 @@ export function useFavoriteSports(userId: number | null) {
   const requestIdRef = useRef(0);
   const pendingLoadRef = useRef<PendingLoad | null>(null);
   const savingRef = useRef(false);
+  const favoriteSportsRef = useRef<FavoriteSportId[]>([]);
 
   useEffect(() => {
     currentUserIdRef.current = userId;
@@ -52,6 +57,7 @@ export function useFavoriteSports(userId: number | null) {
     loadedUserIdRef.current = null;
     pendingLoadRef.current = null;
     savingRef.current = false;
+    favoriteSportsRef.current = [];
     setFavoriteSports([]);
     setFavoriteSportsLoading(false);
     setFavoriteSportsSaving(false);
@@ -86,6 +92,7 @@ export function useFavoriteSports(userId: number | null) {
             return false;
           }
 
+          favoriteSportsRef.current = favorites;
           setFavoriteSports(favorites);
           setFavoriteSportsReady(true);
           loadedUserIdRef.current = userId;
@@ -147,6 +154,7 @@ export function useFavoriteSports(userId: number | null) {
           return false;
         }
 
+        favoriteSportsRef.current = favorites;
         setFavoriteSports(favorites);
         setFavoriteSportsReady(true);
         loadedUserIdRef.current = userId;
@@ -174,6 +182,60 @@ export function useFavoriteSports(userId: number | null) {
     [favoriteSports],
   );
 
+  const toggleFavoriteSport = useCallback(
+    async (league: FavoriteSportId): Promise<boolean> => {
+      if (!userId || !favoriteSportsReady || savingRef.current) {
+        return false;
+      }
+
+      setFavoriteSportsSaving(true);
+      setFavoriteSportsError(null);
+
+      const requestUserId = userId;
+
+      return executeFavoriteSportToggle({
+        league,
+        favoriteSports: favoriteSportsRef.current,
+        requestLock: savingRef,
+        save: updateFavoriteSportsRequest,
+        onOptimisticUpdate: (favorites) => {
+          favoriteSportsRef.current = favorites;
+          setFavoriteSports(favorites);
+        },
+        onAccepted: (favorites) => {
+          if (currentUserIdRef.current !== requestUserId) {
+            return;
+          }
+
+          favoriteSportsRef.current = favorites;
+          setFavoriteSports(favorites);
+          setFavoriteSportsReady(true);
+          loadedUserIdRef.current = requestUserId;
+        },
+        onRejected: (error, previousFavorites) => {
+          if (currentUserIdRef.current !== requestUserId) {
+            return;
+          }
+
+          const rolledBackFavorites = restoreFavoriteSportMembership(
+            favoriteSportsRef.current,
+            previousFavorites,
+            league,
+          );
+
+          favoriteSportsRef.current = rolledBackFavorites;
+          setFavoriteSports(rolledBackFavorites);
+          setFavoriteSportsError(getFavoriteSportsErrorMessage(error));
+        },
+      }).finally(() => {
+        if (currentUserIdRef.current === requestUserId) {
+          setFavoriteSportsSaving(false);
+        }
+      });
+    },
+    [favoriteSportsReady, userId],
+  );
+
   return {
     favoriteSports,
     favoriteSportsLoading,
@@ -184,5 +246,6 @@ export function useFavoriteSports(userId: number | null) {
     updateFavoriteSports,
     clearFavoriteSports,
     isFavoriteSport,
+    toggleFavoriteSport,
   };
 }

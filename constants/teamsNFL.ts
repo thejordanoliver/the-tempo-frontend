@@ -58,7 +58,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 2,
@@ -73,12 +73,12 @@ export const nflTeams: Team[] = [
     logo: JaguarsLogo,
     logoLight: JaguarsLogo,
     name: "Jaguars",
-    color: "#101820",
+    color: "#006778",
     secondaryColor: "#d7a22a",
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 3,
@@ -98,7 +98,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 4,
@@ -118,7 +118,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 5,
@@ -138,7 +138,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 6,
@@ -158,7 +158,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 7,
@@ -178,7 +178,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
 
   {
@@ -199,7 +199,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 9,
@@ -214,12 +214,12 @@ export const nflTeams: Team[] = [
     logo: BrownsLogo,
     logoLight: BrownsLogo,
     name: "Browns",
-    color: "#472a08",
+    color: "#311d00",
     secondaryColor: "#ff3c00",
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 10,
@@ -239,7 +239,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 11,
@@ -259,7 +259,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 12,
@@ -279,7 +279,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 13,
@@ -299,7 +299,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 14,
@@ -319,7 +319,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 15,
@@ -341,7 +341,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 16,
@@ -361,7 +361,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 17,
@@ -381,7 +381,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 18,
@@ -401,7 +401,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 19,
@@ -421,7 +421,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 20,
@@ -441,7 +441,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 21,
@@ -461,7 +461,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 22,
@@ -481,7 +481,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 23,
@@ -501,7 +501,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 24,
@@ -521,7 +521,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 25,
@@ -541,7 +541,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 26,
@@ -561,7 +561,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 27,
@@ -581,7 +581,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 28,
@@ -601,7 +601,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 29,
@@ -621,7 +621,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 30,
@@ -641,7 +641,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 31,
@@ -661,7 +661,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 32,
@@ -681,7 +681,7 @@ export const nflTeams: Team[] = [
     isAllStar: false,
     isActive: true,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
   {
     id: 34,
@@ -700,7 +700,7 @@ export const nflTeams: Team[] = [
     isAllStar: true,
     isActive: false,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
 
   {
@@ -720,7 +720,7 @@ export const nflTeams: Team[] = [
     isAllStar: true,
     isActive: false,
     isNational: false,
-   league: "nfl",
+    league: "nfl",
   },
 ];
 

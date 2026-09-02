@@ -2,6 +2,7 @@ import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import MatchupComparison from "../GameDetails/MatchupComparison";
+import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 
 type GamePreviewContentProps = {
   firstFighterId: number;
@@ -39,6 +40,7 @@ type GamePreviewContentProps = {
   venueAttendance?: number | null;
   weather?: any;
   state: string;
+  isDark: boolean
 };
 
 export default function GamePreviewContent({
@@ -76,11 +78,14 @@ export default function GamePreviewContent({
   venueCapacity,
   venueAttendance,
   weather,
+  isDark,
 }: GamePreviewContentProps) {
+  const styles = gamePreviewModalStyle({ isDark: isDark });
+
   return (
     <BottomSheetScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 100, gap: 20 }}
+      contentContainerStyle={styles.contentContainerStyle}
     >
       <MatchupComparison
         firstFighterId={firstFighterId}
@@ -110,7 +115,7 @@ export default function GamePreviewContent({
         secondFighterIsChampion={secondFighterIsChampion}
         firstFighterIsChampion={firstFighterIsChampion}
         gameStatusDescription={gameStatusDescription}
-        isDark
+        isDark={isDark}
       />
 
       <GameLocation
@@ -121,7 +126,7 @@ export default function GamePreviewContent({
         venueCapacity={venueCapacity}
         venueAttendance={venueAttendance}
         weather={weather}
-        isDark
+        isDark={isDark}
       />
     </BottomSheetScrollView>
   );

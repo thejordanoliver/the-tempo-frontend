@@ -142,7 +142,7 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       alignItems: "flex-start",
       height: 60,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
     detailText: {
@@ -183,6 +183,10 @@ export const PlayByPlayStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
       backgroundColor: isDark ? "#7A5A09" : "#B88700",
     },
+    baseballBadge: {
+      borderColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
+      backgroundColor: isDark ? "#245C2A" : Colors.light.green,
+    },
     playStatusGlow: {
       ...StyleSheet.absoluteFillObject,
     },
@@ -194,6 +198,9 @@ export const PlayByPlayStyles = (isDark: boolean) =>
     },
     fieldGoalGlow: {
       backgroundColor: isDark ? Colors.dark.yellow : Colors.light.yellow,
+    },
+    baseballGlow: {
+      backgroundColor: isDark ? Colors.dark.leafGreen : Colors.light.green,
     },
     playStatusText: {
       fontFamily: Fonts.BOLD,

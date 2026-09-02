@@ -103,6 +103,8 @@ export type CustomHeaderProps = {
   isNeutralSite?: boolean;
 
   isFavorite?: boolean;
+  showFavoriteAction?: boolean;
+  favoritePending?: boolean;
   isNotified?: boolean;
 
   onOpenInfo?: () => void;

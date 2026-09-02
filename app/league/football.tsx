@@ -28,6 +28,7 @@ import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "@/hooks/LeagueHooks/useLeagueTabs";
 import { useLeaguesNews } from "@/hooks/NewsHooks/useLeaguesNews";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { getFootballSeason, getRecruitYear } from "@/utils/dateUtils";
 import { useNavigation } from "@react-navigation/native";
@@ -119,13 +120,16 @@ export default function FootballLeagueScreen() {
 
 function NFLLeagueScreen() {
   const league = "nfl";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const currentSeason = getFootballSeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
   const [screenRefreshing, setScreenRefreshing] = useState(false);
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0);
+  const [selectedWeekIndex, setSelectedWeekIndex] = useState<number | null>(
+    null,
+  );
   const [standingsYear, setStandingsYear] = useState(currentSeason.toString());
   const [draftYear, setDraftYear] = useState(() =>
     getDefaultDraftYear("nfl").toString(),
@@ -178,9 +182,41 @@ function NFLLeagueScreen() {
       });
   }, [calendar, currentSeason]);
 
-  const selectedWeek = weekGroups[selectedWeekIndex];
-  const selectedWeekNumber = selectedWeek?.week.number ?? 1;
-  const selectedSeasonType = selectedWeek?.season.type ?? 2;
+  const activeWeekIndex = useMemo(() => {
+    if (!calendar?.length || !weekGroups.length) {
+      return null;
+    }
+
+    const now = dayjs();
+
+    const activeCalendarWeek = calendar.find(
+      (week) =>
+        week.stage !== "Off Season" &&
+        now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
+    );
+
+    if (!activeCalendarWeek) {
+      return null;
+    }
+
+    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
+
+    const index = weekGroups.findIndex(
+      (group) =>
+        group.week.number === activeCalendarWeek.weekNumber &&
+        group.season.type === activeSeasonType,
+    );
+
+    return index >= 0 ? index : null;
+  }, [calendar, weekGroups]);
+
+  const resolvedWeekIndex = selectedWeekIndex ?? activeWeekIndex;
+
+  const selectedWeek =
+    resolvedWeekIndex != null ? weekGroups[resolvedWeekIndex] : undefined;
+
+  const selectedWeekNumber = selectedWeek?.week.number;
+  const selectedSeasonType = selectedWeek?.season.type;
 
   const {
     games: selectedWeekGames,
@@ -188,10 +224,11 @@ function NFLLeagueScreen() {
     refreshing: gamesRefreshing,
     refreshGames,
   } = useFootballGames({
-    league: league,
+    league,
     season: currentSeason,
     week: selectedWeekNumber,
     seasontype: selectedSeasonType,
+    enabled: selectedWeekNumber != null && selectedSeasonType != null,
   });
 
   const {
@@ -217,53 +254,26 @@ function NFLLeagueScreen() {
   } = useSeasonLeaders(currentSeason, league);
 
   useEffect(() => {
-    if (!weekGroups.length) {
-      setSelectedWeekIndex(0);
-      return;
-    }
+    setSelectedWeekIndex((currentIndex) => {
+      if (currentIndex == null) {
+        return null;
+      }
 
-    setSelectedWeekIndex((currentIndex) =>
-      currentIndex < weekGroups.length ? currentIndex : 0,
-    );
+      return currentIndex < weekGroups.length ? currentIndex : null;
+    });
   }, [weekGroups.length]);
-
-  useEffect(() => {
-    if (!calendar?.length || !weekGroups.length) {
-      return;
-    }
-
-    const now = dayjs();
-
-    const activeCalendarWeek = calendar.find(
-      (week) =>
-        week.stage !== "Off Season" &&
-        now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
-    );
-
-    if (!activeCalendarWeek) {
-      return;
-    }
-
-    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
-
-    const matchingGroupIndex = weekGroups.findIndex(
-      (group) =>
-        group.week.number === activeCalendarWeek.weekNumber &&
-        group.season.type === activeSeasonType,
-    );
-
-    if (matchingGroupIndex >= 0) {
-      setSelectedWeekIndex(matchingGroupIndex);
-    }
-  }, [calendar, weekGroups]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league.toUpperCase()} onBack={goBack} />
+        <CustomHeader
+          tabName={league.toUpperCase()}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [league, navigation]);
+  }, [favoriteHeaderProps, league, navigation]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);
@@ -302,7 +312,7 @@ function NFLLeagueScreen() {
             <WeekSelector
               groups={weekGroups}
               loading={gamesLoading}
-              selectedWeekIndex={selectedWeekIndex}
+              selectedWeekIndex={resolvedWeekIndex}
               onSelectWeek={setSelectedWeekIndex}
               isDark={isDark}
             />
@@ -383,6 +393,7 @@ function NFLLeagueScreen() {
 
 function CFBLeagueScreen() {
   const league = "cfb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const currentSeason = getFootballSeason();
   const navigation = useNavigation();
   const conferenceModalRef = useRef<ConferenceListModalRef>(null);
@@ -581,10 +592,17 @@ function CFBLeagueScreen() {
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
           selectedConferenceName={selectedConferenceName}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
+  }, [
+    favoriteHeaderProps,
+    isConferenceModalOpen,
+    league,
+    navigation,
+    selectedConferenceName,
+  ]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);
@@ -721,6 +739,7 @@ function CFBLeagueScreen() {
 
 function UFLLeagueScreen() {
   const league = "ufl";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const currentSeason = getFootballSeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
@@ -841,10 +860,14 @@ function UFLLeagueScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName={league.toUpperCase()} onBack={goBack} />
+        <CustomHeader
+          tabName={league.toUpperCase()}
+          onBack={goBack}
+          {...favoriteHeaderProps}
+        />
       ),
     });
-  }, [league, navigation]);
+  }, [favoriteHeaderProps, league, navigation]);
 
   const handleRefresh = useCallback(async () => {
     setScreenRefreshing(true);

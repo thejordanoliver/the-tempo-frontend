@@ -32,21 +32,13 @@ export const formStyles = (isDark: boolean) => {
 
   const text = isDark ? Colors.white : Colors.black;
 
-  const border = isDark
-    ? "rgba(255,255,255,0.08)"
-    : "rgba(0,0,0,0.08)";
+  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
-  const focusBorder = isDark
-    ? "rgba(255,255,255,0.25)"
-    : "rgba(0,0,0,0.25)";
+  const focusBorder = isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.25)";
 
-  const subtleText = isDark
-    ? "rgba(255,255,255,0.4)"
-    : "rgba(0,0,0,0.4)";
+  const subtleText = isDark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)";
 
-  const divider = isDark
-    ? "rgba(255,255,255,0.08)"
-    : "rgba(0,0,0,0.07)";
+  const divider = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)";
 
   return StyleSheet.create({
     // ─── Layout ──────────────────────────────────────────────────────────────
@@ -71,6 +63,10 @@ export const formStyles = (isDark: boolean) => {
     row: {
       flexDirection: "column",
       gap: SPACING.sm,
+    },
+
+    tabs: {
+      marginBottom: SPACING.md,
     },
 
     buttonContainer: {

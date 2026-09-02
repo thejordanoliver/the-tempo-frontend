@@ -43,9 +43,6 @@ export const gamePreviewModalStyle = ({
     },
     blurViewContainer: {
       flex: 1,
-      top: 0,
-      left: 0,
-      right: 0,
       padding: 12,
       paddingTop: 40,
       borderTopLeftRadius: 20,

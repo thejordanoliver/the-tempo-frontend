@@ -11,7 +11,10 @@ import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
 import UFLLightLogo from "assets/Football/UFL_Logos/UFLLight.png";
 import NHLLogo from "assets/Hockey/NHL_Logos/NHL.png";
 import UFCLogo from "assets/MMA/MMA_Logos/UFC.png";
+import UFCLogoLight from "assets/MMA/MMA_Logos/UFCLight.png";
 import NBALogo from "assets/NBA/Logos/NBA.png";
+import GLeagueLogo from "assets/NBA/Logos/GLeague.png";
+import GLeagueLogoLight from "assets/NBA/Logos/GLeagueLight.png";
 import F1Logo from "assets/Racing/Logos/f1.png";
 import NascarLogo from "assets/Racing/Logos/Nascar.png";
 import NascarLightLogo from "assets/Racing/Logos/NascarLight.png";
@@ -28,6 +31,7 @@ import UEFAEuropaLightLogo from "assets/Soccer/Logos/UEFAEuropaLight.png";
 import WorldCupLogo from "assets/Soccer/Logos/WorldCup.png";
 import WorldCupLightLogo from "assets/Soccer/Logos/WorldCupLight.png";
 import WNBALogo from "assets/WNBA/Logos/WNBA.png";
+import WNBALogoLight from "assets/WNBA/Logos/WNBALight.png";
 
 import type { LeagueType } from "types/types";
 
@@ -51,102 +55,42 @@ type LeagueDefinition = {
 };
 
 export const BROWSEABLE_LEAGUES = [
-  "nba",
-  "gleague",
-  "wnba",
-  "nfl",
-  "mlb",
-  "nhl",
-  "cfb",
-  "cb",
-  "sb",
-  "cbb",
-  "wcbb",
-  "ufc",
-  "ufl",
-  "epl",
-  "mls",
-  "champions",
-  "europa",
   "bundesliga",
-  "leaguescup",
+  "cb",
+  "cbb",
+  "cfb",
+  "champions",
+  "epl",
+  "europa",
+  "f1",
   "fifa",
   "fifaw",
-  "f1",
+  "gleague",
+  "leaguescup",
+  "mlb",
+  "mls",
   "nascarpremier",
+  "nba",
+  "nfl",
+  "nhl",
+  "sb",
+  "ufc",
+  "ufl",
+  "wcbb",
+  "wnba",
 ] as const satisfies readonly LeagueType[];
 
 export type BrowseableLeague = (typeof BROWSEABLE_LEAGUES)[number];
 
 export const LEAGUE_CONFIG = {
-  nba: {
-    id: "nba",
-    label: "NBA",
-    color: "#1D428A",
-    secondaryColor: "#C8102E",
-    logo: NBALogo,
-    logoLight: NBALogo,
-    route: "/league/basketball",
-  },
-
-  gleague: {
-    id: "gleague",
-    label: "NBA G League",
-    color: "#000000",
-    secondaryColor: "#C8102E",
-    logo: NBALogo,
-    logoLight: NBALogo,
-    route: "/league/basketball",
-  },
-
-  wnba: {
-    id: "wnba",
-    label: "WNBA",
-    color: "#FF6B00",
-    secondaryColor: "#FFFFFF",
-    logo: WNBALogo,
-    logoLight: WNBALogo,
-    route: "/league/basketball",
-  },
-
-  nfl: {
-    id: "nfl",
-    label: "NFL",
-    color: "#013369",
-    secondaryColor: "#D50A0A",
-    logo: NFLLogo,
-    logoLight: NFLLogo,
-    route: "/league/football",
-  },
-
-  mlb: {
-    id: "mlb",
-    label: "MLB",
-    color: "#002D72",
-    secondaryColor: "#D50032",
-    logo: MLBLogo,
-    logoLight: MLBLogo,
-    route: "/league/baseball",
-  },
-
-  nhl: {
-    id: "nhl",
-    label: "NHL",
-    color: "#000000",
-    secondaryColor: "#FFFFFF",
-    logo: NHLLogo,
-    logoLight: NHLLogo,
-    route: "/league/hockey",
-  },
-
-  cfb: {
-    id: "cfb",
-    label: "College Football",
-    color: "#009CDE",
+  bundesliga: {
+    id: "bundesliga",
+    label: "German Bundesliga",
+    color: "#D20515",
     secondaryColor: "#000000",
-    logo: CFBLogo,
-    logoLight: CFBLogo,
-    route: "/league/football",
+    logo: BundesligaLogo,
+    logoLight: BundesligaLightLogo,
+    route: "/league/socc",
   },
 
   cb: {
@@ -159,19 +103,9 @@ export const LEAGUE_CONFIG = {
     route: "/league/baseball",
   },
 
-  sb: {
-    id: "sb",
-    label: "College Softball",
-    color: "#009CDE",
-    secondaryColor: "#000000",
-    logo: SBLogo,
-    logoLight: SBLogo,
-    route: "/league/baseball",
-  },
-
   cbb: {
     id: "cbb",
-    label: "Men's College Basketball",
+    label: "M. College Basketball",
     color: "#009CDE",
     secondaryColor: "#000000",
     logo: CBBLogo,
@@ -179,54 +113,14 @@ export const LEAGUE_CONFIG = {
     route: "/league/basketball",
   },
 
-  wcbb: {
-    id: "wcbb",
-    label: "Women's College Basketball",
+  cfb: {
+    id: "cfb",
+    label: "College Football",
     color: "#009CDE",
     secondaryColor: "#000000",
-    logo: WCBBLogo,
-    logoLight: WCBBLogo,
-    route: "/league/basketball",
-  },
-
-  ufc: {
-    id: "ufc",
-    label: "UFC",
-    color: "#D20A0A",
-    secondaryColor: "#000000",
-    logo: UFCLogo,
-    logoLight: UFCLogo,
-    route: "/league/mma",
-  },
-
-  ufl: {
-    id: "ufl",
-    label: "UFL",
-    color: "#003B71",
-    secondaryColor: "#D71920",
-    logo: UFLLogo,
-    logoLight: UFLLightLogo,
+    logo: CFBLogo,
+    logoLight: CFBLogo,
     route: "/league/football",
-  },
-
-  epl: {
-    id: "epl",
-    label: "English Premier League",
-    color: "#37003C",
-    secondaryColor: "#00FF85",
-    logo: EPLLogo,
-    logoLight: EPLLogo,
-    route: "/league/socc",
-  },
-
-  mls: {
-    id: "mls",
-    label: "MLS",
-    color: "#111111",
-    secondaryColor: "#E2231A",
-    logo: MLSLogo,
-    logoLight: MLSLogo,
-    route: "/league/socc",
   },
 
   champions: {
@@ -236,6 +130,16 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#FFFFFF",
     logo: UEFAChampionsLogo,
     logoLight: UEFAChampionsLightLogo,
+    route: "/league/socc",
+  },
+
+  epl: {
+    id: "epl",
+    label: "English Premier League",
+    color: "#37003C",
+    secondaryColor: "#00FF85",
+    logo: EPLLogo,
+    logoLight: EPLLogo,
     route: "/league/socc",
   },
 
@@ -249,24 +153,14 @@ export const LEAGUE_CONFIG = {
     route: "/league/socc",
   },
 
-  bundesliga: {
-    id: "bundesliga",
-    label: "German Bundesliga",
-    color: "#D20515",
-    secondaryColor: "#000000",
-    logo: BundesligaLogo,
-    logoLight: BundesligaLightLogo,
-    route: "/league/socc",
-  },
-
-  leaguescup: {
-    id: "leaguescup",
-    label: "Leagues Cup",
-    color: "#6A1B9A",
-    secondaryColor: "#00C2FF",
-    logo: LeaguesCupLogo,
-    logoLight: LeaguesCupLogoLight,
-    route: "/league/socc",
+  f1: {
+    id: "f1",
+    label: "F1",
+    color: "#E10600",
+    secondaryColor: "#15151E",
+    logo: F1Logo,
+    logoLight: F1Logo,
+    route: "/league/racing",
   },
 
   fifa: {
@@ -289,14 +183,44 @@ export const LEAGUE_CONFIG = {
     route: "/league/socc",
   },
 
-  f1: {
-    id: "f1",
-    label: "F1",
-    color: "#E10600",
-    secondaryColor: "#15151E",
-    logo: F1Logo,
-    logoLight: F1Logo,
-    route: "/league/racing",
+  gleague: {
+    id: "gleague",
+    label: "NBA G League",
+    color: "#000000",
+    secondaryColor: "#C8102E",
+    logo: GLeagueLogo,
+    logoLight: GLeagueLogoLight,
+    route: "/league/basketball",
+  },
+
+  leaguescup: {
+    id: "leaguescup",
+    label: "Leagues Cup",
+    color: "#6A1B9A",
+    secondaryColor: "#00C2FF",
+    logo: LeaguesCupLogo,
+    logoLight: LeaguesCupLogoLight,
+    route: "/league/socc",
+  },
+
+  mlb: {
+    id: "mlb",
+    label: "MLB",
+    color: "#002D72",
+    secondaryColor: "#D50032",
+    logo: MLBLogo,
+    logoLight: MLBLogo,
+    route: "/league/baseball",
+  },
+
+  mls: {
+    id: "mls",
+    label: "MLS",
+    color: "#111111",
+    secondaryColor: "#E2231A",
+    logo: MLSLogo,
+    logoLight: MLSLogo,
+    route: "/league/socc",
   },
 
   nascarpremier: {
@@ -307,6 +231,86 @@ export const LEAGUE_CONFIG = {
     logo: NascarLogo,
     logoLight: NascarLightLogo,
     route: "/league/racing",
+  },
+
+  nba: {
+    id: "nba",
+    label: "NBA",
+    color: "#1D428A",
+    secondaryColor: "#C8102E",
+    logo: NBALogo,
+    logoLight: NBALogo,
+    route: "/league/basketball",
+  },
+
+  nfl: {
+    id: "nfl",
+    label: "NFL",
+    color: "#013369",
+    secondaryColor: "#D50A0A",
+    logo: NFLLogo,
+    logoLight: NFLLogo,
+    route: "/league/football",
+  },
+
+  nhl: {
+    id: "nhl",
+    label: "NHL",
+    color: "#000000",
+    secondaryColor: "#FFFFFF",
+    logo: NHLLogo,
+    logoLight: NHLLogo,
+    route: "/league/hockey",
+  },
+
+  sb: {
+    id: "sb",
+    label: "College Softball",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: SBLogo,
+    logoLight: SBLogo,
+    route: "/league/baseball",
+  },
+
+  ufc: {
+    id: "ufc",
+    label: "UFC",
+    color: "#D20A0A",
+    secondaryColor: "#000000",
+    logo: UFCLogo,
+    logoLight: UFCLogoLight,
+    route: "/league/mma",
+  },
+
+  ufl: {
+    id: "ufl",
+    label: "UFL",
+    color: "#003B71",
+    secondaryColor: "#D71920",
+    logo: UFLLogo,
+    logoLight: UFLLightLogo,
+    route: "/league/football",
+  },
+
+  wcbb: {
+    id: "wcbb",
+    label: "W. College Basketball",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: WCBBLogo,
+    logoLight: WCBBLogo,
+    route: "/league/basketball",
+  },
+
+  wnba: {
+    id: "wnba",
+    label: "WNBA",
+    color: "#FF6B00",
+    secondaryColor: "#FFFFFF",
+    logo: WNBALogo,
+    logoLight: WNBALogoLight,
+    route: "/league/basketball",
   },
 } as const satisfies Record<LeagueType, LeagueDefinition>;
 export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];

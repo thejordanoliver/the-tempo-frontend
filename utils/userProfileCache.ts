@@ -1,6 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  normalizeFavoriteTeamKeys,
+  type FavoriteTeamKey,
+} from "types/favorites";
 
-export const USER_PROFILE_CACHE_VERSION = 1;
+export const USER_PROFILE_CACHE_VERSION = 2;
 export const USER_PROFILE_CACHE_TTL = 1000 * 60 * 10;
 export const USER_PROFILE_STALE_TTL = 1000 * 60 * 60 * 24;
 export const USER_PROFILE_CACHE_KEY_PREFIX = "userProfileCache:";
@@ -16,7 +20,7 @@ export type CachedUserProfilePayload = {
   bio: string | null;
   profileImage: string | null;
   bannerImage: string | null;
-  favorites: string[];
+  favoriteTeams: FavoriteTeamKey[];
   updatedAt?: string | null;
   cachedAt: number;
   version: number;
@@ -57,13 +61,8 @@ const normalizeId = (value: unknown): string | null => {
   return normalizeString(value);
 };
 
-const normalizeFavorites = (value: unknown): string[] => {
-  if (!Array.isArray(value)) return [];
-
-  return value.filter(
-    (favorite): favorite is string =>
-      typeof favorite === "string" && favorite.includes(":"),
-  );
+const normalizeFavoriteTeams = (value: unknown): FavoriteTeamKey[] => {
+  return normalizeFavoriteTeamKeys(value);
 };
 
 const parseDateTime = (value?: string | null) => {
@@ -111,7 +110,7 @@ const parseCachedPayload = (
     bio: normalizeString(value.bio),
     profileImage: normalizeImageUrl(value.profileImage),
     bannerImage: normalizeImageUrl(value.bannerImage),
-    favorites: normalizeFavorites(value.favorites),
+    favoriteTeams: normalizeFavoriteTeams(value.favoriteTeams),
     updatedAt: normalizeString(value.updatedAt),
     cachedAt,
     version: USER_PROFILE_CACHE_VERSION,
@@ -190,7 +189,7 @@ export async function setCachedUserProfile(
     bio: normalizeString(profile.bio),
     profileImage: normalizeImageUrl(profile.profileImage),
     bannerImage: normalizeImageUrl(profile.bannerImage),
-    favorites: normalizeFavorites(profile.favorites),
+    favoriteTeams: normalizeFavoriteTeams(profile.favoriteTeams),
     updatedAt: normalizeString(profile.updatedAt),
     cachedAt: Date.now(),
     version: USER_PROFILE_CACHE_VERSION,

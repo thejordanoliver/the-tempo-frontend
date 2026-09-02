@@ -1,5 +1,6 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import { Colors } from "@/constants/styles";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import {
@@ -10,9 +11,8 @@ import {
 } from "@/utils/dateUtils";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma/mma";
 import {
@@ -39,6 +39,8 @@ type Props = {
 };
 
 export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const sheetRef = useRef<BottomSheetModal>(null);
 
   // Modal open/close
@@ -53,7 +55,6 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline || holidayLabel;
 
-  const styles = gamePreviewModalStyle({});
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
@@ -88,12 +89,17 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const secondFighterClass = secondFighter?.weightClassShortName ?? "N/A";
   const firstFighterWinner = firstFighter?.winner === true;
   const secondFighterWinner = secondFighter?.winner === true;
-
   const firstFighterIsChampion = firstFighter?.isChampion ?? false;
   const secondFighterIsChampion = secondFighter?.isChampion ?? false;
 
   const gameStatusDescription = game.status.description;
   const state = game.status.state;
+
+  const styles = gamePreviewModalStyle({
+    isDark: isDark,
+    homeColor: firstFighterColor,
+    awayColor: secondFighterColor,
+  });
 
   const isCanceled = gameStatusDescription === "Canceled";
   const isDelayed = gameStatusDescription === "Delayed";
@@ -158,30 +164,10 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <LinearGradient
-          colors={[
-            secondFighterColor,
-            secondFighterColor,
-            firstFighterColor,
-            firstFighterColor,
-          ]}
-          locations={[0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
+        <View style={styles.leftCircle} />
+        <View style={styles.rightCircle} />
 
-        <LinearGradient
-          colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.8)"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={StyleSheet.absoluteFill}
-        />
-        <BlurView
-          intensity={100}
-          tint={"systemUltraThinMaterialDark"}
-          style={styles.blurViewContainer}
-        >
+        <BlurView intensity={100} style={styles.blurViewContainer}>
           {headline && <Text style={styles.headlineText}>{headline}</Text>}
 
           <View style={styles.gameHeaderContainer}>
@@ -194,7 +180,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               isWinner={secondFighterWinner}
               gameStatusDescription={gameStatusDescription}
               isFirstFighter={false}
-              isDark
+              isDark={isDark}
             />
 
             <GameInfo
@@ -205,7 +191,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               broadcast={broadcast}
               gameStatusDescription={gameStatusDescription}
               results={results}
-              isDark
+              isDark={isDark}
             />
 
             <FighterRow
@@ -217,7 +203,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               isWinner={firstFighterWinner}
               gameStatusDescription={gameStatusDescription}
               isFirstFighter={true}
-              isDark
+              isDark={isDark}
             />
           </View>
 
@@ -259,6 +245,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               venueCapacity={venueCapacity}
               venueAttendance={venueAttendance}
               weather={weather}
+              isDark={isDark}
             />
           )}
         </BlurView>

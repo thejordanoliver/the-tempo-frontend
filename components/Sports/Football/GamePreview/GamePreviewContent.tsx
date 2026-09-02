@@ -23,7 +23,7 @@ import { View } from "react-native";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
-import GameLeaders from "../GameDetails/GameLeaders";
+import GameLeaders from "../GameDetails/Leaders";
 import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
 
 type GamePreviewContentProps = {

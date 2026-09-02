@@ -7,14 +7,23 @@ import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
+import { soccerTeams } from "@/constants/teamsSOCC";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
 import { usePathname, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
+import {
+  getFavoriteTeams,
+  updateFavoriteTeams as updateFavoriteTeamsRequest,
+} from "services/usersApi";
+import {
+  buildFavoriteTeamKey,
+  normalizeFavoriteTeamKeys,
+  type FavoriteTeamKey,
+} from "types/favorites";
 import type { Team } from "types/types";
-import { apiClient } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
 import { useFavoriteSports } from "./useFavoriteSports";
 
@@ -31,7 +40,7 @@ const getFavoritesStorageKey = (userId: number | string) =>
 
 export function useFavoriteTeams() {
   const [search, setSearch] = useState("");
-  const [favorites, setFavorites] = useState<string[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteTeamKey[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGridView, setIsGridView] = useState(true);
@@ -65,6 +74,7 @@ export function useFavoriteTeams() {
       ...sbTeams,
       ...mlbTeams,
       ...nhlTeams,
+      ...soccerTeams,
     ],
     [],
   );
@@ -158,24 +168,34 @@ const filteredTeams = useMemo(() => {
           return;
         }
 
-        if (!storedFavorites) {
-          setFavorites([]);
-          return;
+        let cachedFavorites: FavoriteTeamKey[] = [];
+
+        if (storedFavorites) {
+          cachedFavorites = normalizeFavoriteTeamKeys(
+            JSON.parse(storedFavorites),
+          );
         }
 
-        const parsedFavorites: unknown = JSON.parse(storedFavorites);
+        setFavorites(cachedFavorites);
 
-        if (!Array.isArray(parsedFavorites)) {
-          setFavorites([]);
-          return;
+        try {
+          const serverFavorites = await getFavoriteTeams();
+
+          if (requestId !== loadRequestId.current) {
+            return;
+          }
+
+          setFavorites(serverFavorites);
+          await AsyncStorage.setItem(
+            storageKey,
+            JSON.stringify(serverFavorites),
+          );
+        } catch (error) {
+          console.warn(
+            "Failed to refresh favorite teams from the server; using the local cache:",
+            error,
+          );
         }
-
-        const validFavorites = parsedFavorites.filter(
-          (favorite): favorite is string =>
-            typeof favorite === "string" && favorite.includes(":"),
-        );
-
-        setFavorites(validFavorites);
       } catch (error) {
         if (requestId !== loadRequestId.current) {
           return;
@@ -199,11 +219,11 @@ const filteredTeams = useMemo(() => {
 
   /* ---------------- FAVORITE HELPERS ---------------- */
 
-  const buildKey = (league: string, id: string | number) => `${league}:${id}`;
-
   const isFavorite = useCallback(
-    (league: string, id: string | number) =>
-      favorites.includes(buildKey(league, id)),
+    (league: string, id: string | number) => {
+      const key = buildFavoriteTeamKey(league, id);
+      return key ? favorites.includes(key) : false;
+    },
     [favorites],
   );
 
@@ -214,16 +234,25 @@ const filteredTeams = useMemo(() => {
    * should not be included in the URL.
    */
   const syncFavoritesToServer = useCallback(
-    async (nextFavorites: string[], action: string): Promise<boolean> => {
+    async (
+      nextFavorites: readonly string[],
+      action: string,
+    ): Promise<boolean> => {
       if (!userId) {
         console.warn(`Unable to ${action}: no user ID is available.`);
         return false;
       }
 
       try {
-        await apiClient.patch(FAVORITES_ENDPOINT, {
-          favorites: nextFavorites,
-        });
+        const savedFavorites = await updateFavoriteTeamsRequest(
+          normalizeFavoriteTeamKeys(nextFavorites),
+        );
+
+        setFavorites(savedFavorites);
+        await AsyncStorage.setItem(
+          getFavoritesStorageKey(userId),
+          JSON.stringify(savedFavorites),
+        );
 
         await removeCachedUserProfile(String(userId));
 
@@ -246,7 +275,9 @@ const filteredTeams = useMemo(() => {
 
   const toggleFavorite = useCallback(
     (league: string, id: string | number) => {
-      const key = buildKey(league, id);
+      const key = buildFavoriteTeamKey(league, id);
+
+      if (!key) return;
 
       setFavorites((previousFavorites) => {
         const nextFavorites = previousFavorites.includes(key)
@@ -301,10 +332,7 @@ const filteredTeams = useMemo(() => {
       return false;
     }
 
-    const normalizedFavorites = favorites.filter(
-      (favorite): favorite is string =>
-        typeof favorite === "string" && favorite.includes(":"),
-    );
+    const normalizedFavorites = normalizeFavoriteTeamKeys(favorites);
 
     const synced = await syncFavoritesToServer(
       normalizedFavorites,
@@ -337,21 +365,7 @@ const filteredTeams = useMemo(() => {
         return false;
       }
 
-      const normalizedFavorites = orderedIds.filter(
-        (favorite): favorite is string =>
-          typeof favorite === "string" && favorite.includes(":"),
-      );
-
-      try {
-        await AsyncStorage.setItem(
-          getFavoritesStorageKey(userId),
-          JSON.stringify(normalizedFavorites),
-        );
-      } catch (error) {
-        console.error("Failed to save reordered favorites locally:", error);
-
-        return false;
-      }
+      const normalizedFavorites = normalizeFavoriteTeamKeys(orderedIds);
 
       const synced = await syncFavoritesToServer(
         normalizedFavorites,
@@ -394,24 +408,25 @@ const filteredTeams = useMemo(() => {
       return;
     }
 
+    const league = previewTeam.league.toLowerCase();
     const route =
-      previewTeam.league === "NFL"
+      league === "nfl"
         ? "/team/nfl/[teamId]"
-        : previewTeam.league === "NBA"
+        : league === "nba"
           ? "/team/[teamId]"
-          : previewTeam.league === "WNBA"
+          : league === "wnba"
             ? "/team/wnba/[teamId]"
-            : previewTeam.league === "CFB"
+            : league === "cfb"
               ? "/team/cfb/[teamId]"
-              : previewTeam.league === "CBB"
+              : league === "cbb"
                 ? "/team/cbb/[teamId]"
-                : previewTeam.league === "WCBB"
+                : league === "wcbb"
                   ? "/team/wcbb/[teamId]"
-                  : previewTeam.league === "MLB"
+                  : league === "mlb"
                     ? "/team/mlb/[teamId]"
-                    : previewTeam.league === "CB"
+                    : league === "cb"
                       ? "/team/cb/[teamId]"
-                      : previewTeam.league === "SB"
+                      : league === "sb"
                         ? "/team/sb/[teamId]"
                         : "/team/nhl/[teamId]";
 
@@ -419,7 +434,7 @@ const filteredTeams = useMemo(() => {
       pathname: route,
       params: {
         teamId: String(id),
-        league: previewTeam.league,
+        league,
       },
     });
 
@@ -439,7 +454,11 @@ const filteredTeams = useMemo(() => {
         return false;
       }
 
-      const key = buildKey(team.league, id);
+      const key = buildFavoriteTeamKey(team.league, id);
+
+      if (!key) {
+        return false;
+      }
 
       const updatedFavorites = favorites.filter((favorite) => favorite !== key);
 

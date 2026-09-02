@@ -320,6 +320,7 @@ export default function GamesList({
       </View>
     );
   }
+  
   if (error) return <Text style={global.errorText}>Error: {error}</Text>;
 
   return (

@@ -1,11 +1,17 @@
-import { useCallback, useEffect, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
-import { Play } from "../BasketballHooks/useBasketballGameDetails";
 import { TeamInjury } from "../FootballHooks/useFootballGameDetails";
 
+type TeamRecord = {
+  type: string;
+  summary: string;
+  displayValue: string;
+};
+
 type Team = {
-  id: string;
+  id: string | number;
+  espnId: string | number | null;
   guid: string;
   uid: string;
   location: string;
@@ -17,18 +23,7 @@ type Team = {
   score: number;
   winner: boolean;
   record: string;
-  records: [
-    {
-      type: "total";
-      summary: string;
-      displayValue: string;
-    },
-    {
-      type: "points";
-      summary: string;
-      displayValue: string;
-    },
-  ];
+  records: TeamRecord[];
   possession: boolean;
   hits: number | null;
   errors: number | null;
@@ -158,6 +153,241 @@ export type TeamRecords = {
   conference?: string | null;
 };
 
+export type BaseballPlayType = {
+  id: string;
+  text: string;
+  abbreviation?: string;
+  alternativeText?: string;
+  type: string;
+};
+
+export type BaseballPlayPeriod = {
+  type: "Top" | "Bottom" | string;
+  number: number;
+  displayValue: string;
+};
+
+export type BaseballPlayCoordinate = {
+  x: number;
+  y: number;
+};
+
+export type BaseballPitchType = {
+  id: string;
+  text: string;
+  abbreviation: string;
+};
+
+export type BaseballPitchCount = {
+  balls: number;
+  strikes: number;
+};
+
+export type BaseballBats = {
+  type: string;
+  abbreviation: string;
+  displayValue: string;
+};
+
+export type BaseballPlayTeam = {
+  id: number | string | null;
+  espnId?: number | string | null;
+
+  name?: string | null;
+  fullName?: string | null;
+  displayName?: string | null;
+  shortName?: string | null;
+  shortDisplayName?: string | null;
+
+  abbreviation?: string | null;
+  code?: string | null;
+  location?: string | null;
+
+  color?: string | null;
+  alternateColor?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+
+  established?: number | null;
+  mlbId?: number | null;
+};
+
+export type BaseballPlayAthlete = {
+  id: number | string | null;
+  espnId?: number | string | null;
+
+  teamId?: number | string | null;
+  teamEspnId?: number | string | null;
+
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string | null;
+  displayName?: string | null;
+  shortName?: string | null;
+
+  headshot?: string | null;
+  jersey?: string | null;
+  position?: string | null;
+};
+
+export type BaseballPlayParticipant = {
+  athlete: BaseballPlayAthlete;
+
+  type: "pitcher" | "batter" | "onFirst" | "onSecond" | "onThird" | string;
+
+  teamId?: number | string | null;
+  teamEspnId?: number | string | null;
+};
+
+export type BaseballBaseRunner = {
+  athlete: {
+    id: number | string | null;
+  };
+};
+
+export type BaseballPlay = {
+  id: string;
+  sequenceNumber: string | number;
+
+  type: BaseballPlayType;
+
+  /**
+   * Used on play-result entries.
+   * Example: play-result -> single, ground-out, fly-out, etc.
+   */
+  alternativeType?: BaseballPlayType | null;
+
+  alternativePlay?: string | null;
+
+  text?: string | null;
+
+  awayScore: number;
+  homeScore: number;
+
+  period: BaseballPlayPeriod;
+
+  scoringPlay: boolean;
+  scoreValue: number;
+
+  team?: BaseballPlayTeam | null;
+
+  participants?: BaseballPlayParticipant[] | null;
+
+  wallclock?: string | null;
+
+  atBatId?: string | null;
+  batOrder?: number | null;
+
+  bats?: BaseballBats | null;
+
+  atBatPitchNumber?: number | null;
+
+  pitchCoordinate?: BaseballPlayCoordinate | null;
+  hitCoordinate?: BaseballPlayCoordinate | null;
+
+  pitchType?: BaseballPitchType | null;
+  pitchVelocity?: number | null;
+
+  summaryType?: string | null;
+
+  /**
+   * Count before/around the play depending on the event.
+   */
+  pitchCount?: BaseballPitchCount | null;
+
+  /**
+   * Count after the event.
+   */
+  resultCount?: BaseballPitchCount | null;
+
+  trajectory?: string | null;
+
+  outs?: number | null;
+
+  onFirst?: BaseballBaseRunner | null;
+  onSecond?: BaseballBaseRunner | null;
+  onThird?: BaseballBaseRunner | null;
+};
+
+export type BaseballSituationPlayer = {
+  id: number | string | null;
+  teamId: number | string | null;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  displayName: string | null;
+  shortName: string | null;
+  headshot: string | null;
+  jersey: string | null;
+  position: string | null;
+  summary: string | null;
+};
+
+export type BaseballSituation = {
+  outs: number;
+  balls: number;
+  strikes: number;
+  pitcher: BaseballSituationPlayer | null;
+  batter: BaseballSituationPlayer | null;
+  bases: {
+    onFirst: boolean;
+    onSecond: boolean;
+    onThird: boolean;
+  };
+};
+
+type BaseballLeaderStatistic = {
+  name: string;
+  displayName?: string | null;
+  shortDisplayName?: string | null;
+  abbreviation?: string | null;
+  value?: string | number | null;
+  displayValue?: string | null;
+};
+
+type BaseballLeaderAthlete = {
+  id?: string | number | null;
+  espnId?: string | number | null;
+  teamId?: string | number | null;
+  teamEspnId?: string | number | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string | null;
+  displayName?: string | null;
+  shortName?: string | null;
+  headshot?: string | null;
+  jersey?: string | null;
+  position?: string | null;
+};
+
+type BaseballLeaderEntry = {
+  displayValue?: string | null;
+  value?: string | number | null;
+  mainStat?: {
+    value?: string | number | null;
+    displayValue?: string | null;
+  } | null;
+  athlete: BaseballLeaderAthlete;
+  statistics?: BaseballLeaderStatistic[];
+};
+
+type BaseballLeaderCategory = {
+  name: string;
+  displayName?: string | null;
+  leaders: BaseballLeaderEntry[];
+};
+
+type BaseballLeaderTeam = {
+  team: {
+    id: string | number;
+    espnId?: string | number | null;
+    displayName?: string | null;
+    abbreviation?: string | null;
+    logo?: string | null;
+  };
+  leaders: BaseballLeaderCategory[];
+};
+
 export type Score = {
   gameId: string;
   uid: string;
@@ -165,13 +395,13 @@ export type Score = {
   lastUpdated: number;
   status: {
     id: string;
-    name: "STATUS_SCHEDULED" | "STATUS_FINAL";
+    name: string;
     state: "pre" | "in" | "post";
     completed: boolean;
     gameStatusDescription: string;
     gameStatusDetail: string;
     shortDetail: string;
-    clock: number | null;
+    clock?: number | null;
     displayClock: string | null;
     period: number | null;
   };
@@ -183,55 +413,20 @@ export type Score = {
     away: number;
   }[];
 
-  plays: any[];
-  lastPlay: Play;
+  plays: BaseballPlay[];
+
+  lastPlay: BaseballPlay | null;
 
   teamStats: {
     team: any;
     stats: TeamStat[];
   }[];
 
-  situation: {
-    outs: number;
-    balls: number;
-    strikes: number;
-    pitcher: {
-      id: number;
-      teamId: number;
-      firstName: string;
-      lastName: string;
-      fullName: string;
-      displayName: string;
-      shortName: string;
-      headshot: string;
-      jersey: string;
-      position: string;
-      summary: null;
-    };
-    batter: {
-      id: number;
-      teamId: number;
-      firstName: string;
-      lastName: string;
-      fullName: string;
-      displayName: string;
-      shortName: string;
-      headshot: string;
-      jersey: string;
-      position: string;
-      summary: null;
-    };
-    bases: {
-      onFirst: false;
-      onSecond: true;
-      onThird: false;
-    };
-  };
-  resultCount?: any;
+  situation: BaseballSituation;
 
   playerStats: PlayerStatsByTeam[];
 
-  leaders: any[];
+  leaders: BaseballLeaderTeam[];
 };
 
 export type GameDetails = {
@@ -265,7 +460,7 @@ export type GameDetails = {
   venue?: Venue | null;
 };
 
-type BaseballGameDetailsResponse = {
+export type BaseballGameDetailsResponse = {
   score: Score;
   details: GameDetails | null;
 };
@@ -311,9 +506,12 @@ export const useBaseballGameDetails = (
           gameId: gameId ?? undefined,
         };
 
-        const { data } = await apiClient.get("api/baseball/details", {
-          params,
-        });
+        const { data } = await apiClient.get<BaseballGameDetailsResponse>(
+          "api/baseball/details",
+          {
+            params,
+          },
+        );
 
         if (!data?.score) {
           setScore(null);
@@ -322,8 +520,8 @@ export const useBaseballGameDetails = (
           return;
         }
 
-        setScore(data.score as Score);
-        setDetails((data.details ?? null) as GameDetails | null);
+        setScore(data.score);
+        setDetails(data.details ?? null);
         setLastRefresh(new Date());
       } catch (err: any) {
         console.warn(`[${league}] game details fetch failed`, err);

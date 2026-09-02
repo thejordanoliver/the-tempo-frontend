@@ -8,7 +8,7 @@ import {
   ScaleDecorator,
   type RenderItemParams,
 } from "react-native-draggable-flatlist";
-import { favoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
+import { FavoritesScrollStyles } from "styles/HomeStyles/FavoritesScrollStyles";
 import type { FavoriteItem } from "types/favorites";
 import {
   getFavoriteTeamLogo,
@@ -22,7 +22,7 @@ export function FavoritesTab({
   isActive,
 }: RenderItemParams<FavoriteItem>) {
   const router = useRouter();
-  const styles = favoritesScrollStyles(item.isDark);
+  const styles = FavoritesScrollStyles(item.isDark);
   const isTeam = item.kind === "team";
   const logo = isTeam ? getFavoriteTeamLogo(item) : item.logo;
   const collegeLeague =

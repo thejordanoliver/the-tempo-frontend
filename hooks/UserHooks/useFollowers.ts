@@ -14,7 +14,6 @@ export type User = {
   full_name: string;
   banner_image: string;
   bio?: string | null;
-  favorites?: string[];
   followers_count?: number;
   isFollowing: boolean;
   followsYou?: boolean;

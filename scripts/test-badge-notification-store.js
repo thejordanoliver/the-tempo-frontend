@@ -413,7 +413,7 @@ function testNotificationSocketSingleton() {
 
   assert.equal(firstSocket.url, "http://localhost:4011/notifications");
   assert.equal(firstSocket.options.auth.token, "token-a");
-  assert.equal(firstSocket.options.reconnection, true);
+  assert.equal(firstSocket.options.reconnection, false);
   assertArrayEqual(firstSocket.options.transports, ["websocket", "polling"]);
   assert.equal(sockets.length, 1);
 

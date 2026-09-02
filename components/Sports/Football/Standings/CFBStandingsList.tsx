@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Dropdown } from "components/Dropdown";
 import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { getCFBTeamByESPNId, getCFBTeamLogo } from "constants/teamsCFB";
+import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
@@ -43,6 +43,7 @@ export const CFBStandingsList = () => {
   const { rankings, loading, error, refresh } = useCFBRankings();
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
+  console.log(rankings)
 
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
@@ -87,7 +88,7 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCFBTeamByESPNId(item.team?.id ?? "");
+    const team = getCFBTeam(item.team?.id ?? "");
     const teamId = team?.id ?? 0;
     const teamLogo = getCFBTeamLogo(teamId, isDark);
     const teamCode =
@@ -99,7 +100,7 @@ export const CFBStandingsList = () => {
     const trendNum = Number(item.trend);
     const hasTrend = Number.isFinite(trendNum) && trendNum !== 0;
     const isUp = trendNum > 0;
-    const favorited = team ? isFavorite("CFB", team.id) : false;
+    const favorited = team ? isFavorite("cfb", team.id) : false;
 
     const trendColor = isUp
       ? isDark
@@ -192,8 +193,8 @@ export const CFBStandingsList = () => {
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
-    const team = getCFBTeamByESPNId(item.team?.id ?? "");
-    const favorited = team ? isFavorite("CFB", team.id) : false;
+    const team = getCFBTeam(item.team?.id ?? "");
+    const favorited = team ? isFavorite("cfb", team.id) : false;
 
     return (
       <View
@@ -283,7 +284,7 @@ export const CFBStandingsList = () => {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {droppedOutTeams.map((item, index) => {
-            const team = getCFBTeamByESPNId(item.team?.id ?? "");
+            const team = getCFBTeam(item.team?.id ?? "");
             const teamName =
               team?.shortName || team?.name || item.team?.abbreviation || "N/A";
             return (

@@ -20,13 +20,7 @@ interface User {
   profileImage?: string | null;
   profile_image?: string | null;
   banner_image?: string | null;
-  favorites?: string[];
 }
-
-const LEGACY_FAVORITES_KEY = "favorites";
-
-const getFavoritesStorageKey = (userId: number | string) =>
-  `favoriteTeams:${userId}`;
 
 const normalizeImage = (value?: string | null): string | null => {
   if (!value || value === "null" || value === "undefined") return null;
@@ -44,17 +38,6 @@ const normalizeCachedAuthUser = (user: User) => ({
   fullName: normalizeString(user.full_name ?? user.fullName),
   profileImage: normalizeImage(user.profile_image ?? user.profileImage) ?? "",
 });
-
-const parseFavorites = (value: string | null): string[] => {
-  if (!value) return [];
-
-  try {
-    const parsed = JSON.parse(value);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
 
 const loadStoredAuthSnapshot = async (): Promise<{
   accessToken: string;
@@ -84,10 +67,6 @@ const loadStoredAuthSnapshot = async (): Promise<{
     return null;
   }
 
-  const storedFavorites = await AsyncStorage.getItem(
-    getFavoritesStorageKey(stored.userId),
-  );
-
   return {
     accessToken: stored.accessToken,
     user: {
@@ -97,7 +76,6 @@ const loadStoredAuthSnapshot = async (): Promise<{
       bio: stored.bio ?? "",
       profile_image: normalizeImage(stored.profileImage),
       banner_image: normalizeImage(stored.bannerImage),
-      favorites: parseFavorites(storedFavorites),
     },
   };
 };
@@ -183,11 +161,8 @@ export function useAuth() {
         normalizeImage(user.profile_image ?? user.profileImage) ?? "",
       ],
       ["bannerImage", normalizeImage(user.banner_image) ?? ""],
-      [getFavoritesStorageKey(user.id), JSON.stringify(user.favorites ?? [])],
       ["authUser", JSON.stringify(normalizeCachedAuthUser(user))],
     ]);
-
-    await AsyncStorage.removeItem(LEGACY_FAVORITES_KEY);
 
     await saveTokens(accessToken, refreshToken);
   };

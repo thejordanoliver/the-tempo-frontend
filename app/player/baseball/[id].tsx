@@ -68,11 +68,7 @@ export default function PlayerDetailScreen() {
   const teamLogo = getMLBTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
 
-  const {
-    player,
-    loading: playerLoading,
-    error: playerError,
-  } = usePlayerById(playerId, league);
+  const { player, loading, error } = usePlayerById(playerId, league);
 
   const {
     data: seasons,
@@ -90,9 +86,7 @@ export default function PlayerDetailScreen() {
     error: gameError,
   } = useTeamLatestGame(league, teamId);
 
-  // -------------------------
-  // Header
-  // -------------------------
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -106,18 +100,19 @@ export default function PlayerDetailScreen() {
       ),
     });
   }, [navigation, teamLogo, teamColor]);
+  
 
-  if (playerLoading || !player || gameLoading)
+  if (loading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
 
-  if (playerError || !player)
+  if (error || !player)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{playerError}</Text>
+        <Text style={global.errorText}>{error}</Text>
       </View>
     );
   /* -------------------------

@@ -7,10 +7,10 @@ import {
   MatchupPredictor,
 } from "@/components/Sports/Basketball/GameDetails";
 import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
-import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
 import LastFiveGames, {
   LastFiveGame,
 } from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+import GameLeaders from "@/components/Sports/Basketball/GameDetails/Leaders";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Coach } from "@/hooks/useTeams";

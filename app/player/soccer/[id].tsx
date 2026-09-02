@@ -75,9 +75,7 @@ export default function PlayerDetailScreen() {
     setSelectedCompetition(competition);
   }, []);
 
-  // -------------------------
-  // Header
-  // -------------------------
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (

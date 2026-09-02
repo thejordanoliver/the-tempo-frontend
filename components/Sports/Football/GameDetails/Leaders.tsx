@@ -20,7 +20,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { LeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const GAME_CATEGORIES = [
   "Passing",
@@ -342,7 +342,7 @@ function Stat({
   value: string | number;
   isDark: boolean;
 }) {
-  const styles = gameLeadersStyles(isDark);
+  const styles = LeadersStyles(isDark);
 
   return (
     <View style={{ marginRight: 12 }}>
@@ -400,7 +400,7 @@ export default function GameLeaders({
   loading = false,
   error = false,
 }: Props) {
-  const styles = gameLeadersStyles(isDark);
+  const styles = LeadersStyles(isDark);
   const global = globalStyles(isDark);
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");

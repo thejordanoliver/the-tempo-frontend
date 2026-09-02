@@ -3,7 +3,7 @@ import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import { calculateAge, formatBirth } from "utils/dateUtils";
 
-type BasketballLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+export type BasketballLeague = "nba" | "wnba" | "cbb" | "wcbb";
 
 type Props = {
   player: Player;
@@ -14,14 +14,14 @@ type Props = {
 export default function PlayerHeader({
   player,
   isDark,
-  league = "NBA",
+  league = "nba",
 }: Props) {
   const styles = playerHeaderStyles(isDark);
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
 
-  const isNBA = league === "NBA"
-  const isWNBA = league === "WNBA"
+  const isNBA = league === "nba"
+  const isWNBA = league === "nba"
 
   const experience =
     player.experience === 0

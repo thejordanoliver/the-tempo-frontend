@@ -1,10 +1,11 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
+import Leaders from "@/components/Sports/Football/GameDetails/Leaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
@@ -22,7 +23,6 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
-import { useLastFiveGames } from "hooks/FootballHooks/useLastFiveGames";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
@@ -31,7 +31,6 @@ import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScre
 import {
   formatDate,
   formatTime,
-  getFootballSeason,
   getHolidayLabel,
   safeDate,
   shouldShowGameChat,
@@ -110,10 +109,9 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const currentSeason = getFootballSeason();
   const LEAGUE = game?.league?.code ?? "nfl";
   const isCFB = LEAGUE === "cfb";
-  const isNFL = LEAGUE === "ufl";
+  const isNFL = LEAGUE === "nfl";
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
@@ -133,39 +131,38 @@ export default function GameDetailsScreen(
   const awayId = away?.id ?? 0;
 
   const homeTeam = isNFL
-    ? getUFLTeam(homeId)
+    ? getNFLTeam(homeId)
     : isCFB
       ? getCFBTeam(homeId)
-      : getNFLTeam(homeId);
+      : getUFLTeam(homeId);
 
   const awayTeam = isNFL
-    ? getUFLTeam(awayId)
+    ? getNFLTeam(awayId)
     : isCFB
       ? getCFBTeam(awayId)
-      : getNFLTeam(awayId);
+      : getUFLTeam(awayId);
 
-const homeLogo = isNFL
-  ? getNFLTeamLogo(homeId, isDark)
-  : isCFB
-    ? getCFBTeamLogo(homeId, isDark)
-    : getUFLTeamLogo(homeId, isDark);
-const awayLogo = isNFL
-  ? getNFLTeamLogo(awayId, isDark)
-  : isCFB
-    ? getCFBTeamLogo(awayId, isDark)
-    : getUFLTeamLogo(awayId, isDark);
+  const homeLogo = isNFL
+    ? getNFLTeamLogo(homeId, isDark)
+    : isCFB
+      ? getCFBTeamLogo(homeId, isDark)
+      : getUFLTeamLogo(homeId, isDark);
+  const awayLogo = isNFL
+    ? getNFLTeamLogo(awayId, isDark)
+    : isCFB
+      ? getCFBTeamLogo(awayId, isDark)
+      : getUFLTeamLogo(awayId, isDark);
 
-const homeHeaderLogo = isNFL
-  ? getNFLTeamLogo(homeId, true)
-  : isCFB
-    ? getCFBTeamLogo(homeId, true)
-    : getUFLTeamLogo(homeId, true);
-
-const awayHeaderLogo = isNFL
-  ? getNFLTeamLogo(awayId, true)
-  : isCFB
-    ? getCFBTeamLogo(awayId, true)
-    : getUFLTeamLogo(awayId, true);
+  const homeHeaderLogo = isNFL
+    ? getNFLTeamLogo(homeId, true)
+    : isCFB
+      ? getCFBTeamLogo(homeId, true)
+      : getUFLTeamLogo(homeId, true);
+  const awayHeaderLogo = isNFL
+    ? getNFLTeamLogo(awayId, true)
+    : isCFB
+      ? getCFBTeamLogo(awayId, true)
+      : getUFLTeamLogo(awayId, true);
 
   const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
   const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
@@ -178,8 +175,8 @@ const awayHeaderLogo = isNFL
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
   const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
-  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
-  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
+  const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
@@ -476,7 +473,7 @@ const awayHeaderLogo = isNFL
               isDark={isDark}
             />
 
-            <GameLeaders
+            <Leaders
               leaders={leaders}
               awayId={awayId}
               homeId={homeId}

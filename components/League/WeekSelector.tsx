@@ -36,7 +36,7 @@ export type FootballWeekGroup = {
 type Props = {
   groups: FootballWeekGroup[];
   loading: boolean;
-  selectedWeekIndex?: number;
+  selectedWeekIndex: number | null;
   onSelectWeek: (index: number) => void;
   isDark: boolean;
   containerStyle?: ViewStyle;
@@ -48,7 +48,7 @@ const SIDE_PADDING = 12;
 const ITEM_SPACING = 0;
 const ITEM_HEIGHT = 32;
 
-function getWeekLabel(group: FootballWeekGroup) {
+function getWeekLabel(group: FootballWeekGroup): string {
   const label = group.label || "";
   const weekNumber = group.week?.number;
 
@@ -86,7 +86,7 @@ function getWeekLabel(group: FootballWeekGroup) {
 export default function WeekSelector({
   groups,
   loading,
-  selectedWeekIndex = 0,
+  selectedWeekIndex,
   onSelectWeek,
   isDark,
   containerStyle,
@@ -95,25 +95,35 @@ export default function WeekSelector({
   const styles = WeekSelectorStyles(isDark, itemWidth);
 
   const scrollViewRef = useRef<ScrollView>(null);
+
   const indicatorX = useRef(new Animated.Value(0)).current;
 
   const [containerWidth, setContainerWidth] = useState(0);
 
   const itemStep = itemWidth + ITEM_SPACING;
 
-  const safeSelectedIndex = useMemo(() => {
-    if (!groups.length) return 0;
+  /**
+   * null means the parent has not resolved the active week yet.
+   *
+   * Do not convert null to 0 here because index 0 may be HOF Week.
+   */
+  const safeSelectedIndex = useMemo<number | null>(() => {
+    if (selectedWeekIndex == null || !groups.length) {
+      return null;
+    }
 
     return Math.min(Math.max(selectedWeekIndex, 0), groups.length - 1);
   }, [groups.length, selectedWeekIndex]);
 
-  const onLayoutContainer = (event: LayoutChangeEvent) => {
+  const onLayoutContainer = useCallback((event: LayoutChangeEvent) => {
     setContainerWidth(event.nativeEvent.layout.width);
-  };
+  }, []);
 
   const computeScrollOffset = useCallback(
-    (index: number) => {
-      if (!containerWidth || !groups.length) return 0;
+    (index: number): number => {
+      if (!containerWidth || !groups.length) {
+        return 0;
+      }
 
       const targetOffset =
         SIDE_PADDING + index * itemStep - containerWidth / 2 + itemWidth / 2;
@@ -142,19 +152,42 @@ export default function WeekSelector({
     [computeScrollOffset, onSelectWeek],
   );
 
+  /**
+   * Move the selected pill only after a real selected week exists.
+   */
   useEffect(() => {
-    if (!groups.length) return;
+    if (safeSelectedIndex == null || !groups.length) {
+      return;
+    }
 
-    Animated.spring(indicatorX, {
+    const animation = Animated.spring(indicatorX, {
       toValue: safeSelectedIndex * itemStep,
       useNativeDriver: true,
       tension: 90,
       friction: 12,
-    }).start();
+    });
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
   }, [safeSelectedIndex, itemStep, groups.length, indicatorX]);
 
+  /**
+   * Keep the selected week centered.
+   *
+   * This intentionally does nothing while selectedWeekIndex is null.
+   */
   useEffect(() => {
-    if (!scrollViewRef.current || !containerWidth || !groups.length) return;
+    if (
+      safeSelectedIndex == null ||
+      !scrollViewRef.current ||
+      !containerWidth ||
+      !groups.length
+    ) {
+      return;
+    }
 
     scrollViewRef.current.scrollTo({
       x: computeScrollOffset(safeSelectedIndex),
@@ -180,18 +213,25 @@ export default function WeekSelector({
         decelerationRate="fast"
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Animated.View
-          pointerEvents="none"
-          style={[
-            styles.slidingSelectedContainer,
-            {
-              transform: [{ translateX: indicatorX }],
-            },
-          ]}
-        />
+        {safeSelectedIndex != null ? (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.slidingSelectedContainer,
+              {
+                transform: [
+                  {
+                    translateX: indicatorX,
+                  },
+                ],
+              },
+            ]}
+          />
+        ) : null}
 
         {groups.map((group, index) => {
-          const isSelected = index === safeSelectedIndex;
+          const isSelected =
+            safeSelectedIndex != null && index === safeSelectedIndex;
 
           return (
             <TouchableOpacity
@@ -219,11 +259,13 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
     wrapper: {
       marginVertical: 8,
     },
+
     contentContainerStyle: {
       position: "relative",
       alignItems: "center",
       paddingHorizontal: SIDE_PADDING,
     },
+
     slidingSelectedContainer: {
       position: "absolute",
       top: 0,
@@ -236,8 +278,9 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
-        overflow: "hidden",
+      overflow: "hidden",
     },
+
     label: {
       zIndex: 2,
       alignItems: "center",
@@ -247,12 +290,14 @@ const WeekSelectorStyles = (isDark: boolean, itemWidth: number) =>
       padding: 4,
       borderRadius: 8,
     },
+
     monthText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
+
     monthTextSelected: {
       fontFamily: Fonts.MEDIUM,
       fontSize: 16,

@@ -25,9 +25,7 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const global = globalStyles(isDark);
   const navigation = useNavigation();
-
   const playerId = Number(id);
-
   const { player, loading, error } = usePlayerById(playerId, league);
 
   const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
@@ -45,9 +43,7 @@ export default function PlayerDetailScreen() {
   const teamLogo = getNHLTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
 
-  // -------------------------
-  // Header
-  // -------------------------
+  /* ---------------- Header ---------------- */
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -85,7 +81,7 @@ export default function PlayerDetailScreen() {
         loading={gameLoading}
         error={gameError}
         isDark={isDark}
-        league={"NHL"}
+        league={league}
       />
 
       <PlayerStatTable

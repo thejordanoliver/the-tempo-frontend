@@ -39,7 +39,7 @@ type Props = {
   isCBB: boolean;
   isWCBB: boolean;
   isWNBA: boolean;
-  isGLEAGUE: boolean;
+  isGLEAGUE?: boolean;
 };
 
 export default function GamePreviewModal({

@@ -63,6 +63,7 @@ import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standing
 import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
@@ -133,6 +134,7 @@ export default function BasketballLeagueScreen() {
 
 function NBALeagueScreen() {
   const league = "nba";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -325,10 +327,11 @@ function NBALeagueScreen() {
           tabName={league.toUpperCase()}
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [league, navigation]);
+  }, [favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -540,6 +543,7 @@ function NBALeagueScreen() {
 
 function WNBALeagueScreen() {
   const league = "wnba";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -638,10 +642,11 @@ function WNBALeagueScreen() {
           tabName={league.toUpperCase()}
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [league, navigation]);
+  }, [favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -821,6 +826,7 @@ function WNBALeagueScreen() {
 
 function GLeagueScreen() {
   const league = "gleague";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -908,10 +914,11 @@ function GLeagueScreen() {
           tabName={"NBA G League"}
           league={league}
           onBack={goBack}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [league, navigation]);
+  }, [favoriteHeaderProps, league, navigation]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Handlers                                  */
@@ -1063,6 +1070,7 @@ function GLeagueScreen() {
 /* ========================================================================== */
 function CBBLeagueScreen() {
   const league = "cbb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
@@ -1245,10 +1253,17 @@ function CBBLeagueScreen() {
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
           selectedConferenceName={selectedConferenceName}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
+  }, [
+    favoriteHeaderProps,
+    isConferenceModalOpen,
+    league,
+    navigation,
+    selectedConferenceName,
+  ]);
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
   /* ------------------------------------------------------------------------ */
@@ -1446,6 +1461,7 @@ function CBBLeagueScreen() {
 
 function WCBBLeagueScreen() {
   const league = "wcbb";
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const currentSeason = getCBBSeason();
 
   const navigation = useNavigation();
@@ -1621,10 +1637,17 @@ function WCBBLeagueScreen() {
           setModalVisible={setIsConferenceModalOpen}
           onOpenLeagueModal={() => conferenceModalRef.current?.present()}
           selectedConferenceName={selectedConferenceName}
+          {...favoriteHeaderProps}
         />
       ),
     });
-  }, [isConferenceModalOpen, league, navigation, selectedConferenceName]);
+  }, [
+    favoriteHeaderProps,
+    isConferenceModalOpen,
+    league,
+    navigation,
+    selectedConferenceName,
+  ]);
   /* ------------------------------------------------------------------------ */
   /*                                 Handlers                                 */
   /* ------------------------------------------------------------------------ */

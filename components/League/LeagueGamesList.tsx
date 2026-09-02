@@ -18,7 +18,7 @@ import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard"
 import BaseballSquareGameCard from "components/Sports/Baseball/Games/BaseballSquareGameCard";
 import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballStackedGameCard";
 import * as Haptics from "expo-haptics";
-import { useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { FlatList, SectionList, View, type ViewStyle } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
@@ -28,6 +28,7 @@ import HeadingTwo from "../Headings/HeadingTwo";
 import SquareGameCardSkeleton from "../Skeletons/GameCards/SquareGameCardSkeleton";
 import HeaderSkeleton from "../Skeletons/HeaderSkeleton";
 import BasketballGamePreviewModal from "../Sports/Basketball/GamePreview/BasketballGamePreviewModal";
+import ChampionshipGameCard from "../Sports/Basketball/Games/ChampionshipGameCard";
 import FootballGamePreviewModal from "../Sports/Football/GamePreview/FootballGamePreviewModal";
 import FootballSquareGameCard from "../Sports/Football/Games/FootballSquareGameCard";
 import NHLGamePreviewModal from "../Sports/Hockey/GamePreview/HockeyGamePreviewModal";
@@ -68,6 +69,16 @@ type LeagueGamesListProps = {
   viewMode: "list" | "grid" | "stacked";
 };
 
+const isChampionshipGame = (item: HomeGameItem): boolean => {
+  const headline = item.game?.headline || "";
+  return (
+    headline.includes("NBA Finals") ||
+    headline.includes("Finals") ||
+    headline.includes("Championship") ||
+    headline.includes("Final")
+  );
+};
+
 export default function LeagueGamesList({
   sections,
   loading,
@@ -79,6 +90,36 @@ export default function LeagueGamesList({
   const styles = leagueGamesListStyles(isDark);
   const [previewItem, setPreviewItem] = useState<HomeGameItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Separate championship games from regular games
+  const { championshipGames, regularSections } = useMemo(() => {
+    const champs: HomeGameItem[] = [];
+    const regular: HomeGameSection[] = [];
+
+    for (const section of sections) {
+      const regularInSection: HomeGameItem[] = [];
+
+      for (const item of section.data) {
+        if (isChampionshipGame(item)) {
+          champs.push(item);
+        } else {
+          regularInSection.push(item);
+        }
+      }
+
+      if (regularInSection.length > 0) {
+        regular.push({
+          ...section,
+          data: regularInSection,
+        });
+      }
+    }
+
+    return {
+      championshipGames: champs,
+      regularSections: regular,
+    };
+  }, [sections]);
 
   const handleLongPress = (item: HomeGameItem) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -141,10 +182,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BasketballGameCard game={game} isCBB />);
         if (viewMode === "grid")
-          return wrapper(
-            <BasketballSquareGameCard game={game} isCBB />,
-            index,
-          );
+          return wrapper(<BasketballSquareGameCard game={game} isCBB />, index);
         return wrapper(<BasketballStackedGameCard game={game} isCBB />);
       }
 
@@ -217,9 +255,7 @@ export default function LeagueGamesList({
             <NHLGameSquareCard game={game} isNHL isMCH={false} />,
             index,
           );
-        return wrapper(
-          <NHLStackedGameCard game={game} isNHL isMCH={false} />,
-        );
+        return wrapper(<NHLStackedGameCard game={game} isNHL isMCH={false} />);
       }
 
       case "mls":
@@ -230,8 +266,7 @@ export default function LeagueGamesList({
       case "leaguescup":
       case "epl": {
         const game = item.game as SoccerGame;
-        if (viewMode === "list")
-          return wrapper(<SoccerGameCard game={game} />);
+        if (viewMode === "list") return wrapper(<SoccerGameCard game={game} />);
         if (viewMode === "grid")
           return wrapper(<SoccerSquareGameCard game={game} />, index);
         return wrapper(<SoccerStackedGameCard game={game} />);
@@ -326,12 +361,64 @@ export default function LeagueGamesList({
     );
   }
 
-  const visibleSections = sections.filter((section) => section.data.length > 0);
+  const visibleSections = regularSections.filter(
+    (section) => section.data.length > 0,
+  );
   const previewLeague = previewItem?.league;
   const previewGame = previewItem?.game;
 
   return (
     <>
+      {/* Championship Games Section */}
+      {championshipGames.length > 0 && (
+        <View style={{ marginTop: 4, marginBottom: 4 }}>
+          {championshipGames.map((game) => (
+            <LongPressGestureHandler
+              key={game.key}
+              minDurationMs={300}
+              onHandlerStateChange={({ nativeEvent }) => {
+                if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+              }}
+            >
+              <View>
+                {game.league && BASKETBALL_LEAGUES.has(game.league) && (
+                  <ChampionshipGameCard
+                    game={game.game as BasketballGame}
+                    isCBB={game.league === "cbb"}
+                    isWCBB={game.league === "wcbb"}
+                    isWNBA={game.league === "wnba"}
+                    isSL={false}
+                    isGLEAGUE={false}
+                  />
+                )}
+                {game.league === "nfl" ||
+                  (game.league === "cfb" && (
+                    <ChampionshipGameCard
+                      game={game.game}
+                      isCBB={false}
+                      isWCBB={false}
+                      isWNBA={false}
+                      isSL={false}
+                      isGLEAGUE={false}
+                    />
+                  ))}
+                {game.league === "mlb" && (
+                  <ChampionshipGameCard
+                    game={game.game}
+                    isCBB={false}
+                    isWCBB={false}
+                    isWNBA={false}
+                    isSL={false}
+                    isGLEAGUE={false}
+                  />
+                )}
+              </View>
+            </LongPressGestureHandler>
+          ))}
+        </View>
+      )}
+
+      {/* Regular Games Section */}
       <SectionList<HomeGameItem, HomeGameSection>
         sections={visibleSections}
         keyExtractor={(item) => item.key}

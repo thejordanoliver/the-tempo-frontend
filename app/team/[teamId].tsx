@@ -55,7 +55,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 }
 
 export default function TeamDetailScreen() {
-  const league = "NBA";
+  const league = "nba";
   const currentSeason = getNBASeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

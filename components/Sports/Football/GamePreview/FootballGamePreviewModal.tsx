@@ -4,8 +4,8 @@ import { Colors } from "@/constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
-import { useLastFiveGames } from "@/hooks/FootballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
@@ -24,7 +24,6 @@ import { Text, View } from "react-native";
 import {
   formatDate,
   formatTime,
-  getFootballSeason,
   getHolidayLabel,
   safeDate,
 } from "utils/dateUtils";
@@ -50,7 +49,7 @@ export default function FootballGamePreviewModal({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const currentSeason = getFootballSeason();
+
   const sheetRef = useRef<BottomSheetModal>(null);
   useEffect(() => {
     if (!sheetRef.current) return;
@@ -127,8 +126,8 @@ export default function FootballGamePreviewModal({
   const awayName = awayTeam?.fullName ?? "";
 
   const { score, details } = useFootballGameDetails(LEAGUE, gameId);
-  const homeLastGames = useLastFiveGames(homeId, LEAGUE, currentSeason).games;
-  const awayLastGames = useLastFiveGames(awayId, LEAGUE, currentSeason).games;
+  const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
+  const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);

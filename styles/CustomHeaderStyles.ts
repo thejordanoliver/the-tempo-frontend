@@ -81,6 +81,12 @@ export const customHeaderStyles = (isDark: boolean) =>
       fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: Colors.white,
+      textShadowColor: "rgba(0,0,0,0.5)",
+      textShadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      textShadowRadius: 4,
     },
 
     teamCodeRow: {
@@ -98,117 +104,12 @@ export const customHeaderStyles = (isDark: boolean) =>
       fontFamily: Fonts.BOLD,
       fontSize: 24,
       color: Colors.white,
-    },
-
-    racingHeader: {
-      zIndex: -10,
-      backgroundColor: Colors.black,
-      overflow: "hidden",
-    },
-
-    racingAccent: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      zIndex: 3,
-      width: 5,
-    },
-
-    racingHeaderContent: {
-      ...StyleSheet.absoluteFillObject,
-      zIndex: 2,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: 54,
-    },
-
-    racingCodeRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginRight: 10,
-    },
-
-    racingCode: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: Colors.white,
-    },
-
-    racingTextWrapper: {
-      flexShrink: 1,
-      alignItems: "flex-start",
-      justifyContent: "center",
-    },
-
-    racingSeriesLabel: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 8,
-      letterSpacing: 1.1,
-      color: "rgba(255,255,255,0.72)",
-    },
-
-    racingEventTitle: {
-      maxWidth: HEADER_WIDTH * 0.48,
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: Colors.white,
-    },
-
-    racingLogoWrapper: {
-      position: "absolute",
-      top: -26,
-      right: 34,
-      zIndex: 1,
-      width: 116,
-      height: 116,
-      opacity: 0.18,
-    },
-
-    racingLogo: {
-      width: "100%",
-      height: "100%",
-    },
-
-    racingLargeText: {
-      position: "absolute",
-      right: -4,
-      bottom: -22,
-      zIndex: 1,
-      opacity: 0.09,
-      fontFamily: Fonts.BOLD,
-      fontSize: 70,
-      lineHeight: 78,
-      letterSpacing: -3,
-    },
-
-    racingCheckeredPattern: {
-      position: "absolute",
-      top: -14,
-      right: -12,
-      flexDirection: "row",
-      flexWrap: "wrap",
-      width: 108,
-      opacity: 0.08,
-      transform: [
-        {
-          rotate: "12deg",
-        },
-      ],
-    },
-
-    racingCheckeredCell: {
-      width: 18,
-      height: 18,
-    },
-
-    racingCheckeredCellFilled: {
-      backgroundColor: Colors.white,
-    },
-
-    racingCheckeredCellEmpty: {
-      backgroundColor: "transparent",
+      textShadowColor: "rgba(0,0,0,0.55)",
+      textShadowOffset: {
+        width: 0,
+        height: 1,
+      },
+      textShadowRadius: 4,
     },
 
     messageHeaderContainer: {

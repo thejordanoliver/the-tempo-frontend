@@ -1,4 +1,5 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
+import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -16,7 +17,6 @@ import { ScrollView, View } from "react-native";
 import CustomActivityIndicator from "../../../components/CustomActivityIndicator";
 import { CustomHeader } from "../../../components/CustomHeader";
 import GameHeader from "../../../components/Sports/Baseball/GameDetails/GameHeader";
-import LastPlay from "../../../components/Sports/Baseball/GameDetails/LastPlay";
 import {
   FanPrediction,
   GameLiveChatOverlay,
@@ -35,13 +35,17 @@ import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "../../../constants/teamsSB";
 import { usePreferences } from "../../../contexts/PreferencesContext";
-import { useBaseballGameDetails } from "../../../hooks/BaseballHooks/useBaseballGameDetails";
+import {
+  type BaseballPlay,
+  useBaseballGameDetails,
+} from "../../../hooks/BaseballHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "../../../hooks/BaseballHooks/useLastFiveGames";
 import { useScrollFade } from "../../../hooks/useScrollFade";
 import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "../../../types/baseball/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
+import Leaders from "@/components/Sports/Baseball/GameDetails/Leaders";
 
 type RouteParams = {
   game?: string | string[];
@@ -239,9 +243,18 @@ export default function GameDetailsScreen(
   const awayRecord = away?.record ?? "0—0";
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
-  const lastPlay = score?.lastPlay;
+  const plays = score?.plays ?? [];
+  const situation = score?.situation ?? null;
+  const fieldPlay = useMemo<BaseballPlay | null>(() => {
+    const plays = score?.plays ?? [];
+
+    return (
+      score?.lastPlay ?? (plays.length > 0 ? plays[plays.length - 1] : null)
+    );
+  }, [score?.lastPlay, score?.plays]);
 
   const teamStats = score?.teamStats ?? [];
+  const leaders = score?.leaders ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];
@@ -367,12 +380,19 @@ export default function GameDetailsScreen(
 
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
-            <LastPlay
-              lastPlay={lastPlay}
-              homeId={homeId}
-              awayId={awayId}
-              state={state}
-              league={LEAGUE}
+            <PlayByPlay
+              width={420}
+              awayCode={awayCode}
+              homeCode={homeCode}
+              venueId={venueId}
+              awayLogo={awayLogo}
+              homeLogo={homeLogo}
+              awayTeamId={awayId}
+              homeTeamId={homeId}
+              play={fieldPlay}
+              plays={plays}
+              situation={situation}
+              isDark={isDark}
             />
 
             <FanPrediction
@@ -436,6 +456,16 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
+            <Leaders
+              leaders={leaders}
+              homeId={homeId}
+              homeLogo={homeLogo}
+              awayId={awayId}
+              awayLogo={awayLogo}
+              state={state}
+              isDark={isDark}
+            />
+
             <BoxScore
               awayTeamId={awayId}
               homeTeamId={homeId}
@@ -485,11 +515,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <Officials
-              officials={officials ?? []}
-              isDark={isDark}
-              state={state}
-            />
+            <Officials officials={officials} isDark={isDark} state={state} />
 
             <GameLocation
               venueImage={venueImage}

@@ -1,7 +1,7 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const gameLeadersStyles = (isDark: boolean) =>
+export const LeadersStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       gap: 10,

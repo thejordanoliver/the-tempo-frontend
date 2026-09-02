@@ -265,7 +265,7 @@ export type PlayerLeaders = {
   leaders: PlayerLeader[];
 };
 
-export type Leaders = {
+export type LeadersType = {
   team: StatsTeam;
   leaders: PlayerLeaders[];
 };
@@ -308,7 +308,7 @@ export type Score = {
   lastPlay: Play;
   teamStats: TeamStats;
   playerStats: PlayerStats;
-  leaders: Leaders[];
+  leaders: LeadersType[];
   foulTrouble?: FoulTrouble[];
 };
 

@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useCallback, useMemo, useState } from "react";
+import { buildFavoriteTeamKey } from "types/favorites";
 import { isGameLive, normalizeGames } from "utils/games";
 import { useBaseballGames } from "../BaseballHooks/useBaseballGames";
 import { useBasketballGames } from "../BasketballHooks/useBasketballGames";
@@ -464,10 +465,12 @@ export function useLeagueData() {
     (g: any, prefix: string) => {
       const homeId = g?.home?.id;
       const awayId = g?.away?.id;
+      const homeKey = buildFavoriteTeamKey(prefix, homeId);
+      const awayKey = buildFavoriteTeamKey(prefix, awayId);
 
       return (
-        (homeId && favorites.includes(`${prefix}:${String(homeId)}`)) ||
-        (awayId && favorites.includes(`${prefix}:${String(awayId)}`))
+        (homeKey !== null && favorites.includes(homeKey)) ||
+        (awayKey !== null && favorites.includes(awayKey))
       );
     },
     [favorites],

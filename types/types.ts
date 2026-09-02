@@ -226,7 +226,7 @@ export type AwardSeason = {
 export const AWARD_CONFIG: Partial<
   Record<string, { label: string; value: AwardCategory; title: string }[]>
 > = {
-  NBA: [
+  nba: [
     { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NBA MVP" },
     { label: "ROTY", value: "roy", title: "NBA Rookie of the Year" },
@@ -237,7 +237,7 @@ export const AWARD_CONFIG: Partial<
     { label: "FMVP", value: "fmvp", title: "NBA Finals MVP" },
   ],
 
-  WNBA: [
+  wnba: [
     { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "WNBA MVP" },
     { label: "ROTY", value: "roy", title: "WNBA Rookie of the Year" },
@@ -251,7 +251,7 @@ export const AWARD_CONFIG: Partial<
     { label: "MIP", value: "mip", title: "WNBA Most Improved Player" },
   ],
 
-  CFB: [
+  cfb: [
     { label: "All Awards", value: "all", title: "" },
     { label: "Heisman Trophy", value: "heisman", title: "Heisman Trophy" },
     {
@@ -312,7 +312,7 @@ export const AWARD_CONFIG: Partial<
     },
   ],
 
-  CBB: [
+  cbb: [
     { label: "All Awards", value: "all", title: "" },
     {
       label: "Men's AP Player of the Year",
@@ -355,7 +355,7 @@ export const AWARD_CONFIG: Partial<
       title: "Men's Wooden Award",
     },
   ],
-  WCBB: [
+  wcbb: [
     { label: "All Awards", value: "all", title: "" },
     {
       label: "Women's AP Player of the Year",
@@ -389,7 +389,7 @@ export const AWARD_CONFIG: Partial<
       title: "Women's Wooden Award",
     },
   ],
-  NFL: [
+  nfl: [
     { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NFL Most Valuable Player" },
     {
@@ -410,7 +410,7 @@ export const AWARD_CONFIG: Partial<
       title: "NFL Coach of the Year",
     },
   ],
-  NHL: [
+  nhl: [
     { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "NHL Most Valuable Player" },
     {
@@ -429,7 +429,7 @@ export const AWARD_CONFIG: Partial<
       title: "NHL Coach of the Year",
     },
   ],
-  MLB: [
+  mlb: [
     { label: "All Awards", value: "all", title: "" },
     { label: "MVP", value: "mvp", title: "MLB Most Valuable Player" },
     {

@@ -1,4 +1,7 @@
-import { Play } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import type {
+  BaseballPlay,
+  BaseballPlayParticipant,
+} from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
@@ -7,11 +10,11 @@ import { Image, Text, View } from "react-native";
 import { lastPlayStyles } from "styles/GameDetailStyles/LastPlay.styles";
 
 type LastPlayProps = {
-  lastPlay?: Play;
-  homeId: number;
-  awayId: number;
+  lastPlay?: BaseballPlay | null;
+  homeId?: number;
+  awayId?: number;
   state?: string | null;
-  league: string;
+  league?: string;
 };
 
 type LastPlayAthlete = {
@@ -22,19 +25,6 @@ type LastPlayAthlete = {
   jersey?: string;
   teamId?: string;
 };
-
-type PlayParticipant = {
-  athlete?: {
-    id?: string | number | null;
-    name?: string | null;
-    headshot?: string | null;
-    position?: string | null;
-    jersey?: string | number | null;
-  } | null;
-  teamId?: string | number | null;
-};
-
-type StructuredPlay = Exclude<Play, string>;
 
 const DEFAULT_HEADSHOT =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781892365/playerPlaceholder_vi9zk3.png";
@@ -50,7 +40,7 @@ const normalizeValue = (
 };
 
 const participantsToAthletes = (
-  participants?: PlayParticipant[],
+  participants?: BaseballPlayParticipant[],
 ): LastPlayAthlete[] => {
   if (!participants?.length) {
     return [];
@@ -58,14 +48,27 @@ const participantsToAthletes = (
 
   return participants
     .filter((participant) => participant?.athlete)
-    .map((participant) => ({
-      id: normalizeValue(participant.athlete?.id),
-      name: normalizeValue(participant.athlete?.name),
-      headshot: normalizeValue(participant.athlete?.headshot),
-      position: normalizeValue(participant.athlete?.position),
-      jersey: normalizeValue(participant.athlete?.jersey),
-      teamId: normalizeValue(participant.teamId),
-    }));
+    .map((participant) => {
+      const athlete = participant.athlete;
+      const fullName = [athlete.firstName, athlete.lastName]
+        .filter(Boolean)
+        .join(" ")
+        .trim();
+
+      return {
+        id: normalizeValue(athlete.id),
+        name:
+          (athlete.shortName ??
+            athlete.displayName ??
+            athlete.fullName ??
+            fullName) ||
+          undefined,
+        headshot: normalizeValue(athlete.headshot),
+        position: normalizeValue(athlete.position),
+        jersey: normalizeValue(athlete.jersey),
+        teamId: normalizeValue(participant.teamId),
+      };
+    });
 };
 
 export default function LastPlay({ lastPlay, state }: LastPlayProps) {
@@ -73,16 +76,8 @@ export default function LastPlay({ lastPlay, state }: LastPlayProps) {
   const isDark = resolvedColorScheme === "dark";
   const styles = lastPlayStyles(isDark);
 
-  if (!lastPlay || state === "pre" || !lastPlay || state === "post") {
+  if (!lastPlay || state === "pre" || state === "post") {
     return null;
-  }
-
-  if (typeof lastPlay === "string") {
-    return (
-      <View style={styles.simpleContainer}>
-        <Text style={styles.simpleText}>{lastPlay}</Text>
-      </View>
-    );
   }
 
   const athletes = Array.isArray(lastPlay.participants)
@@ -91,7 +86,7 @@ export default function LastPlay({ lastPlay, state }: LastPlayProps) {
 
   const firstAthlete = athletes[0];
 
-  const getTextColor = (play: StructuredPlay, text?: string): string => {
+  const getTextColor = (play: BaseballPlay, text?: string | null): string => {
     const defaultColor = isDark ? Colors.white : Colors.black;
 
     if (!text) {
@@ -114,7 +109,7 @@ export default function LastPlay({ lastPlay, state }: LastPlayProps) {
     return defaultColor;
   };
 
-  const getIcon = (play: StructuredPlay) => {
+  const getIcon = (play: BaseballPlay) => {
     const isTimeout = play.text?.toLowerCase().includes("timeout");
 
     if (!isTimeout) {

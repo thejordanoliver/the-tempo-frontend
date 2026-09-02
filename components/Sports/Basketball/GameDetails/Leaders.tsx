@@ -1,11 +1,11 @@
-import { Leaders } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { LeadersType } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { useEffect, useMemo, useState } from "react";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
-import { gameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { LeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 type TeamId = string | number;
 
@@ -17,7 +17,7 @@ type Category = GameCategory | SeasonCategory;
 
 type TeamIdField = "id" | "espnId";
 
-type LeaderEntry = Leaders["leaders"][number]["leaders"][number];
+type LeaderEntry = LeadersType["leaders"][number]["leaders"][number];
 
 type DisplayStat = {
   label: string;
@@ -42,12 +42,12 @@ type CategoryConfig = {
 };
 
 type ResolvedLeaderTeams = {
-  away: Leaders | undefined;
-  home: Leaders | undefined;
+  away: LeadersType | undefined;
+  home: LeadersType | undefined;
 };
 
 type Props = {
-  leaders: Leaders[];
+  leaders: LeadersType[];
   awayId: TeamId;
   homeId: TeamId;
   awayLogo: ImageSourcePropType | string | null;
@@ -59,7 +59,7 @@ type Props = {
 
 type StatProps = {
   stat: DisplayStat;
-  styles: ReturnType<typeof gameLeadersStyles>;
+  styles: ReturnType<typeof LeadersStyles>;
 };
 
 const GAME_CATEGORIES: Category[] = ["points", "assists", "rebounds"];
@@ -136,15 +136,15 @@ function normalizeImageSource(
 }
 
 function findTeamGroup(
-  leaders: Leaders[],
+  leaders: LeadersType[],
   teamId: TeamId,
   field: TeamIdField,
-): Leaders | undefined {
+): LeadersType | undefined {
   return leaders.find((group) => idsMatch(group.team[field], teamId));
 }
 
 function resolveUsingField(
-  leaders: Leaders[],
+  leaders: LeadersType[],
   awayId: TeamId,
   homeId: TeamId,
   field: TeamIdField,
@@ -160,7 +160,7 @@ function resolveUsingField(
 }
 
 function resolveLeaderTeams(
-  leaders: Leaders[],
+  leaders: LeadersType[],
   awayId: TeamId,
   homeId: TeamId,
 ): ResolvedLeaderTeams {
@@ -241,7 +241,7 @@ function createPlaceholder(category: Category): DisplayPlayer {
 }
 
 function getTopPlayer(
-  teamGroup: Leaders | undefined,
+  teamGroup: LeadersType | undefined,
   category: Category,
 ): DisplayPlayer {
   const categoryGroup = teamGroup?.leaders.find(
@@ -275,7 +275,7 @@ function Stat({ stat, styles }: StatProps) {
   );
 }
 
-export default function GameLeaders({
+export default function Leaders({
   leaders,
   awayId,
   homeId,
@@ -291,7 +291,7 @@ export default function GameLeaders({
     isScheduled ? "pointsPerGame" : "points",
   );
 
-  const styles = gameLeadersStyles(isDark);
+  const styles = LeadersStyles(isDark);
   const global = globalStyles(isDark);
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;

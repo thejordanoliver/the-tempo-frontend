@@ -1,11 +1,12 @@
 export type PlayerResult = {
   id: number;
   team_id: number;
-  full_name: string;
-  headshot_url: string;
-  nickname: string;
-  association_name: string;
-  position: string;
+  full_name: string | null;
+  headshot_url: string | null;
+  nickname: string | null;
+  association_name: string | null;
+  affiliation: string;
+  position: string | null;
   isNFL?: boolean;
   isMMA?: boolean;
   isNBA?: boolean;
@@ -22,8 +23,6 @@ export type PlayerResult = {
 
 export type TeamResult = {
   id: number;
-  /** @deprecated WCBB team routes now use id, not wid. */
-  wid?: number;
   name: string;
   full_name: string;
   short_name: string;

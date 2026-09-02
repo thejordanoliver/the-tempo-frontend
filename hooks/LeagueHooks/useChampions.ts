@@ -40,22 +40,7 @@ export function useChampions({
       setLoading(true);
       setError(null);
 
-      const endpoint =
-        league === "CFB"
-          ? "api/cfb/champion-seasons"
-          : league === "NBA"
-            ? "api/nba/champion-seasons"
-            : league === "WNBA"
-              ? "api/wnba/champion-seasons"
-              : league === "MLB"
-                ? "api/mlb/champion-seasons"
-                : league === "NHL"
-                  ? "api/nhl/champion-seasons"
-                  : league === "CBB"
-                    ? "api/cbb/champion-seasons"
-                    : league === "WCBB"
-                      ? "api/wcbb/champion-seasons"
-                      : "api/nfl/champion-seasons";
+      const endpoint = `api/${league}/champion-seasons`;
 
       const res = await apiClient.get(`${endpoint}`, {
         params: {

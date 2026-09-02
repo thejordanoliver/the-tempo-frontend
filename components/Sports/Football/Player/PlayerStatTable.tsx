@@ -19,7 +19,7 @@ type StatTableProps = {
   loading?: boolean;
   error?: string | null;
   position?: string | null;
-  league: "NFL" | "CFB";
+  league: "nfl" | "cfb";
 };
 
 type SeasonTypeTab = "regular" | "postseason";
@@ -525,7 +525,7 @@ function getOrderedStatGroups(position?: string | null) {
 
 function getSeasonTeamCode(
   season: FootballPlayerSeason,
-  league: "NFL" | "CFB",
+  league: "nfl" | "cfb",
 ) {
   const teamId = Number(season.teamId);
 
@@ -534,7 +534,7 @@ function getSeasonTeamCode(
   }
 
   const team =
-    league === "NFL" ? getNFLTeamByESPNId(teamId) : getCFBTeamByESPNId(teamId);
+    league === "nfl" ? getNFLTeamByESPNId(teamId) : getCFBTeamByESPNId(teamId);
 
   return team?.code || "—";
 }
@@ -647,7 +647,7 @@ export default function PlayerStatTable({
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
-  const showSeasonTypeTabs = league === "NFL";
+  const showSeasonTypeTabs = league === "nfl";
 
   const [selectedSeasonType, setSelectedSeasonType] =
     useState<SeasonTypeTab>("regular");

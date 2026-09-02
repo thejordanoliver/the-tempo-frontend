@@ -72,6 +72,8 @@ export function CustomHeader({
   homeColor,
   awayColor,
   isFavorite,
+  showFavoriteAction = false,
+  favoritePending = false,
   isNotified,
   selectedConferenceName,
   onToggleFavorite,
@@ -421,6 +423,9 @@ export function CustomHeader({
         <HeaderRightActions
           isTeamScreen={isTeamScreen}
           isPlayerScreen={isPlayerScreen}
+          showFavoriteAction={showFavoriteAction}
+          favoritePending={favoritePending}
+          favoriteIconColor={headerIconColor}
           onToggleFavorite={onToggleFavorite}
           onToggleNotifications={onToggleNotifications}
           onOpenInfo={onOpenInfo}

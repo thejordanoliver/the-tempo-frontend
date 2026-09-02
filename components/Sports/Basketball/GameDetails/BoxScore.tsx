@@ -6,7 +6,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { boxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
+import { BoxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
 import {
   Colors,
   activeOpacity,
@@ -267,7 +267,7 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
-  const styles = boxScoreStyles(isDark);
+  const styles = BoxScoreStyles(isDark);
   const global = globalStyles(isDark);
 
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
@@ -283,8 +283,8 @@ export default function BoxScore({
     (index: number) =>
       index % 2 === 1
         ? isDark
-          ? Colors.transparentDarkGray
-          : Colors.transparentLightGray
+          ? Colors.dark.itemBackground
+          : Colors.light.itemBackground
         : "transparent",
     [isDark],
   );
@@ -395,10 +395,7 @@ export default function BoxScore({
 
     const labels = getStatLabels(teamBlock);
     const statKeys = getStatKeys(teamBlock);
-    const resolvedTeamId =
-      String(league).toUpperCase() === "WCBB"
-        ? teamId
-        : teamBlock?.team?.id ?? teamId;
+    const resolvedTeamId = teamBlock?.team?.id ?? teamId;
     const isExpanded = expandedTeams[sectionKey] ?? false;
 
     const visiblePlayers = isExpanded
@@ -451,7 +448,7 @@ export default function BoxScore({
                       handlePlayerPress(
                         playerId,
                         playerTeamId,
-                        league.toUpperCase(),
+                        league,
                       )
                     }
                   >

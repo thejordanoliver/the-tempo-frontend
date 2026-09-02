@@ -3,7 +3,6 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
-import { LeagueType } from "@/types/types";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
@@ -23,69 +22,244 @@ import BasketballGameCard from "../Games/BasketballGameCard";
 type BaseProps = {
   error: string | null;
   loading?: boolean;
+
+  isNBA?: boolean;
   isCBB?: boolean;
   isWNBA?: boolean;
   isWCBB?: boolean;
+
+  isMLB?: boolean;
+  isCB?: boolean;
   isSB?: boolean;
+
   isNFL?: boolean;
   isCFB?: boolean;
-  isCB?: boolean;
+
+  isNHL?: boolean;
+  isMCH?: boolean;
+
   isDark: boolean;
 };
 
-type Props =
-  | ({
-      league: "NBA";
-      game: BasketballGame | null;
-    } & BaseProps)
-  | ({
-      league: "MLB";
-      game: BaseballGame | null;
-    } & BaseProps)
-  | ({
-      league: "NHL";
-      game: HockeyGame | null;
-    } & BaseProps)
-  | ({
-      league: "CBB" | "WCBB" | "WNBA";
-      game: BasketballGame | null;
-    } & BaseProps)
-  | ({
-      league: "NFL" | "CFB";
-      game: FootballGame | null;
-    } & BaseProps)
-  | ({
-      league: Exclude<
-        LeagueType,
-        "NBA" | "CBB" | "WCBB" | "WNBA" | "MLB" | "NHL"
-      >;
-      game: FootballGame | null;
-    } & BaseProps);
+type BasketballProps = BaseProps & {
+  league: "nba" | "cbb" | "wcbb" | "wnba";
+  game: BasketballGame | null;
+};
 
-export default function LatestGame({
-  game,
-  error,
-  league,
-  loading = false,
-  isCBB = false,
-  isNFL = false,
-  isCFB = false,
-  isWNBA = false,
-  isWCBB = false,
-  isDark,
-}: Props) {
+type BaseballProps = BaseProps & {
+  league: "mlb";
+  game: BaseballGame | null;
+};
+
+type HockeyProps = BaseProps & {
+  league: "nhl";
+  game: HockeyGame | null;
+};
+
+type FootballProps = BaseProps & {
+  league: "nfl" | "cfb";
+  game: FootballGame | null;
+};
+
+type Props = BasketballProps | BaseballProps | HockeyProps | FootballProps;
+
+export default function LatestGame(props: Props) {
+  const {
+    error,
+    loading = false,
+    isDark,
+    isNBA = false,
+    isCBB = false,
+    isWNBA = false,
+    isWCBB = false,
+    isNFL = false,
+    isCFB = false,
+  } = props;
+
   const global = globalStyles(isDark);
+
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleLongPress = (event: { nativeEvent: { state: State } }) => {
-    if (event.nativeEvent.state !== State.ACTIVE || !game) return;
+  const handleLongPress = (event: {
+    nativeEvent: {
+      state: State;
+    };
+  }) => {
+    if (event.nativeEvent.state !== State.ACTIVE || !props.game) {
+      return;
+    }
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
+  };
+
+  const renderGameCard = () => {
+    /*
+     * Destructure both values together.
+     *
+     * This preserves the discriminated-union relationship between
+     * league and game.
+     */
+    const { league, game } = props;
+
+    if (!game) {
+      return null;
+    }
+
+    switch (league) {
+      case "nba":
+        return <BasketballGameCard game={game} isNBA={isNBA} />;
+
+      case "cbb":
+        return <BasketballGameCard game={game} isCBB={isCBB} />;
+
+      case "wcbb":
+        return <BasketballGameCard game={game} isWCBB={isWCBB} />;
+
+      case "wnba":
+        return <BasketballGameCard game={game} isWNBA={isWNBA} />;
+
+      case "mlb":
+        return (
+          <BaseballGameCard
+            game={game}
+            isMLB={true}
+            isCB={false}
+            isSB={false}
+          />
+        );
+
+      case "nfl":
+        return <FootballGameCard game={game} isNFL={isNFL} isCFB={false} />;
+
+      case "cfb":
+        return <FootballGameCard game={game} isNFL={false} isCFB={isCFB} />;
+
+      case "nhl":
+        return <HockeyGameCard game={game} isNHL={true} isMCH={false} />;
+    }
+  };
+
+  const renderPreviewModal = () => {
+    if (!modalVisible) {
+      return null;
+    }
+
+    /*
+     * Narrow game again inside this function.
+     *
+     * The earlier component-level check does not reliably carry
+     * into a nested function.
+     */
+    const { league, game } = props;
+
+    if (!game) {
+      return null;
+    }
+
+    switch (league) {
+      case "nba":
+        return (
+          <BasketballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isSL={false}
+            isCBB={false}
+            isWCBB={false}
+            isWNBA={false}
+          />
+        );
+
+      case "cbb":
+        return (
+          <BasketballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isSL={false}
+            isCBB={isCBB}
+            isWCBB={false}
+            isWNBA={false}
+          />
+        );
+
+      case "wcbb":
+        return (
+          <BasketballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isSL={false}
+            isCBB={false}
+            isWCBB={isWCBB}
+            isWNBA={false}
+          />
+        );
+
+      case "wnba":
+        return (
+          <BasketballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isSL={false}
+            isCBB={false}
+            isWCBB={false}
+            isWNBA={isWNBA}
+          />
+        );
+
+      case "mlb":
+        return (
+          <BaseballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isMLB={true}
+            isCB={false}
+            isSB={false}
+          />
+        );
+
+      case "nfl":
+        return (
+          <FootballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isNFL={isNFL}
+            isCFB={false}
+          />
+        );
+
+      case "cfb":
+        return (
+          <FootballGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isNFL={false}
+            isCFB={isCFB}
+          />
+        );
+
+      case "nhl":
+        return (
+          <HockeyGamePreviewModal
+            game={game}
+            visible={modalVisible}
+            onClose={handleCloseModal}
+            isNHL={true}
+            isMCH={false}
+          />
+        );
+    }
   };
 
   if (loading) {
@@ -97,9 +271,11 @@ export default function LatestGame({
     );
   }
 
-  if (error) return <Text style={global.errorText}>{error}</Text>;
+  if (error) {
+    return <Text style={global.errorText}>{error}</Text>;
+  }
 
-  if (!game) {
+  if (!props.game) {
     return null;
   }
 
@@ -112,85 +288,11 @@ export default function LatestGame({
           onHandlerStateChange={handleLongPress}
           minDurationMs={400}
         >
-          <View>
-            {league === "NBA" && <BasketballGameCard game={game} />}
-
-            {league === "MLB" && (
-              <BaseballGameCard
-                game={game}
-                isMLB={true}
-                isCB={false}
-                isSB={false}
-              />
-            )}
-            {league === "NFL" && (
-              <FootballGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
-            )}
-            {league === "CFB" && (
-              <FootballGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
-            )}
-            {league === "NHL" && (
-              <HockeyGameCard game={game} isNHL={true} isMCH={false} />
-            )}
-            {league === "CBB" && (
-              <BasketballGameCard game={game} isCBB={isCBB} />
-            )}
-            {league === "WCBB" && (
-              <BasketballGameCard game={game} isWCBB={isWCBB} />
-            )}
-            {league === "WNBA" && (
-              <BasketballGameCard game={game} isWNBA={isWNBA} />
-            )}
-
-            {league !== "NBA" && league !== "MLB" && null}
-          </View>
+          <View>{renderGameCard()}</View>
         </LongPressGestureHandler>
       </View>
 
-      {(league === "NBA" ||
-        league === "CBB" ||
-        league === "WCBB" ||
-        league === "WNBA") &&
-        modalVisible && (
-          <BasketballGamePreviewModal
-            game={game}
-            visible={modalVisible}
-            onClose={handleCloseModal}
-            isSL={false}
-            isCBB={isCBB}
-            isWCBB={isWCBB}
-            isWNBA={isWNBA}
-          />
-        )}
-
-      {league === "MLB" && modalVisible && (
-        <BaseballGamePreviewModal
-          game={game}
-          visible={modalVisible}
-          onClose={handleCloseModal}
-          isMLB={true}
-          isCB={false}
-          isSB={false}
-        />
-      )}
-      {league === "NHL" && modalVisible && (
-        <HockeyGamePreviewModal
-          game={game}
-          visible={modalVisible}
-          onClose={handleCloseModal}
-          isNHL={true}
-          isMCH={false}
-        />
-      )}
-      {(league === "NFL" || league === "CFB") && modalVisible && (
-        <FootballGamePreviewModal
-          game={game}
-          visible={modalVisible}
-          onClose={handleCloseModal}
-          isNFL={isNFL}
-          isCFB={isCFB}
-        />
-      )}
+      {renderPreviewModal()}
     </>
   );
 }

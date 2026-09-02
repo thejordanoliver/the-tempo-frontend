@@ -141,7 +141,7 @@ export default function UserProfileScreen() {
     if (!currentUserIdString || !userId) return;
 
     router.push({
-      pathname: "/user/followers",
+      pathname: "/followers",
       params: {
         type: "followers",
         currentUserId: currentUserIdString,
@@ -154,7 +154,7 @@ export default function UserProfileScreen() {
     if (!currentUserIdString || !userId) return;
 
     router.push({
-      pathname: "/user/followers",
+      pathname: "/followers",
       params: {
         type: "following",
         currentUserId: currentUserIdString,

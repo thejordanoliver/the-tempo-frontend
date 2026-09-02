@@ -1,5 +1,5 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DimensionValue } from "react-native";
 import {
@@ -662,7 +662,7 @@ export default function GameTeamStats({
         {canExpand ? (
           <View style={styles.showMoreLessContainer}>
             <TouchableOpacity
-              activeOpacity={0.5}
+              activeOpacity={activeOpacity}
               onPress={() => setExpanded((prev) => !prev)}
             >
               <Text style={styles.showMoreLess}>

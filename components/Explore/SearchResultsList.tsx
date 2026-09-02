@@ -142,14 +142,17 @@ export default function SearchResultsList({
       <FlatList
         data={visibleData}
         keyExtractor={getResultKey}
-        renderItem={({ item }) => (
-          <ResultItemRow
-            item={item}
-            onSelect={handleSelect}
-            onDelete={onDelete}
-            query={query}
-          />
-        )}
+        renderItem={({ item }) => {
+      
+          return (
+            <ResultItemRow
+              item={item}
+              onSelect={handleSelect}
+              onDelete={onDelete}
+              query={query}
+            />
+          );
+        }}
         ListHeaderComponent={
           showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : null
         }

@@ -35,11 +35,19 @@ export default function FollowersList({
   if (loading) return <FollowerListSkeleton />;
 
   if (!users || users.length === 0) {
-    return <Text style={global.emptyText}>No users found.</Text>;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>No users found.</Text>
+      </View>
+    );
   }
 
   if (error) {
-    return <Text style={global.errorText}>{error}</Text>;
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>{error}</Text>
+      </View>
+    );
   }
 
   const renderItem = ({ item }: { item: User }) => {

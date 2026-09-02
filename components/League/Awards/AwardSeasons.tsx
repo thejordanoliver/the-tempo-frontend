@@ -23,14 +23,14 @@ import TopThreeTeams from "./TopThreeTeams";
 type ViewMode = "champions" | "players" | "teams";
 
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
-  CFB: "College Football Champions",
-  WNBA: "WNBA Champions",
-  CBB: "Men's College Basketball Champions",
-  WCBB: "Women's College Basketball Champions",
-  NBA: "NBA Champions",
-  NFL: "Super Bowl Champions",
-  MLB: "World Series Champions",
-  NHL: "Stanley Cup Champions",
+  cfb: "College Football Champions",
+  wnba: "WNBA Champions",
+  cbb: "Men's College Basketball Champions",
+  wcbb: "Women's College Basketball Champions",
+  nba: "NBA Champions",
+  nfl: "Super Bowl Champions",
+  mlb: "World Series Champions",
+  nhl: "Stanley Cup Champions",
 };
 
 type Props = {
@@ -51,18 +51,18 @@ export default function AwardSeasons({ league }: Props) {
     { label: "Players", value: "players" },
 
     // Only show "Teams" for CFB, CBB, WCBB
-    ...(league === "CFB" || league === "CBB" || league === "WCBB"
+    ...(league === "cfb" || league === "cbb" || league === "wcbb"
       ? [{ label: "Teams", value: "teams" }]
       : []),
   ];
 
   const apiLeague = useMemo(() => {
     switch (league) {
-      case "CFB":
+      case "cfb":
         return "cfb";
-      case "CBB":
+      case "cbb":
         return "cbb";
-      case "WCBB":
+      case "wcbb":
         return "wcbb";
 
       default:
@@ -102,13 +102,13 @@ export default function AwardSeasons({ league }: Props) {
   /* ------------------------------------------------ */
 
   const showAwardTopThree =
-    (league === "CFB" || league === "CBB" || league === "WCBB") &&
+    (league === "cfb" || league === "cbb" || league === "wcbb") &&
     viewMode === "teams";
 
   const { data: awardTeams } = useAwardSchools({
     league: apiLeague,
     category: selectedAward,
-    enabled: showAwardTopThree && !!apiLeague,
+    enabled: showAwardTopThree && !!league,
   });
 
   /* ------------------------------------------------ */
@@ -117,14 +117,14 @@ export default function AwardSeasons({ league }: Props) {
 
   const showChampionTopThree = viewMode === "champions";
   const supportsChampionTeams =
-    league === "NHL" ||
-    league === "MLB" ||
-    league === "CFB" ||
-    league === "CBB" ||
-    league === "WCBB" ||
-    league === "WNBA" ||
-    league === "NBA" ||
-    league === "NFL";
+    league === "nhl" ||
+    league === "mlb" ||
+    league === "cfb" ||
+    league === "cbb" ||
+    league === "wcbb" ||
+    league === "wnba" ||
+    league === "nba" ||
+    league === "nfl";
 
   const championTeamsResult = useChampionTeams({
     league,
@@ -195,19 +195,19 @@ export default function AwardSeasons({ league }: Props) {
             team: t.team,
             value: t.total_championships,
             logo:
-              league === "NBA"
+              league === "nba"
                 ? getNBATeamLogo(t.team.id, isDark)
-                : league === "WNBA"
+                : league === "wnba"
                   ? getWNBATeamLogo(t.team.id, isDark)
-                  : league === "CFB"
+                  : league === "cfb"
                     ? getCFBTeamLogo(t.team.id, isDark)
-                    : league === "CBB"
+                    : league === "cbb"
                       ? getCBBTeamLogo(t.team.id, isDark)
-                      : league === "WCBB"
+                      : league === "wcbb"
                         ? getWCBBTeamLogo(t.team.id, isDark)
-                        : league === "MLB"
+                        : league === "mlb"
                           ? getMLBTeamLogo(t.team.id, isDark)
-                          : league === "NHL"
+                          : league === "nhl"
                             ? getNHLTeamLogo(t.team.id, isDark)
                             : getNFLTeamLogo(t.team.id, isDark),
           }))}
@@ -218,16 +218,16 @@ export default function AwardSeasons({ league }: Props) {
       {/* Award Top 3 (CFB / CBB / WCBB)                  */}
       {/* ------------------------------------------------ */}
 
-      {showAwardTopThree && awardTeams.length > 0 && apiLeague && (
+      {showAwardTopThree && awardTeams.length > 0 && league && (
         <TopThreeTeams
           limit={3}
           teams={awardTeams.map((t) => ({
             team: t.team,
             value: t.total_awards,
             logo:
-              league === "CFB"
+              league === "cfb"
                 ? getCFBTeamLogo(t.team.id, isDark)
-                : league === "WCBB"
+                : league === "wcbb"
                   ? getWCBBTeamLogo(t.team.id, isDark)
                   : getCBBTeamLogo(t.team.id, isDark),
           }))}
@@ -251,7 +251,7 @@ export default function AwardSeasons({ league }: Props) {
       {/* Teams Table (Unified)                            */}
       {/* ------------------------------------------------ */}
 
-      {(league === "CFB" || league === "CBB" || league === "WCBB") &&
+      {(league === "cfb" || league === "cbb" || league === "wcbb") &&
         viewMode === "teams" &&
         awards.map(({ value, title }) => {
           if (value === "all") return null;
@@ -261,7 +261,7 @@ export default function AwardSeasons({ league }: Props) {
           return (
             <AwardSchoolsTable
               key={`${league}-teams-${value}`}
-              league={apiLeague}
+              league={league}
               category={value}
               title={title}
               data={awardSchools}
@@ -276,14 +276,14 @@ export default function AwardSeasons({ league }: Props) {
       {/* ------------------------------------------------ */}
 
       {viewMode === "players" &&
-        (league === "NBA" ||
-          league === "WNBA" ||
-          league === "NFL" ||
-          league === "CFB" ||
-          league === "CBB" ||
-          league === "NHL" ||
-          league === "MLB" ||
-          league === "WCBB") &&
+        (league === "nba" ||
+          league === "wnba" ||
+          league === "nfl" ||
+          league === "cfb" ||
+          league === "cbb" ||
+          league === "nhl" ||
+          league === "mlb" ||
+          league === "wcbb") &&
         awards.map(({ value, title }) => {
           if (value === "all") return null;
 

@@ -1,12 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity } from "constants/styles";
+import * as Haptics from "expo-haptics";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import {
+  getFavoriteHeaderAccessibilityLabel,
+  getFavoriteHeaderIconName,
+} from "./favoriteAction";
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
 
 type HeaderRightActionsProps = {
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
+  showFavoriteAction?: boolean;
+  favoritePending?: boolean;
+  favoriteIconColor: string;
   onToggleFavorite?: () => void;
   onToggleNotifications?: () => void;
   onOpenInfo?: () => void;
@@ -29,9 +37,54 @@ type HeaderRightActionsProps = {
   isGrid?: boolean;
 };
 
+type FavoriteHeaderButtonProps = {
+  isFavorite: boolean;
+  pending: boolean;
+  color: string;
+  onPress: () => void;
+};
+
+function FavoriteHeaderButton({
+  isFavorite,
+  pending,
+  color,
+  onPress,
+}: FavoriteHeaderButtonProps) {
+  const styles = customHeaderStyles(false);
+
+  const handlePress = () => {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() =>
+      undefined,
+    );
+    onPress();
+  };
+
+  return (
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
+      disabled={pending}
+      onPress={handlePress}
+      style={styles.teamHeaderActionButton}
+      accessibilityRole="button"
+      accessibilityLabel={getFavoriteHeaderAccessibilityLabel(isFavorite)}
+      accessibilityState={{ disabled: pending, selected: isFavorite }}
+      hitSlop={8}
+    >
+      <Ionicons
+        name={getFavoriteHeaderIconName(isFavorite)}
+        size={24}
+        color={color}
+      />
+    </TouchableOpacity>
+  );
+}
+
 export function HeaderRightActions({
   isTeamScreen,
   isPlayerScreen,
+  showFavoriteAction = false,
+  favoritePending = false,
+  favoriteIconColor,
   onToggleFavorite,
   onToggleNotifications,
   onOpenInfo,
@@ -59,17 +112,12 @@ export function HeaderRightActions({
     return (
       <View style={styles.teamHeaderActions}>
         {onToggleFavorite ? (
-          <TouchableOpacity
-            activeOpacity={activeOpacity}
+          <FavoriteHeaderButton
+            isFavorite={Boolean(isFavorite)}
+            pending={favoritePending}
+            color={Colors.white}
             onPress={onToggleFavorite}
-            style={styles.teamHeaderActionButton}
-          >
-            <Ionicons
-              name={isFavorite ? "star" : "star-outline"}
-              size={24}
-              color={Colors.white}
-            />
-          </TouchableOpacity>
+          />
         ) : null}
 
         {onToggleNotifications ? (
@@ -99,6 +147,19 @@ export function HeaderRightActions({
             />
           </TouchableOpacity>
         ) : null}
+      </View>
+    );
+  }
+
+  if (showFavoriteAction && onToggleFavorite) {
+    return (
+      <View style={styles.teamHeaderActions}>
+        <FavoriteHeaderButton
+          isFavorite={Boolean(isFavorite)}
+          pending={favoritePending}
+          color={favoriteIconColor}
+          onPress={onToggleFavorite}
+        />
       </View>
     );
   }

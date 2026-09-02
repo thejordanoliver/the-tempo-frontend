@@ -9,11 +9,11 @@ import {
   LineScore,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
+import { BoxScore } from "@/components/Sports/Basketball/GameDetails";
 import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
-import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
 import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
 import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
+import Leaders from "@/components/Sports/Basketball/GameDetails/Leaders";
 import MatchupPredictor from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import PlayersInFoulTrouble from "@/components/Sports/Basketball/GameDetails/PlayersInFoulTrouble";
@@ -437,7 +437,7 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
-              <GameLeaders
+              <Leaders
                 leaders={leaders}
                 homeId={homeId}
                 homeLogo={homeLogo}
