@@ -18,11 +18,17 @@ import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, TextStyle, View, ViewStyle } from "react-native";
+import {
+  Animated,
+  TextStyle,
+  useWindowDimensions,
+  View,
+  ViewStyle,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   customHeaderStyles,
-  HEADER_WIDTH,
+
 } from "../../styles/CustomHeaderStyles";
 import { ConferenceBackground } from "./ConferenceBackground";
 import { GameHeader } from "./GameHeader";
@@ -34,6 +40,7 @@ import { MessageThreadHeader } from "./MessageThreadHeader";
 import { resolveRacingLeague } from "./racingConfig";
 import { TeamBackground } from "./TeamBackground";
 import type { CustomHeaderProps, HeaderTeamLike } from "./types";
+import { EditFavoritesHeader } from "./EditFavoritesHeader";
 
 const isConferenceSelectorTab = (tabName?: string) =>
   tabName === "College Football" ||
@@ -51,6 +58,7 @@ export function CustomHeader({
   onBack,
   onOpenLeagueModal,
   onHomeTabPress,
+  onEditTabPress,
   homeScrollProgress,
   onToggleLayout,
   isGrid,
@@ -93,12 +101,13 @@ export function CustomHeader({
   messageIsOnline,
   messageIsVerified,
   homeSelectedTab = "scores",
+  editFavoritesSelectedTab = "teams",
 }: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
-
+  const { width } = useWindowDimensions();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const styles = customHeaderStyles(isDark);
+  const styles = customHeaderStyles(isDark, width);
 
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
 
@@ -297,7 +306,7 @@ export function CustomHeader({
   };
 
   const containerStyle: ViewStyle = {
-    width: HEADER_WIDTH,
+    width: width,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -410,6 +419,13 @@ export function CustomHeader({
             isDark={isDark}
             selectedTab={homeSelectedTab}
             onTabPress={onHomeTabPress ?? (() => undefined)}
+            scrollProgress={homeScrollProgress}
+          />
+        ) : tabName === "Edit Favorites" ? (
+          <EditFavoritesHeader
+            isDark={isDark}
+            selectedTab={editFavoritesSelectedTab}
+            onTabPress={onEditTabPress ?? (() => undefined)}
             scrollProgress={homeScrollProgress}
           />
         ) : (

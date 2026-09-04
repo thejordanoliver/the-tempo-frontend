@@ -69357,13 +69357,19 @@ export function getSOCCTeamLogo(
   id: number | string | undefined,
   isDark: boolean,
 ) {
-  const team = soccerTeams.find((t) => String(t.id) === String(id));
-  if (!id || !team || team.logo === null) return PlaceholderLogo;
+  if (!id) return PlaceholderLogo;
 
-  if (team.logo || team.logoLight === "string") return PlaceholderLogo;
-  return team
-    ? isDark
-      ? team.logoLight || team.logo || PlaceholderLogo
-      : team.logo || PlaceholderLogo
-    : PlaceholderLogo;
+  const team = soccerTeams.find((t) => String(t.id) === String(id));
+
+  if (!team) return PlaceholderLogo;
+
+  const logo = isDark ? team.logoLight || team.logo : team.logo;
+
+  // Remote/string logos should use the local placeholder
+  if (!logo || typeof logo === "string") {
+    return PlaceholderLogo;
+  }
+
+  // Local require/import assets
+  return logo;
 }

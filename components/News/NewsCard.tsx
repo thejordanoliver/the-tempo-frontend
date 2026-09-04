@@ -4,8 +4,14 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { newsCardStyles } from "styles/NewsStyles/NewsCardStyles";
+import {
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { NewsCardStyles } from "styles/NewsStyles/NewsCardStyles";
 
 type NewsCardProps = {
   content: NewsArticle;
@@ -14,7 +20,8 @@ type NewsCardProps = {
 
 export default function NewsCard({ content, isDark }: NewsCardProps) {
   const router = useRouter();
-  const styles = newsCardStyles(isDark);
+  const { width } = useWindowDimensions();
+  const styles = NewsCardStyles(isDark, width);
   const [imageError] = useState(false);
   const formattedDate = new Date(content.published).toLocaleDateString(
     "en-US",

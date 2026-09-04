@@ -73,15 +73,14 @@ export default function HeadCoaches({
         <View style={[styles.coachCopy, isHome && styles.homeCoachCopy]}>
           <Text
             style={[styles.coachName, isHome && styles.homeText]}
-            numberOfLines={2}
+            numberOfLines={1}
+            minimumFontScale={0.2}
+            adjustsFontSizeToFit
           >
             {getCoachName(coach)}
           </Text>
           {teamName && (
-            <Text
-              style={[styles.teamName, isHome && styles.homeText]}
-              numberOfLines={2}
-            >
+            <Text style={[styles.teamName, isHome && styles.homeText]}>
               {teamName}
             </Text>
           )}

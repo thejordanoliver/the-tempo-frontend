@@ -10,7 +10,6 @@ import {
   getWidgetSizeOptions,
   isGameWidgetType,
 } from "constants/exploreWidgets";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors } from "constants/styles";
 import { useExploreWidgetGames } from "hooks/WidgetHooks/useExploreWidgetGames";
 import type { ReactNode } from "react";
@@ -38,7 +37,7 @@ import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import {
   EXPLORE_WIDGET_GRID_GAP,
   EXPLORE_WIDGET_ROW_GAP,
-  widgetDashboardStyles,
+  WidgetDashboardStyles,
 } from "styles/ExploreStyles/WidgetDashboardStyles";
 import {
   ExploreWidgetConfig,
@@ -66,6 +65,25 @@ type GameWidgetSection = {
   type: ExploreWidgetType;
   title: string;
   slides: WidgetSlide[];
+};
+
+const getWidgetGameTimestamp = (slide: WidgetSlide) => {
+  const { date, startDate, timestamp } = slide.data;
+  const dateTimestamp = Date.parse(startDate || date);
+
+  if (Number.isFinite(dateTimestamp)) {
+    return dateTimestamp;
+  }
+
+  const numericTimestamp = Number(timestamp);
+
+  if (!Number.isFinite(numericTimestamp)) {
+    return 0;
+  }
+
+  return numericTimestamp < 1_000_000_000_000
+    ? numericTimestamp * 1000
+    : numericTimestamp;
 };
 
 type WidgetEditProps = {
@@ -183,7 +201,7 @@ export default function ExploreWidgetDashboard({
   const smallGridDragOffset = useRef(new Animated.ValueXY()).current;
   const { width: screenWidth } = useWindowDimensions();
   const styles = exploreStyles(isDark);
-  const dashboardStyles = widgetDashboardStyles(isDark);
+  const dashboardStyles = WidgetDashboardStyles(isDark);
   const dashboardWidth = Math.max(screenWidth - 24, 1);
   const gridGap = EXPLORE_WIDGET_GRID_GAP;
   const rowGap = EXPLORE_WIDGET_ROW_GAP;
@@ -217,16 +235,21 @@ export default function ExploreWidgetDashboard({
   });
 
   const favoriteGameSlides: WidgetSlide[] = useMemo(
-    () => [
-      ...nbaGames.map((game) => ({ type: "NBA" as const, data: game })),
-      ...mlbGames.map((game) => ({ type: "MLB" as const, data: game })),
-      ...wnbaGames.map((game) => ({ type: "WNBA" as const, data: game })),
-      ...cbbGames.map((game) => ({ type: "CBB" as const, data: game })),
-      ...wcbbGames.map((game) => ({ type: "WCBB" as const, data: game })),
-      ...nflGames.map((game) => ({ type: "NFL" as const, data: game })),
-      ...cfbGames.map((game) => ({ type: "CFB" as const, data: game })),
-      ...nhlGames.map((game) => ({ type: "NHL" as const, data: game })),
-    ],
+    () =>
+      [
+        ...nbaGames.map((game) => ({ type: "nba" as const, data: game })),
+        ...mlbGames.map((game) => ({ type: "mlb" as const, data: game })),
+        ...wnbaGames.map((game) => ({ type: "wnba" as const, data: game })),
+        ...cbbGames.map((game) => ({ type: "cbb" as const, data: game })),
+        ...wcbbGames.map((game) => ({ type: "wcbb" as const, data: game })),
+        ...nflGames.map((game) => ({ type: "nfl" as const, data: game })),
+        ...cfbGames.map((game) => ({ type: "cfb" as const, data: game })),
+        ...nhlGames.map((game) => ({ type: "nhl" as const, data: game })),
+      ].sort(
+        (firstGame, secondGame) =>
+          getWidgetGameTimestamp(secondGame) -
+          getWidgetGameTimestamp(firstGame),
+      ),
     [
       cbbGames,
       cfbGames,
@@ -248,42 +271,42 @@ export default function ExploreWidgetDashboard({
       {
         type: "nba_games",
         title: "NBA Games",
-        slides: nbaGames.map((game) => ({ type: "NBA", data: game })),
+        slides: nbaGames.map((game) => ({ type: "nba", data: game })),
       },
       {
         type: "mlb_games",
         title: "MLB Games",
-        slides: mlbGames.map((game) => ({ type: "MLB", data: game })),
+        slides: mlbGames.map((game) => ({ type: "mlb", data: game })),
       },
       {
         type: "wnba_games",
         title: "WNBA Games",
-        slides: wnbaGames.map((game) => ({ type: "WNBA", data: game })),
+        slides: wnbaGames.map((game) => ({ type: "wnba", data: game })),
       },
       {
         type: "cbb_games",
         title: "CBB Games",
-        slides: cbbGames.map((game) => ({ type: "CBB", data: game })),
+        slides: cbbGames.map((game) => ({ type: "cbb", data: game })),
       },
       {
         type: "wcbb_games",
         title: "WCBB Games",
-        slides: wcbbGames.map((game) => ({ type: "WCBB", data: game })),
+        slides: wcbbGames.map((game) => ({ type: "wcbb", data: game })),
       },
       {
         type: "nfl_games",
         title: "NFL Games",
-        slides: nflGames.map((game) => ({ type: "NFL", data: game })),
+        slides: nflGames.map((game) => ({ type: "nfl", data: game })),
       },
       {
         type: "cfb_games",
         title: "CFB Games",
-        slides: cfbGames.map((game) => ({ type: "CFB", data: game })),
+        slides: cfbGames.map((game) => ({ type: "cfb", data: game })),
       },
       {
         type: "nhl_games",
         title: "NHL Games",
-        slides: nhlGames.map((game) => ({ type: "NHL", data: game })),
+        slides: nhlGames.map((game) => ({ type: "nhl", data: game })),
       },
     ],
     [
@@ -477,12 +500,6 @@ export default function ExploreWidgetDashboard({
     </View>
   );
 
-  const renderLoadingCard = (height: number) => (
-    <View style={[dashboardStyles.loadingCard, { height }]}>
-      <CustomActivityIndicator />
-    </View>
-  );
-
   if (visibleWidgets.length === 0) {
     return renderEmptyBoard();
   }
@@ -516,24 +533,16 @@ export default function ExploreWidgetDashboard({
     if (gameSection) {
       return (
         <View style={dashboardStyles.section}>
-          {gameWidgetsLoading ? (
-            renderLoadingCard(widgetHeight)
-          ) : gameSection.slides.length > 0 ? (
-            <WidgetSlider
-              games={gameSection.slides}
-              initialHeight={widgetHeight}
-              initialWidth={widgetWidth}
-              isDark={isDark}
-              dashboardMode
-              orientation="horizontal"
-              {...editProps}
-            />
-          ) : (
-            renderEmptyCard(gameSection.type, gameSection.title, {
-              ...editProps,
-              placeholderHeight: widgetHeight,
-            })
-          )}
+          <WidgetSlider
+            games={gameSection.slides}
+            loading={gameWidgetsLoading}
+            initialHeight={widgetHeight}
+            initialWidth={widgetWidth}
+            isDark={isDark}
+            dashboardMode
+            orientation="horizontal"
+            {...editProps}
+          />
         </View>
       );
     }
@@ -691,7 +700,11 @@ export default function ExploreWidgetDashboard({
     </ScaleDecorator>
   );
 
-  const renderDragPlaceholder = ({ item: row }: { item: DashboardWidgetRow }) => {
+  const renderDragPlaceholder = ({
+    item: row,
+  }: {
+    item: DashboardWidgetRow;
+  }) => {
     const isSmallRow = row.cells.every((cell) => cell.widget.size === "small");
 
     return (

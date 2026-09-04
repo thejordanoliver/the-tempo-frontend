@@ -3,11 +3,11 @@ import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
-import type { CFPBracketProps } from "../../../../types/football/cfpBracketTypes";
+import type { CFPBracketProps } from "types/football/cfpBracketTypes";
 import {
   buildCFPBracketData,
   buildRoundDates,
-} from "../../../../utils/cfpBracketUtils";
+} from "utils/cfpBracketUtils";
 import { CFPBracketCanvas } from "./CFPBracketCanvas";
 import { CFPBracketState } from "./CFPBracketState";
 

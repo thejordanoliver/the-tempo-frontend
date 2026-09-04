@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   BaseballProps,
-  teamRowStyles,
+  TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
 export const TeamRow = ({
@@ -21,11 +21,10 @@ export const TeamRow = ({
   state,
 }: BaseballProps) => {
   const router = useRouter();
-  const styles = teamRowStyles(isDark);
+  const styles = TeamRowStyles(isDark);
 
   const inProgress = state === "in";
   const isFinal = gameStatusDescription === "Final";
-
 
   const getScoreStyle = () => {
     if (score == null) {

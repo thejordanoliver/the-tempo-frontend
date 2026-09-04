@@ -15,7 +15,7 @@ export const editFavoritesStyles = StyleSheet.create({
   },
 
   selectorContainer: {
-    flex: 1,
+ 
   },
 
   buttonContainer: {

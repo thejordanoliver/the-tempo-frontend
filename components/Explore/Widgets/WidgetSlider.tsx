@@ -1,3 +1,4 @@
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { BaseballGame } from "@/types/baseball/baseball";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
@@ -53,6 +54,7 @@ type WidgetSliderOrientation = "vertical" | "horizontal";
 
 type WidgetSliderProps = {
   games: WidgetSlide[];
+  loading: boolean;
   initialHeight?: number;
   initialWidth?: number;
   isDark: boolean;
@@ -82,8 +84,7 @@ type WidgetEditControlsProps = {
   compact?: boolean;
 };
 
-const DEFAULT_SIZE_OPTIONS: readonly ExploreWidgetSize[] =
-  EXPLORE_WIDGET_SIZES;
+const DEFAULT_SIZE_OPTIONS: readonly ExploreWidgetSize[] = EXPLORE_WIDGET_SIZES;
 
 export function WidgetEditControls({
   isDark,
@@ -197,6 +198,7 @@ export function WidgetEditControls({
 
 export default function WidgetSlider({
   games,
+  loading,
   initialHeight = 220,
   initialWidth,
   isDark,
@@ -591,6 +593,13 @@ export default function WidgetSlider({
   const showEditControls = isEditing && widgetId != null && widgetSize != null;
   const showDots = dashboardMode && slides.length > 1 && !showEditControls;
 
+  if (loading)
+    return (
+      <View style={styles.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+
   return (
     <Animated.View
       style={{
@@ -677,13 +686,18 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       width: "100%",
       height: "100%",
       padding: dashboardMode ? 0 : 4,
-      borderWidth: 1,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.midTone,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
       overflow: "hidden",
+    },
+    emptyContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+      flex: 1,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
     },
     progressContainer: {
       position: "absolute",

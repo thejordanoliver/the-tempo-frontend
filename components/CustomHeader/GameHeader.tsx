@@ -1,26 +1,41 @@
 import { Colors } from "constants/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, RacingLeague } from "./types";
 import { resolveImage } from "./utils";
 
 type GameHeaderProps = {
   tabName?: string;
+
   homeTeam?: unknown;
   awayTeam?: unknown;
+
   homeCode?: string;
   awayCode?: string;
+
   homeLogo?: HeaderImageSource;
   awayLogo?: HeaderImageSource;
+
   homeColor?: string | null;
   awayColor?: string | null;
+
   isEvent: boolean;
   isNeutralSite: boolean;
+
   racingLeague?: RacingLeague | null;
   eventTitle?: string;
   eventLogo?: HeaderImageSource;
+
   isDark: boolean;
 };
 
@@ -37,12 +52,20 @@ export function GameHeader({
   isNeutralSite,
   isDark,
 }: GameHeaderProps) {
-  const styles = customHeaderStyles(isDark);
+  const { width } = useWindowDimensions();
+
+  const styles = useMemo(
+    () => customHeaderStyles(isDark, width),
+    [isDark, width],
+  );
+
   const dividerText = isNeutralSite ? "vs" : "@";
 
   const scaleHome = useRef(new Animated.Value(0.6)).current;
   const scaleAway = useRef(new Animated.Value(0.6)).current;
+
   const opacity = useRef(new Animated.Value(0)).current;
+
   const dividerScale = useRef(new Animated.Value(0.8)).current;
 
   const getTeamCodeLetters = useCallback(
@@ -74,7 +97,9 @@ export function GameHeader({
     [],
   );
 
-  const isTeamGameHeader = Boolean(tabName === "Game" && homeTeam && awayTeam);
+  const isTeamGameHeader = Boolean(
+    tabName === "Game" && homeTeam && awayTeam,
+  );
 
   const awayLetters = useMemo(
     () => getTeamCodeLetters(awayCode, "AWY"),
@@ -201,169 +226,174 @@ export function GameHeader({
   const awayLogoSource = resolveImage(awayLogo);
   const homeLogoSource = resolveImage(homeLogo);
 
- return (
-   <Animated.View
-     pointerEvents="none"
-     style={[
-       StyleSheet.absoluteFillObject,
-       {
-         flexDirection: "row",
-         zIndex: -10,
-         opacity,
-       },
-     ]}
-   >
-     {/* Team colors */}
-     <LinearGradient
-       colors={[
-         resolvedAwayColor,
-         resolvedAwayColor,
-         resolvedHomeColor,
-         resolvedHomeColor,
-       ]}
-       locations={[0, 0.5, 0.5, 1]}
-       start={{
-         x: 0,
-         y: -2,
-       }}
-       end={{
-         x: 1.08,
-         y: 1.2,
-       }}
-       style={StyleSheet.absoluteFillObject}
-     />
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        StyleSheet.absoluteFillObject,
+        {
+          flexDirection: "row",
+          zIndex: -10,
+          opacity,
+        },
+      ]}
+    >
+      {/* Team colors */}
+      <LinearGradient
+        colors={[
+          resolvedAwayColor,
+          resolvedAwayColor,
+          resolvedHomeColor,
+          resolvedHomeColor,
+        ]}
+        locations={[0, 0.5, 0.5, 1]}
+        start={{
+          x: 0,
+          y: -2,
+        }}
+        end={{
+          x: 1.08,
+          y: 1.2,
+        }}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-     {/* Header readability overlay */}
-     <LinearGradient
-       colors={[
-         "rgba(0,0,0,0.48)",
-         "rgba(0,0,0,0.28)",
-         "rgba(0,0,0,0.08)",
-         "transparent",
-       ]}
-       locations={[0, 0.35, 0.72, 1]}
-       start={{ x: 0.5, y: 0 }}
-       end={{ x: 0.5, y: 1 }}
-       style={StyleSheet.absoluteFillObject}
-     />
+      {/* Header readability overlay */}
+      <LinearGradient
+        colors={[
+          "rgba(0,0,0,0.48)",
+          "rgba(0,0,0,0.28)",
+          "rgba(0,0,0,0.08)",
+          "transparent",
+        ]}
+        locations={[0, 0.35, 0.72, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={StyleSheet.absoluteFillObject}
+      />
 
-     <View style={styles.teamHalfWrapper}>
-       <Animated.View
-         style={[
-           styles.teamHalfContent,
-           {
-             transform: [{ scale: scaleAway }],
-           },
-         ]}
-       >
-         {awayLogoSource ? (
-           <Image
-             source={awayLogoSource}
-             style={styles.bgLogo}
-             resizeMode="contain"
-           />
-         ) : null}
+      {/* Away team */}
+      <View style={styles.teamHalfWrapper}>
+        <Animated.View
+          style={[
+            styles.teamHalfContent,
+            {
+              transform: [{ scale: scaleAway }],
+            },
+          ]}
+        >
+          {awayLogoSource ? (
+            <Image
+              source={awayLogoSource}
+              style={styles.bgLogo}
+              resizeMode="contain"
+            />
+          ) : null}
 
-         <View style={styles.teamCodeRow}>
-           {awayLetters.map((character, index) => {
-             const animation = awayLetterAnims[index];
+          <View style={styles.teamCodeRow}>
+            {awayLetters.map((character, index) => {
+              const animation = awayLetterAnims[index];
 
-             return (
-               <Animated.Text
-                 key={`away-${character}-${index}`}
-                 style={[
-                   styles.teamCode,
-                   {
-                     opacity: animation,
-                     transform: [
-                       {
-                         scale: animation.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: [0.7, 1],
-                         }),
-                       },
-                       {
-                         translateY: animation.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: [10, 0],
-                         }),
-                       },
-                     ],
-                   },
-                 ]}
-               >
-                 {character}
-               </Animated.Text>
-             );
-           })}
-         </View>
-       </Animated.View>
-     </View>
+              return (
+                <Animated.Text
+                  key={`away-${character}-${index}`}
+                  style={[
+                    styles.teamCode,
+                    {
+                      opacity: animation,
 
-     <Animated.View
-       style={[
-         styles.dividerWrapper,
-         {
-           opacity,
-           transform: [{ scale: dividerScale }],
-         },
-       ]}
-     >
-       <Text style={styles.dividerText}>{dividerText}</Text>
-     </Animated.View>
+                      transform: [
+                        {
+                          scale: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.7, 1],
+                          }),
+                        },
+                        {
+                          translateY: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  {character}
+                </Animated.Text>
+              );
+            })}
+          </View>
+        </Animated.View>
+      </View>
 
-     <View style={styles.teamHalfWrapper}>
-       <Animated.View
-         style={[
-           styles.teamHalfContent,
-           {
-             transform: [{ scale: scaleHome }],
-           },
-         ]}
-       >
-         {homeLogoSource ? (
-           <Image
-             source={homeLogoSource}
-             style={styles.bgLogo}
-             resizeMode="contain"
-           />
-         ) : null}
+      {/* VS / @ */}
+      <Animated.View
+        style={[
+          styles.dividerWrapper,
+          {
+            opacity,
+            transform: [{ scale: dividerScale }],
+          },
+        ]}
+      >
+        <Text style={styles.dividerText}>{dividerText}</Text>
+      </Animated.View>
 
-         <View style={styles.teamCodeRow}>
-           {homeLetters.map((character, index) => {
-             const animation = homeLetterAnims[index];
+      {/* Home team */}
+      <View style={styles.teamHalfWrapper}>
+        <Animated.View
+          style={[
+            styles.teamHalfContent,
+            {
+              transform: [{ scale: scaleHome }],
+            },
+          ]}
+        >
+          {homeLogoSource ? (
+            <Image
+              source={homeLogoSource}
+              style={styles.bgLogo}
+              resizeMode="contain"
+            />
+          ) : null}
 
-             return (
-               <Animated.Text
-                 key={`home-${character}-${index}`}
-                 style={[
-                   styles.teamCode,
-                   {
-                     opacity: animation,
-                     transform: [
-                       {
-                         scale: animation.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: [0.7, 1],
-                         }),
-                       },
-                       {
-                         translateY: animation.interpolate({
-                           inputRange: [0, 1],
-                           outputRange: [10, 0],
-                         }),
-                       },
-                     ],
-                   },
-                 ]}
-               >
-                 {character}
-               </Animated.Text>
-             );
-           })}
-         </View>
-       </Animated.View>
-     </View>
-   </Animated.View>
- );
+          <View style={styles.teamCodeRow}>
+            {homeLetters.map((character, index) => {
+              const animation = homeLetterAnims[index];
+
+              return (
+                <Animated.Text
+                  key={`home-${character}-${index}`}
+                  style={[
+                    styles.teamCode,
+                    {
+                      opacity: animation,
+
+                      transform: [
+                        {
+                          scale: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.7, 1],
+                          }),
+                        },
+                        {
+                          translateY: animation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  {character}
+                </Animated.Text>
+              );
+            })}
+          </View>
+        </Animated.View>
+      </View>
+    </Animated.View>
+  );
 }

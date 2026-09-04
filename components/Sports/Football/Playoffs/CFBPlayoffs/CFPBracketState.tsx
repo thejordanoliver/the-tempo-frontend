@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
+import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
 
 type CFPBracketStateProps = {
   isDark: boolean;

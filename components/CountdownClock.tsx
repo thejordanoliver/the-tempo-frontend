@@ -33,7 +33,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
 }: Props<TGame>) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = countdownClockStyles(isDark);
+  const styles = CountdownClockStyles(isDark);
 
   const [countDown, setCountdown] = useState<CountdownType | null>(null);
   const [showSeasonAnimation, setShowSeasonAnimation] = useState(false);
@@ -192,7 +192,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
   );
 }
 
-const countdownClockStyles = (isDark: boolean) =>
+const CountdownClockStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       width: "100%",
@@ -204,14 +204,14 @@ const countdownClockStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       width: "100%",
+      gap: 8,
     },
 
     timeContainer: {
       alignItems: "center",
       justifyContent: "center",
-      width: "22%",
+      flex: 1,
       minWidth: 72,
-      maxWidth: 92,
       paddingVertical: 12,
       borderRadius: 8,
       backgroundColor: isDark

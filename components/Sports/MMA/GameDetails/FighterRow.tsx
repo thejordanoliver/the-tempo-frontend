@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   MMAProps,
-  teamRowStyles,
+  TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
 export const FighterRow = ({
@@ -19,7 +19,7 @@ export const FighterRow = ({
   gameStatusDescription,
 }: MMAProps) => {
   const router = useRouter();
-  const styles = teamRowStyles(isDark);
+  const styles = TeamRowStyles(isDark);
 
   const inProgress = gameStatusDescription === "In Progress";
   const isFinal = gameStatusDescription === "Final";

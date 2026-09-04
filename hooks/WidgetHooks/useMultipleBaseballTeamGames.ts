@@ -1,6 +1,10 @@
 import { BaseballGame } from "@/types/baseball/baseball";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import {
+  loadTeamGameWithCache,
+  readTeamGameCache,
+} from "utils/teamGameCache";
 
 type League = "mlb" | "cb" | "sb";
 
@@ -94,8 +98,6 @@ export function useMultipleBaseballTeamGames({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheRef = useRef<Map<string, BaseballGame | null>>(new Map());
-
   const teamIdsKey = useMemo(() => {
     return Array.from(new Set(teamIds.map(String).filter(Boolean)))
       .sort()
@@ -113,32 +115,49 @@ export function useMultipleBaseballTeamGames({
         return;
       }
 
+      const cachedResults = ids.map((teamId) => {
+        const cacheKey = `baseball:${league}:${teamId}`;
+        return [teamId, readTeamGameCache<BaseballGame>(cacheKey)] as const;
+      });
+
+      if (!forceRefresh && cachedResults.every(([, cached]) => cached.hit)) {
+        setLastGames(
+          Object.fromEntries(
+            cachedResults.map(([teamId, cached]) => [teamId, cached.value]),
+          ),
+        );
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
         const results = await Promise.all(
           ids.map(async (teamId: string) => {
-            const cacheKey = `${league}-${teamId}`;
-
-            if (!forceRefresh && cacheRef.current.has(cacheKey)) {
-              return [teamId, cacheRef.current.get(cacheKey) ?? null] as const;
-            }
+            const cacheKey = `baseball:${league}:${teamId}`;
 
             try {
-              const res = await apiClient.get<LastBaseballTeamGameResponse>(
-                `api/games/baseball/team/last/${league}/${teamId}`,
+              const game = await loadTeamGameWithCache<BaseballGame>(
+                cacheKey,
+                async () => {
+                  const res =
+                    await apiClient.get<LastBaseballTeamGameResponse>(
+                      `api/games/baseball/team/last/${league}/${teamId}`,
+                    );
+
+                  if (res.data?.success === false) {
+                    throw new Error(
+                      `Failed to fetch ${league.toUpperCase()} last game for team ${teamId}`,
+                    );
+                  }
+
+                  return normalizeBaseballGameResponse(res.data);
+                },
+                forceRefresh,
               );
-
-              if (res.data?.success === false) {
-                throw new Error(
-                  `Failed to fetch ${league.toUpperCase()} last game for team ${teamId}`,
-                );
-              }
-
-              const game = normalizeBaseballGameResponse(res.data);
-
-              cacheRef.current.set(cacheKey, game);
 
               return [teamId, game] as const;
             } catch (teamErr) {

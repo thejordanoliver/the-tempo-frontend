@@ -1,8 +1,8 @@
 import { getCFBTeamLogo } from "@/constants/teamsCFB";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Image, Pressable, Text, View } from "react-native";
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
+import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
+import type { FootballTeam } from "types/football/cfpBracketTypes";
 
 /*
 |--------------------------------------------------------------------------

@@ -48,7 +48,7 @@ const SUPPORTED_LEAGUES = new Set<SupportedGameLeague>([
 const normalizeLeague = (league: unknown): SupportedGameLeague | null => {
   const normalized = String(league ?? "")
     .trim()
-    .toUpperCase();
+    .toLowerCase();
 
   return SUPPORTED_LEAGUES.has(normalized as SupportedGameLeague)
     ? (normalized as SupportedGameLeague)

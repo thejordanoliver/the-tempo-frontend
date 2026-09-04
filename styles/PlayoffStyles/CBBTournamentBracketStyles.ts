@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-import { BRACKET_LAYOUT } from "../../components/Sports/Basketball/CBBTournament/tournamentBracket.utils";
+import { BRACKET_LAYOUT } from "../../utils/tournamentBracket.utils";
 export const CARD_WIDTH = 176;
 export const CARD_HEIGHT = 142;
 
@@ -36,8 +36,9 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
     },
     horizontalScrollContent: {
       flexGrow: 1,
-      paddingHorizontal: 8,
-      paddingBottom: 18,
+      gap: 8,
+      alignItems: "center",
+      justifyContent: "center",
     },
     header: {
       gap: 3,
@@ -56,22 +57,7 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       color: mutedTextColor,
       textTransform: "uppercase",
     },
-    warningBanner: {
-      marginHorizontal: 16,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.transparentGold
-        : Colors.light.transparentGold,
-    },
-    warningText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: textColor,
-    },
+
     bracketBoard: {
       position: "relative",
       backgroundColor: boardBackground,
@@ -88,12 +74,7 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
     regionContainer: {
       overflow: "visible",
     },
-    regionHeader: {
-      justifyContent: "center",
-      height: BRACKET_LAYOUT.regionHeaderHeight,
-      paddingHorizontal: 12,
-   
-    },
+
     regionTitle: {
       fontFamily: Fonts.BOLD,
       fontSize: 15,
@@ -341,7 +322,7 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       fontFamily: Fonts.BOLD,
       fontSize: 18,
       color: textColor,
-      textAlign: "center",
+      width: "100%",
       textTransform: "uppercase",
     },
     openingGamesRow: {

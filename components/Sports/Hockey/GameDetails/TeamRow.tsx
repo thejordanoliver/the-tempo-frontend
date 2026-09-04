@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   NHLProps,
-  teamRowStyles,
+  TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
 /* -----------------------------------------------------
@@ -26,7 +26,7 @@ export const TeamRow = ({
   league,
 }: NHLProps) => {
   const router = useRouter();
-  const styles = teamRowStyles(isDark);
+  const styles = TeamRowStyles(isDark);
 
   /* -----------------------------------------------------
    * Game State

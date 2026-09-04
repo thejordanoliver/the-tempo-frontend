@@ -1,6 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import { EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM } from "constants/exploreWidgetSizes";
-import { Colors, Fonts } from "constants/styles";
+import { Colors } from "@/constants/styles";
+import { FavoriteTeamsSliderStyles } from "@/styles/ExploreStyles/FavoriteTeamsSliderStyles";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { ExploreFavoriteTeam } from "hooks/WidgetHooks/useExploreWidgetGames";
 import { useCallback, useRef, useState } from "react";
@@ -10,9 +11,8 @@ import {
   ImageSourcePropType,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  StyleSheet,
+  Pressable,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { getTeamRoute } from "utils/teams";
@@ -22,6 +22,9 @@ export type FavoriteTeamSlide = {
   name: string;
   fullName?: string;
   logo?: ImageSourcePropType;
+  color?: string;
+  secondaryColor?: string;
+  code?: string;
 };
 
 type FavoriteTeamsSliderProps = {
@@ -42,7 +45,7 @@ export default function FavoriteTeamsSlider({
   const router = useRouter();
   const listRef = useRef<FlatList<FavoriteTeamSlide>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const styles = favoriteTeamsSliderStyles(isDark, compact);
+  const styles = FavoriteTeamsSliderStyles(isDark, compact);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -61,40 +64,56 @@ export default function FavoriteTeamsSlider({
   );
 
   const renderSlide = useCallback(
-    ({ item }: { item: FavoriteTeamSlide }) => (
-      <View style={[styles.slide, { width, height }]}>
-        <TouchableOpacity
-          activeOpacity={0.86}
-          style={styles.slideButton}
-          onPress={() =>
-            router.push({
-              pathname: getTeamRoute(item.favorite.league) as any,
-              params: { teamId: item.favorite.id },
-            })
-          }
-        >
-          {item.logo ? (
-            <Image source={item.logo} style={styles.teamLogo} />
-          ) : (
-            <View style={styles.teamLogoFallback}>
-              <Ionicons
-                name="shield-outline"
-                size={compact ? 36 : 46}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </View>
-          )}
+    ({ item }: { item: FavoriteTeamSlide }) => {
+      return (
+        <View style={[styles.slide, { width, height }]}>
+          <Pressable
+            style={styles.slideButton}
+            onPress={() =>
+              router.push({
+                pathname: getTeamRoute(item.favorite.league) as any,
+                params: { teamId: item.favorite.id },
+              })
+            }
+          >
+            <LinearGradient
+              colors={[
+                item.color ?? Colors.midTone,
+                isDark ? Colors.black : Colors.white,
+              ]}
+              locations={isDark ? [0, 0.8] : [0, 0.8]}
+              start={{
+                x: 0.5,
+                y: 0,
+              }}
+              end={{
+                x: 0.5,
+                y: 1,
+              }}
+              style={styles.teamGlow}
+            />
 
-          <View style={styles.teamTextWrap}>
-            <Text style={styles.teamName} numberOfLines={2}>
-              {item.fullName}
-            </Text>
-            <Text style={styles.leagueBadgeText}>{item.favorite.league}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    ),
-    [compact, height, isDark, router, styles, width],
+            {item.logo && <Image source={item.logo} style={styles.teamLogo} />}
+            {!item?.logo && (
+              <Image source={PlaceholderLogo} style={styles.teamLogo} />
+            )}
+            <View style={styles.teamTextWrap}>
+              <Text
+                style={styles.teamName}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.fullName}
+              </Text>
+              <Text style={styles.leagueText}>
+                {item.favorite.league.toUpperCase()}
+              </Text>
+            </View>
+          </Pressable>
+        </View>
+      );
+    },
+    [height, router, styles, width, isDark],
   );
 
   return (
@@ -130,79 +149,3 @@ export default function FavoriteTeamsSlider({
     </View>
   );
 }
-
-const favoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
-  StyleSheet.create({
-    container: {
-      borderRadius: 6,
-      overflow: "hidden",
-    },
-    list: {
-      flex: 1,
-    },
-    slide: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    slideButton: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: compact ? 10 : 18,
-      width: "100%",
-      paddingHorizontal: compact ? 8 : 14,
-      paddingTop: compact ? 8 : 12,
-      paddingBottom: compact ? 18 : 24,
-    },
-    leagueBadgeText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    teamLogo: {
-      width: compact ? "48%" : "52%",
-      height: compact ? "48%" : "52%",
-      resizeMode: "contain",
-    },
-    teamLogoFallback: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: compact ? "48%" : "52%",
-      height: compact ? "48%" : "52%",
-    },
-    teamTextWrap: {
-      alignItems: "center",
-      gap: 4,
-      maxWidth: "100%",
-    },
-    teamName: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: compact ? 16 : 22,
-      lineHeight: compact ? 20 : 27,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    teamFullName: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: compact ? 10 : 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-    dots: {
-      position: "absolute",
-      bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
-      flexDirection: "row",
-      alignSelf: "center",
-      gap: 5,
-    },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    activeDot: {
-      width: 16,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-    },
-  });

@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import {
   CARD_WIDTH,
   CFPBracketStyles,
-} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
+} from "styles/PlayoffStyles/CFPBracketStyles";
 
 /*
 |--------------------------------------------------------------------------

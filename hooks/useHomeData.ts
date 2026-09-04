@@ -27,8 +27,14 @@ const getStartOfToday = () => dayjs().startOf("day").toDate();
 
 export function useHomeData(selectedTab: "scores" | "news") {
   const currentFootballSeason = getFootballSeason();
-  const { favorites, favoriteSports, favoriteSportsReady } =
-    useFavoriteTeamsContext();
+  const {
+    favorites,
+    favoriteSports,
+    favoriteSportsError,
+    favoriteSportsReady,
+    ready: favoriteTeamsReady,
+    userId,
+  } = useFavoriteTeamsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
 
@@ -419,25 +425,32 @@ export function useHomeData(selectedTab: "scores" | "news") {
     }
   };
 
+  const favoriteOrderReady =
+    favoriteTeamsReady &&
+    (userId === null || favoriteSportsReady || favoriteSportsError !== null);
+
+  // Keep the list behind its loading state until every source that affects its
+  // contents and personalized order has settled. Otherwise the first completed
+  // request renders a partial list that visibly moves as later requests finish.
   const scoresLoading =
-    nbaLoading &&
-    mlbLoading &&
-    nhlLoading &&
-    nflLoading &&
-    uflLoading &&
-    cfbLoading &&
-    mensCBBLoading &&
-    womensCBBLoading &&
-    wnbaLoading &&
-    mlsLoading &&
-    leaguesCupLoading &&
-    fifaLoading &&
-    eplLoading &&
-    europaLoading &&
-    bundesligaLoading &&
-    championsLoading &&
-    mmaLoading &&
-    homeGameSections.length === 0;
+    !favoriteOrderReady ||
+    nbaLoading ||
+    mlbLoading ||
+    nhlLoading ||
+    nflLoading ||
+    uflLoading ||
+    cfbLoading ||
+    mensCBBLoading ||
+    womensCBBLoading ||
+    wnbaLoading ||
+    mlsLoading ||
+    leaguesCupLoading ||
+    fifaLoading ||
+    eplLoading ||
+    europaLoading ||
+    bundesligaLoading ||
+    championsLoading ||
+    mmaLoading;
 
   return {
     selectedDate,
@@ -450,6 +463,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
     errorFights: mmaError,
     newsLoading,
     articles,
-    loading: selectedTab === "scores" ? scoresLoading : newsLoading,
+    loading:
+      selectedTab === "scores" ? scoresLoading || refreshing : newsLoading,
   };
 }

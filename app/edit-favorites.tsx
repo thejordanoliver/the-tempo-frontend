@@ -5,21 +5,23 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
-import { Alert, View, useWindowDimensions } from "react-native";
+import { Alert, Animated, View, useWindowDimensions } from "react-native";
 
+import PagerView, { PagerViewOnPageScrollEvent } from "react-native-pager-view";
 import Button from "../components/Buttons/Button";
-import { CustomHeader } from "../components/CustomHeader";
+import {
+  CustomHeader,
+  EditFavoritesHeaderTab,
+} from "../components/CustomHeader";
 import FavoriteSportsSelector from "../components/Favorites/FavoriteSportsSelector";
 import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
-import TabBar from "../components/TabBars/TabBar";
 import type { FavoriteSportId } from "../constants/leagues";
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
-
-const FAVORITES_TABS = ["teams", "leagues"] as const;
 
 export default function EditFavoritesScreen() {
   const styles = editFavoritesStyles;
@@ -29,7 +31,6 @@ export default function EditFavoritesScreen() {
     favorites,
     toggleFavorite,
     isGridView,
-    toggleLayout,
     fadeAnim,
     saveFavorites,
     isLoading,
@@ -43,7 +44,20 @@ export default function EditFavoritesScreen() {
     loadFavoriteSports,
     updateFavoriteSports,
   } = useFavoriteTeamsContext();
-  const [selectedTab, setSelectedTab] = useState<"teams" | "leagues">("teams");
+  const [selectedTab, setSelectedTab] = useState<"teams" | "sports">("teams");
+  const homeTabScrollProgress = useRef(new Animated.Value(0)).current;
+  const handlePageScroll = useCallback(
+    (event: PagerViewOnPageScrollEvent) => {
+      const { offset, position } = event.nativeEvent;
+      homeTabScrollProgress.setValue(position + offset);
+    },
+    [homeTabScrollProgress],
+  );
+  const pagerRef = useRef<PagerView>(null);
+  const handleHeaderTabPress = useCallback((tab: EditFavoritesHeaderTab) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tab === "teams" ? 0 : 1);
+  }, []);
   const [draftFavoriteSports, setDraftFavoriteSports] = useState<
     FavoriteSportId[]
   >([]);
@@ -87,14 +101,15 @@ export default function EditFavoritesScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          title="Edit Favorites"
-          onBack={() => router.back()}
-          onToggleLayout={toggleLayout}
-          isGrid={isGridView}
+          tabName="Edit Favorites"
+          editFavoritesSelectedTab={selectedTab}
+          onEditTabPress={handleHeaderTabPress}
+          homeScrollProgress={homeTabScrollProgress}
+          unreadNotificationCount={10}
         />
       ),
     });
-  }, [isGridView, navigation, router, selectedTab, toggleLayout]);
+  }, [handleHeaderTabPress, homeTabScrollProgress, navigation, selectedTab]);
 
   const handleToggleFavoriteSport = useCallback((league: FavoriteSportId) => {
     setDraftFavoriteSports((current) =>
@@ -138,29 +153,23 @@ export default function EditFavoritesScreen() {
     updateFavoriteSports,
   ]);
 
-  const handleTabPress = useCallback(
-    (tab: (typeof FAVORITES_TABS)[number]) => {
-      setSearch("");
-      setSelectedTab(tab);
-    },
-    [setSearch],
-  );
-
   const screenBusy =
     isLoading || favoriteSportsLoading || favoriteSportsSaving || saving;
 
   return (
     <View style={styles.container}>
-      <TabBar
-        tabs={FAVORITES_TABS}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-        style={styles.tabs}
-      />
-
-      <View style={styles.selectorContainer}>
-        {selectedTab === "teams" ? (
+      <PagerView
+        ref={pagerRef}
+        style={{ flex: 1 }}
+        initialPage={0}
+        onPageScroll={handlePageScroll}
+        onPageSelected={(e) => {
+          const index = e.nativeEvent.position;
+          homeTabScrollProgress.setValue(index);
+          setSelectedTab(index === 0 ? "teams" : "sports");
+        }}
+      >
+        <View key={"teams"} style={styles.selectorContainer}>
           <FavoriteTeamsSelector
             teams={filteredTeams}
             favorites={favorites}
@@ -172,7 +181,30 @@ export default function EditFavoritesScreen() {
             setSearch={setSearch}
             loading={isLoading}
           />
-        ) : (
+          <View style={styles.buttonContainer}>
+            <Button
+              isDark={isDark}
+              onPress={() => router.back()}
+              disabled={screenBusy}
+              variant="outline"
+              style={styles.button}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              isDark={isDark}
+              onPress={handleSave}
+              disabled={screenBusy || !favoriteSportsReady}
+              variant="filled"
+              style={styles.button}
+            >
+              {saving ? "Saving…" : "Save"}
+            </Button>
+          </View>
+        </View>
+
+        <View key={"sports"} style={styles.selectorContainer}>
           <FavoriteSportsSelector
             favorites={draftFavoriteSports}
             loading={favoriteSportsLoading}
@@ -187,30 +219,29 @@ export default function EditFavoritesScreen() {
             setSearch={setSearch}
             itemWidth={itemWidth}
           />
-        )}
-      </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              isDark={isDark}
+              onPress={() => router.back()}
+              disabled={screenBusy}
+              variant="outline"
+              style={styles.button}
+            >
+              Cancel
+            </Button>
 
-      <View style={styles.buttonContainer}>
-        <Button
-          isDark={isDark}
-          onPress={() => router.back()}
-          disabled={screenBusy}
-          variant="outline"
-          style={styles.button}
-        >
-          Cancel
-        </Button>
-
-        <Button
-          isDark={isDark}
-          onPress={handleSave}
-          disabled={screenBusy || !favoriteSportsReady}
-          variant="filled"
-          style={styles.button}
-        >
-          {saving ? "Saving…" : "Save"}
-        </Button>
-      </View>
+            <Button
+              isDark={isDark}
+              onPress={handleSave}
+              disabled={screenBusy || !favoriteSportsReady}
+              variant="filled"
+              style={styles.button}
+            >
+              {saving ? "Saving…" : "Save"}
+            </Button>
+          </View>
+        </View>
+      </PagerView>
     </View>
   );
 }

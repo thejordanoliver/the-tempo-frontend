@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 export const EXPLORE_WIDGET_GRID_GAP = 12;
 export const EXPLORE_WIDGET_ROW_GAP = 16;
 
-export const widgetDashboardStyles = (isDark: boolean) =>
+export const WidgetDashboardStyles = (isDark: boolean) =>
   StyleSheet.create({
     content: {
       flexGrow: 1,
@@ -144,9 +144,7 @@ export const widgetDashboardStyles = (isDark: boolean) =>
       justifyContent: "center",
       minHeight: 84,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+
     },
     errorCard: {
       gap: 6,

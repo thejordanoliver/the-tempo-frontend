@@ -30,8 +30,8 @@ export default function BasketballGameCard({
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-
   const handlePress = () => {
+      console.log(league);
     router.push({
       pathname: "/game/basketball/[game]",
       params: {
@@ -41,6 +41,7 @@ export default function BasketballGameCard({
       },
     });
   };
+
 
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);

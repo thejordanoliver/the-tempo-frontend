@@ -1,6 +1,10 @@
 import { FootballGame } from "@/types/football/football";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import {
+  loadTeamGameWithCache,
+  readTeamGameCache,
+} from "utils/teamGameCache";
 
 type League = "nfl" | "cfb";
 
@@ -136,7 +140,6 @@ export function useMultipleFootballTeamGames({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheRef = useRef<Map<string, FootballGame | null>>(new Map());
   const requestIdRef = useRef(0);
 
   const teamIdsKey = useMemo(() => {
@@ -157,26 +160,42 @@ export function useMultipleFootballTeamGames({
         return;
       }
 
+      const cachedResults = ids.map((teamId) => {
+        const cacheKey = `football:${league}:${teamId}`;
+        return [teamId, readTeamGameCache<FootballGame>(cacheKey)] as const;
+      });
+
+      if (!forceRefresh && cachedResults.every(([, cached]) => cached.hit)) {
+        setLastGames(
+          Object.fromEntries(
+            cachedResults.map(([teamId, cached]) => [teamId, cached.value]),
+          ),
+        );
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
         const results = await Promise.all(
           ids.map(async (teamId) => {
-            const cacheKey = `${league}-${teamId}`;
-
-            if (!forceRefresh && cacheRef.current.has(cacheKey)) {
-              return [teamId, cacheRef.current.get(cacheKey) ?? null] as const;
-            }
+            const cacheKey = `football:${league}:${teamId}`;
 
             try {
-              const res = await apiClient.get(
-                `/api/games/football/team/last/${league}/${teamId}`,
+              const game = await loadTeamGameWithCache<FootballGame>(
+                cacheKey,
+                async () => {
+                  const res = await apiClient.get(
+                    `/api/games/football/team/last/${league}/${teamId}`,
+                  );
+
+                  return normalizeFootballGameResponse(res.data);
+                },
+                forceRefresh,
               );
-
-              const game = normalizeFootballGameResponse(res.data);
-
-              cacheRef.current.set(cacheKey, game);
 
               return [teamId, game] as const;
             } catch (teamErr) {
@@ -184,9 +203,6 @@ export function useMultipleFootballTeamGames({
                 `Failed to fetch ${league.toUpperCase()} last game for team ${teamId}`,
                 teamErr,
               );
-
-              cacheRef.current.set(cacheKey, null);
-
               return [teamId, null] as const;
             }
           }),
@@ -216,10 +232,14 @@ export function useMultipleFootballTeamGames({
     fetchLastGames();
   }, [fetchLastGames]);
 
+  const refresh = useCallback(() => {
+    fetchLastGames({ forceRefresh: true });
+  }, [fetchLastGames]);
+
   return {
     lastGames,
     loading,
     error,
-    refresh: fetchLastGames,
+    refresh,
   };
 }

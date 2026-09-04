@@ -9,8 +9,8 @@ import {
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Pressable, Text, View } from "react-native";
 
-import { CFPBracketStyles } from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
+import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
+import type { FootballTeam } from "types/football/cfpBracketTypes";
 import { BracketTeamRow } from "./BracketTeamRow";
 
 /*

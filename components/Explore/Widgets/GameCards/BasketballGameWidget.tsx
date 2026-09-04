@@ -1,9 +1,11 @@
+import { activeOpacity } from "@/constants/styles";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
-import { Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
@@ -32,6 +34,17 @@ export default function BasketballGameWidget({
   isWCBB,
   isWNBA,
 }: GameWidgetProps) {
+  const league = isCBB ? "cbb" : isWCBB ? "wcbb" : isWNBA ? "wnba" : "nba";
+  const handlePress = () => {
+    router.push({
+      pathname: "/game/basketball/[game]",
+      params: {
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    });
+  };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
@@ -94,11 +107,11 @@ export default function BasketballGameWidget({
   const gameDate = safeDate(game?.date);
   const holidayLabel = getHolidayLabel(gameDate);
 
+  const clock = game?.status.clock;
   const period = formatPeriod({
-    period: game.status.period,
+    period: game?.status.period ?? 0,
     isCBB: isCBB || isWCBB,
   });
-  const clock = game?.status.clock;
 
   const state = game.status.state ?? "";
   const gameStatusDescription = game.status?.description;
@@ -220,64 +233,66 @@ export default function BasketballGameWidget({
   // Render widget
   // -------------------------
   return (
-    <View style={styles.container}>
-      {showHeadline && (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headline} numberOfLines={1}>
-            {headline}
-          </Text>
-        </View>
-      )}
-      <View style={styles.wrapper}>
-        {/* ---------------------- */}
-        {/* Away Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.awaySection}>
-          {awayTeamContent}
-          {awayDisplay}
-        </View>
-
-        {/* ---------------------- */}
-        {/* Game Info Section */}
-        {/* ---------------------- */}
-        {!isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+      <View style={styles.container}>
+        {showHeadline && (
+          <View style={styles.headlineContainer}>
+            <Text style={styles.headline} numberOfLines={1}>
+              {headline}
+            </Text>
           </View>
         )}
+        <View style={styles.wrapper}>
+          {/* ---------------------- */}
+          {/* Away Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.awaySection}>
+            {awayTeamContent}
+            {awayDisplay}
+          </View>
 
-        {/* ---------------------- */}
-        {/* Home Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.homeSection}>
-          {isSmallLayout ? (
-            <>
-              {homeTeamContent}
-              {homeDisplay}
-            </>
-          ) : (
-            <>
-              {homeDisplay}
-              {homeTeamContent}
-            </>
+          {/* ---------------------- */}
+          {/* Game Info Section */}
+          {/* ---------------------- */}
+          {!isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
+          )}
+
+          {/* ---------------------- */}
+          {/* Home Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.homeSection}>
+            {isSmallLayout ? (
+              <>
+                {homeTeamContent}
+                {homeDisplay}
+              </>
+            ) : (
+              <>
+                {homeDisplay}
+                {homeTeamContent}
+              </>
+            )}
+          </View>
+          {isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
           )}
         </View>
-        {isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
-          </View>
-        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

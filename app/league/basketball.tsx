@@ -64,11 +64,10 @@ import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
-import TournamentBracket from "../../components/Sports/Basketball/CBBTournament";
+import TournamentTreeBracket from "../../components/Sports/Basketball/CBBTournament/TournamentTreeBracket";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
-import { useTournamentBracket } from "../../hooks/BasketballHooks/useTournamentBracket";
 import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
 import {
   getCBBSeason,
@@ -1227,18 +1226,6 @@ function CBBLeagueScreen() {
   } = useSeasonLeaders(currentSeason, league);
 
   /* ------------------------------------------------------------------------ */
-  /*                                 Bracket                                  */
-  /* ------------------------------------------------------------------------ */
-
-  const {
-    tournament,
-    loading: bracketLoading,
-    error: bracketError,
-    refreshing: bracketRefreshing,
-    refresh: refreshBracket,
-  } = useTournamentBracket(league, 2025);
-
-  /* ------------------------------------------------------------------------ */
   /*                                  Header                                  */
   /* ------------------------------------------------------------------------ */
 
@@ -1352,13 +1339,7 @@ function CBBLeagueScreen() {
 
   const bracketPage = (
     <View key="bracket" style={styles.contentArea}>
-      <TournamentBracket
-        tournament={tournament}
-        loading={bracketLoading}
-        error={bracketError}
-        refreshing={bracketRefreshing}
-        onRefresh={refreshBracket}
-      />
+      <TournamentTreeBracket league={league} season={2025} />
     </View>
   );
 
@@ -1611,18 +1592,6 @@ function WCBBLeagueScreen() {
   } = useSeasonLeaders(currentSeason, league);
 
   /* ------------------------------------------------------------------------ */
-  /*                                 Bracket                                  */
-  /* ------------------------------------------------------------------------ */
-
-  const {
-    tournament,
-    loading: bracketLoading,
-    error: bracketError,
-    refreshing: bracketRefreshing,
-    refresh: refreshBracket,
-  } = useTournamentBracket(league, currentSeason);
-
-  /* ------------------------------------------------------------------------ */
   /*                                  Header                                  */
   /* ------------------------------------------------------------------------ */
 
@@ -1736,13 +1705,7 @@ function WCBBLeagueScreen() {
 
   const bracketPage = (
     <View key="bracket" style={styles.contentArea}>
-      <TournamentBracket
-        tournament={tournament}
-        loading={bracketLoading}
-        error={bracketError}
-        refreshing={bracketRefreshing}
-        onRefresh={refreshBracket}
-      />
+      <TournamentTreeBracket league={league} season={currentSeason} />
     </View>
   );
 

@@ -96,14 +96,14 @@ export default function SoccerLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName="League"
+          tabName={league.toUpperCase()}
           league={leagueLabel}
           onBack={goBack}
           {...favoriteHeaderProps}
         />
       ),
     });
-  }, [favoriteHeaderProps, navigation, leagueLabel]);
+  }, [favoriteHeaderProps, navigation, leagueLabel, league]);
 
   const handleRefresh = async () => {
     setRefreshing(true);

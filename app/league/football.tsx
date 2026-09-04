@@ -11,9 +11,9 @@ import WeekSelector, {
 } from "@/components/League/WeekSelector";
 import NewsList from "@/components/News/NewsList";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
-import { CFPBracket } from "@/components/Sports/Football/CFBPlayoffs/CFPBracket";
+import { CFPBracket } from "@/components/Sports/Football/Playoffs/CFBPlayoffs/CFPBracket";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import { NFLPlayoffBracket } from "@/components/Sports/Football/NFLPlayoffs/NFLPlayoffBracket";
+import { NFLPlayoffBracket } from "@/components/Sports/Football/Playoffs/NFLPlayoffs/NFLPlayoffBracket";
 import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";

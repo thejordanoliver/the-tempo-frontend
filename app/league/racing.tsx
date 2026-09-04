@@ -3,8 +3,8 @@ import EventSelector, {
 } from "@/components/Sports/MMA/EventSelector";
 import GamesList from "@/components/Sports/Racing/Games/RacingGamesList";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
-import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useRacingEvents } from "@/hooks/RacingHooks/useRacingEvents";
+import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import {
@@ -151,7 +151,7 @@ export default function RacingLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName="League"
+          tabName={league.toUpperCase()}
           league={league}
           onBack={goBack}
           {...favoriteHeaderProps}

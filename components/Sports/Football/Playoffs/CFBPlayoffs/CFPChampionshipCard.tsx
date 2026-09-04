@@ -6,8 +6,8 @@ import {
   CFPBracketStyles,
   CHAMPIONSHIP_X,
   CHAMPIONSHIP_Y,
-} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
-import type { FootballTeam } from "../../../../types/football/cfpBracketTypes";
+} from "styles/PlayoffStyles/CFPBracketStyles";
+import type { FootballTeam } from "types/football/cfpBracketTypes";
 import { BracketTeamRow } from "./BracketTeamRow";
 import { CFPTeamLogo } from "./CFPTeamLogo";
 

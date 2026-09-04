@@ -1,5 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import {
+  BoxScore,
   GameHeader,
   GameLiveChatOverlay,
   GameLocation,
@@ -9,7 +10,6 @@ import {
   LineScore,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import { BoxScore } from "@/components/Sports/Basketball/GameDetails";
 import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
 import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
 import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
@@ -112,17 +112,10 @@ export default function GameDetailsScreen(
     );
   }, [params.data, params.game, props.game]);
 
-  const leagueId = Number(
-    getFirstParam(params.leagueId) ??
-      getFirstParam(params.league) ??
-      game?.league?.id ??
-      0,
-  );
-
-  const LEAGUE = game?.league?.code ?? "";
-  const isWNBA = leagueId === 59;
-  const isWCBB = leagueId === 54;
-  const isCBB = leagueId === 10;
+  const LEAGUE = game?.league?.code ?? "nba";
+  const isWNBA = LEAGUE === "wnba";
+  const isWCBB = LEAGUE === "wcbb";
+  const isCBB = LEAGUE === "cbb";
 
   const gameDateObj = game?.date ? new Date(game.date) : null;
   const gameDate = safeDate(game?.date);

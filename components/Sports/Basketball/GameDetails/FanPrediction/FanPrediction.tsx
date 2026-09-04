@@ -248,7 +248,7 @@ function FanPredictionContent({
 
   if (phase === "loading") {
     return (
-      <View style={styles.container}>
+      <View>
         <HeadingTwo isDark={isDark}>Fan Prediction</HeadingTwo>
 
         <View style={styles.wrapper}>
@@ -269,14 +269,14 @@ function FanPredictionContent({
   }
   if (phase === "error")
     return (
-      <View style={global.emptyContainer}>
-        <HeadingTwo isDark={isDark}>Fan Prediction Vote</HeadingTwo>
+      <View>
+        <HeadingTwo isDark={isDark}>Fan Prediction</HeadingTwo>
         <Text style={global.errorText}>{errorMessage}</Text>
       </View>
     );
 
   return (
-    <View style={styles.container}>
+    <View>
       <HeadingTwo isDark={isDark}>Fan Prediction</HeadingTwo>
       <View style={styles.wrapper}>
         <PredictionCard

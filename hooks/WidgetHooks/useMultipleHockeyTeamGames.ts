@@ -1,6 +1,10 @@
 import { HockeyGame } from "@/types/hockey/hockey";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import {
+  loadTeamGameWithCache,
+  readTeamGameCache,
+} from "utils/teamGameCache";
 
 type League = "nhl" | "mch";
 
@@ -136,7 +140,6 @@ export function useMultipleHockeyTeamGames({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const cacheRef = useRef<Map<string, HockeyGame | null>>(new Map());
   const requestIdRef = useRef(0);
 
   const teamIdsKey = useMemo(() => {
@@ -157,26 +160,42 @@ export function useMultipleHockeyTeamGames({
         return;
       }
 
+      const cachedResults = ids.map((teamId) => {
+        const cacheKey = `hockey:${league}:${teamId}`;
+        return [teamId, readTeamGameCache<HockeyGame>(cacheKey)] as const;
+      });
+
+      if (!forceRefresh && cachedResults.every(([, cached]) => cached.hit)) {
+        setLastGames(
+          Object.fromEntries(
+            cachedResults.map(([teamId, cached]) => [teamId, cached.value]),
+          ),
+        );
+        setLoading(false);
+        setError(null);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
       try {
         const results = await Promise.all(
           ids.map(async (teamId) => {
-            const cacheKey = `${league}-${teamId}`;
-
-            if (!forceRefresh && cacheRef.current.has(cacheKey)) {
-              return [teamId, cacheRef.current.get(cacheKey) ?? null] as const;
-            }
+            const cacheKey = `hockey:${league}:${teamId}`;
 
             try {
-              const res = await apiClient.get(
-                `/api/games/hockey/team/last/${league}/${teamId}`,
+              const game = await loadTeamGameWithCache<HockeyGame>(
+                cacheKey,
+                async () => {
+                  const res = await apiClient.get(
+                    `/api/games/hockey/team/last/${league}/${teamId}`,
+                  );
+
+                  return normalizeHockeyGameResponse(res.data);
+                },
+                forceRefresh,
               );
-
-              const game = normalizeHockeyGameResponse(res.data);
-
-              cacheRef.current.set(cacheKey, game);
 
               return [teamId, game] as const;
             } catch (teamErr) {
@@ -184,9 +203,6 @@ export function useMultipleHockeyTeamGames({
                 `Failed to fetch ${league.toUpperCase()} last game for team ${teamId}`,
                 teamErr,
               );
-
-              cacheRef.current.set(cacheKey, null);
-
               return [teamId, null] as const;
             }
           }),
@@ -216,10 +232,14 @@ export function useMultipleHockeyTeamGames({
     fetchLastGames();
   }, [fetchLastGames]);
 
+  const refresh = useCallback(() => {
+    fetchLastGames({ forceRefresh: true });
+  }, [fetchLastGames]);
+
   return {
     lastGames,
     loading,
     error,
-    refresh: fetchLastGames,
+    refresh,
   };
 }

@@ -107,6 +107,9 @@ export default function FavoriteTeamsWidget({
           return {
             favorite,
             name: team?.name ?? team?.shortName ?? favorite.id,
+            code: team?.code,
+            color: team?.color ?? Colors.midTone,
+            secondaryColor: team?.secondaryColor ?? Colors.midTone,
             fullName:
               team?.fullName ?? team?.name ?? team?.shortName ?? favorite.id,
             logo: resolveTeamLogo(favorite, allTeams, isDark),
@@ -193,12 +196,9 @@ const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     card: {
       position: "relative",
-      borderWidth: 1,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.midTone,
       borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
       overflow: "hidden",
     },
     body: {

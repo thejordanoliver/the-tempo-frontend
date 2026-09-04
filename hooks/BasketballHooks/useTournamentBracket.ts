@@ -1,11 +1,10 @@
 // hooks/BasketballHooks/useTournamentBracket.ts
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
 import { apiClient } from "utils/apiClient";
 
 /* -------------------------------------------------------------------------- */
-/*                                   Types                                    */
+/*                                    Types                                   */
 /* -------------------------------------------------------------------------- */
 
 export type TournamentLeagueInfo = {
@@ -16,12 +15,6 @@ export type TournamentLeagueInfo = {
   slug: string;
 };
 
-export type TournamentRegionSide = "left" | "right";
-
-export type TournamentRegionVerticalPosition = "top" | "bottom";
-
-export type TournamentNextGamePosition = "top" | "bottom";
-
 export type TournamentRoundCode =
   | "OPENING"
   | "ROUND_OF_64"
@@ -31,36 +24,18 @@ export type TournamentRoundCode =
   | "FINAL_4"
   | "CHAMPIONSHIP";
 
-export type TournamentGameStatus =
-  | "scheduled"
-  | "pre"
-  | "in"
-  | "live"
-  | "post"
-  | "final"
-  | "postponed"
-  | "canceled"
-  | "cancelled"
-  | "delayed"
-  | string;
+export type TournamentHomeAway = "home" | "away";
 
 export type TournamentTeam = {
-  /**
-   * ESPN team ID.
-   *
-   * The current tournament endpoint exposes `id` directly and does not return
-   * database-specific aliases such as databaseId, dbId, wcbbTeamId, etc.
-   */
   id: string;
-
   name: string;
   shortName: string;
-  abbreviation: string;
+  code: string;
   logo: string | null;
-
   seed: number | null;
   score: number | null;
   winner: boolean | null;
+  homeAway: TournamentHomeAway;
 };
 
 export type TournamentVenue = {
@@ -71,159 +46,99 @@ export type TournamentVenue = {
   indoor: boolean;
 };
 
-export type TournamentGame = {
+type TournamentApiGame = {
   id: string;
   tournamentId: string;
-
-  /**
-   * Region is null for Final Four / Championship games.
-   */
   regionId: string | null;
   regionName: string | null;
-
   round: TournamentRoundCode;
   roundLabel: string;
-
-  /**
-   * Global tournament round ordering:
-   *
-   * 0 = First Four
-   * 1 = Round of 64
-   * 2 = Round of 32
-   * 3 = Sweet 16
-   * 4 = Elite Eight
-   * 5 = Final Four
-   * 6 = Championship
-   */
   roundOrder: number;
-
-  gameOrder: number;
-
-  /**
-   * Region bracket position.
-   *
-   * Opening, Final Four, and Championship games may not have a slot.
-   */
-  bracketSlot: number | null;
-
-  topTeam: TournamentTeam;
-  bottomTeam: TournamentTeam;
-
-  winnerTeamId: string | null;
-
-  /**
-   * Previous games feeding this matchup.
-   */
-  topSourceGameId: string | null;
-  bottomSourceGameId: string | null;
-
-  /**
-   * Destination game after this matchup.
-   */
-  nextGameId: string | null;
-  nextGamePosition: TournamentNextGamePosition | null;
-
-  /**
-   * Primarily used by First Four games to describe where the winner enters
-   * the main bracket.
-   */
-  destinationRegionId: string | null;
-  destinationRound: TournamentRoundCode | null;
-  destinationSeed: number | null;
-
   date: string | null;
-
-  status: TournamentGameStatus;
+  status: string;
   statusText: string | null;
-
+  teams: TournamentTeam[];
+  winnerTeamId: string | null;
   venue: TournamentVenue | null;
-
   broadcast: string | null;
   headline: string | null;
 };
 
-export type TournamentRegion = {
-  id: string;
-  name: string;
+export type TournamentGame = Omit<TournamentApiGame, "teams"> & {
+  homeTeam: TournamentTeam | null;
+  awayTeam: TournamentTeam | null;
+};
 
+type TournamentApiRound = {
+  round: TournamentRoundCode;
+  label: string;
   order: number;
+  games: TournamentApiGame[];
+};
 
-  side: TournamentRegionSide;
-  verticalPosition: TournamentRegionVerticalPosition;
-
+export type TournamentRound = {
+  round: TournamentRoundCode;
+  label: string;
+  order: number;
   games: TournamentGame[];
 };
 
 export type TournamentMetadata = {
   source: string;
-
   fetchedAt: string;
-
   totalGames: number;
   warnings: string[];
+};
+
+type TournamentApiData = {
+  tournamentId: string;
+  tournamentName: string;
+  season: number;
+  competition: string;
+  rounds: TournamentApiRound[];
+  metadata: TournamentMetadata;
 };
 
 export type TournamentData = {
   tournamentId: string;
   tournamentName: string;
-
   season: number;
   competition: string;
-
-  openingRoundLabel: string;
-
-  regions: TournamentRegion[];
-
-  openingRoundGames: TournamentGame[];
-  finalFourGames: TournamentGame[];
-
-  championshipGame: TournamentGame | null;
-
+  rounds: TournamentRound[];
   metadata: TournamentMetadata;
 };
 
-export type TournamentResponse = {
+type TournamentApiResponse = {
   success: boolean;
-
   league: string;
   leagueInfo: TournamentLeagueInfo;
-
-  data: TournamentData;
-
+  data: TournamentApiData;
   error?: string;
 };
 
-export type TournamentRoundsMap = Record<string, TournamentGame[]>;
-
-export type TournamentGamesById = Map<string, TournamentGame>;
+export type TournamentRegion = {
+  id: string;
+  name: string;
+  order: number;
+  games: TournamentGame[];
+};
 
 export type UseTournamentBracketResult = {
   tournament: TournamentData | null;
 
-  tournamentId: string | null;
   tournamentName: string | null;
-  tournamentSeason: number;
-
   competition: string | null;
-  openingRoundLabel: string | null;
 
   league: string;
   leagueInfo: TournamentLeagueInfo | null;
 
+  rounds: TournamentRound[];
+  games: TournamentGame[];
   regions: TournamentRegion[];
 
   openingRoundGames: TournamentGame[];
   finalFourGames: TournamentGame[];
   championshipGame: TournamentGame | null;
-
-  bracket: TournamentGame[];
-  gamesById: TournamentGamesById;
-
-  count: number;
-  isPostseason: boolean;
-
-  roundsMap: TournamentRoundsMap;
-  roundNames: string[];
 
   metadata: TournamentMetadata | null;
   warnings: string[];
@@ -236,20 +151,27 @@ export type UseTournamentBracketResult = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                               Empty constants                              */
+/*                                  Constants                                 */
 /* -------------------------------------------------------------------------- */
 
+const EMPTY_ROUNDS: TournamentRound[] = [];
 const EMPTY_GAMES: TournamentGame[] = [];
 const EMPTY_REGIONS: TournamentRegion[] = [];
 const EMPTY_WARNINGS: string[] = [];
 
+const REGION_ORDER = new Map<string, number>([
+  ["east", 0],
+  ["south", 1],
+  ["west", 2],
+  ["midwest", 3],
+]);
+
 /* -------------------------------------------------------------------------- */
-/*                                  Helpers                                   */
+/*                                   Helpers                                  */
 /* -------------------------------------------------------------------------- */
 
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return typeof value === "object" && value !== null;
-};
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
 const getErrorMessage = (error: unknown): string => {
   if (!isRecord(error)) {
@@ -258,64 +180,92 @@ const getErrorMessage = (error: unknown): string => {
 
   const response = error.response;
 
-  if (isRecord(response)) {
-    const responseData = response.data;
+  if (isRecord(response) && isRecord(response.data)) {
+    const message = response.data.error;
 
-    if (
-      isRecord(responseData) &&
-      typeof responseData.error === "string" &&
-      responseData.error.trim()
-    ) {
-      return responseData.error;
+    if (typeof message === "string" && message.trim()) {
+      return message;
     }
+  }
 
-    return "Server error.";
+  if (typeof error.message === "string" && error.message.trim()) {
+    return error.message;
   }
 
   if ("request" in error) {
     return "Network error.";
   }
 
-  if (typeof error.message === "string" && error.message.trim().length > 0) {
-    return error.message;
-  }
-
   return "Something went wrong.";
 };
 
-const collectTournamentGames = (
-  tournament: TournamentData,
-): TournamentGame[] => {
-  const gamesById = new Map<string, TournamentGame>();
+const normalizeGame = (game: TournamentApiGame): TournamentGame => {
+  const homeTeam = game.teams.find((team) => team.homeAway === "home") ?? null;
 
-  const addGames = (games: readonly TournamentGame[]) => {
-    for (const game of games) {
-      gamesById.set(game.id, game);
-    }
+  const awayTeam = game.teams.find((team) => team.homeAway === "away") ?? null;
+
+  const { teams: _teams, ...gameData } = game;
+
+  return {
+    ...gameData,
+    homeTeam,
+    awayTeam,
   };
+};
 
-  addGames(tournament.openingRoundGames);
+const normalizeTournament = (data: TournamentApiData): TournamentData => ({
+  tournamentId: data.tournamentId,
+  tournamentName: data.tournamentName,
+  season: data.season,
+  competition: data.competition,
+  rounds: data.rounds.map((round) => ({
+    round: round.round,
+    label: round.label,
+    order: round.order,
+    games: round.games.map(normalizeGame),
+  })),
+  metadata: data.metadata,
+});
 
-  for (const region of tournament.regions) {
-    addGames(region.games);
+const getRoundGames = (
+  rounds: readonly TournamentRound[],
+  roundCode: TournamentRoundCode,
+): TournamentGame[] =>
+  rounds.find((round) => round.round === roundCode)?.games ?? EMPTY_GAMES;
+
+const buildRegions = (games: readonly TournamentGame[]): TournamentRegion[] => {
+  if (games.length === 0) {
+    return EMPTY_REGIONS;
   }
 
-  addGames(tournament.finalFourGames);
+  const regionMap = new Map<string, TournamentRegion>();
 
-  if (tournament.championshipGame) {
-    gamesById.set(tournament.championshipGame.id, tournament.championshipGame);
+  for (const game of games) {
+    if (!game.regionId || !game.regionName) {
+      continue;
+    }
+
+    const existingRegion = regionMap.get(game.regionId);
+
+    if (existingRegion) {
+      existingRegion.games.push(game);
+      continue;
+    }
+
+    regionMap.set(game.regionId, {
+      id: game.regionId,
+      name: game.regionName,
+      order: REGION_ORDER.get(game.regionId.toLowerCase()) ?? 99,
+      games: [game],
+    });
   }
 
-  return Array.from(gamesById.values()).sort((firstGame, secondGame) => {
-    if (firstGame.roundOrder !== secondGame.roundOrder) {
-      return firstGame.roundOrder - secondGame.roundOrder;
+  return Array.from(regionMap.values()).sort((a, b) => {
+    if (a.order !== b.order) {
+      return a.order - b.order;
     }
 
-    if (firstGame.gameOrder !== secondGame.gameOrder) {
-      return firstGame.gameOrder - secondGame.gameOrder;
-    }
-
-    return firstGame.id.localeCompare(secondGame.id);
+    return a.name.localeCompare(b.name);
   });
 };
 
@@ -328,38 +278,32 @@ export function useTournamentBracket(
   season: number,
 ): UseTournamentBracketResult {
   const [tournament, setTournament] = useState<TournamentData | null>(null);
-
   const [leagueInfo, setLeagueInfo] = useState<TournamentLeagueInfo | null>(
     null,
   );
+  const [responseLeague, setResponseLeague] = useState(
+    league.trim().toLowerCase(),
+  );
 
-  const [responseLeague, setResponseLeague] = useState(league);
-
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
   const requestIdRef = useRef(0);
 
-  /* ------------------------------------------------------------------------ */
-  /*                                  Fetch                                   */
-  /* ------------------------------------------------------------------------ */
+  const fetchTournament = useCallback(
+    async (refreshingRequest = false): Promise<void> => {
+      const normalizedLeague = league.trim().toLowerCase();
 
-  const fetchTournamentGames = useCallback(
-    async (isRefresh = false): Promise<void> => {
-      const normalizedLeague = league.trim();
-
-      if (!normalizedLeague || !Number.isFinite(season)) {
+      if (!normalizedLeague || !Number.isInteger(season) || season <= 0) {
         requestIdRef.current += 1;
 
         setTournament(null);
         setLeagueInfo(null);
-        setResponseLeague(normalizedLeague || league);
-        setError("A valid league and season are required.");
-
+        setResponseLeague(normalizedLeague);
         setLoading(false);
         setRefreshing(false);
+        setError("A valid league and season are required.");
 
         return;
       }
@@ -367,26 +311,24 @@ export function useTournamentBracket(
       const requestId = ++requestIdRef.current;
 
       try {
-        if (isRefresh) {
+        if (refreshingRequest) {
           setRefreshing(true);
         } else {
           setLoading(true);
+          setTournament(null);
+          setLeagueInfo(null);
+          setResponseLeague(normalizedLeague);
         }
 
         setError(null);
 
-        const response = await apiClient.get<TournamentResponse>(
+        const response = await apiClient.get<TournamentApiResponse>(
           `api/games/basketball/${normalizedLeague}/tournament`,
           {
-            params: {
-              season,
-            },
+            params: { season },
           },
         );
 
-        /**
-         * League/season changed and a newer request already started.
-         */
         if (requestId !== requestIdRef.current) {
           return;
         }
@@ -399,29 +341,17 @@ export function useTournamentBracket(
           );
         }
 
-        setTournament(payload.data);
+        setTournament(normalizeTournament(payload.data));
         setLeagueInfo(payload.leagueInfo);
         setResponseLeague(payload.league);
       } catch (fetchError: unknown) {
-        /**
-         * Ignore stale failures too. An older request should not replace the
-         * state or error belonging to a newer league/season.
-         */
         if (requestId !== requestIdRef.current) {
           return;
         }
 
-        console.error("Tournament fetch error:", fetchError);
-
-        /**
-         * A refresh failure keeps the currently displayed bracket.
-         *
-         * An initial fetch failure clears stale tournament information.
-         */
-        if (!isRefresh) {
+        if (!refreshingRequest) {
           setTournament(null);
           setLeagueInfo(null);
-          setResponseLeague(normalizedLeague);
         }
 
         setError(getErrorMessage(fetchError));
@@ -430,133 +360,65 @@ export function useTournamentBracket(
           return;
         }
 
-        if (isRefresh) {
-          setRefreshing(false);
-        } else {
-          setLoading(false);
-        }
+        setLoading(false);
+        setRefreshing(false);
       }
     },
     [league, season],
   );
 
-  /* ------------------------------------------------------------------------ */
-  /*                              Initial fetch                               */
-  /* ------------------------------------------------------------------------ */
-
   useEffect(() => {
-    void fetchTournamentGames();
+    void fetchTournament();
 
-    /**
-     * Invalidate this request if the dependency changes or the component
-     * unmounts before the request completes.
-     */
     return () => {
       requestIdRef.current += 1;
     };
-  }, [fetchTournamentGames]);
-
-  /* ------------------------------------------------------------------------ */
-  /*                                 Refresh                                  */
-  /* ------------------------------------------------------------------------ */
+  }, [fetchTournament]);
 
   const refresh = useCallback(async (): Promise<void> => {
-    await fetchTournamentGames(true);
-  }, [fetchTournamentGames]);
+    await fetchTournament(true);
+  }, [fetchTournament]);
 
-  /* ------------------------------------------------------------------------ */
-  /*                              Derived bracket                             */
-  /* ------------------------------------------------------------------------ */
+  const rounds = tournament?.rounds ?? EMPTY_ROUNDS;
 
-  const bracket = useMemo<TournamentGame[]>(() => {
-    if (!tournament) {
-      return EMPTY_GAMES;
-    }
+  const games = useMemo(() => rounds.flatMap((round) => round.games), [rounds]);
 
-    return collectTournamentGames(tournament);
-  }, [tournament]);
+  const regions = useMemo(() => buildRegions(games), [games]);
 
-  const gamesById = useMemo<TournamentGamesById>(() => {
-    return new Map(bracket.map((game) => [game.id, game]));
-  }, [bracket]);
+  const openingRoundGames = useMemo(
+    () => getRoundGames(rounds, "OPENING"),
+    [rounds],
+  );
 
-  /* ------------------------------------------------------------------------ */
-  /*                                  Rounds                                  */
-  /* ------------------------------------------------------------------------ */
+  const finalFourGames = useMemo(
+    () => getRoundGames(rounds, "FINAL_4"),
+    [rounds],
+  );
 
-  const roundsMap = useMemo<TournamentRoundsMap>(() => {
-    const rounds: TournamentRoundsMap = {};
-
-    for (const game of bracket) {
-      const roundName = game.roundLabel || game.round;
-
-      const existingRound = rounds[roundName];
-
-      if (existingRound) {
-        existingRound.push(game);
-      } else {
-        rounds[roundName] = [game];
-      }
-    }
-
-    return rounds;
-  }, [bracket]);
-
-  const roundNames = useMemo<string[]>(() => {
-    return Object.keys(roundsMap);
-  }, [roundsMap]);
-
-  /* ------------------------------------------------------------------------ */
-  /*                            Derived response data                          */
-  /* ------------------------------------------------------------------------ */
-
-  const regions = tournament?.regions ?? EMPTY_REGIONS;
-
-  const openingRoundGames = tournament?.openingRoundGames ?? EMPTY_GAMES;
-
-  const finalFourGames = tournament?.finalFourGames ?? EMPTY_GAMES;
-
-  const championshipGame = tournament?.championshipGame ?? null;
+  const championshipGame = useMemo(
+    () => getRoundGames(rounds, "CHAMPIONSHIP")[0] ?? null,
+    [rounds],
+  );
 
   const metadata = tournament?.metadata ?? null;
-
-  const warnings = tournament?.metadata.warnings ?? EMPTY_WARNINGS;
-
-  const count = tournament?.metadata.totalGames ?? bracket.length;
-
-  const isPostseason = tournament !== null;
-
-  /* ------------------------------------------------------------------------ */
-  /*                                  Return                                  */
-  /* ------------------------------------------------------------------------ */
+  const warnings = metadata?.warnings ?? EMPTY_WARNINGS;
 
   return {
     tournament,
 
-    tournamentId: tournament?.tournamentId ?? null,
     tournamentName: tournament?.tournamentName ?? null,
-    tournamentSeason: tournament?.season ?? season,
-
     competition: tournament?.competition ?? null,
-    openingRoundLabel: tournament?.openingRoundLabel ?? null,
 
     league: responseLeague,
     leagueInfo,
 
+    rounds,
+    games,
     regions,
 
     openingRoundGames,
     finalFourGames,
     championshipGame,
-
-    bracket,
-    gamesById,
-
-    count,
-    isPostseason,
-
-    roundsMap,
-    roundNames,
 
     metadata,
     warnings,

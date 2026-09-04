@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   SoccerProps,
-  teamRowStyles,
+  TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 
 export const TeamRow = ({
@@ -24,7 +24,7 @@ export const TeamRow = ({
   league,
 }: SoccerProps) => {
   const router = useRouter();
-  const styles = teamRowStyles(isDark);
+  const styles = TeamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const isSuspended = gameStatusDescription === "Suspended";

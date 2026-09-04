@@ -4,16 +4,6 @@ import { StyleSheet } from "react-native";
 
 export type SizeType = "small" | "medium" | "large";
 
-export type TeamRowTeam = {
-  id?: string | number;
-  espnId?: string | number;
-  logo: any;
-  code?: string;
-  shortName?: string;
-  name?: string;
-  record?: string;
-};
-
 export type FighterRow = {
   id?: string | number;
   espnId?: string | number;
@@ -157,7 +147,7 @@ export type NHLProps = {
 };
 
 // Main static styles
-export const teamRowStyles = (isDark: boolean, isTie?: boolean) =>
+export const TeamRowStyles = (isDark: boolean, isTie?: boolean) =>
   StyleSheet.create({
     row: {
       flexDirection: "row",

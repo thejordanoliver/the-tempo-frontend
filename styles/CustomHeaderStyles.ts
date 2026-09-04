@@ -1,44 +1,54 @@
 import { Colors, Fonts } from "constants/styles";
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
-export const HEADER_WIDTH = Dimensions.get("window").width;
+const TABLET_BREAKPOINT = 768;
 
-export const customHeaderStyles = (isDark: boolean) =>
-  StyleSheet.create({
+export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
+  const isTablet = screenWidth >= TABLET_BREAKPOINT;
+
+  return StyleSheet.create({
     bgImage: {
       position: "absolute",
-      top: -70,
+      top: isTablet ? -90 : -70,
       zIndex: 0,
+
       width: "100%",
-      height: 200,
+      height: isTablet ? 260 : 200,
+
       opacity: 0.25,
+
       resizeMode: "contain",
     },
 
     headerSidePlaceholder: {
-      width: 24,
+      width: isTablet ? 32 : 24,
     },
 
     profileHeaderPlaceholder: {
-      width: 32,
+      width: isTablet ? 40 : 32,
     },
 
     defaultHeaderTitleContainer: {
       flex: 1,
+
       alignItems: "center",
       justifyContent: "center",
     },
 
     leagueHeaderContainer: {
       flex: 1,
+
       alignItems: "center",
       justifyContent: "center",
-      height: 56,
+
+      height: isTablet ? 64 : 56,
+
       overflow: "hidden",
     },
 
     leagueHeaderButton: {
       zIndex: 2,
+
       flexDirection: "row",
       alignItems: "center",
     },
@@ -46,198 +56,279 @@ export const customHeaderStyles = (isDark: boolean) =>
     teamHeaderActions: {
       flexDirection: "row",
       alignItems: "center",
+
+      gap: isTablet ? 4 : 0,
     },
 
     teamHeaderActionButton: {
-      padding: 8,
+      padding: isTablet ? 10 : 8,
     },
+
+    // ----------------------------------------------------------------
+    // GAME HEADER
+    // ----------------------------------------------------------------
 
     teamHalfWrapper: {
       position: "relative",
+
       flex: 1,
+
       alignItems: "center",
       justifyContent: "center",
+
       overflow: "hidden",
     },
 
     teamHalfContent: {
       ...StyleSheet.absoluteFillObject,
+
       zIndex: 2,
+
       alignItems: "center",
       justifyContent: "center",
     },
 
     bgLogo: {
       position: "absolute",
+
       alignSelf: "center",
-      width: "100%",
-      height: 180,
-      marginTop: 10,
+
+      width: isTablet ? "82%" : "100%",
+      height: isTablet ? 260 : 180,
+
+      marginTop: isTablet ? 16 : 10,
+
       opacity: 0.25,
+    },
+
+    teamCodeRow: {
+      flexDirection: "row",
+
+      alignItems: "center",
+      justifyContent: "center",
+
+      gap: isTablet ? 2 : 0,
     },
 
     teamCode: {
       zIndex: 2,
       fontFamily: Fonts.BOLD,
-      fontSize: 24,
+      fontSize: isTablet ? 32 : 24,
+      lineHeight: isTablet ? 42 : 30,
       color: Colors.white,
-    },
-
-    teamCodeRow: {
-      flexDirection: "row",
+      textAlign: "center",
     },
 
     dividerWrapper: {
-      ...StyleSheet.absoluteFillObject,
-      zIndex: 2,
+      position: "absolute",
+      left: "50%",
+      top: 0,
+      bottom: 0,
+      zIndex: 10,
+      width: isTablet ? 80 : 60,
+      marginLeft: isTablet ? -15 : -30,
       alignItems: "center",
       justifyContent: "center",
     },
 
     dividerText: {
       fontFamily: Fonts.BOLD,
-      fontSize: 24,
+      fontSize: isTablet ? 32 : 24,
       color: Colors.white,
-      textShadowColor: "rgba(0,0,0,0.55)",
-      textShadowOffset: {
-        width: 0,
-        height: 1,
-      },
-      textShadowRadius: 4,
+      textAlign: "center",
     },
+
+    // ----------------------------------------------------------------
+    // MESSAGE HEADER
+    // ----------------------------------------------------------------
 
     messageHeaderContainer: {
       flex: 1,
+
       flexDirection: "row",
+
       alignItems: "center",
       justifyContent: "center",
-      height: 56,
-      paddingHorizontal: 8,
+
+      height: isTablet ? 64 : 56,
+
+      paddingHorizontal: isTablet ? 12 : 8,
     },
 
     messageAvatarWrap: {
-      width: 36,
-      height: 36,
-      marginRight: 9,
-      borderRadius: 18,
+      width: isTablet ? 42 : 36,
+      height: isTablet ? 42 : 36,
+
+      marginRight: isTablet ? 12 : 9,
+
+      borderRadius: isTablet ? 21 : 18,
     },
 
     messageAvatar: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
+      width: isTablet ? 42 : 36,
+      height: isTablet ? 42 : 36,
+
+      borderRadius: isTablet ? 21 : 18,
+
       backgroundColor: Colors.darkGray,
     },
 
     messageOnlineDot: {
       position: "absolute",
+
       right: -1,
       bottom: 1,
-      width: 10,
-      height: 10,
+
+      width: isTablet ? 12 : 10,
+      height: isTablet ? 12 : 10,
+
       borderWidth: 1.5,
-      borderRadius: 5,
+      borderRadius: isTablet ? 6 : 5,
+
       backgroundColor: Colors.dark.leafGreen,
     },
 
     messageHeaderTextWrap: {
       justifyContent: "center",
-      maxWidth: HEADER_WIDTH * 0.54,
+
+      maxWidth: screenWidth * (isTablet ? 0.42 : 0.54),
     },
 
     messageUsernameRow: {
       flexDirection: "row",
+
       alignItems: "center",
-      gap: 4,
+
+      gap: isTablet ? 6 : 4,
     },
 
     messageUsername: {
       flexShrink: 1,
+
       fontFamily: Fonts.BOLD,
-      fontSize: 15,
+
+      fontSize: isTablet ? 17 : 15,
     },
 
     messageFullName: {
       marginTop: 1,
+
       fontFamily: Fonts.REGULAR,
-      fontSize: 11,
+
+      fontSize: isTablet ? 13 : 11,
     },
+
+    // ----------------------------------------------------------------
+    // PROFILE HEADER
+    // ----------------------------------------------------------------
 
     profileMenuAnchor: {
       position: "relative",
+
       zIndex: 50,
+
       alignItems: "center",
       justifyContent: "center",
-      width: 32,
-      height: 32,
+
+      width: isTablet ? 40 : 32,
+      height: isTablet ? 40 : 32,
+
       elevation: 50,
     },
 
     profileHeaderActionButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 32,
-      height: 32,
-      borderRadius: 16,
+
+      width: isTablet ? 40 : 32,
+      height: isTablet ? 40 : 32,
+
+      borderRadius: isTablet ? 20 : 16,
     },
 
     profileSubmenu: {
       position: "absolute",
-      top: 38,
+
+      top: isTablet ? 46 : 38,
       right: 0,
-      width: 150,
+
+      width: isTablet ? 180 : 150,
+
       borderWidth: StyleSheet.hairlineWidth,
-      borderRadius: 14,
+      borderRadius: isTablet ? 16 : 14,
+
       overflow: "hidden",
+
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+
       shadowColor: Colors.black,
+
       shadowOffset: {
         width: 0,
         height: 6,
       },
+
       shadowOpacity: 0.18,
       shadowRadius: 12,
+
       elevation: 18,
     },
 
     profileSubmenuItem: {
       flexDirection: "row",
+
       alignItems: "center",
-      gap: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 10,
+
+      gap: isTablet ? 10 : 8,
+
+      paddingHorizontal: isTablet ? 14 : 10,
+      paddingVertical: isTablet ? 13 : 10,
     },
 
     profileSubmenuIconWrap: {
       alignItems: "center",
       justifyContent: "center",
-      width: 24,
-      height: 24,
-      borderRadius: 12,
+
+      width: isTablet ? 28 : 24,
+      height: isTablet ? 28 : 24,
+
+      borderRadius: isTablet ? 14 : 12,
     },
 
     profileSubmenuText: {
       flex: 1,
+
       fontFamily: Fonts.BOLD,
-      fontSize: 12,
+
+      fontSize: isTablet ? 14 : 12,
+
       color: isDark ? Colors.dark.text : Colors.light.text,
     },
 
     profileSubmenuSeparator: {
       height: StyleSheet.hairlineWidth,
-      marginLeft: 42,
+
+      marginLeft: isTablet ? 52 : 42,
+
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
+
+    // ----------------------------------------------------------------
+    // HEADER ACTIONS
+    // ----------------------------------------------------------------
 
     headerActionButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+
+      width: isTablet ? 46 : 40,
+      height: isTablet ? 46 : 40,
+
+      borderRadius: isTablet ? 23 : 20,
     },
 
     headerActionButtonPressed: {
@@ -246,32 +337,47 @@ export const customHeaderStyles = (isDark: boolean) =>
 
     notificationButton: {
       position: "relative",
+
       alignItems: "center",
       justifyContent: "center",
-      width: 32,
-      height: 32,
+
+      width: isTablet ? 40 : 32,
+      height: isTablet ? 40 : 32,
     },
 
     notificationBadge: {
       position: "absolute",
-      top: -5,
-      right: -2,
-      minWidth: 20,
-      height: 20,
-      paddingHorizontal: 4,
+
+      top: isTablet ? -6 : -5,
+      right: isTablet ? -3 : -2,
+
+      minWidth: isTablet ? 22 : 20,
+      height: isTablet ? 22 : 20,
+
+      paddingHorizontal: isTablet ? 5 : 4,
+
       alignItems: "center",
       justifyContent: "center",
+
       overflow: "hidden",
+
       borderRadius: 999,
+
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+
       borderWidth: 2,
+
       borderColor: isDark ? Colors.black : Colors.white,
     },
 
     notificationBadgeText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 10,
+
+      fontSize: isTablet ? 11 : 10,
+
       color: Colors.white,
+
       textAlign: "center",
     },
   });
+};

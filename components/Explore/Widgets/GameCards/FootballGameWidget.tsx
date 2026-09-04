@@ -2,15 +2,21 @@ import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGame } from "@/types/football/football";
 import Football from "assets/icons8/Football.png";
 import FootballLight from "assets/icons8/FootballLight.png";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
-import { Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
@@ -33,20 +39,25 @@ export default function FootballGameWidget({
   loading = false,
   isDark,
 }: FootballGameWidgetProps) {
+  const league = isNFL ? "nfl" : isCFB ? "cfb" : "ufl";
+  const handlePress = () => {
+    router.push({
+      pathname: "/game/football/[game]",
+      params: {
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    });
+  };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
 
-  const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
+  const holidayLabel = getHolidayLabel(gameDate);
 
   const home = game.home;
   const away = game.away;
@@ -99,7 +110,7 @@ export default function FootballGameWidget({
   const broadcasts = game?.broadcasts;
   const broadcast = getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
-  const holidayLabel = getHolidayLabel(gameDateObj);
+
   const headline = game.headline ?? holidayLabel;
   const possessionTeamId = game.situation.possession;
   const homeRecord = game.home.record;
@@ -246,68 +257,70 @@ export default function FootballGameWidget({
   // Render widget
   // -------------------------
   return (
-    <View style={styles.container}>
-      {showHeadline && (
-        <View style={styles.headlineContainer}>
-          <Text style={styles.headline} numberOfLines={1}>
-            {headline}
-          </Text>
-        </View>
-      )}
-      <View style={styles.wrapper}>
-        {/* ---------------------- */}
-        {/* Away Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.awaySection}>
-          {awayTeamContent}
-          {awayScoreContent}
-        </View>
-
-        {/* ---------------------- */}
-        {/* Game Info Section */}
-        {/* ---------------------- */}
-
-        {!isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {renderDownAndDistance()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+      <View style={styles.container}>
+        {showHeadline && (
+          <View style={styles.headlineContainer}>
+            <Text style={styles.headline} numberOfLines={1}>
+              {headline}
+            </Text>
           </View>
         )}
+        <View style={styles.wrapper}>
+          {/* ---------------------- */}
+          {/* Away Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.awaySection}>
+            {awayTeamContent}
+            {awayScoreContent}
+          </View>
 
-        {/* ---------------------- */}
-        {/* Home Team Section */}
-        {/* ---------------------- */}
-        <View style={styles.homeSection}>
-          {isSmallLayout ? (
-            <>
-              {homeTeamContent}
-              {homeScoreContent}
-            </>
-          ) : (
-            <>
-              {homeScoreContent}
-              {homeTeamContent}
-            </>
+          {/* ---------------------- */}
+          {/* Game Info Section */}
+          {/* ---------------------- */}
+
+          {!isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {renderDownAndDistance()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
+          )}
+
+          {/* ---------------------- */}
+          {/* Home Team Section */}
+          {/* ---------------------- */}
+          <View style={styles.homeSection}>
+            {isSmallLayout ? (
+              <>
+                {homeTeamContent}
+                {homeScoreContent}
+              </>
+            ) : (
+              <>
+                {homeScoreContent}
+                {homeTeamContent}
+              </>
+            )}
+          </View>
+
+          {isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              {renderDownAndDistance()}
+              {showBroadcast && (
+                <Text style={styles.broadcast} numberOfLines={1}>
+                  {broadcast}
+                </Text>
+              )}
+            </View>
           )}
         </View>
-
-        {isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            {renderDownAndDistance()}
-            {showBroadcast && (
-              <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcast}
-              </Text>
-            )}
-          </View>
-        )}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

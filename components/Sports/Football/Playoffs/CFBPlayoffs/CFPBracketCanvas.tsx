@@ -12,12 +12,12 @@ import {
   SEMIFINAL_X,
   SEMIFINAL_Y,
   snapBracketOffsets,
-} from "../../../../styles/PlayoffStyles/CFPBracketStyles";
+} from "styles/PlayoffStyles/CFPBracketStyles";
 import type {
   CFPBracketData,
   CFPRoundDates,
   FootballTeam,
-} from "../../../../types/football/cfpBracketTypes";
+} from "types/football/cfpBracketTypes";
 import { BracketConnectors } from "./BracketConnectors";
 import { BracketGameCard } from "./BracketGameCard";
 import { BracketRoundHeader } from "./BracketRoundHeader";

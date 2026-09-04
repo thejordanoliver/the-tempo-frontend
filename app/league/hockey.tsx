@@ -147,7 +147,7 @@ function NHLLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName={league}
+          tabName={league.toUpperCase()}
           league={league}
           onBack={goBack}
           {...favoriteHeaderProps}

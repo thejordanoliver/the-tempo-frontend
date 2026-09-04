@@ -7,6 +7,7 @@ export type RacingLeague =
   | "nascartruck";
 
 export type HomeHeaderTab = "scores" | "news";
+export type EditFavoritesHeaderTab = "teams" | "sports";
 
 export type RacingLeagueDisplayConfig = {
   label: string;
@@ -52,6 +53,7 @@ export type CustomHeaderProps = {
   onCalendarPress?: () => void;
   onOpenLeagueModal?: () => void;
   onHomeTabPress?: (tab: HomeHeaderTab) => void;
+  onEditTabPress?: (tab: EditFavoritesHeaderTab) => void;
   homeScrollProgress?: Animated.Value;
 
   modalVisible?: boolean;
@@ -93,6 +95,7 @@ export type CustomHeaderProps = {
   selectedConferenceName?: string;
 
   homeSelectedTab?: HomeHeaderTab;
+  editFavoritesSelectedTab?: EditFavoritesHeaderTab;
 
   showBackButton?: boolean;
 

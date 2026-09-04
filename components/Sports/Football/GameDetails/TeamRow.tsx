@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   FootballTeamRowProps,
-  teamRowStyles,
+  TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
 import Football from "../../../../assets/icons8/Football.png";
 import FootballLight from "../../../../assets/icons8/FootballLight.png";
@@ -26,7 +26,7 @@ export const TeamRow = ({
   league,
 }: FootballTeamRowProps) => {
   const router = useRouter();
-  const styles = teamRowStyles(isDark);
+  const styles = TeamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";
   const inProgress = state === "in";
