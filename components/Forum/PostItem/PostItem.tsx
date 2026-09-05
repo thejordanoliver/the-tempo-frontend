@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumPostItemProps } from "types/forum";
 import { Interactions } from "./Interactions";
 import { PostContent } from "./PostContent";
@@ -25,7 +25,7 @@ export const PostItem = memo(function PostItem({
   const [editText, setEditText] = useState(item.text);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
 
   /* -------------------------------------------------------------------------- */
   /*                                  Effects                                   */

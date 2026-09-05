@@ -20,7 +20,7 @@ import Reanimated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { commentItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { CommentItemStyles } from "styles/ForumStyles/PostItemStyles";
 import { AlertConfig } from "types/alert";
 import type {
   ForumActionSubmenuProps,
@@ -59,7 +59,7 @@ const CommentSubmenu = ({
 }: ForumActionSubmenuProps) => {
   const progress = useRef(new RNAnimated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
-  const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
+  const styles = useMemo(() => CommentItemStyles(isDark), [isDark]);
 
   useEffect(() => {
     if (visible) {
@@ -162,7 +162,7 @@ export const CommentItem = ({
   isReply = false,
   isLast,
 }: ForumCommentItemProps) => {
-  const styles = useMemo(() => commentItemStyles(isDark), [isDark]);
+  const styles = useMemo(() => CommentItemStyles(isDark), [isDark]);
   const router = useRouter();
 
   const commentText = comment.text ?? "";

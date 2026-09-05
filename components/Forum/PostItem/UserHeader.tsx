@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumActionSubmenuProps, ForumPost } from "types/forum";
 
 type UserHeaderProps = {
@@ -35,7 +35,7 @@ const PostSubmenu = ({
   const progress = useRef(new Animated.Value(0)).current;
   const [shouldRender, setShouldRender] = useState(visible);
 
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
 
   useEffect(() => {
     if (visible) {
@@ -165,7 +165,7 @@ export const UserHeader = memo(function UserHeader({
   const [submenuVisible, setSubmenuVisible] = useState(false);
 
   const router = useRouter();
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
 
   const profileImageUri = item.profile_image;
 

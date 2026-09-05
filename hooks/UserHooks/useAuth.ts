@@ -251,8 +251,6 @@ export function useAuth() {
       setUser(null);
       setToken(null);
 
-      router.replace("/login");
-
       if (refreshToken) {
         void apiClient.post(`/api/logout`, { refreshToken }).catch(() => {});
       }
@@ -262,7 +260,6 @@ export function useAuth() {
       useBadgeNotificationStore.getState().clearBadgeNotifications();
       setUser(null);
       setToken(null);
-      router.replace("/login");
     }
   };
 

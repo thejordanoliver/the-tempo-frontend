@@ -131,6 +131,10 @@ export type MMAFightCardProps = {
   game: MMAFight;
 };
 
+/* -------------------------------------------------------------------------- */
+/*                              MMA Divisions                                 */
+/* -------------------------------------------------------------------------- */
+
 export type MMADivision =
   | "Heavyweight"
   | "Light Heavyweight"
@@ -140,7 +144,110 @@ export type MMADivision =
   | "Featherweight"
   | "Bantamweight"
   | "Flyweight"
-  | "Women's Featherweight"
   | "Women's Bantamweight"
   | "Women's Flyweight"
   | "Women's Strawweight";
+
+/* -------------------------------------------------------------------------- */
+/*                                MMA Fighter                                 */
+/* -------------------------------------------------------------------------- */
+
+export type MMAChampionFighter = {
+  id: number;
+  age: number | null;
+
+  uid: string | null;
+  guid: string | null;
+  slug: string | null;
+
+  first_name: string | null;
+  last_name: string | null;
+  full_name: string;
+  short_name: string | null;
+  nickname: string | null;
+
+  gender: string | null;
+  active: boolean;
+  linked: boolean;
+
+  height: string | null;
+  weight: number | null;
+  reach: string | null;
+
+  birth_date: string | null;
+
+  citizenship: string | null;
+  citizenship_country_id: string | null;
+  citizenship_country_code: string | null;
+  citizenship_country_color: string | null;
+  citizenship_country_alt_color: string | null;
+
+  flag_url: string | null;
+  headshot_url: string | null;
+  left_stance_url: string | null;
+  right_stance_url: string | null;
+
+  style_id: string | null;
+  style_text: string | null;
+
+  stance_id: string | null;
+  stance_text: string | null;
+
+  status_id: string | null;
+  status_name: string | null;
+  status_type: string | null;
+  status_abbreviation: string | null;
+
+  weight_class_id: string | null;
+  weight_class_slug: string | null;
+  weight_class_text: string | null;
+  weight_class_short_name: string | null;
+
+  association_id: string | null;
+  association_name: string | null;
+  association_country: string | null;
+
+  api_ref: string | null;
+  records_ref: string | null;
+  statistics_ref: string | null;
+
+  created_at: string;
+  updated_at: string;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                             MMA Championship                               */
+/* -------------------------------------------------------------------------- */
+
+export type MMAChampionship = {
+  fighter_id: string;
+
+  accolade_key: string;
+  accolade_id: string;
+  accolade_name: string;
+  accolade_type: string;
+
+  division: MMADivision | string;
+  division_slug: string;
+
+  is_current: boolean | null;
+
+  created_at: string;
+  updated_at: string;
+
+  fighter: MMAChampionFighter;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                           Champions API Response                           */
+/* -------------------------------------------------------------------------- */
+
+export type MMAChampionsResponse = Partial<
+  Record<MMADivision, MMAChampionship[]>
+>;
+
+export type MMAChampionsApiResponse = {
+  success: boolean;
+  data: MMAChampionsResponse;
+  error?: string;
+};

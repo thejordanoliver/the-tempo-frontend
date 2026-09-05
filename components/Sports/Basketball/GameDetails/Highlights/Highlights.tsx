@@ -1,181 +1,120 @@
-import AppVideo from "@/components/AppVideo";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
-import { LinearGradient } from "expo-linear-gradient";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Dimensions,
   FlatList,
-  Image,
-  Pressable,
   StyleSheet,
-  Text,
+  useWindowDimensions,
   View,
+  type ListRenderItem,
+  type ViewStyle,
+  type ViewToken,
 } from "react-native";
-import { Highlight } from "types/types";
+import type { Highlight } from "types/types";
+
+import {
+  HighlightVideoItem,
+  type HighlightVideoItemStyles,
+} from "./HighlightVideoItem";
 
 type HighlightVideoProps = {
   highlights: Highlight[] | undefined;
   isDark: boolean;
 };
 
-const { width } = Dimensions.get("window");
+const AUTO_ADVANCE_INTERVAL_MS = 10_000;
+const CARD_GAP = 15;
 const CARD_HEIGHT = 220;
+const MAX_CARD_WIDTH = 420;
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 60 } as const;
 
-// ---> FIX: SAFE ESPN VIDEO URL EXTRACTOR
-const getPlayableUrl = (item: Highlight) => {
-  return (
-    item?.links?.source?.HLS?.href ||
-    item?.links?.hls ||
-    item?.links?.source?.href ||
-    item?.links?.mp4 ||
-    item?.links?.mobile ||
-    null
-  );
-};
-
-export const Highlights: React.FC<HighlightVideoProps> = ({
+export const Highlights = React.memo(function Highlights({
   highlights,
   isDark,
-}) => {
+}: HighlightVideoProps) {
+  const { width: windowWidth } = useWindowDimensions();
+  const cardWidth = Math.min(windowWidth * 0.8, MAX_CARD_WIDTH);
+  const snapInterval = cardWidth + CARD_GAP;
+  const styles = useMemo(() => createHighlightStyles(cardWidth), [cardWidth]);
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [paused, setPaused] = useState<Record<string, boolean>>({});
   const listRef = useRef<FlatList<Highlight>>(null);
   const currentIndexRef = useRef(0);
+  const highlightCount = highlights?.length ?? 0;
 
-  const [headlineVisible, setHeadlineVisible] = useState<
-    Record<string, boolean>
-  >({});
-  const [hasPlayed, setHasPlayed] = useState<Record<string, boolean>>({});
-  const styles = highlightStyles(isDark);
   const handlePlay = useCallback((id: string) => {
     setPlayingId(id);
-    setPaused((prev) => ({ ...prev, [id]: false }));
-    setHasPlayed((prev) => ({ ...prev, [id]: true }));
   }, []);
 
-  React.useEffect(() => {
-    if (!highlights || highlights.length === 0) return;
+  const handleEnd = useCallback((id: string) => {
+    setPlayingId((currentId) => (currentId === id ? null : currentId));
+  }, []);
 
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndexRef.current + 1) % highlights.length;
-
-      listRef.current?.scrollToIndex({
-        index: nextIndex,
-        animated: true,
-      });
-
-      currentIndexRef.current = nextIndex;
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [highlights]);
-
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: any[] }) => {
-      if (viewableItems.length > 0) {
-        currentIndexRef.current = viewableItems[0].index ?? 0;
-      }
-    },
-  ).current;
-
-  const viewabilityConfig = useRef({
-    viewAreaCoveragePercentThreshold: 50,
-  }).current;
-
-  const renderItem = useCallback(
-    ({ item }: { item: Highlight }) => {
-      const videoSource = getPlayableUrl(item);
-
-      if (!videoSource) {
-        return (
-          <View style={[styles.cardWrapper, { justifyContent: "center" }]}>
-            <Text style={styles.unavailable}>Video unavailable</Text>
-          </View>
-        );
-      }
-
-      const isPlaying = playingId === item.id;
-      const isPaused = paused[item.id];
-
-      return (
-        <View style={styles.cardWrapper}>
-          {isPlaying ? (
-            <AppVideo
-              uri={videoSource}
-              style={styles.video}
-              contentFit="contain"
-              autoPlay={!isPaused}
-              nativeControls
-              onPlayingChange={(nextIsPlaying) => {
-                setPaused((prev) => ({ ...prev, [item.id]: !nextIsPlaying }));
-
-                if (!nextIsPlaying) {
-                  setHeadlineVisible((prev) => ({ ...prev, [item.id]: true }));
-
-                  setTimeout(() => {
-                    setHeadlineVisible((prev) => ({
-                      ...prev,
-                      [item.id]: false,
-                    }));
-                  }, 2500);
-                }
-              }}
-              onEnd={() => {
-                setPaused((prev) => ({ ...prev, [item.id]: true }));
-                setPlayingId(null);
-                setHeadlineVisible((prev) => ({ ...prev, [item.id]: false }));
-              }}
-            />
-          ) : (
-            <Pressable
-              style={styles.thumbnailWrapper}
-              onPress={() => handlePlay(item.id)}
-            >
-              <Image
-                source={{ uri: item.thumbnail }}
-                style={styles.thumbnail}
-              />
-              <View style={styles.playButtonOverlay}>
-                <Text style={styles.playButtonText}>▶</Text>
-              </View>
-            </Pressable>
-          )}
-
-          {(!hasPlayed[item.id] ||
-            (!isPlaying && headlineVisible[item.id])) && (
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.7)"]}
-              style={styles.headlineContainer}
-            >
-              <Text style={styles.headline} numberOfLines={2}>
-                {item.headline}
-              </Text>
-            </LinearGradient>
-          )}
-        </View>
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken<Highlight>[] }) => {
+      const firstVisibleItem = viewableItems.find(
+        (viewableItem) => viewableItem.index != null,
       );
-    },
-    [
-      styles.cardWrapper,
-      styles.headline,
-      styles.headlineContainer,
-      styles.playButtonText,
-      styles.thumbnailWrapper,
-      styles.unavailable,
-      styles.thumbnail,
-      styles.video,
-      styles.playButtonOverlay,
-      playingId,
-      paused,
-      handlePlay,
 
-      headlineVisible,
-      hasPlayed,
-    ],
+      if (firstVisibleItem?.index != null) {
+        currentIndexRef.current = firstVisibleItem.index;
+      }
+
+      setPlayingId((currentId) => {
+        if (
+          currentId &&
+          !viewableItems.some((viewableItem) => viewableItem.item.id === currentId)
+        ) {
+          return null;
+        }
+
+        return currentId;
+      });
+    },
+    [],
   );
 
-  if (!highlights || highlights.length === 0) return null;
+  useEffect(() => {
+    if (currentIndexRef.current >= highlightCount) {
+      currentIndexRef.current = 0;
+    }
+  }, [highlightCount]);
+
+  useEffect(() => {
+    if (highlightCount < 2 || playingId) return;
+
+    const interval = setInterval(() => {
+      const nextIndex = (currentIndexRef.current + 1) % highlightCount;
+
+      listRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+      currentIndexRef.current = nextIndex;
+    }, AUTO_ADVANCE_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [highlightCount, playingId]);
+
+  const getItemLayout = useCallback(
+    (_data: ArrayLike<Highlight> | null | undefined, index: number) => ({
+      index,
+      length: snapInterval,
+      offset: snapInterval * index,
+    }),
+    [snapInterval],
+  );
+
+  const renderItem = useCallback<ListRenderItem<Highlight>>(
+    ({ item }) => (
+      <HighlightVideoItem
+        item={item}
+        isPlaying={playingId === item.id}
+        onEnd={handleEnd}
+        onPlay={handlePlay}
+        styles={styles}
+      />
+    ),
+    [handleEnd, handlePlay, playingId, styles],
+  );
+
+  if (!highlights?.length) return null;
 
   return (
     <View>
@@ -183,88 +122,88 @@ export const Highlights: React.FC<HighlightVideoProps> = ({
       <View style={styles.wrapper}>
         <FlatList
           ref={listRef}
-          data={highlights}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={width * 0.8 + 15}
-          decelerationRate="fast"
           contentContainerStyle={styles.listContainer}
-          extraData={[playingId, paused]}
+          data={highlights}
+          decelerationRate="fast"
+          extraData={playingId}
+          getItemLayout={getItemLayout}
+          horizontal
+          initialNumToRender={2}
+          keyExtractor={(item) => item.id}
+          maxToRenderPerBatch={3}
           onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={viewabilityConfig}
+          renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={snapInterval}
+          viewabilityConfig={VIEWABILITY_CONFIG}
+          windowSize={3}
         />
       </View>
     </View>
   );
-};
+});
 
-const highlightStyles = (isDark: boolean) =>
+const createHighlightStyles = (
+  cardWidth: number,
+): HighlightVideoItemStyles & {
+  listContainer: ViewStyle;
+  wrapper: ViewStyle;
+} =>
   StyleSheet.create({
     listContainer: {
       paddingLeft: 12,
     },
-    unavailable: {
-      padding: 10,
-      color: Colors.white,
-    },
     wrapper: {
-      padding: 12,
-      borderWidth: 1,
       borderColor: Colors.midTone,
       borderRadius: 8,
+      borderWidth: 1,
+      padding: 12,
     },
     cardWrapper: {
-      justifyContent: "flex-end",
-      width: width * 0.8,
-      height: CARD_HEIGHT,
-      marginRight: 15,
-      borderRadius: 10,
+      alignItems: "center",
       backgroundColor: Colors.black,
+      borderRadius: 10,
+      height: CARD_HEIGHT,
+      justifyContent: "center",
+      marginRight: CARD_GAP,
       overflow: "hidden",
+      width: cardWidth,
     },
     video: {
       ...StyleSheet.absoluteFillObject,
       backgroundColor: Colors.black,
     },
-    headlineContainer: {
-      position: "absolute",
-      right: 0,
-      bottom: 0,
-      left: 0,
-      justifyContent: "flex-end",
-      padding: 8,
+    thumbnailWrapper: {
+      height: "100%",
+      position: "relative",
+      width: "100%",
     },
-    headline: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 16,
-      color: Colors.white,
-    },
-    empty: {
-      marginTop: 20,
-      fontFamily: Fonts.REGULAR,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
+    thumbnail: {
+      height: "100%",
+      width: "100%",
     },
     playButtonOverlay: {
       ...StyleSheet.absoluteFillObject,
       alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.28)",
       justifyContent: "center",
-      backgroundColor: "rgba(0,0,0,0.3)",
     },
-    playButtonText: {
-      fontSize: 50,
-      fontWeight: "bold",
+    headlineContainer: {
+      bottom: 0,
+      justifyContent: "flex-end",
+      left: 0,
+      padding: 10,
+      position: "absolute",
+      right: 0,
+    },
+    headline: {
       color: Colors.white,
+      fontFamily: Fonts.BOLD,
+      fontSize: 16,
     },
-    thumbnailWrapper: {
-      position: "relative",
-      width: "100%",
-      height: "100%",
-    },
-    thumbnail: {
-      width: "100%",
-      height: "100%",
+    unavailable: {
+      color: Colors.white,
+      padding: 10,
+      textAlign: "center",
     },
   });

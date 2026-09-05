@@ -1,3 +1,5 @@
+/* global __dirname */
+
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -413,8 +415,10 @@ function testNotificationSocketSingleton() {
 
   assert.equal(firstSocket.url, "http://localhost:4011/notifications");
   assert.equal(firstSocket.options.auth.token, "token-a");
-  assert.equal(firstSocket.options.reconnection, false);
-  assertArrayEqual(firstSocket.options.transports, ["websocket", "polling"]);
+  assert.equal(firstSocket.options.autoConnect, false);
+  assert.equal(firstSocket.options.reconnection, true);
+  assert.equal(firstSocket.options.tryAllTransports, true);
+  assertArrayEqual(firstSocket.options.transports, ["polling", "websocket"]);
   assert.equal(sockets.length, 1);
 
   firstSocket.connected = false;
@@ -422,7 +426,7 @@ function testNotificationSocketSingleton() {
   const reusedSocket = notificationSocket.getNotificationSocket("token-a");
 
   assert.equal(reusedSocket, firstSocket);
-  assert.equal(firstSocket.connectCalls, 1);
+  assert.equal(firstSocket.connectCalls, 0);
   assert.equal(sockets.length, 1);
 
   const secondSocket = notificationSocket.getNotificationSocket("token-b");
@@ -471,6 +475,11 @@ async function testRealtimeHelpers() {
       "@/services/notificationSocket": {
         disconnectNotificationSocket() {},
         getNotificationSocket: () => null,
+      },
+      "@/contexts/NotificationContext": {
+        useNotifications: () => ({
+          addCenterNotification() {},
+        }),
       },
       "@/store/badgeNotificationStore": {
         useBadgeNotificationStore: store,
@@ -588,6 +597,311 @@ async function testRealtimeHelpers() {
   });
 
   assert.equal(replacedToken, null);
+
+  const centerNotifications = [];
+  const acceptedLike = realtime.handleLikeNotificationSocketPayload(
+    {
+      id: "like-event-1",
+      recipientUserId: 1,
+      postId: "post-1",
+      actorUserId: 2,
+      actorUsername: "jordan",
+      createdAt: "2026-07-14T00:00:00.000Z",
+    },
+    1,
+    (notification) => centerNotifications.push(notification),
+  );
+
+  assert.equal(acceptedLike, true);
+  assert.equal(centerNotifications.length, 1);
+  assert.equal(centerNotifications[0].id, "like:like-event-1");
+  assert.equal(centerNotifications[0].postId, "post-1");
+  assert.equal(centerNotifications[0].actorUsername, "jordan");
+
+  const mismatchedLike = realtime.handleLikeNotificationSocketPayload(
+    {
+      id: "like-event-2",
+      recipientUserId: 2,
+      postId: "post-1",
+      actorUserId: 3,
+      actorUsername: "alex",
+      createdAt: "2026-07-14T00:01:00.000Z",
+    },
+    1,
+    (notification) => centerNotifications.push(notification),
+  );
+  const selfLike = realtime.handleLikeNotificationSocketPayload(
+    {
+      id: "like-event-3",
+      recipientUserId: 1,
+      postId: "post-1",
+      actorUserId: 1,
+      actorUsername: "owner",
+      createdAt: "2026-07-14T00:02:00.000Z",
+    },
+    1,
+    (notification) => centerNotifications.push(notification),
+  );
+
+  assert.equal(mismatchedLike, false);
+  assert.equal(selfLike, false);
+  assert.equal(centerNotifications.length, 1);
+}
+
+function createCenterLike(
+  id,
+  postId,
+  actorUsername,
+  createdAt,
+  actorUserId,
+) {
+  return {
+    id,
+    type: "likes",
+    title: "New Like",
+    text: "",
+    postId,
+    actorUsername,
+    actorUsernames: [actorUsername],
+    ...(actorUserId
+      ? { userId: String(actorUserId), actorUserIds: [String(actorUserId)] }
+      : {}),
+    likeCount: 1,
+    readAt: null,
+    createdAt,
+  };
+}
+
+function testNotificationCenterGrouping() {
+  const center = loadTranspiledModule("utils/notificationCenter.ts");
+  let notifications = [];
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:1",
+      "post-1",
+      "jordan",
+      "2026-07-14T00:00:00.000Z",
+      2,
+    ),
+  );
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].title, "New Like");
+  assert.equal(notifications[0].text, "@jordan liked your post");
+  assert.equal(notifications[0].likeCount, 1);
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:1",
+      "post-1",
+      "jordan",
+      "2026-07-14T00:00:00.000Z",
+      2,
+    ),
+  );
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].text, "@jordan liked your post");
+  assert.equal(notifications[0].likeCount, 1);
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:2",
+      "post-1",
+      "alex",
+      "2026-07-14T00:01:00.000Z",
+    ),
+  );
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].title, "2 new likes");
+  assert.equal(notifications[0].text, "@jordan and @alex liked your post");
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:3",
+      "post-1",
+      "sam",
+      "2026-07-14T00:02:00.000Z",
+    ),
+  );
+  assert.equal(notifications[0].title, "3 new likes");
+  assert.equal(
+    notifications[0].text,
+    "@jordan, @alex and 1 other liked your post",
+  );
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:4",
+      "post-1",
+      "lee",
+      "2026-07-14T00:03:00.000Z",
+    ),
+  );
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:5",
+      "post-1",
+      "morgan",
+      "2026-07-14T00:04:00.000Z",
+    ),
+  );
+  assert.equal(notifications[0].title, "5 new likes");
+  assert.equal(
+    notifications[0].text,
+    "@jordan, @alex and 3 others liked your post",
+  );
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:duplicate-actor",
+      "post-1",
+      "@Jordan",
+      "2026-07-14T00:05:00.000Z",
+      2,
+    ),
+  );
+  assert.equal(notifications.length, 1);
+  assert.equal(notifications[0].likeCount, 5);
+
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:other-post",
+      "post-2",
+      "casey",
+      "2026-07-14T00:06:00.000Z",
+    ),
+  );
+  assert.equal(notifications.length, 2);
+  assert.equal(notifications[0].postId, "post-2");
+
+  const readGroup = {
+    ...notifications.find((notification) => notification.postId === "post-1"),
+    readAt: "2026-07-14T00:07:00.000Z",
+  };
+  notifications = [
+    readGroup,
+    ...notifications.filter((notification) => notification.postId !== "post-1"),
+  ];
+  notifications = center.addCenterNotificationToState(
+    notifications,
+    createCenterLike(
+      "like:after-read",
+      "post-1",
+      "newuser",
+      "2026-07-14T00:08:00.000Z",
+    ),
+  );
+
+  const postOneGroups = notifications.filter(
+    (notification) => notification.postId === "post-1",
+  );
+  assert.equal(postOneGroups.length, 2);
+  assert.equal(postOneGroups[0].title, "New Like");
+  assert.equal(postOneGroups[0].text, "@newuser liked your post");
+  assert.equal(postOneGroups[1].likeCount, 5);
+  assert.ok(postOneGroups[1].readAt);
+
+  let messageNotifications = [];
+  const createMessage = (id, createdAt) => ({
+    id,
+    type: "messages",
+    title: "New Message",
+    text: "hello",
+    conversationId: "conversation-1",
+    senderUsername: "sender",
+    messageCount: 1,
+    readAt: null,
+    createdAt,
+  });
+  messageNotifications = center.addCenterNotificationToState(
+    messageNotifications,
+    createMessage("message:1", "2026-07-14T01:00:00.000Z"),
+  );
+  messageNotifications = center.addCenterNotificationToState(
+    messageNotifications,
+    createMessage("message:2", "2026-07-14T01:01:00.000Z"),
+  );
+  assert.equal(messageNotifications.length, 1);
+  assert.equal(messageNotifications[0].title, "2 new messages");
+  assert.equal(messageNotifications[0].messageCount, 2);
+
+  assert.equal(
+    center.getUnreadCenterNotificationCount([
+      {
+        ...messageNotifications[0],
+        messageCount: 3,
+      },
+      createCenterLike(
+        "like:weighted",
+        "post-3",
+        "first",
+        "2026-07-14T02:00:00.000Z",
+      ),
+      {
+        id: "comment:1",
+        type: "comments",
+        title: "New Comment",
+        text: "Commented on your post",
+        readAt: null,
+        createdAt: "2026-07-14T02:01:00.000Z",
+      },
+    ].map((notification) =>
+      notification.id === "like:weighted"
+        ? { ...notification, likeCount: 4 }
+        : notification,
+    )),
+    8,
+  );
+
+  assert.equal(
+    center.getNotificationCenterHref(createCenterLike(
+      "like:route",
+      "post-route",
+      "jordan",
+      "2026-07-14T03:00:00.000Z",
+    )),
+    "/post/post-route",
+  );
+
+  const hydratedWithLiveNotification = center.mergeCenterNotificationStates(
+    [
+      createCenterLike(
+        "like:persisted",
+        "post-hydration",
+        "persisted-user",
+        "2026-07-14T04:00:00.000Z",
+        10,
+      ),
+    ],
+    [
+      createCenterLike(
+        "like:live",
+        "post-hydration",
+        "live-user",
+        "2026-07-14T04:01:00.000Z",
+        11,
+      ),
+    ],
+  );
+
+  assert.equal(hydratedWithLiveNotification.length, 1);
+  assert.equal(hydratedWithLiveNotification[0].title, "2 new likes");
+  assert.equal(
+    hydratedWithLiveNotification[0].text,
+    "@persisted-user and @live-user liked your post",
+  );
+  assert.equal(
+    center.getUnreadCenterNotificationCount(hydratedWithLiveNotification),
+    2,
+  );
 }
 
 function testBadgeAwardResponsesOnlyRefresh() {
@@ -631,9 +945,10 @@ function testBadgeAwardResponsesOnlyRefresh() {
   await testBadgeApi();
   testNotificationSocketSingleton();
   await testRealtimeHelpers();
+  testNotificationCenterGrouping();
   testBadgeAwardResponsesOnlyRefresh();
 
-  console.log("Badge notification tests passed.");
+  console.log("Badge and Notification Center tests passed.");
 })().catch((error) => {
   console.error(error);
   process.exit(1);

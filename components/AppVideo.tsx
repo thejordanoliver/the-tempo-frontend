@@ -6,7 +6,7 @@ import {
   useVideoPlayer,
   type VideoContentFit,
 } from "expo-video";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 
 type Props = {
@@ -42,9 +42,15 @@ export default function AppVideo({
     isPlaying: player.playing,
   });
 
+  const onPlayingChangeRef = useRef(onPlayingChange);
+
   useEffect(() => {
-    onPlayingChange?.(isPlaying);
-  }, [isPlaying, onPlayingChange]);
+    onPlayingChangeRef.current = onPlayingChange;
+  }, [onPlayingChange]);
+
+  useEffect(() => {
+    onPlayingChangeRef.current?.(isPlaying);
+  }, [isPlaying]);
 
   useEffect(() => {
     if (autoPlay) {

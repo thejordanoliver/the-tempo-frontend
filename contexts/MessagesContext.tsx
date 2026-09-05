@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppState } from "react-native";
+import { useNotifications } from "contexts/NotificationContext";
 import {
   createConversation as createConversationRequest,
   deleteConversation as deleteConversationRequest,
@@ -88,6 +89,25 @@ const getPreviewText = (message: DirectMessageItem) => {
   return "";
 };
 
+const getMessageSenderName = (
+  rawMessage: any,
+  conversation?: MessageItem | null,
+) => {
+  const senderName =
+    rawMessage?.senderUsername ??
+    rawMessage?.sender?.username ??
+    rawMessage?.user?.username ??
+    rawMessage?.username ??
+    (conversation as any)?.username ??
+    (conversation as any)?.user?.username ??
+    (conversation as any)?.otherUser?.username ??
+    (conversation as any)?.participant?.username;
+
+  const normalized = String(senderName ?? "").trim();
+
+  return normalized || null;
+};
+
 const matchesConversation = (a: MessageItem, b: MessageItem) => {
   const aId = normalizeId(a.id);
   const bId = normalizeId(b.id);
@@ -100,10 +120,7 @@ const matchesConversation = (a: MessageItem, b: MessageItem) => {
   return Boolean(aDmKey && bDmKey && aDmKey === bDmKey);
 };
 
-const upsertConversationInList = (
-  list: MessageItem[],
-  next: MessageItem,
-) => {
+const upsertConversationInList = (list: MessageItem[], next: MessageItem) => {
   if (!normalizeId(next.id)) return list;
 
   const index = list.findIndex((item) => matchesConversation(item, next));
@@ -124,8 +141,7 @@ const upsertConversationInList = (
           currentUserLastReadAt:
             next.currentUserLastReadAt ?? item.currentUserLastReadAt,
           otherParticipantLastReadAt:
-            next.otherParticipantLastReadAt ??
-            item.otherParticipantLastReadAt,
+            next.otherParticipantLastReadAt ?? item.otherParticipantLastReadAt,
           isPinned: next.isPinned ?? item.isPinned,
         }
       : item,
@@ -134,13 +150,9 @@ const upsertConversationInList = (
   return sortConversations(merged);
 };
 
-const mergeConversations = (
-  current: MessageItem[],
-  incoming: MessageItem[],
-) =>
+const mergeConversations = (current: MessageItem[], incoming: MessageItem[]) =>
   incoming.reduce(
-    (result, conversation) =>
-      upsertConversationInList(result, conversation),
+    (result, conversation) => upsertConversationInList(result, conversation),
     current,
   );
 
@@ -212,9 +224,8 @@ const removeMessageFromList = (
 
 type ConversationReadReceiptMap = Record<string, ConversationReadPosition>;
 
-const hasReadReceipts = (
-  receipts?: ConversationReadReceiptMap,
-) => Boolean(receipts && Object.keys(receipts).length > 0);
+const hasReadReceipts = (receipts?: ConversationReadReceiptMap) =>
+  Boolean(receipts && Object.keys(receipts).length > 0);
 
 const mergeReadReceipts = (
   current?: ConversationReadReceiptMap,
@@ -321,14 +332,18 @@ export function MessagesProvider({
   token?: string | null;
   userId?: number | string | null;
 }) {
+  const { addCenterNotification, markConversationNotificationsRead } =
+    useNotifications();
+
   const [conversationLists, setConversationLists] = useState<
     Record<string, ConversationListState>
   >({ "": createConversationListState() });
   const [messageCache, setMessageCache] = useState<
     Record<string, MessageCacheState>
   >({});
-  const [readReceiptsByConversation, setReadReceiptsByConversation] =
-    useState<Record<string, ConversationReadReceiptMap>>({});
+  const [readReceiptsByConversation, setReadReceiptsByConversation] = useState<
+    Record<string, ConversationReadReceiptMap>
+  >({});
 
   const conversationListsRef = useRef(conversationLists);
   const messageCacheRef = useRef(messageCache);
@@ -489,9 +504,7 @@ export function MessagesProvider({
 
               return {
                 ...conversation,
-                unreadCount: isCurrentUserReader
-                  ? 0
-                  : conversation.unreadCount,
+                unreadCount: isCurrentUserReader ? 0 : conversation.unreadCount,
                 currentUserLastReadAt: isCurrentUserReader
                   ? readAt
                   : conversation.currentUserLastReadAt,
@@ -512,29 +525,32 @@ export function MessagesProvider({
     [userId],
   );
 
-  const upsertConversation = useCallback((conversation: MessageItem) => {
-    const normalized = conversation;
+  const upsertConversation = useCallback(
+    (conversation: MessageItem) => {
+      const normalized = conversation;
 
-    if (!normalizeId(normalized.id)) return;
+      if (!normalizeId(normalized.id)) return;
 
-    cacheConversationReadReceipts(normalized);
+      cacheConversationReadReceipts(normalized);
 
-    setConversationLists((current) => {
-      const next = { ...current };
-      const keys = new Set(["", ...Object.keys(current)]);
+      setConversationLists((current) => {
+        const next = { ...current };
+        const keys = new Set(["", ...Object.keys(current)]);
 
-      keys.forEach((key) => {
-        const previous = current[key] ?? createConversationListState();
+        keys.forEach((key) => {
+          const previous = current[key] ?? createConversationListState();
 
-        next[key] = {
-          ...previous,
-          items: upsertConversationInList(previous.items, normalized),
-        };
+          next[key] = {
+            ...previous,
+            items: upsertConversationInList(previous.items, normalized),
+          };
+        });
+
+        return next;
       });
-
-      return next;
-    });
-  }, [cacheConversationReadReceipts]);
+    },
+    [cacheConversationReadReceipts],
+  );
 
   const removeConversation = useCallback((conversationId: string) => {
     const normalizedConversationId = normalizeId(conversationId);
@@ -582,9 +598,9 @@ export function MessagesProvider({
 
     const isOnline = Boolean(
       payload?.isOnline ??
-        payload?.online ??
-        (payload?.status === "online" ? true : undefined) ??
-        payload?.user?.isOnline,
+      payload?.online ??
+      (payload?.status === "online" ? true : undefined) ??
+      payload?.user?.isOnline,
     );
 
     setConversationLists((current) => {
@@ -838,50 +854,44 @@ export function MessagesProvider({
     [upsertConversation],
   );
 
-  const deleteConversation = useCallback(
-    async (item: MessageItem) => {
-      const conversationId = normalizeId(item.id);
-      if (!conversationId) throw new Error("Conversation ID is missing.");
+  const deleteConversation = useCallback(async (item: MessageItem) => {
+    const conversationId = normalizeId(item.id);
+    if (!conversationId) throw new Error("Conversation ID is missing.");
 
-      let previousLists: Record<string, ConversationListState> | null = null;
+    let previousLists: Record<string, ConversationListState> | null = null;
 
-      setConversationLists((current) => {
-        previousLists = current;
-        const next = { ...current };
+    setConversationLists((current) => {
+      previousLists = current;
+      const next = { ...current };
 
-        Object.entries(current).forEach(([key, state]) => {
-          next[key] = {
-            ...state,
-            items: state.items.filter(
-              (conversation) =>
-                normalizeId(conversation.id) !== conversationId,
-            ),
-          };
-        });
-
-        return next;
+      Object.entries(current).forEach(([key, state]) => {
+        next[key] = {
+          ...state,
+          items: state.items.filter(
+            (conversation) => normalizeId(conversation.id) !== conversationId,
+          ),
+        };
       });
 
+      return next;
+    });
+
+    try {
+      await deleteConversationRequest(conversationId);
+
       try {
-        await deleteConversationRequest(conversationId);
+        emitConversationDelete(conversationId);
+      } catch {}
+    } catch (error: any) {
+      if (error?.response?.status === 404) return;
 
-        try {
-          emitConversationDelete(conversationId);
-        } catch {}
-      } catch (error: any) {
-        if (error?.response?.status === 404) return;
-
-        if (previousLists) {
-          setConversationLists(previousLists);
-        }
-
-        throw new Error(
-          getErrorMessage(error, "Could not delete conversation."),
-        );
+      if (previousLists) {
+        setConversationLists(previousLists);
       }
-    },
-    [],
-  );
+
+      throw new Error(getErrorMessage(error, "Could not delete conversation."));
+    }
+  }, []);
 
   const createOrGetConversation = useCallback(
     async (recipientId: number | string) => {
@@ -989,13 +999,7 @@ export function MessagesProvider({
         }));
       }
     },
-    [
-      enabled,
-      token,
-      updateMessageState,
-      upsertConversation,
-      userId,
-    ],
+    [enabled, token, updateMessageState, upsertConversation, userId],
   );
 
   const loadOlderMessages = useCallback(
@@ -1055,6 +1059,7 @@ export function MessagesProvider({
       if (!normalizedConversationId) return;
 
       clearConversationUnread(normalizedConversationId);
+      markConversationNotificationsRead(normalizedConversationId);
 
       if (socketRef.current?.connected) {
         try {
@@ -1101,14 +1106,12 @@ export function MessagesProvider({
     [
       applyConversationReadReceipt,
       clearConversationUnread,
+      markConversationNotificationsRead,
     ],
   );
 
   const sendDirectMessage = useCallback(
-    async (
-      conversationId: string,
-      payload: ComposeDirectMessagePayload,
-    ) => {
+    async (conversationId: string, payload: ComposeDirectMessagePayload) => {
       const normalizedConversationId = normalizeId(conversationId);
       const text = payload.text?.trim() ?? "";
       const attachment = payload.attachment ?? null;
@@ -1210,9 +1213,7 @@ export function MessagesProvider({
 
         return true;
       } catch (error: any) {
-        handleFailure(
-          getErrorMessage(error, "Message failed to send."),
-        );
+        handleFailure(getErrorMessage(error, "Message failed to send."));
 
         return false;
       }
@@ -1283,6 +1284,48 @@ export function MessagesProvider({
       });
 
       updateConversationPreviewFromMessage(message);
+
+      if (!message.isCurrentUser) {
+        const messageId =
+          normalizeId(message.id) || normalizeId(message.clientId);
+        const createdAt = message.createdAt ?? new Date().toISOString();
+        const preview =
+          getPreviewText(message) || "You received a new message.";
+
+        let conversation: MessageItem | null = null;
+
+        for (const state of Object.values(conversationListsRef.current)) {
+          const match = state.items.find(
+            (item) => normalizeId(item.id) === conversationId,
+          );
+
+          if (match) {
+            conversation = match;
+            break;
+          }
+        }
+
+        const senderName = getMessageSenderName(rawMessage, conversation);
+        const senderLabel = senderName
+          ? senderName.startsWith("@")
+            ? senderName
+            : `@${senderName}`
+          : null;
+
+        addCenterNotification({
+          id: messageId
+            ? `message:${messageId}`
+            : `message:${conversationId}:${createdAt}`,
+          type: "messages",
+          title: "New Message",
+          text: senderLabel ? `${senderLabel}: ${preview}` : preview,
+          conversationId,
+          senderUsername: senderName,
+          messageCount: 1,
+          readAt: null,
+          createdAt,
+        });
+      }
     };
 
     const handleMessageDeleted = (payload: any) => {
@@ -1317,6 +1360,7 @@ export function MessagesProvider({
       socket.off("message:deleted", handleMessageDeleted);
     };
   }, [
+    addCenterNotification,
     applyConversationReadReceipt,
     enabled,
     loadConversations,

@@ -9,18 +9,14 @@ import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { ImageSourcePropType } from "react-native";
 import { Animated, FlatList, StyleSheet } from "react-native";
 import { buildFavoriteTeamKey } from "types/favorites";
-import { Team } from "types/team";
-import SearchBar from "../Explore/SearchBar";
+import type { Team } from "types/team";
+
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import SelectionCard from "./SelectionCard";
-
-type LeagueTeamWithId = Team & {
-  id: number;
-};
 
 type Props = {
   teams: Team[];
@@ -28,11 +24,14 @@ type Props = {
   toggleFavorite: (league: string, id: string) => void;
   isGridView: boolean;
   fadeAnim: Animated.Value;
-  search: string;
   itemWidth: number;
   loading?: boolean;
-  setSearch: (t: string) => void;
 };
+
+const COLLEGE_LEAGUES = new Set(["cfb", "cbb", "wcbb", "cb", "sb"]);
+
+const LIST_ITEM_HEIGHT = 76;
+const LIST_ITEM_GAP = 12;
 
 const getTeamLogo = (
   league: string,
@@ -75,20 +74,17 @@ const getTeamLogo = (
   }
 };
 
-const COLLEGE_LEAGUES = new Set(["cfb", "cbb", "wcbb", "cb", "sb"]);
-
 const FavoriteTeamsSelector = ({
   teams,
   favorites,
   toggleFavorite,
   isGridView,
   fadeAnim,
-  search,
   itemWidth,
-  setSearch,
-  loading,
+  loading = false,
 }: Props) => {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
 
   const styles = useMemo(
@@ -96,6 +92,9 @@ const FavoriteTeamsSelector = ({
     [isGridView, itemWidth],
   );
 
+  /**
+   * O(1) favorite lookup for each rendered item.
+   */
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const handleToggle = useCallback(
@@ -107,8 +106,9 @@ const FavoriteTeamsSelector = ({
 
   const renderItem = useCallback(
     ({ item }: { item: Team }) => {
-      const key = buildFavoriteTeamKey(item.league, item.id);
-      const isSelected = key ? favoritesSet.has(key) : false;
+      const favoriteKey = buildFavoriteTeamKey(item.league, item.id);
+
+      const isSelected = favoriteKey ? favoritesSet.has(favoriteKey) : false;
 
       const useAltLogo = isDark || isSelected;
 
@@ -130,18 +130,17 @@ const FavoriteTeamsSelector = ({
   );
 
   const keyExtractor = useCallback(
-    (item: LeagueTeamWithId) => `${item.league}-${item.id}`,
+    (item: Team) => `${item.league}-${item.id}`,
     [],
   );
 
   const getItemLayout = useCallback(
-    (_: ArrayLike<LeagueTeamWithId> | null | undefined, index: number) => {
-      const itemHeight = 76;
-      const separatorHeight = 12;
+    (_data: ArrayLike<Team> | null | undefined, index: number) => {
+      const length = LIST_ITEM_HEIGHT + LIST_ITEM_GAP;
 
       return {
-        length: itemHeight + separatorHeight,
-        offset: (itemHeight + separatorHeight) * index,
+        length,
+        offset: length * index,
         index,
       };
     },
@@ -159,18 +158,16 @@ const FavoriteTeamsSelector = ({
   }
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <SearchBar
-        visible
-        value={search}
-        onFocus={() => {}}
-        onBlur={() => {}}
-        onChangeText={setSearch}
-        placeholder="Search teams..."
-      />
-
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          opacity: fadeAnim,
+        },
+      ]}
+    >
       <FlatList
-        key={isGridView ? "grid" : "list"}
+        key={isGridView ? "teams-grid" : "teams-list"}
         data={teams}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -191,7 +188,10 @@ const FavoriteTeamsSelector = ({
   );
 };
 
-export const FavoritesSelectorStyles = (isGridView: boolean, itemWidth: number) =>
+export const FavoritesSelectorStyles = (
+  isGridView: boolean,
+  itemWidth: number,
+) =>
   StyleSheet.create({
     container: {
       flex: 1,

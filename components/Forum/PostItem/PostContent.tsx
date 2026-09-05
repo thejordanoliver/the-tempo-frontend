@@ -2,7 +2,7 @@
 import { Colors } from "constants/styles";
 import { memo, useMemo } from "react";
 import { Text, TextInput, View } from "react-native";
-import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumDisplayMediaItem, ForumPost } from "types/forum";
 import PollBlock from "../PollBlock";
 import PostImages from "../PostImages";
@@ -25,7 +25,7 @@ export const PostContent = memo(function PostContent({
   editText,
   onChangeEditText,
 }: PostContentProps) {
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
 
   /* -------------------------------------------------------------------------- */
   /*                                   Media                                    */

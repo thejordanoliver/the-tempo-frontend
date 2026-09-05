@@ -23,7 +23,7 @@ export const BRACKET_LAYOUT = {
   centerGap: 30,
   connectorLineWidth: 1,
   regionHeaderHeight: 34,
-  roundTitleHeight: 28,
+  roundTitleHeight: 40,
 } as const;
 
 /** Complete seed groups that can occupy each regional visual game slot. */

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { useCallback, useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { postItemStyles } from "styles/ForumStyles/PostItemStyles";
+import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumPollResponse, ForumPollState } from "types/forum";
 import { apiClient } from "utils/apiClient";
 
@@ -13,7 +13,7 @@ export default function PollBlock({
   postId: string;
   isDark: boolean;
 }) {
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
   const [poll, setPoll] = useState<ForumPollState | null>(null);
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState(false);

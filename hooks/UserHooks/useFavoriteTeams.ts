@@ -11,7 +11,7 @@ import { soccerTeams } from "@/constants/teamsSOCC";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
-import { usePathname, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import {
@@ -24,6 +24,7 @@ import {
   type FavoriteTeamKey,
 } from "types/favorites";
 import type { Team } from "types/types";
+import { subscribeAuthSession } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
 import { useFavoriteSports } from "./useFavoriteSports";
 
@@ -49,8 +50,9 @@ export function useFavoriteTeams() {
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const loadRequestId = useRef(0);
+  const currentUserIdRef = useRef<number | null>(null);
+  const hasLoadedFavoritesRef = useRef(false);
   const router = useRouter();
-  const pathname = usePathname();
   const favoriteSportsState = useFavoriteSports(userId);
   const { clearFavoriteSports } = favoriteSportsState;
 
@@ -106,6 +108,8 @@ const filteredTeams = useMemo(() => {
 
   const clearFavorites = useCallback(() => {
     loadRequestId.current += 1;
+    currentUserIdRef.current = null;
+    hasLoadedFavoritesRef.current = false;
 
     setUserId(null);
     setFavorites([]);
@@ -120,9 +124,9 @@ const filteredTeams = useMemo(() => {
 
   const loadFavorites = useCallback(
     async (targetUserId?: number | string | null) => {
-      const requestId = ++loadRequestId.current;
-
-      setIsLoading(true);
+      const loadGeneration = loadRequestId.current;
+      let requestId: number | null = null;
+      let skippedUnchangedUser = false;
 
       try {
         const storedUserId =
@@ -135,25 +139,44 @@ const filteredTeams = useMemo(() => {
             ? targetUserId == null
               ? null
               : Number(targetUserId)
-            : storedUserId
-              ? Number(storedUserId)
-              : null;
+              : storedUserId
+                ? Number(storedUserId)
+                : null;
 
-        if (requestId !== loadRequestId.current) {
+        if (loadGeneration !== loadRequestId.current) {
           return;
         }
 
+        // Repeated implicit loads for the same authenticated user should not
+        // refetch or show a loading state. Explicit user-targeted loads remain
+        // available to the profile/auth flow when the account changes.
+        if (
+          targetUserId === undefined &&
+          hasLoadedFavoritesRef.current &&
+          nextUserId === currentUserIdRef.current
+        ) {
+          skippedUnchangedUser = true;
+          return;
+        }
+
+        requestId = ++loadRequestId.current;
+        setIsLoading(true);
+
         if (!nextUserId || !Number.isInteger(nextUserId)) {
+          currentUserIdRef.current = null;
+          hasLoadedFavoritesRef.current = true;
           setUserId(null);
           setFavorites([]);
           setReady(true);
           return;
         }
 
-        if (nextUserId !== userId) {
+        if (nextUserId !== currentUserIdRef.current) {
           setFavorites([]);
         }
 
+        currentUserIdRef.current = nextUserId;
+        hasLoadedFavoritesRef.current = true;
         setUserId(nextUserId);
 
         const storageKey = getFavoritesStorageKey(nextUserId);
@@ -197,25 +220,48 @@ const filteredTeams = useMemo(() => {
           );
         }
       } catch (error) {
-        if (requestId !== loadRequestId.current) {
+        const isCurrentRequest =
+          requestId === null
+            ? loadGeneration === loadRequestId.current
+            : requestId === loadRequestId.current;
+
+        if (!isCurrentRequest) {
           return;
         }
 
         console.error("Failed to load favorites:", error);
         setFavorites([]);
       } finally {
-        if (requestId === loadRequestId.current) {
+        const isCurrentRequest =
+          requestId === null
+            ? loadGeneration === loadRequestId.current
+            : requestId === loadRequestId.current;
+
+        if (!skippedUnchangedUser && isCurrentRequest) {
           setIsLoading(false);
           setReady(true);
         }
       }
     },
-    [userId],
+    [],
   );
 
   useEffect(() => {
-    loadFavorites();
-  }, [loadFavorites, pathname]);
+    void loadFavorites();
+  }, [loadFavorites]);
+
+  useEffect(() => {
+    return subscribeAuthSession(({ accessToken }) => {
+      if (!accessToken) {
+        clearFavorites();
+        return;
+      }
+
+      // saveTokens publishes only after the new token and user identity have
+      // been persisted, so this hydrates Home for the newly signed-in user.
+      void loadFavorites();
+    });
+  }, [clearFavorites, loadFavorites]);
 
   /* ---------------- FAVORITE HELPERS ---------------- */
 

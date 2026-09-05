@@ -1,6 +1,6 @@
 // components/Forum/Interactions.tsx
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
-import { postItemStyles } from "@/styles/ForumStyles/PostItemStyles";
+import { PostItemStyles } from "@/styles/ForumStyles/PostItemStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { isAxiosError } from "axios";
 import ConfirmModal from "components/ConfirmModal";
@@ -60,7 +60,7 @@ export const Interactions = memo(function Interactions({
   const { handleBadgeAwards } = useBadgeNotifications();
 
   const router = useRouter();
-  const styles = postItemStyles(isDark);
+  const styles = PostItemStyles(isDark);
 
   /* ------------------------------------------------------------------------ */
   /*                                  State                                   */

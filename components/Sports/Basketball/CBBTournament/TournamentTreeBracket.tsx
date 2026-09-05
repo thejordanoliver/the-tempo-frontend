@@ -4,6 +4,7 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, globalStyles } from "@/constants/styles";
 import { getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { usePreferences } from "@/contexts/PreferencesContext";
 import {
   type TournamentGame,
   type TournamentRegion,
@@ -16,14 +17,7 @@ import {
   CBBTournamentBracketStyles,
 } from "@/styles/PlayoffStyles/CBBTournamentBracketStyles";
 import React, { useMemo, useRef } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {
   BRACKET_LAYOUT,
@@ -200,6 +194,8 @@ const sortGamesByDate = (games: readonly TournamentGame[]): TournamentGame[] =>
 
 const getTeamName = (team: TournamentTeam | null): string =>
   team?.code || team?.shortName || team?.name || "TBD";
+const getChampionName = (team: TournamentTeam | null): string =>
+  team?.shortName || team?.name || "TBD";
 
 const getGameSeeds = (game: TournamentGame): number[] =>
   [game.homeTeam?.seed, game.awayTeam?.seed].filter(
@@ -711,8 +707,7 @@ function BracketRoundHeader({ isDark }: { isDark: boolean }) {
   const styles = CBBTournamentBracketStyles(isDark);
   const centerStageX = REGION_ROUNDS_WIDTH + CENTER_STAGE_GAP;
   const rightRegionX = centerStageX + FINAL_STAGE_WIDTH + CENTER_STAGE_GAP;
-  const championshipX =
-    centerStageX + (FINAL_STAGE_WIDTH - CARD_WIDTH) / 2;
+  const championshipX = centerStageX + (FINAL_STAGE_WIDTH - CARD_WIDTH) / 2;
 
   const renderRegionalHeaders = (
     rounds: readonly RegionalRoundCode[],
@@ -732,7 +727,10 @@ function BracketRoundHeader({ isDark }: { isDark: boolean }) {
       {rounds.map((round) => (
         <Text
           key={`${left}-${round}`}
-          style={[styles.roundLabel, { width: BRACKET_LAYOUT.roundColumnWidth }]}
+          style={[
+            styles.roundLabel,
+            { width: BRACKET_LAYOUT.roundColumnWidth },
+          ]}
         >
           {ROUND_LABELS[round]}
         </Text>
@@ -919,25 +917,23 @@ const getFinalFourRegionLayout = (
   const fallbackRegions = [...regions]
     .sort((firstRegion, secondRegion) => firstRegion.order - secondRegion.order)
     .slice(0, 4);
-  const semifinalRegionPairs = orderedFinalFourGames
-    .slice(0, 2)
-    .map((game) => {
-      const pair: TournamentRegion[] = [];
-      const displayTeams = getFinalFourDisplayTeams(
-        game,
-        regionalChampionOrderByTeamId,
-      );
+  const semifinalRegionPairs = orderedFinalFourGames.slice(0, 2).map((game) => {
+    const pair: TournamentRegion[] = [];
+    const displayTeams = getFinalFourDisplayTeams(
+      game,
+      regionalChampionOrderByTeamId,
+    );
 
-      for (const team of displayTeams) {
-        const region = getRegionForTeam(regions, team);
+    for (const team of displayTeams) {
+      const region = getRegionForTeam(regions, team);
 
-        if (region && !pair.some((candidate) => candidate.id === region.id)) {
-          pair.push(region);
-        }
+      if (region && !pair.some((candidate) => candidate.id === region.id)) {
+        pair.push(region);
       }
+    }
 
-      return pair;
-    });
+    return pair;
+  });
 
   while (semifinalRegionPairs.length < 2) {
     semifinalRegionPairs.push([]);
@@ -980,10 +976,7 @@ function NationalStage({
 
   const orderedFinalFour = useMemo(
     () =>
-      getOrderedFinalFourGames(
-        finalFourGames,
-        regionalChampionOrderByTeamId,
-      ),
+      getOrderedFinalFourGames(finalFourGames, regionalChampionOrderByTeamId),
     [finalFourGames, regionalChampionOrderByTeamId],
   );
 
@@ -1128,7 +1121,7 @@ function NationalStage({
           <Text style={styles.championLabel}>Champion</Text>
 
           <Text numberOfLines={1} style={styles.championName}>
-            {getTeamName(champion)}
+            {getChampionName(champion)}
           </Text>
 
           {champion?.seed !== null && champion?.seed !== undefined ? (
@@ -1157,10 +1150,7 @@ function TournamentQuadrant({
   );
   const orderedFinalFour = useMemo(
     () =>
-      getOrderedFinalFourGames(
-        finalFourGames,
-        regionalChampionOrderByTeamId,
-      ),
+      getOrderedFinalFourGames(finalFourGames, regionalChampionOrderByTeamId),
     [finalFourGames, regionalChampionOrderByTeamId],
   );
   const orderedRegions = useMemo(
@@ -1177,9 +1167,7 @@ function TournamentQuadrant({
   const bottomRegionY = REGION_BLOCK_HEIGHT + QUADRANT_VERTICAL_GAP;
   const centerStageY = (QUADRANT_BOARD_HEIGHT - FINAL_STAGE_HEIGHT) / 2;
   const regionalWinnerCenterY =
-    BRACKET_LAYOUT.regionHeaderHeight +
-    ELITE_8_Y[0] +
-    CARD_HEIGHT / 2;
+    BRACKET_LAYOUT.regionHeaderHeight + ELITE_8_Y[0] + CARD_HEIGHT / 2;
   const leftRegionWinnerX =
     getRoundColumnX(REGIONAL_ROUNDS.length - 1) +
     CARD_LEFT_IN_COLUMN +
@@ -1187,10 +1175,8 @@ function TournamentQuadrant({
   const rightRegionWinnerX = rightRegionX + CARD_LEFT_IN_COLUMN;
   const leftFinalFourX = centerStageX;
   const rightFinalFourX = centerStageX + FINAL_STAGE_WIDTH;
-  const finalFourTopTeamY =
-    centerStageY + FINAL_FOUR_Y + CARD_HEIGHT * 0.3;
-  const finalFourBottomTeamY =
-    centerStageY + FINAL_FOUR_Y + CARD_HEIGHT * 0.7;
+  const finalFourTopTeamY = centerStageY + FINAL_FOUR_Y + CARD_HEIGHT * 0.3;
+  const finalFourBottomTeamY = centerStageY + FINAL_FOUR_Y + CARD_HEIGHT * 0.7;
   const leftConnectorElbowX =
     leftRegionWinnerX + (leftFinalFourX - leftRegionWinnerX) / 2;
   const rightConnectorElbowX =
@@ -1296,8 +1282,8 @@ export default function TournamentTreeBracket({
   season,
   league = "cbb",
 }: TournamentTreeBracketProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
   const styles = CBBTournamentBracketStyles(isDark);
   const global = globalStyles(isDark);
   const roundHeaderScrollRef = useRef<ScrollView>(null);
@@ -1350,8 +1336,7 @@ export default function TournamentTreeBracket({
 
         <View
           style={{
-            height:
-              regions.length > 0 ? BRACKET_LAYOUT.roundTitleHeight : 0,
+            height: regions.length > 0 ? BRACKET_LAYOUT.roundTitleHeight : 0,
             zIndex: 20,
             backgroundColor: isDark
               ? Colors.dark.background

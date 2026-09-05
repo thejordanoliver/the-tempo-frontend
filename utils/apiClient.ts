@@ -122,6 +122,7 @@ const PUBLIC_AUTH_PATHS = [
   "/api/verify-reset-code",
   "/api/reset-password",
   "/api/refresh",
+  "/api/logout",
 ];
 
 const getRequestPath = (url?: string) => {

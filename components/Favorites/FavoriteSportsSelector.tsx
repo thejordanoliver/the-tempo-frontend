@@ -6,7 +6,6 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import { Animated, FlatList } from "react-native";
 
-import SearchBar from "../Explore/SearchBar";
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import { FavoritesSelectorStyles } from "./FavoriteTeamsSelector";
 import SelectionCard from "./SelectionCard";
@@ -16,15 +15,11 @@ type FavoriteSportOption = (typeof FAVORITE_SPORT_OPTIONS)[number];
 type Props = {
   favorites: FavoriteSportId[];
   loading: boolean;
-  ready: boolean;
   isGridView: boolean;
   saving: boolean;
-  error: string | null;
-  onRetry: () => void;
   toggleFavorite: (league: FavoriteSportId) => void;
   fadeAnim: Animated.Value;
   search: string;
-  setSearch: (t: string) => void;
   itemWidth: number;
 };
 
@@ -35,7 +30,6 @@ export default function FavoriteSportsSelector({
   fadeAnim,
   search,
   itemWidth,
-  setSearch,
   loading,
   saving,
 }: Props) {
@@ -48,11 +42,17 @@ export default function FavoriteSportsSelector({
     [isGridView, itemWidth],
   );
 
+  /**
+   * O(1) selected-state lookup.
+   */
   const favoritesSet = useMemo(
     () => new Set<FavoriteSportId>(favorites),
     [favorites],
   );
 
+  /**
+   * Filtering only reruns when the sports search query changes.
+   */
   const filteredSports = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -60,14 +60,23 @@ export default function FavoriteSportsSelector({
       return FAVORITE_SPORT_OPTIONS;
     }
 
-    return FAVORITE_SPORT_OPTIONS.filter(
-      (item) =>
-        item.id.toLowerCase().includes(query) ||
-        item.label.toLowerCase().includes(query) ||
-        item.league.toLowerCase().includes(query),
-    );
+    return FAVORITE_SPORT_OPTIONS.filter((item) => {
+      const id = item.id.toLowerCase();
+
+      const label = item.label.toLowerCase();
+
+      const league = item.league.toLowerCase();
+
+      return (
+        id.includes(query) || label.includes(query) || league.includes(query)
+      );
+    });
   }, [search]);
 
+  /**
+   * SelectionCard currently reports league + id.
+   * Sports use their FavoriteSportId as the league value.
+   */
   const handleToggle = useCallback(
     (league: string, _id: string) => {
       if (saving) {
@@ -90,6 +99,7 @@ export default function FavoriteSportsSelector({
   const renderItem = useCallback(
     ({ item }: { item: FavoriteSportOption }) => {
       const isSelected = favoritesSet.has(item.id);
+
       const logo = isDark || isSelected ? item.logoLight : item.logo;
 
       return (
@@ -133,15 +143,6 @@ export default function FavoriteSportsSelector({
         },
       ]}
     >
-      <SearchBar
-        visible
-        value={search}
-        onFocus={() => {}}
-        onBlur={() => {}}
-        onChangeText={setSearch}
-        placeholder="Search leagues..."
-      />
-
       <FlatList
         key={isGridView ? "sports-grid" : "sports-list"}
         data={filteredSports}

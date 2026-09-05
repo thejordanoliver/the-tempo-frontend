@@ -5,37 +5,48 @@ import { Animated, RefreshControl, ScrollView, View } from "react-native";
 import PagerView, {
   type PagerViewOnPageScrollEvent,
 } from "react-native-pager-view";
+
 import {
   CustomHeader,
   type HomeHeaderTab,
 } from "../../components/CustomHeader";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
-import LeagueGamesList from "../../components/League/LeagueGamesList";
+import LeagueGamesList from "../../components/League/Games/LeagueGamesList";
 import NewsList from "../../components/News/NewsList";
 import { Colors } from "../../constants/styles";
+import { useNotifications } from "../../contexts/NotificationContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useHomeData } from "../../hooks/useHomeData";
 import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
   const { resolvedColorScheme, viewMode } = usePreferences();
+  const { unreadNotificationCount } = useNotifications();
+
   const isDark = resolvedColorScheme === "dark";
+
   const navigation = useNavigation();
+
   const styles = homeStyles(isDark);
+
   const [favoritesInteracting, setFavoritesInteracting] = React.useState(false);
+
   const [selectedTab, setSelectedTab] = React.useState<HomeHeaderTab>("scores");
 
   const pagerRef = useRef<PagerView>(null);
+
   const homeTabScrollProgress = useRef(new Animated.Value(0)).current;
 
   const handleHeaderTabPress = useCallback((tab: HomeHeaderTab) => {
     setSelectedTab(tab);
+
     pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
   }, []);
 
   const handlePageScroll = useCallback(
     (event: PagerViewOnPageScrollEvent) => {
       const { offset, position } = event.nativeEvent;
+
       homeTabScrollProgress.setValue(position + offset);
     },
     [homeTabScrollProgress],
@@ -69,11 +80,17 @@ export default function HomeScreen() {
           onHomeTabPress={handleHeaderTabPress}
           homeScrollProgress={homeTabScrollProgress}
           onNotificationsCenter={() => router.navigate("/notification-center")}
-          unreadNotificationCount={10}
+          unreadNotificationCount={unreadNotificationCount}
         />
       ),
     });
-  }, [handleHeaderTabPress, homeTabScrollProgress, navigation, selectedTab]);
+  }, [
+    handleHeaderTabPress,
+    homeTabScrollProgress,
+    navigation,
+    selectedTab,
+    unreadNotificationCount,
+  ]);
 
   const refreshControl = useCallback(
     () => (
@@ -96,9 +113,11 @@ export default function HomeScreen() {
           initialPage={0}
           scrollEnabled={!favoritesInteracting}
           onPageScroll={handlePageScroll}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
+          onPageSelected={(event) => {
+            const index = event.nativeEvent.position;
+
             homeTabScrollProgress.setValue(index);
+
             setSelectedTab(index === 0 ? "scores" : "news");
           }}
         >
@@ -124,7 +143,7 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          {/* NEWS */}
+          {/* NEWS PAGE */}
           <View key="news" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}

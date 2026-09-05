@@ -1,553 +1,929 @@
 // constants/teamsCBB.ts
-import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Team } from "@/types/team";
+import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
+
+import AbileneChristianLogo from "assets/College_Logos/AbileneChristianLogo.png";
+import AbileneChristianLogoLight from "assets/College_Logos/AbileneChristianLogoLight.png";
+import AirForceLogo from "assets/College_Logos/AirForceLogo.png";
+import AirForceLogoLight from "assets/College_Logos/AirForceLogoLight.png";
+import AkronLogo from "assets/College_Logos/AkronLogo.png";
+import AkronLogoLight from "assets/College_Logos/AkronLogoLight.png";
+import AlabamaAAndMLogo from "assets/College_Logos/AlabamaAAndMLogo.png";
+import AlabamaAAndMLogoLight from "assets/College_Logos/AlabamaAAndMLogoLight.png";
+import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
+import AlabamaStateLogo from "assets/College_Logos/AlabamaStateLogo.png";
+import AlabamaStateLogoLight from "assets/College_Logos/AlabamaStateLogoLight.png";
+import AlaskaAnchorageLogo from "assets/College_Logos/AlaskaAnchorageLogo.png";
+import AlaskaAnchorageLogoLight from "assets/College_Logos/AlaskaAnchorageLogoLight.png";
+import AlcornStateLogo from "assets/College_Logos/AlcornStateLogo.png";
+import AlcornStateLogoLight from "assets/College_Logos/AlcornStateLogoLight.png";
+import AlleghenyLogo from "assets/College_Logos/AlleghenyLogo.png";
+import AlleghenyLogoLight from "assets/College_Logos/AlleghenyLogoLight.png";
+import AmericanUniversityLogo from "assets/College_Logos/AmericanUniversityLogo.png";
+import AmericanUniversityLogoLight from "assets/College_Logos/AmericanUniversityLogoLight.png";
+import AppStateLogo from "assets/College_Logos/AppStateLogo.png";
+import AppStateLogoLight from "assets/College_Logos/AppStateLogoLight.png";
+import ArizonaLogo from "assets/College_Logos/ArizonaLogo.png";
+import ArizonaLogoLight from "assets/College_Logos/ArizonaLogoLight.png";
+import ArizonaStateLogo from "assets/College_Logos/ArizonaStateLogo.png";
+import ArizonaStateLogoLight from "assets/College_Logos/ArizonaStateLogoLight.png";
+import ArkansasBaptistLogo from "assets/College_Logos/ArkansasBaptistLogo.png";
+import ArkansasBaptistLogoLight from "assets/College_Logos/ArkansasBaptistLogoLight.png";
+import ArkansasLogo from "assets/College_Logos/ArkansasLogo.png";
+import ArkansasLogoLight from "assets/College_Logos/ArkansasLogoLight.png";
+import ArkansasPineBluffLogo from "assets/College_Logos/ArkansasPineBluffLogo.png";
+import ArkansasPineBluffLogoLight from "assets/College_Logos/ArkansasPineBluffLogoLight.png";
+import ArkansasStateLogo from "assets/College_Logos/ArkansasStateLogo.png";
+import ArkansasStateLogoLight from "assets/College_Logos/ArkansasStateLogoLight.png";
+import ArlingtonBaptistLogo from "assets/College_Logos/ArlingtonBaptistLogo.png";
+import ArlingtonBaptistLogoLight from "assets/College_Logos/ArlingtonBaptistLogoLight.png";
+import ArmyLogo from "assets/College_Logos/ArmyLogo.png";
+import ArmyLogoLight from "assets/College_Logos/ArmyLogoLight.png";
+import AuburnLogo from "assets/College_Logos/AuburnLogo.png";
+import AuburnLogoLight from "assets/College_Logos/AuburnLogoLight.png";
+import AustinPeayLogo from "assets/College_Logos/AustinPeayLogo.png";
+import AustinPeayLogoLight from "assets/College_Logos/AustinPeayLogoLight.png";
+import BallStateLogo from "assets/College_Logos/BallStateLogo.png";
+import BallStateLogoLight from "assets/College_Logos/BallStateLogoLight.png";
+import BarberScotiaLogo from "assets/College_Logos/BarberScotiaLogo.png";
+import BarberScotiaLogoLight from "assets/College_Logos/BarberScotiaLogoLight.png";
+import BaylorLogo from "assets/College_Logos/BaylorLogo.png";
+import BaylorLogoLight from "assets/College_Logos/BaylorLogoLight.png";
+import BellarmineLogo from "assets/College_Logos/BellarmineLogo.png";
+import BellarmineLogoLight from "assets/College_Logos/BellarmineLogoLight.png";
+import BelmontLogo from "assets/College_Logos/BelmontLogo.png";
+import BelmontLogoLight from "assets/College_Logos/BelmontLogoLight.png";
+import BethanyWVLogo from "assets/College_Logos/BethanyWVLogo.png";
+import BethanyWVLogoLight from "assets/College_Logos/BethanyWVLogoLight.png";
+import BethesdaLogo from "assets/College_Logos/BethesdaLogo.png";
+import BethesdaLogoLight from "assets/College_Logos/BethesdaLogoLight.png";
+import BethuneCookmanLogo from "assets/College_Logos/BethuneCookmanLogo.png";
+import BethuneCookmanLogoLight from "assets/College_Logos/BethuneCookmanLogoLight.png";
+import BiblicalStudLogo from "assets/College_Logos/BiblicalStudLogo.png";
+import BiblicalStudLogoLight from "assets/College_Logos/BiblicalStudLogoLight.png";
+import BinghamtonLogo from "assets/College_Logos/BinghamtonLogo.png";
+import BinghamtonLogoLight from "assets/College_Logos/BinghamtonLogoLight.png";
+import BloomfieldLogo from "assets/College_Logos/BloomfieldLogo.png";
+import BloomfieldLogoLight from "assets/College_Logos/BloomfieldLogoLight.png";
+import BobJonesLogo from "assets/College_Logos/BobJonesLogo.png";
+import BobJonesLogoLight from "assets/College_Logos/BobJonesLogoLight.png";
+import BoiseStateLogo from "assets/College_Logos/BoiseStateLogo.png";
+import BoiseStateLogoLight from "assets/College_Logos/BoiseStateLogoLight.png";
+import BostonCollegeLogo from "assets/College_Logos/BostonCollegeLogo.png";
+import BostonCollegeLogoLight from "assets/College_Logos/BostonCollegeLogoLight.png";
+import BostonUniversityLogo from "assets/College_Logos/BostonUniversityLogo.png";
+import BostonUniversityLogoLight from "assets/College_Logos/BostonUniversityLogoLight.png";
+import BowieStateLogo from "assets/College_Logos/BowieStateLogo.png";
+import BowieStateLogoLight from "assets/College_Logos/BowieStateLogoLight.png";
+import BowlingGreenLogo from "assets/College_Logos/BowlingGreenLogo.png";
+import BowlingGreenLogoLight from "assets/College_Logos/BowlingGreenLogoLight.png";
+import BradleyLogo from "assets/College_Logos/BradleyLogo.png";
+import BradleyLogoLight from "assets/College_Logos/BradleyLogoLight.png";
+import BrevardLogo from "assets/College_Logos/BrevardLogo.png";
+import BrevardLogoLight from "assets/College_Logos/BrevardLogoLight.png";
+import BrewtonParkerLogo from "assets/College_Logos/BrewtonParkerLogo.png";
+import BrewtonParkerLogoLight from "assets/College_Logos/BrewtonParkerLogoLight.png";
+import BridgewaterStateLogo from "assets/College_Logos/BridgewaterStateLogo.png";
+import BridgewaterStateLogoLight from "assets/College_Logos/BridgewaterStateLogoLight.png";
+import BridgewaterVALogo from "assets/College_Logos/BridgewaterVALogo.png";
+import BridgewaterVALogoLight from "assets/College_Logos/BridgewaterVALogoLight.png";
+import BrownLogo from "assets/College_Logos/BrownLogo.png";
+import BrownLogoLight from "assets/College_Logos/BrownLogoLight.png";
+import BryantLogo from "assets/College_Logos/BryantLogo.png";
+import BryantLogoLight from "assets/College_Logos/BryantLogoLight.png";
+import BryanTNLogo from "assets/College_Logos/BryanTNLogo.png";
+import BryanTNLogoLight from "assets/College_Logos/BryanTNLogoLight.png";
+import BucknellLogo from "assets/College_Logos/BucknellLogo.png";
+import BucknellLogoLight from "assets/College_Logos/BucknellLogoLight.png";
+import BuffaloLogo from "assets/College_Logos/BuffaloLogo.png";
+import BuffaloLogoLight from "assets/College_Logos/BuffaloLogoLight.png";
+import ButlerLogo from "assets/College_Logos/ButlerLogo.png";
+import ButlerLogoLight from "assets/College_Logos/ButlerLogoLight.png";
+import BYULogo from "assets/College_Logos/BYULogo.png";
+import BYULogoLight from "assets/College_Logos/BYULogoLight.png";
+import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptistLogo.png";
+import CaliforniaBaptistLogoLight from "assets/College_Logos/CaliforniaBaptistLogoLight.png";
+import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
+import CalPolyLogo from "assets/College_Logos/CalPolyLogo.png";
+import CalPolyLogoLight from "assets/College_Logos/CalPolyLogoLight.png";
+import CalStateBakersfieldLogo from "assets/College_Logos/CalStateBakersfieldLogo.png";
+import CalStateBakersfieldLogoLight from "assets/College_Logos/CalStateBakersfieldLogoLight.png";
+import CalStateFullertonLogo from "assets/College_Logos/CalStateFullertonLogo.png";
+import CalStateFullertonLogoLight from "assets/College_Logos/CalStateFullertonLogoLight.png";
+import CalStateNorthridgeLogo from "assets/College_Logos/CalStateNorthridgeLogo.png";
+import CalStateNorthridgeLogoLight from "assets/College_Logos/CalStateNorthridgeLogoLight.png";
+import CampbellLogo from "assets/College_Logos/CampbellLogo.png";
+import CampbellLogoLight from "assets/College_Logos/CampbellLogoLight.png";
+import CampbellsvilleLogo from "assets/College_Logos/CampbellsvilleLogo.png";
+import CampbellsvilleLogoLight from "assets/College_Logos/CampbellsvilleLogoLight.png";
+import CanisiusLogo from "assets/College_Logos/CanisiusLogo.png";
+import CanisiusLogoLight from "assets/College_Logos/CanisiusLogoLight.png";
+import CarolinaUniversityLogo from "assets/College_Logos/CarolinaUniversityLogo.png";
+import CarolinaUniversityLogoLight from "assets/College_Logos/CarolinaUniversityLogoLight.png";
+import CentenaryNJLogo from "assets/College_Logos/CentenaryNJLogo.png";
+import CentenaryNJLogoLight from "assets/College_Logos/CentenaryNJLogoLight.png";
+import CentralArkansasLogo from "assets/College_Logos/CentralArkansasLogo.png";
+import CentralArkansasLogoLight from "assets/College_Logos/CentralArkansasLogoLight.png";
+import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticutLogo.png";
+import CentralConnecticutLogoLight from "assets/College_Logos/CentralConnecticutLogoLight.png";
+import CentralMichiganLogo from "assets/College_Logos/CentralMichiganLogo.png";
+import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLogoLight.png";
+import CentralWashingtonLogo from "assets/College_Logos/CentralWashingtonLogo.png";
+import CentralWashingtonLogoLight from "assets/College_Logos/CentralWashingtonLogoLight.png";
+import ChaminadeLogo from "assets/College_Logos/ChaminadeLogo.png";
+import ChaminadeLogoLight from "assets/College_Logos/ChaminadeLogoLight.png";
+import ChampionChristianLogo from "assets/College_Logos/ChampionChristianLogo.png";
+import ChampionChristianLogoLight from "assets/College_Logos/ChampionChristianLogoLight.png";
+import CharlestonLogo from "assets/College_Logos/CharlestonLogo.png";
+import CharlestonLogoLight from "assets/College_Logos/CharlestonLogoLight.png";
+import CharlestonSouthernLogo from "assets/College_Logos/CharlestonSouthernLogo.png";
+import CharlestonSouthernLogoLight from "assets/College_Logos/CharlestonSouthernLogoLight.png";
+import CharlotteLogo from "assets/College_Logos/CharlotteLogo.png";
+import CharlotteLogoLight from "assets/College_Logos/CharlotteLogoLight.png";
+import ChattanoogaLogo from "assets/College_Logos/ChattanoogaLogo.png";
+import ChattanoogaLogoLight from "assets/College_Logos/ChattanoogaLogoLight.png";
+import ChicagoStateLogo from "assets/College_Logos/ChicagoStateLogo.png";
+import ChicagoStateLogoLight from "assets/College_Logos/ChicagoStateLogoLight.png";
+import CincinnatiLogo from "assets/College_Logos/CincinnatiLogo.png";
+import CincinnatiLogoLight from "assets/College_Logos/CincinnatiLogoLight.png";
+import CityCollegeNYLogo from "assets/College_Logos/CityCollegeNYLogo.png";
+import CityCollegeNYLogoLight from "assets/College_Logos/CityCollegeNYLogoLight.png";
+import ClemsonLogo from "assets/College_Logos/ClemsonLogo.png";
+import ClemsonLogoLight from "assets/College_Logos/ClemsonLogoLight.png";
+import ClevelandStateLogo from "assets/College_Logos/ClevelandStateLogo.png";
+import ClevelandStateLogoLight from "assets/College_Logos/ClevelandStateLogoLight.png";
+import ClintonCollegeLogo from "assets/College_Logos/ClintonCollegeLogo.png";
+import ClintonCollegeLogoLight from "assets/College_Logos/ClintonCollegeLogoLight.png";
+import CoastalCarolinaLogo from "assets/College_Logos/CoastalCarolinaLogo.png";
+import CoastalCarolinaLogoLight from "assets/College_Logos/CoastalCarolinaLogoLight.png";
+import CoastalGeorgiaLogo from "assets/College_Logos/CoastalGeorgiaLogo.png";
+import CoastalGeorgiaLogoLight from "assets/College_Logos/CoastalGeorgiaLogoLight.png";
+import ColgateLogo from "assets/College_Logos/ColgateLogo.png";
+import ColgateLogoLight from "assets/College_Logos/ColgateLogoLight.png";
+import ColoradoLogo from "assets/College_Logos/ColoradoLogo.png";
+import ColoradoLogoLight from "assets/College_Logos/ColoradoLogoLight.png";
+import ColoradoStateLogo from "assets/College_Logos/ColoradoStateLogo.png";
+import ColoradoStateLogoLight from "assets/College_Logos/ColoradoStateLogoLight.png";
+import ColumbiaInternationalLogo from "assets/College_Logos/ColumbiaInternationalLogo.png";
+import ColumbiaInternationalLogoLight from "assets/College_Logos/ColumbiaInternationalLogoLight.png";
+import ColumbiaLogo from "assets/College_Logos/ColumbiaLogo.png";
+import ColumbiaLogoLight from "assets/College_Logos/ColumbiaLogoLight.png";
+import CoppinStateLogo from "assets/College_Logos/CoppinStateLogo.png";
+import CoppinStateLogoLight from "assets/College_Logos/CoppinStateLogoLight.png";
+import CornellLogo from "assets/College_Logos/CornellLogo.png";
+import CornellLogoLight from "assets/College_Logos/CornellLogoLight.png";
+import CreightonLogo from "assets/College_Logos/CreightonLogo.png";
+import CreightonLogoLight from "assets/College_Logos/CreightonLogoLight.png";
+import DakotaWesleyanLogo from "assets/College_Logos/DakotaWesleyanLogo.png";
+import DakotaWesleyanLogoLight from "assets/College_Logos/DakotaWesleyanLogoLight.png";
+import DallasLogo from "assets/College_Logos/DallasLogo.png";
+import DallasLogoLight from "assets/College_Logos/DallasLogoLight.png";
+import DartmouthLogo from "assets/College_Logos/DartmouthLogo.png";
+import DartmouthLogoLight from "assets/College_Logos/DartmouthLogoLight.png";
+import DavidsonLogo from "assets/College_Logos/DavidsonLogo.png";
+import DavidsonLogoLight from "assets/College_Logos/DavidsonLogoLight.png";
+import DaytonLogo from "assets/College_Logos/DaytonLogo.png";
+import DaytonLogoLight from "assets/College_Logos/DaytonLogoLight.png";
+import DelawareLogo from "assets/College_Logos/DelawareLogo.png";
+import DelawareLogoLight from "assets/College_Logos/DelawareLogoLight.png";
+import DelawareStateLogo from "assets/College_Logos/DelawareStateLogo.png";
+import DelawareStateLogoLight from "assets/College_Logos/DelawareStateLogoLight.png";
+import DenverLogo from "assets/College_Logos/DenverLogo.png";
+import DenverLogoLight from "assets/College_Logos/DenverLogoLight.png";
+import DePaulLogo from "assets/College_Logos/DePaulLogo.png";
+import DePaulLogoLight from "assets/College_Logos/DePaulLogoLight.png";
+import DepauwLogo from "assets/College_Logos/DepauwLogo.png";
+import DepauwLogoLight from "assets/College_Logos/DepauwLogoLight.png";
+import DetroitMercyLogo from "assets/College_Logos/DetroitMercyLogo.png";
+import DetroitMercyLogoLight from "assets/College_Logos/DetroitMercyLogoLight.png";
+import DrakeLogo from "assets/College_Logos/DrakeLogo.png";
+import DrakeLogoLight from "assets/College_Logos/DrakeLogoLight.png";
+import DrexelLogo from "assets/College_Logos/DrexelLogo.png";
+import DrexelLogoLight from "assets/College_Logos/DrexelLogoLight.png";
+import DukeLogo from "assets/College_Logos/DukeLogo.png";
+import DukeLogoLight from "assets/College_Logos/DukeLogoLight.png";
+import DuquesneLogo from "assets/College_Logos/DuquesneLogo.png";
+import DuquesneLogoLight from "assets/College_Logos/DuquesneLogoLight.png";
+import EastCarolinaLogo from "assets/College_Logos/EastCarolinaLogo.png";
+import EastCarolinaLogoLight from "assets/College_Logos/EastCarolinaLogoLight.png";
+import EasternIllinoisLogo from "assets/College_Logos/EasternIllinoisLogo.png";
+import EasternIllinoisLogoLight from "assets/College_Logos/EasternIllinoisLogoLight.png";
+import EasternKentuckyLogo from "assets/College_Logos/EasternKentuckyLogo.png";
+import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLogoLight.png";
+import EasternMichiganLogo from "assets/College_Logos/EasternMichiganLogo.png";
+import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLogoLight.png";
+import EasternWashingtonLogo from "assets/College_Logos/EasternWashingtonLogo.png";
+import EasternWashingtonLogoLight from "assets/College_Logos/EasternWashingtonLogoLight.png";
+import EastTennesseeStateLogo from "assets/College_Logos/EastTennesseeStateLogo.png";
+import EastTennesseeStateLogoLight from "assets/College_Logos/EastTennesseeStateLogoLight.png";
+import EastTexasAAndMLogo from "assets/College_Logos/EastTexasAAndMLogo.png";
+import EastTexasAAndMLogoLight from "assets/College_Logos/EastTexasAAndMLogoLight.png";
+import EastWestUniversityLogo from "assets/College_Logos/EastWestUniversityLogo.png";
+import EastWestUniversityLogoLight from "assets/College_Logos/EastWestUniversityLogoLight.png";
+import EcclesiaLogo from "assets/College_Logos/EcclesiaLogo.png";
+import EcclesiaLogoLight from "assets/College_Logos/EcclesiaLogoLight.png";
+import ElonLogo from "assets/College_Logos/ElonLogo.png";
+import ElonLogoLight from "assets/College_Logos/ElonLogoLight.png";
+import EmersonLogo from "assets/College_Logos/EmersonLogo.png";
+import EmersonLogoLight from "assets/College_Logos/EmersonLogoLight.png";
+import EvansvilleLogo from "assets/College_Logos/EvansvilleLogo.png";
+import EvansvilleLogoLight from "assets/College_Logos/EvansvilleLogoLight.png";
+import FairfieldLogo from "assets/College_Logos/FairfieldLogo.png";
+import FairfieldLogoLight from "assets/College_Logos/FairfieldLogoLight.png";
+import FairleighDickinsonLogo from "assets/College_Logos/FairleighDickinsonLogo.png";
+import FairleighDickinsonLogoLight from "assets/College_Logos/FairleighDickinsonLogoLight.png";
+import FAULogo from "assets/College_Logos/FAULogo.png";
+import FAULogoLight from "assets/College_Logos/FAULogoLight.png";
+import FisherCollegeLogo from "assets/College_Logos/FisherCollegeLogo.png";
+import FisherCollegeLogoLight from "assets/College_Logos/FisherCollegeLogoLight.png";
+import FIULogo from "assets/College_Logos/FIULogo.png";
+import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
+import FloridaAAndMLogo from "assets/College_Logos/FloridaAAndMLogo.png";
+import FloridaAAndMLogoLight from "assets/College_Logos/FloridaAAndMLogoLight.png";
+import FloridaGulfCoastLogo from "assets/College_Logos/FloridaGulfCoastLogo.png";
+import FloridaGulfCoastLogoLight from "assets/College_Logos/FloridaGulfCoastLogoLight.png";
+import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
+import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
+import FloridaStateLogo from "assets/College_Logos/FloridaStateLogo.png";
+import FloridaStateLogoLight from "assets/College_Logos/FloridaStateLogoLight.png";
+import FordhamLogo from "assets/College_Logos/FordhamLogo.png";
+import FordhamLogoLight from "assets/College_Logos/FordhamLogoLight.png";
+import FortLauderdaleLogo from "assets/College_Logos/FortLauderdaleLogo.png";
+import FortLauderdaleLogoLight from "assets/College_Logos/FortLauderdaleLogoLight.png";
+import FranciscanUniversityLogo from "assets/College_Logos/FranciscanUniversityLogo.png";
+import FranciscanUniversityLogoLight from "assets/College_Logos/FranciscanUniversityLogoLight.png";
+import FresnoStateLogo from "assets/College_Logos/FresnoStateLogo.png";
+import FresnoStateLogoLight from "assets/College_Logos/FresnoStateLogoLight.png";
+import FurmanLogo from "assets/College_Logos/FurmanLogo.png";
+import FurmanLogoLight from "assets/College_Logos/FurmanLogoLight.png";
+import GardnerWebbLogo from "assets/College_Logos/GardnerWebbLogo.png";
+import GardnerWebbLogoLight from "assets/College_Logos/GardnerWebbLogoLight.png";
+import GenevaLogo from "assets/College_Logos/GenevaLogo.png";
+import GenevaLogoLight from "assets/College_Logos/GenevaLogoLight.png";
+import GeorgeMasonLogo from "assets/College_Logos/GeorgeMasonLogo.png";
+import GeorgeMasonLogoLight from "assets/College_Logos/GeorgeMasonLogoLight.png";
+import GeorgetownLogo from "assets/College_Logos/GeorgetownLogo.png";
+import GeorgetownLogoLight from "assets/College_Logos/GeorgetownLogoLight.png";
+import GeorgeWashingtonLogo from "assets/College_Logos/GeorgeWashingtonLogo.png";
+import GeorgeWashingtonLogoLight from "assets/College_Logos/GeorgeWashingtonLogoLight.png";
+import GeorgiaLogo from "assets/College_Logos/GeorgiaLogo.png";
+import GeorgiaLogoLight from "assets/College_Logos/GeorgiaLogoLight.png";
+import GeorgianCourtLogo from "assets/College_Logos/GeorgianCourtLogo.png";
+import GeorgianCourtLogoLight from "assets/College_Logos/GeorgianCourtLogoLight.png";
+import GeorgiaSouthernLogo from "assets/College_Logos/GeorgiaSouthernLogo.png";
+import GeorgiaSouthernLogoLight from "assets/College_Logos/GeorgiaSouthernLogoLight.png";
+import GeorgiaStateLogo from "assets/College_Logos/GeorgiaStateLogo.png";
+import GeorgiaStateLogoLight from "assets/College_Logos/GeorgiaStateLogoLight.png";
+import GeorgiaTechLogo from "assets/College_Logos/GeorgiaTechLogo.png";
+import GeorgiaTechLogoLight from "assets/College_Logos/GeorgiaTechLogoLight.png";
+import GonzagaLogo from "assets/College_Logos/GonzagaLogo.png";
+import GonzagaLogoLight from "assets/College_Logos/GonzagaLogoLight.png";
+import GramblingLogo from "assets/College_Logos/GramblingLogo.png";
+import GramblingLogoLight from "assets/College_Logos/GramblingLogoLight.png";
+import GrandCanyonLogo from "assets/College_Logos/GrandCanyonLogo.png";
+import GrandCanyonLogoLight from "assets/College_Logos/GrandCanyonLogoLight.png";
+import HamptonLogo from "assets/College_Logos/HamptonLogo.png";
+import HamptonLogoLight from "assets/College_Logos/HamptonLogoLight.png";
+import HarvardLogo from "assets/College_Logos/HarvardLogo.png";
+import HarvardLogoLight from "assets/College_Logos/HarvardLogoLight.png";
+import HaskellLogo from "assets/College_Logos/HaskellLogo.png";
+import HaskellLogoLight from "assets/College_Logos/HaskellLogoLight.png";
+import HawaiiLogo from "assets/College_Logos/HawaiiLogo.png";
+import HawaiiLogoLight from "assets/College_Logos/HawaiiLogoLight.png";
+import HighPointLogo from "assets/College_Logos/HighPointLogo.png";
+import HighPointLogoLight from "assets/College_Logos/HighPointLogoLight.png";
+import HiramCollegeLogo from "assets/College_Logos/HiramCollegeLogo.png";
+import HiramCollegeLogoLight from "assets/College_Logos/HiramCollegeLogoLight.png";
+import HofstraLogo from "assets/College_Logos/HofstraLogo.png";
+import HofstraLogoLight from "assets/College_Logos/HofstraLogoLight.png";
+import HolyCrossLogo from "assets/College_Logos/HolyCrossLogo.png";
+import HolyCrossLogoLight from "assets/College_Logos/HolyCrossLogoLight.png";
+import HoustonChristianLogo from "assets/College_Logos/HoustonChristianLogo.png";
+import HoustonChristianLogoLight from "assets/College_Logos/HoustonChristianLogoLight.png";
+import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
+import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
+import HowardLogo from "assets/College_Logos/HowardLogo.png";
+import HowardLogoLight from "assets/College_Logos/HowardLogoLight.png";
+import HowardPayneLogo from "assets/College_Logos/HowardPayneLogo.png";
+import HowardPayneLogoLight from "assets/College_Logos/HowardPayneLogoLight.png";
+import IdahoLogo from "assets/College_Logos/IdahoLogo.png";
+import IdahoLogoLight from "assets/College_Logos/IdahoLogoLight.png";
+import IdahoStateLogo from "assets/College_Logos/IdahoStateLogo.png";
+import IdahoStateLogoLight from "assets/College_Logos/IdahoStateLogoLight.png";
+import IllinoisLogo from "assets/College_Logos/IllinoisLogo.png";
+import IllinoisLogoLight from "assets/College_Logos/IllinoisLogoLight.png";
+import IllinoisStateLogo from "assets/College_Logos/IllinoisStateLogo.png";
+import IllinoisStateLogoLight from "assets/College_Logos/IllinoisStateLogoLight.png";
+import IncarnateWordLogo from "assets/College_Logos/IncarnateWordLogo.png";
+import IncarnateWordLogoLight from "assets/College_Logos/IncarnateWordLogoLight.png";
+import IndianaLogo from "assets/College_Logos/IndianaLogo.png";
+import IndianaLogoLight from "assets/College_Logos/IndianaLogoLight.png";
+import IndianaStateLogo from "assets/College_Logos/IndianaStateLogo.png";
+import IndianaStateLogoLight from "assets/College_Logos/IndianaStateLogoLight.png";
+import IndianaWesleyanLogo from "assets/College_Logos/IndianaWesleyanLogo.png";
+import IndianaWesleyanLogoLight from "assets/College_Logos/IndianaWesleyanLogoLight.png";
+import IonaLogo from "assets/College_Logos/IonaLogo.png";
+import IonaLogoLight from "assets/College_Logos/IonaLogoLight.png";
+import IowaLogo from "assets/College_Logos/IowaLogo.png";
+import IowaLogoLight from "assets/College_Logos/IowaLogoLight.png";
+import IowaStateLogo from "assets/College_Logos/IowaStateLogo.png";
+import IowaStateLogoLight from "assets/College_Logos/IowaStateLogoLight.png";
+import IUColumbusLogo from "assets/College_Logos/IUColumbusLogo.png";
+import IUColumbusLogoLight from "assets/College_Logos/IUColumbusLogoLight.png";
+import IUIndianapolisLogo from "assets/College_Logos/IUIndianapolisLogo.png";
+import IUIndianapolisLogoLight from "assets/College_Logos/IUIndianapolisLogoLight.png";
+import JacksonStateLogo from "assets/College_Logos/JacksonStateLogo.png";
+import JacksonStateLogoLight from "assets/College_Logos/JacksonStateLogoLight.png";
+import JacksonvilleLogo from "assets/College_Logos/JacksonvilleLogo.png";
+import JacksonvilleLogoLight from "assets/College_Logos/JacksonvilleLogoLight.png";
+import JaxStateLogo from "assets/College_Logos/JaxStateLogo.png";
+import JaxStateLogoLight from "assets/College_Logos/JaxStateLogoLight.png";
+import JMULogo from "assets/College_Logos/JMULogo.png";
+import JMULogoLight from "assets/College_Logos/JMULogoLight.png";
+import JohnsonAndWalesRILogo from "assets/College_Logos/JohnsonAndWalesRILogo.png";
+import JohnsonAndWalesRILogoLight from "assets/College_Logos/JohnsonAndWalesRILogoLight.png";
+import KansasChristianLogo from "assets/College_Logos/KansasChristianLogo.png";
+import KansasChristianLogoLight from "assets/College_Logos/KansasChristianLogoLight.png";
+import KansasCityLogo from "assets/College_Logos/KansasCityLogo.png";
+import KansasCityLogoLight from "assets/College_Logos/KansasCityLogoLight.png";
+import KansasLogo from "assets/College_Logos/KansasLogo.png";
+import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
+import KansasStateLogo from "assets/College_Logos/KansasStateLogo.png";
+import KansasStateLogoLight from "assets/College_Logos/KansasStateLogoLight.png";
+import KennesawStateLogo from "assets/College_Logos/KennesawStateLogo.png";
+import KennesawStateLogoLight from "assets/College_Logos/KennesawStateLogoLight.png";
+import KentStateLogo from "assets/College_Logos/KentStateLogo.png";
+import KentStateLogoLight from "assets/College_Logos/KentStateLogoLight.png";
+import KentuckyChristianLogo from "assets/College_Logos/KentuckyChristianLogo.png";
+import KentuckyChristianLogoLight from "assets/College_Logos/KentuckyChristianLogoLight.png";
+import KentuckyLogo from "assets/College_Logos/KentuckyLogo.png";
+import KentuckyLogoLight from "assets/College_Logos/KentuckyLogoLight.png";
+import KingTNLogo from "assets/College_Logos/KingTNLogo.png";
+import KingTNLogoLight from "assets/College_Logos/KingTNLogoLight.png";
+import LafayetteLogo from "assets/College_Logos/LafayetteLogo.png";
+import LafayetteLogoLight from "assets/College_Logos/LafayetteLogoLight.png";
+import LamarLogo from "assets/College_Logos/LamarLogo.png";
+import LamarLogoLight from "assets/College_Logos/LamarLogoLight.png";
+import LaSalleLogo from "assets/College_Logos/LaSalleLogo.png";
+import LaSalleLogoLight from "assets/College_Logos/LaSalleLogoLight.png";
+import LaSierraLogo from "assets/College_Logos/LaSierraLogo.png";
+import LaSierraLogoLight from "assets/College_Logos/LaSierraLogoLight.png";
+import LehighLogo from "assets/College_Logos/LehighLogo.png";
+import LehighLogoLight from "assets/College_Logos/LehighLogoLight.png";
+import LeMoyneLogo from "assets/College_Logos/LeMoyneLogo.png";
+import LeMoyneLogoLight from "assets/College_Logos/LeMoyneLogoLight.png";
+import LibertyLogo from "assets/College_Logos/LibertyLogo.png";
+import LibertyLogoLight from "assets/College_Logos/LibertyLogoLight.png";
+import LindenwoodLogo from "assets/College_Logos/LindenwoodLogo.png";
+import LindenwoodLogoLight from "assets/College_Logos/LindenwoodLogoLight.png";
+import LipscombLogo from "assets/College_Logos/LipscombLogo.png";
+import LipscombLogoLight from "assets/College_Logos/LipscombLogoLight.png";
+import LittleRockLogo from "assets/College_Logos/LittleRockLogo.png";
+import LittleRockLogoLight from "assets/College_Logos/LittleRockLogoLight.png";
+import LongBeachStateLogo from "assets/College_Logos/LongBeachStateLogo.png";
+import LongBeachStateLogoLight from "assets/College_Logos/LongBeachStateLogoLight.png";
+import LongIslandLogo from "assets/College_Logos/LongIslandLogo.png";
+import LongIslandLogoLight from "assets/College_Logos/LongIslandLogoLight.png";
+import LongwoodLogo from "assets/College_Logos/LongwoodLogo.png";
+import LongwoodLogoLight from "assets/College_Logos/LongwoodLogoLight.png";
+import LouisianaChristianLogo from "assets/College_Logos/LouisianaChristianLogo.png";
+import LouisianaChristianLogoLight from "assets/College_Logos/LouisianaChristianLogoLight.png";
+import LouisianaLogo from "assets/College_Logos/LouisianaLogo.png";
+import LouisianaLogoLight from "assets/College_Logos/LouisianaLogoLight.png";
+import LouisianaTechLogo from "assets/College_Logos/LouisianaTechLogo.png";
+import LouisianaTechLogoLight from "assets/College_Logos/LouisianaTechLogoLight.png";
+import LouisvilleLogo from "assets/College_Logos/LouisvilleLogo.png";
+import LouisvilleLogoLight from "assets/College_Logos/LouisvilleLogoLight.png";
+import LoyolaChicagoLogo from "assets/College_Logos/LoyolaChicagoLogo.png";
+import LoyolaChicagoLogoLight from "assets/College_Logos/LoyolaChicagoLogoLight.png";
+import LoyolaMarylandLogo from "assets/College_Logos/LoyolaMarylandLogo.png";
+import LoyolaMarylandLogoLight from "assets/College_Logos/LoyolaMarylandLogoLight.png";
+import LoyolaMarymountLogo from "assets/College_Logos/LoyolaMarymountLogo.png";
+import LoyolaMarymountLogoLight from "assets/College_Logos/LoyolaMarymountLogoLight.png";
+import LSULogo from "assets/College_Logos/LSULogo.png";
+import LSULogoLight from "assets/College_Logos/LSULogoLight.png";
+import LynchburgLogo from "assets/College_Logos/LynchburgLogo.png";
+import LynchburgLogoLight from "assets/College_Logos/LynchburgLogoLight.png";
+import MaineLogo from "assets/College_Logos/MaineLogo.png";
+import MaineLogoLight from "assets/College_Logos/MaineLogoLight.png";
+import ManhattanLogo from "assets/College_Logos/ManhattanLogo.png";
+import ManhattanLogoLight from "assets/College_Logos/ManhattanLogoLight.png";
+import ManorCollegeLogo from "assets/College_Logos/ManorCollegeLogo.png";
+import ManorCollegeLogoLight from "assets/College_Logos/ManorCollegeLogoLight.png";
+import MaristLogo from "assets/College_Logos/MaristLogo.png";
+import MaristLogoLight from "assets/College_Logos/MaristLogoLight.png";
+import MarquetteLogo from "assets/College_Logos/MarquetteLogo.png";
+import MarquetteLogoLight from "assets/College_Logos/MarquetteLogoLight.png";
+import MarshallLogo from "assets/College_Logos/MarshallLogo.png";
+import MarshallLogoLight from "assets/College_Logos/MarshallLogoLight.png";
+import MarylandLogo from "assets/College_Logos/MarylandLogo.png";
+import MarylandLogoLight from "assets/College_Logos/MarylandLogoLight.png";
+import McNeeseLogo from "assets/College_Logos/McNeeseLogo.png";
+import McNeeseLogoLight from "assets/College_Logos/McNeeseLogoLight.png";
+import MdEastShoreLogo from "assets/College_Logos/MdEastShoreLogo.png";
+import MdEastShoreLogoLight from "assets/College_Logos/MdEastShoreLogoLight.png";
+import MemphisLogo from "assets/College_Logos/MemphisLogo.png";
+import MemphisLogoLight from "assets/College_Logos/MemphisLogoLight.png";
+import MercerLogo from "assets/College_Logos/MercerLogo.png";
+import MercerLogoLight from "assets/College_Logos/MercerLogoLight.png";
+import MercyhurstLogo from "assets/College_Logos/MercyhurstLogo.png";
+import MercyhurstLogoLight from "assets/College_Logos/MercyhurstLogoLight.png";
+import MercyLogo from "assets/College_Logos/MercyLogo.png";
+import MercyLogoLight from "assets/College_Logos/MercyLogoLight.png";
+import MerrimackLogo from "assets/College_Logos/MerrimackLogo.png";
+import MerrimackLogoLight from "assets/College_Logos/MerrimackLogoLight.png";
+import MiamiLogo from "assets/College_Logos/MiamiLogo.png";
+import MiamiLogoLight from "assets/College_Logos/MiamiLogoLight.png";
+import MiamiOHHamiltonLogo from "assets/College_Logos/MiamiOHHamiltonLogo.png";
+import MiamiOHHamiltonLogoLight from "assets/College_Logos/MiamiOHHamiltonLogoLight.png";
+import MiamiOHLogo from "assets/College_Logos/MiamiOHLogo.png";
+import MiamiOHLogoLight from "assets/College_Logos/MiamiOHLogoLight.png";
+import MichiganLogo from "assets/College_Logos/MichiganLogo.png";
+import MichiganLogoLight from "assets/College_Logos/MichiganLogoLight.png";
+import MichiganStateLogo from "assets/College_Logos/MichiganStateLogo.png";
+import MichiganStateLogoLight from "assets/College_Logos/MichiganStateLogoLight.png";
+import MidAtlanticChristianLogo from "assets/College_Logos/MidAtlanticChristianLogo.png";
+import MidAtlanticChristianLogoLight from "assets/College_Logos/MidAtlanticChristianLogoLight.png";
+import MiddleTennesseeLogo from "assets/College_Logos/MiddleTennesseeLogo.png";
+import MiddleTennesseeLogoLight from "assets/College_Logos/MiddleTennesseeLogoLight.png";
+import MilliganLogo from "assets/College_Logos/MilliganLogo.png";
+import MilliganLogoLight from "assets/College_Logos/MilliganLogoLight.png";
+import MilwaukeeLogo from "assets/College_Logos/MilwaukeeLogo.png";
+import MilwaukeeLogoLight from "assets/College_Logos/MilwaukeeLogoLight.png";
+import MinnesotaCrookstonLogo from "assets/College_Logos/MinnesotaCrookstonLogo.png";
+import MinnesotaCrookstonLogoLight from "assets/College_Logos/MinnesotaCrookstonLogoLight.png";
+import MinnesotaLogo from "assets/College_Logos/MinnesotaLogo.png";
+import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLogoLight.png";
+import MisericordiaEspn111902Logo from "assets/College_Logos/MisericordiaEspn111902Logo.png";
+import MisericordiaEspn111902LogoLight from "assets/College_Logos/MisericordiaEspn111902LogoLight.png";
+import MississippiStateLogo from "assets/College_Logos/MississippiStateLogo.png";
+import MississippiStateLogoLight from "assets/College_Logos/MississippiStateLogoLight.png";
+import MississippiValleyStLogo from "assets/College_Logos/MississippiValleyStLogo.png";
+import MississippiValleyStLogoLight from "assets/College_Logos/MississippiValleyStLogoLight.png";
+import MissouriLogo from "assets/College_Logos/MissouriLogo.png";
+import MissouriLogoLight from "assets/College_Logos/MissouriLogoLight.png";
+import MissouriStateLogo from "assets/College_Logos/MissouriStateLogo.png";
+import MissouriStateLogoLight from "assets/College_Logos/MissouriStateLogoLight.png";
+import MitchellCollegeLogo from "assets/College_Logos/MitchellCollegeLogo.png";
+import MitchellCollegeLogoLight from "assets/College_Logos/MitchellCollegeLogoLight.png";
+import MolloyLogo from "assets/College_Logos/MolloyLogo.png";
+import MolloyLogoLight from "assets/College_Logos/MolloyLogoLight.png";
+import MonmouthLogo from "assets/College_Logos/MonmouthLogo.png";
+import MonmouthLogoLight from "assets/College_Logos/MonmouthLogoLight.png";
+import MontanaLogo from "assets/College_Logos/MontanaLogo.png";
+import MontanaLogoLight from "assets/College_Logos/MontanaLogoLight.png";
+import MontanaStateLogo from "assets/College_Logos/MontanaStateLogo.png";
+import MontanaStateLogoLight from "assets/College_Logos/MontanaStateLogoLight.png";
+import MoreheadStateLogo from "assets/College_Logos/MoreheadStateLogo.png";
+import MoreheadStateLogoLight from "assets/College_Logos/MoreheadStateLogoLight.png";
+import MorganStateLogo from "assets/College_Logos/MorganStateLogo.png";
+import MorganStateLogoLight from "assets/College_Logos/MorganStateLogoLight.png";
+import MorrisCollegeLogo from "assets/College_Logos/MorrisCollegeLogo.png";
+import MorrisCollegeLogoLight from "assets/College_Logos/MorrisCollegeLogoLight.png";
+import MountStMarysLogo from "assets/College_Logos/MountStMarysLogo.png";
+import MountStMarysLogoLight from "assets/College_Logos/MountStMarysLogoLight.png";
+import MurrayStateLogo from "assets/College_Logos/MurrayStateLogo.png";
+import MurrayStateLogoLight from "assets/College_Logos/MurrayStateLogoLight.png";
+import NavyLogo from "assets/College_Logos/NavyLogo.png";
+import NavyLogoLight from "assets/College_Logos/NavyLogoLight.png";
+import NCStateLogo from "assets/College_Logos/NCStateLogo.png";
+import NCStateLogoLight from "assets/College_Logos/NCStateLogoLight.png";
+import NCWesleyanLogo from "assets/College_Logos/NCWesleyanLogo.png";
+import NCWesleyanLogoLight from "assets/College_Logos/NCWesleyanLogoLight.png";
+import NebraskaLogo from "assets/College_Logos/NebraskaLogo.png";
+import NebraskaLogoLight from "assets/College_Logos/NebraskaLogoLight.png";
+import NebraskaOLogo from "assets/College_Logos/NebraskaOLogo.png";
+import NebraskaOLogoLight from "assets/College_Logos/NebraskaOLogoLight.png";
+import NevadaLogo from "assets/College_Logos/NevadaLogo.png";
+import NevadaLogoLight from "assets/College_Logos/NevadaLogoLight.png";
+import NewHampshireLogo from "assets/College_Logos/NewHampshireLogo.png";
+import NewHampshireLogoLight from "assets/College_Logos/NewHampshireLogoLight.png";
+import NewHavenLogo from "assets/College_Logos/NewHavenLogo.png";
+import NewHavenLogoLight from "assets/College_Logos/NewHavenLogoLight.png";
+import NewMexicoLogo from "assets/College_Logos/NewMexicoLogo.png";
+import NewMexicoLogoLight from "assets/College_Logos/NewMexicoLogoLight.png";
+import NewMexicoStateLogo from "assets/College_Logos/NewMexicoStateLogo.png";
+import NewMexicoStateLogoLight from "assets/College_Logos/NewMexicoStateLogoLight.png";
+import NewOrleansLogo from "assets/College_Logos/NewOrleansLogo.png";
+import NewOrleansLogoLight from "assets/College_Logos/NewOrleansLogoLight.png";
+import NiagaraLogo from "assets/College_Logos/NiagaraLogo.png";
+import NiagaraLogoLight from "assets/College_Logos/NiagaraLogoLight.png";
+import NichollsLogo from "assets/College_Logos/NichollsLogo.png";
+import NichollsLogoLight from "assets/College_Logos/NichollsLogoLight.png";
+import NicholsLogo from "assets/College_Logos/NicholsLogo.png";
+import NicholsLogoLight from "assets/College_Logos/NicholsLogoLight.png";
+import NJITLogo from "assets/College_Logos/NJITLogo.png";
+import NJITLogoLight from "assets/College_Logos/NJITLogoLight.png";
+import NobelLogo from "assets/College_Logos/NobelLogo.png";
+import NobelLogoLight from "assets/College_Logos/NobelLogoLight.png";
+import NorfolkStateLogo from "assets/College_Logos/NorfolkStateLogo.png";
+import NorfolkStateLogoLight from "assets/College_Logos/NorfolkStateLogoLight.png";
+import NorthAlabamaLogo from "assets/College_Logos/NorthAlabamaLogo.png";
+import NorthAlabamaLogoLight from "assets/College_Logos/NorthAlabamaLogoLight.png";
+import NorthCarolinaAAndTLogo from "assets/College_Logos/NorthCarolinaAAndTLogo.png";
+import NorthCarolinaAAndTLogoLight from "assets/College_Logos/NorthCarolinaAAndTLogoLight.png";
+import NorthCarolinaCentralLogo from "assets/College_Logos/NorthCarolinaCentralLogo.png";
+import NorthCarolinaCentralLogoLight from "assets/College_Logos/NorthCarolinaCentralLogoLight.png";
+import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
+import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
+import NorthDakotaLogo from "assets/College_Logos/NorthDakotaLogo.png";
+import NorthDakotaLogoLight from "assets/College_Logos/NorthDakotaLogoLight.png";
+import NorthDakotaStateLogo from "assets/College_Logos/NorthDakotaStateLogo.png";
+import NorthDakotaStateLogoLight from "assets/College_Logos/NorthDakotaStateLogoLight.png";
+import NortheasternLogo from "assets/College_Logos/NortheasternLogo.png";
+import NortheasternLogoLight from "assets/College_Logos/NortheasternLogoLight.png";
+import NorthernArizonaLogo from "assets/College_Logos/NorthernArizonaLogo.png";
+import NorthernArizonaLogoLight from "assets/College_Logos/NorthernArizonaLogoLight.png";
+import NorthernColoradoLogo from "assets/College_Logos/NorthernColoradoLogo.png";
+import NorthernColoradoLogoLight from "assets/College_Logos/NorthernColoradoLogoLight.png";
+import NorthernIllinoisLogo from "assets/College_Logos/NorthernIllinoisLogo.png";
+import NorthernIllinoisLogoLight from "assets/College_Logos/NorthernIllinoisLogoLight.png";
+import NorthernIowaLogo from "assets/College_Logos/NorthernIowaLogo.png";
+import NorthernIowaLogoLight from "assets/College_Logos/NorthernIowaLogoLight.png";
+import NorthernKentuckyLogo from "assets/College_Logos/NorthernKentuckyLogo.png";
+import NorthernKentuckyLogoLight from "assets/College_Logos/NorthernKentuckyLogoLight.png";
+import NorthFloridaLogo from "assets/College_Logos/NorthFloridaLogo.png";
+import NorthFloridaLogoLight from "assets/College_Logos/NorthFloridaLogoLight.png";
+import NorthGreenvilleLogo from "assets/College_Logos/NorthGreenvilleLogo.png";
+import NorthGreenvilleLogoLight from "assets/College_Logos/NorthGreenvilleLogoLight.png";
+import NorthTexasLogo from "assets/College_Logos/NorthTexasLogo.png";
+import NorthTexasLogoLight from "assets/College_Logos/NorthTexasLogoLight.png";
+import NorthwesternLogo from "assets/College_Logos/NorthwesternLogo.png";
+import NorthwesternLogoLight from "assets/College_Logos/NorthwesternLogoLight.png";
+import NorthwesternStateLogo from "assets/College_Logos/NorthwesternStateLogo.png";
+import NorthwesternStateLogoLight from "assets/College_Logos/NorthwesternStateLogoLight.png";
+import NorthwoodLogo from "assets/College_Logos/NorthwoodLogo.png";
+import NorthwoodLogoLight from "assets/College_Logos/NorthwoodLogoLight.png";
+import NotreDameLogo from "assets/College_Logos/NotreDameLogo.png";
+import NotreDameLogoLight from "assets/College_Logos/NotreDameLogoLight.png";
+import NotreDameMDLogo from "assets/College_Logos/NotreDameMDLogo.png";
+import NotreDameMDLogoLight from "assets/College_Logos/NotreDameMDLogoLight.png";
+import OaklandLogo from "assets/College_Logos/OaklandLogo.png";
+import OaklandLogoLight from "assets/College_Logos/OaklandLogoLight.png";
+import OhioLogo from "assets/College_Logos/OhioLogo.png";
+import OhioLogoLight from "assets/College_Logos/OhioLogoLight.png";
+import OhioStateLogo from "assets/College_Logos/OhioStateLogo.png";
+import OhioStateLogoLight from "assets/College_Logos/OhioStateLogoLight.png";
+import OhioWesleyanLogo from "assets/College_Logos/OhioWesleyanLogo.png";
+import OhioWesleyanLogoLight from "assets/College_Logos/OhioWesleyanLogoLight.png";
+import OklahomaLogo from "assets/College_Logos/OklahomaLogo.png";
+import OklahomaLogoLight from "assets/College_Logos/OklahomaLogoLight.png";
+import OklahomaStateLogo from "assets/College_Logos/OklahomaStateLogo.png";
+import OklahomaStateLogoLight from "assets/College_Logos/OklahomaStateLogoLight.png";
+import OldDominionLogo from "assets/College_Logos/OldDominionLogo.png";
+import OldDominionLogoLight from "assets/College_Logos/OldDominionLogoLight.png";
+import OleMissLogo from "assets/College_Logos/OleMissLogo.png";
+import OleMissLogoLight from "assets/College_Logos/OleMissLogoLight.png";
+import OlivetLogo from "assets/College_Logos/OlivetLogo.png";
+import OlivetLogoLight from "assets/College_Logos/OlivetLogoLight.png";
+import OralRobertsLogo from "assets/College_Logos/OralRobertsLogo.png";
+import OralRobertsLogoLight from "assets/College_Logos/OralRobertsLogoLight.png";
+import OregonLogo from "assets/College_Logos/OregonLogo.png";
+import OregonLogoLight from "assets/College_Logos/OregonLogoLight.png";
+import OregonStateLogo from "assets/College_Logos/OregonStateLogo.png";
+import OregonStateLogoLight from "assets/College_Logos/OregonStateLogoLight.png";
+import PacificLogo from "assets/College_Logos/PacificLogo.png";
+import PacificLogoLight from "assets/College_Logos/PacificLogoLight.png";
+import PennStateLogo from "assets/College_Logos/PennStateLogo.png";
+import PennStateLogoLight from "assets/College_Logos/PennStateLogoLight.png";
+import PennStateShenangoLogo from "assets/College_Logos/PennStateShenangoLogo.png";
+import PennStateShenangoLogoLight from "assets/College_Logos/PennStateShenangoLogoLight.png";
+import PennStateYorkLogo from "assets/College_Logos/PennStateYorkLogo.png";
+import PennStateYorkLogoLight from "assets/College_Logos/PennStateYorkLogoLight.png";
+import PennsylvaniaLogo from "assets/College_Logos/PennsylvaniaLogo.png";
+import PennsylvaniaLogoLight from "assets/College_Logos/PennsylvaniaLogoLight.png";
+import PepperdineLogo from "assets/College_Logos/PepperdineLogo.png";
+import PepperdineLogoLight from "assets/College_Logos/PepperdineLogoLight.png";
+import PiedmontLogo from "assets/College_Logos/PiedmontLogo.png";
+import PiedmontLogoLight from "assets/College_Logos/PiedmontLogoLight.png";
+import PittsburghGreensburgLogo from "assets/College_Logos/PittsburghGreensburgLogo.png";
+import PittsburghGreensburgLogoLight from "assets/College_Logos/PittsburghGreensburgLogoLight.png";
+import PittsburghLogo from "assets/College_Logos/PittsburghLogo.png";
+import PittsburghLogoLight from "assets/College_Logos/PittsburghLogoLight.png";
+import PortlandLogo from "assets/College_Logos/PortlandLogo.png";
+import PortlandLogoLight from "assets/College_Logos/PortlandLogoLight.png";
+import PortlandStateLogo from "assets/College_Logos/PortlandStateLogo.png";
+import PortlandStateLogoLight from "assets/College_Logos/PortlandStateLogoLight.png";
+import PrairieViewLogo from "assets/College_Logos/PrairieViewLogo.png";
+import PrairieViewLogoLight from "assets/College_Logos/PrairieViewLogoLight.png";
+import PresbyterianLogo from "assets/College_Logos/PresbyterianLogo.png";
+import PresbyterianLogoLight from "assets/College_Logos/PresbyterianLogoLight.png";
+import PrincetonLogo from "assets/College_Logos/PrincetonLogo.png";
+import PrincetonLogoLight from "assets/College_Logos/PrincetonLogoLight.png";
+import ProvidenceLogo from "assets/College_Logos/ProvidenceLogo.png";
+import ProvidenceLogoLight from "assets/College_Logos/ProvidenceLogoLight.png";
+import PuertoRicoMayaguezLogo from "assets/College_Logos/PuertoRicoMayaguezLogo.png";
+import PuertoRicoMayaguezLogoLight from "assets/College_Logos/PuertoRicoMayaguezLogoLight.png";
+import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayneLogo.png";
+import PurdueFortWayneLogoLight from "assets/College_Logos/PurdueFortWayneLogoLight.png";
+import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
+import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
+import QueensLogo from "assets/College_Logos/QueensLogo.png";
+import QueensLogoLight from "assets/College_Logos/QueensLogoLight.png";
+import QuinnipiacLogo from "assets/College_Logos/QuinnipiacLogo.png";
+import QuinnipiacLogoLight from "assets/College_Logos/QuinnipiacLogoLight.png";
+import RadfordLogo from "assets/College_Logos/RadfordLogo.png";
+import RadfordLogoLight from "assets/College_Logos/RadfordLogoLight.png";
+import RegisCollegeLogo from "assets/College_Logos/RegisCollegeLogo.png";
+import RegisCollegeLogoLight from "assets/College_Logos/RegisCollegeLogoLight.png";
+import ReinhardtLogo from "assets/College_Logos/ReinhardtLogo.png";
+import ReinhardtLogoLight from "assets/College_Logos/ReinhardtLogoLight.png";
+import RhodeIslandLogo from "assets/College_Logos/RhodeIslandLogo.png";
+import RhodeIslandLogoLight from "assets/College_Logos/RhodeIslandLogoLight.png";
+import RhodesLogo from "assets/College_Logos/RhodesLogo.png";
+import RhodesLogoLight from "assets/College_Logos/RhodesLogoLight.png";
+import RiceLogo from "assets/College_Logos/RiceLogo.png";
+import RiceLogoLight from "assets/College_Logos/RiceLogoLight.png";
+import RichmondLogo from "assets/College_Logos/RichmondLogo.png";
+import RichmondLogoLight from "assets/College_Logos/RichmondLogoLight.png";
+import RiderLogo from "assets/College_Logos/RiderLogo.png";
+import RiderLogoLight from "assets/College_Logos/RiderLogoLight.png";
+import RiponLogo from "assets/College_Logos/RiponLogo.png";
+import RiponLogoLight from "assets/College_Logos/RiponLogoLight.png";
+import RITLogo from "assets/College_Logos/RITLogo.png";
+import RITLogoLight from "assets/College_Logos/RITLogoLight.png";
+import RobertMorrisLogo from "assets/College_Logos/RobertMorrisLogo.png";
+import RobertMorrisLogoLight from "assets/College_Logos/RobertMorrisLogoLight.png";
+import RutgersLogo from "assets/College_Logos/RutgersLogo.png";
+import RutgersLogoLight from "assets/College_Logos/RutgersLogoLight.png";
+import SacramentoStateLogo from "assets/College_Logos/SacramentoStateLogo.png";
+import SacramentoStateLogoLight from "assets/College_Logos/SacramentoStateLogoLight.png";
+import SacredHeartLogo from "assets/College_Logos/SacredHeartLogo.png";
+import SacredHeartLogoLight from "assets/College_Logos/SacredHeartLogoLight.png";
+import SaintFrancisLogo from "assets/College_Logos/SaintFrancisLogo.png";
+import SaintFrancisLogoLight from "assets/College_Logos/SaintFrancisLogoLight.png";
+import SaintJosephsLogo from "assets/College_Logos/SaintJosephsLogo.png";
+import SaintJosephsLogoLight from "assets/College_Logos/SaintJosephsLogoLight.png";
+import SaintLouisLogo from "assets/College_Logos/SaintLouisLogo.png";
+import SaintLouisLogoLight from "assets/College_Logos/SaintLouisLogoLight.png";
+import SaintMarysLogo from "assets/College_Logos/SaintMarysLogo.png";
+import SaintMarysLogoLight from "assets/College_Logos/SaintMarysLogoLight.png";
+import SaintPetersLogo from "assets/College_Logos/SaintPetersLogo.png";
+import SaintPetersLogoLight from "assets/College_Logos/SaintPetersLogoLight.png";
+import SamfordLogo from "assets/College_Logos/SamfordLogo.png";
+import SamfordLogoLight from "assets/College_Logos/SamfordLogoLight.png";
+import SamHoustonLogo from "assets/College_Logos/SamHoustonLogo.png";
+import SamHoustonLogoLight from "assets/College_Logos/SamHoustonLogoLight.png";
+import SanDiegoLogo from "assets/College_Logos/SanDiegoLogo.png";
+import SanDiegoLogoLight from "assets/College_Logos/SanDiegoLogoLight.png";
+import SanDiegoStateLogo from "assets/College_Logos/SanDiegoStateLogo.png";
+import SanDiegoStateLogoLight from "assets/College_Logos/SanDiegoStateLogoLight.png";
+import SanFranciscoLogo from "assets/College_Logos/SanFranciscoLogo.png";
+import SanFranciscoLogoLight from "assets/College_Logos/SanFranciscoLogoLight.png";
+import SanJoseStateLogo from "assets/College_Logos/SanJoseStateLogo.png";
+import SanJoseStateLogoLight from "assets/College_Logos/SanJoseStateLogoLight.png";
+import SantaClaraLogo from "assets/College_Logos/SantaClaraLogo.png";
+import SantaClaraLogoLight from "assets/College_Logos/SantaClaraLogoLight.png";
+import SeattleULogo from "assets/College_Logos/SeattleULogo.png";
+import SeattleULogoLight from "assets/College_Logos/SeattleULogoLight.png";
+import SELouisianaLogo from "assets/College_Logos/SELouisianaLogo.png";
+import SELouisianaLogoLight from "assets/College_Logos/SELouisianaLogoLight.png";
+import SEMissouriStateLogo from "assets/College_Logos/SEMissouriStateLogo.png";
+import SEMissouriStateLogoLight from "assets/College_Logos/SEMissouriStateLogoLight.png";
+import SetonHallLogo from "assets/College_Logos/SetonHallLogo.png";
+import SetonHallLogoLight from "assets/College_Logos/SetonHallLogoLight.png";
+import SienaLogo from "assets/College_Logos/SienaLogo.png";
+import SienaLogoLight from "assets/College_Logos/SienaLogoLight.png";
+import SIUEdwardsvilleLogo from "assets/College_Logos/SIUEdwardsvilleLogo.png";
+import SIUEdwardsvilleLogoLight from "assets/College_Logos/SIUEdwardsvilleLogoLight.png";
+import SMULogo from "assets/College_Logos/SMULogo.png";
+import SMULogoLight from "assets/College_Logos/SMULogoLight.png";
+import SouthAlabamaLogo from "assets/College_Logos/SouthAlabamaLogo.png";
+import SouthAlabamaLogoLight from "assets/College_Logos/SouthAlabamaLogoLight.png";
+import SouthCarolinaLogo from "assets/College_Logos/SouthCarolinaLogo.png";
+import SouthCarolinaLogoLight from "assets/College_Logos/SouthCarolinaLogoLight.png";
+import SouthCarolinaStLogo from "assets/College_Logos/SouthCarolinaStLogo.png";
+import SouthCarolinaStLogoLight from "assets/College_Logos/SouthCarolinaStLogoLight.png";
+import SouthCarolinaUpstateLogo from "assets/College_Logos/SouthCarolinaUpstateLogo.png";
+import SouthCarolinaUpstateLogoLight from "assets/College_Logos/SouthCarolinaUpstateLogoLight.png";
+import SouthDakotaLogo from "assets/College_Logos/SouthDakotaLogo.png";
+import SouthDakotaLogoLight from "assets/College_Logos/SouthDakotaLogoLight.png";
+import SouthDakotaStateLogo from "assets/College_Logos/SouthDakotaStateLogo.png";
+import SouthDakotaStateLogoLight from "assets/College_Logos/SouthDakotaStateLogoLight.png";
+import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinoisLogo.png";
+import SouthernIllinoisLogoLight from "assets/College_Logos/SouthernIllinoisLogoLight.png";
+import SouthernIndianaLogo from "assets/College_Logos/SouthernIndianaLogo.png";
+import SouthernIndianaLogoLight from "assets/College_Logos/SouthernIndianaLogoLight.png";
+import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
+import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
+import SouthernMissLogo from "assets/College_Logos/SouthernMissLogo.png";
+import SouthernMissLogoLight from "assets/College_Logos/SouthernMissLogoLight.png";
+import SouthernUtahLogo from "assets/College_Logos/SouthernUtahLogo.png";
+import SouthernUtahLogoLight from "assets/College_Logos/SouthernUtahLogoLight.png";
+import SouthFloridaLogo from "assets/College_Logos/SouthFloridaLogo.png";
+import SouthFloridaLogoLight from "assets/College_Logos/SouthFloridaLogoLight.png";
+import SouthwesternAdventistLogo from "assets/College_Logos/SouthwesternAdventistLogo.png";
+import SouthwesternAdventistLogoLight from "assets/College_Logos/SouthwesternAdventistLogoLight.png";
+import SouthwesternChristianLogo from "assets/College_Logos/SouthwesternChristianLogo.png";
+import SouthwesternChristianLogoLight from "assets/College_Logos/SouthwesternChristianLogoLight.png";
+import SpringHillLogo from "assets/College_Logos/SpringHillLogo.png";
+import SpringHillLogoLight from "assets/College_Logos/SpringHillLogoLight.png";
+import StanfordLogo from "assets/College_Logos/StanfordLogo.png";
+import StanfordLogoLight from "assets/College_Logos/StanfordLogoLight.png";
+import StBonaventureLogo from "assets/College_Logos/StBonaventureLogo.png";
+import StBonaventureLogoLight from "assets/College_Logos/StBonaventureLogoLight.png";
+import StephenFAustinLogo from "assets/College_Logos/StephenFAustinLogo.png";
+import StephenFAustinLogoLight from "assets/College_Logos/StephenFAustinLogoLight.png";
+import StetsonLogo from "assets/College_Logos/StetsonLogo.png";
+import StetsonLogoLight from "assets/College_Logos/StetsonLogoLight.png";
+import StJohnsLogo from "assets/College_Logos/StJohnsLogo.png";
+import StJohnsLogoLight from "assets/College_Logos/StJohnsLogoLight.png";
+import StMarysMDLogo from "assets/College_Logos/StMarysMDLogo.png";
+import StMarysMDLogoLight from "assets/College_Logos/StMarysMDLogoLight.png";
+import StonehillLogo from "assets/College_Logos/StonehillLogo.png";
+import StonehillLogoLight from "assets/College_Logos/StonehillLogoLight.png";
+import StonyBrookLogo from "assets/College_Logos/StonyBrookLogo.png";
+import StonyBrookLogoLight from "assets/College_Logos/StonyBrookLogoLight.png";
+import StThomasMinnesotaLogo from "assets/College_Logos/StThomasMinnesotaLogo.png";
+import StThomasMinnesotaLogoLight from "assets/College_Logos/StThomasMinnesotaLogoLight.png";
+import SUNYDelhiLogo from "assets/College_Logos/SUNYDelhiLogo.png";
+import SUNYDelhiLogoLight from "assets/College_Logos/SUNYDelhiLogoLight.png";
+import SUNYMaritimeLogo from "assets/College_Logos/SUNYMaritimeLogo.png";
+import SUNYMaritimeLogoLight from "assets/College_Logos/SUNYMaritimeLogoLight.png";
+import SUNYOneontaLogo from "assets/College_Logos/SUNYOneontaLogo.png";
+import SUNYOneontaLogoLight from "assets/College_Logos/SUNYOneontaLogoLight.png";
+import SyracuseLogo from "assets/College_Logos/SyracuseLogo.png";
+import SyracuseLogoLight from "assets/College_Logos/SyracuseLogoLight.png";
+import TarletonStateLogo from "assets/College_Logos/TarletonStateLogo.png";
+import TarletonStateLogoLight from "assets/College_Logos/TarletonStateLogoLight.png";
+import TCULogo from "assets/College_Logos/TCULogo.png";
+import TCULogoLight from "assets/College_Logos/TCULogoLight.png";
+import TempleLogo from "assets/College_Logos/TempleLogo.png";
+import TempleLogoLight from "assets/College_Logos/TempleLogoLight.png";
+import TennesseeLogo from "assets/College_Logos/TennesseeLogo.png";
+import TennesseeLogoLight from "assets/College_Logos/TennesseeLogoLight.png";
+import TennesseeSouthernLogo from "assets/College_Logos/TennesseeSouthernLogo.png";
+import TennesseeSouthernLogoLight from "assets/College_Logos/TennesseeSouthernLogoLight.png";
+import TennesseeStateLogo from "assets/College_Logos/TennesseeStateLogo.png";
+import TennesseeStateLogoLight from "assets/College_Logos/TennesseeStateLogoLight.png";
+import TennesseeTechLogo from "assets/College_Logos/TennesseeTechLogo.png";
+import TennesseeTechLogoLight from "assets/College_Logos/TennesseeTechLogoLight.png";
+import TexasAAndMCorpusChristiLogo from "assets/College_Logos/TexasAAndMCorpusChristiLogo.png";
+import TexasAAndMCorpusChristiLogoLight from "assets/College_Logos/TexasAAndMCorpusChristiLogoLight.png";
+import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
+import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
+import TexasAAndMSALogo from "assets/College_Logos/TexasAAndMSALogo.png";
+import TexasAAndMSALogoLight from "assets/College_Logos/TexasAAndMSALogoLight.png";
+import TexasLogo from "assets/College_Logos/TexasLogo.png";
+import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
+import TexasSouthernLogo from "assets/College_Logos/TexasSouthernLogo.png";
+import TexasSouthernLogoLight from "assets/College_Logos/TexasSouthernLogoLight.png";
+import TexasStateLogo from "assets/College_Logos/TexasStateLogo.png";
+import TexasStateLogoLight from "assets/College_Logos/TexasStateLogoLight.png";
+import TexasTechLogo from "assets/College_Logos/TexasTechLogo.png";
+import TexasTechLogoLight from "assets/College_Logos/TexasTechLogoLight.png";
+import TheCitadelLogo from "assets/College_Logos/TheCitadelLogo.png";
+import TheCitadelLogoLight from "assets/College_Logos/TheCitadelLogoLight.png";
+import ToccoaFallsLogo from "assets/College_Logos/ToccoaFallsLogo.png";
+import ToccoaFallsLogoLight from "assets/College_Logos/ToccoaFallsLogoLight.png";
+import ToledoLogo from "assets/College_Logos/ToledoLogo.png";
+import ToledoLogoLight from "assets/College_Logos/ToledoLogoLight.png";
+import TowsonLogo from "assets/College_Logos/TowsonLogo.png";
+import TowsonLogoLight from "assets/College_Logos/TowsonLogoLight.png";
+import TrinityCollegeOfJacksonvilleLogo from "assets/College_Logos/TrinityCollegeOfJacksonvilleLogo.png";
+import TrinityCollegeOfJacksonvilleLogoLight from "assets/College_Logos/TrinityCollegeOfJacksonvilleLogoLight.png";
+import TroyLogo from "assets/College_Logos/TroyLogo.png";
+import TroyLogoLight from "assets/College_Logos/TroyLogoLight.png";
+import TulaneLogo from "assets/College_Logos/TulaneLogo.png";
+import TulaneLogoLight from "assets/College_Logos/TulaneLogoLight.png";
+import TulsaLogo from "assets/College_Logos/TulsaLogo.png";
+import TulsaLogoLight from "assets/College_Logos/TulsaLogoLight.png";
+import UABLogo from "assets/College_Logos/UABLogo.png";
+import UABLogoLight from "assets/College_Logos/UABLogoLight.png";
+import UAlbanyLogo from "assets/College_Logos/UAlbanyLogo.png";
+import UAlbanyLogoLight from "assets/College_Logos/UAlbanyLogoLight.png";
+import UCDavisLogo from "assets/College_Logos/UCDavisLogo.png";
+import UCDavisLogoLight from "assets/College_Logos/UCDavisLogoLight.png";
+import UCFLogo from "assets/College_Logos/UCFLogo.png";
+import UCFLogoLight from "assets/College_Logos/UCFLogoLight.png";
+import UCIrvineLogo from "assets/College_Logos/UCIrvineLogo.png";
+import UCIrvineLogoLight from "assets/College_Logos/UCIrvineLogoLight.png";
+import UCLALogo from "assets/College_Logos/UCLALogo.png";
+import UCLALogoLight from "assets/College_Logos/UCLALogoLight.png";
+import UConnLogo from "assets/College_Logos/UConnLogo.png";
+import UConnLogoLight from "assets/College_Logos/UConnLogoLight.png";
+import UCRiversideLogo from "assets/College_Logos/UCRiversideLogo.png";
+import UCRiversideLogoLight from "assets/College_Logos/UCRiversideLogoLight.png";
+import UCSanDiegoLogo from "assets/College_Logos/UCSanDiegoLogo.png";
+import UCSanDiegoLogoLight from "assets/College_Logos/UCSanDiegoLogoLight.png";
+import UCSantaBarbaraLogo from "assets/College_Logos/UCSantaBarbaraLogo.png";
+import UCSantaBarbaraLogoLight from "assets/College_Logos/UCSantaBarbaraLogoLight.png";
+import UICLogo from "assets/College_Logos/UICLogo.png";
+import UICLogoLight from "assets/College_Logos/UICLogoLight.png";
+import ULMonroeLogo from "assets/College_Logos/ULMonroeLogo.png";
+import ULMonroeLogoLight from "assets/College_Logos/ULMonroeLogoLight.png";
+import UMassLogo from "assets/College_Logos/UMassLogo.png";
+import UMassLogoLight from "assets/College_Logos/UMassLogoLight.png";
+import UMassLowellLogo from "assets/College_Logos/UMassLowellLogo.png";
+import UMassLowellLogoLight from "assets/College_Logos/UMassLowellLogoLight.png";
+import UMBCLogo from "assets/College_Logos/UMBCLogo.png";
+import UMBCLogoLight from "assets/College_Logos/UMBCLogoLight.png";
+import UNCAshevilleLogo from "assets/College_Logos/UNCAshevilleLogo.png";
+import UNCAshevilleLogoLight from "assets/College_Logos/UNCAshevilleLogoLight.png";
+import UNCGreensboroLogo from "assets/College_Logos/UNCGreensboroLogo.png";
+import UNCGreensboroLogoLight from "assets/College_Logos/UNCGreensboroLogoLight.png";
+import UNCWilmingtonLogo from "assets/College_Logos/UNCWilmingtonLogo.png";
+import UNCWilmingtonLogoLight from "assets/College_Logos/UNCWilmingtonLogoLight.png";
+import UNLVLogo from "assets/College_Logos/UNLVLogo.png";
+import UNLVLogoLight from "assets/College_Logos/UNLVLogoLight.png";
+import USCLogo from "assets/College_Logos/USCLogo.png";
+import USCLogoLight from "assets/College_Logos/USCLogoLight.png";
+import UtahLogo from "assets/College_Logos/UtahLogo.png";
+import UtahLogoLight from "assets/College_Logos/UtahLogoLight.png";
+import UtahStateLogo from "assets/College_Logos/UtahStateLogo.png";
+import UtahStateLogoLight from "assets/College_Logos/UtahStateLogoLight.png";
+import UtahTechLogo from "assets/College_Logos/UtahTechLogo.png";
+import UtahTechLogoLight from "assets/College_Logos/UtahTechLogoLight.png";
+import UtahValleyLogo from "assets/College_Logos/UtahValleyLogo.png";
+import UtahValleyLogoLight from "assets/College_Logos/UtahValleyLogoLight.png";
+import UTArlingtonLogo from "assets/College_Logos/UTArlingtonLogo.png";
+import UTArlingtonLogoLight from "assets/College_Logos/UTArlingtonLogoLight.png";
+import UTEPLogo from "assets/College_Logos/UTEPLogo.png";
+import UTEPLogoLight from "assets/College_Logos/UTEPLogoLight.png";
+import UTMartinLogo from "assets/College_Logos/UTMartinLogo.png";
+import UTMartinLogoLight from "assets/College_Logos/UTMartinLogoLight.png";
+import UTRioGrandeValleyLogo from "assets/College_Logos/UTRioGrandeValleyLogo.png";
+import UTRioGrandeValleyLogoLight from "assets/College_Logos/UTRioGrandeValleyLogoLight.png";
+import UTSALogo from "assets/College_Logos/UTSALogo.png";
+import UTSALogoLight from "assets/College_Logos/UTSALogoLight.png";
+import ValparaisoLogo from "assets/College_Logos/ValparaisoLogo.png";
+import ValparaisoLogoLight from "assets/College_Logos/ValparaisoLogoLight.png";
+import VanderbiltLogo from "assets/College_Logos/VanderbiltLogo.png";
+import VanderbiltLogoLight from "assets/College_Logos/VanderbiltLogoLight.png";
+import VCULogo from "assets/College_Logos/VCULogo.png";
+import VCULogoLight from "assets/College_Logos/VCULogoLight.png";
+import VermontLogo from "assets/College_Logos/VermontLogo.png";
+import VermontLogoLight from "assets/College_Logos/VermontLogoLight.png";
+import VermontStateJohnsonLogo from "assets/College_Logos/VermontStateJohnsonLogo.png";
+import VermontStateJohnsonLogoLight from "assets/College_Logos/VermontStateJohnsonLogoLight.png";
+import VermontStateLyndonLogo from "assets/College_Logos/VermontStateLyndonLogo.png";
+import VermontStateLyndonLogoLight from "assets/College_Logos/VermontStateLyndonLogoLight.png";
+import VillanovaLogo from "assets/College_Logos/VillanovaLogo.png";
+import VillanovaLogoLight from "assets/College_Logos/VillanovaLogoLight.png";
+import VirginiaLogo from "assets/College_Logos/VirginiaLogo.png";
+import VirginiaLogoLight from "assets/College_Logos/VirginiaLogoLight.png";
+import VirginiaLynchburgLogo from "assets/College_Logos/VirginiaLynchburgLogo.png";
+import VirginiaLynchburgLogoLight from "assets/College_Logos/VirginiaLynchburgLogoLight.png";
+import VirginiaTechLogo from "assets/College_Logos/VirginiaTechLogo.png";
+import VirginiaTechLogoLight from "assets/College_Logos/VirginiaTechLogoLight.png";
+import VMILogo from "assets/College_Logos/VMILogo.png";
+import VMILogoLight from "assets/College_Logos/VMILogoLight.png";
+import WagnerLogo from "assets/College_Logos/WagnerLogo.png";
+import WagnerLogoLight from "assets/College_Logos/WagnerLogoLight.png";
+import WakeForestLogo from "assets/College_Logos/WakeForestLogo.png";
+import WakeForestLogoLight from "assets/College_Logos/WakeForestLogoLight.png";
+import WarrenWilsonLogo from "assets/College_Logos/WarrenWilsonLogo.png";
+import WarrenWilsonLogoLight from "assets/College_Logos/WarrenWilsonLogoLight.png";
+import WashingtonLogo from "assets/College_Logos/WashingtonLogo.png";
+import WashingtonLogoLight from "assets/College_Logos/WashingtonLogoLight.png";
+import WashingtonStateLogo from "assets/College_Logos/WashingtonStateLogo.png";
+import WashingtonStateLogoLight from "assets/College_Logos/WashingtonStateLogoLight.png";
+import WeberStateLogo from "assets/College_Logos/WeberStateLogo.png";
+import WeberStateLogoLight from "assets/College_Logos/WeberStateLogoLight.png";
+import WesternCarolinaLogo from "assets/College_Logos/WesternCarolinaLogo.png";
+import WesternCarolinaLogoLight from "assets/College_Logos/WesternCarolinaLogoLight.png";
+import WesternIllinoisLogo from "assets/College_Logos/WesternIllinoisLogo.png";
+import WesternIllinoisLogoLight from "assets/College_Logos/WesternIllinoisLogoLight.png";
+import WesternKentuckyLogo from "assets/College_Logos/WesternKentuckyLogo.png";
+import WesternKentuckyLogoLight from "assets/College_Logos/WesternKentuckyLogoLight.png";
+import WesternMichiganLogo from "assets/College_Logos/WesternMichiganLogo.png";
+import WesternMichiganLogoLight from "assets/College_Logos/WesternMichiganLogoLight.png";
+import WesternOregonLogo from "assets/College_Logos/WesternOregonLogo.png";
+import WesternOregonLogoLight from "assets/College_Logos/WesternOregonLogoLight.png";
+import WestGeorgiaLogo from "assets/College_Logos/WestGeorgiaLogo.png";
+import WestGeorgiaLogoLight from "assets/College_Logos/WestGeorgiaLogoLight.png";
+import WestLibertyLogo from "assets/College_Logos/WestLibertyLogo.png";
+import WestLibertyLogoLight from "assets/College_Logos/WestLibertyLogoLight.png";
+import WestVirginiaLogo from "assets/College_Logos/WestVirginiaLogo.png";
+import WestVirginiaLogoLight from "assets/College_Logos/WestVirginiaLogoLight.png";
+import WichitaStateLogo from "assets/College_Logos/WichitaStateLogo.png";
+import WichitaStateLogoLight from "assets/College_Logos/WichitaStateLogoLight.png";
+import WilliamAndMaryLogo from "assets/College_Logos/WilliamAndMaryLogo.png";
+import WilliamAndMaryLogoLight from "assets/College_Logos/WilliamAndMaryLogoLight.png";
+import WilliamPeaceLogo from "assets/College_Logos/WilliamPeaceLogo.png";
+import WilliamPeaceLogoLight from "assets/College_Logos/WilliamPeaceLogoLight.png";
+import WinthropLogo from "assets/College_Logos/WinthropLogo.png";
+import WinthropLogoLight from "assets/College_Logos/WinthropLogoLight.png";
+import WiscGreenBayLogo from "assets/College_Logos/WiscGreenBayLogo.png";
+import WiscGreenBayLogoLight from "assets/College_Logos/WiscGreenBayLogoLight.png";
+import WisconsinLogo from "assets/College_Logos/WisconsinLogo.png";
+import WisconsinLogoLight from "assets/College_Logos/WisconsinLogoLight.png";
+import WoffordLogo from "assets/College_Logos/WoffordLogo.png";
+import WoffordLogoLight from "assets/College_Logos/WoffordLogoLight.png";
+import WrightStateLogo from "assets/College_Logos/WrightStateLogo.png";
+import WrightStateLogoLight from "assets/College_Logos/WrightStateLogoLight.png";
+import WyomingLogo from "assets/College_Logos/WyomingLogo.png";
+import WyomingLogoLight from "assets/College_Logos/WyomingLogoLight.png";
+import XavierLogo from "assets/College_Logos/XavierLogo.png";
+import XavierLogoLight from "assets/College_Logos/XavierLogoLight.png";
+import YaleLogo from "assets/College_Logos/YaleLogo.png";
+import YaleLogoLight from "assets/College_Logos/YaleLogoLight.png";
+import YoungstownStateLogo from "assets/College_Logos/YoungstownStateLogo.png";
+import YoungstownStateLogoLight from "assets/College_Logos/YoungstownStateLogoLight.png";
 
 //Logos
-import AirForceLogo from "assets/College_Logos/AirForce.png";
-import AirForceLogoLight from "assets/College_Logos/AirForceLight.png";
-import AkronLogo from "assets/College_Logos/Akron.png";
-import AlabamaLogo from "assets/College_Logos/Alabama.png";
-import AlabamaAMLogo from "assets/College_Logos/AlabamaA&M.png";
-import AlabamaAMLogoLight from "assets/College_Logos/AlabamaA&MLight.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLight.png";
-import AlabamaStLogo from "assets/College_Logos/AlabamaSt.png";
-import AlcornStLogo from "assets/College_Logos/AlcornSt.png";
-import AmericanUniversityLogo from "assets/College_Logos/AmericanUniversity.png";
-import AppalachianStateLogo from "assets/College_Logos/AppalachianState.png";
-import ArizonaLogo from "assets/College_Logos/Arizona.png";
-import ArizonaStateLogo from "assets/College_Logos/ArizonaState.png";
-import ArkansasPineBluffLogo from "assets/College_Logos/Arkansas-PineBluff.png";
-import ArkansasLogo from "assets/College_Logos/Arkansas.png";
-import ArkansasLogoLight from "assets/College_Logos/ArkansasLight.png";
-import AuburnLogo from "assets/College_Logos/Auburn.png";
-import AuburnLogoLight from "assets/College_Logos/AuburnLight.png";
-import AustinPeayLogo from "assets/College_Logos/AustinPeay.png";
-import BallStateLogo from "assets/College_Logos/BallState.png";
-import BaylorLogo from "assets/College_Logos/Baylor.png";
-import BaylorLogoLight from "assets/College_Logos/BaylorLight.png";
-import BethuneCookmanLogo from "assets/College_Logos/Bethune-Cookman.png";
-import BoiseStateLogo from "assets/College_Logos/BoiseState.png";
-import BostonCollegeLogo from "assets/College_Logos/BostonCollege.png";
-import BostonCollegeLogoLight from "assets/College_Logos/BostonCollegeLight.png";
-import BowlingGreenLogo from "assets/College_Logos/BowlingGreen.png";
-import BryantLogo from "assets/College_Logos/Bryant.png";
-import BucknellLogo from "assets/College_Logos/Bucknell.png";
-import BuffaloLogo from "assets/College_Logos/Buffalo.png";
-import ButlerLogo from "assets/College_Logos/Butler.png";
-import BYULogo from "assets/College_Logos/BYU.png";
-import BYULogoLight from "assets/College_Logos/BYULight.png";
-import CaliforniaLogo from "assets/College_Logos/California.png";
-import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLight.png";
-import CampbellLogo from "assets/College_Logos/Campbell.png";
-import CentralConnecticutLogo from "assets/College_Logos/CentralConnecticut.png";
-import CentralMichiganLogo from "assets/College_Logos/CentralMichigan.png";
-import CentralMichiganLogoLight from "assets/College_Logos/CentralMichiganLight.png";
-import CentralWashingtonLogo from "assets/College_Logos/CentralWashington.png";
-import CharlestonSouthernLogo from "assets/College_Logos/CharlestonSouthern.png";
-import CharlotteLogo from "assets/College_Logos/Charlotte.png";
-import CharlotteLogoLight from "assets/College_Logos/CharlotteLight.png";
-import ChattanoogaLogo from "assets/College_Logos/Chattanooga.png";
-import CincinnatiLogo from "assets/College_Logos/Cincinnati.png";
-import CincinnatiLogoLight from "assets/College_Logos/CincinnatiLight.png";
-import ClemsonLogo from "assets/College_Logos/Clemson.png";
-import ClemsonLogoLight from "assets/College_Logos/ClemsonLight.png";
-import CoastalCarolinaLogo from "assets/College_Logos/CoastalCarolina.png";
-import ColgateLogo from "assets/College_Logos/Colgate.png";
-import ColgateLogoLight from "assets/College_Logos/ColgateLight.png";
-import ColoradoLogo from "assets/College_Logos/Colorado.png";
-import ColoradoStateLogo from "assets/College_Logos/ColoradoState.png";
-import DelawareLogo from "assets/College_Logos/Delaware.png";
-import DelawareStateLogo from "assets/College_Logos/DelawareState.png";
-import DukeLogo from "assets/College_Logos/Duke.png";
-import DukeLogoLight from "assets/College_Logos/DukeLight.png";
-import DuquesneLogo from "assets/College_Logos/Duquesne.png";
-import DuquesneLogoLight from "assets/College_Logos/DuquesneLight.png";
-import EasternKentuckyLogo from "assets/College_Logos/EasternKentucky.png";
-import EasternKentuckyLogoLight from "assets/College_Logos/EasternKentuckyLight.png";
-import EasternMichiganLogo from "assets/College_Logos/EasternMichigan.png";
-import EasternMichiganLogoLight from "assets/College_Logos/EasternMichiganLight.png";
-import FAMULogo from "assets/College_Logos/FAMU.png";
-import FAULogo from "assets/College_Logos/FAU.png";
-import FIULogo from "assets/College_Logos/FIU.png";
-import FIULogoLight from "assets/College_Logos/FIULight.png";
-import FloridaLogo from "assets/College_Logos/Florida.png";
-import FloridaStateLogo from "assets/College_Logos/FSU.png";
-import GeorgetownLogo from "assets/College_Logos/Georgetown.png";
-import GeorgiaLogo from "assets/College_Logos/Georgia.png";
-import GeorgiaSouthernLogo from "assets/College_Logos/GeorgiaSouthern.png";
-import HawaiiLogo from "assets/College_Logos/Hawaii.png";
-import HighPointLogo from "assets/College_Logos/HighPoint.png";
-import HighPointLogoLight from "assets/College_Logos/HighPointLight.png";
-import HolyCrossLogo from "assets/College_Logos/HolyCross.png";
-import HoustonLogo from "assets/College_Logos/Houston.png";
-import IdahoStateLogo from "assets/College_Logos/IdahoState.png";
-import IllinoisLogo from "assets/College_Logos/Illinois.png";
-import IllinoisStateLogo from "assets/College_Logos/IllinoisState.png";
-import IndianaLogo from "assets/College_Logos/Indiana.png";
-import IndianaLogoLight from "assets/College_Logos/IndianaLight.png";
-import IowaLogo from "assets/College_Logos/Iowa.png";
-import IowaLogoLight from "assets/College_Logos/IowaLight.png";
-import KansasLogo from "assets/College_Logos/Kansas.png";
-import KansasStLogo from "assets/College_Logos/KansasSt.png";
-import KansasStLogoLight from "assets/College_Logos/KansasStLight.png";
-import KentuckyLogo from "assets/College_Logos/Kentucky.png";
-import KentuckyLogoLight from "assets/College_Logos/KentuckyLight.png";
-import LATechLogo from "assets/College_Logos/LATech.png";
-import LindenwoodLogo from "assets/College_Logos/Lindenwood.png";
-import LIULogo from "assets/College_Logos/LIU.png";
-import LSULogo from "assets/College_Logos/LSU.png";
-import LSULogoLight from "assets/College_Logos/LSULight.png";
-import ManorCollegeLogo from "assets/College_Logos/ManorCollege.png";
-import MarshallLogo from "assets/College_Logos/Marshall.png";
-import MarylandLogo from "assets/College_Logos/Maryland.png";
-import MiamiOHLogo from "assets/College_Logos/Miami(OH).png";
-import MiamiLogo from "assets/College_Logos/Miami.png";
-import MichiganLogo from "assets/College_Logos/Michigan.png";
-import MichiganStateLogo from "assets/College_Logos/MichiganState.png";
-import MichiganStateLogoLight from "assets/College_Logos/MichiganStateLight.png";
-import MinnesotaLogo from "assets/College_Logos/Minnesota.png";
-import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLight.png";
-import MissouriLogo from "assets/College_Logos/Missouri.png";
-import MissStLogo from "assets/College_Logos/MissSt.png";
-import MiddleTennesseeLogo from "assets/College_Logos/MTSU.png";
-import NavyLogo from "assets/College_Logos/Navy.png";
-import NCStateLogo from "assets/College_Logos/NCState.png";
-import NebraskaLogo from "assets/College_Logos/Nebraska.png";
-import NebraskaLogoLight from "assets/College_Logos/NebraskaLight.png";
-import NevadaLogo from "assets/College_Logos/Nevada.png";
-import NevadaLogoLight from "assets/College_Logos/NevadaLight.png";
-import NichollsLogo from "assets/College_Logos/Nicholls.png";
-import NorfolkStLogo from "assets/College_Logos/NorfolkSt.png";
-import NorthernArizonaLogo from "assets/College_Logos/NorthernArizona.png";
-import NorthernArizonaLogoLight from "assets/College_Logos/NorthernArizonaLight.png";
-import NorthernIllinoisLogo from "assets/College_Logos/NorthernIllinois.png";
-import NorthTexasLogo from "assets/College_Logos/NorthTexas.png";
-import NorthwesternLogo from "assets/College_Logos/Northwestern.png";
-import NotreDameLogo from "assets/College_Logos/NotreDame.png";
-import NotreDameLogoLight from "assets/College_Logos/NotreDameLight.png";
-import OhioLogo from "assets/College_Logos/Ohio.png";
-import OhioStLogo from "assets/College_Logos/OhioState.png";
-import OhioStLogoLight from "assets/College_Logos/OhioStateLight.png";
-import OklahomaLogo from "assets/College_Logos/Oklahoma.png";
-import OklahomaLogoLight from "assets/College_Logos/OklahomaLight.png";
-import OKStateLogo from "assets/College_Logos/OklahomaState.png";
-import ODULogo from "assets/College_Logos/OldDominion.png";
-import OleMissLogo from "assets/College_Logos/OleMiss.png";
-import OleMissLogoLight from "assets/College_Logos/OleMissLight.png";
-import OralRobertsLogo from "assets/College_Logos/OralRoberts.png";
-import OralRobertsLogoLight from "assets/College_Logos/OralRobertsLight.png";
-import OregonLogo from "assets/College_Logos/Oregon.png";
-import OregonLogoLight from "assets/College_Logos/OregonLight.png";
-import OregonStateLogo from "assets/College_Logos/OregonState.png";
-import PennLogo from "assets/College_Logos/Penn.png";
-import PennStateLogo from "assets/College_Logos/PennState.png";
-import PittsburghLogo from "assets/College_Logos/Pittsburgh.png";
-import PittsburghLogoLight from "assets/College_Logos/PittsburghLight.png";
-import PrincetonLogo from "assets/College_Logos/Princeton.png";
-import PurdueLogo from "assets/College_Logos/Purdue.png";
-import RiceLogo from "assets/College_Logos/Rice.png";
-import RiceLogoLight from "assets/College_Logos/RiceLight.png";
-import RichmondLogo from "assets/College_Logos/Richmond.png";
-import RichmondLogoLight from "assets/College_Logos/RichmondLight.png";
-import RutgersLogo from "assets/College_Logos/Rutgers.png";
-import SamHoustonLogo from "assets/College_Logos/SamHouston.png";
-import SanDiegoStLogo from "assets/College_Logos/SanDiegoSt..png";
-import SouthDakotaStateLogo from "assets/College_Logos/SDST.png";
-import SouthAlabamaLogo from "assets/College_Logos/SouthAlabama.png";
-import StonehillLogo from "assets/College_Logos/Stonehill.png";
-import TCULogo from "assets/College_Logos/TCU.png";
-import TCULogoLight from "assets/College_Logos/TCULight.png";
-import TempleLogo from "assets/College_Logos/Temple.png";
-import TempleLogoLight from "assets/College_Logos/TempleLight.png";
-import TennesseeLogo from "assets/College_Logos/Tennessee.png";
-import TennesseeLogoLight from "assets/College_Logos/TennesseeLight.png";
-import TennesseeTechLogo from "assets/College_Logos/TennesseeTech.png";
-import TexasLogo from "assets/College_Logos/Texas.png";
-import TexasAMLogo from "assets/College_Logos/TexasA&M.png";
-import TexasAMLogoLight from "assets/College_Logos/TexasA&MLight.png";
-import TexasLogoLight from "assets/College_Logos/TexasLight.png";
-import TroyLogo from "assets/College_Logos/Troy.png";
-import TulaneLogo from "assets/College_Logos/Tulane.png";
-import TulsaLogo from "assets/College_Logos/Tulsa.png";
-import TulsaLogoLight from "assets/College_Logos/TulsaLight.png";
-import UCFLogo from "assets/College_Logos/UCF.png";
-import UConnLogo from "assets/College_Logos/UCONN.png";
-import UNCLogo from "assets/College_Logos/UNC.png";
-import UNLVLogo from "assets/College_Logos/UNLV.png";
-import UNLVLogoLight from "assets/College_Logos/UNLVLight.png";
-import USCLogo from "assets/College_Logos/USC.png";
-import USFLogo from "assets/College_Logos/USF.png";
-import UtahLogo from "assets/College_Logos/Utah.png";
-import UtahStateLogo from "assets/College_Logos/UtahState.png";
-import UtahValleyLogo from "assets/College_Logos/UtahValley.png";
-import UTEPLogo from "assets/College_Logos/UTEP.png";
-import UTEPLogoLight from "assets/College_Logos/UTEPLight.png";
-import UTSALogo from "assets/College_Logos/UTSA.png";
-import VanderbiltLogo from "assets/College_Logos/Vanderbilt.png";
-import VirginiaLogo from "assets/College_Logos/Virginia.png";
-import VirginiaLogoLight from "assets/College_Logos/VirginiaLight.png";
-import VirginiaTechLogo from "assets/College_Logos/VirginiaTech.png";
-import VirginiaTechLogoLight from "assets/College_Logos/VirginiaTechLight.png";
-import WakeForestLogo from "assets/College_Logos/WakeForest.png";
-import WakeForestLogoLight from "assets/College_Logos/WakeForestLight.png";
-import WesternKentuckyLogo from "assets/College_Logos/WesternKentucky.png";
-import WesternMichiganLogo from "assets/College_Logos/WesternMichigan.png";
-import WestVirginiaLogo from "assets/College_Logos/WestVirginia.png";
-import WestVirginiaLogoLight from "assets/College_Logos/WestVirginiaLight.png";
-import WisconsinLogo from "assets/College_Logos/Wisconsin.png";
-import WyomingLogo from "assets/College_Logos/Wyoming.png";
-import WyomingLogoLight from "assets/College_Logos/WyomingLight.png";
-import AbileneChristianLogo from "../assets/College_Logos/AbileneChristian.png";
-import AlaskaAnchorageLogo from "../assets/College_Logos/AlaskaAnchorage.png";
-import AlleghenyLogo from "../assets/College_Logos/Allegheny.png";
-import AlleghenyLogoLight from "../assets/College_Logos/AlleghenyLight.png";
-import ArkansasBaptistLogo from "../assets/College_Logos/ArkansasBaptist.png";
-import ArkansasStateLogo from "../assets/College_Logos/ArkansasState.png";
-import ArlingtonBaptistLogo from "../assets/College_Logos/ArlingtonBaptist.png";
-import ArmyLogo from "../assets/College_Logos/Army.png";
-import BellarmineLogo from "../assets/College_Logos/Bellarmine.png";
-import BelmontLogo from "../assets/College_Logos/Belmont.png";
-import BethanyWVLogo from "../assets/College_Logos/Bethany(WV).png";
-import BethesdaLogo from "../assets/College_Logos/Bethesda.png";
-import BinghamtonLogo from "../assets/College_Logos/Binghamton.png";
-import BobJonesLogo from "../assets/College_Logos/BobJones.png";
-import BostonUniversityLogo from "../assets/College_Logos/BostonUniversity.png";
-import BowieStateLogo from "../assets/College_Logos/BowieState.png";
-import BradleyLogo from "../assets/College_Logos/Bradley.png";
-import BrevardCollegeLogo from "../assets/College_Logos/BrevardCollege.png";
-import BrewtonParkerLogo from "../assets/College_Logos/BrewtonParker.png";
-import BridgewaterStateLogo from "../assets/College_Logos/BridgewaterState.png";
-import BridgewaterVALogo from "../assets/College_Logos/BridgewaterVA.png";
-import BrownLogo from "../assets/College_Logos/Brown.png";
-import BryanTNLogo from "../assets/College_Logos/BryanTN.png";
-import CaliforniaBaptistLogo from "../assets/College_Logos/CaliforniaBaptist.png";
-import CalPolyLogo from "../assets/College_Logos/CalPoly.png";
-import CalStateNorthridgeLogo from "../assets/College_Logos/CalStateNorthridge.png";
-import CampbellsvilleLogo from "../assets/College_Logos/Campbellsville.png";
-import CanisiusLogo from "../assets/College_Logos/Canisius.png";
-import CarolinaUniversityLogo from "../assets/College_Logos/CarolinaUniversity.png";
-import CCNYLogo from "../assets/College_Logos/CCNY.png";
-import CentenaryNJLogo from "../assets/College_Logos/CentenaryNJ.png";
-import CentralArkansasLogo from "../assets/College_Logos/CentralArkansas.png";
-import ChaminadeLogo from "../assets/College_Logos/Chaminade.png";
-import ChampionChristianLogo from "../assets/College_Logos/ChampionChristian.png";
-import CharlestonLogo from "../assets/College_Logos/Charleston.png";
-import ChicagoStateLogo from "../assets/College_Logos/ChicagoState.png";
-import ClevelandStateLogo from "../assets/College_Logos/ClevelandState.png";
-import ClintonLogo from "../assets/College_Logos/Clinton.png";
-import CoastalGeorgiaLogo from "../assets/College_Logos/CoastalGeorgia.png";
-import CollegeOfBiblicalStudiesLogo from "../assets/College_Logos/CollegeOfBiblicalStudies.png";
-import ColumbiaLogo from "../assets/College_Logos/Columbia.png";
-import ColumbiaInternationalLogo from "../assets/College_Logos/ColumbiaInternational.png";
-import CoppinStateLogo from "../assets/College_Logos/CoppinState.png";
-import CornellLogo from "../assets/College_Logos/Cornell.png";
-import CreightonLogo from "../assets/College_Logos/Creighton.png";
-import CSFullertonLogo from "../assets/College_Logos/CSFullerton.png";
-import CSUBakersfieldLogo from "../assets/College_Logos/CSUBakersfield.png";
-import DakotaWesleyanLogo from "../assets/College_Logos/DakotaWesleyan.png";
-import DallasUniversityLogo from "../assets/College_Logos/DallasUniversity.png";
-import DartmouthLogo from "../assets/College_Logos/Dartmouth.png";
-import DavidsonLogo from "../assets/College_Logos/Davidson.png";
-import DaytonLogo from "../assets/College_Logos/Dayton.png";
-import DaytonLogoLight from "../assets/College_Logos/DaytonLight.png";
-import DenverLogo from "../assets/College_Logos/Denver.png";
-import DenverLogoLight from "../assets/College_Logos/DenverLight.png";
-import DepaulLogo from "../assets/College_Logos/Depaul.png";
-import DepauwLogo from "../assets/College_Logos/Depauw.png";
-import DetroitLogo from "../assets/College_Logos/Detroit.png";
-import DrakeLogo from "../assets/College_Logos/Drake.png";
-import DrexelLogo from "../assets/College_Logos/Drexel.png";
-import ECULogo from "../assets/College_Logos/EastCarolina.png";
-import EasternIllinoisLogo from "../assets/College_Logos/EasternIllinois.png";
-import EasternWashingtonLogo from "../assets/College_Logos/EasternWashington.png";
-import EasternWashingtonLogoLight from "../assets/College_Logos/EasternWashingtonLight.png";
-import EastTennesseeStateLogo from "../assets/College_Logos/EastTennesseeState.png";
-import EastWestUniversityLogo from "../assets/College_Logos/EastWestUniversity.png";
-import EastWestUniversityLogoLight from "../assets/College_Logos/EastWestUniversityLight.png";
-import EcclesiaLogo from "../assets/College_Logos/Ecclesia.png";
-import ElonLogo from "../assets/College_Logos/Elon.png";
-import EmersonLogo from "../assets/College_Logos/Emerson.png";
-import ETAMLogo from "../assets/College_Logos/ETA&M.png";
-import EvansvilleLogo from "../assets/College_Logos/Evansville.png";
-import FairfieldLogo from "../assets/College_Logos/Fairfield.png";
-import FairleighDickinsonLogo from "../assets/College_Logos/FairleighDickinson.png";
-import FGCULogo from "../assets/College_Logos/FGCU.png";
-import FisherLogo from "../assets/College_Logos/Fisher.png";
-import FordhamLogo from "../assets/College_Logos/Fordham.png";
-import FranciscanLogo from "../assets/College_Logos/Franciscan.png";
-import FresnoStLogo from "../assets/College_Logos/FresnoState.png";
-import FtLauderdaleLogo from "../assets/College_Logos/FtLauderdale.png";
-import FurmanLogo from "../assets/College_Logos/Furman.png";
-import GardnerWebbLogo from "../assets/College_Logos/Gardner-Webb.png";
-import GenevaLogo from "../assets/College_Logos/Geneva.png";
-import GeorgeMasonLogo from "../assets/College_Logos/GeorgeMason.png";
-import GeorgeWashingtonLogo from "../assets/College_Logos/GeorgeWashington.png";
-import GeorgianCourtLogo from "../assets/College_Logos/GeorgianCourt.png";
-import GeorgianCourtLogoLight from "../assets/College_Logos/GeorgianCourtLight.png";
-import GeorgiaStateLogo from "../assets/College_Logos/GeorgiaState.png";
-import GeorgiaTechLogo from "../assets/College_Logos/GeorgiaTech.png";
-import GeorgiaTechLogoLight from "../assets/College_Logos/GeorgiaTechLight.png";
-import GonzagaLogo from "../assets/College_Logos/Gonzaga.png";
-import GramblingLogo from "../assets/College_Logos/Grambling.png";
-import GrandCanyonLogo from "../assets/College_Logos/GrandCanyon.png";
-import GrandCanyonLogoLight from "../assets/College_Logos/GrandCanyonLight.png";
-import HamptonLogo from "../assets/College_Logos/Hampton.png";
-import HarvardLogo from "../assets/College_Logos/Harvard.png";
-import HaskellLogo from "../assets/College_Logos/Haskell.png";
-import HiramCollegeLogo from "../assets/College_Logos/HiramCollege.png";
-import HofstraLogo from "../assets/College_Logos/Hofstra.png";
-import HofstraLogoLight from "../assets/College_Logos/HofstraLight.png";
-import HoustonChristianLogo from "../assets/College_Logos/HoustonChristian.png";
-import HowardLogo from "../assets/College_Logos/Howard.png";
-import HowardPayneLogo from "../assets/College_Logos/HowardPayne.png";
-import IdahoLogo from "../assets/College_Logos/Idaho.png";
-import IncarnateWordLogo from "../assets/College_Logos/IncarnateWord.png";
-import IndianaStateLogo from "../assets/College_Logos/IndianaState.png";
-import IonaLogo from "../assets/College_Logos/Iona.png";
-import IowaStateLogo from "../assets/College_Logos/IowaState.png";
-import IUColumbusLogo from "../assets/College_Logos/IUColumbus.png";
-import IUIndianapolisLogo from "../assets/College_Logos/IUIndianapolis.png";
-import JacksonStateLogo from "../assets/College_Logos/JacksonState.png";
-import JacksonvilleLogo from "../assets/College_Logos/Jacksonville.png";
-import JacksonvilleLogoLight from "../assets/College_Logos/JacksonvilleLight.png";
-import JamesMadisonLogo from "../assets/College_Logos/JamesMadison.png";
-import JaxStateLogo from "../assets/College_Logos/JaxState.png";
-import JohnsonWalesRILogo from "../assets/College_Logos/JohnsonWalesRI.png";
-import KansasChristianLogo from "../assets/College_Logos/KansasChristian.png";
-import KansasCityLogo from "../assets/College_Logos/KansasCity.png";
-import KennesawStateLogo from "../assets/College_Logos/KennesawState.png";
-import KentStateLogo from "../assets/College_Logos/KentState.png";
-import KentuckyChristianLogo from "../assets/College_Logos/KentuckyChristian.png";
-import KingTornadoLogo from "../assets/College_Logos/KingTornado.png";
-import LafayetteLogo from "../assets/College_Logos/Lafayette.png";
-import LamarLogo from "../assets/College_Logos/Lamar.png";
-import LaSalleLogo from "../assets/College_Logos/LaSalle.png";
-import LaSierraLogo from "../assets/College_Logos/LaSierra.png";
-import LehighLogo from "../assets/College_Logos/Lehigh.png";
-import LeMoyneLogo from "../assets/College_Logos/LeMoyne.png";
-import LibertyLogo from "../assets/College_Logos/Liberty.png";
-import LipscombLogo from "../assets/College_Logos/Lipscomb.png";
-import LittleRockLogo from "../assets/College_Logos/LittleRock.png";
-import LittleRockLogoLight from "../assets/College_Logos/LittleRockLight.png";
-import LongBeachStateLogo from "../assets/College_Logos/LongBeachState.png";
-import LongBeachStateLogoLight from "../assets/College_Logos/LongBeachStateLight.png";
-import LongwoodLogo from "../assets/College_Logos/Longwood.png";
-import LouisianaLogo from "../assets/College_Logos/Louisiana.png";
-import LouisianaChristianLogo from "../assets/College_Logos/LouisianaChristian.png";
-import LouisvilleLogo from "../assets/College_Logos/Louisville.png";
-import LoyolaChicagoLogo from "../assets/College_Logos/LoyolaChicago.png";
-import LoyolaMarylandLogo from "../assets/College_Logos/LoyolaMaryland.png";
-import LoyolaMarymountLogo from "../assets/College_Logos/LoyolaMarymount.png";
-import LynchburgLogo from "../assets/College_Logos/Lynchburg.png";
-import MaineLogo from "../assets/College_Logos/Maine.png";
-import ManhattanLogo from "../assets/College_Logos/Manhattan.png";
-import ManhattanLogoLight from "../assets/College_Logos/ManhattanLight.png";
-import MaristLogo from "../assets/College_Logos/Marist.png";
-import MarquetteLogo from "../assets/College_Logos/Marquette.png";
-import MarylandEasternShoreLogo from "../assets/College_Logos/MarylandEasternShore.png";
-import McNeeseLogo from "../assets/College_Logos/McNeese.png";
-import MemphisLogo from "../assets/College_Logos/Memphis.png";
-import MercerLogo from "../assets/College_Logos/Mercer.png";
-import Mercylogo from "../assets/College_Logos/Mercy.png";
-import MercyhurstLogo from "../assets/College_Logos/Mercyhurst.png";
-import MerrimackLogo from "../assets/College_Logos/Merrimack.png";
-import MiamiHamiltonLogo from "../assets/College_Logos/MiamiHamilton.png";
-import MiamiHamiltonLogoLight from "../assets/College_Logos/MiamiHamiltonLight.png";
-import MilliganLogo from "../assets/College_Logos/Milligan.png";
-import MilwaukeeLogo from "../assets/College_Logos/Milwaukee.png";
-import MinnesotaCrookstonLogo from "../assets/College_Logos/MinnesotaCrookston.png";
-import MisericordiaLogo from "../assets/College_Logos/Misericordia.png";
-import MississippiValleyStateLogo from "../assets/College_Logos/MississippiValleyState.png";
-import MissouriStateLogo from "../assets/College_Logos/MissouriState.png";
-import MitchellLogo from "../assets/College_Logos/Mitchell.png";
-import MolloyLogo from "../assets/College_Logos/Molloy.png";
-import MonmouthLogo from "../assets/College_Logos/Monmouth.png";
-import MontanaLogo from "../assets/College_Logos/Montana.png";
-import MontanaLogoLight from "../assets/College_Logos/MontanaLight.png";
-import MontanaStateLogo from "../assets/College_Logos/MontanaState.png";
-import MontanaTechLogo from "../assets/College_Logos/MontanaTech.png";
-import MoreheadStateLogo from "../assets/College_Logos/MoreheadState.png";
-import MorehouseCollegeLogo from "../assets/College_Logos/MorehouseCollege.png";
-import MorehouseCollegeLogoLight from "../assets/College_Logos/MorehouseCollegeLight.png";
-import MorganStateLogo from "../assets/College_Logos/MorganState.png";
-import MorrisCollegeLogo from "../assets/College_Logos/MorrisCollege.png";
-import MountSaintMarys from "../assets/College_Logos/MountSt.Mary's.png";
-import MurrayStateLogo from "../assets/College_Logos/MurrayState.png";
-import NCWesleyanLogo from "../assets/College_Logos/NCWesleyan.png";
-import NewHampshireLogo from "../assets/College_Logos/NewHampshire.png";
-import NewHavenLogo from "../assets/College_Logos/NewHaven.png";
-import NewMexicoLogo from "../assets/College_Logos/NewMexico.png";
-import NewMexicoStateLogo from "../assets/College_Logos/NewMexicoState.png";
-import NewOrleansLogo from "../assets/College_Logos/NewOrleans.png";
-import NiagaraLogo from "../assets/College_Logos/Niagara.png";
-import NicholsLogo from "../assets/College_Logos/Nichols.png";
-import NJITLogo from "../assets/College_Logos/NJIT.png";
-import NobelLogo from "../assets/College_Logos/Nobel.png";
-import NorthFloridaLogo from "../assets/College_Logos/NorhFlorida.png";
-import NorthAlabamaLogo from "../assets/College_Logos/NorthAlabama.png";
-import NorthCarolinaATLogo from "../assets/College_Logos/NorthCarolinaA&T.png";
-import NorthCarolinaCentralLogo from "../assets/College_Logos/NorthCarolinaCentral.png";
-import NorthDakotaLogo from "../assets/College_Logos/NorthDakota.png";
-import NorthDakotaStateLogo from "../assets/College_Logos/NorthDakotaState.png";
-import NortheasternLogo from "../assets/College_Logos/Northeastern.png";
-import NorhternColoradoLogo from "../assets/College_Logos/NorthernColorado.png";
-import NorthernIowaLogo from "../assets/College_Logos/NorthernIowa.png";
-import NorthernKentuckyLogo from "../assets/College_Logos/NorthernKentucky.png";
-import NorthGreenvilleLogo from "../assets/College_Logos/NorthGreenville.png";
-import NorthwesternStateLogo from "../assets/College_Logos/NorthwesternState.png";
-import NorthwoodLogo from "../assets/College_Logos/Northwood.png";
-import NotreDameMDLogo from "../assets/College_Logos/NotreDameMD.png";
-import OaklandLogo from "../assets/College_Logos/Oakland.png";
-import OhioWesleyanLogo from "../assets/College_Logos/OhioWesleyan.png";
-import OlivetLogo from "../assets/College_Logos/Olivet.png";
-import OlivetLogoLight from "../assets/College_Logos/OlivetLight.png";
-import OmahaLogo from "../assets/College_Logos/Omaha.png";
-import PacificLogo from "../assets/College_Logos/Pacific.png";
-import PennStateYorkLogo from "../assets/College_Logos/PennStateYork.png";
-import PepperdineLogo from "../assets/College_Logos/Pepperdine.png";
-import PiedmontLogo from "../assets/College_Logos/Piedmont.png";
-import PittGreensburgLogo from "../assets/College_Logos/PittGreensburg.png";
-import PittGreensburgLogoLight from "../assets/College_Logos/PittGreensburgLight.png";
-import PortlandLogo from "../assets/College_Logos/Portland.png";
-import PortlandStateLogo from "../assets/College_Logos/PortlandState.png";
-import PrairieViewAMLogo from "../assets/College_Logos/PrairieViewA&M.png";
-import PresbyterianLogo from "../assets/College_Logos/Presbyterian.png";
-import ProvidenceLogo from "../assets/College_Logos/Providence.png";
-import PurdueFortWayneLogo from "../assets/College_Logos/PurdueFortWayne.png";
-import QueensLogo from "../assets/College_Logos/Queens.png";
-import QuinnipiacLogo from "../assets/College_Logos/Quinnipiac.png";
-import RadfordLogo from "../assets/College_Logos/Radford.png";
-import RegisLogo from "../assets/College_Logos/Regis.png";
-import ReinhardtLogo from "../assets/College_Logos/Reinhardt.png";
-import RhodeIslandLogo from "../assets/College_Logos/RhodeIsland.png";
-import RhodesLogo from "../assets/College_Logos/Rhodes.png";
-import RiderLogo from "../assets/College_Logos/Rider.png";
-import RiponLogo from "../assets/College_Logos/Ripon.png";
-import RITLogo from "../assets/College_Logos/RIT.png";
-import RobertMorrisLogo from "../assets/College_Logos/RobertMorris.png";
-import SacramentoStateLogo from "../assets/College_Logos/SacramentoState.png";
-import SacredHeartLogo from "../assets/College_Logos/SacredHeart.png";
-import SaintFrancisLogo from "../assets/College_Logos/SaintFrancis.png";
-import SaintJosephsLogo from "../assets/College_Logos/SaintJosephs.png";
-import SaintLouisLogo from "../assets/College_Logos/SaintLouis.png";
-import SaintMaryLogo from "../assets/College_Logos/SaintMary.png";
-import SaintMaryLogoLight from "../assets/College_Logos/SaintMaryLight.png";
-import SaintPetersLogo from "../assets/College_Logos/SaintPeters.png";
-import SamfordLogo from "../assets/College_Logos/Samford.png";
-import SanDiegoLogo from "../assets/College_Logos/SanDiego.png";
-import SanFranciscoLogo from "../assets/College_Logos/SanFrancisco.png";
-import SanFranciscoLogoLight from "../assets/College_Logos/SanFranciscoLight.png";
-import SanJoseStateLogo from "../assets/College_Logos/SanJoseState.png";
-import SantaClaraLogo from "../assets/College_Logos/SantaClara.png";
-import SCUpstateLogo from "../assets/College_Logos/SCUpstate.png";
-import SeattleLogo from "../assets/College_Logos/Seattle.png";
-import SELouisianaLogo from "../assets/College_Logos/SELouisiana.png";
-import SetonHallLogo from "../assets/College_Logos/SetonHall.png";
-import SienaLogo from "../assets/College_Logos/Siena.png";
-import SIUELogo from "../assets/College_Logos/SIUEdwardsville.png";
-import SIUELogoLight from "../assets/College_Logos/SIUEdwardsvilleLight.png";
-import SMULogo from "../assets/College_Logos/SMU.png";
-import SouthCarolinaLogo from "../assets/College_Logos/SouthCarolina.png";
-import SouthCarolinaLogoLight from "../assets/College_Logos/SouthCarolinaLight.png";
-import SouthCarolinaStateLogo from "../assets/College_Logos/SouthCarolinaState.png";
-import SouthDakotaLogo from "../assets/College_Logos/SouthDakota.png";
-import SoutheastMissouriStateLogo from "../assets/College_Logos/SoutheastMissouriState.png";
-import SouthernLogo from "../assets/College_Logos/Southern.png";
-import SouthernIllinoisLogo from "../assets/College_Logos/SouthernIllinois.png";
-import SouthernIndianaLogo from "../assets/College_Logos/SouthernIndiana.png";
-import SouthernMissLogo from "../assets/College_Logos/SouthernMiss.png";
-import SouthernUtahLogo from "../assets/College_Logos/SouthernUtah.png";
-import SouthwesternAdventistLogo from "../assets/College_Logos/SouthwesternAdventist.png";
-import SouthwesternAdventistLogoLight from "../assets/College_Logos/SouthwesternAdventistLight.png";
-import SouthwesternChristianLogo from "../assets/College_Logos/SouthwesternChristian.png";
-import SpringHillLogo from "../assets/College_Logos/SpringHill.png";
-import StJohnsLogo from "../assets/College_Logos/St.Johns.png";
-import StJohnsLogoLight from "../assets/College_Logos/St.JohnsLight.png";
-import StanfordLogo from "../assets/College_Logos/Stanford.png";
-import StBonaventureLogo from "../assets/College_Logos/StBonaventure.png";
-import StBonaventureLogoLight from "../assets/College_Logos/StBonaventureLight.png";
-import StephenFAustinLogo from "../assets/College_Logos/StephenFAustin.png";
-import StetsonLogo from "../assets/College_Logos/Stetson.png";
-import StMarysMDLogo from "../assets/College_Logos/StMarysMD.png";
-import StonyBrookLogo from "../assets/College_Logos/StonyBrook.png";
-import StThomasMinnesotaLogo from "../assets/College_Logos/StThomasMinnesota.png";
-import SUNYDelhiLogo from "../assets/College_Logos/SUNYDelhi.png";
-import SUNYMaritimeLogo from "../assets/College_Logos/SUNYMaritime.png";
-import SUNYOneontaLogo from "../assets/College_Logos/SUNYOneonta.png";
-import SyracuseLogo from "../assets/College_Logos/Syracuse.png";
-import SyracuseLogoLight from "../assets/College_Logos/SyracuseLight.png";
-import TarletonStateLogo from "../assets/College_Logos/TarletonState.png";
-import TennesseeSouthernLogo from "../assets/College_Logos/TennesseeSouthern.png";
-import TennesseeStateLogo from "../assets/College_Logos/TennesseeState.png";
-import TexasAMCCLogo from "../assets/College_Logos/TexasA&M-CorpusChristi.png";
-import TexasAMSALogo from "../assets/College_Logos/TexasA&MSA.png";
-import TexasSouthernLogo from "../assets/College_Logos/TexasSouthern.png";
-import TexasStLogo from "../assets/College_Logos/TexasSt.png";
-import TexasTechLogo from "../assets/College_Logos/TexasTech.png";
-import TheCitadelLogo from "../assets/College_Logos/TheCitadel.png";
-import TheCitadelLogoLight from "../assets/College_Logos/TheCitadelLight.png";
-import ToccoaFallsLogo from "../assets/College_Logos/ToccoaFalls.png";
-import ToledoLogo from "../assets/College_Logos/Toledo.png";
-import ToledoLogoLight from "../assets/College_Logos/ToledoLight.png";
-import TowsonLogo from "../assets/College_Logos/Towson.png";
-import TrinityCoJaxLogo from "../assets/College_Logos/TrinityCoJax.png";
-import UABLogo from "../assets/College_Logos/UAB.png";
-import UAlbanyLogo from "../assets/College_Logos/UAlbany.png";
-import UCDavisLogo from "../assets/College_Logos/UCDavis.png";
-import UCDavisLogoLight from "../assets/College_Logos/UCDavisLight.png";
-import UCIrvineLogo from "../assets/College_Logos/UCIrvine.png";
-import UCLALogo from "../assets/College_Logos/UCLA.png";
-import UCLALogoLight from "../assets/College_Logos/UCLALight.png";
-import UCRiversideLogo from "../assets/College_Logos/UCRiverside.png";
-import UCSanDiegoLogo from "../assets/College_Logos/UCSanDiego.png";
-import UCSantaBarbaraLogo from "../assets/College_Logos/UCSantaBarbara.png";
-import UICLOGO from "../assets/College_Logos/UIC.png";
-import ULMLogo from "../assets/College_Logos/ULM.png";
-import UmassLogo from "../assets/College_Logos/Umass.png";
-import UMassLowellLogo from "../assets/College_Logos/UMassLowell.png";
-import UMBCLogo from "../assets/College_Logos/UMBC.png";
-import UNCAshevilleLogo from "../assets/College_Logos/UNCAsheville.png";
-import UNCGreensboroLogo from "../assets/College_Logos/UNCGreensboro.png";
-import UNCWilmingtonLogo from "../assets/College_Logos/UNCWilmington.png";
-import USCLogoLight from "../assets/College_Logos/USCLight.png";
-import UtahLogoLight from "../assets/College_Logos/UtahLight.png";
-import UtahStateLogoLight from "../assets/College_Logos/UtahStateLight.png";
-import UtahTechLogo from "../assets/College_Logos/UtahTech.png";
-import UTArlingtonLogo from "../assets/College_Logos/UTArlington.png";
-import UTMartinLogo from "../assets/College_Logos/UTMartin.png";
-import UTRioGrandeValleyLogo from "../assets/College_Logos/UTRioGrandeValley.png";
-import ValparaisoLogo from "../assets/College_Logos/Valparaiso.png";
-import VCULogo from "../assets/College_Logos/VCU.png";
-import VermontLogo from "../assets/College_Logos/Vermont.png";
-import VermontStateJohnsonLogo from "../assets/College_Logos/VermontStateJohnson.png";
-import VillanovaLogo from "../assets/College_Logos/Villanova.png";
-import VirginiaLynchburgLogo from "../assets/College_Logos/VirginiaLynchburg.png";
-import VMILogo from "../assets/College_Logos/VMI.png";
-import WagnerLogo from "../assets/College_Logos/Wagner.png";
-import WarrenWilsonLogo from "../assets/College_Logos/WarrenWilson.png";
-import WashingtonLogo from "../assets/College_Logos/Washington.png";
-import WashingtonLogoLight from "../assets/College_Logos/WashingtonLight.png";
-import WashingtonStateLogo from "../assets/College_Logos/WashingtonState.png";
-import WashingtonStateLogoLight from "../assets/College_Logos/WashingtonStateLight.png";
-import WCarolinaLogo from "../assets/College_Logos/WCarolina.png";
-import WeberStateLogo from "../assets/College_Logos/WeberState.png";
-import WesternOregonLogo from "../assets/College_Logos/WesternOregon.png";
-import WestGeorgiaLogo from "../assets/College_Logos/WestGeorgia.png";
-import WestLibertyLogo from "../assets/College_Logos/WestLiberty.png";
-import WestLibertyLogoLight from "../assets/College_Logos/WestLibertyLight.png";
-import WichitaStLogo from "../assets/College_Logos/WichitaSt.png";
-import WilliamMaryLogo from "../assets/College_Logos/WilliamMary.png";
-import WilliamPeaceLogo from "../assets/College_Logos/WilliamPeace.png";
-import WIllinoisLogo from "../assets/College_Logos/WIllinois.png";
-import WinthropLogo from "../assets/College_Logos/Winthrop.png";
-import WisconsinGreenBayLogo from "../assets/College_Logos/WisconsinGreenBay.png";
-import WisconsinGreenBayLogoLight from "../assets/College_Logos/WisconsinGreenBayLight.png";
-import WoffordLogo from "../assets/College_Logos/Wofford.png";
-import WrightStateLogo from "../assets/College_Logos/WrightState.png";
-import XavierLogo from "../assets/College_Logos/Xavier.png";
-import XavierLogoLight from "../assets/College_Logos/XavierLight.png";
-import YaleLogo from "../assets/College_Logos/Yale.png";
-import YoungstownStateLogo from "../assets/College_Logos/YoungstownState.png";
 
 export const cbbTeams: Team[] = [
   {
@@ -566,7 +942,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
 
   {
@@ -585,7 +961,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WesternKentuckyLogoLight,
   },
   {
     id: 1823,
@@ -602,7 +979,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AustinPeayLogoLight,
   },
   {
     id: 2182,
@@ -620,7 +998,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VCULogoLight,
   },
   {
     id: 2053,
@@ -637,7 +1016,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthwesternLogoLight,
   },
   {
     id: 2045,
@@ -655,7 +1035,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NortheasternLogoLight,
   },
   {
     id: 1904,
@@ -673,7 +1054,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EvansvilleLogoLight,
   },
   {
     id: 195,
@@ -691,7 +1073,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2171,
@@ -709,7 +1091,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1943,
@@ -726,7 +1108,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IdahoStateLogoLight,
   },
   {
     id: 2074,
@@ -744,7 +1127,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PepperdineLogoLight,
   },
   {
     id: 2180,
@@ -762,7 +1146,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2179,
@@ -779,7 +1163,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UConnLogoLight,
   },
   {
     id: 1944,
@@ -796,7 +1181,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IllinoisLogoLight,
   },
   {
     id: 1506,
@@ -814,7 +1200,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1914,
@@ -831,7 +1217,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FloridaStateLogoLight,
   },
   {
     id: 1891,
@@ -849,7 +1236,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 230,
@@ -867,7 +1254,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FAULogoLight,
   },
   {
     id: 3429,
@@ -885,7 +1273,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 190,
@@ -903,7 +1291,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LipscombLogoLight,
   },
   {
     id: 1830,
@@ -921,7 +1310,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BinghamtonLogoLight,
   },
   {
     id: 7597,
@@ -939,7 +1329,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RITLogoLight,
   },
   {
     id: 2505,
@@ -957,7 +1348,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SpringHillLogoLight,
   },
   {
     id: 1842,
@@ -975,7 +1367,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BryanTNLogoLight,
   },
   {
     id: 2093,
@@ -993,7 +1386,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RiderLogoLight,
   },
   {
     id: 2375,
@@ -1011,7 +1405,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CarolinaUniversityLogoLight,
   },
   {
     id: 6201,
@@ -1022,14 +1417,15 @@ export const cbbTeams: Team[] = [
     code: "CBS",
     color: "#00322D",
     secondaryColor: "#AF6528",
-    logo: CollegeOfBiblicalStudiesLogo,
+    logo: BiblicalStudLogo,
     location: "Houston, TX",
     city: "Houston",
     established: 1976,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BiblicalStudLogoLight,
   },
   {
     id: 1878,
@@ -1047,7 +1443,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CoppinStateLogoLight,
   },
   {
     id: 2039,
@@ -1057,14 +1454,15 @@ export const cbbTeams: Team[] = [
     code: "UNC",
     color: "#7bafd4",
     secondaryColor: "#13294b",
-    logo: UNCLogo,
+    logo: NorthCarolinaLogo,
     location: "Chapel Hill, NC",
     city: "Chapel Hill",
     established: 1789,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthCarolinaLogoLight,
   },
   {
     id: 2028,
@@ -1078,12 +1476,12 @@ export const cbbTeams: Team[] = [
     color: "#00665e",
     secondaryColor: "#ffda00",
     logo: UNCWilmingtonLogo,
-    logoLight: UNCWilmingtonLogo,
+    logoLight: UNCWilmingtonLogoLight,
     established: 1976,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1910,
@@ -1093,14 +1491,15 @@ export const cbbTeams: Team[] = [
     code: "FAMU",
     color: "#F89728",
     secondaryColor: "#00843d",
-    logo: FAMULogo,
+    logo: FloridaAAndMLogo,
     location: "Tallahassee, FL",
     city: "Tallahassee",
     established: 1887,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FloridaAAndMLogoLight,
   },
   {
     id: 2035,
@@ -1118,7 +1517,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NewMexicoStateLogoLight,
   },
   {
     id: 2032,
@@ -1136,7 +1536,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2177,
@@ -1154,7 +1554,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1496,
@@ -1171,7 +1571,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthTexasLogoLight,
   },
   {
     id: 1933,
@@ -1188,7 +1589,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HawaiiLogoLight,
   },
   {
     id: 2185,
@@ -1205,7 +1607,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VanderbiltLogoLight,
   },
   {
     id: 2060,
@@ -1215,14 +1618,15 @@ export const cbbTeams: Team[] = [
     code: "OKST",
     color: "#000000",
     secondaryColor: "#dddddd",
-    logo: OKStateLogo,
+    logo: OklahomaStateLogo,
     location: "Stillwater, OK",
     city: "Stillwater",
     established: 1890,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OklahomaStateLogoLight,
   },
   {
     id: 211,
@@ -1240,7 +1644,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2079,
@@ -1258,7 +1662,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 223,
@@ -1276,7 +1680,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2036,
@@ -1294,7 +1698,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NiagaraLogoLight,
   },
   {
     id: 2192,
@@ -1312,7 +1717,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
 
   {
@@ -1330,7 +1735,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VMILogoLight,
   },
   {
     id: 1805,
@@ -1347,7 +1753,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AkronLogoLight,
   },
   {
     id: 201,
@@ -1365,7 +1772,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SaintFrancisLogoLight,
   },
   {
     id: 1917,
@@ -1376,14 +1784,15 @@ export const cbbTeams: Team[] = [
     code: "FRN",
     color: "#a20012",
     secondaryColor: "#000000",
-    logo: FranciscanLogo,
+    logo: FranciscanUniversityLogo,
     location: "Steubenville, OH",
     city: "Steubenville",
     established: 1946,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FranciscanUniversityLogoLight,
   },
   {
     id: 2141,
@@ -1401,7 +1810,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1824,
@@ -1412,14 +1821,14 @@ export const cbbTeams: Team[] = [
     color: "#BA0C2F",
     secondaryColor: "#FFFFFF",
     logo: BallStateLogo,
-    logoLight: BallStateLogo,
+    logoLight: BallStateLogoLight,
     location: "Muncie, IN",
     city: "Muncie",
     established: 1918,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2165,
@@ -1436,7 +1845,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UCFLogoLight,
   },
   {
     id: 2117,
@@ -1446,14 +1856,15 @@ export const cbbTeams: Team[] = [
     code: "SCST",
     color: "#7d1315",
     secondaryColor: "#104897",
-    logo: SouthCarolinaStateLogo,
+    logo: SouthCarolinaStLogo,
     location: "Orangeburg, SC",
     city: "Orangeburg",
     established: 1896,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthCarolinaStLogoLight,
   },
   {
     id: 5782,
@@ -1471,7 +1882,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LouisianaChristianLogoLight,
   },
   {
     id: 2117,
@@ -1482,14 +1894,15 @@ export const cbbTeams: Team[] = [
     code: "NCAT",
     color: "#0505aa",
     secondaryColor: "#004684",
-    logo: NorthCarolinaATLogo,
+    logo: NorthCarolinaAAndTLogo,
     location: "Greensboro, NC",
     city: "Greensboro",
     established: 1891,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthCarolinaAAndTLogoLight,
   },
   {
     id: 7588,
@@ -1507,7 +1920,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NewHavenLogoLight,
   },
   {
     id: 2187,
@@ -1525,7 +1939,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VermontLogoLight,
   },
   {
     id: 6685,
@@ -1536,14 +1951,15 @@ export const cbbTeams: Team[] = [
     code: "VTSL",
     color: "#FEF172",
     secondaryColor: "#123D10",
-    logo: PlaceholderLogo,
+    logo: VermontStateLyndonLogo,
     location: "Lyndonville, VT",
     city: "Lyndonville",
     established: 1911,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VermontStateLyndonLogoLight,
   },
   {
     id: 6684,
@@ -1561,7 +1977,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VermontStateJohnsonLogoLight,
   },
   {
     id: 2069,
@@ -1579,7 +1996,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PacificLogoLight,
   },
   {
     id: 5628,
@@ -1597,7 +2015,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1860,
@@ -1615,7 +2033,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ChampionChristianLogoLight,
   },
   {
     id: 2486,
@@ -1633,7 +2052,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KansasChristianLogoLight,
   },
   {
     id: 7590,
@@ -1652,7 +2072,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2374,
@@ -1670,7 +2090,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BrewtonParkerLogoLight,
   },
   {
     id: 1859,
@@ -1687,7 +2108,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ChaminadeLogoLight,
   },
   {
     id: 1843,
@@ -1704,7 +2126,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BryantLogoLight,
   },
   {
     id: 204,
@@ -1722,7 +2145,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1966,
@@ -1733,14 +2156,15 @@ export const cbbTeams: Team[] = [
     code: "LIU",
     color: "#69B3E7",
     secondaryColor: "#FFC72C",
-    logo: LIULogo,
+    logo: LongIslandLogo,
     location: "Brooklyn, NY",
     city: "Brooklyn",
     established: 1926,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LongIslandLogoLight,
   },
   {
     id: 1974,
@@ -1759,7 +2183,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2358,
@@ -1777,7 +2201,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BellarmineLogoLight,
   },
   {
     id: 2233,
@@ -1795,7 +2220,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthwesternChristianLogoLight,
   },
   {
     id: 2418,
@@ -1813,7 +2239,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CoastalGeorgiaLogoLight,
   },
   {
     id: 2085,
@@ -1830,7 +2257,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PurdueLogoLight,
   },
   {
     id: 2073,
@@ -1847,7 +2275,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PennStateLogoLight,
   },
   {
     id: 2048,
@@ -1864,7 +2293,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthernIllinoisLogoLight,
   },
   {
     id: 1894,
@@ -1881,7 +2311,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EasternIllinoisLogoLight,
   },
   {
     id: 221,
@@ -1898,7 +2329,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UABLogoLight,
   },
   {
     id: 2160,
@@ -1917,7 +2349,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
 
   {
@@ -1928,15 +2360,15 @@ export const cbbTeams: Team[] = [
     code: "AAMU",
     color: "#790000",
     secondaryColor: "#ffffff",
-    logo: AlabamaAMLogo,
-    logoLight: AlabamaAMLogoLight,
+    logo: AlabamaAAndMLogo,
+    logoLight: AlabamaAAndMLogoLight,
     location: "Normal, AL",
     city: "Normal",
     established: 1875,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2006,
@@ -1953,7 +2385,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MissouriLogoLight,
   },
   {
     id: 1976,
@@ -1964,14 +2397,15 @@ export const cbbTeams: Team[] = [
     code: "LT",
     color: "#002d65",
     secondaryColor: "#d3313a",
-    logo: LATechLogo,
+    logo: LouisianaTechLogo,
     location: "Ruston, LA",
     city: "Ruston",
     established: 1894,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LouisianaTechLogoLight,
   },
   {
     id: 2003,
@@ -1989,7 +2423,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1816,
@@ -2006,7 +2440,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArizonaStateLogoLight,
   },
   {
     id: 2046,
@@ -2024,7 +2459,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1919,
@@ -2034,14 +2469,15 @@ export const cbbTeams: Team[] = [
     code: "FRES",
     color: "#c41230",
     secondaryColor: "#13284c",
-    logo: FresnoStLogo,
+    logo: FresnoStateLogo,
     location: "Fresno, CA",
     city: "Fresno",
     established: 1911,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FresnoStateLogoLight,
   },
   {
     id: 1847,
@@ -2058,7 +2494,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CalPolyLogoLight,
   },
   {
     id: 2110,
@@ -2075,7 +2512,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SanJoseStateLogoLight,
   },
   {
     id: 1995,
@@ -2094,7 +2532,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2202,
@@ -2111,7 +2549,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WesternMichiganLogoLight,
   },
   {
     id: 1896,
@@ -2129,7 +2568,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1895,
@@ -2147,7 +2586,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2061,
@@ -2157,14 +2596,15 @@ export const cbbTeams: Team[] = [
     code: "ODU",
     color: "#00507d",
     secondaryColor: "#a1d2f1",
-    logo: ODULogo,
+    logo: OldDominionLogo,
     location: "Norfolk, VA",
     city: "Norfolk",
     established: 1930,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OldDominionLogoLight,
   },
   {
     id: 2190,
@@ -2182,7 +2622,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1983,
@@ -2200,7 +2640,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MarquetteLogoLight,
   },
   {
     id: 2213,
@@ -2218,7 +2659,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MilwaukeeLogoLight,
   },
   {
     id: 214,
@@ -2237,7 +2679,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 191,
@@ -2255,7 +2697,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LoyolaChicagoLogoLight,
   },
   {
     id: 2001,
@@ -2273,7 +2716,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MilliganLogoLight,
   },
   {
     id: 1503,
@@ -2291,7 +2735,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LoyolaMarylandLogoLight,
   },
   {
     id: 3382,
@@ -2309,7 +2754,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LoyolaMarymountLogoLight,
   },
   {
     id: 1489,
@@ -2327,7 +2773,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CanisiusLogoLight,
   },
   {
     id: 1499,
@@ -2345,7 +2792,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgeMasonLogoLight,
   },
   {
     id: 1890,
@@ -2363,7 +2811,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
 
   {
@@ -2375,15 +2823,15 @@ export const cbbTeams: Team[] = [
     code: "SMC",
     color: "#d80024",
     secondaryColor: "#003057",
-    logo: SaintMaryLogo,
-    logoLight: SaintMaryLogoLight,
+    logo: SaintMarysLogo,
+    logoLight: SaintMarysLogoLight,
     location: "Moraga, CA",
     city: "Moraga",
     established: 1863,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2140,
@@ -2401,7 +2849,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1959,
@@ -2418,7 +2866,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KansasLogoLight,
   },
   {
     id: 2143,
@@ -2435,7 +2884,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TennesseeTechLogoLight,
   },
   {
     id: 189,
@@ -2453,7 +2903,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 5566,
@@ -2471,7 +2921,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthernIndianaLogoLight,
   },
   {
     id: 1570,
@@ -2489,7 +2940,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SienaLogoLight,
   },
   {
     id: 233,
@@ -2507,7 +2959,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HamptonLogoLight,
   },
   {
     id: 181,
@@ -2524,7 +2977,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ColoradoLogoLight,
   },
   {
     id: 202,
@@ -2542,7 +2996,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 176,
@@ -2560,7 +3014,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2058,
@@ -2570,15 +3024,15 @@ export const cbbTeams: Team[] = [
     code: "OSU",
     color: "#ce1141",
     secondaryColor: "#505056",
-    logo: OhioStLogo,
-    logoLight: OhioStLogoLight,
+    logo: OhioStateLogo,
+    logoLight: OhioStateLogoLight,
     location: "Columbus, OH",
     city: "Columbus",
     established: 1870,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2055,
@@ -2596,7 +3050,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1924,
@@ -2613,7 +3067,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgiaLogoLight,
   },
   {
     id: 2065,
@@ -2631,7 +3086,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2144,
@@ -2641,15 +3096,15 @@ export const cbbTeams: Team[] = [
     code: "TA&M",
     color: "#500000",
     secondaryColor: "#ffffff",
-    logo: TexasAMLogo,
-    logoLight: TexasAMLogoLight,
+    logo: TexasAAndMLogo,
+    logoLight: TexasAAndMLogoLight,
     location: "College Station, TX",
     city: "College Station",
     established: 1876,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2145,
@@ -2660,14 +3115,15 @@ export const cbbTeams: Team[] = [
     code: "AMCC",
     color: "#0067c5",
     secondaryColor: "#007f3e",
-    logo: TexasAMCCLogo,
+    logo: TexasAAndMCorpusChristiLogo,
     location: "Corpus Christi, TX",
     city: "Corpus Christi",
     established: 1947,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TexasAAndMCorpusChristiLogoLight,
   },
   {
     id: 1909,
@@ -2684,7 +3140,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FloridaLogoLight,
   },
   {
     id: 2181,
@@ -2702,7 +3159,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1981,
@@ -2721,7 +3178,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1994,
@@ -2738,7 +3195,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MichiganLogoLight,
   },
   {
     id: 1870,
@@ -2755,7 +3213,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ColoradoStateLogoLight,
   },
   {
     id: 2059,
@@ -2773,7 +3232,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1825,
@@ -2791,7 +3250,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1892,
@@ -2801,14 +3260,15 @@ export const cbbTeams: Team[] = [
     code: "ECU",
     color: "#4b1869",
     secondaryColor: "#f0907b",
-    logo: ECULogo,
+    logo: EastCarolinaLogo,
     location: "Greenville, NC",
     city: "Greenville",
     established: 1907,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EastCarolinaLogoLight,
   },
   {
     id: 194,
@@ -2825,7 +3285,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NCStateLogoLight,
   },
   {
     id: 2173,
@@ -2836,15 +3297,15 @@ export const cbbTeams: Team[] = [
     code: "UPST",
     color: "#008545",
     secondaryColor: "#000000",
-    logo: SCUpstateLogo,
-    logoLight: SCUpstateLogo,
+    logo: SouthCarolinaUpstateLogo,
+    logoLight: SouthCarolinaUpstateLogoLight,
     location: "Spartanburg, SC",
     city: "Spartanburg",
     established: 1967,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2172,
@@ -2862,7 +3323,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1993,
@@ -2879,7 +3340,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MiamiLogoLight,
   },
 
   {
@@ -2898,7 +3360,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BethuneCookmanLogoLight,
   },
   {
     id: 1991,
@@ -2909,14 +3372,15 @@ export const cbbTeams: Team[] = [
     code: "UMES",
     color: "#5c2301",
     secondaryColor: "#b5b7ba",
-    logo: MarylandEasternShoreLogo,
+    logo: MdEastShoreLogo,
     location: "Princess Anne, MD",
     city: "Princess Anne",
     established: 1886,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MdEastShoreLogoLight,
   },
   {
     id: 3248,
@@ -2927,14 +3391,15 @@ export const cbbTeams: Team[] = [
     code: "FISH",
     color: "#0C2340",
     secondaryColor: "#FFFFFF",
-    logo: FisherLogo,
+    logo: FisherCollegeLogo,
     location: "Boston, MA",
     city: "Boston",
     established: 1903,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FisherCollegeLogoLight,
   },
   {
     id: 2214,
@@ -2951,7 +3416,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WisconsinLogoLight,
   },
   {
     id: 1945,
@@ -2968,7 +3434,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IllinoisStateLogoLight,
   },
   {
     id: 177,
@@ -2986,7 +3453,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 3347,
@@ -3004,7 +3471,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArkansasBaptistLogoLight,
   },
   {
     id: 0,
@@ -3015,14 +3483,15 @@ export const cbbTeams: Team[] = [
     code: "PRMAYA",
     color: "#41A425",
     secondaryColor: "#FFFFFF",
-    logo: PlaceholderLogo,
+    logo: PuertoRicoMayaguezLogo,
     isActive: false,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PuertoRicoMayaguezLogoLight,
   },
   {
     id: 6646,
@@ -3040,7 +3509,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1865,
@@ -3058,7 +3527,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1964,
@@ -3076,7 +3545,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1495,
@@ -3093,7 +3562,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MiamiOHLogoLight,
   },
   {
     id: 2062,
@@ -3111,7 +3581,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2157,
@@ -3128,7 +3598,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TroyLogoLight,
   },
   {
     id: 238,
@@ -3146,7 +3617,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NJITLogoLight,
   },
   {
     id: 2178,
@@ -3163,7 +3635,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UTSALogoLight,
   },
   {
     id: 1938,
@@ -3180,7 +3653,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HoustonLogoLight,
   },
   {
     id: 218,
@@ -3190,14 +3664,15 @@ export const cbbTeams: Team[] = [
     code: "USF",
     color: "#004A36",
     secondaryColor: "#231f20",
-    logo: USFLogo,
+    logo: SouthFloridaLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthFloridaLogoLight,
   },
   {
     id: 1841,
@@ -3215,7 +3690,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1856,
@@ -3233,7 +3708,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CentralConnecticutLogoLight,
   },
   {
     id: 1950,
@@ -3251,7 +3727,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 200,
@@ -3269,7 +3745,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthDakotaStateLogoLight,
   },
   {
     id: 1985,
@@ -3286,7 +3763,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MarylandLogoLight,
   },
   {
     id: 1845,
@@ -3303,7 +3781,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BuffaloLogoLight,
   },
   {
     id: 1836,
@@ -3321,7 +3800,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1837,
@@ -3333,14 +3812,14 @@ export const cbbTeams: Team[] = [
     color: "#cc0000",
     secondaryColor: "#ffffff",
     logo: BostonUniversityLogo,
-    logoLight: BostonUniversityLogo,
+    logoLight: BostonUniversityLogoLight,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2096,
@@ -3357,7 +3836,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RutgersLogoLight,
   },
   {
     id: 1813,
@@ -3367,14 +3847,15 @@ export const cbbTeams: Team[] = [
     code: "APP",
     color: "#000000",
     secondaryColor: "#ffcd00",
-    logo: AppalachianStateLogo,
+    logo: AppStateLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AppStateLogoLight,
   },
   {
     id: 2029,
@@ -3391,7 +3872,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NavyLogoLight,
   },
   {
     id: 1884,
@@ -3408,7 +3890,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DelawareLogoLight,
   },
   {
     id: 2189,
@@ -3426,7 +3909,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 243,
@@ -3437,14 +3920,15 @@ export const cbbTeams: Team[] = [
     code: "SEA",
     color: "#BF2E1A",
     secondaryColor: "#c2c3c0",
-    logo: SeattleLogo,
+    logo: SeattleULogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SeattleULogoLight,
   },
   {
     id: 2092,
@@ -3462,7 +3946,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1804,
@@ -3480,7 +3964,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2049,
@@ -3497,7 +3981,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthernIowaLogoLight,
   },
   {
     id: 209,
@@ -3515,7 +4000,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CalStateNorthridgeLogoLight,
   },
   {
     id: 2090,
@@ -3533,7 +4019,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ReinhardtLogoLight,
   },
   {
     id: 1951,
@@ -3550,7 +4037,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IowaStateLogoLight,
   },
   {
     id: 2118,
@@ -3561,14 +4049,15 @@ export const cbbTeams: Team[] = [
     code: "SEMO",
     color: "#c8102e",
     secondaryColor: "#000000",
-    logo: SoutheastMissouriStateLogo,
+    logo: SEMissouriStateLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SEMissouriStateLogoLight,
   },
   {
     id: 2166,
@@ -3586,7 +4075,7 @@ export const cbbTeams: Team[] = [
     city: "",
     location: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1838,
@@ -3603,7 +4092,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BowlingGreenLogoLight,
   },
   {
     id: 2108,
@@ -3613,14 +4103,15 @@ export const cbbTeams: Team[] = [
     code: "SDSU",
     color: "#c41230",
     secondaryColor: "#000000",
-    logo: SanDiegoStLogo,
+    logo: SanDiegoStateLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SanDiegoStateLogoLight,
   },
   {
     id: 1815,
@@ -3637,7 +4128,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArizonaLogoLight,
   },
   {
     id: 2041,
@@ -3654,7 +4146,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthDakotaLogoLight,
   },
   {
     id: 2043,
@@ -3671,7 +4164,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthFloridaLogoLight,
   },
   {
     id: 1912,
@@ -3682,14 +4176,15 @@ export const cbbTeams: Team[] = [
     code: "FGCU",
     color: "#00885a",
     secondaryColor: "#076c3b",
-    logo: FGCULogo,
+    logo: FloridaGulfCoastLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FloridaGulfCoastLogoLight,
   },
   {
     id: 2423,
@@ -3700,14 +4195,15 @@ export const cbbTeams: Team[] = [
     code: "UFTL",
     color: "#8e183c",
     secondaryColor: "#ffc82b",
-    logo: FtLauderdaleLogo,
+    logo: FortLauderdaleLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FortLauderdaleLogoLight,
   },
   {
     id: 3351,
@@ -3718,15 +4214,15 @@ export const cbbTeams: Team[] = [
     code: "MHAM",
     color: "#a4000c",
     secondaryColor: "#f0f0f0",
-    logo: MiamiHamiltonLogo,
-    logoLight: MiamiHamiltonLogoLight,
+    logo: MiamiOHHamiltonLogo,
+    logoLight: MiamiOHHamiltonLogoLight,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2507,
@@ -3744,7 +4240,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StMarysMDLogoLight,
   },
   {
     id: 237,
@@ -3761,7 +4258,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MarshallLogoLight,
   },
   {
     id: 196,
@@ -3771,14 +4269,15 @@ export const cbbTeams: Team[] = [
     code: "NORF",
     color: "#0c8968",
     secondaryColor: "#fdb813",
-    logo: NorfolkStLogo,
+    logo: NorfolkStateLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorfolkStateLogoLight,
   },
   {
     id: 2159,
@@ -3796,7 +4295,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1850,
@@ -3814,7 +4313,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2163,
@@ -3832,7 +4331,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UCRiversideLogoLight,
   },
   {
     id: 2164,
@@ -3850,7 +4350,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UCSantaBarbaraLogoLight,
   },
   {
     id: 2111,
@@ -3868,7 +4369,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SantaClaraLogoLight,
   },
   {
     id: 2363,
@@ -3886,7 +4388,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UCSanDiegoLogoLight,
   },
   {
     id: 2161,
@@ -3904,7 +4407,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1828,
@@ -3921,7 +4424,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BethesdaLogoLight,
   },
   {
     id: 2115,
@@ -3938,7 +4442,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthAlabamaLogoLight,
   },
   {
     id: 188,
@@ -3957,7 +4462,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2037,
@@ -3974,7 +4479,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NichollsLogoLight,
   },
   {
     id: 247,
@@ -3984,14 +4490,15 @@ export const cbbTeams: Team[] = [
     code: "TXST",
     color: "#4e1719",
     secondaryColor: "#b4975a",
-    logo: TexasStLogo,
+    logo: TexasStateLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TexasStateLogoLight,
   },
   {
     id: 1501,
@@ -4008,7 +4515,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgiaSouthernLogoLight,
   },
   {
     id: 2018,
@@ -4025,7 +4533,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MorganStateLogoLight,
   },
   {
     id: 2057,
@@ -4042,7 +4551,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OhioLogoLight,
   },
   {
     id: 1954,
@@ -4052,14 +4562,15 @@ export const cbbTeams: Team[] = [
     code: "JMU",
     color: "#450084",
     secondaryColor: "#b5a068",
-    logo: JamesMadisonLogo,
+    logo: JMULogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: JMULogoLight,
   },
   {
     id: 1999,
@@ -4077,7 +4588,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MiddleTennesseeLogoLight,
   },
   {
     id: 1822,
@@ -4095,7 +4607,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1494,
@@ -4112,7 +4624,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MercerLogoLight,
   },
   {
     id: 1901,
@@ -4129,7 +4642,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ElonLogoLight,
   },
   {
     id: 1960,
@@ -4139,15 +4653,15 @@ export const cbbTeams: Team[] = [
     code: "KSU",
     color: "#3c0969",
     secondaryColor: "#e2e3e4",
-    logo: KansasStLogo,
-    logoLight: KansasStLogoLight,
+    logo: KansasStateLogo,
+    logoLight: KansasStateLogoLight,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1498,
@@ -4164,7 +4678,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthDakotaLogoLight,
   },
   {
     id: 212,
@@ -4181,7 +4696,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CoastalCarolinaLogoLight,
   },
   {
     id: 1820,
@@ -4198,7 +4714,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArmyLogoLight,
   },
   {
     id: 7566,
@@ -4208,14 +4725,15 @@ export const cbbTeams: Team[] = [
     code: "BFC",
     color: "#B4131D",
     secondaryColor: "#FCD13B",
-    logo: PlaceholderLogo,
+    logo: BloomfieldLogo,
     isActive: false,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BloomfieldLogoLight,
   },
   {
     id: 219,
@@ -4232,7 +4750,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthernMissLogoLight,
   },
   {
     id: 1972,
@@ -4249,7 +4768,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LibertyLogoLight,
   },
   {
     id: 2158,
@@ -4266,7 +4786,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TulaneLogoLight,
   },
   {
     id: 2168,
@@ -4276,14 +4797,15 @@ export const cbbTeams: Team[] = [
     code: "MASS",
     color: "#971B2F",
     secondaryColor: "#572932",
-    logo: UmassLogo,
+    logo: UMassLogo,
     location: "Amherst, MA",
     city: "Amherst",
     established: 1863,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UMassLogoLight,
   },
   {
     id: 2112,
@@ -4301,7 +4823,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SetonHallLogoLight,
   },
   {
     id: 1906,
@@ -4319,7 +4842,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FairfieldLogoLight,
   },
   {
     id: 1949,
@@ -4337,7 +4861,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IonaLogoLight,
   },
   {
     id: 240,
@@ -4355,7 +4880,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PresbyterianLogoLight,
   },
   {
     id: 5737,
@@ -4366,14 +4892,15 @@ export const cbbTeams: Team[] = [
     code: "CTON",
     color: "#010101",
     secondaryColor: "#EED484",
-    logo: ClintonLogo,
+    logo: ClintonCollegeLogo,
     isActive: true,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ClintonCollegeLogoLight,
   },
   {
     id: 1505,
@@ -4391,7 +4918,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KansasCityLogoLight,
   },
   {
     id: 2169,
@@ -4409,7 +4937,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UMassLowellLogoLight,
   },
   {
     id: 3245,
@@ -4427,7 +4956,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EmersonLogoLight,
   },
   {
     id: 2103,
@@ -4445,7 +4975,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SaintJosephsLogoLight,
   },
   {
     id: 1932,
@@ -4463,7 +4994,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HaskellLogoLight,
   },
   {
     id: 2131,
@@ -4481,7 +5013,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SaintPetersLogoLight,
   },
   {
     id: 5730,
@@ -4499,7 +5032,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CentenaryNJLogoLight,
   },
   {
     id: 2128,
@@ -4517,7 +5051,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SaintLouisLogoLight,
   },
   {
     id: 2162,
@@ -4535,7 +5070,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UCIrvineLogoLight,
   },
   {
     id: 1968,
@@ -4553,7 +5089,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LaSalleLogoLight,
   },
   {
     id: 2167,
@@ -4571,7 +5108,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UMBCLogoLight,
   },
   {
     id: 1975,
@@ -4588,7 +5126,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LouisianaLogoLight,
   },
   {
     id: 2098,
@@ -4605,7 +5144,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SELouisianaLogoLight,
   },
   {
     id: 1817,
@@ -4622,7 +5162,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArkansasStateLogoLight,
   },
   {
     id: 232,
@@ -4639,7 +5180,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GramblingLogoLight,
   },
   {
     id: 2005,
@@ -4650,14 +5192,15 @@ export const cbbTeams: Team[] = [
     code: "MSST",
     color: "#5d1725",
     secondaryColor: "#c1c6c8",
-    logo: MissStLogo,
+    logo: MississippiStateLogo,
     location: "Starkville, MS",
     city: "Starkville",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MississippiStateLogoLight,
   },
   {
     id: 192,
@@ -4674,7 +5217,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MemphisLogoLight,
   },
   {
     id: 2116,
@@ -4692,7 +5236,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1925,
@@ -4709,7 +5253,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgiaStateLogoLight,
   },
   {
     id: 7578,
@@ -4728,7 +5273,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2099,
@@ -4745,7 +5290,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SMULogoLight,
   },
   {
     id: 2133,
@@ -4762,7 +5308,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StanfordLogoLight,
   },
   {
     id: 1491,
@@ -4780,7 +5327,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2146,
@@ -4797,7 +5344,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TexasTechLogoLight,
   },
   {
     id: 2024,
@@ -4814,7 +5362,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MurrayStateLogoLight,
   },
   {
     id: 2030,
@@ -4825,14 +5374,15 @@ export const cbbTeams: Team[] = [
     code: "OMA",
     color: "#e3193e",
     secondaryColor: "#474648",
-    logo: OmahaLogo,
+    logo: NebraskaOLogo,
     location: "Omaha, NE",
     city: "Omaha",
     established: 1908,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NebraskaOLogoLight,
   },
   {
     id: 203,
@@ -4850,7 +5400,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 236,
@@ -4860,14 +5410,15 @@ export const cbbTeams: Team[] = [
     code: "ULM",
     color: "#231F20",
     secondaryColor: "#b18445",
-    logo: ULMLogo,
+    logo: ULMonroeLogo,
     location: "Monroe, LA",
     city: "Monroe",
     established: 1931,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ULMonroeLogoLight,
   },
   {
     id: 2137,
@@ -4885,7 +5436,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1840,
@@ -4895,14 +5446,15 @@ export const cbbTeams: Team[] = [
     code: "BRE",
     color: "#003c78",
     secondaryColor: "#0023b3",
-    logo: BrevardCollegeLogo,
+    logo: BrevardLogo,
     isActive: false,
     isAllStar: false,
     city: "",
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BrevardLogoLight,
   },
   {
     id: 6210,
@@ -4919,7 +5471,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DakotaWesleyanLogoLight,
   },
   {
     id: 2210,
@@ -4936,7 +5489,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WilliamPeaceLogoLight,
   },
   {
     id: 1977,
@@ -4953,7 +5507,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LouisvilleLogoLight,
   },
   {
     id: 2034,
@@ -4970,7 +5525,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NewMexicoLogoLight,
   },
   {
     id: 1979,
@@ -4987,7 +5543,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MaineLogoLight,
   },
   {
     id: 2195,
@@ -5006,7 +5563,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1942,
@@ -5023,7 +5580,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IdahoLogoLight,
   },
   {
     id: 2066,
@@ -5040,7 +5598,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OregonStateLogoLight,
   },
   {
     id: 3312,
@@ -5051,14 +5610,15 @@ export const cbbTeams: Team[] = [
     code: "RGIS",
     color: "#B6121D",
     secondaryColor: "#231F20",
-    logo: RegisLogo,
+    logo: RegisCollegeLogo,
     location: "Weston, MA",
     city: "Weston",
     established: 1927,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RegisCollegeLogoLight,
   },
   {
     id: 2150,
@@ -5076,7 +5636,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ToccoaFallsLogoLight,
   },
   {
     id: 1835,
@@ -5093,7 +5654,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BoiseStateLogoLight,
   },
   {
     id: 2193,
@@ -5111,7 +5673,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 235,
@@ -5128,7 +5690,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KentStateLogoLight,
   },
   {
     id: 1967,
@@ -5146,7 +5709,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1926,
@@ -5164,7 +5727,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 180,
@@ -5182,7 +5745,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2106,
@@ -5199,7 +5762,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SamfordLogoLight,
   },
   {
     id: 185,
@@ -5216,7 +5780,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FurmanLogoLight,
   },
   {
     id: 1834,
@@ -5233,7 +5798,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BobJonesLogoLight,
   },
   {
     id: 1872,
@@ -5251,7 +5817,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ColumbiaInternationalLogoLight,
   },
   {
     id: 244,
@@ -5268,7 +5835,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthernUtahLogoLight,
   },
   {
     id: 226,
@@ -5286,7 +5854,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CharlestonSouthernLogoLight,
   },
   {
     id: 1861,
@@ -5304,7 +5873,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CharlestonLogoLight,
   },
   {
     id: 1490,
@@ -5322,7 +5892,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CentralArkansasLogoLight,
   },
   {
     id: 2446,
@@ -5340,7 +5911,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LaSierraLogoLight,
   },
   {
     id: 6220,
@@ -5351,14 +5923,15 @@ export const cbbTeams: Team[] = [
     code: "KNG",
     color: "#1A428A",
     secondaryColor: "#CF102D",
-    logo: KingTornadoLogo,
+    logo: KingTNLogo,
     location: "Bristol, TN",
     city: "Bristol",
     established: 1867,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KingTNLogoLight,
   },
   {
     id: 2200,
@@ -5368,14 +5941,15 @@ export const cbbTeams: Team[] = [
     code: "WIU",
     color: "#4e1e8a",
     secondaryColor: "#ffc90a",
-    logo: WIllinoisLogo,
+    logo: WesternIllinoisLogo,
     location: "Macomb, IL",
     city: "Macomb",
     established: 1899,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WesternIllinoisLogoLight,
   },
   {
     id: 1969,
@@ -5392,7 +5966,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LafayetteLogoLight,
   },
   {
     id: 205,
@@ -5402,14 +5977,15 @@ export const cbbTeams: Team[] = [
     code: "WICH",
     color: "#0d0a03",
     secondaryColor: "#ffc41e",
-    logo: WichitaStLogo,
+    logo: WichitaStateLogo,
     location: "Wichita, KS",
     city: "Wichita",
     established: 1895,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WichitaStateLogoLight,
   },
   {
     id: 1963,
@@ -5427,7 +6003,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KennesawStateLogoLight,
   },
   {
     id: 1948,
@@ -5444,7 +6021,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IndianaStateLogoLight,
   },
   {
     id: 2191,
@@ -5461,7 +6039,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WagnerLogoLight,
   },
   {
     id: 2047,
@@ -5472,14 +6051,15 @@ export const cbbTeams: Team[] = [
     code: "UNCO",
     color: "#13558D",
     secondaryColor: "#ffc533",
-    logo: NorhternColoradoLogo,
+    logo: NorthernColoradoLogo,
     location: "Greeley, CO",
     city: "Greeley",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthernColoradoLogoLight,
   },
   {
     id: 1807,
@@ -5489,14 +6069,15 @@ export const cbbTeams: Team[] = [
     code: "ALST",
     color: "#e9a900",
     secondaryColor: "#0a0a0a",
-    logo: AlabamaStLogo,
+    logo: AlabamaStateLogo,
     location: "Montgomery, AL",
     city: "Montgomery",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AlabamaStateLogoLight,
   },
   {
     id: 1946,
@@ -5513,7 +6094,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IncarnateWordLogoLight,
   },
   {
     id: 1936,
@@ -5530,7 +6112,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HolyCrossLogoLight,
   },
   {
     id: 242,
@@ -5547,7 +6130,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RobertMorrisLogoLight,
   },
   {
     id: 2064,
@@ -5566,7 +6150,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1922,
@@ -5583,7 +6167,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GardnerWebbLogoLight,
   },
   {
     id: 2199,
@@ -5593,14 +6178,15 @@ export const cbbTeams: Team[] = [
     code: "WCU",
     color: "#492F91",
     secondaryColor: "#bf9e70",
-    logo: WCarolinaLogo,
+    logo: WesternCarolinaLogo,
     location: "Cullowhee, NC",
     city: "Cullowhee",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WesternCarolinaLogoLight,
   },
   {
     id: 2196,
@@ -5617,7 +6203,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WeberStateLogoLight,
   },
   {
     id: 1809,
@@ -5627,14 +6214,15 @@ export const cbbTeams: Team[] = [
     code: "ALCN",
     color: "#4b0058",
     secondaryColor: "#46166a",
-    logo: AlcornStLogo,
+    logo: AlcornStateLogo,
     location: "Lorman, MS",
     city: "Lorman",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AlcornStateLogoLight,
   },
   {
     id: 1970,
@@ -5652,7 +6240,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LamarLogoLight,
   },
   {
     id: 6714,
@@ -5663,14 +6252,15 @@ export const cbbTeams: Team[] = [
     code: "TEXSA",
     color: "#000000",
     secondaryColor: "#ffffffff",
-    logo: TexasAMSALogo,
+    logo: TexasAAndMSALogo,
     location: "San Antonio, TX",
     city: "San Antonio",
     isActive: true,
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TexasAAndMSALogoLight,
   },
   {
     id: 215,
@@ -5687,7 +6277,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HowardLogoLight,
   },
   {
     id: 2134,
@@ -5705,7 +6296,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StephenFAustinLogoLight,
   },
   {
     id: 2121,
@@ -5722,7 +6314,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthernLogoLight,
   },
   {
     id: 2373,
@@ -5739,7 +6332,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BowieStateLogoLight,
   },
   {
     id: 222,
@@ -5757,7 +6351,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UtahValleyLogoLight,
   },
   {
     id: 1898,
@@ -5774,7 +6369,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EcclesiaLogoLight,
   },
   {
     id: 246,
@@ -5791,7 +6387,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TexasSouthernLogoLight,
   },
   {
     id: 1990,
@@ -5808,7 +6405,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: McNeeseLogoLight,
   },
   {
     id: 1492,
@@ -5827,7 +6425,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 3299,
@@ -5844,7 +6442,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthwoodLogoLight,
   },
   {
     id: 3291,
@@ -5862,7 +6461,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MorrisCollegeLogoLight,
   },
   {
     id: 3274,
@@ -5879,7 +6479,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LeMoyneLogoLight,
   },
   {
     id: 1818,
@@ -5897,7 +6498,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArkansasPineBluffLogoLight,
   },
   {
     id: 6664,
@@ -5914,7 +6516,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NobelLogoLight,
   },
   {
     id: 2218,
@@ -5932,7 +6535,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: YoungstownStateLogoLight,
   },
   {
     id: 216,
@@ -5950,7 +6554,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LongwoodLogoLight,
   },
   {
     id: 2008,
@@ -5968,7 +6573,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MissouriStateLogoLight,
   },
   {
     id: 2215,
@@ -5985,7 +6591,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WoffordLogoLight,
   },
   {
     id: 1803,
@@ -6002,7 +6609,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AbileneChristianLogoLight,
   },
   {
     id: 3003,
@@ -6021,7 +6629,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 6645,
@@ -6039,7 +6647,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IUColumbusLogoLight,
   },
   {
     id: 6712,
@@ -6057,7 +6666,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IUIndianapolisLogoLight,
   },
   {
     id: 2170,
@@ -6075,7 +6685,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UNCAshevilleLogoLight,
   },
   {
     id: 2188,
@@ -6092,7 +6703,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VillanovaLogoLight,
   },
   {
     id: 2120,
@@ -6109,7 +6721,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SouthernIllinoisLogoLight,
   },
   {
     id: 2152,
@@ -6126,7 +6739,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TowsonLogoLight,
   },
   {
     id: 6228,
@@ -6143,7 +6757,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NotreDameMDLogoLight,
   },
   {
     id: 1844,
@@ -6160,7 +6775,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BucknellLogoLight,
   },
   {
     id: 2209,
@@ -6171,14 +6787,15 @@ export const cbbTeams: Team[] = [
     code: "W&M",
     color: "#103217",
     secondaryColor: "#f6b220",
-    logo: WilliamMaryLogo,
+    logo: WilliamAndMaryLogo,
     location: "Williamsburg, VA",
     city: "Williamsburg",
     established: 1693,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WilliamAndMaryLogoLight,
   },
   {
     id: 2087,
@@ -6195,7 +6812,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RadfordLogoLight,
   },
   {
     id: 220,
@@ -6212,7 +6830,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StonyBrookLogoLight,
   },
   {
     id: 208,
@@ -6230,7 +6849,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BrownLogoLight,
   },
   {
     id: 2176,
@@ -6247,7 +6867,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UTMartinLogoLight,
   },
   {
     id: 248,
@@ -6265,7 +6886,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UTRioGrandeValleyLogoLight,
   },
   {
     id: 2174,
@@ -6283,7 +6905,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UTArlingtonLogoLight,
   },
   {
     id: 7562,
@@ -6301,7 +6924,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AlaskaAnchorageLogoLight,
   },
   {
     id: 1965,
@@ -6319,7 +6943,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: KentuckyChristianLogoLight,
   },
   {
     id: 2025,
@@ -6330,14 +6955,15 @@ export const cbbTeams: Team[] = [
     code: "NCAT",
     color: "#0505aa",
     secondaryColor: "#004684",
-    logo: NorthCarolinaATLogo,
+    logo: NorthCarolinaAAndTLogo,
     location: "Greensboro, NC",
     city: "Greensboro",
     established: 1891,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthCarolinaAAndTLogoLight,
   },
   {
     id: 179,
@@ -6354,7 +6980,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CampbellLogoLight,
   },
   {
     id: 1826,
@@ -6372,7 +6999,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BelmontLogoLight,
   },
   {
     id: 1493,
@@ -6389,7 +7017,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: JaxStateLogoLight,
   },
   {
     id: 2054,
@@ -6407,7 +7036,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthwesternStateLogoLight,
   },
   {
     id: 2142,
@@ -6425,7 +7055,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TennesseeStateLogoLight,
   },
   {
     id: 2013,
@@ -6442,7 +7073,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MontanaStateLogoLight,
   },
   {
     id: 2042,
@@ -6459,7 +7091,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthDakotaStateLogoLight,
   },
   {
     id: 2359,
@@ -6476,7 +7109,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ChattanoogaLogoLight,
   },
   {
     id: 224,
@@ -6487,14 +7121,15 @@ export const cbbTeams: Team[] = [
     code: "CSUF",
     color: "#003767",
     secondaryColor: "#ff8300",
-    logo: CSFullertonLogo,
+    logo: CalStateFullertonLogo,
     location: "Fullerton, CA",
     city: "Fullerton",
     established: 1957,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CalStateFullertonLogoLight,
   },
   {
     id: 225,
@@ -6505,14 +7140,15 @@ export const cbbTeams: Team[] = [
     code: "CSUB",
     color: "#003594",
     secondaryColor: "#FFC72C",
-    logo: CSUBakersfieldLogo,
+    logo: CalStateBakersfieldLogo,
     location: "Bakersfield, CA",
     city: "Bakersfield",
     established: 1965,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CalStateBakersfieldLogoLight,
   },
   {
     id: 2091,
@@ -6529,7 +7165,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RhodeIslandLogoLight,
   },
   {
     id: 3313,
@@ -6546,7 +7183,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RhodesLogoLight,
   },
   {
     id: 1852,
@@ -6563,7 +7201,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CampbellsvilleLogoLight,
   },
   {
     id: 6654,
@@ -6581,7 +7220,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MinnesotaCrookstonLogoLight,
   },
   {
     id: 2076,
@@ -6599,7 +7239,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PiedmontLogoLight,
   },
   {
     id: 1916,
@@ -6617,7 +7258,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FordhamLogoLight,
   },
   {
     id: 257,
@@ -6635,7 +7277,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PurdueFortWayneLogoLight,
   },
   {
     id: 2101,
@@ -6653,7 +7296,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SacramentoStateLogoLight,
   },
   {
     id: 1939,
@@ -6671,7 +7315,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HoustonChristianLogoLight,
   },
   {
     id: 1866,
@@ -6690,7 +7335,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 6663,
@@ -6708,7 +7353,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NewHampshireLogoLight,
   },
   {
     id: 239,
@@ -6726,7 +7372,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NewOrleansLogoLight,
   },
   {
     id: 206,
@@ -6744,7 +7391,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WrightStateLogoLight,
   },
   {
     id: 3352,
@@ -6762,7 +7410,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OhioWesleyanLogoLight,
   },
   {
     id: 229,
@@ -6780,7 +7429,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EastTennesseeStateLogoLight,
   },
   {
     id: 2038,
@@ -6798,7 +7448,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthAlabamaLogoLight,
   },
   {
     id: 2379,
@@ -6816,7 +7467,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UtahTechLogoLight,
   },
   {
     id: 2016,
@@ -6834,7 +7486,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MoreheadStateLogoLight,
   },
   {
     id: 5801,
@@ -6845,14 +7498,15 @@ export const cbbTeams: Team[] = [
     code: "MISE",
     color: "#FDDF12",
     secondaryColor: "#1A68BB",
-    logo: MisericordiaLogo,
+    logo: MisericordiaEspn111902Logo,
     location: "Dallas, PA",
     city: "Dallas",
     established: 1924,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MisericordiaEspn111902LogoLight,
   },
   {
     id: 266,
@@ -6870,7 +7524,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthGreenvilleLogoLight,
   },
   {
     id: 2011,
@@ -6888,7 +7543,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MonmouthLogoLight,
   },
   {
     id: 2004,
@@ -6899,14 +7555,15 @@ export const cbbTeams: Team[] = [
     code: "MVSU",
     color: "#005328",
     secondaryColor: "#cf2d34",
-    logo: MississippiValleyStateLogo,
+    logo: MississippiValleyStLogo,
     location: "Itta Bena, MS",
     city: "Itta Bena",
     established: 1950,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MississippiValleyStLogoLight,
   },
   {
     id: 1819,
@@ -6924,7 +7581,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ArlingtonBaptistLogoLight,
   },
   {
     id: 6669,
@@ -6935,14 +7593,15 @@ export const cbbTeams: Team[] = [
     code: "PEN",
     color: "#1D417D",
     secondaryColor: "#ffffff",
-    logo: PennStateYorkLogo,
+    logo: PennStateShenangoLogo,
     location: "Sharon, PA",
     city: "Sharon",
     established: 1964,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PennStateShenangoLogoLight,
   },
   {
     id: 7599,
@@ -6960,7 +7619,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: RiponLogoLight,
   },
   {
     id: 274,
@@ -6978,7 +7638,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WesternOregonLogoLight,
   },
   {
     id: 1992,
@@ -6996,7 +7657,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MerrimackLogoLight,
   },
   {
     id: 184,
@@ -7015,7 +7677,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2125,
@@ -7034,7 +7696,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1502,
@@ -7045,14 +7707,15 @@ export const cbbTeams: Team[] = [
     code: "UIC",
     color: "#001e62",
     secondaryColor: "#d50032",
-    logo: UICLOGO,
+    logo: UICLogo,
     location: "Chicago, IL",
     city: "Chicago",
     established: 1946,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UICLogoLight,
   },
   {
     id: 1839,
@@ -7070,7 +7733,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BradleyLogoLight,
   },
   {
     id: 1982,
@@ -7088,7 +7752,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MaristLogoLight,
   },
   {
     id: 186,
@@ -7106,7 +7771,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgetownLogoLight,
   },
   {
     id: 2102,
@@ -7124,7 +7790,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SacredHeartLogoLight,
   },
   {
     id: 178,
@@ -7142,7 +7809,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ButlerLogoLight,
   },
   {
     id: 183,
@@ -7160,7 +7828,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DavidsonLogoLight,
   },
   {
     id: 1885,
@@ -7178,7 +7847,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DelawareStateLogoLight,
   },
   {
     id: 2212,
@@ -7196,7 +7866,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WinthropLogoLight,
   },
   {
     id: 5866,
@@ -7214,7 +7885,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StonehillLogoLight,
   },
   {
     id: 2012,
@@ -7233,7 +7905,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1889,
@@ -7251,7 +7923,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DrexelLogoLight,
   },
   {
     id: 228,
@@ -7269,7 +7942,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DrakeLogoLight,
   },
   {
     id: 2135,
@@ -7287,7 +7961,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StetsonLogoLight,
   },
   {
     id: 1811,
@@ -7305,7 +7980,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: AmericanUniversityLogoLight,
   },
   {
     id: 1934,
@@ -7324,7 +8000,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2114,
@@ -7335,15 +8011,15 @@ export const cbbTeams: Team[] = [
     code: "SIUE",
     color: "#eb1c23",
     secondaryColor: "#080808",
-    logo: SIUELogo,
-    logoLight: SIUELogoLight,
+    logo: SIUEdwardsvilleLogo,
+    logoLight: SIUEdwardsvilleLogoLight,
     location: "Edwardsville, IL",
     city: "Edwardsville",
     established: 1957,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 193,
@@ -7361,7 +8037,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UNCGreensboroLogoLight,
   },
   {
     id: 2080,
@@ -7379,7 +8056,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PortlandLogoLight,
   },
   {
     id: 2082,
@@ -7397,7 +8075,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PortlandStateLogoLight,
   },
   {
     id: 3325,
@@ -7415,7 +8094,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: StThomasMinnesotaLogoLight,
   },
   {
     id: 197,
@@ -7433,7 +8113,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ProvidenceLogoLight,
   },
   {
     id: 3371,
@@ -7451,7 +8132,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PennStateYorkLogoLight,
   },
   {
     id: 2056,
@@ -7469,7 +8151,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: OaklandLogoLight,
   },
   {
     id: 1886,
@@ -7488,7 +8171,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2184,
@@ -7505,7 +8188,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ValparaisoLogoLight,
   },
   {
     id: 2083,
@@ -7516,14 +8200,15 @@ export const cbbTeams: Team[] = [
     code: "PV",
     color: "#4d0960",
     secondaryColor: "#000000",
-    logo: PrairieViewAMLogo,
+    logo: PrairieViewLogo,
     location: "Prairie View, TX",
     city: "Prairie View",
     established: 1876,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PrairieViewLogoLight,
   },
   {
     id: 1882,
@@ -7534,14 +8219,15 @@ export const cbbTeams: Team[] = [
     code: "DALL",
     color: "#001A4B",
     secondaryColor: "#FFFFFF",
-    logo: DallasUniversityLogo,
+    logo: DallasLogo,
     location: "Irving, TX",
     city: "Irving",
     established: 1956,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DallasLogoLight,
   },
   {
     id: 3239,
@@ -7560,13 +8246,13 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 299,
     espnId: 111756,
     name: "Indiana Wesleyan",
-    logo: "https://media.api-sports.io/american-football/teams/299.png",
+    logo: IndianaWesleyanLogo,
     isActive: true,
     isAllStar: false,
     code: "",
@@ -7577,7 +8263,8 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: IndianaWesleyanLogoLight,
   },
   {
     id: 199,
@@ -7594,7 +8281,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SanDiegoLogoLight,
   },
 
   {
@@ -7613,7 +8301,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthCarolinaCentralLogoLight,
   },
   {
     id: 1955,
@@ -7624,14 +8313,15 @@ export const cbbTeams: Team[] = [
     code: "JOHNS",
     color: "#880023",
     secondaryColor: "#c2c3c0",
-    logo: JohnsonWalesRILogo,
+    logo: JohnsonAndWalesRILogo,
     location: "Providence, RI",
     city: "Providence",
     established: 1914,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: JohnsonAndWalesRILogoLight,
   },
   {
     id: 6661,
@@ -7642,14 +8332,15 @@ export const cbbTeams: Team[] = [
     code: "MITC",
     color: "#FFFFFE",
     secondaryColor: "#1A1919",
-    logo: MitchellLogo,
+    logo: MitchellCollegeLogo,
     location: "New London, CT",
     city: "New London",
     established: 1938,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MitchellCollegeLogoLight,
   },
   {
     id: 6678,
@@ -7667,7 +8358,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SUNYOneontaLogoLight,
   },
   {
     id: 5867,
@@ -7685,7 +8377,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SUNYMaritimeLogoLight,
   },
   {
     id: 210,
@@ -7703,7 +8396,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CaliforniaBaptistLogoLight,
   },
   {
     id: 1497,
@@ -7722,7 +8416,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1952,
@@ -7740,7 +8434,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: JacksonStateLogoLight,
   },
   {
     id: 3332,
@@ -7758,7 +8453,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: VirginiaLynchburgLogoLight,
   },
   {
     id: 1973,
@@ -7776,7 +8472,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LindenwoodLogoLight,
   },
   {
     id: 2430,
@@ -7794,7 +8491,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: QueensLogoLight,
   },
   {
     id: 5787,
@@ -7812,14 +8510,15 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LynchburgLogoLight,
   },
   {
     id: 317,
     espnId: null,
     name: "Barton College",
     fullName: "Barton College",
-    logo: "",
+    logo: PlaceholderLogo,
     location: "Wilson, NC",
     city: "Wilson",
     established: 1902,
@@ -7829,7 +8528,8 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PlaceholderLogo,
   },
   {
     id: 187,
@@ -7846,7 +8546,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HarvardLogoLight,
   },
   {
     id: 2084,
@@ -7863,7 +8564,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PrincetonLogoLight,
   },
   {
     id: 2072,
@@ -7873,14 +8575,15 @@ export const cbbTeams: Team[] = [
     code: "PENN",
     color: "#082A74",
     secondaryColor: "#a6163d",
-    logo: PennLogo,
+    logo: PennsylvaniaLogo,
     location: "Philadelphia, PA",
     city: "Philadelphia",
     established: 1740,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PennsylvaniaLogoLight,
   },
   {
     id: 227,
@@ -7897,7 +8600,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CornellLogoLight,
   },
   {
     id: 1883,
@@ -7915,7 +8619,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DartmouthLogoLight,
   },
   {
     id: 2217,
@@ -7933,7 +8638,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: YaleLogoLight,
   },
   {
     id: 1907,
@@ -7951,7 +8657,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: FairleighDickinsonLogoLight,
   },
   {
     id: 1971,
@@ -7969,7 +8676,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: LehighLogoLight,
   },
   {
     id: 249,
@@ -7980,22 +8688,22 @@ export const cbbTeams: Team[] = [
     code: "GB",
     color: "#006633",
     secondaryColor: "#ffffff",
-    logo: WisconsinGreenBayLogo,
-    logoLight: WisconsinGreenBayLogoLight,
+    logo: WiscGreenBayLogo,
+    logoLight: WiscGreenBayLogoLight,
     location: "Green Bay, WI",
     city: "Green Bay",
     established: 1965,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2017,
     name: "Morehouse College",
     fullName: "Morehouse College",
-    logo: MorehouseCollegeLogo,
-    logoLight: MorehouseCollegeLogoLight,
+    logo: PlaceholderLogo,
+    logoLight: PlaceholderLogo,
     location: "Atlanta, GA",
     city: "Atlanta",
     established: 1867,
@@ -8006,7 +8714,7 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1871,
@@ -8024,7 +8732,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ColumbiaLogoLight,
   },
   {
     id: 2362,
@@ -8042,7 +8751,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TarletonStateLogoLight,
   },
   {
     id: 241,
@@ -8059,7 +8769,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: QuinnipiacLogoLight,
   },
   {
     id: 3330,
@@ -8077,7 +8788,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TennesseeSouthernLogoLight,
   },
   {
     id: 373,
@@ -8095,7 +8807,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 374,
@@ -8112,7 +8824,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HiramCollegeLogoLight,
   },
   {
     id: 375,
@@ -8129,7 +8842,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DepauwLogoLight,
   },
   {
     id: 213,
@@ -8140,14 +8854,15 @@ export const cbbTeams: Team[] = [
     code: "DEP",
     color: "#2d649c",
     secondaryColor: "#ce1125",
-    logo: DepaulLogo,
+    logo: DePaulLogo,
     location: "Chicago, IL",
     city: "Chicago",
     established: 1898,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DePaulLogoLight,
   },
   {
     id: 1887,
@@ -8158,14 +8873,15 @@ export const cbbTeams: Team[] = [
     code: "DETM",
     color: "#165b9e",
     secondaryColor: "#d31733",
-    logo: DetroitLogo,
+    logo: DetroitMercyLogo,
     location: "Detroit, MI",
     city: "Detroit",
     established: 1877,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: DetroitMercyLogoLight,
   },
 
   {
@@ -8177,14 +8893,15 @@ export const cbbTeams: Team[] = [
     code: "MRCY",
     color: "#003868",
     secondaryColor: "#ABA096",
-    logo: Mercylogo,
+    logo: MercyLogo,
     location: "Dobbs Ferry, NY",
     city: "Dobbs Ferry",
     established: 1950,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MercyLogoLight,
   },
   {
     id: 2050,
@@ -8202,7 +8919,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NorthernKentuckyLogoLight,
   },
 
   {
@@ -8221,7 +8939,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NCWesleyanLogoLight,
   },
   {
     id: 3224,
@@ -8239,7 +8958,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BridgewaterVALogoLight,
   },
   {
     id: 7635,
@@ -8257,7 +8977,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BridgewaterStateLogoLight,
   },
   {
     id: 393,
@@ -8274,7 +8995,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: NicholsLogoLight,
   },
   {
     id: 609,
@@ -8292,7 +9014,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     espnId: null,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CentralWashingtonLogoLight,
   },
   {
     id: 6686,
@@ -8309,7 +9032,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WestGeorgiaLogoLight,
   },
   {
     id: 1827,
@@ -8326,7 +9050,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BethanyWVLogoLight,
   },
   {
     id: 6632,
@@ -8344,7 +9069,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: UAlbanyLogoLight,
   },
   {
     id: 5846,
@@ -8362,7 +9088,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SUNYDelhiLogoLight,
   },
   {
     id: 198,
@@ -8380,7 +9107,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: SamHoustonLogoLight,
   },
   {
     id: 207,
@@ -8399,7 +9127,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 814,
@@ -8409,7 +9137,7 @@ export const cbbTeams: Team[] = [
     code: "MTECH",
     color: "#995339",
     secondaryColor: "#315338",
-    logo: MontanaTechLogo,
+    logo: PlaceholderLogo,
     location: "Butte, MT",
     city: "Butte",
     established: 1900,
@@ -8417,7 +9145,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     espnId: null,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: PlaceholderLogo,
   },
   {
     id: 7564,
@@ -8436,7 +9165,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 2155,
@@ -8445,7 +9174,7 @@ export const cbbTeams: Team[] = [
     fullName: "Trinity College of Jacksonville Eagles",
     shortName: "Trinity Co Jax",
     code: "TCJ",
-    logo: TrinityCoJaxLogo,
+    logo: TrinityCollegeOfJacksonvilleLogo,
     location: "Jacksonville, FL",
     city: "Jacksonville",
     established: 1934,
@@ -8454,7 +9183,8 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: TrinityCollegeOfJacksonvilleLogoLight,
   },
   {
     id: 7806,
@@ -8465,14 +9195,15 @@ export const cbbTeams: Team[] = [
     code: "ETAM",
     color: "#00386C",
     secondaryColor: "#FFC333",
-    logo: ETAMLogo,
+    logo: EastTexasAAndMLogo,
     location: "Commerce, TX",
     city: "Commerce",
     established: 1889,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: EastTexasAAndMLogoLight,
   },
   {
     id: 1927,
@@ -8490,7 +9221,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GonzagaLogoLight,
   },
   {
     id: 1500,
@@ -8508,7 +9240,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GeorgeWashingtonLogoLight,
   },
   {
     id: 2020,
@@ -8519,14 +9252,15 @@ export const cbbTeams: Team[] = [
     code: "MSM",
     color: "#005596",
     secondaryColor: "#ebebeb",
-    logo: MountSaintMarys,
+    logo: MountStMarysLogo,
     location: "Emmitsburg, MD",
     city: "Emmitsburg",
     established: 1808,
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MountStMarysLogoLight,
   },
   {
     id: 182,
@@ -8544,7 +9278,8 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CreightonLogoLight,
   },
   {
     id: 2127,
@@ -8563,7 +9298,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1863,
@@ -8581,7 +9316,8 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ChicagoStateLogoLight,
   },
   {
     id: 3289,
@@ -8599,7 +9335,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MolloyLogoLight,
   },
   {
     id: 1867,
@@ -8617,7 +9354,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ClevelandStateLogoLight,
   },
   {
     id: 1940,
@@ -8635,7 +9373,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: HowardPayneLogoLight,
   },
   {
     id: 6655,
@@ -8653,7 +9392,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: ManorCollegeLogoLight,
   },
   {
     id: 3336,
@@ -8671,7 +9411,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: WarrenWilsonLogoLight,
   },
   {
     id: 7565,
@@ -8682,14 +9423,15 @@ export const cbbTeams: Team[] = [
     code: "BASC",
     color: "#254488",
     secondaryColor: "#ffffff",
-    logo: PlaceholderLogo,
+    logo: BarberScotiaLogo,
     location: "Concord, NC",
     city: "Concord",
     established: 1867,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: BarberScotiaLogoLight,
   },
   {
     id: 0,
@@ -8700,14 +9442,15 @@ export const cbbTeams: Team[] = [
     code: "MATC",
     color: "#002D72",
     secondaryColor: "#C8102E",
-    logo: PlaceholderLogo,
+    logo: MidAtlanticChristianLogo,
     location: "Elizabeth City, NC",
     city: "Elizabeth City",
     established: 1948,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MidAtlanticChristianLogoLight,
   },
   {
     id: 2472,
@@ -8725,7 +9468,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: MercyhurstLogoLight,
   },
   {
     id: 7569,
@@ -8736,14 +9480,15 @@ export const cbbTeams: Team[] = [
     code: "CCNY",
     color: "#0033A0",
     secondaryColor: "#FFFFFF",
-    logo: CCNYLogo,
+    logo: CityCollegeNYLogo,
     location: "New York, NY",
     city: "New York",
     established: 1847,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: CityCollegeNYLogoLight,
   },
   {
     id: 5837,
@@ -8754,15 +9499,15 @@ export const cbbTeams: Team[] = [
     code: "UPG",
     color: "#003594",
     secondaryColor: "#FFB81C",
-    logo: PittGreensburgLogo,
-    logoLight: PittGreensburgLogoLight,
+    logo: PittsburghGreensburgLogo,
+    logoLight: PittsburghGreensburgLogoLight,
     location: "Greensburg, PA",
     city: "Greensburg",
     established: 1963,
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
   },
   {
     id: 1923,
@@ -8780,7 +9525,8 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb"
+    league: "cbb",
+    logoLight: GenevaLogoLight,
   },
 ];
 

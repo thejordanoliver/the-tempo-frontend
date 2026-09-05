@@ -1,6 +1,15 @@
 import { io, type Socket } from "socket.io-client";
 import type { BadgeEarnedSocketPayload } from "@/types/badges";
 
+export type LikeNotificationSocketPayload = {
+  id: string;
+  recipientUserId: number;
+  postId: string;
+  actorUserId: number;
+  actorUsername: string;
+  createdAt: string;
+};
+
 const normalizeSocketBaseUrl = (value?: string) => {
   if (!value) {
     return "";
@@ -16,6 +25,7 @@ const SOCKET_URL =
 
 type NotificationServerEvents = {
   "badge:earned": (payload: BadgeEarnedSocketPayload) => void;
+  "like:new": (payload: LikeNotificationSocketPayload) => void;
   "notifications:ready": (payload: { userId: number }) => void;
 };
 
@@ -42,10 +52,6 @@ export const getNotificationSocket = (
   }
 
   if (notificationSocket && activeToken === token) {
-    if (!notificationSocket.connected) {
-      notificationSocket.connect();
-    }
-
     return notificationSocket;
   }
 
@@ -59,11 +65,15 @@ export const getNotificationSocket = (
     auth: {
       token,
     },
-    transports: ["websocket", "polling"],
-    autoConnect: true,
-    // Keep this connection attempt one-shot. A later authenticated lifecycle
-    // call can explicitly try again without Socket.IO retrying forever.
-    reconnection: false,
+    // Expo Go can reject a direct WebSocket handshake on local networks even
+    // when ordinary HTTP requests work. Start with polling, then upgrade to
+    // WebSocket, and allow Engine.IO to try the next transport on failure.
+    transports: ["polling", "websocket"],
+    tryAllTransports: true,
+    // The root realtime bridge attaches every listener before starting the
+    // connection, so startup events cannot race listener registration.
+    autoConnect: false,
+    reconnection: true,
   });
 
   return notificationSocket;

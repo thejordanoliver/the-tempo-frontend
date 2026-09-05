@@ -1,24 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useEvent } from "expo";
-import { LinearGradient } from "expo-linear-gradient";
-import { useVideoPlayer, VideoView } from "expo-video";
-import React, { useCallback, useMemo } from "react";
-import {
-  Image,
-  ImageStyle,
-  Pressable,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
-
+import AppVideo from "components/AppVideo";
 import { Colors } from "constants/styles";
-import { Highlight } from "types/types";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useCallback } from "react";
+import type { ImageStyle, TextStyle, ViewStyle } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import type { Highlight } from "types/types";
 
 export interface HighlightVideoItemStyles {
   cardWrapper: ViewStyle;
@@ -33,62 +21,36 @@ export interface HighlightVideoItemStyles {
 
 interface HighlightVideoItemProps {
   item: Highlight;
-  isActive: boolean;
+  isPlaying: boolean;
   onPlay: (id: string) => void;
-  hasPlayed: Record<string, boolean>;
-  setHasPlayed: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  onEnd: (id: string) => void;
   styles: HighlightVideoItemStyles;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 const getPlayableUrl = (item: Highlight): string | null =>
-  item?.links?.source?.HLS?.href ||
-  item?.links?.hls ||
-  item?.links?.source?.href ||
-  item?.links?.mp4 ||
-  item?.links?.mobile ||
+  item.links?.source?.HLS?.href ||
+  item.links?.hls ||
+  item.links?.source?.href ||
+  item.links?.mp4 ||
+  item.links?.mobile ||
   null;
-
-const FULLSCREEN_OPTIONS = { enable: true };
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 export const HighlightVideoItem = React.memo(function HighlightVideoItem({
   item,
-  isActive,
+  isPlaying,
   onPlay,
-  hasPlayed,
-  setHasPlayed,
+  onEnd,
   styles,
 }: HighlightVideoItemProps) {
-  const videoSource = useMemo(() => getPlayableUrl(item), [item]);
+  const videoSource = getPlayableUrl(item);
 
-  // Hooks before early return — Rules of Hooks compliant
-  const player = useVideoPlayer(videoSource ?? "", (p) => {
-    p.loop = false;
-  });
-
-  const { isPlaying } = useEvent(player, "playingChange", {
-    isPlaying: player.playing,
-  });
-
-  // Pause when scrolled off screen; never auto-play
-  React.useEffect(() => {
-    if (!videoSource) return;
-    if (!isActive) player.pause();
-  }, [isActive, player, videoSource]);
-
-  const handlePress = useCallback(() => {
+  const handlePlay = useCallback(() => {
     onPlay(item.id);
-    setHasPlayed((prev) => ({ ...prev, [item.id]: true }));
-    player.replay();
-    player.play();
-  }, [item.id, onPlay, player, setHasPlayed]);
+  }, [item.id, onPlay]);
+
+  const handleEnd = useCallback(() => {
+    onEnd(item.id);
+  }, [item.id, onEnd]);
 
   if (!videoSource) {
     return (
@@ -100,37 +62,44 @@ export const HighlightVideoItem = React.memo(function HighlightVideoItem({
 
   return (
     <View style={styles.cardWrapper}>
-      <VideoView
-        style={styles.video}
-        player={player}
-        contentFit="cover"
-        nativeControls
-        fullscreenOptions={FULLSCREEN_OPTIONS}
-        allowsPictureInPicture
-        startsPictureInPictureAutomatically={false}
-      />
-
-      {/* Thumbnail overlay — shown until first play */}
-      {!isPlaying && (
-        <Pressable style={styles.thumbnailWrapper} onPress={handlePress}>
-          <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
-          <View style={styles.playButtonOverlay}>
-            <Ionicons name="play" size={60} color={Colors.white} />
-          </View>
-        </Pressable>
-      )}
-
-      {/* Headline — hidden while playing so it doesn't block native controls */}
-      {!isPlaying && (
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.7)"]}
-          style={styles.headlineContainer}
-          pointerEvents="none"
+      {isPlaying ? (
+        <AppVideo
+          uri={videoSource}
+          style={styles.video}
+          contentFit="contain"
+          autoPlay
+          nativeControls
+          onEnd={handleEnd}
+        />
+      ) : (
+        <Pressable
+          accessibilityHint="Plays this highlight video"
+          accessibilityLabel={item.headline || "Game highlight"}
+          accessibilityRole="button"
+          onPress={handlePlay}
+          style={styles.thumbnailWrapper}
         >
-          <Text style={styles.headline} numberOfLines={2}>
-            {item.headline}
-          </Text>
-        </LinearGradient>
+          <Image
+            accessibilityLabel=""
+            contentFit="cover"
+            recyclingKey={item.id}
+            source={item.thumbnail}
+            style={styles.thumbnail}
+            transition={150}
+          />
+          <View pointerEvents="none" style={styles.playButtonOverlay}>
+            <Ionicons name="play" size={52} color={Colors.white} />
+          </View>
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.78)"]}
+            pointerEvents="none"
+            style={styles.headlineContainer}
+          >
+            <Text style={styles.headline} numberOfLines={2}>
+              {item.headline}
+            </Text>
+          </LinearGradient>
+        </Pressable>
       )}
     </View>
   );

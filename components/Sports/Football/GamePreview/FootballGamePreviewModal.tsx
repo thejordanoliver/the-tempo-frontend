@@ -86,8 +86,8 @@ export default function FootballGamePreviewModal({
       ? getCFBTeam(awayId)
       : getUFLTeam(awayId);
 
-  const homeCode = homeTeam?.code ?? "";
-  const awayCode = awayTeam?.code ?? "";
+  const homeCode = homeTeam?.code ?? game.home.code ?? "";
+  const awayCode = awayTeam?.code ?? game.away.code ?? "";
 
   const homeLogo = isNFL
     ? getNFLTeamLogo(homeId, isDark)

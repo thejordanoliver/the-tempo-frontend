@@ -1,7 +1,13 @@
+import type {
+  MMAChampionship,
+  MMAChampionsResponse,
+  MMADivision,
+} from "@/types/mma/mma";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors, Fonts, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import useMMAChampions from "hooks/MMAHooks/useMMAChampions";
 import {
@@ -12,7 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { MMAChampion, MMADivision } from "types/mma";
 
 const DIVISION_ORDER: MMADivision[] = [
   "Heavyweight",
@@ -23,95 +28,94 @@ const DIVISION_ORDER: MMADivision[] = [
   "Featherweight",
   "Bantamweight",
   "Flyweight",
-  "Women's Featherweight",
   "Women's Bantamweight",
   "Women's Flyweight",
   "Women's Strawweight",
 ];
 
-const formatDivisionLabel = (division: MMADivision | string) =>
-  division.replace("Women's ", "W ");
-
-const isInterimChampion = (champion: MMAChampion) =>
-  champion.accolade_name?.toLowerCase().includes("interim");
-
-const getCurrentChampion = (champions: MMAChampion[] = []) =>
-  champions.find((champion) => champion.is_current === true) ??
-  champions.find((champion) => !isInterimChampion(champion)) ??
-  champions[0] ??
-  null;
-
-const getChampionBadgeLabel = (champion: MMAChampion) =>
-  isInterimChampion(champion) ? "INTERIM" : "CHAMPION";
-
-const getChampionEntries = (
-  data: Partial<Record<MMADivision, MMAChampion[]>>,
-) => {
-  const orderedEntries = DIVISION_ORDER.map((division) => ({
-    division,
-    champion: getCurrentChampion(data[division]),
-  }));
-
-  const orderedDivisionSet = new Set<string>(DIVISION_ORDER);
-
-  const extraEntries = Object.entries(data)
-    .filter(([division]) => !orderedDivisionSet.has(division))
-    .map(([division, champions]) => ({
-      division,
-      champion: getCurrentChampion(champions),
-    }));
-
-  return [...orderedEntries, ...extraEntries];
+type ChampionEntry = {
+  division: string;
+  champion: MMAChampionship | null;
 };
 
-type MetaPillProps = {
+type StatItemProps = {
   label: string;
   value: string;
   isDark: boolean;
 };
 
-function MetaPill({ label, value, isDark }: MetaPillProps) {
-  const styles = getPillStyles(isDark);
+/* -------------------------------------------------------------------------- */
+/*                                   Helpers                                  */
+/* -------------------------------------------------------------------------- */
+
+function formatDivisionLabel(division: string): string {
+  return division.replace("Women's ", "W ");
+}
+
+function isInterimChampion(champion: MMAChampionship): boolean {
+  return champion.accolade_name.toLowerCase().includes("interim");
+}
+
+function getCurrentChampion(
+  champions: MMAChampionship[] = [],
+): MMAChampionship | null {
   return (
-    <View style={styles.pill}>
-      <Text style={styles.pillLabel}>{label}</Text>
-      <Text style={styles.pillValue} numberOfLines={1}>
+    champions.find((champion) => champion.is_current === true) ??
+    champions.find((champion) => !isInterimChampion(champion)) ??
+    champions[0] ??
+    null
+  );
+}
+
+function getChampionEntries(data: MMAChampionsResponse): ChampionEntry[] {
+  const orderedEntries: ChampionEntry[] = DIVISION_ORDER.map((division) => ({
+    division,
+    champion: getCurrentChampion(data[division] ?? []),
+  }));
+
+  const orderedDivisionSet = new Set<string>(DIVISION_ORDER);
+
+  const extraEntries: ChampionEntry[] = Object.entries(data)
+    .filter(([division]) => !orderedDivisionSet.has(division))
+    .map(([division, champions]) => ({
+      division,
+      champion: getCurrentChampion(champions ?? []),
+    }));
+
+  return [...orderedEntries, ...extraEntries];
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  Stat Item                                 */
+/* -------------------------------------------------------------------------- */
+
+function StatItem({ label, value, isDark }: StatItemProps) {
+  const styles = MMAChampionListStyles(isDark);
+
+  return (
+    <View style={styles.statItem}>
+      <Text style={styles.statLabel}>{label}</Text>
+
+      <Text style={styles.statValue} numberOfLines={1}>
         {value}
       </Text>
     </View>
   );
 }
 
-const getPillStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    pill: {
-      flex: 1,
-      gap: 1,
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      borderRadius: 8,
-      backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-    },
-    pillLabel: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 10,
-      letterSpacing: 0.8,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
-    },
-    pillValue: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      color: isDark ? Colors.white : Colors.black,
-    },
-  });
+/* -------------------------------------------------------------------------- */
+/*                            MMA Champions List                              */
+/* -------------------------------------------------------------------------- */
 
 export default function MMAChampionsList() {
   const router = useRouter();
+
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
+
   const global = globalStyles(isDark);
-  const styles = getStyles(isDark);
+  const styles = MMAChampionListStyles(isDark);
 
   const { data, loading, refreshing, error, refreshChampions } =
     useMMAChampions();
@@ -126,7 +130,7 @@ export default function MMAChampionsList() {
 
   if (error) {
     return (
-      <View style={styles.stateContainer}>
+      <View style={global.emptyContainer}>
         <Text style={global.errorText}>{error}</Text>
       </View>
     );
@@ -154,85 +158,148 @@ export default function MMAChampionsList() {
         />
       }
     >
-      {/* Cards */}
       {champions.map(({ division, champion }) => {
-        if (!champion) return null;
+        if (!champion) {
+          return null;
+        }
 
         const fighter = champion.fighter;
-        const avatarUrl =
-          fighter.headshot_url ?? fighter.images?.[0]?.href ?? null;
 
-        const fighterId = String(fighter.id ?? champion.fighter_id);
+        const fighterId = fighter.id;
+
+        const headshot = fighter.headshot_url;
+        const flag = fighter.flag_url;
+
         const nickname = fighter.nickname ? `"${fighter.nickname}"` : null;
+
         const country =
           fighter.citizenship_country_code ?? fighter.citizenship ?? "—";
-        const weight = fighter.weight ? `${fighter.weight} lbs` : "—";
+
+        const weight = fighter.weight != null ? `${fighter.weight} lbs` : "—";
+
         const stance = fighter.stance_text ?? "—";
         const camp = fighter.association_name ?? "—";
-        const isInterim = isInterimChampion(champion);
+
         const divisionLabel = formatDivisionLabel(division);
+
+        const fighterInitial =
+          fighter.first_name?.charAt(0) ?? fighter.full_name?.charAt(0) ?? "?";
 
         return (
           <TouchableOpacity
             key={`${division}-${champion.accolade_id}-${fighterId}`}
-            activeOpacity={0.82}
+            activeOpacity={activeOpacity}
             style={styles.card}
             onPress={() =>
               router.push({
                 pathname: "/player/mma/[id]",
-                params: { id: fighterId },
+                params: {
+                  id: fighterId,
+                  league: "mma",
+                },
               })
             }
           >
-            {/* Top bar: division label + badge */}
-            <View style={styles.cardHeader}>
-              <Text style={styles.divisionLabel}>{divisionLabel}</Text>
-              <View style={[styles.badge, isInterim && styles.interimBadge]}>
-                <Text style={styles.badgeText}>
-                  {getChampionBadgeLabel(champion)}
+            <LinearGradient
+              colors={
+                isDark
+                  ? ([Colors.dark.itemBackground, Colors.black] as const)
+                  : ([Colors.light.itemBackground, Colors.white] as const)
+              }
+              locations={[0, 1]}
+              start={{
+                x: 0,
+                y: 0,
+              }}
+              end={{
+                x: 1,
+                y: 1,
+              }}
+              style={styles.cardGradient}
+            >
+              {/* Accent */}
+              <View style={styles.accentBar} />
+
+              {/* Division */}
+              <View style={styles.divisionRow}>
+                <View>
+                  <Text style={styles.divisionEyebrow}>UFC</Text>
+
+                  <Text style={styles.divisionLabel}>{divisionLabel}</Text>
+                </View>
+
+                <Text style={styles.titleType}>
+                  {isInterimChampion(champion)
+                    ? "INTERIM TITLE"
+                    : "TITLE HOLDER"}
                 </Text>
               </View>
-            </View>
 
-            {/* Body: avatar + name block */}
-            <View style={styles.body}>
-              <View style={styles.avatarWrap}>
-                {avatarUrl ? (
-                  <Image
-                    source={{ uri: avatarUrl }}
-                    style={styles.avatar}
-                    contentFit="cover"
-                  />
-                ) : (
-                  <View style={styles.avatarFallback}>
-                    <Text style={styles.avatarInitial}>
-                      {fighter.first_name?.[0] ?? fighter.full_name?.[0] ?? "?"}
+              {/* Fighter */}
+              <View style={styles.fighterSection}>
+                <View style={styles.headshotContainer}>
+                  {headshot ? (
+                    <Image
+                      source={{ uri: headshot }}
+                      style={styles.headshot}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <View style={styles.headshotFallback}>
+                      <Text style={styles.headshotInitial}>
+                        {fighterInitial}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.fighterInfo}>
+                  <View style={styles.identityRow}>
+                    <View style={styles.nameContainer}>
+                      <Text style={styles.fighterName} numberOfLines={2}>
+                        {fighter.full_name || "Unknown Fighter"}
+                      </Text>
+
+                      {nickname ? (
+                        <Text style={styles.nickname} numberOfLines={1}>
+                          {nickname}
+                        </Text>
+                      ) : null}
+                    </View>
+
+                    {flag ? (
+                      <View style={styles.flagContainer}>
+                        <Image
+                          source={{ uri: flag }}
+                          style={styles.flag}
+                          contentFit="cover"
+                          accessibilityLabel={`${country} flag`}
+                        />
+                      </View>
+                    ) : null}
+                  </View>
+
+                  <View style={styles.countryRow}>
+                    <Text style={styles.countryText}>
+                      {fighter.citizenship ?? country}
                     </Text>
                   </View>
-                )}
+                </View>
               </View>
 
-              <View style={styles.nameBlock}>
-                <Text style={styles.fighterName} numberOfLines={2}>
-                  {fighter.full_name ?? "Unknown Fighter"}
-                </Text>
-                {nickname ? (
-                  <Text style={styles.nickname} numberOfLines={1}>
-                    {nickname}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
+              {/* Stats */}
+              <View style={styles.statsContainer}>
+                <StatItem label="Weight" value={weight} isDark={isDark} />
 
-            {/* Meta pills */}
-            <View style={styles.pillRow}>
-              <MetaPill label="Country" value={country} isDark={isDark} />
-              <MetaPill label="Weight" value={weight} isDark={isDark} />
-            </View>
-            <View style={styles.pillRow}>
-              <MetaPill label="Stance" value={stance} isDark={isDark} />
-              <MetaPill label="Camp" value={camp} isDark={isDark} />
-            </View>
+                <View style={styles.statDivider} />
+
+                <StatItem label="Stance" value={stance} isDark={isDark} />
+
+                <View style={styles.statDivider} />
+
+                <StatItem label="Camp" value={camp} isDark={isDark} />
+              </View>
+            </LinearGradient>
           </TouchableOpacity>
         );
       })}
@@ -240,14 +307,19 @@ export default function MMAChampionsList() {
   );
 }
 
-const getStyles = (isDark: boolean) =>
+/* -------------------------------------------------------------------------- */
+/*                              Screen Styles                                 */
+/* -------------------------------------------------------------------------- */
+
+export const MMAChampionListStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainer: {
-      gap: 10,
+      gap: 14,
       paddingHorizontal: 16,
       paddingTop: 20,
       paddingBottom: 120,
     },
+
     stateContainer: {
       flex: 1,
       alignItems: "center",
@@ -255,135 +327,199 @@ const getStyles = (isDark: boolean) =>
       paddingHorizontal: 24,
     },
 
-    // ── Header ──────────────────────────────────────
-    header: {
-      marginBottom: 12,
-    },
-    eyebrow: {
-      marginBottom: 4,
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      letterSpacing: 3,
-      color: isDark ? Colors.dark.gold : Colors.light.gold,
-      textTransform: "uppercase",
-    },
-    title: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 40,
-      lineHeight: 44,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    headerDivider: {
-      height: 1,
-      marginTop: 14,
-      backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
-    },
-
-    // ── Card ────────────────────────────────────────
     card: {
-      gap: 12,
-      padding: 16,
-      borderRadius: 18,
+      borderRadius: 14,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       overflow: "hidden",
     },
 
-    // Ghost watermark behind content
-    watermark: {
-      position: "absolute",
-      bottom: -8,
-      right: -4,
-      fontSize: 64,
-      fontFamily: Fonts.BOLD,
-      color: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.045)",
-      letterSpacing: -1,
-      // Prevent interaction / layout influence
-      pointerEvents: "none",
+    cardGradient: {
+      position: "relative",
+      gap: 18,
+      padding: 18,
     },
 
-    // Top bar
-    cardHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 10,
-    },
-    divisionLabel: {
-      flex: 1,
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      letterSpacing: 0.4,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
-    },
-    badge: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 999,
+    accentBar: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      bottom: 0,
+      width: 4,
       backgroundColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
-    interimBadge: {
-      opacity: 0.75,
-    },
-    badgeText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      letterSpacing: 0.6,
-      color: isDark ? Colors.white : Colors.black,
+
+    /* ---------------------------------------------------------------------- */
+    /*                               Division                                 */
+    /* ---------------------------------------------------------------------- */
+
+    divisionRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 12,
+      paddingLeft: 4,
     },
 
-    // Body row
-    body: {
+    divisionEyebrow: {
+      marginBottom: 2,
+      fontFamily: Fonts.BOLD,
+      fontSize: 9,
+      letterSpacing: 2,
+      color: isDark ? Colors.dark.gold : Colors.light.gold,
+    },
+
+    divisionLabel: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      letterSpacing: 0.4,
+      color: isDark ? Colors.white : Colors.black,
+      textTransform: "uppercase",
+    },
+
+    titleType: {
+      marginTop: 2,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 9,
+      letterSpacing: 1.1,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    /* ---------------------------------------------------------------------- */
+    /*                                Fighter                                 */
+    /* ---------------------------------------------------------------------- */
+
+    fighterSection: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 14,
+      gap: 16,
+      paddingLeft: 4,
     },
-    avatarWrap: {
-      width: 60,
-      height: 60,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 100,
+
+    headshotContainer: {
+      width: 86,
+      height: 86,
+      flexShrink: 0,
+      borderRadius: 14,
       overflow: "hidden",
+      backgroundColor: isDark
+        ? Colors.dark.transparentItemBackground
+        : Colors.light.transparentItemBackground,
     },
-    avatar: {
+
+    headshot: {
       width: "100%",
       height: "100%",
     },
-    avatarFallback: {
+
+    headshotFallback: {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      borderWidth: 1,
-      borderColor: isDark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)",
-      borderRadius: 14,
     },
-    avatarInitial: {
+
+    headshotInitial: {
       fontFamily: Fonts.BOLD,
-      fontSize: 26,
+      fontSize: 34,
       color: isDark ? Colors.white : Colors.black,
     },
-    nameBlock: {
+
+    fighterInfo: {
       flex: 1,
-      gap: 2,
+      minWidth: 0,
+      gap: 8,
     },
+
+    identityRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+
+    nameContainer: {
+      flex: 1,
+      minWidth: 0,
+      gap: 3,
+    },
+
     fighterName: {
       fontFamily: Fonts.BOLD,
-      fontSize: 22,
-      lineHeight: 26,
+      fontSize: 24,
+      lineHeight: 28,
+      letterSpacing: -0.4,
       color: isDark ? Colors.white : Colors.black,
     },
+
     nickname: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 14,
+      fontSize: 13,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    // Meta pills
-    pillRow: {
+    flagContainer: {
+      width: 42,
+      height: 28,
+      flexShrink: 0,
+      borderRadius: 4,
+      overflow: "hidden",
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.18)",
+    },
+
+    flag: {
+      width: "100%",
+      height: "100%",
+    },
+
+    countryRow: {
       flexDirection: "row",
-      gap: 8,
+      alignItems: "center",
+    },
+
+    countryText: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    /* ---------------------------------------------------------------------- */
+    /*                                 Stats                                  */
+    /* ---------------------------------------------------------------------- */
+
+    statsContainer: {
+      flexDirection: "row",
+      alignItems: "stretch",
+      marginLeft: 4,
+      paddingVertical: 11,
+      paddingHorizontal: 12,
+      borderRadius: 10,
+      backgroundColor: isDark ? "rgba(255,255,255,0.055)" : "rgba(0,0,0,0.045)",
+    },
+
+    statItem: {
+      flex: 1,
+      minWidth: 0,
+      gap: 3,
+      paddingHorizontal: 8,
+    },
+
+    statLabel: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 9,
+      letterSpacing: 0.9,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textTransform: "uppercase",
+    },
+
+    statValue: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 12,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    statDivider: {
+      width: StyleSheet.hairlineWidth,
+      backgroundColor: isDark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.12)",
     },
   });

@@ -200,7 +200,6 @@ export default function GameDetailsScreen(
   const redzone = game?.situation?.isRedZone ?? false;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
-
   const scoringPlays = score?.scoringPlays;
   const lastPlay = score?.lastPlay ?? null;
   const drives = score?.drives;

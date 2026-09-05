@@ -1,12 +1,19 @@
-// /contexts/NotificationContext.tsx
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
-  useContext,
-  useState,
   useCallback,
+  useContext,
   useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  addCenterNotificationToState,
+  getUnreadCenterNotificationCount,
+  MAX_CENTER_NOTIFICATIONS,
+  mergeCenterNotificationStates,
+} from "@/utils/notificationCenter";
 
 export type Notification = {
   id: string;
@@ -14,82 +21,336 @@ export type Notification = {
   teamLogo?: string | number;
 };
 
+export type NotificationCenterType =
+  | "messages"
+  | "likes"
+  | "comments"
+  | "badges"
+  | "game"
+  | "followers";
+
+export type GameSport =
+  | "basketball"
+  | "football"
+  | "soccer"
+  | "baseball"
+  | "hockey"
+  | "mma";
+
+export type NotificationCenterItem = {
+  id: string;
+  type: NotificationCenterType;
+  title: string;
+  text: string;
+  conversationId?: string | null;
+  postId?: string | number | null;
+  gameId?: string | number | null;
+  sport?: string | null;
+  userId?: string | null;
+  senderUsername?: string | null;
+  messageCount?: number;
+  actorUsername?: string | null;
+  actorUsernames?: string[];
+  actorUserIds?: string[];
+  likeCount?: number;
+  readAt?: string | null;
+  createdAt: string;
+};
+
 type NotificationContextType = {
+  // Temporary in-app banners/toasts.
   notifications: Notification[];
   showNotification: (notif: Notification) => void;
   onDismiss: (id: string) => void;
 
-  // 🔔 team-level notification toggling
-  toggleNotifications: (league: string, teamId: string | number) => Promise<void>;
+  // Persistent local Notification Center history.
+  centerNotifications: NotificationCenterItem[];
+  addCenterNotification: (notification: NotificationCenterItem) => void;
+  markCenterNotificationRead: (id: string) => void;
+  markConversationNotificationsRead: (conversationId: string) => void;
+  markAllCenterNotificationsRead: () => void;
+  removeCenterNotification: (id: string) => void;
+  clearCenterNotifications: () => void;
+  unreadNotificationCount: number;
+
+  // Team-level notification toggling.
+  toggleNotifications: (
+    league: string,
+    teamId: string | number,
+  ) => Promise<void>;
   isNotified: (league: string, teamId: string | number) => boolean;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
-  undefined
+  undefined,
 );
 
-const STORAGE_KEY = "teamNotifications";
+const TEAM_NOTIFICATIONS_STORAGE_KEY = "teamNotifications";
+const CENTER_NOTIFICATIONS_STORAGE_KEY = "notificationCenter";
 
-export function NotificationProvider({ children }: { children: React.ReactNode }) {
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value && typeof value === "object" && !Array.isArray(value));
+
+const isNotificationCenterItem = (
+  value: unknown,
+): value is NotificationCenterItem => {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.type === "string" &&
+    typeof value.title === "string" &&
+    typeof value.text === "string" &&
+    typeof value.createdAt === "string"
+  );
+};
+
+export function NotificationProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [teamNotifications, setTeamNotifications] = useState<Record<string, boolean>>({});
+  const [centerNotifications, setCenterNotifications] = useState<
+    NotificationCenterItem[]
+  >([]);
+  const [teamNotifications, setTeamNotifications] = useState<
+    Record<string, boolean>
+  >({});
 
-  // --- Load persisted team notifications on mount ---
+  const hasLoadedTeamNotificationsRef = useRef(false);
+  const hasLoadedCenterNotificationsRef = useRef(false);
+
   useEffect(() => {
-    const loadSettings = async () => {
+    let isMounted = true;
+
+    const loadPersistedState = async () => {
       try {
-        const stored = await AsyncStorage.getItem(STORAGE_KEY);
-        if (stored) setTeamNotifications(JSON.parse(stored));
-      } catch (e) {
-        console.error("Failed to load team notifications:", e);
+        const [storedTeamNotifications, storedCenterNotifications] =
+          await Promise.all([
+            AsyncStorage.getItem(TEAM_NOTIFICATIONS_STORAGE_KEY),
+            AsyncStorage.getItem(CENTER_NOTIFICATIONS_STORAGE_KEY),
+          ]);
+
+        if (!isMounted) return;
+
+        if (storedTeamNotifications) {
+          try {
+            const parsed = JSON.parse(storedTeamNotifications);
+
+            if (isRecord(parsed)) {
+              const normalized = Object.entries(parsed).reduce<
+                Record<string, boolean>
+              >((result, [key, value]) => {
+                if (typeof value === "boolean") {
+                  result[key] = value;
+                }
+
+                return result;
+              }, {});
+
+              setTeamNotifications(normalized);
+            }
+          } catch (error) {
+            console.error("Failed to parse team notifications:", error);
+          }
+        }
+
+        if (storedCenterNotifications) {
+          try {
+            const parsed = JSON.parse(storedCenterNotifications);
+
+            if (Array.isArray(parsed)) {
+              const normalized = parsed
+                .filter(isNotificationCenterItem)
+                .slice(0, MAX_CENTER_NOTIFICATIONS);
+
+              setCenterNotifications((current) =>
+                mergeCenterNotificationStates(normalized, current),
+              );
+            }
+          } catch (error) {
+            console.error("Failed to parse notification center:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load notification settings:", error);
+      } finally {
+        if (isMounted) {
+          hasLoadedTeamNotificationsRef.current = true;
+          hasLoadedCenterNotificationsRef.current = true;
+        }
       }
     };
-    loadSettings();
+
+    void loadPersistedState();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // --- Persist when changed ---
   useEffect(() => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(teamNotifications)).catch((e) =>
-      console.error("Failed to save team notifications:", e)
-    );
+    if (!hasLoadedTeamNotificationsRef.current) return;
+
+    AsyncStorage.setItem(
+      TEAM_NOTIFICATIONS_STORAGE_KEY,
+      JSON.stringify(teamNotifications),
+    ).catch((error) => {
+      console.error("Failed to save team notifications:", error);
+    });
   }, [teamNotifications]);
 
-  // --- Show + dismiss ephemeral notifications ---
+  useEffect(() => {
+    if (!hasLoadedCenterNotificationsRef.current) return;
+
+    AsyncStorage.setItem(
+      CENTER_NOTIFICATIONS_STORAGE_KEY,
+      JSON.stringify(centerNotifications),
+    ).catch((error) => {
+      console.error("Failed to save notification center:", error);
+    });
+  }, [centerNotifications]);
+
   const showNotification = useCallback((notif: Notification) => {
-    setNotifications((prev) => [...prev, notif]);
+    setNotifications((current) => {
+      const exists = current.some((item) => item.id === notif.id);
+
+      if (exists) return current;
+
+      return [...current, notif];
+    });
   }, []);
 
   const onDismiss = useCallback((id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    setNotifications((current) =>
+      current.filter((notification) => notification.id !== id),
+    );
   }, []);
 
-  // --- Team-level notification toggle ---
+  const addCenterNotification = useCallback(
+    (notification: NotificationCenterItem) => {
+      if (!notification.id) return;
+
+      setCenterNotifications((current) =>
+        addCenterNotificationToState(current, notification),
+      );
+    },
+    [],
+  );
+
+  const markCenterNotificationRead = useCallback((id: string) => {
+    const readAt = new Date().toISOString();
+
+    setCenterNotifications((current) =>
+      current.map((notification) =>
+        notification.id === id && !notification.readAt
+          ? { ...notification, readAt }
+          : notification,
+      ),
+    );
+  }, []);
+
+  const markConversationNotificationsRead = useCallback(
+    (conversationId: string) => {
+      const normalizedConversationId = String(conversationId ?? "").trim();
+
+      if (!normalizedConversationId) return;
+
+      const readAt = new Date().toISOString();
+
+      setCenterNotifications((current) =>
+        current.map((notification) =>
+          notification.type === "messages" &&
+          String(notification.conversationId ?? "").trim() ===
+            normalizedConversationId &&
+          !notification.readAt
+            ? { ...notification, readAt }
+            : notification,
+        ),
+      );
+    },
+    [],
+  );
+
+  const markAllCenterNotificationsRead = useCallback(() => {
+    const readAt = new Date().toISOString();
+
+    setCenterNotifications((current) =>
+      current.map((notification) =>
+        notification.readAt ? notification : { ...notification, readAt },
+      ),
+    );
+  }, []);
+
+  const removeCenterNotification = useCallback((id: string) => {
+    setCenterNotifications((current) =>
+      current.filter((notification) => notification.id !== id),
+    );
+  }, []);
+
+  const clearCenterNotifications = useCallback(() => {
+    setCenterNotifications([]);
+  }, []);
+
+  const unreadNotificationCount = useMemo(
+    () => getUnreadCenterNotificationCount(centerNotifications),
+    [centerNotifications],
+  );
+
   const toggleNotifications = useCallback(
     async (league: string, teamId: string | number) => {
       const key = `${league}-${teamId}`;
-      setTeamNotifications((prev) => {
-        const updated = { ...prev, [key]: !prev[key] };
-        return updated;
-      });
+
+      setTeamNotifications((current) => ({
+        ...current,
+        [key]: !current[key],
+      }));
     },
-    []
+    [],
   );
 
   const isNotified = useCallback(
-    (league: string, teamId: string | number) => !!teamNotifications[`${league}-${teamId}`],
-    [teamNotifications]
+    (league: string, teamId: string | number) =>
+      Boolean(teamNotifications[`${league}-${teamId}`]),
+    [teamNotifications],
+  );
+
+  const value = useMemo<NotificationContextType>(
+    () => ({
+      notifications,
+      showNotification,
+      onDismiss,
+      centerNotifications,
+      addCenterNotification,
+      markCenterNotificationRead,
+      markConversationNotificationsRead,
+      markAllCenterNotificationsRead,
+      removeCenterNotification,
+      clearCenterNotifications,
+      unreadNotificationCount,
+      toggleNotifications,
+      isNotified,
+    }),
+    [
+      addCenterNotification,
+      centerNotifications,
+      clearCenterNotifications,
+      isNotified,
+      markAllCenterNotificationsRead,
+      markCenterNotificationRead,
+      markConversationNotificationsRead,
+      notifications,
+      onDismiss,
+      removeCenterNotification,
+      showNotification,
+      toggleNotifications,
+      unreadNotificationCount,
+    ],
   );
 
   return (
-    <NotificationContext.Provider
-      value={{
-        notifications,
-        showNotification,
-        onDismiss,
-        toggleNotifications,
-        isNotified,
-      }}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );
@@ -97,8 +358,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
 export function useNotifications() {
   const context = useContext(NotificationContext);
+
   if (!context) {
-    throw new Error("useNotifications must be used within NotificationProvider");
+    throw new Error(
+      "useNotifications must be used within NotificationProvider",
+    );
   }
+
   return context;
 }

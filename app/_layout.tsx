@@ -20,13 +20,17 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import { CustomHeader } from "../components/CustomHeader";
 import CustomTabBar from "../components/CustomTabBar";
 import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
 import { MessagesProvider } from "../contexts/MessagesContext";
-import { NotificationProvider } from "../contexts/NotificationContext";
+import {
+  NotificationProvider,
+  useNotifications,
+} from "../contexts/NotificationContext";
 import {
   PreferencesProvider,
   usePreferences,
@@ -92,15 +96,25 @@ function BadgeRealtimeBridge({
 
 function AppLayout() {
   const pathname = usePathname();
+
   const { resolvedColorScheme } = usePreferences();
+
+  const { clearCenterNotifications } = useNotifications();
+
   const isDark = resolvedColorScheme === "dark";
+
   const router = useRouter();
+
   const { user, token, loadingUser } = useAuth();
+
   const opacity = useRef(new Animated.Value(1)).current;
+
   const [visibleTabBar, setVisibleTabBar] = useState(true);
+
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
 
   const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
+
   const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
 
   useEffect(() => {
@@ -115,10 +129,9 @@ function AppLayout() {
         if (isMounted) {
           setCheckingStoredSession(false);
         }
+
         return;
       }
-
-      setCheckingStoredSession(true);
 
       try {
         const values = await AsyncStorage.multiGet([
@@ -143,21 +156,29 @@ function AppLayout() {
           !Number.isNaN(parsedUserId)
         ) {
           setCheckingStoredSession(false);
+
           return;
         }
 
         useBadgeNotificationStore.getState().clearBadgeNotifications();
+
+        clearCenterNotifications();
+
         await clearAuthSession(stored.userId);
 
         if (isMounted) {
           setCheckingStoredSession(false);
+
           router.replace("/login");
         }
       } catch {
         useBadgeNotificationStore.getState().clearBadgeNotifications();
 
+        clearCenterNotifications();
+
         if (isMounted) {
           setCheckingStoredSession(false);
+
           router.replace("/login");
         }
       }
@@ -168,10 +189,18 @@ function AppLayout() {
     return () => {
       isMounted = false;
     };
-  }, [isPublicRoute, loadingUser, pathname, router, user]);
+  }, [
+    clearCenterNotifications,
+    isPublicRoute,
+    loadingUser,
+    pathname,
+    router,
+    user,
+  ]);
 
   useEffect(() => {
     if (!pathname) return;
+
     setVisibleTabBar(!shouldHideTabBar);
   }, [pathname, shouldHideTabBar]);
 
@@ -197,11 +226,14 @@ function AppLayout() {
         <Stack
           screenOptions={({ route, navigation }) => {
             const isTabScreen = route.name === "(tabs)";
+
             const isSplashScreen = route.name === "signup/success";
+
             const isProfileScreen = route.name === "profile";
 
             return {
               headerShown: !isSplashScreen && !isTabScreen,
+
               header: !isSplashScreen
                 ? () => (
                     <CustomHeader
@@ -212,7 +244,9 @@ function AppLayout() {
                     />
                   )
                 : undefined,
+
               gestureEnabled: !isTabScreen,
+
               animation: isProfileScreen
                 ? "fade"
                 : isSplashScreen
@@ -220,19 +254,23 @@ function AppLayout() {
                   : isTabScreen
                     ? "none"
                     : "default",
+
               gestureDirection: "horizontal",
             };
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
           <Stack.Screen
             name="+not-found"
             options={{ title: "Page Not Found" }}
           />
+
           <Stack.Screen
             name="forgot-password"
             options={{ headerShown: false }}
           />
+
           <Stack.Screen name="signup/success" />
         </Stack>
 
@@ -255,6 +293,7 @@ function AppLayout() {
         {!isPublicRoute && (
           <>
             <BadgeRealtimeBridge token={token} userId={user?.id} />
+
             <BadgeUnlockedModal />
           </>
         )}

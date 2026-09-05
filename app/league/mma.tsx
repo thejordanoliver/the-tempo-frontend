@@ -53,7 +53,7 @@ function UFCLeagueScreen() {
     null,
   );
 
-  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs("UFC");
+  const { tabs, selectedTab, setSelectedTab } = useLeagueTabs(league);
   const { calendar } = useLeagueCalendar(league, league);
 
   const sortedCalendar = useMemo(() => {

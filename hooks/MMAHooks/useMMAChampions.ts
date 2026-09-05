@@ -1,9 +1,15 @@
 import { isAxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { MMAChampionsResponse, MMADivision } from "types/mma";
+
+import type {
+  MMAChampionsApiResponse,
+  MMAChampionsResponse,
+  MMADivision,
+} from "types/mma/mma";
+
 import { apiClient } from "utils/apiClient";
 
-interface UseMMAChampionsResult {
+export interface UseMMAChampionsResult {
   data: MMAChampionsResponse | null;
   loading: boolean;
   refreshing: boolean;
@@ -11,14 +17,23 @@ interface UseMMAChampionsResult {
   refreshChampions: () => Promise<void>;
 }
 
-const useMMAChampions = (division?: MMADivision): UseMMAChampionsResult => {
+type MMAChampionsErrorResponse = {
+  error?: string;
+  message?: string;
+};
+
+export default function useMMAChampions(
+  division?: MMADivision,
+): UseMMAChampionsResult {
   const [data, setData] = useState<MMAChampionsResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   const fetchChampions = useCallback(
-    async (isRefresh = false) => {
+    async (isRefresh = false): Promise<void> => {
       try {
         if (isRefresh) {
           setRefreshing(true);
@@ -28,42 +43,58 @@ const useMMAChampions = (division?: MMADivision): UseMMAChampionsResult => {
 
         setError(null);
 
-        const response = await apiClient.get<{
-          success: boolean;
-          data: MMAChampionsResponse;
-        }>(`/api/mma/champions${division ? `?division=${division}` : ""}`);
+        const response = await apiClient.get<MMAChampionsApiResponse>(
+          "/api/mma/champions",
+          {
+            params: division
+              ? {
+                  division,
+                }
+              : undefined,
+          },
+        );
 
         setData(response.data.data);
       } catch (err: unknown) {
-        if (isAxiosError(err)) {
+        if (isAxiosError<MMAChampionsErrorResponse>(err)) {
           setError(
-            err.response?.data?.error ||
-              err.message ||
-              "Failed to fetch champions"
+            err.response?.data?.error ??
+              err.response?.data?.message ??
+              err.message ??
+              "Failed to fetch MMA champions",
           );
-        } else if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Failed to fetch champions");
+
+          return;
         }
+
+        if (err instanceof Error) {
+          setError(err.message);
+
+          return;
+        }
+
+        setError("Failed to fetch MMA champions");
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [division]
+    [division],
   );
 
-  const refreshChampions = async () => {
+  const refreshChampions = useCallback(async (): Promise<void> => {
     await fetchChampions(true);
-  };
-
-  useEffect(() => {
-    fetchChampions();
-
   }, [fetchChampions]);
 
-  return { data, loading, refreshing, error, refreshChampions };
-};
+  useEffect(() => {
+    void fetchChampions();
+  }, [fetchChampions]);
 
-export default useMMAChampions;
+  return {
+    data,
+    loading,
+    refreshing,
+    error,
+    refreshChampions,
+  };
+}

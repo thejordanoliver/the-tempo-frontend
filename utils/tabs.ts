@@ -59,7 +59,7 @@ export const LEAGUE_TABS = {
 
   sb: ["scores", "news", "standings", "forum"],
 
-  ufc: ["fights", "news", "champions"],
+  ufc: ["fights", "news", "champions", "forum"],
 
   mls: ["scores", "news", "standings", "forum"],
 

@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export function postItemStyles(isDark: boolean) {
+export function PostItemStyles(isDark: boolean) {
   const textColor = isDark ? Colors.white : Colors.black;
   const mutedColor = Colors.midTone;
   const surfaceColor = isDark
@@ -342,7 +342,7 @@ export function postItemStyles(isDark: boolean) {
   });
 }
 
-export const commentItemStyles = (isDark: boolean) =>
+export const CommentItemStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       zIndex: 1,

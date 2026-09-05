@@ -1,7 +1,7 @@
+import { MatchupPredictorStyles } from "@/styles/GameDetailStyles/MatchupPredictorStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
-import React, { useEffect, useMemo } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo } from "react";
+import { Image, Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -41,7 +41,7 @@ const clampPercentage = (percentage: number) => {
 const getLogoSource = (logo: any) =>
   typeof logo === "string" ? { uri: logo } : logo;
 
-const MatchupPredictor: React.FC<Props> = ({
+export default function MatchupPredictor({
   homeId,
   homeCode,
   homeLogo,
@@ -56,18 +56,22 @@ const MatchupPredictor: React.FC<Props> = ({
   awayChance,
   isDark,
   state,
-}) => {
-  const styles = useMemo(() => matchupPredictorStyles(isDark), [isDark]);
+}: Props) {
+  const styles = useMemo(() => MatchupPredictorStyles(isDark), [isDark]);
   const animatedSplitPercent = useSharedValue(50);
 
   const homePct = clampPercentage(homeChance);
   const awayPct = clampPercentage(awayChance);
   const totalChance = homePct + awayPct;
+
   const awayTrackPct = totalChance > 0 ? (awayPct / totalChance) * 100 : 50;
+
   const isHomeFavorite = homePct >= awayPct;
+
   const favoriteCode = isHomeFavorite ? homeCode : awayCode;
   const favoriteLogo = isHomeFavorite ? homeHeaderLogo : awayHeaderLogo;
   const favoriteColor = isHomeFavorite ? homeColor : awayColor;
+
   const edge = Math.abs(homePct - awayPct);
 
   useEffect(() => {
@@ -99,7 +103,11 @@ const MatchupPredictor: React.FC<Props> = ({
       <View
         style={styles.wrapper}
         accessible
-        accessibilityLabel={`${awayCode} ${awayPct.toFixed(1)} percent, ${homeCode} ${homePct.toFixed(1)} percent. ${favoriteCode} has a ${edge.toFixed(1)} point edge.`}
+        accessibilityLabel={`${awayCode} ${awayPct.toFixed(
+          1,
+        )} percent, ${homeCode} ${homePct.toFixed(
+          1,
+        )} percent. ${favoriteCode} has a ${edge.toFixed(1)} point edge.`}
       >
         <View style={styles.headerRow}>
           <View style={styles.teamHeader}>
@@ -110,6 +118,7 @@ const MatchupPredictor: React.FC<Props> = ({
                 resizeMode="contain"
               />
             </View>
+
             <View style={styles.teamCopy}>
               <Text style={styles.teamCode} numberOfLines={1}>
                 {awayCode}
@@ -123,6 +132,7 @@ const MatchupPredictor: React.FC<Props> = ({
                 {homeCode}
               </Text>
             </View>
+
             <View style={styles.logoBadge}>
               <Image
                 source={getLogoSource(homeLogo)}
@@ -157,6 +167,7 @@ const MatchupPredictor: React.FC<Props> = ({
                 ))}
               </View>
             </Animated.View>
+
             <Animated.View
               style={[
                 styles.homeMeter,
@@ -172,9 +183,11 @@ const MatchupPredictor: React.FC<Props> = ({
             <Text style={styles.chanceText}>{awayPct.toFixed(1)}%</Text>
             <Text style={styles.percentLabel}>{awayCode}</Text>
           </View>
+
           <Text style={styles.edgeLabel}>
             {favoriteCode} +{edge.toFixed(1)}
           </Text>
+
           <View style={styles.homePercent}>
             <Text style={styles.chanceText}>{homePct.toFixed(1)}%</Text>
             <Text style={styles.percentLabel}>{homeCode}</Text>
@@ -183,163 +196,4 @@ const MatchupPredictor: React.FC<Props> = ({
       </View>
     </View>
   );
-};
-
-const matchupPredictorStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    outerContainer: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    wrapper: {
-      justifyContent: "center",
-      gap: 12,
-      padding: 12,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 8,
-    },
-    headerRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 12,
-    },
-    teamHeader: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 8,
-      minWidth: 0,
-    },
-    homeHeader: {
-      justifyContent: "flex-end",
-    },
-    teamCopy: {
-      flex: 1,
-      minWidth: 0,
-    },
-    homeCopy: {
-      alignItems: "flex-end",
-    },
-    logoBadge: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      overflow: "hidden",
-    },
-
-    logo: {
-      width: 32,
-      height: 32,
-      resizeMode: "contain",
-    },
-    teamCode: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 16,
-      lineHeight: 20,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    trackArea: {
-      position: "relative",
-      justifyContent: "center",
-      height: 58,
-    },
-    logoMarker: {
-      position: "absolute",
-      top: 10,
-      zIndex: 2,
-      alignItems: "center",
-      justifyContent: "center",
-      width: 40,
-      height: 40,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 23,
-      overflow: "hidden",
-      transform: [{ translateX: -10 }],
-    },
-    homeLogoMarker: {
-      borderColor: Colors.white,
-    },
-    markerLogo: {
-      width: 28,
-      height: 28,
-    },
-    track: {
-      position: "relative",
-      height: 8,
-      borderRadius: 999,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-      overflow: "hidden",
-    },
-    awayMeter: {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
-      left: 0,
-      overflow: "hidden",
-    },
-    awayStripeRow: {
-      flexDirection: "row",
-      gap: 3,
-      height: "100%",
-      minWidth: 360,
-    },
-    awayStripe: {
-      width: 2,
-      height: "100%",
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      opacity: 0.75,
-      transform: [{ skewX: "-18deg" }],
-    },
-    homeMeter: {
-      position: "absolute",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      borderWidth: 1.5,
-      borderColor: isDark ? Colors.white : "transparent",
-      opacity: 0.92,
-    },
-
-    percentRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: 10,
-    },
-    homePercent: {
-      alignItems: "flex-end",
-    },
-    chanceText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 22,
-      lineHeight: 27,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    percentLabel: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      lineHeight: 15,
-      color: Colors.midTone,
-    },
-    edgeLabel: {
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderWidth: 1,
-      borderRadius: 999,
-      borderColor: isDark ? Colors.white : Colors.black,
-      overflow: "hidden",
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 11,
-      lineHeight: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-  });
-
-export default MatchupPredictor;
+}
