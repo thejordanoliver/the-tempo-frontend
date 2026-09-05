@@ -29,6 +29,7 @@ import FavoriteSportsSelector from "../components/Favorites/FavoriteSportsSelect
 import FavoriteTeamsSelector from "../components/Favorites/FavoriteTeamsSelector";
 import type { FavoriteSportId } from "../constants/leagues";
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
+import { useNotifications } from "../contexts/NotificationContext";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
 import {
@@ -62,6 +63,7 @@ export default function EditFavoritesScreen() {
   const router = useRouter();
 
   const { resolvedColorScheme } = usePreferences();
+  const { unreadNotificationCount } = useNotifications();
   const { width: screenWidth } = useWindowDimensions();
 
   const isDark = resolvedColorScheme === "dark";
@@ -257,7 +259,7 @@ export default function EditFavoritesScreen() {
           editFavoritesSelectedTab={selectedTab}
           onEditTabPress={handleHeaderTabPress}
           homeScrollProgress={homeTabScrollProgress}
-          unreadNotificationCount={10}
+          unreadNotificationCount={unreadNotificationCount}
         />
       ),
     });
@@ -266,6 +268,7 @@ export default function EditFavoritesScreen() {
     homeTabScrollProgress,
     navigation,
     selectedTab,
+    unreadNotificationCount,
   ]);
 
   const handleToggleFavoriteSport = useCallback(

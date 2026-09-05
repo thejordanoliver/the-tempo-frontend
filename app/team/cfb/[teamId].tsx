@@ -17,6 +17,7 @@ import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -33,6 +34,7 @@ import { CustomHeader } from "../../../components/CustomHeader";
 
 export default function TeamDetailScreen() {
   const league = "cfb";
+  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -140,6 +142,8 @@ export default function TeamDetailScreen() {
           isTeamScreen={true}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -153,6 +157,9 @@ export default function TeamDetailScreen() {
     toggleFavorite,
     favorited,
     teamIdNum,
+    toggleNotifications,
+    isNotified,
+    league,
   ]);
 
   if (!team) {

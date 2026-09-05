@@ -47,9 +47,7 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
     },
 
     notificationRowUnread: {
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+    
     },
 
     notificationRowPressed: {
@@ -74,7 +72,7 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       width: 8,
       height: 8,
       borderRadius: 4,
-      backgroundColor: isDark ? Colors.white : Colors.black,
+      backgroundColor: isDark ? Colors.dark.blue : Colors.light.blue,
     },
 
     textContainer: {

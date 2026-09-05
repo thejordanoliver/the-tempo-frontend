@@ -1,38 +1,49 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import { Colors } from "@/constants/styles";
 import {
-  type NotificationCenterItem,
-  type NotificationCenterType,
   useNotifications,
 } from "@/contexts/NotificationContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { NotificationsCenterStyles } from "@/styles/NotificationCenterStyles";
 import { getNotificationCenterHref } from "@/utils/notificationCenter";
+import type { AppNotification, NotificationType } from "@/types/notifications";
 import { Ionicons } from "@expo/vector-icons";
 import { Href, useNavigation, useRouter } from "expo-router";
-import { useCallback, useLayoutEffect } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { memo, useCallback, useLayoutEffect } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  type ListRenderItem,
+  Pressable,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 
 const getNotificationIcon = (
-  type: NotificationCenterType,
+  type: NotificationType,
 ): React.ComponentProps<typeof Ionicons>["name"] => {
   switch (type) {
-    case "game":
+    case "game_starting":
+    case "game_touchdown":
+    case "game_close":
+    case "game_final":
       return "alert";
 
-    case "likes":
+    case "post_like":
       return "heart-outline";
 
-    case "comments":
+    case "post_comment":
+    case "comment_reply":
       return "chatbubble-ellipses-outline";
 
-    case "messages":
+    case "message":
       return "chatbubbles-outline";
 
-    case "badges":
+    case "badge":
       return "ribbon-outline";
 
-    case "followers":
+    case "new_follower":
       return "people-outline";
 
     default:
@@ -41,21 +52,23 @@ const getNotificationIcon = (
 };
 
 type NotificationRowProps = {
-  notification: NotificationCenterItem;
+  notification: AppNotification;
   isDark: boolean;
-  onPress: (notification: NotificationCenterItem) => void;
+  onPress: (notification: AppNotification) => void;
+  onArchive: (notification: AppNotification) => void;
 };
 
-function NotificationRow({
+const NotificationRow = memo(function NotificationRow({
   notification,
   isDark,
   onPress,
+  onArchive,
 }: NotificationRowProps) {
   const styles = NotificationsCenterStyles(isDark);
 
-  const { title, text, type, readAt } = notification;
+  const { title, body, type, readAt } = notification;
 
-  if (!title && !text) {
+  if (!title && !body) {
     return null;
   }
 
@@ -69,7 +82,7 @@ function NotificationRow({
       disabled={!isPressable}
       onPress={() => onPress(notification)}
       accessibilityRole={isPressable ? "button" : undefined}
-      accessibilityLabel={`${title}. ${text}`}
+      accessibilityLabel={`${title}. ${body}`}
       accessibilityHint={
         isPressable ? "Opens the related notification." : undefined
       }
@@ -95,9 +108,22 @@ function NotificationRow({
         </Text>
 
         <Text style={styles.notificationText} numberOfLines={3}>
-          {text}
+          {body}
         </Text>
       </View>
+
+      <Pressable
+        onPress={() => onArchive(notification)}
+        accessibilityRole="button"
+        accessibilityLabel={`Remove ${title}`}
+        hitSlop={8}
+      >
+        <Ionicons
+          name="close"
+          size={17}
+          color={isDark ? Colors.lightGray : Colors.darkGray}
+        />
+      </Pressable>
 
       {isPressable && (
         <Ionicons
@@ -109,7 +135,7 @@ function NotificationRow({
       )}
     </Pressable>
   );
-}
+});
 
 export default function NotificationsCenter() {
   const { resolvedColorScheme } = usePreferences();
@@ -118,6 +144,14 @@ export default function NotificationsCenter() {
     centerNotifications,
     markCenterNotificationRead,
     markAllCenterNotificationsRead,
+    removeCenterNotification,
+    refreshNotifications,
+    loadMoreNotifications,
+    loading,
+    refreshing,
+    loadingMore,
+    hasMore,
+    error,
   } = useNotifications();
 
   const isDark = resolvedColorScheme === "dark";
@@ -136,7 +170,7 @@ export default function NotificationsCenter() {
   }, [navigation, router]);
 
   const handleNotificationPress = useCallback(
-    (notification: NotificationCenterItem) => {
+    (notification: AppNotification) => {
       if (!notification.readAt) {
         markCenterNotificationRead(notification.id);
       }
@@ -153,8 +187,27 @@ export default function NotificationsCenter() {
   );
 
   const handleMarkAllRead = useCallback(() => {
-    markAllCenterNotificationsRead();
+    void markAllCenterNotificationsRead();
   }, [markAllCenterNotificationsRead]);
+
+  const handleArchiveNotification = useCallback(
+    (notification: AppNotification) => {
+      void removeCenterNotification(notification.id);
+    },
+    [removeCenterNotification],
+  );
+
+  const renderNotificationItem = useCallback<ListRenderItem<AppNotification>>(
+    ({ item }) => (
+      <NotificationRow
+        notification={item}
+        isDark={isDark}
+        onPress={handleNotificationPress}
+        onArchive={handleArchiveNotification}
+      />
+    ),
+    [handleArchiveNotification, handleNotificationPress, isDark],
+  );
 
   const hasUnreadNotifications = centerNotifications.some(
     (notification) => !notification.readAt,
@@ -164,13 +217,7 @@ export default function NotificationsCenter() {
     <FlatList
       data={centerNotifications}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <NotificationRow
-          notification={item}
-          isDark={isDark}
-          onPress={handleNotificationPress}
-        />
-      )}
+      renderItem={renderNotificationItem}
       ListHeaderComponent={
         hasUnreadNotifications ? (
           <View style={styles.listHeader}>
@@ -191,6 +238,10 @@ export default function NotificationsCenter() {
       }
       ListEmptyComponent={
         <View style={styles.emptyState}>
+          {loading ? (
+            <ActivityIndicator color={isDark ? Colors.white : Colors.black} />
+          ) : (
+            <>
           <Ionicons
             name="notifications-outline"
             size={34}
@@ -200,10 +251,33 @@ export default function NotificationsCenter() {
           <Text style={styles.emptyTitle}>No notifications yet</Text>
 
           <Text style={styles.emptyText}>
-            New messages, likes, comments, and other activity will appear here.
+            {error
+              ? "Notifications could not be loaded. Pull down to try again."
+              : "New messages, likes, comments, and other activity will appear here."}
           </Text>
+            </>
+          )}
         </View>
       }
+      ListFooterComponent={
+        loadingMore ? (
+          <ActivityIndicator
+            style={{ paddingVertical: 16 }}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        ) : null
+      }
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => void refreshNotifications()}
+          tintColor={isDark ? Colors.white : Colors.black}
+        />
+      }
+      onEndReached={() => {
+        if (hasMore && !loadingMore) void loadMoreNotifications();
+      }}
+      onEndReachedThreshold={0.35}
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={[
         styles.container,

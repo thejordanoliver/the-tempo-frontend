@@ -15,6 +15,7 @@ import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -33,6 +34,7 @@ import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "nfl";
+  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -135,6 +137,10 @@ export default function TeamDetailScreen() {
           isTeamScreen={true}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleNotifications={() =>
+            void toggleNotifications(league, teamIdNum)
+          }
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -145,6 +151,9 @@ export default function TeamDetailScreen() {
     isDark,
     team,
     teamIdNum,
+    toggleNotifications,
+    isNotified,
+    league,
     teamColor,
     teamLogo,
     toggleFavorite,
@@ -218,16 +227,6 @@ export default function TeamDetailScreen() {
             league={league}
           />
         </View>
-        {/* DEPTH */}
-
-        <View key="depth" style={styles.contentArea}>
-          <DepthChart
-            teamId={espnId}
-            season={2026}
-            isDark={isDark}
-            league={"nfl"}
-          />
-        </View>
 
         {/* STATS */}
         <View key="stats" style={styles.contentArea}>
@@ -240,6 +239,16 @@ export default function TeamDetailScreen() {
             refreshing={refreshingStats}
             onRefresh={refetch}
             league={league}
+          />
+        </View>
+
+        {/* DEPTH */}
+        <View key="depth" style={styles.contentArea}>
+          <DepthChart
+            teamId={espnId}
+            season={2026}
+            isDark={isDark}
+            league={"nfl"}
           />
         </View>
 

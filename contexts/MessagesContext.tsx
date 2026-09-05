@@ -89,25 +89,6 @@ const getPreviewText = (message: DirectMessageItem) => {
   return "";
 };
 
-const getMessageSenderName = (
-  rawMessage: any,
-  conversation?: MessageItem | null,
-) => {
-  const senderName =
-    rawMessage?.senderUsername ??
-    rawMessage?.sender?.username ??
-    rawMessage?.user?.username ??
-    rawMessage?.username ??
-    (conversation as any)?.username ??
-    (conversation as any)?.user?.username ??
-    (conversation as any)?.otherUser?.username ??
-    (conversation as any)?.participant?.username;
-
-  const normalized = String(senderName ?? "").trim();
-
-  return normalized || null;
-};
-
 const matchesConversation = (a: MessageItem, b: MessageItem) => {
   const aId = normalizeId(a.id);
   const bId = normalizeId(b.id);
@@ -332,8 +313,7 @@ export function MessagesProvider({
   token?: string | null;
   userId?: number | string | null;
 }) {
-  const { addCenterNotification, markConversationNotificationsRead } =
-    useNotifications();
+  const { markConversationNotificationsRead } = useNotifications();
 
   const [conversationLists, setConversationLists] = useState<
     Record<string, ConversationListState>
@@ -1285,47 +1265,9 @@ export function MessagesProvider({
 
       updateConversationPreviewFromMessage(message);
 
-      if (!message.isCurrentUser) {
-        const messageId =
-          normalizeId(message.id) || normalizeId(message.clientId);
-        const createdAt = message.createdAt ?? new Date().toISOString();
-        const preview =
-          getPreviewText(message) || "You received a new message.";
-
-        let conversation: MessageItem | null = null;
-
-        for (const state of Object.values(conversationListsRef.current)) {
-          const match = state.items.find(
-            (item) => normalizeId(item.id) === conversationId,
-          );
-
-          if (match) {
-            conversation = match;
-            break;
-          }
-        }
-
-        const senderName = getMessageSenderName(rawMessage, conversation);
-        const senderLabel = senderName
-          ? senderName.startsWith("@")
-            ? senderName
-            : `@${senderName}`
-          : null;
-
-        addCenterNotification({
-          id: messageId
-            ? `message:${messageId}`
-            : `message:${conversationId}:${createdAt}`,
-          type: "messages",
-          title: "New Message",
-          text: senderLabel ? `${senderLabel}: ${preview}` : preview,
-          conversationId,
-          senderUsername: senderName,
-          messageCount: 1,
-          readAt: null,
-          createdAt,
-        });
-      }
+      // The canonical notification row is created transactionally by the
+      // backend and arrives through the notification namespace. The message
+      // socket remains responsible only for updating conversation UI state.
     };
 
     const handleMessageDeleted = (payload: any) => {
@@ -1360,7 +1302,6 @@ export function MessagesProvider({
       socket.off("message:deleted", handleMessageDeleted);
     };
   }, [
-    addCenterNotification,
     applyConversationReadReceipt,
     enabled,
     loadConversations,

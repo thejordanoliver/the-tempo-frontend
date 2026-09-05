@@ -11,6 +11,7 @@ import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -27,6 +28,7 @@ import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "ufl";
+  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getFootballSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -103,6 +105,8 @@ export default function TeamDetailScreen() {
           isTeamScreen={true}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -113,6 +117,9 @@ export default function TeamDetailScreen() {
     isDark,
     team,
     teamIdNum,
+    toggleNotifications,
+    isNotified,
+    league,
     teamColor,
     teamLogo,
     toggleFavorite,

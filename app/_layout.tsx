@@ -24,6 +24,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { CustomHeader } from "../components/CustomHeader";
 import CustomTabBar from "../components/CustomTabBar";
 import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
+import ForegroundNotificationBanner from "../components/Notifications/ForegroundNotificationBanner";
 import { Colors } from "../constants/styles";
 import { FavoriteTeamsProvider } from "../contexts/FavoriteTeamsContext";
 import { MessagesProvider } from "../contexts/MessagesContext";
@@ -293,6 +294,8 @@ function AppLayout() {
         {!isPublicRoute && (
           <>
             <BadgeRealtimeBridge token={token} userId={user?.id} />
+
+            <ForegroundNotificationBanner />
 
             <BadgeUnlockedModal />
           </>

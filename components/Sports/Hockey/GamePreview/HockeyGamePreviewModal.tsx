@@ -5,7 +5,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { HockeyGame } from "@/types/hockey/hockey";
 import {
   formatDate,
@@ -78,8 +78,8 @@ export default function HockeyGamePreviewModal({
   const awayCode = awayTeam?.code ?? "";
   const homeName = homeTeam?.fullName ?? "";
   const awayName = awayTeam?.fullName ?? "";
- const homeColor = homeTeam?.color ?? Colors.midTone;
- const awayColor = awayTeam?.color ?? Colors.midTone;
+  const homeColor = homeTeam?.color ?? Colors.midTone;
+  const awayColor = awayTeam?.color ?? Colors.midTone;
 
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
@@ -88,7 +88,7 @@ export default function HockeyGamePreviewModal({
   const isLoading = !!details;
 
   const isChampionship = headline?.includes("Stanley Cup Final");
-  const styles = gamePreviewModalStyle({
+  const styles = GamePreviewModalStyles({
     isDark: isDark,
     isChampionship: isChampionship,
     homeColor: homeColor,

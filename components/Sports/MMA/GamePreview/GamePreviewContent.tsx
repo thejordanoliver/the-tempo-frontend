@@ -1,10 +1,9 @@
 import { GameLocation } from "@/components/Sports/Basketball/GameDetails";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import MatchupComparison from "../GameDetails/MatchupComparison";
-
 
 type GamePreviewContentProps = {
   firstFighterId: number;
@@ -82,7 +81,7 @@ export default function GamePreviewContent({
   weather,
   isDark,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle({ isDark: isDark });
+  const styles = GamePreviewModalStyles({ isDark: isDark });
 
   return (
     <BottomSheetScrollView

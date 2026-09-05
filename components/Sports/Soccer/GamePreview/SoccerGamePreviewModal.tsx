@@ -4,7 +4,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { SoccerGame } from "@/types/soccer/soccer";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -104,7 +104,7 @@ export default function SoccerGamePreviewModal({
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
-  const styles = gamePreviewModalStyle({
+  const styles = GamePreviewModalStyles({
     isDark: isDark,
     isChampionship: isChampionship,
     homeColor: homeColor,

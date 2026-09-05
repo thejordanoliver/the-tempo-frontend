@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { AppState, type AppStateStatus } from "react-native";
+import { usePathname } from "expo-router";
 import {
   getPendingBadgeNotifications,
   markBadgeNotificationsRead,
@@ -7,7 +8,6 @@ import {
 import {
   disconnectNotificationSocket,
   getNotificationSocket,
-  type LikeNotificationSocketPayload,
   type NotificationSocket,
 } from "@/services/notificationSocket";
 import { useBadgeNotificationStore } from "@/store/badgeNotificationStore";
@@ -15,45 +15,26 @@ import type {
   BadgeEarnedSocketPayload,
   BadgeNotification,
 } from "@/types/badges";
+import type { AppNotification } from "@/types/notifications";
 import { getAccessToken } from "@/utils/apiClient";
-import {
-  type NotificationCenterItem,
-  useNotifications,
-} from "@/contexts/NotificationContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 
-type UseBadgeRealtimeNotificationsOptions = {
+type Options = {
   token?: string | null;
   userId?: number | string | null;
 };
 
-type EnqueueNotifications = (
-  notifications?: BadgeNotification[] | null,
-) => void;
-
-type AddCenterNotification = (notification: NotificationCenterItem) => void;
-
 type RetryReadOptions = {
   consumeReadRetryNotificationIds: () => string[];
-  queueNotificationReadRetry: (
-    notificationIds?: string[] | string | null,
-  ) => void;
+  queueNotificationReadRetry: (ids?: string[] | string | null) => void;
   markRead?: typeof markBadgeNotificationsRead;
-};
-
-type PrepareNotificationSocketAccessOptions = {
-  token: string;
-  recoverPendingNotifications: () => Promise<unknown>;
-  getStoredAccessToken?: typeof getAccessToken;
 };
 
 export const normalizeAuthenticatedUserId = (
   userId?: number | string | null,
 ): number | null => {
-  const normalizedUserId = Number(userId);
-
-  return Number.isInteger(normalizedUserId) && normalizedUserId > 0
-    ? normalizedUserId
-    : null;
+  const normalized = Number(userId);
+  return Number.isInteger(normalized) && normalized > 0 ? normalized : null;
 };
 
 export const isBadgeEarnedPayloadForUser = (
@@ -61,125 +42,33 @@ export const isBadgeEarnedPayloadForUser = (
   userId?: number | string | null,
 ): payload is BadgeEarnedSocketPayload => {
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
-
-  return (
-    normalizedUserId !== null &&
-    typeof payload === "object" &&
-    payload !== null &&
-    "recipientUserId" in payload &&
-    Number(payload.recipientUserId) === normalizedUserId &&
-    "notifications" in payload &&
-    Array.isArray(payload.notifications)
+  return Boolean(
+    normalizedUserId &&
+      payload &&
+      typeof payload === "object" &&
+      "recipientUserId" in payload &&
+      Number(payload.recipientUserId) === normalizedUserId &&
+      "notifications" in payload &&
+      Array.isArray(payload.notifications),
   );
 };
 
 export const handleBadgeEarnedSocketPayload = (
   payload: unknown,
   userId: number,
-  enqueueNotifications: EnqueueNotifications,
+  enqueue: (notifications?: BadgeNotification[] | null) => void,
 ) => {
-  if (!isBadgeEarnedPayloadForUser(payload, userId)) {
-    if (
-      __DEV__ &&
-      typeof payload === "object" &&
-      payload !== null &&
-      "recipientUserId" in payload
-    ) {
-      console.warn("[BadgeRealtimeHook] Ignored recipient mismatch", {
-        payloadRecipientUserId: payload.recipientUserId,
-        currentUserId: userId,
-      });
-    }
-
-    return false;
-  }
-
-  enqueueNotifications(payload.notifications);
-
-  return true;
-};
-
-export const isLikeNotificationPayloadForUser = (
-  payload: unknown,
-  userId?: number | string | null,
-): payload is LikeNotificationSocketPayload => {
-  const normalizedUserId = normalizeAuthenticatedUserId(userId);
-
-  if (
-    normalizedUserId === null ||
-    typeof payload !== "object" ||
-    payload === null
-  ) {
-    return false;
-  }
-
-  const notification = payload as Record<string, unknown>;
-  const actorUserId = normalizeAuthenticatedUserId(
-    notification.actorUserId as number | string | null,
-  );
-
-  return (
-    Number(notification.recipientUserId) === normalizedUserId &&
-    actorUserId !== null &&
-    actorUserId !== normalizedUserId &&
-    typeof notification.id === "string" &&
-    Boolean(notification.id.trim()) &&
-    typeof notification.postId === "string" &&
-    Boolean(notification.postId.trim()) &&
-    typeof notification.actorUsername === "string" &&
-    Boolean(notification.actorUsername.trim().replace(/^@+/, "")) &&
-    typeof notification.createdAt === "string" &&
-    Number.isFinite(Date.parse(notification.createdAt))
-  );
-};
-
-export const handleLikeNotificationSocketPayload = (
-  payload: unknown,
-  userId: number,
-  addCenterNotification: AddCenterNotification,
-) => {
-  if (!isLikeNotificationPayloadForUser(payload, userId)) {
-    if (
-      __DEV__ &&
-      typeof payload === "object" &&
-      payload !== null &&
-      "recipientUserId" in payload
-    ) {
-      console.warn("[BadgeRealtimeHook] Ignored invalid like notification", {
-        payloadRecipientUserId: payload.recipientUserId,
-        currentUserId: userId,
-      });
-    }
-
-    return false;
-  }
-
-  addCenterNotification({
-    id: `like:${payload.id}`,
-    type: "likes",
-    title: "New Like",
-    text: "",
-    postId: payload.postId,
-    userId: String(payload.actorUserId),
-    actorUsername: payload.actorUsername,
-    actorUsernames: [payload.actorUsername],
-    actorUserIds: [String(payload.actorUserId)],
-    likeCount: 1,
-    readAt: null,
-    createdAt: payload.createdAt,
-  });
-
+  if (!isBadgeEarnedPayloadForUser(payload, userId)) return false;
+  enqueue(payload.notifications);
   return true;
 };
 
 export const loadPendingBadgeNotifications = async (
-  enqueueNotifications: EnqueueNotifications,
+  enqueue: (notifications?: BadgeNotification[] | null) => void,
   getPending: typeof getPendingBadgeNotifications = getPendingBadgeNotifications,
 ) => {
   const notifications = await getPending();
-
-  enqueueNotifications(notifications);
-
+  enqueue(notifications);
   return notifications;
 };
 
@@ -188,58 +77,56 @@ export const retryBadgeNotificationReadAcks = async ({
   queueNotificationReadRetry,
   markRead = markBadgeNotificationsRead,
 }: RetryReadOptions) => {
-  const retryIds = consumeReadRetryNotificationIds();
-
-  if (!retryIds.length) {
-    return [];
-  }
-
+  const ids = consumeReadRetryNotificationIds();
+  if (!ids.length) return [];
   try {
-    const acknowledgedIds = await markRead(retryIds);
-    const acknowledgedIdSet = new Set(acknowledgedIds);
-
-    const unacknowledgedIds = retryIds.filter(
-      (notificationId) => !acknowledgedIdSet.has(notificationId),
-    );
-
-    if (unacknowledgedIds.length) {
-      queueNotificationReadRetry(unacknowledgedIds);
-    }
-
+    const acknowledgedIds = await markRead(ids);
+    const acknowledged = new Set(acknowledgedIds);
+    const retry = ids.filter((id) => !acknowledged.has(id));
+    if (retry.length) queueNotificationReadRetry(retry);
     return acknowledgedIds;
-  } catch (error) {
-    queueNotificationReadRetry(retryIds);
-
-    if (__DEV__) {
-      console.warn(
-        "[BadgeRealtimeHook] Failed to retry read acknowledgments",
-        error,
-      );
-    }
-
+  } catch {
+    queueNotificationReadRetry(ids);
     return [];
   }
 };
 
-export const prepareNotificationSocketAccess = async ({
-  token,
-  recoverPendingNotifications,
-  getStoredAccessToken = getAccessToken,
-}: PrepareNotificationSocketAccessOptions): Promise<string | null> => {
-  await recoverPendingNotifications();
+const isCanonicalNotificationForUser = (
+  payload: unknown,
+  userId: number,
+): payload is AppNotification =>
+  Boolean(
+    payload &&
+      typeof payload === "object" &&
+      "id" in payload &&
+      typeof payload.id === "string" &&
+      "recipientUserId" in payload &&
+      Number(payload.recipientUserId) === userId &&
+      "type" in payload &&
+      typeof payload.type === "string",
+  );
 
-  const latestToken = await getStoredAccessToken();
-
-  return latestToken && latestToken === token ? latestToken : null;
+const activeConversationFromPath = (pathname: string | null) => {
+  const match = pathname?.match(/^\/messages\/([^/]+)$/);
+  return match ? decodeURIComponent(match[1]) : null;
 };
 
-export function useBadgeRealtimeNotifications({
-  token,
-  userId,
-}: UseBadgeRealtimeNotificationsOptions = {}) {
-  const { addCenterNotification } = useNotifications();
-  const previousUserIdRef = useRef<number | null>(null);
+export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
+  const pathname = usePathname();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
+  const previousUserIdRef = useRef<number | null>(null);
+  const {
+    initializeNotifications,
+    refreshNotifications,
+    mergeRealtimeNotification,
+    applyRealtimeRead,
+    applyRealtimeArchive,
+    applyRealtimeUnreadCount,
+    markConversationNotificationsRead,
+    clearCenterNotifications,
+  } = useNotifications();
 
   useEffect(() => {
     if (previousUserIdRef.current !== normalizedUserId) {
@@ -252,46 +139,26 @@ export function useBadgeRealtimeNotifications({
     if (!token || !normalizedUserId) {
       disconnectNotificationSocket();
       useBadgeNotificationStore.getState().clearBadgeNotifications();
-
+      clearCenterNotifications();
       return;
     }
 
-    let isActive = true;
+    let active = true;
     let appState: AppStateStatus = AppState.currentState;
-    let activeSocket: NotificationSocket | null = null;
-    let activeSocketToken: string | null = null;
-    let hasLoggedConnectError = false;
-    let appStateSubscription: ReturnType<
-      typeof AppState.addEventListener
-    > | null = null;
+    let socket: NotificationSocket | null = null;
+    let socketToken: string | null = null;
+    let initialHydration: Promise<boolean> | null = null;
+    let hasConnected = false;
 
-    const recoverPendingNotifications = async () => {
-      try {
-        const store = useBadgeNotificationStore.getState();
-
-        await retryBadgeNotificationReadAcks({
-          consumeReadRetryNotificationIds:
-            store.consumeReadRetryNotificationIds,
-          queueNotificationReadRetry: store.queueNotificationReadRetry,
-        });
-
-        await loadPendingBadgeNotifications((pendingNotifications) => {
-          if (!isActive) {
-            return;
-          }
-
-          useBadgeNotificationStore
-            .getState()
-            .enqueueNotifications(pendingNotifications);
-        });
-      } catch (error) {
-        if (__DEV__) {
-          console.warn(
-            "[BadgeRealtimeHook] Failed to recover pending notifications",
-            error,
-          );
-        }
-      }
+    const recoverBadges = async () => {
+      const store = useBadgeNotificationStore.getState();
+      await retryBadgeNotificationReadAcks({
+        consumeReadRetryNotificationIds: store.consumeReadRetryNotificationIds,
+        queueNotificationReadRetry: store.queueNotificationReadRetry,
+      });
+      await loadPendingBadgeNotifications((pending) => {
+        if (active) useBadgeNotificationStore.getState().enqueueNotifications(pending);
+      });
     };
 
     const handleBadgeEarned = (payload: BadgeEarnedSocketPayload) => {
@@ -302,148 +169,106 @@ export function useBadgeRealtimeNotifications({
       );
     };
 
-    const handleLikeNotification = (payload: LikeNotificationSocketPayload) => {
-      const accepted = handleLikeNotificationSocketPayload(
-        payload,
-        normalizedUserId,
-        addCenterNotification,
-      );
+    const handleNew = (payload: AppNotification) => {
+      if (!isCanonicalNotificationForUser(payload, normalizedUserId)) return;
+      const activeConversationId = activeConversationFromPath(pathnameRef.current);
+      const conversationId = String(payload.data?.conversationId ?? "");
+      const isOpenConversation =
+        payload.type === "message" &&
+        Boolean(activeConversationId) &&
+        conversationId === activeConversationId;
 
-      if (__DEV__) {
-        console.log("[NotificationRealtime] like:new received", {
-          accepted,
-          recipientUserId: payload?.recipientUserId,
-          actorUserId: payload?.actorUserId,
-          postId: payload?.postId,
-        });
+      mergeRealtimeNotification(payload, { showBanner: !isOpenConversation });
+      if (isOpenConversation) {
+        void markConversationNotificationsRead(conversationId);
       }
+    };
+
+    const handleRead = (payload: AppNotification) => {
+      if (isCanonicalNotificationForUser(payload, normalizedUserId)) {
+        applyRealtimeRead(payload);
+      }
+    };
+
+    const handleArchive = (payload: { id: string }) => {
+      if (typeof payload?.id === "string") applyRealtimeArchive(payload.id);
+    };
+
+    const handleUnreadCount = (payload: { unreadCount: number }) => {
+      applyRealtimeUnreadCount(Number(payload?.unreadCount));
     };
 
     const handleConnect = () => {
-      hasLoggedConnectError = false;
-
-      if (__DEV__) {
-        console.log("[NotificationRealtime] socket connected", {
-          socketId: activeSocket?.id,
-          userId: normalizedUserId,
-        });
-      }
-
-      void recoverPendingNotifications();
+      const hydration = initialHydration;
+      const isReconnect = hasConnected;
+      hasConnected = true;
+      void (hydration ? hydration.catch(() => false) : Promise.resolve()).then(
+        () => Promise.all([
+          refreshNotifications(),
+          isReconnect ? recoverBadges() : Promise.resolve(),
+        ]),
+      );
     };
 
-    const handleNotificationsReady = (payload: { userId: number }) => {
-      if (__DEV__) {
-        console.log("[NotificationRealtime] recipient room ready", {
-          socketId: activeSocket?.id,
-          userId: payload.userId,
-        });
-      }
-    };
+    const connect = async () => {
+      // Begin REST catch-up first so the context accepts realtime events for
+      // this user, then connect while hydration is in flight. The first socket
+      // connection performs one post-connect catch-up to close the pre-connect
+      // delivery gap; canonical IDs make both responses idempotent.
+      initialHydration = initializeNotifications(normalizedUserId);
+      const latestToken = await getAccessToken();
+      if (!active || !latestToken || latestToken !== token) return;
 
-    const handleDisconnect = (reason: string) => {
-      if (__DEV__) {
-        console.log("[NotificationRealtime] socket disconnected", {
-          reason,
-          userId: normalizedUserId,
-        });
-      }
-    };
-
-    const handleConnectError = (error: Error) => {
-      if (__DEV__ && !hasLoggedConnectError) {
-        hasLoggedConnectError = true;
-        console.warn("[BadgeRealtimeHook] Socket connection failed", {
-          message: error.message,
-        });
-      }
-    };
-
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      const wasBackgrounded =
-        appState === "inactive" || appState === "background";
-
-      appState = nextAppState;
-
-      if (wasBackgrounded && nextAppState === "active") {
-        void reconnectAfterForeground();
-      }
-    };
-
-    const reconnectAfterForeground = async () => {
-      const latestToken = await prepareNotificationSocketAccess({
-        token,
-        recoverPendingNotifications,
-      });
-
-      if (
-        !isActive ||
-        !latestToken ||
-        latestToken !== activeSocketToken ||
-        !activeSocket ||
-        activeSocket.connected
-      ) {
-        return;
-      }
-
-      activeSocket.connect();
-    };
-
-    const initializeSocket = async () => {
-      const latestToken = await prepareNotificationSocketAccess({
-        token,
-        // This authenticated request refreshes an expired persisted access token
-        // before Socket.IO attempts its one-shot namespace authentication.
-        recoverPendingNotifications,
-      });
-
-      if (!isActive || !latestToken) {
-        return;
-      }
-
-      const socket = getNotificationSocket(latestToken);
-
-      if (!socket) {
-        return;
-      }
-
-      activeSocket = socket;
-      activeSocketToken = latestToken;
-
+      socketToken = latestToken;
+      socket = getNotificationSocket(latestToken);
+      if (!socket) return;
+      socket.on("notification:new", handleNew);
+      socket.on("notification:read", handleRead);
+      socket.on("notification:archived", handleArchive);
+      socket.on("notification:unread-count", handleUnreadCount);
       socket.on("badge:earned", handleBadgeEarned);
-      socket.on("like:new", handleLikeNotification);
-      socket.on("notifications:ready", handleNotificationsReady);
       socket.on("connect", handleConnect);
-      socket.on("connect_error", handleConnectError);
-      socket.on("disconnect", handleDisconnect);
-
-      if (socket.connected) {
-        void recoverPendingNotifications();
-      } else {
-        socket.connect();
-      }
+      if (!socket.connected) socket.connect();
+      await Promise.all([initialHydration, recoverBadges()]);
     };
 
-    appStateSubscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange,
-    );
+    const handleAppState = (nextState: AppStateStatus) => {
+      const returning =
+        (appState === "inactive" || appState === "background") && nextState === "active";
+      appState = nextState;
+      if (!returning) return;
+      void Promise.all([refreshNotifications(), recoverBadges()]).then(async () => {
+        const latestToken = await getAccessToken();
+        if (active && latestToken === socketToken && socket && !socket.connected) {
+          socket.connect();
+        }
+      });
+    };
 
-    void initializeSocket();
+    const appStateSubscription = AppState.addEventListener("change", handleAppState);
+    void connect();
 
     return () => {
-      isActive = false;
-
-      activeSocket?.off("badge:earned", handleBadgeEarned);
-      activeSocket?.off("like:new", handleLikeNotification);
-      activeSocket?.off("notifications:ready", handleNotificationsReady);
-      activeSocket?.off("connect", handleConnect);
-      activeSocket?.off("connect_error", handleConnectError);
-      activeSocket?.off("disconnect", handleDisconnect);
-
-      appStateSubscription?.remove();
-
-      disconnectNotificationSocket(activeSocketToken);
+      active = false;
+      socket?.off("notification:new", handleNew);
+      socket?.off("notification:read", handleRead);
+      socket?.off("notification:archived", handleArchive);
+      socket?.off("notification:unread-count", handleUnreadCount);
+      socket?.off("badge:earned", handleBadgeEarned);
+      socket?.off("connect", handleConnect);
+      appStateSubscription.remove();
+      disconnectNotificationSocket(socketToken);
     };
-  }, [addCenterNotification, normalizedUserId, token]);
+  }, [
+    applyRealtimeArchive,
+    applyRealtimeRead,
+    applyRealtimeUnreadCount,
+    clearCenterNotifications,
+    initializeNotifications,
+    markConversationNotificationsRead,
+    mergeRealtimeNotification,
+    normalizedUserId,
+    refreshNotifications,
+    token,
+  ]);
 }

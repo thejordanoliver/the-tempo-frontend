@@ -18,6 +18,7 @@ import Roster from "components/Sports/Baseball/Team/Roster";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -56,6 +57,7 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "mlb";
+  const { toggleNotifications, isNotified } = useNotifications();
   const navigation = useNavigation();
   const currentSeason = getMLBSeason();
   const { resolvedColorScheme } = usePreferences();
@@ -232,6 +234,8 @@ export default function TeamDetailScreen() {
           isTeamScreen={true}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -242,6 +246,9 @@ export default function TeamDetailScreen() {
     navigation,
     team,
     teamIdNum,
+    toggleNotifications,
+    isNotified,
+    league,
     teamLogo,
     teamColor,
     toggleFavorite,

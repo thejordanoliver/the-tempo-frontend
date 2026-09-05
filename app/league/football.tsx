@@ -716,6 +716,10 @@ function CFBLeagueScreen() {
           <View key="awards" style={styles.contentArea}>
             <AwardSeasons league={league} />
           </View>
+
+          <View key="forum" style={styles.contentArea}>
+            <ForumFeed league={league} />
+          </View>
         </PagerView>
       </View>
 

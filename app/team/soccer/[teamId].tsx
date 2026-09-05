@@ -6,6 +6,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 
@@ -32,6 +33,7 @@ export default function TeamDetailScreen() {
     teamId: string;
     league: string;
   }>();
+  const { toggleNotifications, isNotified } = useNotifications();
 
   const teamIdNum = Number(teamId);
   const team = getSOCCTeam(teamId);
@@ -106,11 +108,22 @@ export default function TeamDetailScreen() {
           teamColor={teamColor}
           onBack={goBack}
           isTeamScreen={true}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           league={league}
         />
       ),
     });
-  }, [navigation, team, teamIdNum, teamLogo, teamColor, league]);
+  }, [
+    navigation,
+    team,
+    teamIdNum,
+    teamLogo,
+    teamColor,
+    league,
+    toggleNotifications,
+    isNotified,
+  ]);
 
   if (!team) {
     return (

@@ -13,7 +13,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import { gamePreviewModalStyle } from "styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "styles/ModalsStyles/GamePreviewModalStyles";
 import { MMAFight } from "types/mma/mma";
 import {
   formatPeriod,
@@ -95,7 +95,7 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const gameStatusDescription = game.status.description;
   const state = game.status.state;
 
-  const styles = gamePreviewModalStyle({
+  const styles = GamePreviewModalStyles({
     isDark: isDark,
     homeColor: firstFighterColor,
     awayColor: secondFighterColor,

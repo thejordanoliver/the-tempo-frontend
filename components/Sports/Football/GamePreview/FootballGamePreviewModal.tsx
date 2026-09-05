@@ -9,7 +9,7 @@ import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDet
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { FootballGame } from "@/types/football/football";
 import {
   formatPeriod,
@@ -115,7 +115,7 @@ export default function FootballGamePreviewModal({
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
-  const styles = gamePreviewModalStyle({
+  const styles = GamePreviewModalStyles({
     isDark: isDark,
     isChampionship: isChampionship,
     homeColor: homeColor,

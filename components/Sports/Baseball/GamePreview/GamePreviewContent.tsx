@@ -11,7 +11,7 @@ import {
   TeamStat,
 } from "@/hooks/BaseballHooks/useBaseballGameDetails";
 import { Coach } from "@/hooks/useTeams";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
@@ -115,7 +115,7 @@ export default function GamePreviewContent({
   isMLB,
   isDark,
 }: GamePreviewContentProps) {
-  const styles = gamePreviewModalStyle({ isDark: isDark });
+  const styles = GamePreviewModalStyles({ isDark: isDark });
 
   return (
     <BottomSheetScrollView

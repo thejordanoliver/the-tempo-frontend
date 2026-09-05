@@ -22,6 +22,7 @@ import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -56,6 +57,7 @@ function getMonthIndex(monthGroup: BasketballScheduleMonth) {
 
 export default function TeamDetailScreen() {
   const league = "wcbb";
+  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getCBBSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -232,6 +234,8 @@ export default function TeamDetailScreen() {
           isTeamScreen
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
@@ -245,6 +249,9 @@ export default function TeamDetailScreen() {
     favorited,
     toggleFavorite,
     teamIdNum,
+    toggleNotifications,
+    isNotified,
+    league,
   ]);
 
   if (!team) {

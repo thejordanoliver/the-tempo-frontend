@@ -5,7 +5,7 @@ import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
-import { gamePreviewModalStyle } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
 import { BaseballGame } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -117,7 +117,7 @@ export default function BaseballGamePreviewModal({
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
-  const styles = gamePreviewModalStyle({
+  const styles = GamePreviewModalStyles({
     isDark: isDark,
     isChampionship: isChampionship,
     homeColor: homeColor,

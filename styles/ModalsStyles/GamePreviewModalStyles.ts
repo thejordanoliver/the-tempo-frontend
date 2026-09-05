@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const gamePreviewModalStyle = ({
+export const GamePreviewModalStyles = ({
   isDark,
   isChampionship,
   awayColor,

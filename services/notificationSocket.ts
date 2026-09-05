@@ -1,14 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 import type { BadgeEarnedSocketPayload } from "@/types/badges";
-
-export type LikeNotificationSocketPayload = {
-  id: string;
-  recipientUserId: number;
-  postId: string;
-  actorUserId: number;
-  actorUsername: string;
-  createdAt: string;
-};
+import type { AppNotification } from "@/types/notifications";
 
 const normalizeSocketBaseUrl = (value?: string) => {
   if (!value) {
@@ -25,7 +17,10 @@ const SOCKET_URL =
 
 type NotificationServerEvents = {
   "badge:earned": (payload: BadgeEarnedSocketPayload) => void;
-  "like:new": (payload: LikeNotificationSocketPayload) => void;
+  "notification:new": (payload: AppNotification) => void;
+  "notification:read": (payload: AppNotification) => void;
+  "notification:archived": (payload: { id: string }) => void;
+  "notification:unread-count": (payload: { unreadCount: number }) => void;
   "notifications:ready": (payload: { userId: number }) => void;
 };
 

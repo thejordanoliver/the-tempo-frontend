@@ -14,6 +14,7 @@ import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
+import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -51,6 +52,7 @@ function getMonthIndex(monthGroup: BaseballScheduleMonth) {
 
 export default function SoftballTeamDetailScreen() {
   const league = "sb";
+  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getWNBASeason();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
@@ -201,12 +203,24 @@ export default function SoftballTeamDetailScreen() {
           isTeamScreen={true}
           isFavorite={favorited}
           onToggleFavorite={() => team && toggleFavorite(league, team.id)}
+          onToggleNotifications={() => void toggleNotifications(league, teamIdNum)}
+          isNotified={isNotified(league, teamIdNum)}
           onOpenInfo={() => setModalVisible(true)}
           league={league}
         />
       ),
     });
-  }, [favorited, navigation, team, teamLogo, teamColor, toggleFavorite]);
+  }, [
+    favorited,
+    navigation,
+    team,
+    teamLogo,
+    teamColor,
+    toggleFavorite,
+    toggleNotifications,
+    isNotified,
+    teamIdNum,
+  ]);
 
   if (!team) {
     return (
