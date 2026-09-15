@@ -7,7 +7,7 @@ import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 export type DraftPick = {
@@ -110,10 +110,10 @@ export default function DraftCard({
     visualState,
   ].join(":");
 
-  const cardSlideX = useRef(new Animated.Value(70)).current;
-  const cardFade = useRef(new Animated.Value(0)).current;
-  const slideX = useRef(new Animated.Value(70)).current;
-  const fade = useRef(new Animated.Value(0)).current;
+  const [cardSlideX] = useState(() => new Animated.Value(70));
+  const [cardFade] = useState(() => new Animated.Value(0));
+  const [slideX] = useState(() => new Animated.Value(70));
+  const [fade] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     const delay = index * 60;

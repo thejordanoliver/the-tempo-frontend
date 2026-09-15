@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Easing,
@@ -25,70 +25,80 @@ function MessageAttachmentMenu({
 }: Props) {
   const styles = useMemo(() => attachmentMenuStyles(isDark), [isDark]);
 
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.94)).current;
-  const translateY = useRef(new Animated.Value(8)).current;
+  const [opacity] = useState(() => new Animated.Value(0));
+  const [scale] = useState(() => new Animated.Value(0.94));
+  const [translateY] = useState(() => new Animated.Value(8));
 
   const [shouldRender, setShouldRender] = useState(visible);
 
   useEffect(() => {
-    if (visible) {
-      setShouldRender(true);
+    let cancelled = false;
 
-      opacity.setValue(0);
-      scale.setValue(0.94);
-      translateY.setValue(8);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) {
+        setShouldRender(true);
+
+        opacity.setValue(0);
+        scale.setValue(0.94);
+        translateY.setValue(8);
+
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 150,
+            easing: Easing.out(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.spring(scale, {
+            toValue: 1,
+            damping: 16,
+            stiffness: 220,
+            mass: 0.75,
+            useNativeDriver: true,
+          }),
+          Animated.spring(translateY, {
+            toValue: 0,
+            damping: 16,
+            stiffness: 220,
+            mass: 0.75,
+            useNativeDriver: true,
+          }),
+        ]).start();
+
+        return;
+      }
 
       Animated.parallel([
         Animated.timing(opacity, {
-          toValue: 1,
-          duration: 150,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.spring(scale, {
-          toValue: 1,
-          damping: 16,
-          stiffness: 220,
-          mass: 0.75,
-          useNativeDriver: true,
-        }),
-        Animated.spring(translateY, {
           toValue: 0,
-          damping: 16,
-          stiffness: 220,
-          mass: 0.75,
+          duration: 110,
+          easing: Easing.in(Easing.quad),
           useNativeDriver: true,
         }),
-      ]).start();
-
-      return;
-    }
-
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 110,
-        easing: Easing.in(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
-        toValue: 0.96,
-        duration: 110,
-        easing: Easing.in(Easing.quad),
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 8,
-        duration: 110,
-        easing: Easing.in(Easing.quad),
-        useNativeDriver: true,
-      }),
-    ]).start(({ finished }) => {
-      if (finished) {
-        setShouldRender(false);
-      }
+        Animated.timing(scale, {
+          toValue: 0.96,
+          duration: 110,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 8,
+          duration: 110,
+          easing: Easing.in(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start(({ finished }) => {
+        if (finished) {
+          setShouldRender(false);
+        }
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [opacity, scale, translateY, visible]);
 
   const handlePickImage = useCallback(() => {

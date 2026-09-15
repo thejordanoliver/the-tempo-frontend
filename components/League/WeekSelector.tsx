@@ -96,7 +96,7 @@ export default function WeekSelector({
 
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const indicatorX = useRef(new Animated.Value(0)).current;
+  const [indicatorX] = useState(() => new Animated.Value(0));
   const hasPositionedIndicatorRef = useRef(false);
   const hasAlignedScrollRef = useRef(false);
 

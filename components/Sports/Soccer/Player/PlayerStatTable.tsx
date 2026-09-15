@@ -419,10 +419,10 @@ const getSelectedTeamOption = (
 
   const selectedTeam = selectedTeamId
     ? teamOptions.find(
-        (team) =>
-          String(team.teamId) === String(selectedTeamId) ||
-          String(team.value) === String(selectedTeamId),
-      )
+      (team) =>
+        String(team.teamId) === String(selectedTeamId) ||
+        String(team.value) === String(selectedTeamId),
+    )
     : null;
 
   return selectedTeam ?? teamOptions[0];
@@ -483,14 +483,24 @@ export default function PlayerStatTable({
   const defaultCategory = categoryOptions[0]?.value ?? null;
   const activeCategory =
     selectedCategory &&
-    categoryOptions.some((category) => category.value === selectedCategory)
+      categoryOptions.some((category) => category.value === selectedCategory)
       ? selectedCategory
       : defaultCategory;
 
   useEffect(() => {
-    if (activeCategory !== selectedCategory) {
-      setSelectedCategory(activeCategory);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (activeCategory !== selectedCategory) {
+        setSelectedCategory(activeCategory);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeCategory, selectedCategory]);
 
   const filteredRows = useMemo(

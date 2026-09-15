@@ -1,14 +1,26 @@
-import { isCancel } from "axios";
+import { isAxiosError, isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export function usePlayerById(playerId?: number, league: string = "NFL") {
+export function usePlayerById(
+  playerId?: number,
+  league: string = "nfl",
+  enabled = true,
+) {
   const [player, setPlayer] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
+  const canFetch =
+    enabled && Boolean(playerId) && Number.isFinite(Number(playerId));
+  const requestKey = canFetch ? `${league}:${playerId}` : null;
 
   useEffect(() => {
-    if (!playerId) return;
+    if (!requestKey || !playerId) {
+      return;
+    }
 
     const controller = new AbortController();
 
@@ -16,6 +28,8 @@ export function usePlayerById(playerId?: number, league: string = "NFL") {
       try {
         setLoading(true);
         setError(null);
+        setPlayer(null);
+        setResolvedRequestKey(null);
 
         const url =
           league === "nba"
@@ -26,25 +40,41 @@ export function usePlayerById(playerId?: number, league: string = "NFL") {
           signal: controller.signal,
         });
 
-        setPlayer(res.data.player);
-      } catch (err: any) {
-        if (isCancel(err)) return;
+        if (controller.signal.aborted) return;
+
+        setPlayer(res.data.player ?? null);
+        setResolvedRequestKey(requestKey);
+      } catch (err: unknown) {
+        if (isCancel(err) || controller.signal.aborted) return;
 
         console.error("Player fetch error:", err);
-        setError("Failed to load player");
+        setPlayer(null);
+        setError(
+          isAxiosError<{ error?: string; message?: string }>(err)
+            ? err.response?.data?.error ||
+                err.response?.data?.message ||
+                "Failed to load player"
+            : "Failed to load player",
+        );
+        setResolvedRequestKey(requestKey);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
 
     fetchPlayer();
 
     return () => controller.abort();
-  }, [playerId, league]);
+  }, [league, playerId, requestKey]);
+
+  const hasCurrentResult =
+    requestKey !== null && resolvedRequestKey === requestKey;
 
   return {
-    player,
-    loading,
-    error,
+    player: hasCurrentResult ? player : null,
+    loading: canFetch ? loading || !hasCurrentResult : false,
+    error: hasCurrentResult ? error : null,
   };
 }

@@ -1,6 +1,6 @@
 import DivisionFilterSkeleton from "@/components/Skeletons/DivisionFilterSkeleton";
 import { activeOpacity, Colors, Fonts } from "@/constants/styles";
-import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -30,7 +30,7 @@ function DivisionFilter({
   isDark,
   loading,
 }: Props) {
-  const indicatorX = useRef(new Animated.Value(0)).current;
+  const [indicatorX] = useState(() => new Animated.Value(0));
   const onSelectRef = useRef(onSelect);
 
   useEffect(() => {

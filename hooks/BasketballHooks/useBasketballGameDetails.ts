@@ -277,10 +277,10 @@ export type LeadersType = {
 export type GameStatus = {
   id: string;
   name:
-    | "STATUS_SCHEDULED"
-    | "STATUS_IN_PROGRESS"
-    | "STATUS_HALFTIME"
-    | "STATUS_FINAL";
+  | "STATUS_SCHEDULED"
+  | "STATUS_IN_PROGRESS"
+  | "STATUS_HALFTIME"
+  | "STATUS_FINAL";
   state: "pre" | "in" | "post";
   completed: boolean;
   gameStatusDescription: string;
@@ -335,10 +335,10 @@ export type BasketballGameDetailsResponse = {
 export type DateParam =
   | string
   | {
-      date?: string;
-      utc?: string;
-      timestamp?: number;
-    };
+    date?: string;
+    utc?: string;
+    timestamp?: number;
+  };
 
 /* ---------------------------------- */
 /* Hook                               */
@@ -416,7 +416,7 @@ export const useBasketballGameDetails = (
   useEffect(() => {
     if (skipFetch) return;
 
-    fetchDetails(true);
+    void Promise.resolve().then(() => fetchDetails(true));
   }, [fetchDetails, skipFetch]);
 
   useLiveSportsSubscription<BasketballGameDetailsResponse>({

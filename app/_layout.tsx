@@ -26,7 +26,7 @@ import {
 } from "expo-router/react-navigation";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -51,7 +51,7 @@ import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
 import { clearAuthSession } from "../utils/apiClient";
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.preventAutoHideAsync().catch(() => { });
 
 SplashScreen.setOptions({
   duration: 1000,
@@ -122,7 +122,7 @@ function AppLayout() {
 
   const { user, token, loadingUser } = useAuth();
 
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [opacity] = useState(() => new Animated.Value(1));
 
   const [visibleTabBar, setVisibleTabBar] = useState(true);
 
@@ -214,9 +214,19 @@ function AppLayout() {
   ]);
 
   useEffect(() => {
-    if (!pathname) return;
+    let cancelled = false;
 
-    setVisibleTabBar(!shouldHideTabBar);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!pathname) return;
+
+      setVisibleTabBar(!shouldHideTabBar);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [pathname, shouldHideTabBar]);
 
   useEffect(() => {
@@ -251,13 +261,13 @@ function AppLayout() {
 
               header: !isSplashScreen
                 ? () => (
-                    <CustomHeader
-                      title={route.name}
-                      onBack={
-                        navigation.canGoBack() ? navigation.goBack : undefined
-                      }
-                    />
-                  )
+                  <CustomHeader
+                    title={route.name}
+                    onBack={
+                      navigation.canGoBack() ? navigation.goBack : undefined
+                    }
+                  />
+                )
                 : undefined,
 
               gestureEnabled: !isTabScreen,
@@ -286,7 +296,14 @@ function AppLayout() {
             options={{ headerShown: false }}
           />
 
-          <Stack.Screen name="signup/success" />
+          <Stack.Screen
+            name="signup/success"
+            options={{
+              animation: "fade",
+              gestureEnabled: false,
+              headerShown: false,
+            }}
+          />
         </Stack>
 
         <StatusBar style={isDark ? "light" : "dark"} />

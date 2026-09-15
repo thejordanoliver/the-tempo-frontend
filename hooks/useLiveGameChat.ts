@@ -62,7 +62,7 @@ const mergeMessageList = (messages: ChatMessageItem[]) =>
 export function useLiveGameChat(gameId: string | number) {
   const { user } = useAuth();
   const socketRef = useRef<GameChatSocket | null>(null);
-  const recentSendRef = useRef<{ key: string; time: number } | null>(null);
+  const recentSendRef = useRef<{ key: string; time: number; } | null>(null);
   const historySyncInFlightRef = useRef(false);
   const historySyncRequestedRef = useRef(false);
   const activeRoomRef = useRef("");
@@ -119,9 +119,9 @@ export function useLiveGameChat(gameId: string | number) {
         prevMessages.map((message) =>
           message.id === messageId || message.clientId === messageId
             ? {
-                ...message,
-                reactions,
-              }
+              ...message,
+              reactions,
+            }
             : message,
         ),
       );
@@ -176,11 +176,14 @@ export function useLiveGameChat(gameId: string | number) {
   useEffect(() => {
     let isMounted = true;
     activeRoomRef.current = roomId;
-    setCacheLoaded(false);
-    setMessages([]);
-    setUserCount(0);
 
     const loadCachedMessages = async () => {
+      await Promise.resolve();
+      if (!isMounted) return;
+      setCacheLoaded(false);
+      setMessages([]);
+      setUserCount(0);
+
       try {
         const savedMessages = await AsyncStorage.getItem(storageKey);
         if (!isMounted) return;
@@ -211,7 +214,7 @@ export function useLiveGameChat(gameId: string | number) {
       }
     };
 
-    loadCachedMessages();
+    void loadCachedMessages();
 
     return () => {
       isMounted = false;
@@ -229,18 +232,20 @@ export function useLiveGameChat(gameId: string | number) {
   useEffect(() => {
     if (!cacheLoaded) return;
 
-    void syncHistory();
+    void Promise.resolve().then(() => syncHistory());
   }, [cacheLoaded, syncHistory]);
 
   useEffect(() => {
     if (!cacheLoaded) return;
 
-    setIsReady(false);
-
     let isMounted = true;
     let socket: GameChatSocket | null = null;
 
     const connectSocket = async () => {
+      await Promise.resolve();
+      if (!isMounted) return;
+      setIsReady(false);
+
       const token = await getAccessToken();
 
       if (!isMounted) return;
@@ -288,7 +293,7 @@ export function useLiveGameChat(gameId: string | number) {
       });
     };
 
-    connectSocket();
+    void connectSocket();
 
     return () => {
       isMounted = false;

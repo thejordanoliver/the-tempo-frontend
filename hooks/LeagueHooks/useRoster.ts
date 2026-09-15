@@ -80,7 +80,7 @@ export default function useRoster(teamId: number, league: string) {
   }, [teamId, league]);
 
   useEffect(() => {
-    refreshPlayers();
+    void Promise.resolve().then(() => refreshPlayers());
   }, [refreshPlayers]);
 
   return {

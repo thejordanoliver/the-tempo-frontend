@@ -29,6 +29,8 @@ type UseExploreSearchStateOptions = {
   setQuery: (query: string) => void;
   results: ResultItem[];
   recentSearches: ResultItem[];
+  onSearchOpen?: () => void;
+  onSearchClose?: () => void;
 };
 
 export function useExploreSearchState({
@@ -36,6 +38,8 @@ export function useExploreSearchState({
   setQuery,
   results,
   recentSearches,
+  onSearchOpen,
+  onSearchClose,
 }: UseExploreSearchStateOptions) {
   const [searchVisible, setSearchVisible] = useState(false);
   const [selectedTab, setSelectedTab] = useState<ExploreSearchTab>("All");
@@ -56,27 +60,36 @@ export function useExploreSearchState({
   const searchResultsData = filteredResults;
 
   useEffect(() => {
-    setShowAll(false);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setShowAll(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [normalizedQuery, selectedTab, searchVisible]);
 
   const closeSearch = useCallback(() => {
+    onSearchClose?.();
     setSearchVisible(false);
     setQuery("");
     setSelectedTab("All");
     setShowAll(false);
-  }, [setQuery]);
+  }, [onSearchClose, setQuery]);
 
   const toggleSearch = useCallback(() => {
-    setSearchVisible((prev) => {
-      if (prev) {
-        setQuery("");
-        setSelectedTab("All");
-        setShowAll(false);
-      }
+    if (searchVisible) {
+      closeSearch();
+      return;
+    }
 
-      return !prev;
-    });
-  }, [setQuery]);
+    onSearchOpen?.();
+    setSearchVisible(true);
+  }, [closeSearch, onSearchOpen, searchVisible]);
 
   const handleChangeText = useCallback(
     (text: string) => {

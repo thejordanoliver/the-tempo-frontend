@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -29,7 +29,7 @@ type PulsingBaseProps = {
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 function usePulseOnOccupy(occupied: boolean) {
-  const scale = useRef(new Animated.Value(1)).current;
+  const [scale] = useState(() => new Animated.Value(1));
   const prevOccupied = useRef(occupied);
 
   useEffect(() => {

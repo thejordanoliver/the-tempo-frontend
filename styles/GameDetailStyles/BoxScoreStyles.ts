@@ -18,6 +18,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
     teamsContainer: {
       gap: 16,
     },
+    teamGap: { height: 24 },
     messageCard: {
       alignItems: "center",
       justifyContent: "center",
@@ -71,14 +72,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
       alignItems: "center",
       gap: 10,
     },
-    teamLogoContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: alternatingRowColor,
-    },
+
     teamLogo: {
       width: 30,
       height: 30,

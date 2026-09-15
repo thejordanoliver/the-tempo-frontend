@@ -99,8 +99,8 @@ function FanPredictionContent({
     string | number | null
   >(null);
 
-  const animFillAway = useRef(new Animated.Value(0)).current;
-  const animFillHome = useRef(new Animated.Value(0)).current;
+  const [animFillAway] = useState(() => new Animated.Value(0));
+  const [animFillHome] = useState(() => new Animated.Value(0));
   const submittingRef = useRef(false);
 
   const canVote = state === "pre" || state === "in";

@@ -101,7 +101,7 @@ export default function GameDetailsScreen(
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+  }, [game]);
 
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);

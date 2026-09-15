@@ -154,7 +154,7 @@ export function useRosterStats(
   );
 
   useEffect(() => {
-    void fetchRoster();
+    void Promise.resolve().then(() => fetchRoster());
   }, [fetchRoster]);
 
   return {

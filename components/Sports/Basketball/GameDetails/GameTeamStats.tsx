@@ -1,6 +1,6 @@
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, Colors } from "constants/styles";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { DimensionValue } from "react-native";
 import {
   Animated,
@@ -503,9 +503,7 @@ export default function GameTeamStats({
   const styles = gameTeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
-  const heightAnim = useRef(
-    new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
-  ).current;
+  const [heightAnim] = useState(() => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT));
 
   const teams = useMemo(() => getTeams(stats, teamStats), [stats, teamStats]);
   const away = getSideTeam(teams, "away") ?? teams[0];

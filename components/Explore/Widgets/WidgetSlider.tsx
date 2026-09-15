@@ -48,6 +48,7 @@ export type WidgetSlide =
   | { type: "cfb"; data: FootballGame }
   | { type: "ufl"; data: FootballGame }
   | { type: "mlb"; data: BaseballGame }
+  | { type: "cb"; data: BaseballGame }
   | { type: "cbb"; data: BasketballGame }
   | { type: "wcbb"; data: BasketballGame }
   | { type: "wnba"; data: BasketballGame }
@@ -228,7 +229,7 @@ export default function WidgetSlider({
   const canResize = !dashboardMode && !isHorizontal;
   const aspectRatio = resolvedInitialWidth / initialHeight;
 
-  const scrollPosition = useRef(new Animated.Value(0)).current;
+  const [scrollPosition] = useState(() => new Animated.Value(0));
   const flatListRef = useRef<FlatList>(null);
   const currentOffset = useRef(0);
 
@@ -249,12 +250,22 @@ export default function WidgetSlider({
   }, [currentIndex]);
 
   useEffect(() => {
-    if (!dashboardMode) return;
+    let cancelled = false;
 
-    slideHeightRef.current = initialHeight;
-    slideWidthRef.current = resolvedInitialWidth;
-    setSlideHeight(initialHeight);
-    setSlideWidth(resolvedInitialWidth);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!dashboardMode) return;
+
+      slideHeightRef.current = initialHeight;
+      slideWidthRef.current = resolvedInitialWidth;
+      setSlideHeight(initialHeight);
+      setSlideWidth(resolvedInitialWidth);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [dashboardMode, initialHeight, resolvedInitialWidth]);
 
   useEffect(() => {
@@ -340,8 +351,13 @@ export default function WidgetSlider({
     });
   }, [isHorizontal]);
 
-  const panResponder = useRef(
-    PanResponder.create({
+  const [panResponder, setPanResponder] = useState(() =>
+    PanResponder.create({}),
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const nextPanResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
 
@@ -394,10 +410,25 @@ export default function WidgetSlider({
         isResizing.current = false;
         snapToCurrentSlide();
       },
-    }),
-  ).current;
+    });
 
-  const progressOpacity = useRef(new Animated.Value(0)).current;
+    void Promise.resolve().then(() => {
+      if (!cancelled) setPanResponder(nextPanResponder);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    aspectRatio,
+    initialHeight,
+    resolvedInitialWidth,
+    screenHeight,
+    screenWidth,
+    snapToCurrentSlide,
+  ]);
+
+  const [progressOpacity] = useState(() => new Animated.Value(0));
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const progressHeight = useMemo(
@@ -527,6 +558,21 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
+                isMLB={true}
+                isCB={false}
+              />
+            </View>
+          );
+        case "cb":
+          return (
+            <View style={{ height: slideHeight, width: slideWidth }}>
+              <BaseballGameWidget
+                game={item.data}
+                height={slideHeight}
+                width={slideWidth}
+                isDark={isDark}
+                isMLB={false}
+                isCB={true}
               />
             </View>
           );

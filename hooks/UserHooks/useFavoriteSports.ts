@@ -12,7 +12,7 @@ import {
 function getFavoriteSportsErrorMessage(error: unknown): string {
   if (error && typeof error === "object" && "response" in error) {
     const response = (error as {
-      response?: { data?: { error?: unknown } };
+      response?: { data?: { error?: unknown; }; };
     }).response;
     const apiError = response?.data?.error;
 
@@ -130,11 +130,21 @@ export function useFavoriteSports(userId: number | null) {
   );
 
   useEffect(() => {
-    clearFavoriteSports();
+    let cancelled = false;
 
-    if (userId) {
-      void loadFavoriteSports();
-    }
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      clearFavoriteSports();
+
+      if (userId) {
+        void loadFavoriteSports();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [clearFavoriteSports, loadFavoriteSports, userId]);
 
   const updateFavoriteSports = useCallback(

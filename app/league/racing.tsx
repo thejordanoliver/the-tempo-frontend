@@ -79,18 +79,23 @@ export default function RacingLeagueScreen() {
     if (!sortedCalendar.length) {
       return;
     }
-
-    setSelectedEventIndex((currentIndex) => {
-      if (
-        currentIndex !== null &&
-        currentIndex >= 0 &&
-        currentIndex < sortedCalendar.length
-      ) {
-        return currentIndex;
-      }
-
-      return defaultEventIndex;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setSelectedEventIndex((currentIndex) => {
+        if (
+          currentIndex !== null &&
+          currentIndex >= 0 &&
+          currentIndex < sortedCalendar.length
+        ) {
+          return currentIndex;
+        }
+        return defaultEventIndex;
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [defaultEventIndex, sortedCalendar.length]);
 
   const safeSelectedEventIndex = useMemo(() => {

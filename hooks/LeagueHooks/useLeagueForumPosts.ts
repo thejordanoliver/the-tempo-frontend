@@ -63,8 +63,8 @@ export function useForumPosts({ league }: UseLeagueForumPostsParams) {
       } catch (err: any) {
         setError(
           err.response?.data?.error ||
-            err.message ||
-            "Failed to load forum posts",
+          err.message ||
+          "Failed to load forum posts",
         );
       } finally {
         setLoading(false);
@@ -77,7 +77,7 @@ export function useForumPosts({ league }: UseLeagueForumPostsParams) {
 
   // 🔁 Initial load
   useEffect(() => {
-    fetchPosts(1);
+    void Promise.resolve().then(() => fetchPosts(1));
   }, [fetchPosts]);
 
   // 🔄 Pull to refresh

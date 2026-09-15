@@ -29,20 +29,34 @@ export function useLeagueTabs(league: string) {
   );
 
   useEffect(() => {
-    setSelectedTab(tabs[0]);
-    setVisitedTabs(new Set([tabs[0]]));
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setSelectedTab(tabs[0]);
+      setVisitedTabs(new Set([tabs[0]]));
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tabs]);
 
   useEffect(() => {
-    setVisitedTabs((current) => {
-      if (current.has(selectedTab)) {
-        return current;
-      }
-
-      const next = new Set(current);
-      next.add(selectedTab);
-      return next;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setVisitedTabs((current) => {
+        if (current.has(selectedTab)) return current;
+        const next = new Set(current);
+        next.add(selectedTab);
+        return next;
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [selectedTab]);
 
   const hasVisitedTab = useCallback(
@@ -71,7 +85,17 @@ export function useTeamTabs(team: string) {
   const [selectedTab, setSelectedTab] = useState<string>(tabs[0]);
 
   useEffect(() => {
-    setSelectedTab(tabs[0]);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setSelectedTab(tabs[0]);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tabs]);
 
   return {

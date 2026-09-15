@@ -124,7 +124,7 @@ const offerListStyles = (isDark: boolean) =>
     itemContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
-      padding: 12,
+      padding: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.white : Colors.black,
     },
@@ -140,12 +140,12 @@ const offerListStyles = (isDark: boolean) =>
     },
     schoolText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.white : Colors.black,
     },
     statusText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 16,
+      fontSize: 14,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     rowAltLight: {

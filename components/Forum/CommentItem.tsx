@@ -57,33 +57,43 @@ const CommentSubmenu = ({
   onEdit,
   onDelete,
 }: ForumActionSubmenuProps) => {
-  const progress = useRef(new RNAnimated.Value(0)).current;
+  const [progress] = useState(() => new RNAnimated.Value(0));
   const [shouldRender, setShouldRender] = useState(visible);
   const styles = useMemo(() => CommentItemStyles(isDark), [isDark]);
 
   useEffect(() => {
-    if (visible) {
-      setShouldRender(true);
+    let cancelled = false;
 
-      RNAnimated.spring(progress, {
-        toValue: 1,
-        damping: 16,
-        stiffness: 230,
-        mass: 0.8,
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) {
+        setShouldRender(true);
+
+        RNAnimated.spring(progress, {
+          toValue: 1,
+          damping: 16,
+          stiffness: 230,
+          mass: 0.8,
+          useNativeDriver: true,
+        }).start();
+
+        return;
+      }
+
+      RNAnimated.timing(progress, {
+        toValue: 0,
+        duration: 130,
+        easing: RNEasing.in(RNEasing.quad),
         useNativeDriver: true,
-      }).start();
-
-      return;
-    }
-
-    RNAnimated.timing(progress, {
-      toValue: 0,
-      duration: 130,
-      easing: RNEasing.in(RNEasing.quad),
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) setShouldRender(false);
+      }).start(({ finished }) => {
+        if (finished) setShouldRender(false);
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [progress, visible]);
 
   if (!shouldRender) return null;
@@ -226,15 +236,35 @@ export const CommentItem = ({
   );
 
   useEffect(() => {
-    setEditText(commentText);
-    setTextExpanded(false);
-    setFullHeight(0);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setEditText(commentText);
+      setTextExpanded(false);
+      setFullHeight(0);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [commentText]);
 
   useEffect(() => {
-    if (isEditing) {
-      setSubmenuVisible(false);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (isEditing) {
+        setSubmenuVisible(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [isEditing]);
 
   useEffect(() => {

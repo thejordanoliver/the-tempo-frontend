@@ -108,7 +108,7 @@ export function useTeams(
   );
 
   useEffect(() => {
-    fetchTeams(false);
+    void Promise.resolve().then(() => fetchTeams(false));
   }, [fetchTeams]);
 
   const refetch = useCallback(async () => {

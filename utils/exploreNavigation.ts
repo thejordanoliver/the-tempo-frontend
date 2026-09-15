@@ -113,7 +113,7 @@ export function getExploreRouteForResult(
         pathname: `${teamRoute.routePrefix}/[id]`,
         params: {
           id: String(routeId),
-          league: String(item.league ?? "SOCC"),
+          league: String(item.league ?? "socc"),
         },
       };
     }
@@ -127,7 +127,7 @@ export function getExploreRouteForResult(
       params: {
         id: String(item.id),
         teamId: String(item.team_id ?? ""),
-        league: item.isWCBB ? "WCBB" : "CBB",
+        league: item.affiliation,
       },
     };
   }
@@ -142,7 +142,7 @@ export function getExploreRouteForResult(
       params: {
         id: String(item.id),
         teamId: String(item.team_id ?? ""),
-        league: String(item.affiliation),
+        league: item.affiliation,
       },
     };
   }
@@ -152,7 +152,7 @@ export function getExploreRouteForResult(
     params: {
       id: String(item.id),
       teamId: String(item.team_id ?? ""),
-      league: String(item.affiliation),
+      league: item.affiliation,
     },
   };
 }

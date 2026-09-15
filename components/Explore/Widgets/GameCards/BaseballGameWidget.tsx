@@ -3,44 +3,53 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import { getBroadcastDisplay } from "@/utils/games";
 import displayeValue from "@/utils/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
-import { Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
 
 type BaseballGameWidgetProps = {
   game: BaseballGame;
   height?: number;
   width?: number;
   isDark: boolean;
+  isMLB: boolean;
+  isCB: boolean;
   loading?: boolean;
 };
 
 export default function BaseballGameWidget({
   game,
+  isMLB,
+  isCB,
   height = 150,
   width = 150,
   loading = false,
   isDark,
 }: BaseballGameWidgetProps) {
+  const league = isMLB ? "mlb" : isCB ? "cb" : "sb";
+  const handlePress = () => {
+    router.push({
+      pathname: "/game/baseball/[game]",
+      params: {
+        game: String(game.id),
+        leagueId: String(league),
+        data: encodeURIComponent(JSON.stringify(game)),
+      },
+    });
+  };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
   const showHeadline = !isSmallLayout || height >= 170;
 
   const gameDateObj = new Date(game.date);
-  const formattedDate = gameDateObj.toLocaleDateString([], {
-    month: "short",
-    day: "numeric",
-  });
-
-  const formattedTime = gameDateObj.toLocaleTimeString([], {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  const formattedDate = formatDate(gameDateObj);
+  const formattedTime = formatTime(gameDateObj);
 
   const home = game.home;
   const away = game.away;
@@ -81,6 +90,7 @@ export default function BaseballGameWidget({
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfInning = gameStatusDescription === "End of Inning";
   const isTopInning = gameStatusDetail.includes("Top");
+  const isBottomInning = gameStatusDetail.includes("Bot");
   const holidayLabel = getHolidayLabel(gameDateObj);
   const headline = game.headline ?? holidayLabel;
   const outs = game?.situation.outs;
@@ -167,16 +177,26 @@ export default function BaseballGameWidget({
     </View>
   );
 
+  const inningIcon = isTopInning ? (
+    <Ionicons
+      name={"caret-up"}
+      size={14}
+      color={isDark ? Colors.white : Colors.black}
+    />
+  ) : isBottomInning ? (
+    <Ionicons
+      name={"caret-down"}
+      size={14}
+      color={isDark ? Colors.white : Colors.black}
+    />
+  ) : null;
+
   const renderStatus = () => {
     if (inProgress)
       return (
         <>
           <View style={styles.infoWrapper}>
-            <Ionicons
-              name={isTopInning ? "caret-up" : "caret-down"}
-              size={14}
-              color={isDark ? Colors.white : Colors.black}
-            />
+            {inningIcon}
             <Text style={styles.period}>{gameStatusDetail}</Text>
             <View style={styles.divider} />
             <View style={styles.outsContainer}>{getOuts}</View>
@@ -209,60 +229,62 @@ export default function BaseballGameWidget({
   };
 
   return (
-    <View style={styles.container}>
-      {showHeadline && (
-        <View style={styles.headlineContainer}>
-          <Text
-            style={styles.headline}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.5}
-          >
-            {headline}
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.basesContainer}>
-        {inProgress && (
-          <BasesIndicator bases={bases} isDark={isDark} size={8} />
-        )}
-      </View>
-
-      <View style={styles.wrapper}>
-        <View style={styles.awaySection}>
-          {awayTeamContent}
-          {awayDisplay}
-        </View>
-
-        {!isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            <Text style={styles.broadcast}>{broadcast}</Text>
+    <TouchableOpacity activeOpacity={activeOpacity} onPress={handlePress}>
+      <View style={styles.container}>
+        {showHeadline && (
+          <View style={styles.headlineContainer}>
+            <Text
+              style={styles.headline}
+              numberOfLines={1}
+              adjustsFontSizeToFit={true}
+              minimumFontScale={0.5}
+            >
+              {headline}
+            </Text>
           </View>
         )}
 
-        <View style={styles.homeSection}>
-          {isSmallLayout ? (
-            <>
-              {homeTeamContent}
-              {homeDisplay}
-            </>
-          ) : (
-            <>
-              {homeDisplay}
-              {homeTeamContent}
-            </>
+        <View style={styles.basesContainer}>
+          {inProgress && (
+            <BasesIndicator bases={bases} isDark={isDark} size={8} />
           )}
         </View>
 
-        {isSmallLayout && (
-          <View style={styles.gameInfo}>
-            {renderStatus()}
-            <Text style={styles.broadcast}>{broadcast}</Text>
+        <View style={styles.wrapper}>
+          <View style={styles.awaySection}>
+            {awayTeamContent}
+            {awayDisplay}
           </View>
-        )}
+
+          {!isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              <Text style={styles.broadcast}>{broadcast}</Text>
+            </View>
+          )}
+
+          <View style={styles.homeSection}>
+            {isSmallLayout ? (
+              <>
+                {homeTeamContent}
+                {homeDisplay}
+              </>
+            ) : (
+              <>
+                {homeDisplay}
+                {homeTeamContent}
+              </>
+            )}
+          </View>
+
+          {isSmallLayout && (
+            <View style={styles.gameInfo}>
+              {renderStatus()}
+              <Text style={styles.broadcast}>{broadcast}</Text>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

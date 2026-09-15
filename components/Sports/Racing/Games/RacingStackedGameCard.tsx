@@ -57,7 +57,6 @@ export default function RacingStackedGameCard({ game }: RacingEventCardProps) {
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
   const headline = game.shortName || game.name;
 
-  const isScheduled = gameStatusDescription === "Scheduled";
   const isCanceled = gameStatusDescription === "Canceled";
   const isFinal = gameStatusDescription === "Final";
   const isPostponed = gameStatusDescription === "Postponed";

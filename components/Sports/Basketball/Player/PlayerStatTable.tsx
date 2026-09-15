@@ -8,14 +8,18 @@ import PlayerStatTableSkeleton from "components/Skeletons/PlayerStatsTableSkelet
 import { globalStyles } from "constants/styles";
 import { getWCBBTeamByESPNId } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { Season, StatValue } from "hooks/NBAHooks/usePlayerSeasons";
+import {
+  BasketballLeague,
+  Season,
+  StatValue,
+} from "hooks/BasketballHooks/usePlayerSeasons";
 import { useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { statsTableStyles } from "styles/PlayerStyles/StatsTableStyles";
-import { BasketballLeague } from "./PlayerHeader";
 
 interface Props {
   seasons: Season[];
+  collegeSeasons?: Season[];
   loading: boolean;
   error: string | null;
   league: BasketballLeague;
@@ -23,6 +27,7 @@ interface Props {
 
 type StatView = "totals" | "pergame" | "per36";
 type SeasonType = "regularseason" | "postseason";
+type CareerView = "pro" | "college";
 
 type SimpleStatKey = "pts" | "trb" | "ast" | "stl" | "blk" | "tov" | "pf";
 type MadeAttemptedKey = "fg" | "three_p" | "ft";
@@ -88,6 +93,11 @@ const STAT_OPTIONS = [
 const SEASON_TYPE_OPTIONS: { label: string; value: SeasonType }[] = [
   { label: "Regular Season", value: "regularseason" },
   { label: "Postseason", value: "postseason" },
+];
+
+const CAREER_VIEW_OPTIONS: { label: string; value: CareerView }[] = [
+  { label: "NBA", value: "pro" },
+  { label: "College", value: "college" },
 ];
 
 const PRO_LEAGUES_WITH_POSTSEASON_TABS = new Set<BasketballLeague>([
@@ -998,6 +1008,7 @@ const getCareerStatCells = (
 
 export default function PlayerStatTable({
   seasons,
+  collegeSeasons = [],
   loading,
   error,
   league,
@@ -1007,15 +1018,26 @@ export default function PlayerStatTable({
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
-  const showSeasonTypeTabs = PRO_LEAGUES_WITH_POSTSEASON_TABS.has(league);
-
   const [statView, setStatView] = useState<StatView>("totals");
   const [selectedSeasonType, setSelectedSeasonType] =
     useState<SeasonType>("regularseason");
+  const [selectedCareerView, setSelectedCareerView] =
+    useState<CareerView>("pro");
+
+  const hasCollegeStats = league === "nba" && collegeSeasons.length > 0;
+  const activeCareerView: CareerView =
+    selectedCareerView === "college" && hasCollegeStats ? "college" : "pro";
+  const activeSeasons =
+    activeCareerView === "college" ? collegeSeasons : seasons;
+  const activeLeague: BasketballLeague =
+    activeCareerView === "college" ? "cbb" : league;
+  const showCareerViewTabs = league === "nba" && hasCollegeStats;
+  const showSeasonTypeTabs =
+    PRO_LEAGUES_WITH_POSTSEASON_TABS.has(activeLeague);
 
   const normalizedRows = useMemo(
-    () => normalizeStatsData(seasons, league),
-    [seasons, league],
+    () => normalizeStatsData(activeSeasons, activeLeague),
+    [activeLeague, activeSeasons],
   );
 
   const filteredRows = useMemo(() => {
@@ -1080,18 +1102,34 @@ export default function PlayerStatTable({
   const renderHeader = () => (
     <>
       <View style={styles.statsHeader}>
-        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
+  
+          <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
-        {filteredRows.length > 0 ? (
-          <Dropdown
-            isDark={isDark}
-            options={STAT_OPTIONS}
-            selectedValue={statView}
-            onSelect={(value) => setStatView(value as StatView)}
-            style={styles.dropdown}
-            width={160}
-          />
-        ) : null}
+          <View style={styles.filtersRow}>
+            {showCareerViewTabs ? (
+              <Dropdown
+                isDark={isDark}
+                options={CAREER_VIEW_OPTIONS}
+                selectedValue={activeCareerView}
+                onSelect={(value) =>
+                  setSelectedCareerView(value as CareerView)
+                }
+                style={[styles.filterDropdown, styles.careerDropdown]}
+              />
+            ) : null}
+
+            {filteredRows.length > 0 ? (
+              <Dropdown
+                isDark={isDark}
+                options={STAT_OPTIONS}
+                selectedValue={statView}
+                onSelect={(value) => setStatView(value as StatView)}
+                style={styles.filterDropdown}
+                width={160}
+              />
+            ) : null}
+ 
+        </View>
       </View>
 
       {showSeasonTypeTabs ? (

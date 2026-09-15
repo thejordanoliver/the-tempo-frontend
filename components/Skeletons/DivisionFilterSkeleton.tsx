@@ -3,7 +3,7 @@
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { Colors } from "constants/styles";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const ITEM_HEIGHT = 32;
@@ -22,7 +22,7 @@ export default function DivisionFilterSkeleton({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   // Mirror the real component: selected index is the 3rd item (index 2),
   // a reasonable mid-list default so the skeleton looks "in progress"

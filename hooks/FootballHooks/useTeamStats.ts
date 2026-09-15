@@ -179,7 +179,7 @@ const getStatPair = (
   maps: BuiltStatMaps,
   aliases: string[],
   groups?: string[],
-): { first: number; second: number } | null => {
+): { first: number; second: number; } | null => {
   const displayValue = getStatDisplay(maps, aliases, groups);
   if (!displayValue) return null;
 
@@ -810,7 +810,7 @@ export function useTeamStats(teamId: string | number, league: string) {
   }, [teamId, league]);
 
   useEffect(() => {
-    fetchTeamStats();
+    void Promise.resolve().then(() => fetchTeamStats());
   }, [fetchTeamStats]);
 
   return {

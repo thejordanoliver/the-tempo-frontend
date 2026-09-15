@@ -311,9 +311,9 @@ export function useLeagueCalendar(
         const requestCacheKey =
           requestMonth !== null
             ? getLeagueCalendarCacheKey(
-                normalizedLeague,
-                requestMonth,
-              )
+              normalizedLeague,
+              requestMonth,
+            )
             : null;
 
         let hydratedCachedCalendar =
@@ -356,7 +356,7 @@ export function useLeagueCalendar(
               if (
                 !forceRefresh &&
                 cachedResult.cacheState ===
-                  "fresh"
+                "fresh"
               ) {
                 setRefreshing(false);
                 return;
@@ -367,7 +367,7 @@ export function useLeagueCalendar(
               forceRefresh &&
               requestCacheKey !== null &&
               displayedRawCacheKeyRef.current ===
-                requestCacheKey &&
+              requestCacheKey &&
               calendarRef.current.length > 0
             ) {
               setLoading(false);
@@ -397,8 +397,8 @@ export function useLeagueCalendar(
           const requestDate =
             requestMonth !== null
               ? getLeagueCalendarMonthAnchor(
-                  requestMonth,
-                )
+                requestMonth,
+              )
               : anchorDate;
 
           const { data } =
@@ -407,8 +407,8 @@ export function useLeagueCalendar(
               {
                 params: requestDate
                   ? {
-                      date: requestDate,
-                    }
+                    date: requestDate,
+                  }
                   : undefined,
                 signal:
                   abortController.signal,
@@ -604,7 +604,7 @@ export function useLeagueCalendar(
         } catch (caughtError) {
           if (
             requestSequenceRef.current !==
-              requestId ||
+            requestId ||
             isCanceledRequest(
               caughtError,
             )
@@ -621,7 +621,7 @@ export function useLeagueCalendar(
             hydratedCachedCalendar ||
             (requestCacheKey !== null &&
               displayedRawCacheKeyRef.current ===
-                requestCacheKey &&
+              requestCacheKey &&
               calendarRef.current.length > 0);
 
           if (
@@ -641,8 +641,8 @@ export function useLeagueCalendar(
             caughtError instanceof Error
               ? caughtError
               : new Error(
-                  "Failed to fetch calendar",
-                ),
+                "Failed to fetch calendar",
+              ),
           );
         } finally {
           if (
@@ -666,7 +666,7 @@ export function useLeagueCalendar(
     );
 
   useEffect(() => {
-    fetchLeagueCalendar();
+    void Promise.resolve().then(() => fetchLeagueCalendar());
 
     return () => {
       requestSequenceRef.current += 1;

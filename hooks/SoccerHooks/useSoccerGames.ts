@@ -67,7 +67,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
   }, [fetchGames]);
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {

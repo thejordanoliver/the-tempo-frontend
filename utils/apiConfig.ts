@@ -11,9 +11,7 @@ let parsedApiUrl: URL;
 try {
   parsedApiUrl = new URL(rawApiUrl);
 } catch {
-  throw new Error(
-    "EXPO_PUBLIC_API_URL must be a valid absolute http(s) URL.",
-  );
+  throw new Error("EXPO_PUBLIC_API_URL must be a valid absolute http(s) URL.");
 }
 
 if (parsedApiUrl.protocol !== "http:" && parsedApiUrl.protocol !== "https:") {
@@ -24,11 +22,6 @@ export const API_BASE_URL = rawApiUrl.replace(/\/+$/, "");
 export const SOCKET_ORIGIN = parsedApiUrl.origin;
 
 const isDevelopment = typeof __DEV__ !== "undefined" && __DEV__;
-
-if (isDevelopment) {
-  console.log("[API Config] EXPO_PUBLIC_API_URL", rawApiUrl);
-  console.log("[API Config] resolved baseURL", API_BASE_URL);
-}
 
 export const getSocketNamespaceUrl = (namespace: string) => {
   const normalizedNamespace = namespace

@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
@@ -10,7 +10,7 @@ export default function FanPredictionSkeleton() {
   const styles = getStyles(isDark);
 
   // 🔥 Color pulse (same as header)
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -43,7 +43,7 @@ export default function FanPredictionSkeleton() {
   });
 
   // 🔥 Split animation (left ↔ right)
-  const animSplit = useRef(new Animated.Value(0.5)).current;
+  const [animSplit] = useState(() => new Animated.Value(0.5));
 
   useEffect(() => {
     const loop = Animated.loop(
@@ -85,7 +85,7 @@ export default function FanPredictionSkeleton() {
     outputRange: [1, 0],
   });
 
-  const SkeletonBlock = ({ style }: { style?: any }) => (
+  const SkeletonBlock = ({ style }: { style?: any; }) => (
     <Animated.View
       style={[
         style,
@@ -113,10 +113,10 @@ export default function FanPredictionSkeleton() {
               },
             ]}
           >
-            <SkeletonBlock style={styles.fillAway} />
+            {SkeletonBlock({ "style": styles.fillAway })}
             <View style={styles.centerContent}>
-              <SkeletonBlock style={styles.logo} />
-              <SkeletonBlock style={styles.teamName} />
+              {SkeletonBlock({ "style": styles.logo })}
+              {SkeletonBlock({ "style": styles.teamName })}
             </View>
           </Animated.View>
 
@@ -129,10 +129,10 @@ export default function FanPredictionSkeleton() {
               },
             ]}
           >
-            <SkeletonBlock style={styles.fillHome} />
+            {SkeletonBlock({ "style": styles.fillHome })}
             <View style={styles.centerContent}>
-              <SkeletonBlock style={styles.logo} />
-              <SkeletonBlock style={styles.teamName} />
+              {SkeletonBlock({ "style": styles.logo })}
+              {SkeletonBlock({ "style": styles.teamName })}
             </View>
           </Animated.View>
         </View>
@@ -140,12 +140,12 @@ export default function FanPredictionSkeleton() {
 
       {/* Percent Row */}
       <View style={styles.percentRow}>
-        <SkeletonBlock style={styles.percent} />
-        <SkeletonBlock style={styles.percent} />
+        {SkeletonBlock({ "style": styles.percent })}
+        {SkeletonBlock({ "style": styles.percent })}
       </View>
 
       {/* Total Votes */}
-      <SkeletonBlock style={styles.totalVotes} />
+      {SkeletonBlock({ "style": styles.totalVotes })}
     </View>
   );
 }

@@ -112,7 +112,7 @@ export function useTeamRecruitingRankings(
   }, [year, league]);
 
   useEffect(() => {
-    fetchRankings();
+    void Promise.resolve().then(() => fetchRankings());
   }, [fetchRankings]);
 
   const rankingsByTeamId = useMemo(() => {

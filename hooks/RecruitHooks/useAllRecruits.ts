@@ -56,19 +56,19 @@ function normalizePredictedSchool(
   return {
     team_id:
       typeof prediction.team_id === "number" &&
-      Number.isFinite(prediction.team_id)
+        Number.isFinite(prediction.team_id)
         ? prediction.team_id
         : null,
     team_name: teamName,
     team_title: prediction.team_title ?? null,
     percentage:
       typeof prediction.percentage === "number" &&
-      Number.isFinite(prediction.percentage)
+        Number.isFinite(prediction.percentage)
         ? prediction.percentage
         : null,
     confidence_score:
       typeof prediction.confidence_score === "number" &&
-      Number.isFinite(prediction.confidence_score)
+        Number.isFinite(prediction.confidence_score)
         ? prediction.confidence_score
         : null,
     confidence_text: prediction.confidence_text ?? null,
@@ -144,8 +144,8 @@ export function useAllRecruits(
 
         setError(
           err?.response?.data?.error ||
-            err?.message ||
-            "Failed to load recruits",
+          err?.message ||
+          "Failed to load recruits",
         );
       } finally {
         setLoading(false);
@@ -166,7 +166,7 @@ export function useAllRecruits(
   useEffect(() => {
     const controller = new AbortController();
 
-    fetchRecruits(false, controller.signal);
+    void Promise.resolve().then(() => fetchRecruits(false, controller.signal));
 
     return () => controller.abort();
   }, [fetchRecruits]);

@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRouter } from "expo-router";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useState } from "react";
 import { type FieldErrors, useForm } from "react-hook-form";
 import { Animated, View } from "react-native";
 
@@ -111,7 +111,7 @@ export default function LoginScreen() {
 
   const styles = formStyles(isDark);
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(1));
 
   const [selectedTab, setSelectedTab] = useState<LoginTab>("sign in");
 

@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -19,7 +19,7 @@ type Props = {
 export default function FollowingButton({ isFollowing, onToggle }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const opacityAnim = useRef(new Animated.Value(1)).current;
+  const [opacityAnim] = useState(() => new Animated.Value(1));
   const styles = followButtonStyles(isDark, isFollowing);
 
   useEffect(() => {

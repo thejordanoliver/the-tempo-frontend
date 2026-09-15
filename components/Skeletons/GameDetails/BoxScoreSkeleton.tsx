@@ -1,6 +1,6 @@
 // components/GameDetails/BoxScoreSkeleton.tsx
 import { Colors } from "constants/styles";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const COLUMN_WIDTH = 50;
@@ -23,7 +23,7 @@ export default function BoxScoreSkeleton({
   const styles = getStyles(isDark);
 
   // Shared pulse animation
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     Animated.loop(

@@ -388,15 +388,15 @@ export function usePlayerSeasons(
         }
       }
     }, [
-      allTeams,
-      canFetch,
-      normalizedCompetition,
-      normalizedPlayerId,
-      normalizedTeamId,
-    ]);
+    allTeams,
+    canFetch,
+    normalizedCompetition,
+    normalizedPlayerId,
+    normalizedTeamId,
+  ]);
 
   useEffect(() => {
-    fetchStats(false);
+    void Promise.resolve().then(() => fetchStats(false));
 
     return () => {
       abortControllerRef.current?.abort();

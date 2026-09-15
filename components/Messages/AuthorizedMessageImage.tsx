@@ -62,12 +62,17 @@ export default function AuthorizedMessageImage({
   );
 
   useEffect(() => {
-    didRetryExpiredUrlRef.current = false;
-    setUrl(attachment.uri ?? null);
-    setFailed(false);
-    void loadSignedUrl(false);
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      didRetryExpiredUrlRef.current = false;
+      setUrl(attachment.uri ?? null);
+      setFailed(false);
+      void loadSignedUrl(false);
+    });
 
     return () => {
+      cancelled = true;
       loadRequestIdRef.current += 1;
     };
   }, [attachment.id, attachment.uri, loadSignedUrl]);

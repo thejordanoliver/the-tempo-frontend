@@ -1,14 +1,14 @@
+import { BoxScoreStyles } from "@/styles/GameDetailStyles/BoxScoreStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { activeOpacity, Colors, Fonts, globalStyles } from "constants/styles";
+import { activeOpacity, globalStyles } from "constants/styles";
 import { router } from "expo-router";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType } from "react-native";
 import {
   Animated,
   Image,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   UIManager,
@@ -16,7 +16,6 @@ import {
 } from "react-native";
 
 const COLUMN_WIDTH = 50;
-const NAME_COLUMN_WIDTH = 160;
 const PLAYER_ROW_HEIGHT = 36;
 const COLLAPSED_ROWS = 5;
 
@@ -713,7 +712,7 @@ const getDidNotPlayText = (player: MlbPlayerStat) => {
 // could never bail out of re-rendering them).
 // ---------------------------------------------------------------------------
 
-type Styles = ReturnType<typeof boxScoreStyles>;
+type Styles = ReturnType<typeof BoxScoreStyles>;
 
 const rowStyle = (styles: Styles, index: number) => [
   styles.tableRow,
@@ -819,6 +818,7 @@ const StatSectionTable = memo(function StatSectionTable({
   teamId,
   section,
   isExpanded,
+  showTotals,
   heightAnim,
   onPlayerPress,
 }: {
@@ -829,6 +829,7 @@ const StatSectionTable = memo(function StatSectionTable({
   teamId?: number | string | null;
   section?: StatSection | null;
   isExpanded: boolean;
+  showTotals: boolean;
   heightAnim: Animated.Value;
   onPlayerPress: (
     playerId: number | string | undefined | null,
@@ -852,7 +853,7 @@ const StatSectionTable = memo(function StatSectionTable({
         ? "No fielding stats available."
         : "No batting stats available.";
 
-  const shouldRenderTotals = hasSectionTotals(section);
+  const shouldRenderTotals = hasSectionTotals(section) && showTotals;
   const animatedStyle = { maxHeight: heightAnim, overflow: "hidden" as const };
 
   return (
@@ -1093,6 +1094,7 @@ const TeamBox = memo(function TeamBox({
           teamId={resolvedTeamId}
           section={section}
           isExpanded={expandedSections[key] ?? false}
+          showTotals={!canExpandTeam || teamExpanded}
           heightAnim={heightAnims[key]}
           onPlayerPress={onPlayerPress}
         />
@@ -1129,10 +1131,17 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
-  const styles = useMemo(() => boxScoreStyles(isDark), [isDark]);
+  const styles = useMemo(() => BoxScoreStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const heightAnimMap = useRef<Record<string, Animated.Value>>({});
+  const [heightAnims] = useState<Record<string, Animated.Value>>(() => ({
+    "away-batting": new Animated.Value(PLAYER_ROW_HEIGHT),
+    "away-pitching": new Animated.Value(PLAYER_ROW_HEIGHT),
+    "away-fielding": new Animated.Value(PLAYER_ROW_HEIGHT),
+    "home-batting": new Animated.Value(PLAYER_ROW_HEIGHT),
+    "home-pitching": new Animated.Value(PLAYER_ROW_HEIGHT),
+    "home-fielding": new Animated.Value(PLAYER_ROW_HEIGHT),
+  }));
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({});
@@ -1148,14 +1157,6 @@ export default function BoxScore({
   const teamGroups = useMemo(() => {
     return getTeamGroups(resolvedPlayerStats);
   }, [resolvedPlayerStats]);
-
-  const getHeightAnim = useCallback((sectionKey: string) => {
-    if (!heightAnimMap.current[sectionKey]) {
-      heightAnimMap.current[sectionKey] = new Animated.Value(PLAYER_ROW_HEIGHT);
-    }
-
-    return heightAnimMap.current[sectionKey];
-  }, []);
 
   const findTeamGroup = useCallback(
     (
@@ -1232,12 +1233,20 @@ export default function BoxScore({
 
   const toggleTeamExpand = useCallback(
     (teamKey: "away" | "home", teamGroup: TeamGroup) => {
-      const sectionKeys = getTeamSectionKeys(teamKey, teamGroup);
+      const expandableSectionKeys = getTeamSectionKeys(teamKey, teamGroup);
 
-      if (sectionKeys.length === 0) return;
+      if (expandableSectionKeys.length === 0) return;
+
+      const sectionKeys = [
+        { key: `${teamKey}-batting`, section: teamGroup.batting },
+        { key: `${teamKey}-pitching`, section: teamGroup.pitching },
+        { key: `${teamKey}-fielding`, section: teamGroup.fielding },
+      ]
+        .filter(({ section }) => hasRenderableSection(section))
+        .map(({ key }) => key);
 
       setExpandedSections((prev) => {
-        const shouldCollapse = sectionKeys.every((key) => prev[key]);
+        const shouldCollapse = expandableSectionKeys.every((key) => prev[key]);
         const next = { ...prev };
 
         sectionKeys.forEach((key) => {
@@ -1249,24 +1258,6 @@ export default function BoxScore({
     },
     [getTeamSectionKeys],
   );
-
-  // Pre-create animated values for every section so child components can
-  // receive a stable Animated.Value reference as a prop.
-  const heightAnims = useMemo(() => {
-    const keys = [
-      "away-batting",
-      "away-pitching",
-      "away-fielding",
-      "home-batting",
-      "home-pitching",
-      "home-fielding",
-    ];
-
-    return keys.reduce<Record<string, Animated.Value>>((acc, key) => {
-      acc[key] = getHeightAnim(key);
-      return acc;
-    }, {});
-  }, [getHeightAnim]);
 
   useEffect(() => {
     const sections = [
@@ -1285,10 +1276,19 @@ export default function BoxScore({
       const fallbackRowCount = playerCount === 0 ? 1 : 0;
       const rowCount = playerCount + totalRowCount + fallbackRowCount;
 
+      const teamGroup = key.startsWith("away-") ? awayTeamGroup : homeTeamGroup;
+      const teamCanExpand =
+        getTeamSectionKeys(key.startsWith("away-") ? "away" : "home", teamGroup)
+          .length > 0;
+      const shouldShowTotals = isExpanded || !teamCanExpand;
+      const collapsedRowCount =
+        playerCount === 0
+          ? fallbackRowCount + (shouldShowTotals ? totalRowCount : 0)
+          : Math.min(playerCount, COLLAPSED_ROWS) +
+            (shouldShowTotals ? totalRowCount : 0);
       const targetHeight = isExpanded
         ? rowCount * PLAYER_ROW_HEIGHT
-        : Math.min(rowCount, COLLAPSED_ROWS + totalRowCount) *
-          PLAYER_ROW_HEIGHT;
+        : collapsedRowCount * PLAYER_ROW_HEIGHT;
 
       Animated.timing(heightAnims[key], {
         toValue: targetHeight,
@@ -1296,7 +1296,13 @@ export default function BoxScore({
         useNativeDriver: false,
       }).start();
     });
-  }, [awayTeamGroup, expandedSections, heightAnims, homeTeamGroup]);
+  }, [
+    awayTeamGroup,
+    expandedSections,
+    getTeamSectionKeys,
+    heightAnims,
+    homeTeamGroup,
+  ]);
 
   const handlePlayerPress = useCallback(
     (
@@ -1377,138 +1383,3 @@ export default function BoxScore({
     </ScrollView>
   );
 }
-
-export const boxScoreStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    playerColumn: {
-      flexDirection: "row",
-      width: "100%",
-    },
-    loading: {
-      padding: 20,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    error: {
-      padding: 20,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
-    teamGap: { height: 24 },
-    teamContainer: {
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 12,
-      overflow: "hidden",
-    },
-    teamHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 12,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: Colors.midTone,
-    },
-    teamLabel: {
-      flexShrink: 1,
-      fontFamily: Fonts.BOLD,
-      fontSize: 18,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    section: {
-      paddingTop: 10,
-      paddingBottom: 2,
-    },
-    categoryLabel: {
-      marginBottom: 4,
-      paddingHorizontal: 8,
-      fontFamily: Fonts.BOLD,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    playerNameColumn: {
-      width: NAME_COLUMN_WIDTH,
-    },
-    tableHeader: {
-      flexDirection: "row",
-      height: 40,
-      paddingVertical: 8,
-      borderBottomWidth: 1,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    tableRow: {
-      flexDirection: "row",
-      height: PLAYER_ROW_HEIGHT,
-      paddingVertical: 6,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: Colors.midTone,
-    },
-    rowAlt: {
-      backgroundColor: isDark
-        ? Colors.transparentDarkGray
-        : Colors.transparentLightGray,
-    },
-    totalsRow: {
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: Colors.midTone,
-    },
-    cellName: {
-      width: NAME_COLUMN_WIDTH,
-      paddingHorizontal: 8,
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    cell: {
-      width: COLUMN_WIDTH,
-      paddingHorizontal: 4,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 13,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    didNotPlayerRow: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    didNotPlayCell: {
-      flex: 1,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 12,
-      color: Colors.midTone,
-      textAlign: "center",
-    },
-    cellHeader: {
-      width: COLUMN_WIDTH,
-      paddingHorizontal: 4,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 13,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    cellContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    teamLogo: {
-      width: 28,
-      height: 28,
-    },
-    showMoreLessButton: {
-      alignItems: "center",
-      paddingVertical: 12,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: Colors.midTone,
-    },
-    showMoreLess: {
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-  });

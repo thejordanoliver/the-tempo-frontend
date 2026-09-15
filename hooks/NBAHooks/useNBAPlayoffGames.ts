@@ -209,12 +209,12 @@ const getAllGamesFromResponse = (data: any): NBAPlayoffGame[] => {
 
   const nestedRoundGames = Array.isArray(data?.rounds)
     ? data.rounds.flatMap((round: NBAPlayoffRound) =>
-        Array.isArray(round?.series)
-          ? round.series.flatMap((series) =>
-              Array.isArray(series?.games) ? series.games : [],
-            )
-          : [],
-      )
+      Array.isArray(round?.series)
+        ? round.series.flatMap((series) =>
+          Array.isArray(series?.games) ? series.games : [],
+        )
+        : [],
+    )
     : [];
 
   const map = new Map<string, NBAPlayoffGame>();
@@ -506,12 +506,22 @@ export function useNBAPlayoffGames({
   }, [fetchPlayoffGames]);
 
   useEffect(() => {
-    if (!enabled) {
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    fetchPlayoffGames();
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!enabled) {
+        setLoading(false);
+        return;
+      }
+
+      fetchPlayoffGames();
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchPlayoffGames]);
 
   const hasLiveGame = useMemo(() => {

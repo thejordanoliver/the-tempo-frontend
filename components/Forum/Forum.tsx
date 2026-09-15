@@ -162,9 +162,7 @@ export default function Forum({
           color={isDark ? Colors.dark.lightRed : Colors.light.red}
         />
 
-        <Text style={global.errorText} selectable>
-          {error}
-        </Text>
+        <Text style={global.errorText}>{error}</Text>
 
         <Button
           disabled={retryDisabled}

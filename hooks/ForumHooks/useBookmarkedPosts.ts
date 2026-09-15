@@ -9,7 +9,7 @@ import type {
 import { apiClient } from "utils/apiClient";
 
 const getErrorMessage = (error: unknown, fallback: string) => {
-  if (isAxiosError<{ error?: string; message?: string }>(error)) {
+  if (isAxiosError<{ error?: string; message?: string; }>(error)) {
     return (
       error.response?.data?.error ||
       error.response?.data?.message ||
@@ -81,15 +81,25 @@ export function useBookmarkedPosts({
   );
 
   useEffect(() => {
-    if (!enabled) {
-      setPosts([]);
-      setPage(1);
-      setTotalPages(1);
-      setError(null);
-      return;
-    }
+    let cancelled = false;
 
-    fetchBookmarks(1);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!enabled) {
+        setPosts([]);
+        setPage(1);
+        setTotalPages(1);
+        setError(null);
+        return;
+      }
+
+      fetchBookmarks(1);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchBookmarks]);
 
   const refresh = useCallback(() => {

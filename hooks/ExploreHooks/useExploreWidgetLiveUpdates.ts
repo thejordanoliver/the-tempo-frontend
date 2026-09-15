@@ -106,8 +106,9 @@ export function useExploreWidgetLiveUpdates({
     .sort()
     .join("|");
   const liveSubscriptionEntriesRef = useRef(liveSubscriptionEntries);
-
-  liveSubscriptionEntriesRef.current = liveSubscriptionEntries;
+  useEffect(() => {
+    liveSubscriptionEntriesRef.current = liveSubscriptionEntries;
+  }, [liveSubscriptionEntries]);
 
   useEffect(() => {
     if (!userId || !liveSubscriptionKey) return;

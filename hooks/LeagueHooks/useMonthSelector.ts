@@ -26,14 +26,24 @@ export function useTeamMonthSelector({
   );
 
   useEffect(() => {
-    if (
-      selection.scheduleIdentity === resolvedSelection.scheduleIdentity &&
-      selection.selectedMonthKey === resolvedSelection.selectedMonthKey
-    ) {
-      return;
-    }
+    let cancelled = false;
 
-    setSelection(resolvedSelection);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (
+        selection.scheduleIdentity === resolvedSelection.scheduleIdentity &&
+        selection.selectedMonthKey === resolvedSelection.selectedMonthKey
+      ) {
+        return;
+      }
+
+      setSelection(resolvedSelection);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [resolvedSelection, selection]);
 
   const selectMonth = useCallback(

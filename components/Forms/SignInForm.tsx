@@ -2,7 +2,7 @@ import Button from "@/components/Buttons/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Keyboard,
@@ -28,7 +28,7 @@ export default function SignInForm({ ...props }: SignInFormProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = formStyles(isDark);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [scaleAnim] = useState(() => new Animated.Value(1));
   const isFirstRender = useRef(true);
 
   useEffect(() => {

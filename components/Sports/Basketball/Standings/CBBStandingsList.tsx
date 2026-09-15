@@ -278,7 +278,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: CBBTeamRank[] }) {
+  function Section({ title, data }: { title: string; data: CBBTeamRank[]; }) {
     return (
       <>
         <View style={styles.wrapper}>
@@ -342,10 +342,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
         />
       </View>
       {/* --- Rankings Section --- */}
-      <Section
-        title={pollMode === "ap" ? "AP Poll" : "Coaches Poll"}
-        data={filteredRankings}
-      />
+      {Section({ "title": pollMode === "ap" ? "AP Poll" : "Coaches Poll", "data": filteredRankings })}
 
       {renderDroppedOut()}
     </ScrollView>

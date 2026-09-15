@@ -170,7 +170,7 @@ export default function ChampionshipGameCard({
   const isTie = homeWins === awayWins;
 
   const status = game?.status ?? {};
-  const headline = game.headline
+  const headline = game.headline;
 
   const gameStatusDescription = status.description;
   const gameStatusDetail = status.shortDetail;
@@ -206,7 +206,7 @@ export default function ChampionshipGameCard({
       | "/game/basketball/[game]"
       | "/game/football/[game]"
       | "/game/baseball/[game]"
-      | "/game/hockey/[game]"
+      | "/game/hockey/[game]";
 
     if (isNFL || isCFB) {
       pathname = "/game/football/[game]";
@@ -328,7 +328,7 @@ export default function ChampionshipGameCard({
         }}
         style={styles.card}
       >
-  
+
 
         <View style={styles.badgeContainer}>
           <Text style={styles.badge}>{headline}</Text>
@@ -350,11 +350,7 @@ export default function ChampionshipGameCard({
               {awayName}
             </Text>
 
-            <ScoreText
-              score={awayScore}
-              record={awayRecord}
-              isWinner={awayWins}
-            />
+            {ScoreText({ "score": awayScore, "record": awayRecord, "isWinner": awayWins })}
           </View>
 
           {/* Center */}
@@ -385,11 +381,7 @@ export default function ChampionshipGameCard({
               {homeName}
             </Text>
 
-            <ScoreText
-              score={homeScore}
-              record={homeRecord}
-              isWinner={homeWins}
-            />
+            {ScoreText({ "score": homeScore, "record": homeRecord, "isWinner": homeWins })}
           </View>
         </View>
       </LinearGradient>

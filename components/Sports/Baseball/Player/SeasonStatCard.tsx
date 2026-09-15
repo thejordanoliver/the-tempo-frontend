@@ -1,7 +1,5 @@
-import type {
-  FootballPlayerSeason,
-  Stat,
-} from "@/hooks/FootballHooks/usePlayerSeasons";
+import { BaseballPlayerSeason } from "@/hooks/BaseballHooks/usePlayerSeasons";
+import type { Stat } from "@/hooks/FootballHooks/usePlayerSeasons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
@@ -14,7 +12,7 @@ type Props = {
   player: any;
   teamColor?: string;
   teamColorDark?: string;
-  season?: FootballPlayerSeason | null;
+  season?: BaseballPlayerSeason | null;
   loading?: boolean;
   error?: string | null;
 };
@@ -43,7 +41,7 @@ function getPosition(player: any) {
   return String(rawPosition).trim().toUpperCase();
 }
 
-function getSeasonDisplayYear(season?: FootballPlayerSeason | null) {
+function getSeasonDisplayYear(season?: BaseballPlayerSeason | null) {
   return String(
     season?.displaySeason ??
       season?.year ??
@@ -52,7 +50,7 @@ function getSeasonDisplayYear(season?: FootballPlayerSeason | null) {
   );
 }
 
-function getAllStats(season?: FootballPlayerSeason | null) {
+function getAllStats(season?: BaseballPlayerSeason | null) {
   if (!season?.categories?.length) {
     return [];
   }
@@ -239,19 +237,19 @@ export default function SeasonStatCard({
         <View style={styles.statsRow}>
           {showPitching && (
             <>
-              <StatItem label="ERA" value={era} />
-              <StatItem label="K" value={strikeouts} />
-              <StatItem label="SWR" value={strikeoutToWalkRatio} />
-              <StatItem label="WIN%" value={formatPercent(winPct)} />
+              {StatItem({ label: "ERA", value: era })}
+              {StatItem({ label: "K", value: strikeouts })}
+              {StatItem({ label: "SWR", value: strikeoutToWalkRatio })}
+              {StatItem({ label: "WIN%", value: formatPercent(winPct) })}
             </>
           )}
 
           {showBatting && (
             <>
-              <StatItem label="HITS" value={hits} />
-              <StatItem label="RBI" value={rbi} />
-              <StatItem label="RUNS" value={runs} />
-              <StatItem label="AVG" value={avg} />
+              {StatItem({ label: "HITS", value: hits })}
+              {StatItem({ label: "RBI", value: rbi })}
+              {StatItem({ label: "RUNS", value: runs })}
+              {StatItem({ label: "AVG", value: avg })}
             </>
           )}
         </View>

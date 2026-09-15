@@ -7,7 +7,7 @@ import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeamLogo, wcbbTeams } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -59,8 +59,8 @@ function AnimatedPlayRow({
   style: object;
   isLatest: boolean;
 }) {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [translateX] = useState(() => new Animated.Value(0));
+  const [opacity] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     if (!isLatest) return;
@@ -120,14 +120,14 @@ export default function GameSummary({
       ? ["All", "1st Half", "2nd Half"]
       : ["All", "1st", "2nd", "3rd", "4th"];
 
-  // Call configureNext during render (before commit) so existing rows animate
-  // downward when a new play is prepended. useEffect fires too late — by then
-  // the layout has already jumped without animation.
+  // Configure the transition in a layout effect so it remains outside render
+  // while still running before the updated frame is painted.
   const prevPlaysLengthRef = useRef(plays.length);
-  if (plays.length !== prevPlaysLengthRef.current) {
+  useLayoutEffect(() => {
+    if (plays.length === prevPlaysLengthRef.current) return;
     prevPlaysLengthRef.current = plays.length;
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }
+  }, [plays.length]);
 
   const teamPlays = useMemo(() => {
     const quarterMap: Record<string, number[] | number> =

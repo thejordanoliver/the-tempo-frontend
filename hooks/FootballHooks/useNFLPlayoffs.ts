@@ -12,7 +12,7 @@ type UseNFLPlayoffsResult = {
 
 export const useNFLPlayoffs = (
   season: number,
-  { enabled = true }: { enabled?: boolean } = {},
+  { enabled = true }: { enabled?: boolean; } = {},
 ): UseNFLPlayoffsResult => {
   const [playoffData, setPlayoffData] =
     useState<BracketApiResponse | null>(null);
@@ -89,8 +89,8 @@ export const useNFLPlayoffs = (
 
         setPlayoffError(
           error?.response?.data?.error ??
-            error?.message ??
-            "Failed to load NFL playoffs",
+          error?.message ??
+          "Failed to load NFL playoffs",
         );
 
         // Preserve existing data during failed refreshes.
@@ -108,11 +108,10 @@ export const useNFLPlayoffs = (
 
   useEffect(() => {
     if (!enabled) {
-      setPlayoffLoading(false);
       return;
     }
 
-    void fetchPlayoffs();
+    void Promise.resolve().then(() => fetchPlayoffs());
 
     return () => {
       abortControllerRef.current?.abort();
@@ -130,7 +129,7 @@ export const useNFLPlayoffs = (
 
   return {
     playoffData,
-    playoffLoading,
+    playoffLoading: enabled && playoffLoading,
     playoffError,
     playoffRefreshing,
     onRefresh,

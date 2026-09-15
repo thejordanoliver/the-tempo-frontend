@@ -489,7 +489,7 @@ function PlayByPlay({
      * when the IDs cannot be matched.
      */
     return null;
-  }, [awayLogo, awayTeamId, homeLogo, homeTeamId, play?.team]);
+  }, [awayLogo, awayTeamId, homeLogo, homeTeamId, play]);
 
   if (!playInfo) {
     return null;

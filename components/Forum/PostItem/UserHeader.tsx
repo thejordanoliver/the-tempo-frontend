@@ -2,7 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { useRouter } from "expo-router";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -32,36 +32,46 @@ const PostSubmenu = ({
   onEdit,
   onDelete,
 }: ForumActionSubmenuProps) => {
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
   const [shouldRender, setShouldRender] = useState(visible);
 
   const styles = PostItemStyles(isDark);
 
   useEffect(() => {
-    if (visible) {
-      setShouldRender(true);
+    let cancelled = false;
 
-      Animated.spring(progress, {
-        toValue: 1,
-        damping: 16,
-        stiffness: 230,
-        mass: 0.8,
-        useNativeDriver: true,
-      }).start();
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-      return;
-    }
+      if (visible) {
+        setShouldRender(true);
 
-    Animated.timing(progress, {
-      toValue: 0,
-      duration: 130,
-      easing: Easing.in(Easing.quad),
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setShouldRender(false);
+        Animated.spring(progress, {
+          toValue: 1,
+          damping: 16,
+          stiffness: 230,
+          mass: 0.8,
+          useNativeDriver: true,
+        }).start();
+
+        return;
       }
+
+      Animated.timing(progress, {
+        toValue: 0,
+        duration: 130,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          setShouldRender(false);
+        }
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [progress, visible]);
 
   if (!shouldRender) {

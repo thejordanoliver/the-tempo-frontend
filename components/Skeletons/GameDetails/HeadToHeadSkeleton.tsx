@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
@@ -9,7 +9,7 @@ export default function HeadToHeadSkeleton() {
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     Animated.loop(
@@ -36,21 +36,21 @@ export default function HeadToHeadSkeleton() {
     <View style={styles.container}>
       <HeaderSkeleton />
       {/* Series Score */}
-      <Block style={styles.seriesSkeleton} />
+      {Block({ "style": styles.seriesSkeleton })}
 
       {/* Game Rows */}
       {[1, 2, 3].map((_, i) => (
         <View key={i} style={styles.row}>
           <View style={styles.team}>
-            <Block style={styles.logo} />
-            <Block style={styles.teamText} />
+            {Block({ "style": styles.logo })}
+            {Block({ "style": styles.teamText })}
           </View>
 
-          <Block style={styles.score} />
+          {Block({ "style": styles.score })}
 
           <View style={styles.team}>
-            <Block style={styles.logo} />
-            <Block style={styles.teamText} />
+            {Block({ "style": styles.logo })}
+            {Block({ "style": styles.teamText })}
           </View>
         </View>
       ))}

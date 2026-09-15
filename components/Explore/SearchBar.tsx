@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -35,7 +35,7 @@ export default function SearchBar({
   selectedTab,
   onTabPress,
 }: Props) {
-  const inputAnim = useRef(new Animated.Value(0)).current;
+  const [inputAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = searchBarStyles(isDark);

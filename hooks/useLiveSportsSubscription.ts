@@ -24,8 +24,9 @@ export function useLiveSportsSubscription<TPayload = unknown>({
   onUpdate,
 }: UseLiveSportsSubscriptionOptions<TPayload>) {
   const onUpdateRef = useRef(onUpdate);
-
-  onUpdateRef.current = onUpdate;
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   const payloadRef = useRef(payload);
   const stableSubscriptionKey = getSportsLiveSubscriptionLocalKey(

@@ -1,13 +1,27 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
+import type {
   PlayerResult,
   ResultItem,
   TeamResult,
   UserResult,
 } from "types/explore";
+import {
+  buildExploreSearchSelectionEvent,
+  buildExploreSearchSettledEvent,
+  createExploreSearchAnalyticsId,
+  sendExploreSearchEvent,
+  type ExploreSearchSettledEvent,
+} from "services/exploreSearchAnalytics";
 import { apiClient } from "utils/apiClient";
+import {
+  EXPLORE_SEARCH_MAX_QUERY_LENGTH,
+  EXPLORE_SEARCH_MIN_QUERY_LENGTH,
+  canSearchExploreQuery,
+  getExploreResultIdentity,
+  normalizeExploreSearchQuery,
+} from "utils/exploreSearch";
 
 const RECENT_SEARCHES_KEY_PREFIX = "recentSearches";
 const RECENT_SEARCHES_LEGACY_KEY = RECENT_SEARCHES_KEY_PREFIX;
@@ -15,21 +29,16 @@ const RECENT_SEARCHES_LIMIT = 10;
 const SEARCH_DEBOUNCE_MS = 400;
 const COLLAPSED_SEARCH_LIMIT = 5;
 const EXPANDED_SEARCH_LIMIT = 25;
+const SEARCH_SETTLED_DELAY_MS = 750;
 
 export type ExploreSearchScope = "all" | "players" | "teams" | "users";
 
 type ExploreSearchResponse = {
+  results: ResultItem[];
   players: PlayerResult[];
   teams: TeamResult[];
   users: UserResult[];
 };
-
-function getResultKey(item: ResultItem) {
-  if (item.type === "player") return String(item.id);
-  if (item.type === "team") return String(item.id);
-  if (item.type === "user") return String(item.id);
-  return null;
-}
 
 const getRecentSearchesKey = (userId: string | number) =>
   `${RECENT_SEARCHES_KEY_PREFIX}:${userId}`;
@@ -47,11 +56,19 @@ function isValidResultItem(item: unknown): item is ResultItem {
   if (!("type" in value)) return false;
 
   if (value.type === "player") {
-    return "id" in value && value.id !== undefined;
+    return (
+      "id" in value &&
+      value.id !== undefined &&
+      typeof value.affiliation === "string"
+    );
   }
 
   if (value.type === "team") {
-    return "id" in value && value.id !== undefined;
+    return (
+      "id" in value &&
+      value.id !== undefined &&
+      typeof value.affiliation === "string"
+    );
   }
 
   if (value.type === "user") {
@@ -88,67 +105,15 @@ function isCanceledRequest(error: unknown) {
   );
 }
 
-function sortByScoreDesc<T extends { score?: number | null }>(items: T[]) {
-  return [...items].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-}
-
-function normalizeUsers(users: UserResult[], query: string): ResultItem[] {
-  const q = query.toLowerCase();
-
-  return users.map((user) => {
-    const username = user.username?.toLowerCase() ?? "";
-    let score = user.score ?? 0;
-
-    if (username === q) {
-      score += 1000;
-    } else if (username.startsWith(q)) {
-      score += 500;
-    }
-
-    return {
-      ...user,
-      type: "user" as const,
-      score,
-    };
-  });
-}
-
-function normalizePlayers(players: PlayerResult[]): ResultItem[] {
-  return players.map((player) => ({
-    ...player,
-    type: "player" as const,
-  }));
-}
-
-function normalizeTeams(teams: TeamResult[]): ResultItem[] {
-  return teams.map((team) => ({
-    ...team,
-    type: "team" as const,
-  }));
-}
-
-function buildResults(
-  data: ExploreSearchResponse,
-  query: string,
-): ResultItem[] {
-  const teams = sortByScoreDesc(normalizeTeams(data.teams));
-  const users = sortByScoreDesc(normalizeUsers(data.users, query));
-  const players = sortByScoreDesc(normalizePlayers(data.players));
-
-  return [...teams, ...users, ...players];
-}
-
 function removeDuplicateRecentSearch(
   searches: ResultItem[],
   itemToRemove: ResultItem,
 ) {
-  const itemKey = getResultKey(itemToRemove);
-  if (!itemKey) return searches;
+  const itemKey = getExploreResultIdentity(itemToRemove);
 
-  return searches.filter((item) => {
-    const key = getResultKey(item);
-    return key !== itemKey || item.type !== itemToRemove.type;
-  });
+  return searches.filter(
+    (item) => getExploreResultIdentity(item) !== itemKey,
+  );
 }
 
 async function persistRecentSearches(
@@ -174,9 +139,14 @@ export function useExplore() {
   const requestIdRef = useRef(0);
   const recentSearchLoadRequestIdRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const searchSessionIdRef = useRef<string | null>(null);
+  const settledAnalyticsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const pendingSettledEventRef = useRef<ExploreSearchSettledEvent | null>(null);
 
-  const normalizedQuery = query.trim();
-  const normalizedDebouncedQuery = debouncedQuery.trim();
+  const normalizedQuery = normalizeExploreSearchQuery(query);
+  const normalizedDebouncedQuery = normalizeExploreSearchQuery(debouncedQuery);
   const searchLimit = expandedSearch
     ? EXPANDED_SEARCH_LIMIT
     : COLLAPSED_SEARCH_LIMIT;
@@ -184,10 +154,65 @@ export function useExplore() {
   const isSearching = useMemo(() => {
     return (
       loading ||
-      (normalizedQuery.length > 0 &&
+      (canSearchExploreQuery(normalizedQuery) &&
         normalizedQuery !== normalizedDebouncedQuery)
     );
   }, [loading, normalizedQuery, normalizedDebouncedQuery]);
+
+  const clearPendingSettledEvent = useCallback(() => {
+    if (settledAnalyticsTimerRef.current) {
+      clearTimeout(settledAnalyticsTimerRef.current);
+      settledAnalyticsTimerRef.current = null;
+    }
+    pendingSettledEventRef.current = null;
+  }, []);
+
+  const startSearchSession = useCallback(() => {
+    if (!searchSessionIdRef.current) {
+      searchSessionIdRef.current = createExploreSearchAnalyticsId();
+    }
+    return searchSessionIdRef.current;
+  }, []);
+
+  const finishSearchSession = useCallback(() => {
+    clearPendingSettledEvent();
+    searchSessionIdRef.current = null;
+  }, [clearPendingSettledEvent]);
+
+  const flushPendingSettledEvent = useCallback(() => {
+    if (settledAnalyticsTimerRef.current) {
+      clearTimeout(settledAnalyticsTimerRef.current);
+      settledAnalyticsTimerRef.current = null;
+    }
+
+    const event = pendingSettledEventRef.current;
+    pendingSettledEventRef.current = null;
+    if (event) sendExploreSearchEvent(event);
+  }, []);
+
+  const setSearchQuery = useCallback((nextQuery: string) => {
+    clearPendingSettledEvent();
+    setQuery(nextQuery);
+    const nextQueryLength = normalizeExploreSearchQuery(nextQuery).length;
+
+    if (canSearchExploreQuery(nextQuery)) {
+      startSearchSession();
+      return;
+    }
+
+    if (nextQueryLength === 0) finishSearchSession();
+
+    requestIdRef.current += 1;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setResults([]);
+    setError(
+      nextQueryLength > EXPLORE_SEARCH_MAX_QUERY_LENGTH
+        ? "Search query is too long"
+        : null,
+    );
+    setLoading(false);
+  }, [clearPendingSettledEvent, finishSearchSession, startSearchSession]);
 
   const loadRecentSearches = useCallback(async () => {
     const requestId = ++recentSearchLoadRequestIdRef.current;
@@ -226,7 +251,7 @@ export function useExplore() {
         limit?: number;
       } = {},
     ) => {
-      const trimmedQuery = searchQuery.trim();
+      const trimmedQuery = normalizeExploreSearchQuery(searchQuery);
       const requestScope = options.scope ?? searchScope;
       const requestLimit = options.limit ?? searchLimit;
 
@@ -235,9 +260,16 @@ export function useExplore() {
 
       abortControllerRef.current?.abort();
 
-      if (!trimmedQuery) {
+      if (trimmedQuery.length < EXPLORE_SEARCH_MIN_QUERY_LENGTH) {
         setResults([]);
         setError(null);
+        setLoading(false);
+        return;
+      }
+
+      if (trimmedQuery.length > EXPLORE_SEARCH_MAX_QUERY_LENGTH) {
+        setResults([]);
+        setError("Search query is too long");
         setLoading(false);
         return;
       }
@@ -247,6 +279,7 @@ export function useExplore() {
 
       setLoading(true);
       setError(null);
+      const requestStartedAt = Date.now();
 
       try {
         const res = await apiClient.get<ExploreSearchResponse>(
@@ -263,13 +296,28 @@ export function useExplore() {
 
         if (requestId !== requestIdRef.current) return;
 
-        setResults(buildResults(res.data, trimmedQuery));
+        setResults(res.data.results);
         setError(null);
-      } catch (err: any) {
+
+        const searchSessionId = searchSessionIdRef.current;
+        if (searchSessionId) {
+          clearPendingSettledEvent();
+          pendingSettledEventRef.current = buildExploreSearchSettledEvent({
+            searchSessionId,
+            query: trimmedQuery,
+            scope: requestScope,
+            results: res.data.results,
+            durationMs: Date.now() - requestStartedAt,
+          });
+          settledAnalyticsTimerRef.current = setTimeout(() => {
+            flushPendingSettledEvent();
+          }, SEARCH_SETTLED_DELAY_MS);
+        }
+      } catch (err: unknown) {
         if (isCanceledRequest(err)) return;
         if (requestId !== requestIdRef.current) return;
 
-        setError(err?.message || "Failed to fetch data");
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
         setResults([]);
       } finally {
         if (requestId === requestIdRef.current) {
@@ -277,13 +325,42 @@ export function useExplore() {
         }
       }
     },
-    [searchLimit, searchScope],
+    [
+      clearPendingSettledEvent,
+      flushPendingSettledEvent,
+      searchLimit,
+      searchScope,
+    ],
+  );
+
+  const recordResultSelection = useCallback(
+    (item: ResultItem) => {
+      const searchSessionId = searchSessionIdRef.current;
+      const normalizedSelectionQuery = normalizeExploreSearchQuery(query);
+      if (!searchSessionId || !canSearchExploreQuery(normalizedSelectionQuery)) {
+        return;
+      }
+
+      const position = results.findIndex(
+        (result) =>
+          getExploreResultIdentity(result) === getExploreResultIdentity(item),
+      );
+      if (position < 0) return;
+
+      flushPendingSettledEvent();
+      sendExploreSearchEvent(
+        buildExploreSearchSelectionEvent({
+          searchSessionId,
+          query: normalizedSelectionQuery,
+          scope: searchScope,
+          item,
+          position: position + 1,
+        }),
+      );
+    }, [flushPendingSettledEvent, query, results, searchScope],
   );
 
   const saveToRecentSearches = useCallback(async (item: ResultItem) => {
-    const key = getResultKey(item);
-    if (!key) return;
-
     try {
       const storageKey = await getCurrentRecentSearchesKey();
 
@@ -347,11 +424,17 @@ export function useExplore() {
   }, [query]);
 
   useEffect(() => {
-    search(debouncedQuery, {
-      scope: searchScope,
-      limit: searchLimit,
-    });
+    void Promise.resolve().then(() =>
+      search(debouncedQuery, {
+        scope: searchScope,
+        limit: searchLimit,
+      }),
+    );
   }, [debouncedQuery, search, searchLimit, searchScope]);
+
+  useEffect(() => {
+    clearPendingSettledEvent();
+  }, [clearPendingSettledEvent, expandedSearch, searchScope]);
 
   useFocusEffect(
     useCallback(() => {
@@ -362,12 +445,14 @@ export function useExplore() {
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort();
+      clearPendingSettledEvent();
+      searchSessionIdRef.current = null;
     };
-  }, []);
+  }, [clearPendingSettledEvent]);
 
   return {
     query,
-    setQuery,
+    setQuery: setSearchQuery,
     results,
     recentSearches,
     loading,
@@ -378,11 +463,14 @@ export function useExplore() {
     expandedSearch,
     setExpandedSearch,
     canExpandResults:
-      normalizedQuery.length > 0 &&
+      canSearchExploreQuery(normalizedQuery) &&
       !expandedSearch &&
       results.length >= COLLAPSED_SEARCH_LIMIT,
     saveToRecentSearches,
     deleteRecentSearch,
     isSearching,
+    startSearchSession,
+    finishSearchSession,
+    recordResultSelection,
   };
 }

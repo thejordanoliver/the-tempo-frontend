@@ -64,7 +64,7 @@ export function useAwardSeasons(options: Options = {}) {
   }, [league, category, playerId, season, enabled]);
 
   useEffect(() => {
-    fetchAwards();
+    void Promise.resolve().then(() => fetchAwards());
   }, [fetchAwards]);
 
   return {

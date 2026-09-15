@@ -39,7 +39,6 @@ export const statsTableStyles = (isDark: boolean) => {
     filtersRow: {
       flexDirection: "row",
       alignItems: "center",
-      justifyContent: "flex-end",
       flexWrap: "wrap",
       gap: 8,
     },

@@ -48,7 +48,7 @@ export function useAllNews(limit: number = 10) {
 
   // initial load
   useEffect(() => {
-    fetchNews();
+    void Promise.resolve().then(() => fetchNews());
   }, [fetchNews]);
 
   return {

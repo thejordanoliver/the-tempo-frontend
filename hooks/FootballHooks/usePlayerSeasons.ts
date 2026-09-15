@@ -1,3 +1,4 @@
+import { isAxiosError, isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -263,6 +264,40 @@ function sortSeasons(seasons: FootballPlayerSeason[]): FootballPlayerSeason[] {
 const EMPTY_API_SEASONS: ApiSeason[] = [];
 const EMPTY_FOOTBALL_SEASONS: FootballPlayerSeason[] = [];
 
+const isFootballLeague = (value: unknown): value is FootballLeague =>
+  value === "nfl" || value === "cfb";
+
+const normalizeFootballLeague = (
+  value: unknown,
+  fallback: FootballLeague,
+): FootballLeague => {
+  const normalized = String(value ?? "").trim().toLowerCase();
+  return isFootballLeague(normalized) ? normalized : fallback;
+};
+
+const normalizePlayerId = (
+  value: string | number | null | undefined,
+  fallback: string,
+) => {
+  const normalized = String(value ?? "").trim();
+  return normalized || fallback;
+};
+
+const getRequestErrorMessage = (error: unknown) => {
+  if (isAxiosError<{ error?: string; message?: string }>(error)) {
+    return (
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      "Failed to fetch player seasons"
+    );
+  }
+
+  return error instanceof Error
+    ? error.message
+    : "Failed to fetch player seasons";
+};
+
 export function usePlayerSeasons(
   playerId: number,
   league: FootballLeague = "cfb",
@@ -283,41 +318,47 @@ export function usePlayerSeasons(
     college: string | null;
   } | null>(null);
 
-  const [resolvedLeague, setResolvedLeague] = useState<FootballLeague>(
-    league.toLowerCase() as FootballLeague,
-  );
+  const [resolvedLeague, setResolvedLeague] =
+    useState<FootballLeague>(league);
 
   const [canonicalProfile, setCanonicalProfile] =
     useState<CanonicalProfile | null>(null);
 
   const [collegeLeague, setCollegeLeague] = useState<"cfb" | null>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
+    null,
+  );
 
   const hasValidPlayerId = Number.isFinite(playerId) && playerId > 0;
 
-  const fallbackLeague = league.toLowerCase() as FootballLeague;
+  const fallbackLeague = league;
+  const requestKey = hasValidPlayerId ? `${league}:${playerId}` : null;
 
   useEffect(() => {
     if (!hasValidPlayerId) {
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
 
     const fetchSeasons = async () => {
       try {
         setLoading(true);
         setError(null);
+        setCanonicalProfile(null);
+        setResolvedRequestKey(null);
 
-        const requestedLeague = league.toLowerCase() as FootballLeague;
+        const requestedLeague = league;
 
         const res = await apiClient.get<PlayerStatsResponse>(
           `api/player/stats/${requestedLeague}/${playerId}`,
+          { signal: controller.signal },
         );
 
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
 
         const json = res.data;
 
@@ -326,7 +367,10 @@ export function usePlayerSeasons(
           ? json.collegeStats.seasons
           : [];
 
-        const effectiveLeague = json.league;
+        const effectiveLeague = normalizeFootballLeague(
+          json.league,
+          requestedLeague,
+        );
 
         const mappedPrimarySeasons = sortSeasons(
           primarySeasons.map((season) => mapSeason(season, effectiveLeague)),
@@ -380,32 +424,36 @@ export function usePlayerSeasons(
 
         setResolvedLeague(effectiveLeague);
 
-        setCanonicalProfile(
-          json.canonicalProfile
-            ? {
-                ...json.canonicalProfile,
-                league: league,
-
-                redirectedFrom: json.canonicalProfile.redirectedFrom
-                  ? {
-                      ...json.canonicalProfile.redirectedFrom,
-                      league: league,
-                    }
-                  : null,
-              }
-            : {
-                league: effectiveLeague,
-                playerId: String(json.playerId ?? playerId),
-                redirected: effectiveLeague !== requestedLeague,
-                redirectedFrom:
-                  effectiveLeague !== requestedLeague
-                    ? {
-                        league: requestedLeague,
-                        playerId: String(playerId),
-                      }
-                    : null,
-              },
+        const canonicalPlayerId = normalizePlayerId(
+          json.canonicalProfile?.playerId ?? json.playerId,
+          String(playerId),
         );
+        const redirectedFrom = json.canonicalProfile?.redirectedFrom;
+
+        setCanonicalProfile({
+          league: effectiveLeague,
+          playerId: canonicalPlayerId,
+          redirected:
+            json.canonicalProfile?.redirected ??
+            effectiveLeague !== requestedLeague,
+          redirectedFrom: redirectedFrom
+            ? {
+                league: normalizeFootballLeague(
+                  redirectedFrom.league,
+                  requestedLeague,
+                ),
+                playerId: normalizePlayerId(
+                  redirectedFrom.playerId,
+                  String(playerId),
+                ),
+              }
+            : effectiveLeague !== requestedLeague
+              ? {
+                  league: requestedLeague,
+                  playerId: String(playerId),
+                }
+              : null,
+        });
 
         setRawSeasons(primarySeasons);
         setData(mappedPrimarySeasons);
@@ -418,15 +466,13 @@ export function usePlayerSeasons(
             ? "cfb"
             : null,
         );
-      } catch (err: any) {
-        if (cancelled) return;
+        setResolvedRequestKey(requestKey);
+      } catch (err: unknown) {
+        if (isCancel(err) || controller.signal.aborted) return;
 
-        setError(
-          err?.response?.data?.error ||
-            err?.response?.data?.message ||
-            err?.message ||
-            "Failed to fetch player seasons",
-        );
+        const message = getRequestErrorMessage(err);
+        console.error("Failed to fetch football player seasons:", message);
+        setError(message);
 
         setData([]);
         setRawSeasons([]);
@@ -435,9 +481,10 @@ export function usePlayerSeasons(
         setPlayer(null);
         setCanonicalProfile(null);
         setCollegeLeague(null);
-        setResolvedLeague(league.toLowerCase() as FootballLeague);
+        setResolvedLeague(fallbackLeague);
+        setResolvedRequestKey(requestKey);
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setLoading(false);
         }
       }
@@ -446,19 +493,24 @@ export function usePlayerSeasons(
     fetchSeasons();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
-  }, [hasValidPlayerId, playerId, league]);
+  }, [fallbackLeague, hasValidPlayerId, playerId, league, requestKey]);
 
-  const currentData = hasValidPlayerId ? data : EMPTY_FOOTBALL_SEASONS;
+  const hasCurrentResult =
+    requestKey !== null && resolvedRequestKey === requestKey;
 
-  const currentRawSeasons = hasValidPlayerId ? rawSeasons : EMPTY_API_SEASONS;
+  const currentData = hasCurrentResult ? data : EMPTY_FOOTBALL_SEASONS;
 
-  const currentCollegeData = hasValidPlayerId
+  const currentRawSeasons = hasCurrentResult
+    ? rawSeasons
+    : EMPTY_API_SEASONS;
+
+  const currentCollegeData = hasCurrentResult
     ? collegeData
     : EMPTY_FOOTBALL_SEASONS;
 
-  const currentRawCollegeSeasons = hasValidPlayerId
+  const currentRawCollegeSeasons = hasCurrentResult
     ? rawCollegeSeasons
     : EMPTY_API_SEASONS;
 
@@ -477,25 +529,29 @@ export function usePlayerSeasons(
      */
     collegeData: currentCollegeData,
     rawCollegeSeasons: currentRawCollegeSeasons,
-    collegeLeague: hasValidPlayerId ? collegeLeague : null,
+    collegeLeague: hasCurrentResult ? collegeLeague : null,
 
     /**
      * Always the canonical profile returned by the backend.
      * For pro players this stays the NFL profile.
      */
-    player: hasValidPlayerId ? player : null,
+    player: hasCurrentResult ? player : null,
 
     /**
      * Use this when deciding which league the stat table should treat
      * as the primary/current league.
      */
-    resolvedLeague: hasValidPlayerId ? resolvedLeague : fallbackLeague,
+    resolvedLeague: hasCurrentResult ? resolvedLeague : fallbackLeague,
 
-    canonicalProfile: hasValidPlayerId ? canonicalProfile : null,
+    canonicalProfile: hasCurrentResult ? canonicalProfile : null,
 
-    hasCollegeStats: hasValidPlayerId && currentCollegeData.length > 0,
+    hasCollegeStats: hasCurrentResult && currentCollegeData.length > 0,
 
-    loading: hasValidPlayerId ? loading : false,
-    error: hasValidPlayerId ? error : null,
+    loading: hasValidPlayerId ? loading || !hasCurrentResult : false,
+    error: hasValidPlayerId
+      ? hasCurrentResult
+        ? error
+        : null
+      : "Invalid player ID",
   };
 }

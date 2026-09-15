@@ -18,7 +18,7 @@ import {
 
 export const useDirectMessages = (
   conversationId: string,
-  options: { isVisible?: boolean } = {},
+  options: { isVisible?: boolean; } = {},
 ) => {
   const { token } = useAuth();
   const isVisible = options.isVisible ?? true;
@@ -55,9 +55,19 @@ export const useDirectMessages = (
   );
 
   useEffect(() => {
-    setMessageThemePreference(
-      conversation?.messageThemePreference ?? DEFAULT_MESSAGE_THEME_PREFERENCE,
-    );
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setMessageThemePreference(
+        conversation?.messageThemePreference ?? DEFAULT_MESSAGE_THEME_PREFERENCE,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [conversation?.messageThemePreference]);
 
   useEffect(() => {

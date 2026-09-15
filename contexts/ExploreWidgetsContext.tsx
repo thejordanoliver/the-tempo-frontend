@@ -106,7 +106,7 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Unable to load widget games.";
 }
 
-export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
+export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
   const {
     favorites,
     isLoading: favoritesLoading,
@@ -161,16 +161,28 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode }) {
     ? `widgets:${userId}:${requestedLeaguesKey}:${favoritesKey}`
     : "widgets:signed-out";
 
-  currentIdentityRef.current = dataKey;
+  useEffect(() => {
+    currentIdentityRef.current = dataKey;
+  }, [dataKey]);
 
   useEffect(() => {
-    setCache(null);
-    setLoading(false);
-    setRefreshing(false);
-    setError(null);
-    requestGenerationRef.current += 1;
-    pendingRequestRef.current?.controller.abort();
-    pendingRequestRef.current = null;
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setCache(null);
+      setLoading(false);
+      setRefreshing(false);
+      setError(null);
+      requestGenerationRef.current += 1;
+      pendingRequestRef.current?.controller.abort();
+      pendingRequestRef.current = null;
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   const loadWidgetData = useCallback(

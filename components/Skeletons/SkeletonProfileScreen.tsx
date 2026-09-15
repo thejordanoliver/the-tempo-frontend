@@ -1,5 +1,5 @@
 import { Colors } from "constants/styles";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 
-export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
+export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean; }) => {
   const styles = profileStyles(isDark);
 
   // Smooth breathing pulse animation
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -56,7 +56,7 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
   };
 
   // Reusable skeleton wrapper
-  const ShimmerBlock = (props: ViewProps & { style?: any }) => (
+  const ShimmerBlock = (props: ViewProps & { style?: any; }) => (
     <View {...props} style={[props.style, skeletonBlock]}>
       <Animated.View
         style={[
@@ -80,12 +80,9 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
     >
       {/* Banner + profile pic */}
       <View style={styles.bannerContainer}>
-        <ShimmerBlock style={styles.banner} testID="skeleton-banner" />
+        {ShimmerBlock({ "style": styles.banner, "testID": "skeleton-banner" })}
         <View style={styles.profilePicWrapper}>
-          <ShimmerBlock
-            style={styles.profilePic}
-            testID="skeleton-profile-pic"
-          />
+          {ShimmerBlock({ "style": styles.profilePic, "testID": "skeleton-profile-pic" })}
         </View>
       </View>
 
@@ -93,14 +90,8 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
       <View style={styles.followContainer}>
         {[0, 1].map((key) => (
           <View key={key} style={styles.followItem}>
-            <ShimmerBlock
-              style={{ height: 20, width: 60, marginBottom: 4 }}
-              testID={`skeleton-follow-title-${key}`}
-            />
-            <ShimmerBlock
-              style={{ height: 12, width: 40 }}
-              testID={`skeleton-follow-subtitle-${key}`}
-            />
+            {ShimmerBlock({ "style": { height: 20, width: 60, marginBottom: 4 }, "testID": `skeleton-follow-title-${key}` })}
+            {ShimmerBlock({ "style": { height: 12, width: 40 }, "testID": `skeleton-follow-subtitle-${key}` })}
           </View>
         ))}
       </View>
@@ -108,48 +99,24 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
       {/* Name + edit button */}
       <View style={styles.wrapper}>
         <View style={styles.nameContainer}>
-          <ShimmerBlock
-            style={{ height: 20, width: 120 }}
-            testID="skeleton-name-line1"
-          />
-          <ShimmerBlock
-            style={{ height: 16, width: 100 }}
-            testID="skeleton-name-line2"
-          />
+          {ShimmerBlock({ "style": { height: 20, width: 120 }, "testID": "skeleton-name-line1" })}
+          {ShimmerBlock({ "style": { height: 16, width: 100 }, "testID": "skeleton-name-line2" })}
         </View>
-        <ShimmerBlock
-          style={[styles.editProfileBtn, { height: 40, width: 110 }]}
-          testID="skeleton-edit-profile-btn"
-        />
+        {ShimmerBlock({ "style": [styles.editProfileBtn, { height: 40, width: 110 }], "testID": "skeleton-edit-profile-btn" })}
       </View>
 
       {/* Bio */}
       <View style={styles.bioContainer}>
-        <ShimmerBlock
-          style={{ height: 10, width: "100%" }}
-          testID="skeleton-bio"
-        />
-        <ShimmerBlock
-          style={{ height: 10, width: "90%" }}
-          testID="skeleton-bio"
-        />
-        <ShimmerBlock
-          style={{ height: 10, width: "80%" }}
-          testID="skeleton-bio"
-        />
+        {ShimmerBlock({ "style": { height: 10, width: "100%" }, "testID": "skeleton-bio" })}
+        {ShimmerBlock({ "style": { height: 10, width: "90%" }, "testID": "skeleton-bio" })}
+        {ShimmerBlock({ "style": { height: 10, width: "80%" }, "testID": "skeleton-bio" })}
       </View>
 
       {/* Favorites */}
       <View style={[styles.contentContainer, { marginTop: 60 }]}>
         <View style={styles.favoritesHeader}>
-          <ShimmerBlock
-            style={{ height: 20, width: 150 }}
-            testID="skeleton-favorites-header"
-          />
-          <ShimmerBlock
-            style={{ height: 20, width: 20 }}
-            testID="skeleton-favorites-icon"
-          />
+          {ShimmerBlock({ "style": { height: 20, width: 150 }, "testID": "skeleton-favorites-header" })}
+          {ShimmerBlock({ "style": { height: 20, width: 20 }, "testID": "skeleton-favorites-icon" })}
         </View>
 
         <View
@@ -160,31 +127,28 @@ export const SkeletonProfileScreen = ({ isDark }: { isDark: boolean }) => {
           }}
         >
           {[...Array(6)].map((_, i) => (
-            <ShimmerBlock
-              key={i}
-              style={{
+            <Fragment key={i}>{ShimmerBlock({
+              "style": {
                 width: itemWidth,
                 height: 130,
                 borderRadius: 8,
                 paddingHorizontal: 2,
                 paddingVertical: 20,
-              }}
-              testID={`skeleton-favorite-item-${i}`}
-            />
+              }, "testID": `skeleton-favorite-item-${i}`
+            })}</Fragment>
           ))}
         </View>
 
         {/* Edit Teams button */}
         <View style={{ width: "100%", marginTop: 10 }}>
-          <ShimmerBlock
-            style={{
+          {ShimmerBlock({
+            "style": {
               height: 60,
               width: "100%",
               alignSelf: "center",
               borderRadius: 20,
-            }}
-            testID="skeleton-edit-teams-button"
-          />
+            }, "testID": "skeleton-edit-teams-button"
+          })}
         </View>
       </View>
     </ScrollView>

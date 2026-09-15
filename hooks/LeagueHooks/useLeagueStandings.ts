@@ -110,8 +110,8 @@ export function useLeagueStandings(
 
       setError(
         err?.response?.data?.error ||
-          err?.message ||
-          `Failed to fetch ${league} standings`,
+        err?.message ||
+        `Failed to fetch ${league} standings`,
       );
 
       setData(null);
@@ -121,7 +121,7 @@ export function useLeagueStandings(
   }, [league, year, seasonType]);
 
   useEffect(() => {
-    fetchStandings();
+    void Promise.resolve().then(() => fetchStandings());
   }, [fetchStandings]);
 
   const availableSeasons = useMemo(() => {

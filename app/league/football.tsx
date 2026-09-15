@@ -256,13 +256,17 @@ function NFLLeagueScreen() {
   });
 
   useEffect(() => {
-    setSelectedWeekIndex((currentIndex) => {
-      if (currentIndex == null) {
-        return null;
-      }
-
-      return currentIndex < weekGroups.length ? currentIndex : null;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setSelectedWeekIndex((currentIndex) => {
+        if (currentIndex == null) return null;
+        return currentIndex < weekGroups.length ? currentIndex : null;
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [weekGroups.length]);
 
   useLayoutEffect(() => {
@@ -287,7 +291,7 @@ function NFLLeagueScreen() {
     } finally {
       setScreenRefreshing(false);
     }
-  }, [league, refreshGames]);
+  }, [league, refreshGames, setScreenRefreshing]);
 
   return (
     <>
@@ -580,21 +584,35 @@ function CFBLeagueScreen() {
     });
 
   useEffect(() => {
-    setSelectedWeekIndex((currentIndex) => {
-      if (currentIndex == null) {
-        return null;
-      }
-
-      return currentIndex < weekGroups.length ? currentIndex : null;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setSelectedWeekIndex((currentIndex) => {
+        if (currentIndex == null) return null;
+        return currentIndex < weekGroups.length ? currentIndex : null;
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [weekGroups.length]);
 
   useEffect(() => {
-    setSelectedWeekIndex(null);
+    let cancelled = false;
 
-    setSelectedConference("top25");
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    setIsConferenceModalOpen(false);
+      setSelectedWeekIndex(null);
+
+      setSelectedConference("top25");
+
+      setIsConferenceModalOpen(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentSeason, league]);
 
   useLayoutEffect(() => {
@@ -847,44 +865,64 @@ function UFLLeagueScreen() {
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
   useEffect(() => {
-    if (!weekGroups.length) {
-      setSelectedWeekIndex(0);
-      return;
-    }
+    let cancelled = false;
 
-    setSelectedWeekIndex((currentIndex) =>
-      currentIndex < weekGroups.length ? currentIndex : 0,
-    );
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!weekGroups.length) {
+        setSelectedWeekIndex(0);
+        return;
+      }
+
+      setSelectedWeekIndex((currentIndex) =>
+        currentIndex < weekGroups.length ? currentIndex : 0,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [weekGroups.length]);
 
   useEffect(() => {
-    if (!calendar?.length || !weekGroups.length) {
-      return;
-    }
+    let cancelled = false;
 
-    const now = dayjs();
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    const activeCalendarWeek = calendar.find(
-      (week) =>
-        week.stage !== "Off Season" &&
-        now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
-    );
+      if (!calendar?.length || !weekGroups.length) {
+        return;
+      }
 
-    if (!activeCalendarWeek) {
-      return;
-    }
+      const now = dayjs();
 
-    const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
+      const activeCalendarWeek = calendar.find(
+        (week) =>
+          week.stage !== "Off Season" &&
+          now.isBetween(dayjs(week.startDate), dayjs(week.endDate), null, "[]"),
+      );
 
-    const matchingGroupIndex = weekGroups.findIndex(
-      (group) =>
-        group.week.number === activeCalendarWeek.weekNumber &&
-        group.season.type === activeSeasonType,
-    );
+      if (!activeCalendarWeek) {
+        return;
+      }
 
-    if (matchingGroupIndex >= 0) {
-      setSelectedWeekIndex(matchingGroupIndex);
-    }
+      const activeSeasonType = getSeasonTypeFromStage(activeCalendarWeek.stage);
+
+      const matchingGroupIndex = weekGroups.findIndex(
+        (group) =>
+          group.week.number === activeCalendarWeek.weekNumber &&
+          group.season.type === activeSeasonType,
+      );
+
+      if (matchingGroupIndex >= 0) {
+        setSelectedWeekIndex(matchingGroupIndex);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [calendar, weekGroups]);
 
   useLayoutEffect(() => {

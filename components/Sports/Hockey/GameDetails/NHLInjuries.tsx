@@ -14,8 +14,8 @@ export interface Injury {
     id: string;
     displayName: string;
     shortName?: string;
-    headshot?: { href: string };
-    position?: { displayName?: string; abbreviation?: string };
+    headshot?: { href: string; };
+    position?: { displayName?: string; abbreviation?: string; };
     jersey?: string;
   };
   details?: {
@@ -71,7 +71,17 @@ export default function NHLInjuries({
 
   // Select the first tab (away) whenever tabs change.
   useEffect(() => {
-    if (tabs.length) setSelectedTeamId(tabs[0]);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (tabs.length) setSelectedTeamId(tabs[0]);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tabs]);
 
   const currentTeam = reorderedInjuries.find(

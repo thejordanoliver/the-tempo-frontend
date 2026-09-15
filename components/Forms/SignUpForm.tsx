@@ -4,7 +4,7 @@ import FavoriteSportsSelector from "components/Favorites/FavoriteSportsSelector"
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, type Control, useWatch } from "react-hook-form";
 import {
   Animated,
@@ -121,7 +121,7 @@ export default function SignUpForm({
   const styles = formStyles(isDark);
   const global = globalStyles(isDark);
 
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
 
   const [selectedFavoritesTab, setSelectedFavoritesTab] =
     useState<FavoritesTab>("teams");

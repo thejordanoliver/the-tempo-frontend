@@ -54,8 +54,8 @@ export function useLeagueSocial(
     } catch (err: any) {
       setSocialError(
         err?.response?.data?.message ||
-          err.message ||
-          "Unknown error fetching social feed",
+        err.message ||
+        "Unknown error fetching social feed",
       );
     } finally {
       setSocialLoading(false);
@@ -63,7 +63,7 @@ export function useLeagueSocial(
   }, [limit, sources]);
 
   useEffect(() => {
-    fetchTweets();
+    void Promise.resolve().then(() => fetchTweets());
   }, [fetchTweets]);
 
   return {

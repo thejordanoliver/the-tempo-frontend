@@ -368,7 +368,7 @@ export function useTournamentBracket(
   );
 
   useEffect(() => {
-    void fetchTournament();
+    void Promise.resolve().then(() => fetchTournament());
 
     return () => {
       requestIdRef.current += 1;

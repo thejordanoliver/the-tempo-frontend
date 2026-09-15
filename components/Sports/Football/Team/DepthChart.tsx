@@ -171,9 +171,8 @@ function getPlayerRowKey(
     entry.athlete?.athleteRef ??
     "unknown-player";
 
-  return `${position.key || "unknown-position"}-${athleteKey}-${
-    entry.slot ?? "no-slot"
-  }-${entry.rank ?? "no-rank"}-${index}`;
+  return `${position.key || "unknown-position"}-${athleteKey}-${entry.slot ?? "no-slot"
+    }-${entry.rank ?? "no-rank"}-${index}`;
 }
 
 function getPositionKey(
@@ -223,7 +222,17 @@ const PlayerRow = memo(function PlayerRow({
   }, []);
 
   useEffect(() => {
-    setHeadshotFailed(false);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setHeadshotFailed(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [headshotUri]);
 
   return (
@@ -443,15 +452,21 @@ export default function DepthChart({
   const [activeChartKey, setActiveChartKey] = useState<string | null>(null);
 
   useEffect(() => {
-    setActiveChartKey((currentKey) => {
-      if (chartOptions.length === 0) {
-        return currentKey === null ? currentKey : null;
-      }
-
-      return chartOptions.some((option) => option.key === currentKey)
-        ? currentKey
-        : chartOptions[0].key;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setActiveChartKey((currentKey) => {
+        if (chartOptions.length === 0) {
+          return currentKey === null ? currentKey : null;
+        }
+        return chartOptions.some((option) => option.key === currentKey)
+          ? currentKey
+          : chartOptions[0].key;
+      });
     });
+    return () => {
+      cancelled = true;
+    };
   }, [chartOptions]);
 
   const activeChartOption = useMemo(

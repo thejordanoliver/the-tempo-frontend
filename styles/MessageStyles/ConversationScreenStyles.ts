@@ -13,6 +13,10 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
+    initialMessageList: {
+      opacity: 0,
+    },
+
     messagesContent: {
       flexGrow: 1,
       paddingHorizontal: 12,

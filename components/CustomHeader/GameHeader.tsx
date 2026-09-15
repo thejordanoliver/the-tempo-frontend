@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Easing,
@@ -61,12 +61,12 @@ export function GameHeader({
 
   const dividerText = isNeutralSite ? "vs" : "@";
 
-  const scaleHome = useRef(new Animated.Value(0.6)).current;
-  const scaleAway = useRef(new Animated.Value(0.6)).current;
+  const [scaleHome] = useState(() => new Animated.Value(0.6));
+  const [scaleAway] = useState(() => new Animated.Value(0.6));
 
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [opacity] = useState(() => new Animated.Value(0));
 
-  const dividerScale = useRef(new Animated.Value(0.8)).current;
+  const [dividerScale] = useState(() => new Animated.Value(0.8));
 
   const getTeamCodeLetters = useCallback(
     (value: unknown, fallback: string): string[] => {

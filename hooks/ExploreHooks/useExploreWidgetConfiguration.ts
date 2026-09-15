@@ -38,34 +38,44 @@ export function useExploreWidgetConfiguration(userId: number | null) {
   const currentReady = configurationUserId === userId && ready;
 
   useEffect(() => {
-    const generation = ++loadGenerationRef.current;
+    let cancelled = false;
 
-    setReady(false);
-    setConfigurationUserId(userId);
-    setWidgets([]);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    if (!userId) {
-      setReady(true);
-      return;
-    }
+      const generation = ++loadGenerationRef.current;
 
-    cleanupLegacyExploreWidgetsKey().catch(() => {});
+      setReady(false);
+      setConfigurationUserId(userId);
+      setWidgets([]);
 
-    loadExploreWidgetsForUser(String(userId))
-      .then((storedWidgets) => {
-        if (generation !== loadGenerationRef.current) return;
-        setWidgets(storedWidgets);
-      })
-      .catch((error: unknown) => {
-        if (generation !== loadGenerationRef.current) return;
-        console.error("Failed to load Explore widget configuration", error);
-        setWidgets([]);
-      })
-      .finally(() => {
-        if (generation === loadGenerationRef.current) {
-          setReady(true);
-        }
-      });
+      if (!userId) {
+        setReady(true);
+        return;
+      }
+
+      cleanupLegacyExploreWidgetsKey().catch(() => { });
+
+      loadExploreWidgetsForUser(String(userId))
+        .then((storedWidgets) => {
+          if (generation !== loadGenerationRef.current) return;
+          setWidgets(storedWidgets);
+        })
+        .catch((error: unknown) => {
+          if (generation !== loadGenerationRef.current) return;
+          console.error("Failed to load Explore widget configuration", error);
+          setWidgets([]);
+        })
+        .finally(() => {
+          if (generation === loadGenerationRef.current) {
+            setReady(true);
+          }
+        });
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   useEffect(() => {
@@ -152,10 +162,10 @@ export function useExploreWidgetConfiguration(userId: number | null) {
         previous.map((widget) =>
           widget.id === widgetId && widget.type === "college_polls"
             ? {
-                ...widget,
-                collegePollLeague: league,
-                collegePollType: normalizedPollType,
-              }
+              ...widget,
+              collegePollLeague: league,
+              collegePollType: normalizedPollType,
+            }
             : widget,
         ),
       );

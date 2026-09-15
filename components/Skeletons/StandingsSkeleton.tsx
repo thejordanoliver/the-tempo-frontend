@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const ROWS = 16;
@@ -12,7 +12,7 @@ export const StandingsSkeleton = () => {
   const isDark = resolvedColorScheme === "dark";
   const bg = isDark ? Colors.dark.itemBackground : Colors.light.itemBackground;
 
-  const pulse = useRef(new Animated.Value(0.4)).current;
+  const [pulse] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     const animation = Animated.loop(
@@ -54,7 +54,7 @@ export const StandingsSkeleton = () => {
     </Animated.View>
   );
 
-  const TeamColumnRow = ({ index }: { index: number }) => {
+  const TeamColumnRow = ({ index }: { index: number; }) => {
     const isLastRow = index === ROWS - 1;
 
     return (
@@ -93,7 +93,7 @@ export const StandingsSkeleton = () => {
     </Animated.View>
   );
 
-  const StatRow = ({ index }: { index: number }) => {
+  const StatRow = ({ index }: { index: number; }) => {
     const isLastRow = index === ROWS - 1;
 
     return (
@@ -173,8 +173,8 @@ export const StandingsSkeleton = () => {
         <View style={[styles.filterSmall, { backgroundColor: bg }]} />
       </Animated.View>
 
-      <TableSkeleton />
-      <TableSkeleton />
+      {TableSkeleton()}
+      {TableSkeleton()}
     </ScrollView>
   );
 };

@@ -50,20 +50,7 @@ export default function CountdownClock<TGame extends CountdownGame>({
   }, []);
 
   useEffect(() => {
-    setCountdown(null);
-    setShowSeasonAnimation(false);
-    setCountdownEnded(false);
-
-    if (!gameDate || !animationKey) {
-      return;
-    }
-
-    const gameTime = new Date(gameDate).getTime();
-
-    if (Number.isNaN(gameTime)) {
-      return;
-    }
-
+    let cancelled = false;
     let intervalId: ReturnType<typeof setInterval> | null = null;
 
     /*
@@ -79,7 +66,8 @@ export default function CountdownClock<TGame extends CountdownGame>({
       }
     };
 
-    const updateCountdown = () => {
+    const updateCountdown = (gameTime: number) => {
+      if (cancelled) return;
       const distance = gameTime - Date.now();
 
       if (distance <= 0) {
@@ -110,11 +98,11 @@ export default function CountdownClock<TGame extends CountdownGame>({
         days: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hours: Math.floor(
           (distance % (1000 * 60 * 60 * 24)) /
-            (1000 * 60 * 60),
+          (1000 * 60 * 60),
         ),
         minutes: Math.floor(
           (distance % (1000 * 60 * 60)) /
-            (1000 * 60),
+          (1000 * 60),
         ),
         seconds: Math.floor(
           (distance % (1000 * 60)) / 1000,
@@ -122,13 +110,26 @@ export default function CountdownClock<TGame extends CountdownGame>({
       });
     };
 
-    updateCountdown();
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setCountdown(null);
+      setShowSeasonAnimation(false);
+      setCountdownEnded(false);
 
-    if (gameTime > Date.now()) {
-      intervalId = setInterval(updateCountdown, 1000);
-    }
+      if (!gameDate || !animationKey) return;
+      const gameTime = new Date(gameDate).getTime();
+      if (Number.isNaN(gameTime)) return;
 
-    return stopInterval;
+      updateCountdown(gameTime);
+      if (gameTime > Date.now()) {
+        intervalId = setInterval(() => updateCountdown(gameTime), 1000);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      stopInterval();
+    };
   }, [animationKey, gameDate]);
 
   if (loading) {

@@ -307,11 +307,21 @@ function NBALeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    const nextAnchor = getMonthAnchor(selectedDate);
+    let cancelled = false;
 
-    setCalendarAnchorDate((previousAnchor) =>
-      previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
-    );
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      const nextAnchor = getMonthAnchor(selectedDate);
+
+      setCalendarAnchorDate((previousAnchor) =>
+        previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedDate]);
 
   useEffect(() => {
@@ -633,11 +643,21 @@ function WNBALeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    const nextAnchor = getMonthAnchor(selectedDate);
+    let cancelled = false;
 
-    setCalendarAnchorDate((previousAnchor) =>
-      previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
-    );
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      const nextAnchor = getMonthAnchor(selectedDate);
+
+      setCalendarAnchorDate((previousAnchor) =>
+        previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedDate]);
 
   useEffect(() => {
@@ -912,11 +932,21 @@ function GLeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    const nextAnchor = getMonthAnchor(selectedDate);
+    let cancelled = false;
 
-    setCalendarAnchorDate((previousAnchor) =>
-      previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
-    );
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      const nextAnchor = getMonthAnchor(selectedDate);
+
+      setCalendarAnchorDate((previousAnchor) =>
+        previousAnchor === nextAnchor ? previousAnchor : nextAnchor,
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedDate]);
 
   useEffect(() => {

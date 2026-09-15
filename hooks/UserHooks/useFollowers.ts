@@ -188,50 +188,47 @@ export function useFollowers(
    * Uses cache first, then refreshes in the background.
    */
   useEffect(() => {
-    if (!targetUserId) {
-      setUsers([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
     let isActive = true;
     const controller = new AbortController();
-
-    const cachedUsers = followersCache.get(cacheKey);
-
-    if (cachedUsers) {
-      setUsers(cachedUsers);
-      setLoading(false);
-    } else {
-      setUsers([]);
-      setLoading(true);
-    }
-
-    setError(null);
-
-    apiClient
-      .get<User[]>(
-        `/api/follows/${encodeURIComponent(targetUserId)}/${type}`,
-        { signal: controller.signal },
-      )
-      .then((res) => {
-        if (!isActive) return;
-
-        const nextUsers = Array.isArray(res.data) ? res.data : [];
-
-        followersCache.set(cacheKey, nextUsers);
-        setUsers(nextUsers);
-      })
-      .catch((err) => {
-        if (!isActive || isCanceledRequest(err)) return;
-
-        setError(getErrorMessage(err));
-      })
-      .finally(() => {
-        if (!isActive) return;
+    void Promise.resolve().then(() => {
+      if (!isActive) return;
+      if (!targetUserId) {
+        setUsers([]);
         setLoading(false);
-      });
+        setError(null);
+        return;
+      }
+
+      const cachedUsers = followersCache.get(cacheKey);
+      if (cachedUsers) {
+        setUsers(cachedUsers);
+        setLoading(false);
+      } else {
+        setUsers([]);
+        setLoading(true);
+      }
+      setError(null);
+
+      void apiClient
+        .get<User[]>(
+          `/api/follows/${encodeURIComponent(targetUserId)}/${type}`,
+          { signal: controller.signal },
+        )
+        .then((res) => {
+          if (!isActive) return;
+          const nextUsers = Array.isArray(res.data) ? res.data : [];
+          followersCache.set(cacheKey, nextUsers);
+          setUsers(nextUsers);
+        })
+        .catch((err) => {
+          if (!isActive || isCanceledRequest(err)) return;
+          setError(getErrorMessage(err));
+        })
+        .finally(() => {
+          if (!isActive) return;
+          setLoading(false);
+        });
+    });
 
     return () => {
       isActive = false;

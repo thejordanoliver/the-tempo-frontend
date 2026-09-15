@@ -8,6 +8,7 @@ import {
 import {
   disconnectNotificationSocket,
   getNotificationSocket,
+  joinNotificationRoom,
   type NotificationSocket,
 } from "@/services/notificationSocket";
 import { useBadgeNotificationStore } from "@/store/badgeNotificationStore";
@@ -114,7 +115,9 @@ const activeConversationFromPath = (pathname: string | null) => {
 export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
   const pathname = usePathname();
   const pathnameRef = useRef(pathname);
-  pathnameRef.current = pathname;
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
   const normalizedUserId = normalizeAuthenticatedUserId(userId);
   const previousUserIdRef = useRef<number | null>(null);
   const {
@@ -199,15 +202,36 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
     };
 
     const handleConnect = () => {
+      const connectedSocket = socket;
       const hydration = initialHydration;
       const isReconnect = hasConnected;
       hasConnected = true;
-      void (hydration ? hydration.catch(() => false) : Promise.resolve()).then(
-        () => Promise.all([
-          refreshNotifications(),
-          isReconnect ? recoverBadges() : Promise.resolve(),
-        ]),
-      );
+
+      if (!connectedSocket) return;
+
+      void Promise.all([
+        hydration ? hydration.catch(() => false) : Promise.resolve(false),
+        joinNotificationRoom(connectedSocket, normalizedUserId),
+      ])
+        .then(async ([, joined]) => {
+          if (!active || socket !== connectedSocket) return;
+
+          if (!joined && __DEV__) {
+            console.warn(
+              "[Notifications] Connected without a confirmed user-room subscription; recovering from the API.",
+            );
+          }
+
+          await Promise.allSettled([
+            refreshNotifications(),
+            isReconnect ? recoverBadges() : Promise.resolve(),
+          ]);
+        })
+        .catch((error) => {
+          if (__DEV__) {
+            console.warn("[Notifications] Realtime synchronization failed", error);
+          }
+        });
     };
 
     const connect = async () => {
@@ -237,12 +261,19 @@ export function useBadgeRealtimeNotifications({ token, userId }: Options = {}) {
         (appState === "inactive" || appState === "background") && nextState === "active";
       appState = nextState;
       if (!returning) return;
-      void Promise.all([refreshNotifications(), recoverBadges()]).then(async () => {
-        const latestToken = await getAccessToken();
-        if (active && latestToken === socketToken && socket && !socket.connected) {
-          socket.connect();
-        }
-      });
+      void Promise.allSettled([refreshNotifications(), recoverBadges()]).then(
+        async () => {
+          const latestToken = await getAccessToken();
+          if (
+            active &&
+            latestToken === socketToken &&
+            socket &&
+            !socket.connected
+          ) {
+            socket.connect();
+          }
+        },
+      );
     };
 
     const appStateSubscription = AppState.addEventListener("change", handleAppState);

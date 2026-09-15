@@ -78,7 +78,7 @@ export function useAccountDetails() {
   }, []);
 
   useEffect(() => {
-    void fetchUserData();
+    void Promise.resolve().then(() => fetchUserData());
   }, [fetchUserData]);
 
   const changePassword = async ({

@@ -19,7 +19,7 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatDate,
@@ -178,7 +178,7 @@ export default function FootballGamePreviewModal({
     current: [],
     previous: [],
   };
-  const fieldPlay = useMemo(() => {
+  const fieldPlay = (() => {
     const plays = score?.plays ?? [];
     const currentDrives = score?.drives?.current ?? [];
     const previousDrives = score?.drives?.previous ?? [];
@@ -208,7 +208,7 @@ export default function FootballGamePreviewModal({
     }
 
     return null;
-  }, [lastPlay, score?.plays, score?.drives]);
+  })();
 
   const neutralSite = details?.neutralSite;
   const officials = details?.officials ?? [];
@@ -216,6 +216,7 @@ export default function FootballGamePreviewModal({
   const injuries = details?.injuries ?? [];
   const leaders = score?.leaders ?? [];
   const teamStats = score?.boxScore?.teams ?? [];
+  const playerStats = score?.boxScore?.players ?? [];
   const venueId = Number(details?.venue?.id);
   const baseVenue = details?.venue;
   const { venue } = useVenue({ sport: "football", id: venueId });
@@ -354,6 +355,7 @@ export default function FootballGamePreviewModal({
                   awayCoach={awayCoach}
                   lineScore={lineScore}
                   teamStats={teamStats}
+                  playerStats={playerStats}
                   injuries={injuries}
                   homeLastGames={homeLastGames}
                   awayLastGames={awayLastGames}

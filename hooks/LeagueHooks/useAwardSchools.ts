@@ -60,7 +60,7 @@ export function useAwardSchools(options: Options = {}) {
   }, [league, category, enabled, refreshToken]);
 
   useEffect(() => {
-    fetchSchools();
+    void Promise.resolve().then(() => fetchSchools());
   }, [fetchSchools]);
 
   return {

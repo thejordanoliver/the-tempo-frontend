@@ -48,6 +48,11 @@ const LIFT_SPRING = {
   mass: 0.7,
 };
 
+function setSharedValue<T>(sharedValue: SharedValue<T>, value: T) {
+  "worklet";
+  sharedValue.value = value;
+}
+
 type ActiveWidgetDrag = {
   id: string;
   fromIndex: number;
@@ -140,12 +145,12 @@ function SortableWidget({
   const edgeDirection = useSharedValue<-1 | 0 | 1>(0);
 
   useEffect(() => {
-    targetX.value = layout.x;
-    targetY.value = layout.y;
+    setSharedValue(targetX, layout.x);
+    setSharedValue(targetY, layout.y);
 
     if (activeWidgetId !== widget.id) {
-      positionX.value = withSpring(layout.x, POSITION_SPRING);
-      positionY.value = withSpring(layout.y, POSITION_SPRING);
+      setSharedValue(positionX, withSpring(layout.x, POSITION_SPRING));
+      setSharedValue(positionY, withSpring(layout.y, POSITION_SPRING));
     }
   }, [
     activeWidgetId,
@@ -159,15 +164,15 @@ function SortableWidget({
   ]);
 
   useEffect(() => {
-    currentIndexValue.value = currentIndex;
-    slotLayouts.value = slots;
+    setSharedValue(currentIndexValue, currentIndex);
+    setSharedValue(slotLayouts, slots);
   }, [currentIndex, currentIndexValue, slotLayouts, slots]);
 
   useEffect(() => {
     if (activeWidgetId === widget.id) return;
 
-    isGestureActive.value = false;
-    scale.value = withSpring(1, LIFT_SPRING);
+    setSharedValue(isGestureActive, false);
+    setSharedValue(scale, withSpring(1, LIFT_SPRING));
   }, [activeWidgetId, isGestureActive, scale, widget.id]);
 
   useAnimatedReaction(
@@ -196,7 +201,7 @@ function SortableWidget({
 
       if (targetIndex === currentIndexValue.value) return;
 
-      currentIndexValue.value = targetIndex;
+      setSharedValue(currentIndexValue, targetIndex);
       scheduleOnRN(onTargetIndexChange, widget.id, targetIndex);
     },
     [layout.height, layout.width, onTargetIndexChange, widget.id],
@@ -210,19 +215,19 @@ function SortableWidget({
         .activateAfterLongPress(LONG_PRESS_DURATION_MS)
         .shouldCancelWhenOutside(false)
         .onStart(() => {
-          completedGesture.value = false;
-          isGestureActive.value = true;
-          dragOriginX.value = positionX.value;
-          dragOriginY.value = positionY.value;
-          dragStartScrollOffset.value = scrollOffset.value;
-          translationX.value = 0;
-          translationY.value = 0;
-          scale.value = withSpring(1.025, LIFT_SPRING);
+          setSharedValue(completedGesture, false);
+          setSharedValue(isGestureActive, true);
+          setSharedValue(dragOriginX, positionX.value);
+          setSharedValue(dragOriginY, positionY.value);
+          setSharedValue(dragStartScrollOffset, scrollOffset.value);
+          setSharedValue(translationX, 0);
+          setSharedValue(translationY, 0);
+          setSharedValue(scale, withSpring(1.025, LIFT_SPRING));
           scheduleOnRN(onDragStart, widget.id);
         })
         .onUpdate((event) => {
-          translationX.value = event.translationX;
-          translationY.value = event.translationY;
+          setSharedValue(translationX, event.translationX);
+          setSharedValue(translationY, event.translationY);
 
           if (viewportBottom.value <= viewportTop.value) return;
 
@@ -238,34 +243,33 @@ function SortableWidget({
           }
 
           if (nextDirection !== edgeDirection.value) {
-            edgeDirection.value = nextDirection;
+            setSharedValue(edgeDirection, nextDirection);
             scheduleOnRN(onEdgeDirectionChange, nextDirection);
           }
         })
         .onEnd(() => {
-          completedGesture.value = true;
+          setSharedValue(completedGesture, true);
           // Freeze the lifted card exactly where the gesture ended. The JS drop
           // handler will commit the optimistic layout and start the final spring;
           // targetX/targetY can still describe the previous slot on this frame.
-          positionX.value = dragOriginX.value + translationX.value;
-          positionY.value =
-            dragOriginY.value +
+          setSharedValue(positionX, dragOriginX.value + translationX.value);
+          setSharedValue(positionY, dragOriginY.value +
             translationY.value +
-            (scrollOffset.value - dragStartScrollOffset.value);
-          isGestureActive.value = false;
-          edgeDirection.value = 0;
-          scale.value = withSpring(1, LIFT_SPRING);
+            (scrollOffset.value - dragStartScrollOffset.value));
+          setSharedValue(isGestureActive, false);
+          setSharedValue(edgeDirection, 0);
+          setSharedValue(scale, withSpring(1, LIFT_SPRING));
           scheduleOnRN(onEdgeDirectionChange, 0);
           scheduleOnRN(onDrop, widget.id);
         })
         .onFinalize(() => {
           if (completedGesture.value) return;
 
-          isGestureActive.value = false;
-          edgeDirection.value = 0;
-          positionX.value = withSpring(targetX.value, POSITION_SPRING);
-          positionY.value = withSpring(targetY.value, POSITION_SPRING);
-          scale.value = withSpring(1, LIFT_SPRING);
+          setSharedValue(isGestureActive, false);
+          setSharedValue(edgeDirection, 0);
+          setSharedValue(positionX, withSpring(targetX.value, POSITION_SPRING));
+          setSharedValue(positionY, withSpring(targetY.value, POSITION_SPRING));
+          setSharedValue(scale, withSpring(1, LIFT_SPRING));
           scheduleOnRN(onEdgeDirectionChange, 0);
           scheduleOnRN(onCancel, widget.id);
         }),
@@ -446,7 +450,7 @@ export default function SortableWidgetGrid({
       }
 
       scrollOffsetRef.current = nextOffset;
-      scrollOffset.value = nextOffset;
+      setSharedValue(scrollOffset, nextOffset);
       scrollRef.current?.scrollTo({ y: nextOffset, animated: false });
       autoScrollFrameRef.current = requestAnimationFrame(tick);
     },
@@ -471,8 +475,8 @@ export default function SortableWidgetGrid({
 
   const updateViewportBounds = useCallback(() => {
     viewportRef.current?.measureInWindow((_x, y, _width, height) => {
-      viewportTop.value = y;
-      viewportBottom.value = y + height;
+      setSharedValue(viewportTop, y);
+      setSharedValue(viewportBottom, y + height);
       viewportHeightRef.current = height;
     });
   }, [viewportBottom, viewportTop]);
@@ -650,7 +654,7 @@ export default function SortableWidgetGrid({
         onScroll={(event) => {
           const nextOffset = event.nativeEvent.contentOffset.y;
           scrollOffsetRef.current = nextOffset;
-          scrollOffset.value = nextOffset;
+          setSharedValue(scrollOffset, nextOffset);
         }}
         refreshControl={
           <RefreshControl

@@ -103,7 +103,7 @@ export default function FootballGameWidget({
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
   const endOfPeriod = gameStatusDescription === "End of Period";
-  const clock = game.status?.clock;
+  const clock = game.status?.displayClock;
   const period = formatPeriod({ period: game.status.period });
   const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;

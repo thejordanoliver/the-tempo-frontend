@@ -1,5 +1,5 @@
 import { router, useNavigation } from "expo-router";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Animated, RefreshControl, ScrollView, View } from "react-native";
 import PagerView, {
   type PagerViewOnPageScrollEvent,
@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
   const pagerRef = useRef<PagerView>(null);
 
-  const homeTabScrollProgress = useRef(new Animated.Value(0)).current;
+  const [homeTabScrollProgress] = useState(() => new Animated.Value(0));
 
   const handleHeaderTabPress = useCallback((tab: HomeHeaderTab) => {
     setSelectedTab(tab);

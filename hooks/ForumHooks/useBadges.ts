@@ -89,7 +89,7 @@ export function useBadges(options: UseBadgesOptions = {}) {
   );
 
   useEffect(() => {
-    void loadBadges(false);
+    void Promise.resolve().then(() => loadBadges(false));
 
     return () => {
       requestSequenceRef.current += 1;

@@ -9,7 +9,7 @@ import type {
   BadgeTier,
 } from "@/types/badges";
 import { capitalizeBadgeTier } from "@/utils/badgeUtils";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Modal,
@@ -61,11 +61,11 @@ export default function BadgeUnlockedModal() {
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
 
-  const cardOpacity = useRef(new Animated.Value(0)).current;
+  const [cardOpacity] = useState(() => new Animated.Value(0));
 
-  const cardScale = useRef(new Animated.Value(0.92)).current;
+  const [cardScale] = useState(() => new Animated.Value(0.92));
 
-  const emblemScale = useRef(new Animated.Value(0.82)).current;
+  const [emblemScale] = useState(() => new Animated.Value(0.82));
 
   const badge = useMemo(
     () =>

@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
@@ -33,7 +33,7 @@ export default function GameLeadersTabBar<T extends string>({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const underlineX = useRef(new Animated.Value(0)).current;
+  const [underlineX] = useState(() => new Animated.Value(0));
   const [containerWidth, setContainerWidth] = useState(0);
 
   const styles = gameLeadersTabBarStyles(isDark);

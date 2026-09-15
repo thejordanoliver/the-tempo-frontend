@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
 export default function GameLocationSkeleton() {
@@ -8,7 +8,7 @@ export default function GameLocationSkeleton() {
   const isDark = resolvedColorScheme === "dark";
 
   // Shared pulse animation value
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     Animated.loop(
@@ -27,7 +27,7 @@ export default function GameLocationSkeleton() {
     ).start();
   }, [pulseAnim]);
 
-  function SkeletonBlock({ style }: { style: any }) {
+  function SkeletonBlock({ style }: { style: any; }) {
     return <Animated.View style={[style, { opacity: pulseAnim }]} />;
   }
 
@@ -43,15 +43,15 @@ export default function GameLocationSkeleton() {
       ]}
     >
       {/* Title */}
-      <SkeletonBlock style={styles.title} />
+      {SkeletonBlock({ "style": styles.title })}
 
       {/* Image */}
-      <SkeletonBlock style={styles.image} />
+      {SkeletonBlock({ "style": styles.image })}
 
       {/* Text */}
-      <SkeletonBlock style={styles.text} />
-      <SkeletonBlock style={styles.temperature} />
-      <SkeletonBlock style={styles.capacity} />
+      {SkeletonBlock({ "style": styles.text })}
+      {SkeletonBlock({ "style": styles.temperature })}
+      {SkeletonBlock({ "style": styles.capacity })}
     </View>
   );
 }

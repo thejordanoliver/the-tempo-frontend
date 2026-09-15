@@ -124,7 +124,7 @@ export const clearTokens = async () => {
   await clearAuthSession();
 };
 
-const PUBLIC_AUTH_PATHS = [
+const AUTH_REFRESH_EXEMPT_PATHS = [
   "/api/login",
   "/api/signup",
   "/api/forgot-password",
@@ -132,6 +132,9 @@ const PUBLIC_AUTH_PATHS = [
   "/api/reset-password",
   "/api/refresh",
   "/api/logout",
+  // Explore analytics is optional and fire-and-forget. A stale token must not
+  // trigger session refresh or login navigation from a telemetry failure.
+  "/api/explore/search/events",
 ];
 
 const getRequestPath = (url?: string) => {
@@ -153,7 +156,7 @@ const getRequestPath = (url?: string) => {
 const shouldSkipAuthRefresh = (url?: string) => {
   const requestPath = getRequestPath(url);
 
-  return PUBLIC_AUTH_PATHS.some(
+  return AUTH_REFRESH_EXEMPT_PATHS.some(
     (path) => requestPath === path || requestPath === `${path}/`,
   );
 };
@@ -173,6 +176,11 @@ apiClient.interceptors.request.use(async (config) => {
 // ─── Response interceptor ────────────────────────────────────────────────────
 
 let isRefreshing = false;
+let refreshBackoffUntil = 0;
+let lastTransientRefreshError: any = null;
+
+const DEFAULT_REFRESH_BACKOFF_MS = 5_000;
+const MAX_REFRESH_BACKOFF_MS = 60_000;
 
 let failedQueue: {
   resolve: (value: string) => void;
@@ -189,6 +197,26 @@ const processQueue = (error: any, token: string | null = null) => {
   });
 
   failedQueue = [];
+};
+
+const isTransientRefreshError = (error: any) => {
+  const status = error?.response?.status;
+
+  return !status || status === 429 || status >= 500;
+};
+
+const getRefreshBackoffMs = (error: any) => {
+  const retryAfterHeader = error?.response?.headers?.["retry-after"];
+  const retryAfterSeconds = Number(retryAfterHeader);
+
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+    return Math.min(
+      MAX_REFRESH_BACKOFF_MS,
+      Math.max(DEFAULT_REFRESH_BACKOFF_MS, retryAfterSeconds * 1_000),
+    );
+  }
+
+  return DEFAULT_REFRESH_BACKOFF_MS;
 };
 
 apiClient.interceptors.response.use(
@@ -222,6 +250,13 @@ apiClient.interceptors.response.use(
 
     if (!isAuthError || originalRequest?._retry) {
       return Promise.reject(error);
+    }
+
+    if (
+      lastTransientRefreshError &&
+      Date.now() < refreshBackoffUntil
+    ) {
+      return Promise.reject(lastTransientRefreshError);
     }
 
     if (isRefreshing) {
@@ -274,6 +309,9 @@ apiClient.interceptors.response.use(
 
       await saveTokens(newAccessToken, newRefreshToken);
 
+      refreshBackoffUntil = 0;
+      lastTransientRefreshError = null;
+
       apiClient.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
@@ -282,6 +320,13 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
+
+      if (isTransientRefreshError(refreshError)) {
+        lastTransientRefreshError = refreshError;
+        refreshBackoffUntil = Date.now() + getRefreshBackoffMs(refreshError);
+
+        return Promise.reject(refreshError);
+      }
 
       await clearAuthSession();
       router.replace("/login");

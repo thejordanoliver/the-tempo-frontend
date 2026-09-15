@@ -17,7 +17,7 @@ import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { HeaderTitle } from "expo-router/react-navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
   TextStyle,
@@ -140,9 +140,19 @@ export function CustomHeader({
   }, [closeProfileMenu, onLogout]);
 
   useEffect(() => {
-    if (tabName !== "Profile") {
-      setProfileMenuVisible(false);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (tabName !== "Profile") {
+        setProfileMenuVisible(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tabName]);
 
   const selectedConference = useMemo(() => {
@@ -180,7 +190,7 @@ export function CustomHeader({
       ? Colors.black
       : Colors.white;
 
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+  const [rotateAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.timing(rotateAnim, {
@@ -316,10 +326,10 @@ export function CustomHeader({
 
   const headerIconColor =
     tabName === "Game" ||
-    isRacingHeader ||
-    selectedConference ||
-    isTeamScreen ||
-    isPlayerScreen
+      isRacingHeader ||
+      selectedConference ||
+      isTeamScreen ||
+      isPlayerScreen
       ? Colors.white
       : isDark
         ? Colors.white

@@ -30,8 +30,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type GifItem = {
   id: string;
   images: {
-    original: { url: string };
-    fixed_width_small: { url: string };
+    original: { url: string; };
+    fixed_width_small: { url: string; };
   };
 };
 
@@ -85,9 +85,19 @@ export const GiphySearchModal: React.FC<Props> = ({
   }, [debouncedQuery, searchGifs, visible]);
 
   useEffect(() => {
-    if (visible) return;
+    let cancelled = false;
 
-    setQuery("");
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) return;
+
+      setQuery("");
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [visible]);
 
   const handleDismiss = useCallback(() => {
@@ -117,7 +127,7 @@ export const GiphySearchModal: React.FC<Props> = ({
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: GifItem }) => (
+    ({ item }: { item: GifItem; }) => (
       <TouchableOpacity
         activeOpacity={activeOpacity}
         onPress={() => handleGifSelect(item)}

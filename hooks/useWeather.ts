@@ -152,7 +152,7 @@ export function useWeather({
   }, [canFetch, formattedDate, lat, lon, location]);
 
   useEffect(() => {
-    refetch();
+    void Promise.resolve().then(() => refetch());
   }, [refetch]);
 
   return {

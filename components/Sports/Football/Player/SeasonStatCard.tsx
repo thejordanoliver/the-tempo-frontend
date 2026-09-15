@@ -99,9 +99,9 @@ function getPosition(player: any) {
 function getSeasonDisplayYear(season?: FootballPlayerSeason | null) {
   return String(
     season?.displaySeason ??
-      season?.year ??
-      season?.season ??
-      getFootballSeason(),
+    season?.year ??
+    season?.season ??
+    getFootballSeason(),
   );
 }
 
@@ -260,8 +260,8 @@ function findStat(
 
   const displayValue =
     stat.displayValue !== null &&
-    stat.displayValue !== undefined &&
-    stat.displayValue !== ""
+      stat.displayValue !== undefined &&
+      stat.displayValue !== ""
       ? String(stat.displayValue)
       : formatValue(stat.value);
 
@@ -675,64 +675,64 @@ export default function SeasonStatCard({
         <View style={styles.statsRow}>
           {showPassing && (
             <>
-              <StatItem label="CMP/ATT" value={cmpAtt} />
-              <StatItem label="PASS YDS" value={passingYards} />
-              <StatItem label="PASS TD" value={passingTDs} />
-              <StatItem label="INT" value={passingInterceptions} />
+              {StatItem({ "label": "CMP/ATT", "value": cmpAtt })}
+              {StatItem({ "label": "PASS YDS", "value": passingYards })}
+              {StatItem({ "label": "PASS TD", "value": passingTDs })}
+              {StatItem({ "label": "INT", "value": passingInterceptions })}
             </>
           )}
 
           {showRushing && (
             <>
-              <StatItem label="RUSH ATT" value={rushingAttempts} />
-              <StatItem label="RUSH YDS" value={rushingYards} />
-              <StatItem label="YDS/ATT" value={rushingAvg} />
-              <StatItem label="RUSH TD" value={rushingTDs} />
+              {StatItem({ "label": "RUSH ATT", "value": rushingAttempts })}
+              {StatItem({ "label": "RUSH YDS", "value": rushingYards })}
+              {StatItem({ "label": "YDS/ATT", "value": rushingAvg })}
+              {StatItem({ "label": "RUSH TD", "value": rushingTDs })}
             </>
           )}
 
           {showReceiving && (
             <>
-              <StatItem label="REC" value={receptions} />
-              <StatItem label="REC YDS" value={receivingYards} />
-              <StatItem label="YDS/REC" value={receivingYardsPer} />
-              <StatItem label="REC TD" value={receivingTDs} />
+              {StatItem({ "label": "REC", "value": receptions })}
+              {StatItem({ "label": "REC YDS", "value": receivingYards })}
+              {StatItem({ "label": "YDS/REC", "value": receivingYardsPer })}
+              {StatItem({ "label": "REC TD", "value": receivingTDs })}
             </>
           )}
 
           {showDefense && (
             <>
-              <StatItem label="TOT" value={totalTackles} />
-              <StatItem label="INT" value={defensiveInterceptions} />
-              <StatItem label="TFL" value={tacklesForLoss} />
-              <StatItem label="SACK" value={defensiveSacks} />
+              {StatItem({ "label": "TOT", "value": totalTackles })}
+              {StatItem({ "label": "INT", "value": defensiveInterceptions })}
+              {StatItem({ "label": "TFL", "value": tacklesForLoss })}
+              {StatItem({ "label": "SACK", "value": defensiveSacks })}
             </>
           )}
 
           {showKicking && (
             <>
-              <StatItem label="FGM/FGA" value={fgmFga} />
-              <StatItem label="FG%" value={fieldGoalPct} />
-              <StatItem label="XPM/XPA" value={xpmXpa} />
-              <StatItem label="LONG" value={longFieldGoal} />
+              {StatItem({ "label": "FGM/FGA", "value": fgmFga })}
+              {StatItem({ "label": "FG%", "value": fieldGoalPct })}
+              {StatItem({ "label": "XPM/XPA", "value": xpmXpa })}
+              {StatItem({ "label": "LONG", "value": longFieldGoal })}
             </>
           )}
 
           {showPunting && (
             <>
-              <StatItem label="PUNTS" value={punts} />
-              <StatItem label="PUNT YDS" value={puntYards} />
-              <StatItem label="LONG" value={longestPunt} />
-              <StatItem label="TB" value={touchbacks} />
+              {StatItem({ "label": "PUNTS", "value": punts })}
+              {StatItem({ "label": "PUNT YDS", "value": puntYards })}
+              {StatItem({ "label": "LONG", "value": longestPunt })}
+              {StatItem({ "label": "TB", "value": touchbacks })}
             </>
           )}
 
           {shouldShowFallback && (
             <>
-              <StatItem label="GP" value={fallbackGamesPlayed} />
-              <StatItem label="YDS" value={fallbackYards} />
-              <StatItem label="TD" value={fallbackTouchdowns} />
-              <StatItem label="PTS" value={fallbackPoints} />
+              {StatItem({ "label": "GP", "value": fallbackGamesPlayed })}
+              {StatItem({ "label": "YDS", "value": fallbackYards })}
+              {StatItem({ "label": "TD", "value": fallbackTouchdowns })}
+              {StatItem({ "label": "PTS", "value": fallbackPoints })}
             </>
           )}
         </View>

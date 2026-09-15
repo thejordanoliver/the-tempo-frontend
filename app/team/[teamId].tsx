@@ -240,7 +240,7 @@ export default function TeamDetailScreen() {
         <View key="depth" style={styles.contentArea}>
           <DepthChart
             teamId={espnId}
-            season={2026}
+            season={currentSeason}
             isDark={isDark}
             league={league}
           />

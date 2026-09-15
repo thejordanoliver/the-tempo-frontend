@@ -4,7 +4,7 @@ import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { GlassView } from "expo-glass-effect";
-import { memo, useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
@@ -18,7 +18,7 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
   const liquid = supportsLiquidGlass();
-  const opacityAnim = useRef(new Animated.Value(isOpen ? 0 : 1)).current;
+  const [opacityAnim] = useState(() => new Animated.Value(isOpen ? 0 : 1));
 
   useEffect(() => {
     Animated.timing(opacityAnim, {

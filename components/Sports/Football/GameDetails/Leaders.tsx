@@ -435,13 +435,23 @@ export default function GameLeaders({
   }, [awayTeamLeaders, homeTeamLeaders]);
 
   useEffect(() => {
-    if (!availableCategories.length) {
-      return;
-    }
+    let cancelled = false;
 
-    if (!availableCategories.includes(selectedCategory)) {
-      setSelectedCategory(availableCategories[0]);
-    }
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!availableCategories.length) {
+        return;
+      }
+
+      if (!availableCategories.includes(selectedCategory)) {
+        setSelectedCategory(availableCategories[0]);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [availableCategories, selectedCategory]);
 
   const displayedLeaders = useMemo<DisplayLeader[]>(() => {

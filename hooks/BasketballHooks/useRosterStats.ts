@@ -140,12 +140,12 @@ const normalizePlayer = (player: ApiRosterPlayer): Player => {
     active: player.active,
     currentSeason: currentSeason
       ? {
-          season: Number(currentSeason.season),
-          displaySeason: currentSeason.displaySeason,
-          averages: normalizeAverages(currentSeason.averages),
-          totals: currentSeason.totals,
-          miscellaneous: currentSeason.miscellaneous,
-        }
+        season: Number(currentSeason.season),
+        displaySeason: currentSeason.displaySeason,
+        averages: normalizeAverages(currentSeason.averages),
+        totals: currentSeason.totals,
+        miscellaneous: currentSeason.miscellaneous,
+      }
       : undefined,
   };
 };
@@ -166,7 +166,11 @@ export const useRosterStats = (league: League, teamId: number) => {
       }
 
       try {
-        isRefresh ? setRefreshing(true) : setLoading(true);
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
         setError(null);
 
         const response = await apiClient.get<ApiRosterPlayer[]>(
@@ -191,7 +195,7 @@ export const useRosterStats = (league: League, teamId: number) => {
   );
 
   useEffect(() => {
-    fetchRoster();
+    void Promise.resolve().then(() => fetchRoster());
   }, [fetchRoster]);
 
   const onRefresh = useCallback(() => {

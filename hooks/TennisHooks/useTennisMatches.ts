@@ -27,7 +27,7 @@ const EMPTY_RESPONSE: Pick<
 function isCanceledRequest(error: unknown) {
   if (!error || typeof error !== "object") return false;
 
-  const value = error as { name?: string; code?: string };
+  const value = error as { name?: string; code?: string; };
   return value.name === "CanceledError" || value.code === "ERR_CANCELED";
 }
 
@@ -104,7 +104,7 @@ export function useTennisMatches(
   );
 
   useEffect(() => {
-    void fetchMatches();
+    void Promise.resolve().then(() => fetchMatches());
 
     return () => {
       abortControllerRef.current?.abort();

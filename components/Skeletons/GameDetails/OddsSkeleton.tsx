@@ -1,7 +1,7 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 
 const LOGO_SIZE = 28;
@@ -20,7 +20,7 @@ const OTHER_ODDS_MARGIN = 40; // smaller than 16
 /* -------------------------------------------------- */
 
 const Pulse = ({ style, color }: { style?: any; color: string }) => {
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const [opacity] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     Animated.loop(

@@ -48,7 +48,7 @@ export function useFavoriteTeams() {
   const [ready, setReady] = useState(false);
   const [previewTeam, setPreviewTeam] = useState<TeamWithLeague | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(1));
   const loadRequestId = useRef(0);
   const currentUserIdRef = useRef<number | null>(null);
   const hasLoadedFavoritesRef = useRef(false);
@@ -81,29 +81,29 @@ export function useFavoriteTeams() {
     [],
   );
 
-const filteredTeams = useMemo(() => {
-  const query = search.trim().toLowerCase();
+  const filteredTeams = useMemo(() => {
+    const query = search.trim().toLowerCase();
 
-  return allTeams.filter((team) => {
-    const isEligible =
-      team.isAllStar !== true &&
-      team.isNational !== true &&
-      team.isActive !== false;
+    return allTeams.filter((team) => {
+      const isEligible =
+        team.isAllStar !== true &&
+        team.isNational !== true &&
+        team.isActive !== false;
 
-    if (!isEligible) {
-      return false;
-    }
+      if (!isEligible) {
+        return false;
+      }
 
-    if (!query) {
-      return true;
-    }
+      if (!query) {
+        return true;
+      }
 
-    const teamName = team.fullName ?? team.name ?? "";
-    const teamLeague = team.league
+      const teamName = team.fullName ?? team.name ?? "";
+      const teamLeague = team.league;
 
-    return teamName.toLowerCase().includes(query) || teamLeague.toLowerCase().includes(query);
-  });
-}, [allTeams, search]);
+      return teamName.toLowerCase().includes(query) || teamLeague.toLowerCase().includes(query);
+    });
+  }, [allTeams, search]);
   /* ---------------- CLEAR FAVORITES ---------------- */
 
   const clearFavorites = useCallback(() => {
@@ -139,9 +139,9 @@ const filteredTeams = useMemo(() => {
             ? targetUserId == null
               ? null
               : Number(targetUserId)
-              : storedUserId
-                ? Number(storedUserId)
-                : null;
+            : storedUserId
+              ? Number(storedUserId)
+              : null;
 
         if (loadGeneration !== loadRequestId.current) {
           return;
@@ -247,7 +247,7 @@ const filteredTeams = useMemo(() => {
   );
 
   useEffect(() => {
-    void loadFavorites();
+    void Promise.resolve().then(() => loadFavorites());
   }, [loadFavorites]);
 
   useEffect(() => {

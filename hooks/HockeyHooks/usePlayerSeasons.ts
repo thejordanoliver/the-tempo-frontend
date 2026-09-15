@@ -138,7 +138,7 @@ export function usePlayerSeasons(playerId: number | string, league: string) {
   }, [playerId, league]);
 
   useEffect(() => {
-    fetchSeasons();
+    void Promise.resolve().then(() => fetchSeasons());
   }, [fetchSeasons]);
 
   return {

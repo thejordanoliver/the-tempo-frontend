@@ -224,7 +224,17 @@ export default function DraftList({
   }, [teamList]);
 
   useEffect(() => {
-    setVisibleCount(CHUNK_SIZE);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setVisibleCount(CHUNK_SIZE);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedYear, selectedTeam, selectedRound, search, league]);
 
   const filteredPicks = useMemo(() => {

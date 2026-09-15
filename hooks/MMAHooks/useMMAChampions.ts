@@ -48,8 +48,8 @@ export default function useMMAChampions(
           {
             params: division
               ? {
-                  division,
-                }
+                division,
+              }
               : undefined,
           },
         );
@@ -59,9 +59,9 @@ export default function useMMAChampions(
         if (isAxiosError<MMAChampionsErrorResponse>(err)) {
           setError(
             err.response?.data?.error ??
-              err.response?.data?.message ??
-              err.message ??
-              "Failed to fetch MMA champions",
+            err.response?.data?.message ??
+            err.message ??
+            "Failed to fetch MMA champions",
           );
 
           return;
@@ -87,7 +87,7 @@ export default function useMMAChampions(
   }, [fetchChampions]);
 
   useEffect(() => {
-    void fetchChampions();
+    void Promise.resolve().then(() => fetchChampions());
   }, [fetchChampions]);
 
   return {

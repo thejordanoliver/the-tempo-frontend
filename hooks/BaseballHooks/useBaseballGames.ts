@@ -77,7 +77,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
   }, [fetchGames]);
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {

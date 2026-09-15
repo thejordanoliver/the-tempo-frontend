@@ -55,9 +55,19 @@ export default function ConfirmModal({
   const isConfirmDisabled = confirmDisabled || isSubmitting;
 
   useEffect(() => {
-    if (!visible) {
-      setIsSubmitting(false);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!visible) {
+        setIsSubmitting(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [visible]);
 
   const handleCancel = useCallback(() => {

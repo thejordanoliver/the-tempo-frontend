@@ -17,6 +17,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { ForumVideoEditorModalProps } from "types/forum";
 
+const seekVideoPlayer = (player: { currentTime: number; }, seconds: number) => {
+  player.currentTime = seconds;
+};
+
 export default function VideoEditorModal({
   visible,
   videoUri,
@@ -54,19 +58,29 @@ export default function VideoEditorModal({
 
   const scrubTo = async (ms: number) => {
     try {
-      player.currentTime = ms / 1000;
-    } catch {}
+      seekVideoPlayer(player, ms / 1000);
+    } catch { }
   };
 
   // --- Reset state when opening ---
   useEffect(() => {
-    if (!visible) return;
+    let cancelled = false;
 
-    setTrimStartMs(initialTrimStartMs);
-    setTrimEndMs(initialTrimEndMs ?? 0);
-    setThumbTimeMs(initialTrimStartMs);
-    setThumbnailUri(initialThumbnailUri ?? null);
-    setThumbnailChanged(false); // ✅ reset
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!visible) return;
+
+      setTrimStartMs(initialTrimStartMs);
+      setTrimEndMs(initialTrimEndMs ?? 0);
+      setThumbTimeMs(initialTrimStartMs);
+      setThumbnailUri(initialThumbnailUri ?? null);
+      setThumbnailChanged(false); // ✅ reset
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     initialThumbnailUri,
     initialTrimEndMs,

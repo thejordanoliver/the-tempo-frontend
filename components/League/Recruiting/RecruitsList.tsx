@@ -166,12 +166,32 @@ export default function RecruitsList({
   const [refreshingTeamRankings, setRefreshingTeamRankings] = useState(false);
 
   useEffect(() => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: false });
-    setVisibleCount(CHUNK_SIZE);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      listRef.current?.scrollToOffset({ offset: 0, animated: false });
+      setVisibleCount(CHUNK_SIZE);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [year, team, view]);
 
   useEffect(() => {
-    setVisibleCount(CHUNK_SIZE);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setVisibleCount(CHUNK_SIZE);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [search]);
 
   const yearOptions = useMemo(() => {

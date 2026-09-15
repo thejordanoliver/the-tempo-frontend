@@ -60,7 +60,7 @@ export function useHockeyGames(date?: Date, league: League = "nhl") {
   }, [fetchGames]);
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {

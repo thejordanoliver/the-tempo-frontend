@@ -47,7 +47,7 @@ export function useSoccerTeamGames(
   }, [teamId, league, season]);
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const refreshGames = useCallback(async () => {

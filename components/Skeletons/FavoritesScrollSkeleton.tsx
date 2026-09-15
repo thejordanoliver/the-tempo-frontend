@@ -1,5 +1,5 @@
 import { Colors } from "constants/styles";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import { FavoritesScrollSkeletonStyles } from "styles/HomeStyles/FavoritesScrollSkeletonStyles";
 
@@ -11,7 +11,7 @@ export default function FavoritesScrollSkeleton({ isDark }: Props) {
   const styles = FavoritesScrollSkeletonStyles(isDark);
 
   // Smooth breathing shimmer animation
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     const pulse = Animated.loop(

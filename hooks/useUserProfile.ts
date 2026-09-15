@@ -192,7 +192,7 @@ export function useUserProfile(userId?: string) {
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
 
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [fadeAnim] = useState(() => new Animated.Value(1));
   const isMountedRef = useRef(true);
   const requestIdRef = useRef(0);
   const activeProfileKeyRef = useRef<string | null>(null);
@@ -220,10 +220,14 @@ export function useUserProfile(userId?: string) {
     [],
   );
 
-  activeProfileKeyRef.current =
+  const activeProfileKey =
     userId && hasLoadedCurrentUserId
       ? getProfileKey(userId, currentUserId)
       : null;
+
+  useEffect(() => {
+    activeProfileKeyRef.current = activeProfileKey;
+  }, [activeProfileKey]);
 
   const resetProfileState = useCallback(() => {
     setUsername(null);
@@ -291,7 +295,7 @@ export function useUserProfile(userId?: string) {
   }, []);
 
   const fetchUserData = useCallback(
-    async (options?: { hydrateCache?: boolean }) => {
+    async (options?: { hydrateCache?: boolean; }) => {
       if (!userId) {
         requestIdRef.current += 1;
         lastLoadedProfileKeyRef.current = null;
@@ -361,7 +365,7 @@ export function useUserProfile(userId?: string) {
         const freshProfile = normalizeDisplayProfile(data, userId);
         const displayProfile =
           cachedProfile &&
-          shouldPreferCachedDisplay(cachedProfile, freshProfile)
+            shouldPreferCachedDisplay(cachedProfile, freshProfile)
             ? cachedProfile
             : freshProfile;
 
@@ -419,23 +423,33 @@ export function useUserProfile(userId?: string) {
   );
 
   useEffect(() => {
-    if (!userId) {
-      requestIdRef.current += 1;
-      lastLoadedProfileKeyRef.current = null;
-      resetProfileState();
-      setHasCachedProfile(false);
-      setCacheState("none");
-      setIsRefreshing(false);
-      setIsLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    if (!hasLoadedCurrentUserId) return;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    const profileKey = getProfileKey(userId, currentUserId);
-    if (lastLoadedProfileKeyRef.current === profileKey) return;
+      if (!userId) {
+        requestIdRef.current += 1;
+        lastLoadedProfileKeyRef.current = null;
+        resetProfileState();
+        setHasCachedProfile(false);
+        setCacheState("none");
+        setIsRefreshing(false);
+        setIsLoading(false);
+        return;
+      }
 
-    fetchUserData();
+      if (!hasLoadedCurrentUserId) return;
+
+      const profileKey = getProfileKey(userId, currentUserId);
+      if (lastLoadedProfileKeyRef.current === profileKey) return;
+
+      fetchUserData();
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     currentUserId,
     fetchUserData,
@@ -513,12 +527,12 @@ export function useUserProfile(userId?: string) {
           const team = teamLookups[league].get(id);
           return team
             ? {
-                ...team,
-                espnId: team.espnId ?? null,
-                city: team.city ?? undefined,
-                location: team.location ?? undefined,
-                league,
-              }
+              ...team,
+              espnId: team.espnId ?? null,
+              city: team.city ?? undefined,
+              location: team.location ?? undefined,
+              league,
+            }
             : null;
         })
         .filter((team): team is Team => team !== null),

@@ -390,7 +390,7 @@ export const useHockeyGameDetails = (
   /* ---------------------------------- */
   useEffect(() => {
     if (skipFetch) return;
-    fetchDetails(true);
+    void Promise.resolve().then(() => fetchDetails(true));
   }, [skipFetch, fetchDetails]);
 
   useLiveSportsSubscription<HockeyGameDetailsResponse>({

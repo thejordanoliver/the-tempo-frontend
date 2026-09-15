@@ -95,7 +95,7 @@ export function useDraft(league: string, year: number | string | undefined) {
   // INITIAL LOAD
   // ---------------------------
   useEffect(() => {
-    fetchDraft("initial");
+    void Promise.resolve().then(() => fetchDraft("initial"));
   }, [fetchDraft]);
 
   // ---------------------------

@@ -134,19 +134,29 @@ export default function TennisLeagueScreen() {
    * available division.
    */
   useEffect(() => {
-    if (!availableDivisions.length) {
-      return;
-    }
+    let cancelled = false;
 
-    const selectedStillExists = availableDivisions.some(
-      (division) => division.slug === selectedDivision,
-    );
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    if (selectedStillExists) {
-      return;
-    }
+      if (!availableDivisions.length) {
+        return;
+      }
 
-    setSelectedDivision(getDefaultDivision(availableDivisions, league));
+      const selectedStillExists = availableDivisions.some(
+        (division) => division.slug === selectedDivision,
+      );
+
+      if (selectedStillExists) {
+        return;
+      }
+
+      setSelectedDivision(getDefaultDivision(availableDivisions, league));
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [availableDivisions, league, selectedDivision]);
 
   const visibleMatches = useMemo(() => {
@@ -159,7 +169,7 @@ export default function TennisLeagueScreen() {
 
   const markedDates = useMemo(
     () =>
-      calendar.reduce<Record<string, { marked: boolean; dotColor: string }>>(
+      calendar.reduce<Record<string, { marked: boolean; dotColor: string; }>>(
         (result, value) => {
           if (typeof value !== "string") {
             return result;

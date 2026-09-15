@@ -119,7 +119,17 @@ export default function GameLiveChatOverlay({
   }, []);
 
   useEffect(() => {
-    setChatOpen(false);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setChatOpen(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [gameId]);
 
   if (state === "post") return null;

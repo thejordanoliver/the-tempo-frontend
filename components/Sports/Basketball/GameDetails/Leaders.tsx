@@ -297,7 +297,17 @@ export default function Leaders({
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
 
   useEffect(() => {
-    setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [isScheduled]);
 
   const resolvedTeams = useMemo(

@@ -43,6 +43,11 @@ import {
 } from "utils/favoriteTeams";
 import { FavoritesTab } from "./FavoritesTab";
 
+function setSharedValue<T>(sharedValue: { value: T }, value: T) {
+  "worklet";
+  sharedValue.value = value;
+}
+
 type Props = {
   onInteractionStart?: () => void;
   onInteractionEnd?: () => void;
@@ -122,14 +127,16 @@ function FavoriteDragBoundary({
       );
 
       if (spacerIndexAnim.value < minimumIndex) {
-        spacerIndexAnim.value = minimumIndex;
+        setSharedValue(spacerIndexAnim, minimumIndex);
       } else if (spacerIndexAnim.value > maximumIndex) {
-        spacerIndexAnim.value = maximumIndex;
+        setSharedValue(spacerIndexAnim, maximumIndex);
       }
 
       if (boundedTranslation !== translatedDistance) {
-        touchTranslate.value =
-          boundedTranslation - autoScrollDistance.value;
+        setSharedValue(
+          touchTranslate,
+          boundedTranslation - autoScrollDistance.value,
+        );
       }
     },
     [itemCount, sportCount],

@@ -6,7 +6,7 @@ import { Colors, Fonts } from "constants/styles";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
@@ -33,8 +33,8 @@ export default function TeamRankCard({ item, index, league }: Props) {
 
   const styles = useMemo(() => getStyles(isDark), [isDark]);
 
-  const slideX = useRef(new Animated.Value(70)).current;
-  const fade = useRef(new Animated.Value(0)).current;
+  const [slideX] = useState(() => new Animated.Value(70));
+  const [fade] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.parallel([

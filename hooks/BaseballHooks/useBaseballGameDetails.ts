@@ -528,8 +528,8 @@ export const useBaseballGameDetails = (
 
         setWarning(
           err?.response?.data?.message ??
-            err?.message ??
-            "Unable to refresh game data",
+          err?.message ??
+          "Unable to refresh game data",
         );
       } finally {
         if (!silent) {
@@ -545,13 +545,23 @@ export const useBaseballGameDetails = (
   /* ---------------------------------- */
 
   useEffect(() => {
-    if (!skipFetch) return;
+    let cancelled = false;
 
-    setScore(null);
-    setDetails(null);
-    setWarning(null);
-    setLastRefresh(null);
-    setLoading(false);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!skipFetch) return;
+
+      setScore(null);
+      setDetails(null);
+      setWarning(null);
+      setLastRefresh(null);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [skipFetch]);
 
   /* ---------------------------------- */
@@ -561,7 +571,7 @@ export const useBaseballGameDetails = (
   useEffect(() => {
     if (skipFetch) return;
 
-    void fetchDetails(true);
+    void Promise.resolve().then(() => fetchDetails(true));
   }, [skipFetch, fetchDetails]);
 
   useLiveSportsSubscription<BaseballGameDetailsResponse>({

@@ -1,5 +1,5 @@
 import { Colors } from "constants/styles";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
@@ -31,7 +31,7 @@ export default function FixedWidthTabBar({
   renderLabel,
   isDark,
 }: FixedWidthTabBarProps) {
-  const underlineX = useRef(new Animated.Value(0)).current;
+  const [underlineX] = useState(() => new Animated.Value(0));
   const [containerWidth, setContainerWidth] = useState(0);
   const styles = fixedWidthTabBarStyles(isDark);
 

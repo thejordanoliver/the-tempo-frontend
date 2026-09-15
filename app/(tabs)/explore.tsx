@@ -37,6 +37,9 @@ export default function ExplorePage() {
     canExpandResults,
     saveToRecentSearches,
     deleteRecentSearch,
+    startSearchSession,
+    finishSearchSession,
+    recordResultSelection,
   } = useExplore();
 
   const {
@@ -63,6 +66,15 @@ export default function ExplorePage() {
     }, [ensureWidgetData]),
   );
 
+  useFocusEffect(
+    useCallback(
+      () => () => {
+        finishSearchSession();
+      },
+      [finishSearchSession],
+    ),
+  );
+
   const {
     searchVisible,
     selectedTab,
@@ -79,6 +91,8 @@ export default function ExplorePage() {
     setQuery,
     results,
     recentSearches,
+    onSearchOpen: startSearchSession,
+    onSearchClose: finishSearchSession,
   });
 
   useEffect(() => {
@@ -91,10 +105,12 @@ export default function ExplorePage() {
 
   const handleSelectItem = useCallback(
     (item: ResultItem) => {
+      recordResultSelection(item);
+      finishSearchSession();
       saveToRecentSearches(item);
       router.push(getExploreRouteForResult(item) as any);
     },
-    [router, saveToRecentSearches],
+    [finishSearchSession, recordResultSelection, router, saveToRecentSearches],
   );
 
   const openWidgetModal = useCallback(() => {

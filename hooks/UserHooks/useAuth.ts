@@ -217,7 +217,7 @@ export function useAuth() {
         res.data.user,
       );
 
-      router.replace("/(tabs)/profile");
+      router.replace("/signup/success");
     } catch (err: any) {
       const message =
         err.response?.data?.error ?? err.message ?? "Signup failed";

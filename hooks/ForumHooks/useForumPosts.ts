@@ -235,7 +235,7 @@ export function useForumPosts(teamId: string) {
   );
 
   useEffect(() => {
-    if (teamId) fetchPosts();
+    if (teamId) void Promise.resolve().then(() => fetchPosts());
   }, [teamId, fetchPosts]);
 
   return {

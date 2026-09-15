@@ -10,6 +10,7 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import {
   FootballDrive,
+  BoxScorePlayerTeam,
   PlayObject,
   TeamInjury,
   TeamLeaders,
@@ -24,6 +25,7 @@ import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import GameLeaders from "../GameDetails/Leaders";
+import BoxScore from "../GameDetails/BoxScore";
 import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
 
 type GamePreviewContentProps = {
@@ -52,6 +54,7 @@ type GamePreviewContentProps = {
     current: FootballDrive[];
   };
   teamStats?: TeamStatsEntry[];
+  playerStats?: BoxScorePlayerTeam[];
   leaders: TeamLeaders[];
   injuries: TeamInjury[];
   homeLastGames: LastFiveGame[];
@@ -88,6 +91,7 @@ export default function GamePreviewContent({
   lineScore,
   neutralSite,
   teamStats,
+  playerStats,
   leaders,
   injuries,
   officials,
@@ -192,6 +196,19 @@ export default function GamePreviewContent({
           homeLogo={homeLogo}
           awayCode={awayCode}
           homeCode={homeCode}
+          league={league}
+          state={state}
+          isDark={isDark}
+        />
+
+        <BoxScore
+          playerStats={playerStats}
+          homeId={homeId}
+          awayId={awayId}
+          homeName={homeName}
+          awayName={awayName}
+          homeLogo={homeLogo}
+          awayLogo={awayLogo}
           league={league}
           state={state}
           isDark={isDark}

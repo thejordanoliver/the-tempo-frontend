@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import HeaderSkeleton from "../HeaderSkeleton";
 
@@ -14,7 +14,7 @@ export default function LineScoreSkeleton({ league }: Props) {
   const baseColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   // Pulse animation
-  const pulse = useRef(new Animated.Value(0.4)).current;
+  const [pulse] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     Animated.loop(
@@ -76,7 +76,7 @@ export default function LineScoreSkeleton({ league }: Props) {
     </View>
   );
 
-  const TeamRow = ({ keyPrefix }: { keyPrefix: string }) => (
+  const TeamRow = ({ keyPrefix }: { keyPrefix: string; }) => (
     <View style={styles.row}>
       <Animated.View
         style={[
@@ -99,9 +99,9 @@ export default function LineScoreSkeleton({ league }: Props) {
 
       {/* Line score box */}
       <Animated.View style={[styles.wrapper, { borderColor: borderPulse }]}>
-        <HeaderRow />
+        {HeaderRow()}
 
-        <TeamRow keyPrefix="away" />
+        {TeamRow({ "keyPrefix": "away" })}
 
         <Animated.View
           style={[
@@ -110,7 +110,7 @@ export default function LineScoreSkeleton({ league }: Props) {
           ]}
         />
 
-        <TeamRow keyPrefix="home" />
+        {TeamRow({ "keyPrefix": "home" })}
       </Animated.View>
     </View>
   );

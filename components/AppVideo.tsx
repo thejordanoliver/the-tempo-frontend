@@ -20,6 +20,10 @@ type Props = {
   onPlayingChange?: (isPlaying: boolean) => void;
 };
 
+const seekVideoPlayer = (player: { currentTime: number }, seconds: number) => {
+  player.currentTime = seconds;
+};
+
 export default function AppVideo({
   uri,
   style,
@@ -62,7 +66,7 @@ export default function AppVideo({
 
   useEventListener(player, "playToEnd", () => {
     player.pause();
-    player.currentTime = 0;
+    seekVideoPlayer(player, 0);
     onEnd?.();
   });
 

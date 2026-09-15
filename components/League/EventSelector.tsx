@@ -107,7 +107,7 @@ export default function UFCEventSelector({
   const styles = EventSelectorStyles(isDark, itemWidth);
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const indicatorX = useRef(new Animated.Value(0)).current;
+  const [indicatorX] = useState(() => new Animated.Value(0));
 
   const [containerWidth, setContainerWidth] = useState(0);
 

@@ -289,7 +289,7 @@ export const useCBRankings = (league: "cb" | "sb") => {
       if (last && Date.now() - parseInt(last, 10) < 5 * 60 * 1000) return;
 
       await fetchLatest();
-    } catch {}
+    } catch { }
   }, [LAST_REFRESH_KEY, fetchLatest]);
 
   /* --------------------------------------------------
@@ -314,7 +314,7 @@ export const useCBRankings = (league: "cb" | "sb") => {
   }, [fetchLatest, fetchLatestInBackground, loadCache]);
 
   useEffect(() => {
-    fetchRankings();
+    void Promise.resolve().then(() => fetchRankings());
   }, [fetchRankings]);
 
   /* --------------------------------------------------

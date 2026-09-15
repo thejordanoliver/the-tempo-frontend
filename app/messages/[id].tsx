@@ -209,8 +209,12 @@ export default function ConversationScreen() {
 
   const listRef = useRef<FlatList<DirectMessageItem>>(null);
   const inputRef = useRef<TextInput>(null);
-  const keyboardOffset = useRef(new Animated.Value(0)).current;
+  const didInitialScrollRef = useRef(false);
+  const pendingInitialScrollRef = useRef(true);
+  const [keyboardOffset] = useState(() => new Animated.Value(0));
   const [isScreenFocused, setIsScreenFocused] = useState(false);
+  const [isInitialPositionPending, setIsInitialPositionPending] =
+    useState(true);
   const [appState, setAppState] = useState<AppStateStatus>(
     AppState.currentState,
   );
@@ -218,12 +222,15 @@ export default function ConversationScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      didInitialScrollRef.current = false;
+      pendingInitialScrollRef.current = Boolean(conversationId);
+      setIsInitialPositionPending(true);
       setIsScreenFocused(true);
 
       return () => {
         setIsScreenFocused(false);
       };
-    }, []),
+    }, [conversationId]),
   );
 
   useEffect(() => {
@@ -263,8 +270,6 @@ export default function ConversationScreen() {
   const [gifModalVisible, setGifModalVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const didInitialScrollRef = useRef(false);
-  const pendingInitialScrollRef = useRef(false);
 
   const isSendDisabled =
     isUploadingImage ||
@@ -303,23 +308,19 @@ export default function ConversationScreen() {
       return;
     }
 
+    const list = listRef.current;
+
+    if (!list) return;
+
     pendingInitialScrollRef.current = false;
     didInitialScrollRef.current = true;
+    list.scrollToEnd({ animated: false });
 
-    // Give FlatList one extra frame to finish measuring all message rows.
+    // Reveal the list only after it has been positioned at the latest message.
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        listRef.current?.scrollToEnd({
-          animated: true,
-        });
-      });
+      setIsInitialPositionPending(false);
     });
   }, [messages.length]);
-
-  useEffect(() => {
-    didInitialScrollRef.current = false;
-    pendingInitialScrollRef.current = false;
-  }, [conversationId]);
 
   useEffect(() => {
     if (isLoading || messages.length === 0 || didInitialScrollRef.current) {
@@ -336,7 +337,12 @@ export default function ConversationScreen() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [handleInitialScrollToBottom, isLoading, messages.length]);
+  }, [
+    handleInitialScrollToBottom,
+    isInitialPositionPending,
+    isLoading,
+    messages.length,
+  ]);
 
   const closeAttachmentMenu = useCallback(() => {
     setAttachmentMenuVisible(false);
@@ -719,6 +725,11 @@ export default function ConversationScreen() {
       <View style={styles.container}>
         <FlatList
           ref={listRef}
+          style={
+            isInitialPositionPending && messages.length > 0
+              ? styles.initialMessageList
+              : undefined
+          }
           data={messages}
           extraData={messageReceiptLabels}
           keyExtractor={keyExtractor}

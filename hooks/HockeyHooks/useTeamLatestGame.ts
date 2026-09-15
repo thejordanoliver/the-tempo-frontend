@@ -66,7 +66,7 @@ export function useTeamLatestGame(
   );
 
   useEffect(() => {
-    fetchLastGame(false);
+    void Promise.resolve().then(() => fetchLastGame(false));
   }, [fetchLastGame]);
 
   const refresh = useCallback(() => {

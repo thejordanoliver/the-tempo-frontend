@@ -136,9 +136,19 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
   const detailScreen = isDetailScreen(pathname);
 
   useEffect(() => {
-    if (!detailScreen) {
-      setLastActiveTab(currentActiveTab);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!detailScreen) {
+        setLastActiveTab(currentActiveTab);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentActiveTab, detailScreen]);
 
   if (shouldHideTabBar(pathname)) {

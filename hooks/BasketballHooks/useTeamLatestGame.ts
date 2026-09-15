@@ -105,7 +105,7 @@ export function useTeamLatestGame(
   );
 
   useEffect(() => {
-    fetchLastGame();
+    void Promise.resolve().then(() => fetchLastGame());
   }, [fetchLastGame]);
 
   const hasLiveGame = useMemo(() => {

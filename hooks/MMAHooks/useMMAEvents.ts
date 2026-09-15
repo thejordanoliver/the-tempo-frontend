@@ -369,8 +369,8 @@ export function useMMAEvents({
         setError(
           new Error(
             err?.response?.data?.error ||
-              err?.message ||
-              `Failed to fetch ${league.toUpperCase()} events`,
+            err?.message ||
+            `Failed to fetch ${league.toUpperCase()} events`,
           ),
         );
 
@@ -391,7 +391,7 @@ export function useMMAEvents({
   }, [fetchGames]);
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const hasLiveEvent = useMemo(() => {

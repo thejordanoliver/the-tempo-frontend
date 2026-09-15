@@ -144,15 +144,15 @@ export default function ShotChart({
   const filteredPlays = useMemo(() => {
     const periodMap: Partial<Record<ShotChartTab, number>> = isCollegeBasketball
       ? {
-          "1st Half": 1,
-          "2nd Half": 2,
-        }
+        "1st Half": 1,
+        "2nd Half": 2,
+      }
       : {
-          "1st": 1,
-          "2nd": 2,
-          "3rd": 3,
-          "4th": 4,
-        };
+        "1st": 1,
+        "2nd": 2,
+        "3rd": 3,
+        "4th": 4,
+      };
 
     return plays.filter((play) => {
       if (!play.coordinate || !play.shootingPlay) {
@@ -273,7 +273,7 @@ export default function ShotChart({
     );
   });
 
-  const MadeView = ({ color }: { color: string }) => (
+  const MadeView = ({ color }: { color: string; }) => (
     <View
       style={[
         styles.madeMarker,
@@ -284,7 +284,7 @@ export default function ShotChart({
     />
   );
 
-  const MissView = ({ color }: { color: string }) => (
+  const MissView = ({ color }: { color: string; }) => (
     <View
       style={[
         styles.missedMarker,
@@ -374,20 +374,20 @@ export default function ShotChart({
               <View style={styles.divider} />
 
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={awayColorValue} />
+              {MadeView({ "color": awayColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={awayColorValue} />
+              {MissView({ "color": awayColorValue })}
             </View>
           )}
 
           {homeTeam && (
             <View style={styles.legendItem}>
               <Text style={styles.legendText}>Make</Text>
-              <MadeView color={homeColorValue} />
+              {MadeView({ "color": homeColorValue })}
 
               <Text style={styles.legendText}>Miss</Text>
-              <MissView color={homeColorValue} />
+              {MissView({ "color": homeColorValue })}
 
               <View style={styles.divider} />
 

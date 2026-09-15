@@ -76,8 +76,7 @@ function normalizeGroups(data: FootballGamesResponse): FootballGameGroup[] {
       return {
         key:
           group.key ||
-          `${group.season?.slug ?? "season"}-week-${
-            group.week?.number ?? "unknown"
+          `${group.season?.slug ?? "season"}-week-${group.week?.number ?? "unknown"
           }`,
 
         label:
@@ -237,12 +236,22 @@ export function useFootballGames({
   }, [enabled, fetchGames]);
 
   useEffect(() => {
-    if (!enabled) {
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    void fetchGames();
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!enabled) {
+        setLoading(false);
+        return;
+      }
+
+      void fetchGames();
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchGames]);
 
   const hasLiveGame = useMemo(() => {

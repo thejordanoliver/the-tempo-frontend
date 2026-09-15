@@ -222,9 +222,9 @@ export function useDepthCharts(
 
       setError(
         err?.response?.data?.details ||
-          err?.response?.data?.error ||
-          err?.message ||
-          "Failed to fetch depth charts"
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to fetch depth charts"
       );
 
       setData(null);
@@ -234,7 +234,7 @@ export function useDepthCharts(
   }, [url, canFetch]);
 
   useEffect(() => {
-    fetchDepthCharts();
+    void Promise.resolve().then(() => fetchDepthCharts());
   }, [fetchDepthCharts]);
 
   const depthCharts = useMemo(() => {

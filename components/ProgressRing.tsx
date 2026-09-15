@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
@@ -32,7 +32,7 @@ export default function ProgressRing({
   const progress = max > 0 ? value / max : 0;
 
   // Animated value (0 → progress)
-  const animatedProgress = useRef(new Animated.Value(0)).current;
+  const [animatedProgress] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     animatedProgress.setValue(0);

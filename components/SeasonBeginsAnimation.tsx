@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "@/constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   ImageSourcePropType,
   StyleSheet,
@@ -55,10 +55,7 @@ export default function SeasonBeginsAnimation({
 }: SeasonBeginsAnimationProps) {
   const { width } = useWindowDimensions();
   const slideDistance = Math.max(width, 400);
-  const [isRendered, setIsRendered] = useState(visible);
-
   const handleAnimationComplete = useCallback(() => {
-    setIsRendered(false);
     onComplete?.();
   }, [onComplete]);
 
@@ -86,11 +83,8 @@ export default function SeasonBeginsAnimation({
 
   useEffect(() => {
     if (!visible) {
-      setIsRendered(false);
       return;
     }
-
-    setIsRendered(true);
 
     // Reset text.
     teamNameTranslateX.value = slideDistance;
@@ -357,7 +351,7 @@ export default function SeasonBeginsAnimation({
     transform: [{ translateY: bottomShutterTranslateY.value }],
   }));
 
-  if (!visible || !isRendered) {
+  if (!visible) {
     return null;
   }
 

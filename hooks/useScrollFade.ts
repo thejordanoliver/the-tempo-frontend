@@ -7,9 +7,7 @@ export const useScrollFade = () => {
 
   const [showDetails, setShowDetails] = useState(false);
 
-  const opacityAnim = useRef(
-    new Animated.Value(isChatOpen ? 0 : 1)
-  ).current;
+  const [opacityAnim] = useState(() => new Animated.Value(isChatOpen ? 0 : 1));
 
   const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 

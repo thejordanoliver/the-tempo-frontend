@@ -189,7 +189,7 @@ export function useTeamGames(
   );
 
   useEffect(() => {
-    fetchSchedule(false);
+    void Promise.resolve().then(() => fetchSchedule(false));
   }, [fetchSchedule]);
 
   const allGames = useMemo(() => data?.games ?? [], [data?.games]);

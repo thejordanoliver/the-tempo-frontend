@@ -23,9 +23,9 @@ import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
-import { useNotifications } from "@/contexts/NotificationContext";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -119,10 +119,7 @@ export default function GameDetailsScreen(
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
-  const {
-    isGameNotified,
-    openGameNotificationSettings,
-  } = useNotifications();
+  const { isGameNotified, openGameNotificationSettings } = useNotifications();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
@@ -134,7 +131,9 @@ export default function GameDetailsScreen(
   }, [params.data, params.game, props.game]);
 
   const LEAGUE = (
-    routeGame?.league?.code ?? getRouteLeague(params.league) ?? "nba"
+    routeGame?.league?.code ??
+    getRouteLeague(params.league) ??
+    "nba"
   ).toLowerCase();
   const isWNBA = LEAGUE === "wnba";
   const isWCBB = LEAGUE === "wcbb";
@@ -460,7 +459,6 @@ export default function GameDetailsScreen(
                 state={state}
                 league={LEAGUE}
               />
-
               <LineScore
                 linescore={lineScore}
                 awayCode={awayCode}
@@ -469,7 +467,6 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
-
               <FanPrediction
                 votes={liveVotes}
                 castVote={castLiveVote}
@@ -484,7 +481,6 @@ export default function GameDetailsScreen(
                 homeColor={homeColor}
                 state={state}
               />
-
               <MatchupPredictor
                 homeId={homeId}
                 homeCode={homeCode}
@@ -512,7 +508,6 @@ export default function GameDetailsScreen(
                 state={state}
                 isDark={isDark}
               />
-
               <PlayersOnCourt
                 playerStats={playerStats}
                 homeId={Number(homeEspnId)}
@@ -525,7 +520,6 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
-
               <PlayersInFoulTrouble
                 foulTrouble={foulTrouble}
                 homeId={homeId}
@@ -538,7 +532,6 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
-
               <BoxScore
                 playerStats={playerStats}
                 homeId={homeId}
@@ -551,7 +544,6 @@ export default function GameDetailsScreen(
                 league={LEAGUE}
                 state={state}
               />
-
               <ShotChart
                 plays={plays}
                 homeEspnId={homeEspnId}
@@ -565,7 +557,6 @@ export default function GameDetailsScreen(
                 league={LEAGUE}
                 state={state}
               />
-
               <GameTeamStats
                 stats={teamStats}
                 awayName={awayCode}
@@ -578,7 +569,6 @@ export default function GameDetailsScreen(
                 state={state}
                 isDark={isDark}
               />
-
               <LastFiveGames
                 homeId={homeId}
                 awayId={awayId}
@@ -590,7 +580,6 @@ export default function GameDetailsScreen(
                 state={state}
                 isDark={isDark}
               />
-
               <TeamInjuries
                 injuries={injuries}
                 homeId={homeId}
@@ -603,9 +592,7 @@ export default function GameDetailsScreen(
                 league={LEAGUE}
                 state={state}
               />
-
               <Highlights highlights={highlights} isDark={isDark} />
-
               <HeadCoaches
                 homeCode={homeCode}
                 awayCode={awayCode}
@@ -616,9 +603,7 @@ export default function GameDetailsScreen(
                 isDark={isDark}
                 state={state}
               />
-
               <Officials officials={officials} isDark={isDark} state={state} />
-
               <GameLocation
                 venueImage={venueImage}
                 venueName={venueName}

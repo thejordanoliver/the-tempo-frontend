@@ -1,9 +1,10 @@
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
+import { supportsLiquidGlass } from "@/utils/glass";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -29,6 +30,7 @@ import type {
 } from "types/forum";
 import { apiClient, BASE_URL } from "utils/apiClient";
 import AppVideo from "../AppVideo";
+import { GlassView } from "expo-glass-effect";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -59,22 +61,22 @@ export default function PostImagesModal({
   const styles = getStyles(isDark);
 
   const flatListRef = useRef<FlatList<ForumDisplayMediaItem>>(null);
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.85)).current;
+  const [opacity] = useState(() => new Animated.Value(0));
+  const [scale] = useState(() => new Animated.Value(0.85));
   const [expanded, setExpanded] = useState(false);
-  const animatedHeight = useRef(new Animated.Value(0)).current;
+  const [animatedHeight] = useState(() => new Animated.Value(0));
   const [collapsedHeight, setCollapsedHeight] = useState(0);
   const [expandedHeight, setExpandedHeight] = useState(0);
   const [isTruncated, setIsTruncated] = useState(false);
   const [activeIndex, setActiveIndex] = useState(initialIndex);
   const [captionVisible, setCaptionVisible] = useState(true);
-  const captionOpacity = useRef(new Animated.Value(1)).current;
+  const [captionOpacity] = useState(() => new Animated.Value(1));
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const [likePending, setLikePending] = useState(false);
-
   const { likes, setLike } = useLikesStore();
   const likeState = likes[postId];
   const { handleBadgeAwards } = useBadgeNotifications();
+  const liquid = supportsLiquidGlass();
 
   const fullProfileImageUri =
     profileImage && !profileImage.startsWith("http")
@@ -185,27 +187,48 @@ export default function PostImagesModal({
   }, [animatedHeight, collapsedHeight, expanded, expandedHeight]);
 
   useEffect(() => {
-    if (visible) {
-      setExpanded(false);
-      setCollapsedHeight(0);
-      setExpandedHeight(0);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) {
+        setExpanded(false);
+        setCollapsedHeight(0);
+        setExpandedHeight(0);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [captionOpacity, visible]);
 
   /* -------------------- Video Pauses On Swipe -------------------- */
   useEffect(() => {
-    if (playingIndex !== null && playingIndex !== activeIndex) {
-      setPlayingIndex(null);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (playingIndex !== null && playingIndex !== activeIndex) {
+        setPlayingIndex(null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [activeIndex, playingIndex]);
 
-  const onViewableItemsChanged = useRef(
-    ({ viewableItems }: { viewableItems: any[] }) => {
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: any[]; }) => {
       if (viewableItems.length > 0) {
         setActiveIndex(viewableItems[0].index ?? 0);
       }
     },
-  ).current;
+    [],
+  );
 
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 80,
@@ -225,16 +248,36 @@ export default function PostImagesModal({
   };
 
   useEffect(() => {
-    if (visible) {
-      captionOpacity.setValue(1);
-      setCaptionVisible(true);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) {
+        captionOpacity.setValue(1);
+        setCaptionVisible(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [captionOpacity, visible]);
 
   useEffect(() => {
-    if (visible) {
-      setPlayingIndex(null); // ⛔ never autoplay on open
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (visible) {
+        setPlayingIndex(null); // ⛔ never autoplay on open
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [visible, initialIndex]);
 
   /* -------------------- Render -------------------- */
@@ -242,7 +285,7 @@ export default function PostImagesModal({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <SafeAreaView style={styles.modalContainer}>
-        <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
+        <BlurView intensity={90} style={StyleSheet.absoluteFill} />
         <View style={styles.modalBackground} />
 
         <Animated.View
@@ -335,11 +378,15 @@ export default function PostImagesModal({
           <Animated.View
             style={[styles.captionOverlay, { opacity: captionOpacity }]}
           >
-            <BlurView
-              intensity={100}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
-            />
+            {liquid ? (
+              <GlassView
+                style={StyleSheet.absoluteFill}
+                glassEffectStyle="regular"
+                isInteractive={true}
+              />
+            ) : (
+              <BlurView intensity={90} style={StyleSheet.absoluteFill} />
+            )}
             {/* Truncation detector */}
             <Text
               style={[

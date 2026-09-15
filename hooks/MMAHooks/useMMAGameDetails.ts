@@ -28,15 +28,15 @@ export type MMAScore = {
   boxScore?: any | null;
   leaders?: any[];
 
-  home: { total: number | null };
-  away: { total: number | null };
+  home: { total: number | null; };
+  away: { total: number | null; };
   homeTeam: string;
   awayTeam: string;
 
   teamStats: any[];
   playerStats: any[];
-  timeouts: { home: number | null; away: number | null };
-  fouls: { home: number | null; away: number | null };
+  timeouts: { home: number | null; away: number | null; };
+  fouls: { home: number | null; away: number | null; };
 };
 
 export type MMAGameDetails = {
@@ -59,8 +59,8 @@ export type MMAGameDetails = {
 
   predictor?: any[];
   records?: {
-    home?: { overall?: string | null };
-    away?: { overall?: string | null };
+    home?: { overall?: string | null; };
+    away?: { overall?: string | null; };
   };
 };
 
@@ -261,8 +261,8 @@ export const useMMAGameDetails = (
 
         setWarning(
           err?.response?.data?.error ||
-            err?.message ||
-            "Unable to refresh MMA game data",
+          err?.message ||
+          "Unable to refresh MMA game data",
         );
       } finally {
         if (!silent) setLoading(false);
@@ -273,7 +273,7 @@ export const useMMAGameDetails = (
 
   useEffect(() => {
     if (skipFetch) return;
-    fetchDetails({ silent: false });
+    void Promise.resolve().then(() => fetchDetails({ silent: false }));
   }, [skipFetch, fetchDetails]);
 
   useEffect(() => {

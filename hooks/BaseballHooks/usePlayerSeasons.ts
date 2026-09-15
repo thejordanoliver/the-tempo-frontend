@@ -288,18 +288,25 @@ export function useBaseballPlayerSeasons(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!playerId) {
-      setData([]);
-      setRawSeasons([]);
-      setPlayer(null);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
     let cancelled = false;
 
+    if (!playerId) {
+      void Promise.resolve().then(() => {
+        if (cancelled) return;
+        setData([]);
+        setRawSeasons([]);
+        setPlayer(null);
+        setLoading(false);
+        setError(null);
+      });
+      return () => {
+        cancelled = true;
+      };
+    }
+
     const fetchSeasons = async () => {
+      await Promise.resolve();
+      if (cancelled) return;
       try {
         setLoading(true);
         setError(null);
@@ -345,9 +352,9 @@ export function useBaseballPlayerSeasons(
 
         setError(
           err?.response?.data?.error ||
-            err?.response?.data?.message ||
-            err?.message ||
-            "Failed to fetch player seasons",
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to fetch player seasons",
         );
 
         setData([]);
@@ -360,7 +367,7 @@ export function useBaseballPlayerSeasons(
       }
     };
 
-    fetchSeasons();
+    void fetchSeasons();
 
     return () => {
       cancelled = true;

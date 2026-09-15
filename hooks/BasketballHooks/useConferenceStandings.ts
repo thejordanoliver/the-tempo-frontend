@@ -46,7 +46,7 @@ interface ConferenceStandingsResponse {
 export const useConferenceStandings = (
   league: string,
   group?: number | string | null,
-  { enabled = true }: { enabled?: boolean } = {},
+  { enabled = true }: { enabled?: boolean; } = {},
 ) => {
   const [conference, setConference] = useState<StandingConference | null>(
     null,
@@ -135,7 +135,7 @@ export const useConferenceStandings = (
   );
 
   useEffect(() => {
-    fetchStandings(false);
+    void Promise.resolve().then(() => fetchStandings(false));
   }, [fetchStandings]);
 
   const refresh = useCallback(() => {

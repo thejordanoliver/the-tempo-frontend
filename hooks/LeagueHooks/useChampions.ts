@@ -58,7 +58,7 @@ export function useChampions({
   }, [league, enabled, refreshToken]);
 
   useEffect(() => {
-    fetchChampions();
+    void Promise.resolve().then(() => fetchChampions());
   }, [fetchChampions]);
 
   return {

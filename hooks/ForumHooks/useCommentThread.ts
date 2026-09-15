@@ -39,7 +39,7 @@ function isSameUser(
 /* -------------------------------------------------------------------------- */
 
 function getErrorMessage(error: unknown, fallback: string) {
-  if (isAxiosError<{ error?: string; message?: string }>(error)) {
+  if (isAxiosError<{ error?: string; message?: string; }>(error)) {
     return (
       error.response?.data?.error ||
       error.response?.data?.message ||
@@ -172,15 +172,15 @@ function normalizeForumComment(
   const replies =
     depth === 0 && Array.isArray(comment.replies)
       ? sortReplies(
-          comment.replies.map((reply) =>
-            normalizeForumComment(
-              reply,
-              fallbackPostId,
-              1,
-              toNullableNumberId(reply.parent_comment_id) ?? commentId,
-            ),
+        comment.replies.map((reply) =>
+          normalizeForumComment(
+            reply,
+            fallbackPostId,
+            1,
+            toNullableNumberId(reply.parent_comment_id) ?? commentId,
           ),
-        )
+        ),
+      )
       : [];
 
   return {
@@ -273,12 +273,12 @@ function appendReplyToComment(
   return comments.map((comment) =>
     comment.id === reply.parent_comment_id
       ? {
-          ...comment,
-          replies: sortReplies([
-            ...(comment.replies ?? []),
-            reply,
-          ]),
-        }
+        ...comment,
+        replies: sortReplies([
+          ...(comment.replies ?? []),
+          reply,
+        ]),
+      }
       : comment,
   );
 }
@@ -295,7 +295,7 @@ function updateCommentInTree(
         ...updatedComment,
         replies:
           updatedComment.replies &&
-          updatedComment.replies.length > 0
+            updatedComment.replies.length > 0
             ? sortReplies(updatedComment.replies)
             : (comment.replies ?? []),
       };
@@ -322,9 +322,9 @@ function updateCommentInTree(
 
     return didUpdateReply
       ? {
-          ...comment,
-          replies: sortReplies(nextReplies),
-        }
+        ...comment,
+        replies: sortReplies(nextReplies),
+      }
       : comment;
   });
 }
@@ -353,9 +353,9 @@ function removeCommentFromTree(
     return nextReplies.length === replies.length
       ? comment
       : {
-          ...comment,
-          replies: nextReplies,
-        };
+        ...comment,
+        replies: nextReplies,
+      };
   });
 }
 
@@ -507,7 +507,7 @@ export function useCommentThread(postId: string | null) {
   }, [postId]);
 
   useEffect(() => {
-    fetchThread();
+    void Promise.resolve().then(() => fetchThread());
   }, [fetchThread]);
 
   /* ------------------------------------------------------------------------ */
@@ -588,16 +588,16 @@ export function useCommentThread(postId: string | null) {
         setPost((previous) =>
           previous
             ? {
-                ...previous,
-                comments_count:
-                  typeof responseData.post
-                    ?.comments_count ===
+              ...previous,
+              comments_count:
+                typeof responseData.post
+                  ?.comments_count ===
                   "number"
-                    ? responseData.post
-                        .comments_count
-                    : (previous.comments_count ??
-                        0) + 1,
-              }
+                  ? responseData.post
+                    .comments_count
+                  : (previous.comments_count ??
+                    0) + 1,
+            }
             : previous,
         );
 
@@ -728,16 +728,16 @@ export function useCommentThread(postId: string | null) {
         setPost((previous) =>
           previous
             ? {
-                ...previous,
-                comments_count:
-                  typeof responseData.post
-                    ?.comments_count ===
+              ...previous,
+              comments_count:
+                typeof responseData.post
+                  ?.comments_count ===
                   "number"
-                    ? responseData.post
-                        .comments_count
-                    : (previous.comments_count ??
-                        0) + 1,
-              }
+                  ? responseData.post
+                    .comments_count
+                  : (previous.comments_count ??
+                    0) + 1,
+            }
             : previous,
         );
 
@@ -903,20 +903,20 @@ export function useCommentThread(postId: string | null) {
         setPost((previous) =>
           previous
             ? {
-                ...previous,
-                comments_count:
-                  typeof res.data.post
-                    ?.comments_count ===
+              ...previous,
+              comments_count:
+                typeof res.data.post
+                  ?.comments_count ===
                   "number"
-                    ? res.data.post
-                        .comments_count
-                    : Math.max(
-                        (previous.comments_count ??
-                          removedCount) -
-                          removedCount,
-                        0,
-                      ),
-              }
+                  ? res.data.post
+                    .comments_count
+                  : Math.max(
+                    (previous.comments_count ??
+                      removedCount) -
+                    removedCount,
+                    0,
+                  ),
+            }
             : previous,
         );
       } catch (error) {
@@ -962,7 +962,7 @@ export function useCommentThread(postId: string | null) {
 
         setPost((previous) =>
           previous &&
-          String(previous.id) ===
+            String(previous.id) ===
             String(postIdToDelete)
             ? null
             : previous,
@@ -998,12 +998,12 @@ export function useCommentThread(postId: string | null) {
     (updatedPost: ForumPost) => {
       setPost((currentPost) =>
         currentPost &&
-        String(currentPost.id) ===
+          String(currentPost.id) ===
           String(updatedPost.id)
           ? {
-              ...currentPost,
-              ...updatedPost,
-            }
+            ...currentPost,
+            ...updatedPost,
+          }
           : currentPost,
       );
     },

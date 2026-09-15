@@ -114,12 +114,22 @@ export default function MessageThemeModal({
    * preference changes.
    */
   useEffect(() => {
-    if (!visible) {
-      return;
-    }
+    let cancelled = false;
 
-    setDraftPreference(normalizeMessageThemePreference(currentPreference));
-    setSaveError(null);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!visible) {
+        return;
+      }
+
+      setDraftPreference(normalizeMessageThemePreference(currentPreference));
+      setSaveError(null);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentPreference, visible]);
 
   const handleClose = () => {
@@ -304,27 +314,27 @@ export default function MessageThemeModal({
 
         {!!saveError && <Text style={styles.errorText}>{saveError}</Text>}
 
-       <View style={styles.buttonContainer}>
-        <Button
-          isDark={isDark}
-          onPress={handleClose}
-          disabled={isLoading}
-          variant="outline"
-          style={styles.button}
-        >
-          Cancel
-        </Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            isDark={isDark}
+            onPress={handleClose}
+            disabled={isLoading}
+            variant="outline"
+            style={styles.button}
+          >
+            Cancel
+          </Button>
 
-        <Button
-          isDark={isDark}
-          onPress={handleSave}
-          disabled={isLoading}
-          variant="filled"
-          style={styles.button}
-        >
-          Save
-        </Button>
-      </View>
+          <Button
+            isDark={isDark}
+            onPress={handleSave}
+            disabled={isLoading}
+            variant="filled"
+            style={styles.button}
+          >
+            Save
+          </Button>
+        </View>
       </View>
     </BottomSheetModal>
   );

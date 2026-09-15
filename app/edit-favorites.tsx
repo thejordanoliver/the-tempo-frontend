@@ -61,7 +61,7 @@ export default function EditFavoritesScreen() {
 
   const pagerRef = useRef<PagerView>(null);
 
-  const homeTabScrollProgress = useRef(new Animated.Value(0)).current;
+  const [homeTabScrollProgress] = useState(() => new Animated.Value(0));
 
   const [selectedTab, setSelectedTab] = useState<FavoritesTab>("teams");
 
@@ -93,13 +93,23 @@ export default function EditFavoritesScreen() {
    * Reset all draft/search state when the authenticated user changes.
    */
   useEffect(() => {
-    setDraftFavoriteTeams([]);
-    setFavoriteTeamsDirty(false);
-    setDraftFavoriteSports([]);
-    setFavoriteSportsDirty(false);
+    let cancelled = false;
 
-    setTeamSearch("");
-    setSportSearch("");
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setDraftFavoriteTeams([]);
+      setFavoriteTeamsDirty(false);
+      setDraftFavoriteSports([]);
+      setFavoriteSportsDirty(false);
+
+      setTeamSearch("");
+      setSportSearch("");
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   /**
@@ -108,11 +118,21 @@ export default function EditFavoritesScreen() {
    * pending changes without mutating the shared favorites context.
    */
   useEffect(() => {
-    if (!favoriteTeamsReady || favoriteTeamsDirty) {
-      return;
-    }
+    let cancelled = false;
 
-    setDraftFavoriteTeams(favorites);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!favoriteTeamsReady || favoriteTeamsDirty) {
+        return;
+      }
+
+      setDraftFavoriteTeams(favorites);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [favoriteTeamsDirty, favoriteTeamsReady, favorites, userId]);
 
   /**
@@ -120,11 +140,21 @@ export default function EditFavoritesScreen() {
    * the user starts making local changes.
    */
   useEffect(() => {
-    if (!favoriteSportsReady || favoriteSportsDirty) {
-      return;
-    }
+    let cancelled = false;
 
-    setDraftFavoriteSports(favoriteSports);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!favoriteSportsReady || favoriteSportsDirty) {
+        return;
+      }
+
+      setDraftFavoriteSports(favoriteSports);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [favoriteSports, favoriteSportsDirty, favoriteSportsReady, userId]);
 
   /**
@@ -327,8 +357,8 @@ export default function EditFavoritesScreen() {
       <SearchBar
         visible
         value={activeSearch}
-        onFocus={() => {}}
-        onBlur={() => {}}
+        onFocus={() => { }}
+        onBlur={() => { }}
         onChangeText={handleSearchChange}
         placeholder={
           selectedTab === "teams" ? "Search teams..." : "Search sports..."

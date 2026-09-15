@@ -89,12 +89,22 @@ export function useLeaguesNews(
   );
 
   useEffect(() => {
-    if (!enabled) {
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    void fetchNews(false);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!enabled) {
+        setLoading(false);
+        return;
+      }
+
+      void fetchNews(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchNews]);
 
   const refresh = useCallback(async () => {

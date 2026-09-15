@@ -424,8 +424,8 @@ export const useSoccerGameDetails = (
 
         setWarning(
           error?.response?.data?.error ||
-            error?.message ||
-            "Unable to refresh soccer game data",
+          error?.message ||
+          "Unable to refresh soccer game data",
         );
       } finally {
         if (!silent) {
@@ -437,19 +437,29 @@ export const useSoccerGameDetails = (
   );
 
   useEffect(() => {
-    if (skipFetch) {
-      setScore(undefined);
-      setDetails(undefined);
-      setWarning(null);
-      setLastRefresh(null);
-      setLoading(false);
+    let cancelled = false;
 
-      return;
-    }
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    void fetchDetails({
-      silent: false,
+      if (skipFetch) {
+        setScore(undefined);
+        setDetails(undefined);
+        setWarning(null);
+        setLastRefresh(null);
+        setLoading(false);
+
+        return;
+      }
+
+      void fetchDetails({
+        silent: false,
+      });
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [skipFetch, fetchDetails]);
 
   useLiveSportsSubscription<GameDetailsResponse>({

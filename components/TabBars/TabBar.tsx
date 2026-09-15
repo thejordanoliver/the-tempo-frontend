@@ -39,8 +39,8 @@ export default function TabBar<T extends string>({
   scrollProgress,
 }: TabBarProps<T>) {
   // Animated values
-  const underlineX = useRef(new Animated.Value(0)).current;
-  const underlineWidth = useRef(new Animated.Value(0)).current;
+  const [underlineX] = useState(() => new Animated.Value(0));
+  const [underlineWidth] = useState(() => new Animated.Value(0));
 
   // Measurements
   const textMeasurements = useRef<{ width: number }[]>([]);

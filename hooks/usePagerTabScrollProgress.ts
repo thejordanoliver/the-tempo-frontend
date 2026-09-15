@@ -1,9 +1,9 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useState } from "react";
 import { Animated } from "react-native";
 import type { PagerViewOnPageScrollEvent } from "react-native-pager-view";
 
 export function usePagerTabScrollProgress() {
-  const scrollProgress = useRef(new Animated.Value(0)).current;
+  const [scrollProgress] = useState(() => new Animated.Value(0));
 
   const handlePageScroll = useCallback(
     (event: PagerViewOnPageScrollEvent) => {

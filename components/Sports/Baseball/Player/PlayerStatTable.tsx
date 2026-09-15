@@ -25,7 +25,7 @@ type StatTableProps = {
 
 type SeasonTypeTab = "regular" | "postseason";
 
-const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab }[] = [
+const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab; }[] = [
   { label: "Regular Season", value: "regular" },
   { label: "Postseason", value: "postseason" },
 ];
@@ -549,11 +549,11 @@ function getSeasonTeamCode(
 
   return season.teamSlug
     ? season.teamSlug
-        .split("-")
-        .map((part) => part[0])
-        .join("")
-        .slice(0, 4)
-        .toUpperCase()
+      .split("-")
+      .map((part) => part[0])
+      .join("")
+      .slice(0, 4)
+      .toUpperCase()
     : String(teamId);
 }
 
@@ -693,7 +693,7 @@ function formatCareerValue(key: string, displayValues: string[]) {
 
   const madeAttemptValues = cleanedValues
     .map(parseMadeAttemptValue)
-    .filter(Boolean) as { made: number; attempted: number }[];
+    .filter(Boolean) as { made: number; attempted: number; }[];
 
   if (madeAttemptValues.length === cleanedValues.length) {
     const made = madeAttemptValues.reduce((sum, value) => sum + value.made, 0);
@@ -806,16 +806,26 @@ export default function PlayerStatTable({
   const [selectedGroup, setSelectedGroup] = useState<string>("");
 
   useEffect(() => {
-    if (!availableGroups.length) {
-      setSelectedGroup("");
-      return;
-    }
+    let cancelled = false;
 
-    const availableGroupNames = availableGroups.map((group) => group.name);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    if (!selectedGroup || !availableGroupNames.includes(selectedGroup)) {
-      setSelectedGroup(availableGroups[0].name);
-    }
+      if (!availableGroups.length) {
+        setSelectedGroup("");
+        return;
+      }
+
+      const availableGroupNames = availableGroups.map((group) => group.name);
+
+      if (!selectedGroup || !availableGroupNames.includes(selectedGroup)) {
+        setSelectedGroup(availableGroups[0].name);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [availableGroups, selectedGroup]);
 
   const activeGroup = selectedGroup || availableGroups[0]?.name;

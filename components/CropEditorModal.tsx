@@ -30,8 +30,8 @@ type CropEditorModalProps = {
   mode: CropMode;
 };
 
-type Coordinate = { x: number; y: number };
-type Size = { width: number; height: number };
+type Coordinate = { x: number; y: number; };
+type Size = { width: number; height: number; };
 
 type CropConfig = {
   cropWidth: number;
@@ -124,7 +124,7 @@ const getCoverSize = (
   return { width, height: width / imageRatio };
 };
 
-const getDistance = (touches: { pageX: number; pageY: number }[]) => {
+const getDistance = (touches: { pageX: number; pageY: number; }[]) => {
   const [a, b] = touches;
   return Math.hypot(b.pageX - a.pageX, b.pageY - a.pageY);
 };
@@ -196,8 +196,8 @@ export default function CropEditorModal({
   const gestureStartScale = useRef(MIN_SCALE);
   const initialDistance = useRef(0);
 
-  const animatedOffset = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
-  const animatedScale = useRef(new Animated.Value(MIN_SCALE)).current;
+  const [animatedOffset] = useState(() => new Animated.ValueXY({ x: 0, y: 0 }));
+  const [animatedScale] = useState(() => new Animated.Value(MIN_SCALE));
 
   const cropConfig = useMemo(
     () => getCropConfig(mode, windowWidth),
@@ -253,26 +253,27 @@ export default function CropEditorModal({
   );
 
   useEffect(() => {
-    setImageSize(null);
-    setIsCropping(false);
-    currentScale.current = MIN_SCALE;
-    currentOffset.current = { x: 0, y: 0 };
-    animatedScale.setValue(MIN_SCALE);
-    animatedOffset.setValue({ x: 0, y: 0 });
-
-    if (!visible || !imageUri) return;
-
     let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setImageSize(null);
+      setIsCropping(false);
+      currentScale.current = MIN_SCALE;
+      currentOffset.current = { x: 0, y: 0 };
+      animatedScale.setValue(MIN_SCALE);
+      animatedOffset.setValue({ x: 0, y: 0 });
 
-    Image.getSize(
-      imageUri,
-      (width, height) => {
-        if (!cancelled) setImageSize({ width, height });
-      },
-      () => {
-        if (!cancelled) Alert.alert("Error", "Could not load image");
-      },
-    );
+      if (!visible || !imageUri) return;
+      Image.getSize(
+        imageUri,
+        (width, height) => {
+          if (!cancelled) setImageSize({ width, height });
+        },
+        () => {
+          if (!cancelled) Alert.alert("Error", "Could not load image");
+        },
+      );
+    });
 
     return () => {
       cancelled = true;
@@ -299,65 +300,76 @@ export default function CropEditorModal({
     initialDistance.current = 0;
   }, []);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => isImageReady,
-        onMoveShouldSetPanResponder: () => isImageReady,
-        onPanResponderGrant: (evt) => {
-          gestureStartOffset.current = currentOffset.current;
-          gestureStartScale.current = currentScale.current;
-
-          if (evt.nativeEvent.touches.length === 2) {
-            initialDistance.current = getDistance(evt.nativeEvent.touches);
-          }
-        },
-        onPanResponderMove: (evt, gesture) => {
-          if (!isImageReady) return;
-
-          const touches = evt.nativeEvent.touches;
-
-          if (touches.length === 1) {
-            const nextOffset = clampOffset(
-              {
-                x: gestureStartOffset.current.x + gesture.dx,
-                y: gestureStartOffset.current.y + gesture.dy,
-              },
-              currentScale.current,
-            );
-
-            currentOffset.current = nextOffset;
-            animatedOffset.setValue(nextOffset);
-            return;
-          }
-
-          if (touches.length === 2) {
-            const distance = getDistance(touches);
-            if (distance <= 0) return;
-
-            if (!initialDistance.current) {
-              initialDistance.current = distance;
-              gestureStartScale.current = currentScale.current;
-            }
-
-            const nextScale = clamp(
-              gestureStartScale.current * (distance / initialDistance.current),
-              MIN_SCALE,
-              MAX_SCALE,
-            );
-            const nextOffset = clampOffset(currentOffset.current, nextScale);
-
-            currentScale.current = nextScale;
-            currentOffset.current = nextOffset;
-            animatedScale.setValue(nextScale);
-            animatedOffset.setValue(nextOffset);
-          }
-        },
-        onPanResponderRelease: finishGesture,
-        onPanResponderTerminate: finishGesture,
-      }),
-    [animatedOffset, animatedScale, clampOffset, finishGesture, isImageReady],
+  const [panResponder, setPanResponder] = useState(() =>
+    PanResponder.create({}),
   );
+
+  useEffect(() => {
+    let cancelled = false;
+    const nextPanResponder = PanResponder.create({
+      onStartShouldSetPanResponder: () => isImageReady,
+      onMoveShouldSetPanResponder: () => isImageReady,
+      onPanResponderGrant: (evt) => {
+        gestureStartOffset.current = currentOffset.current;
+        gestureStartScale.current = currentScale.current;
+
+        if (evt.nativeEvent.touches.length === 2) {
+          initialDistance.current = getDistance(evt.nativeEvent.touches);
+        }
+      },
+      onPanResponderMove: (evt, gesture) => {
+        if (!isImageReady) return;
+
+        const touches = evt.nativeEvent.touches;
+
+        if (touches.length === 1) {
+          const nextOffset = clampOffset(
+            {
+              x: gestureStartOffset.current.x + gesture.dx,
+              y: gestureStartOffset.current.y + gesture.dy,
+            },
+            currentScale.current,
+          );
+
+          currentOffset.current = nextOffset;
+          animatedOffset.setValue(nextOffset);
+          return;
+        }
+
+        if (touches.length === 2) {
+          const distance = getDistance(touches);
+          if (distance <= 0) return;
+
+          if (!initialDistance.current) {
+            initialDistance.current = distance;
+            gestureStartScale.current = currentScale.current;
+          }
+
+          const nextScale = clamp(
+            gestureStartScale.current * (distance / initialDistance.current),
+            MIN_SCALE,
+            MAX_SCALE,
+          );
+          const nextOffset = clampOffset(currentOffset.current, nextScale);
+
+          currentScale.current = nextScale;
+          currentOffset.current = nextOffset;
+          animatedScale.setValue(nextScale);
+          animatedOffset.setValue(nextOffset);
+        }
+      },
+      onPanResponderRelease: finishGesture,
+      onPanResponderTerminate: finishGesture,
+    });
+
+    void Promise.resolve().then(() => {
+      if (!cancelled) setPanResponder(nextPanResponder);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [animatedOffset, animatedScale, clampOffset, finishGesture, isImageReady]);
 
   const handleCrop = useCallback(async () => {
     if (!canSave || !imageSize) return;

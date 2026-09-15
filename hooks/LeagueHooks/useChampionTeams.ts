@@ -38,7 +38,7 @@ export function useChampionTeams({
   }, [league, enabled, refreshToken]);
 
   useEffect(() => {
-    fetch();
+    void Promise.resolve().then(() => fetch());
   }, [fetch]);
 
   return { data, loading };

@@ -157,7 +157,7 @@ export function useBasketballGames(
    * of fetchGames' dependency chain.
    */
   useEffect(() => {
-    void fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {

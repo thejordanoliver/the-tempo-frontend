@@ -55,7 +55,7 @@ export default function CommentThreadScreen() {
 
   const listRef = useRef<FlatList<ForumComment>>(null);
   const inputRef = useRef<TextInput>(null);
-  const keyboardOffset = useRef(new Animated.Value(0)).current;
+  const [keyboardOffset] = useState(() => new Animated.Value(0));
   const hasExitedAfterDeleteRef = useRef(false);
 
   const [newComment, setNewComment] = useState("");
@@ -316,12 +316,22 @@ export default function CommentThreadScreen() {
   }, []);
 
   useEffect(() => {
-    if (
-      replyingTo &&
-      !comments.some((comment) => comment.id === replyingTo.id)
-    ) {
-      setReplyingTo(null);
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (
+        replyingTo &&
+        !comments.some((comment) => comment.id === replyingTo.id)
+      ) {
+        setReplyingTo(null);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [comments, replyingTo]);
 
   const renderComment: ListRenderItem<ForumComment> = useCallback(
@@ -451,9 +461,9 @@ export default function CommentThreadScreen() {
               isDark={isDark}
               currentUserId={currentUserId}
               deletePost={handleDeletePostFromThread}
-              editPost={() => {}}
+              editPost={() => { }}
               onBookmarkChange={updatePost}
-              onImagePress={() => {}}
+              onImagePress={() => { }}
               disableCommentNavigation
             />
           ) : null

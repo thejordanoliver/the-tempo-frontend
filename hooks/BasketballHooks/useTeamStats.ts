@@ -280,7 +280,7 @@ export function useTeamStats({
   );
 
   useEffect(() => {
-    void fetchTeamStats();
+    void Promise.resolve().then(() => fetchTeamStats());
   }, [fetchTeamStats]);
 
   return {

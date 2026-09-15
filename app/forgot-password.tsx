@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   Keyboard,
@@ -81,7 +81,7 @@ export default function ForgotPasswordScreen() {
   const [globalError, setGlobalError] = useState("");
   const [success, setSuccess] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
-  const redirectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [shouldRedirectToLogin, setShouldRedirectToLogin] = useState(false);
 
   const {
     clearErrors,
@@ -113,14 +113,16 @@ export default function ForgotPasswordScreen() {
     return () => clearInterval(interval);
   }, [resendCooldown]);
 
-  useEffect(
-    () => () => {
-      if (redirectTimeout.current) {
-        clearTimeout(redirectTimeout.current);
-      }
-    },
-    [],
-  );
+  useEffect(() => {
+    if (!shouldRedirectToLogin) return;
+
+    const timeout = setTimeout(() => {
+      reset(INITIAL_VALUES);
+      router.replace("/login");
+    }, 1200);
+
+    return () => clearTimeout(timeout);
+  }, [reset, router, shouldRedirectToLogin]);
 
   const requestCode = async ({ isResend = false } = {}) => {
     setGlobalError("");
@@ -199,10 +201,7 @@ export default function ForgotPasswordScreen() {
       await resetPassword(values.email, values.code, values.password);
       setSuccess("Password updated. Redirecting to login...");
 
-      redirectTimeout.current = setTimeout(() => {
-        reset(INITIAL_VALUES);
-        router.replace("/login");
-      }, 1200);
+      setShouldRedirectToLogin(true);
     } catch (error: unknown) {
       const message = getApiErrorMessage(
         error,

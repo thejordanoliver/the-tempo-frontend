@@ -4,13 +4,7 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import GameHeader from "@/components/Sports/Racing/GameDetails/GameHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
-import {
-  formatDate,
-  formatTime,
-  getHolidayLabel,
-  safeDate,
-  shouldShowGameChat,
-} from "@/utils/dateUtils";
+import { shouldShowGameChat } from "@/utils/dateUtils";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
@@ -87,12 +81,7 @@ export default function GameDetailsScreen(
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
-
-  const gameDate = safeDate(game?.date);
-  const formattedDate = formatDate(gameDate);
-  const formattedTime = formatTime(gameDate);
-  const holidayLabel = getHolidayLabel(gameDate);
+  }, [game]);
 
   const gameId = game?.id;
   const drivers = game?.drivers ?? [];

@@ -1,7 +1,11 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  getCFBTeam,
+  getCFBTeamByESPNId,
+  getCFBTeamLogo,
+} from "@/constants/teamsCFB";
 import {
   FootballPlayerSeason,
   usePlayerSeasons,
@@ -12,7 +16,11 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerHeader from "components/Sports/Football/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Football/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
-import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
+import {
+  getNFLTeam,
+  getNFLTeamByESPNId,
+  getNFLTeamLogo,
+} from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
@@ -20,7 +28,6 @@ import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 type FootballRouteLeague = "nfl" | "cfb";
-type FootballStatsLeague = "NFL" | "CFB";
 
 function getSeasonNumber(season: FootballPlayerSeason) {
   const rawSeason = season.season ?? season.year ?? season.displaySeason;
@@ -62,10 +69,6 @@ function normalizeFootballLeague(league: unknown): FootballRouteLeague {
   return String(league).toLowerCase() === "nfl" ? "nfl" : "cfb";
 }
 
-function toStatsLeague(league: FootballRouteLeague): FootballStatsLeague {
-  return league === "nfl" ? "NFL" : "CFB";
-}
-
 export default function PlayerDetailScreen() {
   const {
     id,
@@ -103,8 +106,6 @@ export default function PlayerDetailScreen() {
 
   const requestedLeague = normalizeFootballLeague(league);
 
-  const requestedStatsLeague = toStatsLeague(requestedLeague);
-
   const requestedPlayerId = Number(id);
 
   /**
@@ -125,7 +126,7 @@ export default function PlayerDetailScreen() {
     canonicalProfile,
     loading: seasonsLoading,
     error: seasonsError,
-  } = usePlayerSeasons(requestedPlayerId, requestedStatsLeague);
+  } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
   /**
    * =========================================
@@ -143,12 +144,17 @@ export default function PlayerDetailScreen() {
 
   const canonicalPlayerId = useMemo(() => {
     const resolvedId =
-      canonicalProfile?.playerId ?? statsPlayer?.id ?? requestedPlayerId;
+      canonicalProfile?.playerId ??
+      (requestedLeague === "nfl" ? requestedPlayerId : undefined);
+
+    if (resolvedId === undefined) {
+      return undefined;
+    }
 
     const parsed = Number(resolvedId);
 
-    return Number.isFinite(parsed) ? parsed : requestedPlayerId;
-  }, [canonicalProfile?.playerId, requestedPlayerId, statsPlayer?.id]);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+  }, [canonicalProfile?.playerId, requestedLeague, requestedPlayerId]);
 
   /**
    * =========================================
@@ -156,8 +162,9 @@ export default function PlayerDetailScreen() {
    * =========================================
    */
 
-  const canonicalLeague: FootballRouteLeague =
-    resolvedLeague === "nfl" ? "nfl" : "cfb";
+  const canonicalLeague: FootballRouteLeague = canonicalProfile
+    ? canonicalProfile.league
+    : resolvedLeague;
 
   const isNFL = canonicalLeague === "nfl";
 
@@ -179,6 +186,7 @@ export default function PlayerDetailScreen() {
   const { player, loading, error } = usePlayerById(
     canonicalPlayerId,
     canonicalLeague,
+    requestedLeague === "nfl" || Boolean(canonicalProfile),
   );
 
   /**
@@ -223,20 +231,25 @@ export default function PlayerDetailScreen() {
       return null;
     }
 
-    return isNFL ? getNFLTeam(currentTeamId) : getCFBTeam(currentTeamId);
+    return isNFL
+      ? getNFLTeam(currentTeamId) ?? getNFLTeamByESPNId(currentTeamId)
+      : getCFBTeam(currentTeamId) ?? getCFBTeamByESPNId(currentTeamId);
   }, [currentTeamId, isNFL]);
 
   const teamColor = team?.color ?? Colors.midTone;
+  const resolvedTeamId = team?.id != null ? String(team.id) : currentTeamId;
 
   const teamLogo = useMemo(() => {
-    if (!currentTeamId) {
+    const logoTeamId = team?.id ?? currentTeamId;
+
+    if (!logoTeamId) {
       return undefined;
     }
 
     return isNFL
-      ? getNFLTeamLogo(currentTeamId, true)
-      : getCFBTeamLogo(currentTeamId, true);
-  }, [currentTeamId, isNFL]);
+      ? getNFLTeamLogo(logoTeamId, isDark)
+      : getCFBTeamLogo(logoTeamId, isDark);
+  }, [currentTeamId, isDark, isNFL, team?.id]);
 
   /**
    * =========================================
@@ -256,7 +269,7 @@ export default function PlayerDetailScreen() {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useTeamLatestGame(canonicalLeague, currentTeamId);
+  } = useTeamLatestGame(canonicalLeague, resolvedTeamId);
 
   /**
    * =========================================
@@ -384,7 +397,7 @@ export default function PlayerDetailScreen() {
           Only current active players.
          ===================================== */}
 
-      {isActive && currentTeamId ? (
+      {isActive && resolvedTeamId ? (
         <LatestGame
           game={game}
           loading={gameLoading}

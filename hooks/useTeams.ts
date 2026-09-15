@@ -269,7 +269,7 @@ export default function useTeamDetails(
   }, [league, teamId]);
 
   useEffect(() => {
-    void fetchTeamDetails();
+    void Promise.resolve().then(() => fetchTeamDetails());
   }, [fetchTeamDetails]);
 
   return {

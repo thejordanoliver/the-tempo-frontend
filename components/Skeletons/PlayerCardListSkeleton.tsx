@@ -1,7 +1,7 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -18,7 +18,7 @@ export default function PlayerCardSkeletonList({
   const isDark = resolvedColorScheme === "dark";
   const styles = playerCardSkeletonListStyles(isDark);
 
-  const pulseAnim = useRef(new Animated.Value(0.3)).current; // start at low opacity
+  const [pulseAnim] = useState(() => new Animated.Value(0.3)); // start at low opacity
 
   useEffect(() => {
     const pulse = Animated.loop(

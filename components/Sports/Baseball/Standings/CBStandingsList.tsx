@@ -57,12 +57,12 @@ const getApiTeamLogoSource = (
 ): ImageSourcePropType | undefined => {
   if (!team) return undefined;
 
-  const logo = (team as { logo?: unknown }).logo;
+  const logo = (team as { logo?: unknown; }).logo;
   if (typeof logo === "number") return logo;
   if (typeof logo === "string" && logo.length > 0) return { uri: logo };
   if (isRecord(logo)) return logo as ImageSourcePropType;
 
-  const logos = (team as { logos?: unknown }).logos;
+  const logos = (team as { logos?: unknown; }).logos;
   if (!Array.isArray(logos)) return undefined;
 
   const logoUrl = logos
@@ -148,9 +148,19 @@ export const CBStandingsList = ({ league }: Props) => {
   }, [league, primaryPollKey, tournamentPollKey]);
 
   useEffect(() => {
-    if (!pollOptions.some((option) => option.value === pollMode)) {
-      setPollMode(pollOptions[0]?.value ?? "d1BaseballPoll");
-    }
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!pollOptions.some((option) => option.value === pollMode)) {
+        setPollMode(pollOptions[0]?.value ?? "d1BaseballPoll");
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [pollMode, pollOptions]);
 
   const activePoll = useMemo(() => {
@@ -458,7 +468,7 @@ export const CBStandingsList = ({ league }: Props) => {
         />
       </View>
 
-      <Section title={activePollTitle} data={activeRanks} />
+      {Section({ "title": activePollTitle, "data": activeRanks })}
 
       {renderDroppedOut()}
     </ScrollView>

@@ -63,7 +63,7 @@ export function useArticle(articleId: number | string) {
   }, [articleId]);
 
   useEffect(() => {
-    fetchArticle();
+    void Promise.resolve().then(() => fetchArticle());
   }, [fetchArticle]);
 
   return {

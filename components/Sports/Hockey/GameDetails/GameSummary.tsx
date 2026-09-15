@@ -3,7 +3,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -38,8 +38,8 @@ function AnimatedPlayRow({
   style: object;
   isLatest: boolean;
 }) {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [translateX] = useState(() => new Animated.Value(0));
+  const [opacity] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     if (!isLatest) return;
@@ -86,10 +86,11 @@ export default function GameSummary({
 
   // Animate new plays
   const prevPlaysLengthRef = useRef(plays.length);
-  if (plays.length !== prevPlaysLengthRef.current) {
+  useLayoutEffect(() => {
+    if (plays.length === prevPlaysLengthRef.current) return;
     prevPlaysLengthRef.current = plays.length;
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }
+  }, [plays.length]);
 
   /* ---------------- FILTER + SORT ---------------- */
   const filteredPlays = useMemo(() => {

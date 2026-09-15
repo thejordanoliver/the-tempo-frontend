@@ -64,20 +64,20 @@ function isValidCompetition(
 
   const hasType = Boolean(
     competition.type?.text ||
-      competition.type?.name ||
-      competition.type?.abbreviation,
+    competition.type?.name ||
+    competition.type?.abbreviation,
   );
 
   const hasDate = Boolean(
     competition.startDate ||
-      competition.date ||
-      competition.timestamp,
+    competition.date ||
+    competition.timestamp,
   );
 
   const hasStatus = Boolean(
     competition.status &&
-      typeof competition.status === "object" &&
-      Object.keys(competition.status).length > 0,
+    typeof competition.status === "object" &&
+    Object.keys(competition.status).length > 0,
   );
 
   const hasDrivers =
@@ -462,9 +462,9 @@ export function useRacingEvents({
         setError(
           new Error(
             normalizedError.response?.data?.error ||
-              normalizedError.response?.data?.message ||
-              normalizedError.message ||
-              `Failed to fetch ${normalizedLeague.toUpperCase()} events`,
+            normalizedError.response?.data?.message ||
+            normalizedError.message ||
+            `Failed to fetch ${normalizedLeague.toUpperCase()} events`,
           ),
         );
 
@@ -502,7 +502,7 @@ export function useRacingEvents({
   }, [fetchEvents]);
 
   useEffect(() => {
-    void fetchEvents();
+    void Promise.resolve().then(() => fetchEvents());
   }, [fetchEvents]);
 
   const hasLiveEvent = useMemo(() => {

@@ -119,16 +119,26 @@ export default function CalendarModal({
   const [calendarKey, setCalendarKey] = useState(0);
 
   useEffect(() => {
-    if (!visible) {
-      return;
-    }
+    let cancelled = false;
 
-    const validSelectedDate = getValidCalendarDate(selectedDate);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    setSelectedDay(validSelectedDate);
-    setDisplayedCalendarDate(validSelectedDate);
+      if (!visible) {
+        return;
+      }
 
-    setCalendarKey((previous) => previous + 1);
+      const validSelectedDate = getValidCalendarDate(selectedDate);
+
+      setSelectedDay(validSelectedDate);
+      setDisplayedCalendarDate(validSelectedDate);
+
+      setCalendarKey((previous) => previous + 1);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [visible, selectedDate]);
 
   const combinedMarkedDates = useMemo(() => {

@@ -3,6 +3,7 @@ import EventSelector, {
   getDefaultUFCEventIndex,
 } from "@/components/Sports/MMA/EventSelector";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
@@ -48,10 +49,16 @@ function UFCLeagueScreen() {
 
   const pagerRef = useRef<PagerView>(null);
 
-  // null means "the user has not selected an event yet"
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
     null,
   );
+  const { scrollProgress } = usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
 
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
@@ -119,16 +126,9 @@ function UFCLeagueScreen() {
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-
-          const index = tabs.indexOf(tab);
-
-          if (index >= 0) {
-            pagerRef.current?.setPage(index);
-          }
-        }}
+        onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
@@ -164,14 +164,16 @@ function UFCLeagueScreen() {
           </View>
 
           <View key="news" style={styles.contentArea}>
-            {hasVisitedTab("news") ? <NewsList
-              items={articles}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={refreshingNews}
-              onRefresh={refreshNews}
-              isDark={isDark}
-            /> : null}
+            {hasVisitedTab("news") ? (
+              <NewsList
+                items={articles}
+                loading={newsLoading}
+                error={newsError}
+                refreshing={refreshingNews}
+                onRefresh={refreshNews}
+                isDark={isDark}
+              />
+            ) : null}
           </View>
 
           <View key="champions" style={styles.contentArea}>

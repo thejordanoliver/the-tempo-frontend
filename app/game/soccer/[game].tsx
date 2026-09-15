@@ -105,7 +105,7 @@ export default function GameDetailsScreen(
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+  }, [game]);
 
   const LEAGUE = game?.league?.code ?? "epl";
   const gameId = game?.id ?? 0;

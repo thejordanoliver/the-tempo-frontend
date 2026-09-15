@@ -1,7 +1,7 @@
 // components/GameDetails/AwardSeasonTableSkeleton.tsx
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, ScrollView, StyleSheet, View } from "react-native";
 
 const COLUMN_WIDTH = 70;
@@ -24,7 +24,7 @@ export default function AwardSeasonTableSkeleton({
   const styles = getStyles(isDark, lighter);
 
   // Shared pulse animation
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     Animated.loop(

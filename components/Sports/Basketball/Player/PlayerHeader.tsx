@@ -1,9 +1,8 @@
 import { Player } from "@/hooks/LeagueHooks/useRoster";
+import type { BasketballLeague } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import { Image, Text, View } from "react-native";
 import { playerHeaderStyles } from "styles/PlayerStyles/PlayerHeaderStyles";
 import { calculateAge, formatBirth } from "utils/dateUtils";
-
-export type BasketballLeague = "nba" | "wnba" | "cbb" | "wcbb";
 
 type Props = {
   player: Player;
@@ -20,8 +19,8 @@ export default function PlayerHeader({
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const age = calculateAge(player.birth_date ?? "N/A");
 
-  const isNBA = league === "nba"
-  const isWNBA = league === "nba"
+  const isNBA = league === "nba";
+  const isWNBA = league === "wnba";
 
   const experience =
     player.experience === 0
@@ -78,7 +77,7 @@ export default function PlayerHeader({
           <Text style={styles.statLabel}>LBS</Text>
         </View>
 
-        { (isNBA || isWNBA) && age != null && (
+        {(isNBA || isWNBA) && age != null && (
           <>
             <View style={styles.statDivider} />
             <View style={styles.statChip}>

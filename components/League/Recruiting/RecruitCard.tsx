@@ -9,7 +9,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Easing,
@@ -185,8 +185,8 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     league,
   ]);
 
-  const slideX = useRef(new Animated.Value(70)).current;
-  const fade = useRef(new Animated.Value(0)).current;
+  const [slideX] = useState(() => new Animated.Value(70));
+  const [fade] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.parallel([

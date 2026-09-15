@@ -22,10 +22,43 @@ type NotificationClientEvents = {
   ) => void;
 };
 
+type NotificationJoinResponse = {
+  ok: boolean;
+  userId?: number;
+};
+
+const NOTIFICATION_JOIN_TIMEOUT_MS = 5_000;
+
 export type NotificationSocket = Socket<
   NotificationServerEvents,
   NotificationClientEvents
 >;
+
+export const joinNotificationRoom = (
+  socket: NotificationSocket,
+  expectedUserId: number,
+  timeoutMs = NOTIFICATION_JOIN_TIMEOUT_MS,
+): Promise<boolean> =>
+  new Promise((resolve) => {
+    let settled = false;
+    const finish = (joined: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      resolve(joined);
+    };
+    const timeout = setTimeout(() => finish(false), timeoutMs);
+
+    socket.emit(
+      "notifications:join",
+      {},
+      (response: NotificationJoinResponse) => {
+        finish(
+          response?.ok === true && Number(response.userId) === expectedUserId,
+        );
+      },
+    );
+  });
 
 let notificationSocket: NotificationSocket | null = null;
 let activeToken: string | null = null;

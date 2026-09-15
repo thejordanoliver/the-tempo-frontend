@@ -1,5 +1,5 @@
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -22,7 +22,7 @@ export default function FollowButton({
 }: FollowButtonProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const opacityAnim = useRef(new Animated.Value(1)).current;
+  const [opacityAnim] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     Animated.timing(opacityAnim, {

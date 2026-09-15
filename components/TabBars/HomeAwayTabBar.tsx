@@ -1,5 +1,5 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Animated,
   Image,
@@ -47,7 +47,7 @@ function HomeAwayTabBar({
 }: HomeAwayTabBarProps) {
   const styles = useMemo(() => homeAwayTabBarStyles(isDark), [isDark]);
 
-  const underlineX = useRef(new Animated.Value(0)).current;
+  const [underlineX] = useState(() => new Animated.Value(0));
   const [containerWidth, setContainerWidth] = useState(0);
 
   const tabs = useMemo<TeamTab[]>(() => {

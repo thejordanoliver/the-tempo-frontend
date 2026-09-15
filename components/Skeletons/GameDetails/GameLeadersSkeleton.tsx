@@ -1,7 +1,7 @@
 import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
 
 type SkeletonCardProps = {
@@ -12,7 +12,7 @@ type SkeletonCardProps = {
 const PulseBlock = ({ style }: { style: any }) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.4));
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -52,7 +52,7 @@ const PulseBlock = ({ style }: { style: any }) => {
 const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.3));
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
@@ -131,7 +131,7 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
 export default function GameLeadersSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [pulseAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     const pulse = Animated.loop(

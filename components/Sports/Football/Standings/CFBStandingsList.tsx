@@ -26,7 +26,7 @@ import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
 
-const POLL_OPTIONS: { label: string; value: PollMode }[] = [
+const POLL_OPTIONS: { label: string; value: PollMode; }[] = [
   { label: "AP Poll", value: "ap" },
   { label: "Coaches Poll", value: "coaches" },
   { label: "CFP Rankings", value: "cfp" },
@@ -293,7 +293,7 @@ export const CFBStandingsList = () => {
     );
   };
 
-  const Section = ({ title, data }: { title: string; data: CFBTeamRank[] }) => {
+  const Section = ({ title, data }: { title: string; data: CFBTeamRank[]; }) => {
     return (
       <View style={styles.wrapper}>
         <View style={styles.header}>
@@ -361,7 +361,7 @@ export const CFBStandingsList = () => {
         />
       </View>
 
-      <Section title={pollTitle} data={filteredRankings} />
+      {Section({ "title": pollTitle, "data": filteredRankings })}
 
       {renderDroppedOut()}
     </ScrollView>

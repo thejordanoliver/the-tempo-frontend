@@ -1,6 +1,6 @@
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type TeamStat = {
@@ -33,8 +33,8 @@ function TeamBubble({
   const isDark = resolvedColorScheme === "dark";
   const styles = topThreeTeamsStyles(isDark, teamCount);
 
-  const scale = useRef(new Animated.Value(0.85)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  const [scale] = useState(() => new Animated.Value(0.85));
+  const [opacity] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
     Animated.parallel([

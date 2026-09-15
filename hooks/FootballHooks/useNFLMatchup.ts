@@ -39,10 +39,10 @@ export function useNFLMatchup(
     } finally {
       setLoading(false);
     }
-  }, [team1, team2, options?.year, options?.week]);
+  }, [options, team1, team2]);
 
   useEffect(() => {
-    fetchMatchup();
+    void Promise.resolve().then(() => fetchMatchup());
   }, [fetchMatchup]);
 
   return {

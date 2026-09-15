@@ -4,7 +4,7 @@ import { activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { FlatList, Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
-import type { ResultItem } from "types/explore";
+import type { ResultItem, TeamResult } from "types/explore";
 import ResultItemRow from "./ResultItemRow";
 import SearchBar from "./SearchBar";
 
@@ -26,7 +26,7 @@ type Props = {
   isSearching?: boolean;
 };
 
-function getTeamLeagueKey(item: any) {
+function getTeamLeagueKey(item: TeamResult) {
   if (item.isNFL) return "nfl";
   if (item.isWNBA) return "wnba";
   if (item.isMLB) return "mlb";
@@ -41,31 +41,18 @@ function getTeamLeagueKey(item: any) {
 }
 
 function getResultKey(item: ResultItem, index: number) {
-  const result = item as any;
-
-  if (result.type === "team") {
-    const league = getTeamLeagueKey(result) ?? "unknown";
+  if (item.type === "team") {
+    const league = getTeamLeagueKey(item) ?? "unknown";
 
     const teamKey =
-      result.id != null
-        ? String(result.id)
-        : result.slug != null
-          ? String(result.slug)
-          : `idx-${index}`;
+      item.id != null ? String(item.id) : `idx-${index}`;
 
     return `team-${league}-${teamKey}`;
   }
 
-  const id =
-    result.id != null
-      ? String(result.id)
-      : result.uid != null
-        ? String(result.uid)
-        : result.slug != null
-          ? String(result.slug)
-          : `idx-${index}`;
+  const id = item.id != null ? String(item.id) : `idx-${index}`;
 
-  return `${result.type ?? "result"}-${id}-${index}`;
+  return `${item.type}-${id}-${index}`;
 }
 
 export default function SearchResultsList({
@@ -143,7 +130,6 @@ export default function SearchResultsList({
         data={visibleData}
         keyExtractor={getResultKey}
         renderItem={({ item }) => {
-      
           return (
             <ResultItemRow
               item={item}

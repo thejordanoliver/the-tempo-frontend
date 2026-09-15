@@ -14,7 +14,7 @@ type UseUserPostsOptions = {
 };
 
 const getErrorMessage = (error: unknown, fallback: string) => {
-  if (isAxiosError<{ error?: string; message?: string }>(error)) {
+  if (isAxiosError<{ error?: string; message?: string; }>(error)) {
     return (
       error.response?.data?.error ||
       error.response?.data?.message ||
@@ -102,18 +102,28 @@ export function useUserPosts({
   );
 
   useEffect(() => {
-    setPosts([]);
-    setPage(1);
-    setTotalPages(1);
-    setError(null);
+    let cancelled = false;
 
-    if (!enabled || !userId) {
-      setLoading(false);
-      setRefreshing(false);
-      return;
-    }
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    void fetchUserPosts(1);
+      setPosts([]);
+      setPage(1);
+      setTotalPages(1);
+      setError(null);
+
+      if (!enabled || !userId) {
+        setLoading(false);
+        setRefreshing(false);
+        return;
+      }
+
+      void fetchUserPosts(1);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [enabled, fetchUserPosts, userId]);
 
   const refresh = useCallback(async () => {
@@ -143,9 +153,9 @@ export function useUserPosts({
       current.map((post) =>
         String(post.id) === String(updatedPost.id)
           ? {
-              ...post,
-              ...updatedPost,
-            }
+            ...post,
+            ...updatedPost,
+          }
           : post,
       ),
     );

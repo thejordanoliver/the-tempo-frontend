@@ -22,28 +22,38 @@ export function useHeadToHeadGames(team1: number, team2: number) {
   const [error, setError] = useState<Error | null>(null);
   const season = getNBASeason();
   useEffect(() => {
-    if (!team1 || !team2 || !season) return;
+    let cancelled = false;
 
-    setLoading(true);
-    setError(null);
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
 
-    const fetchGames = async () => {
-      try {
-        const res = await apiClient.get(
-          `api/games/nba/matchups/${team1}/${team2}/${season}`,
-        );
+      if (!team1 || !team2 || !season) return;
 
-        // Return the raw API object
-        setData(res.data);
-      } catch (err: unknown) {
-        console.error("Error fetching head-to-head games:", err);
-        setError(err instanceof Error ? err : new Error(String(err)));
-      } finally {
-        setLoading(false);
-      }
+      setLoading(true);
+      setError(null);
+
+      const fetchGames = async () => {
+        try {
+          const res = await apiClient.get(
+            `api/games/nba/matchups/${team1}/${team2}/${season}`,
+          );
+
+          // Return the raw API object
+          setData(res.data);
+        } catch (err: unknown) {
+          console.error("Error fetching head-to-head games:", err);
+          setError(err instanceof Error ? err : new Error(String(err)));
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchGames();
+    });
+
+    return () => {
+      cancelled = true;
     };
-
-    fetchGames();
   }, [team1, team2, season]);
 
   return { data, loading, error };

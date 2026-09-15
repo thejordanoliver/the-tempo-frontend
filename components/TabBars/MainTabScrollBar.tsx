@@ -65,8 +65,8 @@ export default function MainScrollTabBar<T extends string>({
   scrollProgress,
 }: TabBarProps<T>) {
   const scrollRef = useRef<ScrollView>(null);
-  const underlineX = useRef(new Animated.Value(0)).current;
-  const underlineWidth = useRef(new Animated.Value(0)).current;
+  const [underlineX] = useState(() => new Animated.Value(0));
+  const [underlineWidth] = useState(() => new Animated.Value(0));
   const textWidths = useRef(new Map<T, number>());
   const tabMeasurements = useRef(new Map<T, TabMeasurement>());
   const isUnderlineInitialized = useRef(false);

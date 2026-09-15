@@ -124,7 +124,7 @@ export function useFootballTeamGames(
   );
 
   useEffect(() => {
-    fetchGames();
+    void Promise.resolve().then(() => fetchGames());
   }, [fetchGames]);
 
   const subscriptionEnabled =

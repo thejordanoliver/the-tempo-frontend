@@ -8,7 +8,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
@@ -66,14 +66,14 @@ export default function PlayerDetailScreen() {
   const effectiveSelectedTeamId =
     selectedTeamId ?? selectedFilters?.teamId ?? playerTeamId;
 
-  const handleTeamChange = useCallback((newTeamId: string) => {
+  const handleTeamChange = (newTeamId: string) => {
     setSelectedTeamId(newTeamId);
     setSelectedCompetition(null);
-  }, []);
+  };
 
-  const handleCompetitionChange = useCallback((competition: string | null) => {
+  const handleCompetitionChange = (competition: string | null) => {
     setSelectedCompetition(competition);
-  }, []);
+  };
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {

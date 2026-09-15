@@ -55,7 +55,7 @@ export default function CreatePostWidget({
         currentUserId: user?.id == null ? undefined : String(user.id),
       },
     });
-  }, [isEditing, router, user?.id]);
+  }, [isEditing, router, user]);
 
   return (
     <BlurView intensity={100} style={styles.container}>

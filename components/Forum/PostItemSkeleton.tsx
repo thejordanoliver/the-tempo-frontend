@@ -1,7 +1,7 @@
 // components/Forum/PostItemSkeleton.tsx
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import type { ForumPostItemSkeletonProps } from "types/forum";
 
@@ -12,7 +12,7 @@ export default function PostItemSkeleton({
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);
 
-  const pulse = useRef(new Animated.Value(1)).current;
+  const [pulse] = useState(() => new Animated.Value(1));
 
   useEffect(() => {
     const anim = Animated.loop(
@@ -33,7 +33,7 @@ export default function PostItemSkeleton({
     return () => anim.stop();
   }, [pulse]);
 
-  const PulseBlock = ({ style }: { style?: any }) => (
+  const PulseBlock = ({ style }: { style?: any; }) => (
     <Animated.View style={[styles.block, style, { opacity: pulse }]} />
   );
 
@@ -42,36 +42,36 @@ export default function PostItemSkeleton({
       <View style={styles.postContainer}>
         {/* Header row */}
         <View style={styles.userRow}>
-          <PulseBlock style={styles.avatar} />
+          {PulseBlock({ "style": styles.avatar })}
           <View style={{ flex: 1 }}>
-            <PulseBlock style={styles.usernameLine} />
+            {PulseBlock({ "style": styles.usernameLine })}
           </View>
         </View>
 
         {/* Text */}
         <View style={styles.textBlock}>
-          <PulseBlock style={styles.textLineLg} />
-          <PulseBlock style={styles.textLine} />
-          <PulseBlock style={styles.textLineMd} />
+          {PulseBlock({ "style": styles.textLineLg })}
+          {PulseBlock({ "style": styles.textLine })}
+          {PulseBlock({ "style": styles.textLineMd })}
         </View>
 
         {/* Media placeholder */}
-        {showMedia && <PulseBlock style={styles.media} />}
+        {showMedia && <>{PulseBlock({ "style": styles.media })}</>}
 
         {/* Footer actions */}
         <View style={styles.footerRow}>
           <View style={styles.leftActions}>
-            <PulseBlock style={styles.iconPill} />
-            <PulseBlock style={styles.iconPill} />
+            {PulseBlock({ "style": styles.iconPill })}
+            {PulseBlock({ "style": styles.iconPill })}
           </View>
           <View style={styles.rightActions}>
-            <PulseBlock style={styles.iconPill} />
-            <PulseBlock style={styles.iconPill} />
+            {PulseBlock({ "style": styles.iconPill })}
+            {PulseBlock({ "style": styles.iconPill })}
           </View>
         </View>
 
         {/* Timestamp */}
-        <PulseBlock style={styles.timeLine} />
+        {PulseBlock({ "style": styles.timeLine })}
       </View>
     </View>
   );

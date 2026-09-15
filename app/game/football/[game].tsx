@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import Leaders from "@/components/Sports/Football/GameDetails/Leaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
@@ -165,7 +166,7 @@ export default function GameDetailsScreen(
 
   const gameDateObj = useMemo(() => {
     return game?.date ? new Date(game.date) : null;
-  }, [game?.date]);
+  }, [game]);
 
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
@@ -271,7 +272,7 @@ export default function GameDetailsScreen(
   const drives = score?.drives;
   const currentDrives = drives?.current ?? [];
   const previousDrives = drives?.previous ?? [];
-  const fieldPlay = useMemo(() => {
+  const fieldPlay = (() => {
     const plays = score?.plays ?? [];
     const currentDrives = score?.drives?.current ?? [];
     const previousDrives = score?.drives?.previous ?? [];
@@ -301,7 +302,7 @@ export default function GameDetailsScreen(
     }
 
     return null;
-  }, [lastPlay, score?.plays, score?.drives]);
+  })();
 
   const downDistance = currentDrives[0]?.end?.downDistanceText;
 
@@ -334,6 +335,7 @@ export default function GameDetailsScreen(
   const injuries = details?.injuries ?? [];
   const leaders = score?.leaders;
   const teamStats = score?.boxScore?.teams ?? [];
+  const playerStats = score?.boxScore?.players ?? [];
   const neutralSite = details?.neutralSite;
   const venueId = Number(details?.venue?.id);
   const baseVenue = details?.venue;
@@ -563,6 +565,19 @@ export default function GameDetailsScreen(
               isDark={isDark}
               state={state}
               league={LEAGUE}
+            />
+
+            <BoxScore
+              playerStats={playerStats}
+              homeId={homeId}
+              awayId={awayId}
+              homeName={homeName}
+              awayName={awayName}
+              homeLogo={homeLogo}
+              awayLogo={awayLogo}
+              league={LEAGUE}
+              isDark={isDark}
+              state={state}
             />
 
             <TeamDrives

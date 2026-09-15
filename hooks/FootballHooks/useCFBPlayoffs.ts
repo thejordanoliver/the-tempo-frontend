@@ -129,7 +129,7 @@ export function useCFBPlayoffs({
       return;
     }
 
-    void fetchPlayoffs();
+    void Promise.resolve().then(() => fetchPlayoffs());
   }, [enabled, fetchPlayoffs]);
 
   const refetch = useCallback(async () => {

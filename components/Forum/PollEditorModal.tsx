@@ -56,10 +56,20 @@ export default function PollEditorModal({
 
   // --- Sync initial data when reopening ---
   useEffect(() => {
-    if (!visible) return;
-    setQuestion(initial?.question ?? "");
-    setOptions(initial?.options ?? makeDefaultOptions());
-    setAllowsMultiple(initial?.allowsMultiple ?? false);
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      if (!visible) return;
+      setQuestion(initial?.question ?? "");
+      setOptions(initial?.options ?? makeDefaultOptions());
+      setAllowsMultiple(initial?.allowsMultiple ?? false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [initial?.allowsMultiple, initial?.options, initial?.question, visible]);
 
   const addOption = () => {
