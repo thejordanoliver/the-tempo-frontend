@@ -13,7 +13,17 @@ export const useLikesStore = create<LikeState>((set, get) => ({
   currentUserId: null,
   likes: {},
 
-  setUser: (userId) => set({ currentUserId: userId, likes: {} }),
+  setUser: (userId) =>
+    set((state) => {
+      // Like state is viewer-specific. Keep it across token refreshes for the
+      // same account, but never carry it into a signed-out or different-user
+      // session.
+      if (state.currentUserId === userId) {
+        return state;
+      }
+
+      return { currentUserId: userId, likes: {} };
+    }),
 
   resetLikes: () => set({ likes: {} }),
 

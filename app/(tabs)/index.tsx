@@ -11,7 +11,7 @@ import {
 } from "../../components/CustomHeader";
 import FavoritesScroll from "../../components/Favorites/FavoritesScroll";
 import LeagueGamesList from "../../components/League/Games/LeagueGamesList";
-import NewsList from "../../components/News/NewsList";
+import ForYouFeed from "../../components/Home/ForYouFeed";
 import { Colors } from "../../constants/styles";
 import { useNotifications } from "../../contexts/NotificationContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -63,9 +63,12 @@ export default function HomeScreen() {
     refreshing,
     handleRefresh,
     homeGameSections,
-    articles,
-    newsError,
-    newsLoading,
+    forYouArticles,
+    forYouPosts,
+    favoriteLeagues,
+    currentUserId,
+    forYouError,
+    forYouLoading,
     loading: gamesLoading,
   } = useHomeData(selectedTab);
 
@@ -116,7 +119,7 @@ export default function HomeScreen() {
 
             homeTabScrollProgress.setValue(index);
 
-            setSelectedTab(index === 0 ? "scores" : "news");
+            setSelectedTab(index === 0 ? "scores" : "for you");
           }}
         >
           {/* SCORES PAGE */}
@@ -140,19 +143,20 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          {/* NEWS PAGE */}
-          <View key="news" style={styles.contentArea}>
+          {/* FOR YOU PAGE */}
+          <View key="for-you" style={styles.contentArea}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}
             >
-              <NewsList
-                items={articles}
+              <ForYouFeed
+                articles={forYouArticles}
+                posts={forYouPosts}
+                favoriteLeagues={favoriteLeagues}
+                currentUserId={currentUserId}
                 isDark={isDark}
-                loading={newsLoading}
-                error={newsError}
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
+                loading={forYouLoading}
+                error={forYouError}
               />
             </ScrollView>
           </View>

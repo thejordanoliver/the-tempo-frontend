@@ -1,5 +1,6 @@
 import NotificationSettingsModal from "@/components/Notifications/NotificationSettingsModal";
 import {
+  archiveAllNotifications,
   archiveNotification,
   getNotificationsPage,
   markAllNotificationsRead,
@@ -94,6 +95,7 @@ type NotificationContextType = {
   markConversationNotificationsRead: (conversationId: string) => Promise<void>;
   markAllCenterNotificationsRead: () => Promise<void>;
   removeCenterNotification: (id: string) => Promise<void>;
+  removeAllCenterNotifications: () => Promise<void>;
   clearCenterNotifications: () => void;
   teamSubscriptions: TeamNotificationSubscription[];
   gameSubscriptions: GameNotificationSubscription[];
@@ -601,6 +603,19 @@ export function NotificationProvider({
     [refreshNotifications, updateCenterNotifications, updateUnreadCount],
   );
 
+  const removeAllCenterNotifications = useCallback(async () => {
+    updateCenterNotifications([]);
+    updateUnreadCount(0);
+    setNextCursor(null);
+    setHasMore(false);
+    try {
+      const result = await archiveAllNotifications();
+      updateUnreadCount(result.unreadCount);
+    } catch {
+      await refreshNotifications();
+    }
+  }, [refreshNotifications, updateCenterNotifications, updateUnreadCount]);
+
   const isTeamNotified = useCallback(
     (sport: NotificationTeamSport, league: string, teamId: string | number) =>
       teamSubscriptions.some(
@@ -945,6 +960,7 @@ export function NotificationProvider({
       markConversationNotificationsRead,
       markAllCenterNotificationsRead,
       removeCenterNotification,
+      removeAllCenterNotifications,
       clearCenterNotifications,
       teamSubscriptions,
       gameSubscriptions,
@@ -981,6 +997,7 @@ export function NotificationProvider({
       refreshing,
       refreshNotifications,
       removeCenterNotification,
+      removeAllCenterNotifications,
       openGameNotificationSettings,
       teamSubscriptions,
       toggleGameNotifications,

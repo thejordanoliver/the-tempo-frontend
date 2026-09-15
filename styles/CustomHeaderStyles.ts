@@ -299,6 +299,10 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
       elevation: 18,
     },
 
+    notificationsSubmenu: {
+      width: isTablet ? 210 : 185,
+    },
+
     profileSubmenuItem: {
       flexDirection: "row",
 

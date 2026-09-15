@@ -5,6 +5,7 @@ import type {
   StandingsTeam,
 } from "../hooks/LeagueHooks/useLeagueStandings";
 import {
+  buildStandingsPreviewGroups,
   buildStandingsPreviewRows,
   formatStandingsMetric,
   formatStandingsRecord,
@@ -50,6 +51,52 @@ test("interleaves conference leaders and respects the row limit", () => {
       { conference: "E", id: "a", position: 1 },
       { conference: "W", id: "c", position: 1 },
       { conference: "E", id: "b", position: 2 },
+    ],
+  );
+});
+
+test("groups standings by conference and limits each conference", () => {
+  const conferences: ConferenceStandings[] = [
+    {
+      id: "east",
+      name: "Eastern Conference",
+      abbreviation: "E",
+      standings: [team("a", 10, 2), team("b", 9, 3), team("c", 8, 4)],
+    },
+    {
+      id: "west",
+      name: "Western Conference",
+      abbreviation: "W",
+      standings: [team("d", 11, 1), team("e", 8, 4), team("f", 7, 5)],
+    },
+  ];
+
+  assert.deepEqual(
+    buildStandingsPreviewGroups(conferences, 2).map((group) => ({
+      id: group.id,
+      name: group.name,
+      teams: group.rows.map((row) => ({
+        id: row.team.id,
+        position: row.position,
+      })),
+    })),
+    [
+      {
+        id: "east",
+        name: "Eastern Conference",
+        teams: [
+          { id: "a", position: 1 },
+          { id: "b", position: 2 },
+        ],
+      },
+      {
+        id: "west",
+        name: "Western Conference",
+        teams: [
+          { id: "d", position: 1 },
+          { id: "e", position: 2 },
+        ],
+      },
     ],
   );
 });

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import * as Haptics from "expo-haptics";
+import type { ReactNode } from "react";
 import {
   Pressable,
   Text,
@@ -36,6 +37,9 @@ type HeaderRightActionsProps = {
   onProfileLogout: () => void;
   onSearchToggle?: () => void;
   onNotificationsCenter?: () => void;
+  notificationsMenu?: ReactNode;
+  notificationsMenuVisible?: boolean;
+  onToggleNotificationsMenu?: () => void;
   unreadNotificationCount?: number;
   onOpenThemesSettings?: () => void;
   isMessagesListScreen: boolean;
@@ -108,6 +112,9 @@ export function HeaderRightActions({
   onProfileLogout,
   onSearchToggle,
   onNotificationsCenter,
+  notificationsMenu,
+  notificationsMenuVisible = false,
+  onToggleNotificationsMenu,
   unreadNotificationCount = 0,
   onOpenThemesSettings,
   isMessagesListScreen,
@@ -317,6 +324,36 @@ export function HeaderRightActions({
           </View>
         )}
       </TouchableOpacity>
+    );
+  }
+
+  if (tabName === "Notifications" && onToggleNotificationsMenu) {
+    return (
+      <View style={styles.profileMenuAnchor}>
+        {notificationsMenu}
+
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          onPress={onToggleNotificationsMenu}
+          style={[
+            styles.profileHeaderActionButton,
+            notificationsMenuVisible && {
+              borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+              backgroundColor: isDark ? Colors.black : Colors.white,
+            },
+          ]}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Notification actions"
+          accessibilityState={{ expanded: notificationsMenuVisible }}
+        >
+          <Ionicons
+            name="ellipsis-horizontal"
+            size={24}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </TouchableOpacity>
+      </View>
     );
   }
 

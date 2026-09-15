@@ -6,7 +6,7 @@ export type RacingLeague =
   | "nascarsecondary"
   | "nascartruck";
 
-export type HomeHeaderTab = "scores" | "news";
+export type HomeHeaderTab = "scores" | "for you";
 export type EditFavoritesHeaderTab = "teams" | "sports";
 
 export type RacingLeagueDisplayConfig = {
@@ -75,6 +75,9 @@ export type CustomHeaderProps = {
 
   onSearchToggle?: () => void;
   onNotificationsCenter?: () => void;
+  onToggleNotificationEditing?: () => void;
+  isNotificationEditing?: boolean;
+  hasNotifications?: boolean;
   onOpenThemesSettings?: () => void;
   onAddWidget?: () => void;
   onToggleWidgetEditing?: () => void;

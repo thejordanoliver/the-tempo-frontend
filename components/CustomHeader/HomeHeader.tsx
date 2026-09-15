@@ -3,7 +3,7 @@ import { Animated, StyleSheet } from "react-native";
 import TabBar from "../TabBars/TabBar";
 import type { HomeHeaderTab } from "./types";
 
-const HOME_HEADER_TABS = ["scores", "news"] as const;
+const HOME_HEADER_TABS = ["scores", "for you"] as const;
 
 type HomeHeaderProps = {
   isDark: boolean;

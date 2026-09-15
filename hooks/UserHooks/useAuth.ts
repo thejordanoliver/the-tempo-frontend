@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { disconnectNotificationSocket } from "services/notificationSocket";
 import { useBadgeNotificationStore } from "store/badgeNotificationStore";
+import { useLikesStore } from "store/useLikesStore";
 import {
   apiClient,
   clearAuthSession,
@@ -97,6 +98,7 @@ export function useAuth() {
       setToken(accessToken);
 
       if (!accessToken) {
+        useLikesStore.getState().setUser(null);
         setUser(null);
         return;
       }
@@ -104,6 +106,7 @@ export function useAuth() {
       void loadStoredAuthSnapshot()
         .then((snapshot) => {
           if (!isMounted || !snapshot) return;
+          useLikesStore.getState().setUser(String(snapshot.user.id));
           setUser(snapshot.user);
         })
         .catch((err) => {
@@ -126,11 +129,13 @@ export function useAuth() {
 
         if (!snapshot) {
           await clearAuthSession();
+          useLikesStore.getState().setUser(null);
           setToken(null);
           setUser(null);
           return;
         }
 
+        useLikesStore.getState().setUser(String(snapshot.user.id));
         setToken(snapshot.accessToken);
         setUser(snapshot.user);
       } catch (err) {
@@ -148,6 +153,7 @@ export function useAuth() {
     refreshToken: string,
     user: User,
   ) => {
+    useLikesStore.getState().setUser(String(user.id));
     setToken(accessToken);
     setUser(user);
 
@@ -248,6 +254,7 @@ export function useAuth() {
       await clearAuthSession(currentUserId);
       disconnectNotificationSocket();
       useBadgeNotificationStore.getState().clearBadgeNotifications();
+      useLikesStore.getState().setUser(null);
       setUser(null);
       setToken(null);
 
@@ -258,6 +265,7 @@ export function useAuth() {
       console.error("Logout error:", err);
       disconnectNotificationSocket();
       useBadgeNotificationStore.getState().clearBadgeNotifications();
+      useLikesStore.getState().setUser(null);
       setUser(null);
       setToken(null);
     }
@@ -300,6 +308,7 @@ export function useAuth() {
 
     disconnectNotificationSocket();
     useBadgeNotificationStore.getState().clearBadgeNotifications();
+    useLikesStore.getState().setUser(null);
     setUser(null);
     setToken(null);
   };

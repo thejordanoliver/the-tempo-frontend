@@ -24,7 +24,7 @@ import type {
   ExploreWidgetSize,
 } from "types/widgets";
 import {
-  buildStandingsPreviewRows,
+  buildStandingsPreviewGroups,
   formatStandingsMetric,
   formatStandingsRecord,
 } from "utils/standingsWidget";
@@ -52,7 +52,95 @@ type StandingsWidgetProps = {
 type StandingsTableProps = Pick<
   StandingsWidgetProps,
   "height" | "isDark" | "isEditing" | "league"
->;
+> & Pick<StandingsWidgetProps, "size" | "width">;
+
+type StandingsConferenceProps = Pick<
+  StandingsWidgetProps,
+  "isDark" | "league"
+> & {
+  compact: boolean;
+  group: ReturnType<typeof buildStandingsPreviewGroups>[number];
+  showConferenceName: boolean;
+};
+
+function StandingsConference({
+  compact,
+  group,
+  isDark,
+  league,
+  showConferenceName,
+}: StandingsConferenceProps) {
+  const styles = useMemo(
+    () => standingsWidgetStyles(isDark, compact),
+    [compact, isDark],
+  );
+
+  return (
+    <View style={styles.conferenceGroup}>
+      <View style={styles.conferenceHeader}>
+        <Text style={styles.conferenceName} numberOfLines={1}>
+          {showConferenceName
+            ? group.name
+            : group.abbreviation || group.name}
+        </Text>
+      </View>
+
+      {!compact ? (
+        <View style={styles.tableHeader}>
+          <Text style={[styles.columnLabel, styles.positionColumn]}>#</Text>
+          <Text style={[styles.columnLabel, styles.teamColumn]}>Team</Text>
+          <Text style={[styles.columnLabel, styles.recordColumn]}>Record</Text>
+          <Text style={[styles.columnLabel, styles.metricColumn]}>
+            {league === "nhl" ? "PTS" : "PCT"}
+          </Text>
+        </View>
+      ) : null}
+
+      {group.rows.map(({ conference, position, team }) => {
+        const logo = getLocalTeamLogo(team, league, isDark);
+
+        return (
+          <View key={`${conference}:${team.id}`} style={styles.row}>
+            <Text style={[styles.position, styles.positionColumn]}>
+              {position}
+            </Text>
+            <View style={[styles.teamCell, styles.teamColumn]}>
+              {logo ? (
+                <Image
+                  source={logo}
+                  style={styles.teamLogo}
+                  contentFit="contain"
+                />
+              ) : (
+                <View style={styles.logoFallback}>
+                  <Text style={styles.logoFallbackText}>
+                    {(team.code || team.name).slice(0, 2).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.teamName} numberOfLines={1}>
+                {compact
+                  ? team.code || team.shortName || team.name
+                  : team.shortName || team.name}
+              </Text>
+            </View>
+            <Text
+              style={[styles.stat, styles.recordColumn]}
+              numberOfLines={1}
+            >
+              {formatStandingsRecord(team, league)}
+            </Text>
+            {!compact ? (
+              <Text style={[styles.stat, styles.metricColumn]}>
+                {formatStandingsMetric(team, league)}
+              </Text>
+            ) : null}
+          </View>
+        );
+      })}
+    </View>
+  );
+}
 
 function getLocalTeamLogo(
   team: StandingsTeam,
@@ -92,13 +180,26 @@ function StandingsTable({
   isDark,
   isEditing,
   league,
+  size,
+  width,
 }: StandingsTableProps) {
   const { standings, seasonDisplayName, loading, error, refetch } =
     useLeagueStandings(league);
-  const styles = useMemo(() => standingsWidgetStyles(isDark), [isDark]);
-  const rowLimit = Math.max(3, Math.min(10, Math.floor((height - 105) / 30)));
-  const rows = useMemo(
-    () => buildStandingsPreviewRows(standings, rowLimit),
+  const compact = size === "small" || width < 240;
+  const styles = useMemo(
+    () => standingsWidgetStyles(isDark, compact),
+    [compact, isDark],
+  );
+  const populatedConferenceCount = standings.filter(
+    (conference) => conference.standings.length > 0,
+  ).length;
+  const rowLimit = compact
+    ? populatedConferenceCount > 1
+      ? 2
+      : 5
+    : Math.max(2, Math.min(10, Math.floor((height - 98) / 30)));
+  const groups = useMemo(
+    () => buildStandingsPreviewGroups(standings, rowLimit),
     [rowLimit, standings],
   );
 
@@ -135,7 +236,7 @@ function StandingsTable({
     );
   }
 
-  if (rows.length === 0) {
+  if (groups.length === 0) {
     return (
       <View style={styles.state}>
         <Ionicons name="podium-outline" size={24} color={Colors.midTone} />
@@ -149,57 +250,20 @@ function StandingsTable({
 
   return (
     <View style={[styles.table, isEditing && styles.tableEditing]}>
-      <View style={styles.tableHeader}>
-        <Text style={[styles.columnLabel, styles.positionColumn]}>#</Text>
-        <Text style={[styles.columnLabel, styles.teamColumn]}>Team</Text>
-        <Text style={[styles.columnLabel, styles.recordColumn]}>Record</Text>
-        <Text style={[styles.columnLabel, styles.metricColumn]}>
-          {league === "nhl" ? "PTS" : "PCT"}
-        </Text>
+      <View style={styles.conferenceGrid}>
+        {groups.map((group) => (
+          <StandingsConference
+            key={group.id}
+            compact={compact}
+            group={group}
+            isDark={isDark}
+            league={league}
+            showConferenceName={!compact || groups.length === 1}
+          />
+        ))}
       </View>
 
-      {rows.map(({ conference, position, team }) => {
-        const logo = getLocalTeamLogo(team, league, isDark);
-
-        return (
-          <View key={`${conference}:${team.id}`} style={styles.row}>
-            <Text style={[styles.position, styles.positionColumn]}>
-              {position}
-            </Text>
-            <View style={[styles.teamCell, styles.teamColumn]}>
-              {logo ? (
-                <Image
-                  source={logo}
-                  style={styles.teamLogo}
-                  contentFit="contain"
-                />
-              ) : (
-                <View style={styles.logoFallback}>
-                  <Text style={styles.logoFallbackText}>
-                    {(team.code || team.name).slice(0, 2).toUpperCase()}
-                  </Text>
-                </View>
-              )}
-              <View style={styles.teamCopy}>
-                <Text style={styles.teamName} numberOfLines={1}>
-                  {team.shortName || team.name}
-                </Text>
-                <Text style={styles.conference} numberOfLines={1}>
-                  {conference}
-                </Text>
-              </View>
-            </View>
-            <Text style={[styles.stat, styles.recordColumn]}>
-              {formatStandingsRecord(team, league)}
-            </Text>
-            <Text style={[styles.stat, styles.metricColumn]}>
-              {formatStandingsMetric(team, league)}
-            </Text>
-          </View>
-        );
-      })}
-
-      {seasonDisplayName ? (
+      {!compact && seasonDisplayName ? (
         <Text style={styles.season} numberOfLines={1}>
           {seasonDisplayName}
         </Text>
@@ -226,7 +290,11 @@ export default function StandingsWidget({
   canMoveDown,
 }: StandingsWidgetProps) {
   const [pickerVisible, setPickerVisible] = useState(false);
-  const styles = useMemo(() => standingsWidgetStyles(isDark), [isDark]);
+  const compact = size === "small" || width < 240;
+  const styles = useMemo(
+    () => standingsWidgetStyles(isDark, compact),
+    [compact, isDark],
+  );
   const leagueConfig = LEAGUE_CONFIG[league];
 
   const handleSelectLeague = useCallback(
@@ -242,7 +310,9 @@ export default function StandingsWidget({
         <View style={styles.header}>
           <View style={styles.headingCopy}>
             <Text style={styles.title}>Standings</Text>
-            <Text style={styles.subtitle}>Conference leaders</Text>
+            {!compact ? (
+              <Text style={styles.subtitle}>By conference</Text>
+            ) : null}
           </View>
 
           <Pressable
@@ -272,6 +342,8 @@ export default function StandingsWidget({
           isDark={isDark}
           isEditing={isEditing}
           league={league}
+          size={size}
+          width={width}
         />
 
         {isEditing ? (
@@ -285,7 +357,7 @@ export default function StandingsWidget({
             onMoveWidget={onMoveWidget}
             canMoveUp={canMoveUp}
             canMoveDown={canMoveDown}
-            compact={size === "small"}
+            compact={compact}
           />
         ) : null}
       </BlurView>
@@ -301,7 +373,7 @@ export default function StandingsWidget({
   );
 }
 
-const standingsWidgetStyles = (isDark: boolean) =>
+const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     container: {
       position: "relative",
@@ -314,18 +386,19 @@ const standingsWidgetStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      gap: 10,
-      minHeight: 52,
-      paddingHorizontal: 12,
+      gap: compact ? 6 : 10,
+      minHeight: compact ? 52 : 52,
+      paddingHorizontal: compact ? 8 : 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     headingCopy: {
       flex: 1,
+      minWidth: 0,
     },
     title: {
       fontFamily: Fonts.SEMIBOLD,
-      fontSize: 17,
+      fontSize: compact ? 14 : 17,
       color: isDark ? Colors.white : Colors.black,
     },
     subtitle: {
@@ -337,17 +410,17 @@ const standingsWidgetStyles = (isDark: boolean) =>
     leagueButton: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 6,
-      minHeight: 34,
-      paddingHorizontal: 9,
+      gap: compact ? 4 : 6,
+      minHeight: compact ? 32 : 34,
+      paddingHorizontal: compact ? 6 : 9,
       borderRadius: 17,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     leagueLogo: {
-      width: 22,
-      height: 22,
+      width: compact ? 20 : 22,
+      height: compact ? 20 : 22,
     },
     leagueLabel: {
       fontFamily: Fonts.SEMIBOLD,
@@ -357,15 +430,42 @@ const standingsWidgetStyles = (isDark: boolean) =>
     table: {
       flex: 1,
       minHeight: 0,
-      paddingHorizontal: 10,
+      paddingHorizontal: compact ? 6 : 8,
     },
     tableEditing: {
-      paddingBottom: 54,
+      opacity: 0.62,
+    },
+    conferenceGrid: {
+      flex: 1,
+      minHeight: 0,
+      flexDirection: compact ? "column" : "row",
+      gap: compact ? 0 : 8,
+    },
+    conferenceGroup: {
+      flex: 1,
+      minWidth: 0,
+    },
+    conferenceHeader: {
+      justifyContent: "center",
+      minHeight: compact ? 20 : 24,
+      paddingHorizontal: compact ? 5 : 7,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    conferenceName: {
+      fontFamily: Fonts.SEMIBOLD,
+      fontSize: compact ? 10 : 11,
+      color: isDark ? Colors.white : Colors.black,
+      textTransform: "uppercase",
+      letterSpacing: 0.35,
     },
     tableHeader: {
       flexDirection: "row",
       alignItems: "center",
-      minHeight: 23,
+      minHeight: 22,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
@@ -377,7 +477,7 @@ const standingsWidgetStyles = (isDark: boolean) =>
       textTransform: "uppercase",
     },
     positionColumn: {
-      width: 24,
+      width: compact ? 20 : 22,
       textAlign: "center",
     },
     teamColumn: {
@@ -385,42 +485,42 @@ const standingsWidgetStyles = (isDark: boolean) =>
       minWidth: 0,
     },
     recordColumn: {
-      width: 60,
+      width: compact ? 48 : 51,
       textAlign: "right",
     },
     metricColumn: {
-      width: 45,
+      width: 39,
       textAlign: "right",
     },
     row: {
       flexDirection: "row",
       alignItems: "center",
-      minHeight: 30,
+      minHeight: compact ? 28 : 30,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     position: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 12,
+      fontSize: compact ? 10 : 11,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontVariant: ["tabular-nums"],
     },
     teamCell: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 7,
-      paddingHorizontal: 5,
+      gap: compact ? 4 : 5,
+      paddingHorizontal: compact ? 2 : 3,
     },
     teamLogo: {
-      width: 22,
-      height: 22,
+      width: compact ? 19 : 20,
+      height: compact ? 19 : 20,
     },
     logoFallback: {
       alignItems: "center",
       justifyContent: "center",
-      width: 22,
-      height: 22,
-      borderRadius: 11,
+      width: compact ? 19 : 20,
+      height: compact ? 19 : 20,
+      borderRadius: 10,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
@@ -430,28 +530,21 @@ const standingsWidgetStyles = (isDark: boolean) =>
       fontSize: 8,
       color: isDark ? Colors.white : Colors.black,
     },
-    teamCopy: {
+    teamName: {
       flex: 1,
       minWidth: 0,
-    },
-    teamName: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 12,
+      fontSize: compact ? 9 : 10,
       color: isDark ? Colors.white : Colors.black,
-    },
-    conference: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 9,
-      color: Colors.midTone,
     },
     stat: {
       fontFamily: Fonts.MEDIUM,
-      fontSize: 11,
+      fontSize: compact ? 9 : 10,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontVariant: ["tabular-nums"],
     },
     season: {
-      paddingTop: 4,
+      paddingTop: 3,
       fontFamily: Fonts.REGULAR,
       fontSize: 9,
       color: Colors.midTone,

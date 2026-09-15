@@ -571,9 +571,9 @@ export const CommentItemStyles = (isDark: boolean) =>
     },
 
     expandText: {
-      fontFamily: Fonts.BOLD,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      color: isDark ? Colors.dark.blue : Colors.light.blue,
+      color: Colors.midTone,
     },
 
     measureText: {

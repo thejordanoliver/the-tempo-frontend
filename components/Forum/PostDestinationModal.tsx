@@ -268,28 +268,10 @@ export default function PostDestinationModal({
     >
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerCopy}>
-            <Text style={styles.title}>Choose destination</Text>
-            <Text style={styles.subtitle}>
-              Select the team or league forum where this post should appear.
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => sheetRef.current?.dismiss()}
-            style={({ pressed }) => [
-              styles.closeButton,
-              pressed && styles.optionPressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Close destination picker"
-          >
-            <Ionicons
-              name="close"
-              size={22}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </Pressable>
+          <Text style={styles.title}>Choose destination</Text>
+          <Text style={styles.subtitle}>
+            Select the team or league forum where this post should appear.
+          </Text>
         </View>
         <PillTabs
           tabs={DESTINATION_TABS}
@@ -345,33 +327,31 @@ export const PostDestinationModalStyles = (isDark: boolean) =>
       width: 38,
       backgroundColor: Colors.midTone,
     },
+    header: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    title: {
+      textAlign: "center",
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    subtitle: {
+      textAlign: "center",
+      marginTop: 2,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
     container: {
       flex: 1,
       gap: 12,
       paddingHorizontal: 16,
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
-    header: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
-      paddingTop: 4,
-    },
-    headerCopy: {
-      flex: 1,
-    },
-    title: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 22,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      paddingTop: 2,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 13,
-      lineHeight: 18,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
+
     closeButton: {
       alignItems: "center",
       justifyContent: "center",

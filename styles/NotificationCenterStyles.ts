@@ -3,6 +3,13 @@ import { StyleSheet } from "react-native";
 
 export const NotificationsCenterStyles = (isDark: boolean) =>
   StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: isDark
+        ? Colors.dark.background
+        : Colors.light.background,
+    },
+
     container: {
       flexGrow: 1,
       paddingHorizontal: 12,
@@ -21,6 +28,21 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       paddingVertical: 6,
     },
 
+    selectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+    },
+
+    selectionCount: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      fontVariant: ["tabular-nums"],
+    },
+
     markAllButton: {
       paddingHorizontal: 4,
       paddingVertical: 4,
@@ -36,6 +58,12 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
+    selectAllText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
+    },
+
     notificationRow: {
       flexDirection: "row",
       alignItems: "center",
@@ -46,12 +74,25 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
-    notificationRowUnread: {
-    
-    },
+    notificationRowUnread: {},
 
     notificationRowPressed: {
       opacity: 0.55,
+    },
+
+    selectionCircle: {
+      width: 23,
+      height: 23,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: 1.5,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 999,
+    },
+
+    selectionCircleSelected: {
+      borderColor: isDark ? Colors.dark.blue : Colors.light.blue,
+      backgroundColor: isDark ? Colors.dark.blue : Colors.light.blue,
     },
 
     iconWrapper: {
@@ -170,5 +211,45 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       fontSize: 14,
       lineHeight: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    selectionToolbar: {
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      left: 0,
+      zIndex: 10,
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 12,
+      backgroundColor: isDark
+        ? Colors.dark.background
+        : Colors.light.background,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+
+    deleteButton: {
+      minHeight: 48,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      borderRadius: 14,
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+    },
+
+    deleteButtonDisabled: {
+      opacity: 0.4,
+    },
+
+    deleteButtonPressed: {
+      opacity: 0.7,
+    },
+
+    deleteButtonText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 16,
+      color: Colors.white,
     },
   });

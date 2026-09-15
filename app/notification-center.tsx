@@ -16,8 +16,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
 import { Image } from "expo-image";
-import { Href, useFocusEffect, useNavigation, useRouter } from "expo-router";
-import { memo, useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Href, useNavigation, useRouter } from "expo-router";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -27,6 +35,14 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, {
+  FadeInDown,
+  FadeOutDown,
+  LinearTransition,
+  SlideOutLeft,
+} from "react-native-reanimated";
+
+const CUSTOM_TAB_BAR_HEIGHT = 80;
 
 const getNotificationIcon = (
   type: NotificationType,
@@ -66,7 +82,9 @@ type NotificationRowProps = {
   isDark: boolean;
   now: number;
   onPress: (notification: AppNotification) => void;
-  onArchive: (notification: AppNotification) => void;
+  isEditing: boolean;
+  isSelected: boolean;
+  onToggleSelection: (id: string) => void;
 };
 
 const NotificationRow = memo(function NotificationRow({
@@ -74,7 +92,9 @@ const NotificationRow = memo(function NotificationRow({
   isDark,
   now,
   onPress,
-  onArchive,
+  isEditing,
+  isSelected,
+  onToggleSelection,
 }: NotificationRowProps) {
   const styles = NotificationsCenterStyles(isDark);
 
@@ -115,19 +135,41 @@ const NotificationRow = memo(function NotificationRow({
 
   return (
     <Pressable
-      disabled={!isPressable}
-      onPress={() => onPress(notification)}
-      accessibilityRole={isPressable ? "button" : undefined}
+      disabled={!isEditing && !isPressable}
+      onPress={() =>
+        isEditing ? onToggleSelection(notification.id) : onPress(notification)
+      }
+      accessibilityRole={isEditing || isPressable ? "button" : undefined}
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={isEditing ? { selected: isSelected } : undefined}
       accessibilityHint={
-        isPressable ? "Opens the related notification." : undefined
+        isEditing
+          ? isSelected
+            ? "Double tap to deselect this notification."
+            : "Double tap to select this notification for deletion."
+          : isPressable
+            ? "Opens the related notification."
+            : undefined
       }
       style={({ pressed }) => [
         styles.notificationRow,
         isUnread && styles.notificationRowUnread,
-        pressed && isPressable && styles.notificationRowPressed,
+        pressed && (isEditing || isPressable) && styles.notificationRowPressed,
       ]}
     >
+      {isEditing && (
+        <View
+          style={[
+            styles.selectionCircle,
+            isSelected && styles.selectionCircleSelected,
+          ]}
+        >
+          {isSelected && (
+            <Ionicons name="checkmark" size={15} color={Colors.white} />
+          )}
+        </View>
+      )}
+
       <View
         style={[styles.iconWrapper, gameTeams && styles.gameTeamLogoWrapper]}
       >
@@ -173,20 +215,7 @@ const NotificationRow = memo(function NotificationRow({
         {timeAgo && <Text style={styles.notificationTime}>{timeAgo}</Text>}
       </View>
 
-      <Pressable
-        onPress={() => onArchive(notification)}
-        accessibilityRole="button"
-        accessibilityLabel={`Remove ${title}`}
-        hitSlop={8}
-      >
-        <Ionicons
-          name="close"
-          size={17}
-          color={isDark ? Colors.lightGray : Colors.darkGray}
-        />
-      </Pressable>
-
-      {isPressable && (
+      {isPressable && !isEditing && (
         <Ionicons
           name="chevron-forward"
           size={18}
@@ -206,6 +235,7 @@ export default function NotificationsCenter() {
     markCenterNotificationRead,
     markAllCenterNotificationsRead,
     removeCenterNotification,
+    removeAllCenterNotifications,
     refreshNotifications,
     loadMoreNotifications,
     loading,
@@ -217,25 +247,53 @@ export default function NotificationsCenter() {
 
   const isDark = resolvedColorScheme === "dark";
   const [relativeTimeNow, setRelativeTimeNow] = useState(() => Date.now());
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(() => new Set());
+  const [suppressEmptyState, setSuppressEmptyState] = useState(false);
+  const emptyStateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const styles = NotificationsCenterStyles(isDark);
 
   const navigation = useNavigation();
   const router = useRouter();
 
+  const visibleNotifications = useMemo(
+    () =>
+      centerNotifications.filter(
+        (notification) => !hiddenIds.has(notification.id),
+      ),
+    [centerNotifications, hiddenIds],
+  );
+
+  const toggleSelectionMode = useCallback(() => {
+    setIsSelectionMode((current) => {
+      if (current) {
+        setSelectedIds(new Set());
+      }
+      return !current;
+    });
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader tabName="Notifications" onBack={() => router.back()} />
+        <CustomHeader
+          tabName="Notifications"
+          onBack={() => router.back()}
+          onToggleNotificationEditing={toggleSelectionMode}
+          isNotificationEditing={isSelectionMode}
+          hasNotifications={visibleNotifications.length > 0}
+        />
       ),
     });
-  }, [navigation, router]);
-
-  useFocusEffect(
-    useCallback(() => {
-      void refreshNotifications();
-    }, [refreshNotifications]),
-  );
+  }, [
+    isSelectionMode,
+    navigation,
+    router,
+    toggleSelectionMode,
+    visibleNotifications.length,
+  ]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -244,6 +302,15 @@ export default function NotificationsCenter() {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(
+    () => () => {
+      if (emptyStateTimerRef.current) {
+        clearTimeout(emptyStateTimerRef.current);
+      }
+    },
+    [],
+  );
 
   const handleNotificationPress = useCallback(
     (notification: AppNotification) => {
@@ -266,28 +333,110 @@ export default function NotificationsCenter() {
     void markAllCenterNotificationsRead();
   }, [markAllCenterNotificationsRead]);
 
-  const handleArchiveNotification = useCallback(
-    (notification: AppNotification) => {
-      void removeCenterNotification(notification.id);
-    },
-    [removeCenterNotification],
+  const handleToggleSelection = useCallback((id: string) => {
+    setSelectedIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const allNotificationsSelected =
+    visibleNotifications.length > 0 &&
+    visibleNotifications.every((notification) =>
+      selectedIds.has(notification.id),
+    );
+  const selectedCount = visibleNotifications.reduce(
+    (count, notification) => count + Number(selectedIds.has(notification.id)),
+    0,
   );
+
+  const handleToggleSelectAll = useCallback(() => {
+    setSelectedIds(
+      allNotificationsSelected
+        ? new Set()
+        : new Set(
+            visibleNotifications.map((notification) => notification.id),
+          ),
+    );
+  }, [allNotificationsSelected, visibleNotifications]);
+
+  const handleDeleteSelected = useCallback(() => {
+    const idsToDelete = visibleNotifications
+      .map((notification) => notification.id)
+      .filter((id) => selectedIds.has(id));
+
+    if (idsToDelete.length === 0) {
+      return;
+    }
+
+    const deletingEntireList =
+      idsToDelete.length === visibleNotifications.length;
+
+    setHiddenIds((current) => new Set([...current, ...idsToDelete]));
+    setSelectedIds(new Set());
+    setIsSelectionMode(false);
+
+    if (deletingEntireList) {
+      setSuppressEmptyState(true);
+      if (emptyStateTimerRef.current) {
+        clearTimeout(emptyStateTimerRef.current);
+      }
+      emptyStateTimerRef.current = setTimeout(() => {
+        setSuppressEmptyState(false);
+      }, 240);
+    }
+
+    void (async () => {
+      if (deletingEntireList) {
+        await removeAllCenterNotifications();
+      } else {
+        for (const id of idsToDelete) {
+          await removeCenterNotification(id);
+        }
+      }
+
+      setHiddenIds((current) => {
+        const next = new Set(current);
+        idsToDelete.forEach((id) => next.delete(id));
+        return next;
+      });
+    })();
+  }, [
+    removeAllCenterNotifications,
+    removeCenterNotification,
+    selectedIds,
+    visibleNotifications,
+  ]);
 
   const renderNotificationItem = useCallback<ListRenderItem<AppNotification>>(
     ({ item }) => (
-      <NotificationRow
-        notification={item}
-        isDark={isDark}
-        now={relativeTimeNow}
-        onPress={handleNotificationPress}
-        onArchive={handleArchiveNotification}
-      />
+      <Animated.View
+        exiting={SlideOutLeft.duration(220)}
+        layout={LinearTransition.duration(220)}
+      >
+        <NotificationRow
+          notification={item}
+          isDark={isDark}
+          now={relativeTimeNow}
+          onPress={handleNotificationPress}
+          isEditing={isSelectionMode}
+          isSelected={selectedIds.has(item.id)}
+          onToggleSelection={handleToggleSelection}
+        />
+      </Animated.View>
     ),
     [
-      handleArchiveNotification,
       handleNotificationPress,
+      handleToggleSelection,
       isDark,
+      isSelectionMode,
       relativeTimeNow,
+      selectedIds,
     ],
   );
 
@@ -296,77 +445,140 @@ export default function NotificationsCenter() {
   );
 
   return (
-    <FlatList
-      data={centerNotifications}
-      extraData={relativeTimeNow}
-      keyExtractor={(item) => item.id}
-      renderItem={renderNotificationItem}
-      ListHeaderComponent={
-        hasUnreadNotifications ? (
-          <View style={styles.listHeader}>
-            <Pressable
-              onPress={handleMarkAllRead}
-              accessibilityRole="button"
-              accessibilityLabel="Mark all notifications as read"
-              hitSlop={8}
-              style={({ pressed }) => [
-                styles.markAllButton,
-                pressed && styles.markAllButtonPressed,
-              ]}
-            >
-              <Text style={styles.markAllText}>Mark all as read</Text>
-            </Pressable>
-          </View>
-        ) : null
-      }
-      ListEmptyComponent={
-        <View style={styles.emptyState}>
-          {loading ? (
-            <ActivityIndicator color={isDark ? Colors.white : Colors.black} />
-          ) : (
-            <>
-              <Ionicons
-                name="notifications-outline"
-                size={34}
-                color={isDark ? Colors.lightGray : Colors.darkGray}
-              />
-
-              <Text style={styles.emptyTitle}>No notifications yet</Text>
-
-              <Text style={styles.emptyText}>
-                {error
-                  ? "Notifications could not be loaded. Pull down to try again."
-                  : "New messages, likes, comments, and other activity will appear here."}
+    <View style={styles.screen}>
+      <FlatList
+        data={visibleNotifications}
+        extraData={{ relativeTimeNow, isSelectionMode, selectedIds }}
+        keyExtractor={(item) => item.id}
+        renderItem={renderNotificationItem}
+        ListHeaderComponent={
+          isSelectionMode ? (
+            <View style={styles.selectionHeader}>
+              <Text style={styles.selectionCount}>
+                {selectedCount} selected
               </Text>
-            </>
-          )}
-        </View>
-      }
-      ListFooterComponent={
-        loadingMore ? (
-          <ActivityIndicator
-            style={{ paddingVertical: 16 }}
-            color={isDark ? Colors.white : Colors.black}
+
+              <Pressable
+                onPress={handleToggleSelectAll}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  allNotificationsSelected
+                    ? "Deselect all notifications"
+                    : "Select all notifications"
+                }
+                hitSlop={8}
+                style={({ pressed }) => [
+                  styles.markAllButton,
+                  pressed && styles.markAllButtonPressed,
+                ]}
+              >
+                <Text style={styles.selectAllText}>
+                  {allNotificationsSelected ? "Deselect All" : "Select All"}
+                </Text>
+              </Pressable>
+            </View>
+          ) : hasUnreadNotifications ? (
+            <View style={styles.listHeader}>
+              <Pressable
+                onPress={handleMarkAllRead}
+                accessibilityRole="button"
+                accessibilityLabel="Mark all notifications as read"
+                hitSlop={8}
+                style={({ pressed }) => [
+                  styles.markAllButton,
+                  pressed && styles.markAllButtonPressed,
+                ]}
+              >
+                <Text style={styles.markAllText}>Mark all as read</Text>
+              </Pressable>
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          suppressEmptyState ? null : (
+            <View style={styles.emptyState}>
+              {loading ? (
+                <ActivityIndicator
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              ) : (
+                <>
+                  <Ionicons
+                    name="notifications-outline"
+                    size={34}
+                    color={isDark ? Colors.lightGray : Colors.darkGray}
+                  />
+
+                  <Text style={styles.emptyTitle}>No notifications yet</Text>
+
+                  <Text style={styles.emptyText}>
+                    {error
+                      ? "Notifications could not be loaded. Pull down to try again."
+                      : "New messages, likes, comments, and other activity will appear here."}
+                  </Text>
+                </>
+              )}
+            </View>
+          )
+        }
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator
+              style={{ paddingVertical: 16 }}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          ) : null
+        }
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refreshNotifications()}
+            tintColor={isDark ? Colors.white : Colors.black}
           />
-        ) : null
-      }
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => void refreshNotifications()}
-          tintColor={isDark ? Colors.white : Colors.black}
-        />
-      }
-      onEndReached={() => {
-        if (hasMore && !loadingMore) void loadMoreNotifications();
-      }}
-      onEndReachedThreshold={0.35}
-      contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={[
-        styles.container,
-        centerNotifications.length === 0 && styles.emptyContainer,
-      ]}
-      showsVerticalScrollIndicator={false}
-    />
+        }
+        onEndReached={() => {
+          if (hasMore && !loadingMore) void loadMoreNotifications();
+        }}
+        onEndReachedThreshold={0.35}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={[
+          styles.container,
+          visibleNotifications.length === 0 && styles.emptyContainer,
+          isSelectionMode && {
+            paddingBottom: CUSTOM_TAB_BAR_HEIGHT + 88,
+          },
+        ]}
+        showsVerticalScrollIndicator={false}
+      />
+
+      {isSelectionMode && (
+        <Animated.View
+          entering={FadeInDown.duration(180)}
+          exiting={FadeOutDown.duration(140)}
+          style={[
+            styles.selectionToolbar,
+            { bottom: CUSTOM_TAB_BAR_HEIGHT },
+          ]}
+        >
+          <Pressable
+            disabled={selectedCount === 0}
+            onPress={handleDeleteSelected}
+            accessibilityRole="button"
+            accessibilityLabel={`Delete ${selectedCount} selected notifications`}
+            accessibilityState={{ disabled: selectedCount === 0 }}
+            style={({ pressed }) => [
+              styles.deleteButton,
+              selectedCount === 0 && styles.deleteButtonDisabled,
+              pressed && selectedCount > 0 && styles.deleteButtonPressed,
+            ]}
+          >
+            <Ionicons name="trash-outline" size={20} color={Colors.white} />
+            <Text style={styles.deleteButtonText}>
+              Delete{selectedCount > 0 ? ` (${selectedCount})` : ""}
+            </Text>
+          </Pressable>
+        </Animated.View>
+      )}
+    </View>
   );
 }

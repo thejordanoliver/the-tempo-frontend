@@ -56,3 +56,11 @@ export async function archiveNotification(id: string) {
   );
   return response.data;
 }
+
+export async function archiveAllNotifications() {
+  const response = await apiClient.delete<{
+    updatedCount: number;
+    unreadCount: number;
+  }>("/api/notifications");
+  return response.data;
+}

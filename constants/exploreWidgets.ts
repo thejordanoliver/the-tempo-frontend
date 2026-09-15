@@ -72,11 +72,11 @@ export const EXPLORE_WIDGET_REGISTRY: Record<
 
   standings: {
     title: "Standings",
-    description: "Follow the latest league tables from your Explore board.",
+    description: "Follow conference standings from your Explore board.",
     badge: "Tables",
     icon: "podium-outline",
     defaultSize: "medium",
-    sizes: ["medium", "large"],
+    sizes: EXPLORE_WIDGET_SIZES,
     emptyCopy: "Standings are not available for this league right now.",
   },
 

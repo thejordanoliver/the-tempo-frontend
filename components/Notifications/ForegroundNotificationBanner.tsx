@@ -1,5 +1,5 @@
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
-import { Colors, PLACEHOLDER_AVATAR } from "@/constants/styles";
+import { Colors, Fonts, PLACEHOLDER_AVATAR } from "@/constants/styles";
 import {
   useNotificationBanners,
   useNotifications,
@@ -14,24 +14,56 @@ import {
   shouldShowNotificationActorProfileImage,
 } from "@/utils/notificationCenter";
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import {
+  GlassView,
+  isGlassEffectAPIAvailable,
+  isLiquidGlassAvailable,
+} from "expo-glass-effect";
 import { Image } from "expo-image";
 import { Href, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function ForegroundNotificationBanner() {
+type Props = {
+  preview?: boolean;
+};
+
+export default function ForegroundNotificationBanner({
+  preview = false,
+}: Props) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
   const { resolvedColorScheme } = usePreferences();
+
+  const isDark = resolvedColorScheme === "dark";
+
   const { notifications, onDismiss } = useNotificationBanners();
+
   const { markCenterNotificationRead } = useNotifications();
+
   const banner = notifications.at(-1);
+
   const [progress] = useState(() => new Animated.Value(0));
+
+  const styles = ForegroundNotificationBannerStyles(isDark);
+
+  const liquid = isLiquidGlassAvailable() && isGlassEffectAPIAvailable();
+
+  // Preview content
+  const previewTitle = "Florida Gators";
+  const previewLeagueLabel = "CFB";
+  const previewMessage = "Touchdown! Florida takes the lead 21-17.";
 
   useEffect(() => {
     progress.setValue(0);
-    if (!banner) return;
+
+    if (!banner && !preview) {
+      return;
+    }
+
     Animated.spring(progress, {
       toValue: 1,
       useNativeDriver: true,
@@ -39,11 +71,19 @@ export default function ForegroundNotificationBanner() {
       stiffness: 180,
       mass: 0.8,
     }).start();
-  }, [banner, progress]);
+  }, [banner, preview, progress]);
 
-  const animatedStyle = useMemo(
+  /*
+   * IMPORTANT:
+   *
+   * We DO NOT put opacity on the parent containing GlassView.
+   *
+   * Only the banner content is animated.
+   */
+  const animatedContentStyle = useMemo(
     () => ({
       opacity: progress,
+
       transform: [
         {
           translateY: progress.interpolate({
@@ -56,166 +96,297 @@ export default function ForegroundNotificationBanner() {
     [progress],
   );
 
-  if (!banner) return null;
-  const canonical = banner.notification;
-  const isDark = resolvedColorScheme === "dark";
-  const leagueLabel = canonical ? getNotificationLeagueLabel(canonical) : null;
-  const gameTeams = canonical
-    ? getNotificationGameTeams(canonical, isDark)
-    : null;
+  if (!banner && !preview) {
+    return null;
+  }
+
+  const canonical = preview ? null : banner?.notification;
+
+  const leagueLabel = preview
+    ? previewLeagueLabel
+    : canonical
+      ? getNotificationLeagueLabel(canonical)
+      : null;
+
+  const gameTeams =
+    !preview && canonical ? getNotificationGameTeams(canonical, isDark) : null;
+
   const actorProfileImage =
-    canonical && shouldShowNotificationActorProfileImage(canonical)
+    !preview && canonical && shouldShowNotificationActorProfileImage(canonical)
       ? (parseImageUrl(getNotificationActorProfileImage(canonical)) ??
         PLACEHOLDER_AVATAR)
       : null;
 
+  const title = preview ? previewTitle : (canonical?.title ?? "Tempo");
+
+  const message = preview ? previewMessage : (banner?.message ?? "");
+
   const open = () => {
+    if (preview) {
+      return;
+    }
+
+    if (!banner) {
+      return;
+    }
+
     onDismiss(banner.id);
-    if (!canonical) return;
-    if (!canonical.readAt) void markCenterNotificationRead(canonical.id);
+
+    if (!canonical) {
+      return;
+    }
+
+    if (!canonical.readAt) {
+      void markCenterNotificationRead(canonical.id);
+    }
+
     const href = getNotificationCenterHref(canonical);
-    if (href) router.push(href as Href);
+
+    if (href) {
+      router.push(href as Href);
+    }
+  };
+
+  const dismiss = () => {
+    if (preview) {
+      return;
+    }
+
+    if (!banner) {
+      return;
+    }
+
+    onDismiss(banner.id);
   };
 
   return (
-    <Animated.View
+    <View
       pointerEvents="box-none"
-      style={[styles.positioner, { top: insets.top + 8 }, animatedStyle]}
+      style={[
+        styles.positioner,
+        {
+          top: insets.top + 8,
+        },
+      ]}
     >
-      <Pressable
-        onPress={open}
-        accessibilityRole="button"
-        accessibilityLabel={`${leagueLabel ? `${leagueLabel}. ` : ""}${canonical?.title ?? "Notification"}. ${gameTeams?.matchup ? `${gameTeams.matchup}. ` : ""}${banner.message}`}
-        style={[styles.banner, isDark ? styles.bannerDark : styles.bannerLight]}
-      >
-        <View style={[styles.icon, gameTeams && styles.gameTeamIcon]}>
-          {gameTeams ? (
-            <GameNotificationTeamLogos
-              teams={gameTeams}
-              isDark={isDark}
-              size={29}
-            />
-          ) : actorProfileImage ? (
-            <Image
-              source={{ uri: actorProfileImage }}
-              style={styles.profileImage}
-              contentFit="cover"
-              transition={150}
-            />
-          ) : (
-            <Ionicons name="notifications" size={20} color={Colors.white} />
-          )}
-        </View>
-        <View style={styles.copy}>
-          <View style={styles.titleRow}>
-            {leagueLabel && (
-              <Text style={styles.leagueLabel}>{leagueLabel}</Text>
+      {/* Glass remains at opacity 1 at all times */}
+      {liquid ? (
+        <GlassView
+          glassEffectStyle="regular"
+          isInteractive
+          style={styles.glassBackground}
+        />
+      ) : (
+        <BlurView intensity={80} style={styles.glassBackground} />
+      )}
+
+      {/* Only content animates */}
+      <Animated.View style={[styles.contentContainer, animatedContentStyle]}>
+        <Pressable
+          onPress={open}
+          accessibilityRole="button"
+          accessibilityLabel={`${
+            leagueLabel ? `${leagueLabel}. ` : ""
+          }${title}. ${
+            gameTeams?.matchup ? `${gameTeams.matchup}. ` : ""
+          }${message}`}
+          style={styles.banner}
+        >
+          <View style={[styles.icon, gameTeams && styles.gameTeamIcon]}>
+            {gameTeams ? (
+              <GameNotificationTeamLogos
+                teams={gameTeams}
+                isDark={isDark}
+                size={29}
+              />
+            ) : actorProfileImage ? (
+              <Image
+                source={{
+                  uri: actorProfileImage,
+                }}
+                style={styles.profileImage}
+                contentFit="cover"
+                transition={150}
+              />
+            ) : (
+              <Ionicons name="notifications" size={20} color={Colors.white} />
+            )}
+          </View>
+
+          <View style={styles.copy}>
+            <View style={styles.titleRow}>
+              {leagueLabel && (
+                <Text style={styles.leagueLabel}>{leagueLabel}</Text>
+              )}
+
+              <Text style={styles.title} numberOfLines={1}>
+                {title}
+              </Text>
+            </View>
+
+            {gameTeams?.matchup && (
+              <Text style={styles.teamNames} numberOfLines={1}>
+                {gameTeams.matchup}
+              </Text>
             )}
 
-            <Text
-              style={[styles.title, isDark && styles.textDark]}
-              numberOfLines={1}
-            >
-              {canonical?.title ?? "Tempo"}
+            <Text style={styles.body} numberOfLines={gameTeams ? 1 : 2}>
+              {message}
             </Text>
           </View>
-          {gameTeams?.matchup && (
-            <Text
-              style={[styles.teamNames, isDark && styles.bodyDark]}
-              numberOfLines={1}
-            >
-              {gameTeams.matchup}
-            </Text>
-          )}
-          <Text
-            style={[styles.body, isDark && styles.bodyDark]}
-            numberOfLines={gameTeams ? 1 : 2}
+
+          <Pressable
+            onPress={dismiss}
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss notification"
+            hitSlop={10}
           >
-            {banner.message}
-          </Text>
-        </View>
-        <Pressable
-          onPress={() => onDismiss(banner.id)}
-          accessibilityRole="button"
-          accessibilityLabel="Dismiss notification"
-          hitSlop={10}
-        >
-          <Ionicons
-            name="close"
-            size={18}
-            color={isDark ? Colors.lightGray : Colors.darkGray}
-          />
+            <Ionicons
+              name="close"
+              size={18}
+              color={isDark ? Colors.lightGray : Colors.darkGray}
+            />
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Animated.View>
+      </Animated.View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  positioner: {
-    position: "absolute",
-    left: 12,
-    right: 12,
-    zIndex: 1000,
-    elevation: 12,
-  },
-  banner: {
-    minHeight: 70,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 11,
-    borderWidth: StyleSheet.hairlineWidth,
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-  },
-  bannerLight: { backgroundColor: "#FFFFFF", borderColor: "#E2E2E7" },
-  bannerDark: { backgroundColor: "#202124", borderColor: "#3A3A3C" },
-  icon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#E31B23",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  gameTeamIcon: {
-    width: 48,
-    borderRadius: 0,
-    backgroundColor: "transparent",
-  },
-  profileImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 18,
-  },
-  copy: { flex: 1, gap: 2 },
-  titleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  leagueLabel: {
-    flexShrink: 0,
-    overflow: "hidden",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 999,
-    backgroundColor: "#E31B23",
-    color: Colors.white,
-    fontSize: 9,
-    lineHeight: 12,
-    fontWeight: "800",
-    letterSpacing: 0.4,
-  },
-  title: {
-    flexShrink: 1,
-    color: "#111",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  body: { color: "#555", fontSize: 13, lineHeight: 18 },
-  teamNames: { color: "#333", fontSize: 12, lineHeight: 16, fontWeight: "600" },
-  textDark: { color: "#FFFFFF" },
-  bodyDark: { color: "#D1D1D6" },
-});
+const ForegroundNotificationBannerStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    positioner: {
+      position: "absolute",
+
+      left: 12,
+      right: 12,
+
+      minHeight: 70,
+
+      borderRadius: 16,
+
+      zIndex: 1000,
+      elevation: 12,
+
+      // Important for glass + rounded corners
+      overflow: "hidden",
+    },
+
+    glassBackground: {
+      ...StyleSheet.absoluteFill,
+
+      borderRadius: 16,
+    },
+
+    contentContainer: {
+      borderRadius: 16,
+    },
+
+    banner: {
+      minHeight: 70,
+
+      borderRadius: 16,
+
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+
+      flexDirection: "row",
+      alignItems: "center",
+
+      gap: 11,
+
+      borderWidth: StyleSheet.hairlineWidth,
+
+      borderColor: isDark ? Colors.midTone : Colors.midTone,
+
+      backgroundColor: "transparent",
+    },
+
+    icon: {
+      width: 36,
+      height: 36,
+
+      borderRadius: 18,
+
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+
+      alignItems: "center",
+      justifyContent: "center",
+    },
+
+    gameTeamIcon: {
+      width: 48,
+
+      borderRadius: 0,
+
+      backgroundColor: "transparent",
+    },
+
+    profileImage: {
+      width: "100%",
+      height: "100%",
+
+      borderRadius: 18,
+    },
+
+    copy: {
+      flex: 1,
+      gap: 2,
+    },
+
+    titleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+
+    leagueLabel: {
+      flexShrink: 0,
+
+      overflow: "hidden",
+
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+
+      borderRadius: 999,
+
+      backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
+
+      color: Colors.white,
+
+      fontSize: 9,
+      lineHeight: 12,
+
+      fontFamily: Fonts.BOLD,
+
+      letterSpacing: 0.4,
+    },
+
+    title: {
+      flexShrink: 1,
+
+      color: isDark ? Colors.dark.text : Colors.light.text,
+
+      fontSize: 15,
+
+      fontFamily: Fonts.BOLD,
+    },
+
+    body: {
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+
+      fontSize: 13,
+      lineHeight: 18,
+
+      fontFamily: Fonts.REGULAR,
+    },
+
+    teamNames: {
+      color: isDark ? Colors.darkGray : Colors.lightGray,
+
+      fontSize: 12,
+      lineHeight: 16,
+
+      fontFamily: Fonts.MEDIUM,
+    },
+  });

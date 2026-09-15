@@ -17,7 +17,7 @@ import { useBasketballGames } from "./BasketballHooks/useBasketballGames";
 import { useFootballGames } from "./FootballHooks/useFootballGames";
 import { useHockeyGames } from "./HockeyHooks/useHockeyGames";
 import { useMMAEvents } from "./MMAHooks/useMMAEvents";
-import { useAllNews } from "./NewsHooks/useAllNews";
+import { useForYouFeed } from "./useForYouFeed";
 import { useSoccerGames } from "./SoccerHooks/useSoccerGames";
 import { useTennisMatches } from "./TennisHooks/useTennisMatches";
 
@@ -26,7 +26,7 @@ dayjs.extend(timezone);
 
 const getStartOfToday = () => dayjs().startOf("day").toDate();
 
-export function useHomeData(selectedTab: "scores" | "news") {
+export function useHomeData(selectedTab: "scores" | "for you") {
   const currentFootballSeason = getFootballSeason();
   const {
     favorites,
@@ -39,12 +39,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
 
-  const {
-    articles,
-    loading: newsLoading,
-    error: newsError,
-    refresh: refreshNews,
-  } = useAllNews(30);
+  const forYouFeed = useForYouFeed(selectedTab === "for you");
 
   const {
     games: nbaGames,
@@ -437,7 +432,7 @@ export function useHomeData(selectedTab: "scores" | "news") {
           refreshWTAMatches(),
         ]);
       } else {
-        await refreshNews();
+        await forYouFeed.refresh();
       }
     } finally {
       setRefreshing(false);
@@ -476,15 +471,18 @@ export function useHomeData(selectedTab: "scores" | "news") {
   return {
     selectedDate,
     setSelectedDate,
+    currentUserId: userId,
     favorites,
     refreshing,
     handleRefresh,
     homeGameSections,
-    newsError,
+    forYouError: forYouFeed.error,
     errorFights: mmaError,
-    newsLoading,
-    articles,
+    forYouLoading: forYouFeed.loading,
+    forYouArticles: forYouFeed.articles,
+    forYouPosts: forYouFeed.posts,
+    favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
-      selectedTab === "scores" ? scoresLoading || refreshing : newsLoading,
+      selectedTab === "scores" ? scoresLoading || refreshing : forYouFeed.loading,
   };
 }

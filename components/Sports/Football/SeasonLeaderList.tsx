@@ -68,7 +68,7 @@ export default function SeasonLeadersList({
 
             <View style={styles.playersList}>
               {item.leaders.slice(0, 5).map((player) => {
-                const team = getCFBTeam(player.team_id ?? player.teamId ?? 0);
+                const team = getCFBTeam(player.team_id ?? 0);
                 return (
                   <PlayerCard
                     key={player.id}

@@ -35,6 +35,7 @@ import { HeaderRightActions } from "./HeaderRightActions";
 import { HomeHeader } from "./HomeHeader";
 import { LeagueHeader } from "./LeagueHeader";
 import { MessageThreadHeader } from "./MessageThreadHeader";
+import { NotificationsHeaderMenu } from "./NotificationsHeaderMenu";
 import { resolveRacingLeague } from "./racingConfig";
 import { TeamBackground } from "./TeamBackground";
 import type { CustomHeaderProps, HeaderTeamLike } from "./types";
@@ -63,6 +64,9 @@ export function CustomHeader({
   isTeamScreen = false,
   onSearchToggle,
   onNotificationsCenter,
+  onToggleNotificationEditing,
+  isNotificationEditing = false,
+  hasNotifications = false,
   unreadNotificationCount,
   onOpenThemesSettings,
   onAddWidget,
@@ -110,6 +114,8 @@ export function CustomHeader({
   const styles = customHeaderStyles(isDark, width);
 
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
+  const [notificationsMenuVisible, setNotificationsMenuVisible] =
+    useState(false);
 
   const toggleProfileMenu = useCallback(() => {
     setProfileMenuVisible((current) => !current);
@@ -139,6 +145,15 @@ export function CustomHeader({
     onLogout?.();
   }, [closeProfileMenu, onLogout]);
 
+  const toggleNotificationsMenu = useCallback(() => {
+    setNotificationsMenuVisible((current) => !current);
+  }, []);
+
+  const handleToggleNotificationEditing = useCallback(() => {
+    setNotificationsMenuVisible(false);
+    onToggleNotificationEditing?.();
+  }, [onToggleNotificationEditing]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -147,6 +162,10 @@ export function CustomHeader({
 
       if (tabName !== "Profile") {
         setProfileMenuVisible(false);
+      }
+
+      if (tabName !== "Notifications") {
+        setNotificationsMenuVisible(false);
       }
     });
 
@@ -469,6 +488,19 @@ export function CustomHeader({
           onProfileLogout={handleProfileLogout}
           onSearchToggle={onSearchToggle}
           onNotificationsCenter={onNotificationsCenter}
+          notificationsMenu={
+            tabName === "Notifications" ? (
+              <NotificationsHeaderMenu
+                visible={notificationsMenuVisible}
+                isDark={isDark}
+                isEditing={isNotificationEditing}
+                disabled={!hasNotifications && !isNotificationEditing}
+                onToggleEditing={handleToggleNotificationEditing}
+              />
+            ) : undefined
+          }
+          notificationsMenuVisible={notificationsMenuVisible}
+          onToggleNotificationsMenu={toggleNotificationsMenu}
           unreadNotificationCount={unreadNotificationCount}
           onOpenThemesSettings={onOpenThemesSettings}
           isMessagesListScreen={isMessagesListScreen}

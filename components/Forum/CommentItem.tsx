@@ -187,6 +187,7 @@ export const CommentItem = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(commentText);
   const [textExpanded, setTextExpanded] = useState(false);
+  const [isTextTruncated, setIsTextTruncated] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
@@ -243,6 +244,7 @@ export const CommentItem = ({
 
       setEditText(commentText);
       setTextExpanded(false);
+      setIsTextTruncated(false);
       setFullHeight(0);
     });
 
@@ -278,8 +280,7 @@ export const CommentItem = ({
     previousReplyCountRef.current = replyCount;
   }, [replyCount]);
 
-  const shouldShowExpand =
-    hasText && (commentText.length > 100 || commentText.split("\n").length > 3);
+  const shouldShowExpand = hasText && isTextTruncated;
 
   useEffect(() => {
     if (!shouldShowExpand) return;
@@ -511,23 +512,23 @@ export const CommentItem = ({
           </View>
         ) : (
           <View style={styles.commentBody}>
-            {hasText &&
-              (shouldShowExpand ? (
-                <>
-                  <Reanimated.View
-                    style={[styles.commentTextClip, heightStyle]}
+            {hasText && (
+              <>
+                <Reanimated.View
+                  style={[
+                    styles.commentTextClip,
+                    shouldShowExpand && heightStyle,
+                  ]}
+                >
+                  <Text
+                    style={[styles.commentText, isReply && styles.replyText]}
+                    numberOfLines={textExpanded ? undefined : 3}
                   >
-                    <Text
-                      style={[
-                        styles.commentText,
-                        isReply && styles.replyText,
-                      ]}
-                      numberOfLines={textExpanded ? undefined : 3}
-                    >
-                      {commentText}
-                    </Text>
-                  </Reanimated.View>
+                    {commentText}
+                  </Text>
+                </Reanimated.View>
 
+                {shouldShowExpand && (
                   <TouchableOpacity
                     activeOpacity={activeOpacity}
                     onPress={() => setTextExpanded((prev) => !prev)}
@@ -537,26 +538,26 @@ export const CommentItem = ({
                       {textExpanded ? "Show less" : "Show more"}
                     </Text>
                   </TouchableOpacity>
+                )}
 
-                  <Text
-                    pointerEvents="none"
-                    style={[
-                      styles.commentText,
-                      isReply && styles.replyText,
-                      styles.measureText,
-                    ]}
-                    onLayout={(event) =>
-                      setFullHeight(event.nativeEvent.layout.height)
-                    }
-                  >
-                    {commentText}
-                  </Text>
-                </>
-              ) : (
-                <Text style={[styles.commentText, isReply && styles.replyText]}>
+                <Text
+                  pointerEvents="none"
+                  style={[
+                    styles.commentText,
+                    isReply && styles.replyText,
+                    styles.measureText,
+                  ]}
+                  onTextLayout={(event) =>
+                    setIsTextTruncated(event.nativeEvent.lines.length > 3)
+                  }
+                  onLayout={(event) =>
+                    setFullHeight(event.nativeEvent.layout.height)
+                  }
+                >
                   {commentText}
                 </Text>
-              ))}
+              </>
+            )}
 
             {media.length > 0 && (
               <View

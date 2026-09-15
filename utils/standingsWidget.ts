@@ -10,6 +10,47 @@ export type StandingsPreviewRow = {
   team: StandingsTeam;
 };
 
+export type StandingsPreviewGroup = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  rows: StandingsPreviewRow[];
+};
+
+export function buildStandingsPreviewGroups(
+  conferences: readonly ConferenceStandings[],
+  limitPerConference: number,
+): StandingsPreviewGroup[] {
+  const seenTeamIds = new Set<string>();
+
+  return conferences
+    .filter((conference) => conference.standings.length > 0)
+    .map((conference) => {
+      const conferenceLabel = conference.abbreviation || conference.name;
+      const rows: StandingsPreviewRow[] = [];
+
+      for (const [index, team] of conference.standings.entries()) {
+        if (rows.length >= Math.max(limitPerConference, 0)) break;
+        if (seenTeamIds.has(team.id)) continue;
+
+        seenTeamIds.add(team.id);
+        rows.push({
+          conference: conferenceLabel,
+          position: index + 1,
+          team,
+        });
+      }
+
+      return {
+        id: conference.id,
+        name: conference.name,
+        abbreviation: conference.abbreviation,
+        rows,
+      };
+    })
+    .filter((conference) => conference.rows.length > 0);
+}
+
 export function buildStandingsPreviewRows(
   conferences: readonly ConferenceStandings[],
   limit: number,

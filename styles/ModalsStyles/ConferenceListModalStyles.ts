@@ -26,19 +26,11 @@ export const ConferenceListModalStyles = (isDark: boolean) =>
       gap: 12,
       marginBottom: 14,
     },
-
     title: {
       textAlign: "center",
       fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      textAlign: "center",
-      marginTop: 2,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     container: {
       flex: 1,

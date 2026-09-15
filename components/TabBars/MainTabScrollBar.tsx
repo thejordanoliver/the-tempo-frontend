@@ -40,8 +40,13 @@ type UnderlineMetrics = {
   width: number;
 };
 
-const ANIMATION_DURATION = 250;
-const ANIMATION_EASING = Easing.bezier(0.25, 1, 0.5, 1);
+type MeasuredUnderlineLayout = {
+  tabsKey: string;
+  metrics: UnderlineMetrics[];
+};
+
+const ANIMATION_DURATION = 170;
+const ANIMATION_EASING = Easing.out(Easing.cubic);
 
 function getDefaultLabelStyle(
   tab: string,
@@ -70,10 +75,12 @@ export default function MainScrollTabBar<T extends string>({
   const textWidths = useRef(new Map<T, number>());
   const tabMeasurements = useRef(new Map<T, TabMeasurement>());
   const isUnderlineInitialized = useRef(false);
-  const lastScrollProgress = useRef(tabs.indexOf(selected));
   const previousTabsKey = useRef(tabs.join("\u001f"));
-  const [layoutRevision, setLayoutRevision] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(0);
+  const layoutFrame = useRef<number | null>(null);
+  const viewportWidth = useRef(0);
+  const lastScrollRequest = useRef("");
+  const [measuredLayout, setMeasuredLayout] =
+    useState<MeasuredUnderlineLayout | null>(null);
 
   const selectedIndex = tabs.indexOf(selected);
   const tabsKey = tabs.join("\u001f");
@@ -92,62 +99,86 @@ export default function MainScrollTabBar<T extends string>({
     };
   }, []);
 
-  const setUnderlineAtProgress = useCallback(
-    (progress: number): boolean => {
-      if (!tabs.length) {
-        return false;
-      }
-
-      const clampedProgress = Math.max(0, Math.min(tabs.length - 1, progress));
-      const startIndex = Math.floor(clampedProgress);
-      const endIndex = Math.min(startIndex + 1, tabs.length - 1);
-      const startMetrics = getUnderlineMetrics(tabs[startIndex]);
-      const endMetrics = getUnderlineMetrics(tabs[endIndex]);
-
-      if (!startMetrics || !endMetrics) {
-        return false;
-      }
-
-      const amount = clampedProgress - startIndex;
-
-      underlineX.setValue(
-        startMetrics.x + (endMetrics.x - startMetrics.x) * amount,
-      );
-      underlineWidth.setValue(
-        startMetrics.width + (endMetrics.width - startMetrics.width) * amount,
-      );
-
-      isUnderlineInitialized.current = true;
-      return true;
-    },
-    [getUnderlineMetrics, tabs, underlineWidth, underlineX],
-  );
-
   const scrollToTab = useCallback(
     (tab: T, animated: boolean) => {
       const measurement = tabMeasurements.current.get(tab);
+      const visibleWidth = viewportWidth.current;
 
-      if (!measurement || viewportWidth <= 0) {
+      if (!measurement || visibleWidth <= 0) {
         return;
       }
 
+      const requestKey = [
+        tab,
+        measurement.x,
+        measurement.width,
+        visibleWidth,
+      ].join(":");
+
+      if (lastScrollRequest.current === requestKey) {
+        return;
+      }
+
+      lastScrollRequest.current = requestKey;
       scrollRef.current?.scrollTo({
         x: Math.max(
-          measurement.x + measurement.width / 2 - viewportWidth / 2,
+          measurement.x + measurement.width / 2 - visibleWidth / 2,
           0,
         ),
         animated,
       });
     },
-    [viewportWidth],
+    [],
   );
 
-  const handleViewportLayout = useCallback((event: LayoutChangeEvent) => {
-    const nextWidth = event.nativeEvent.layout.width;
-    setViewportWidth((currentWidth) =>
-      currentWidth === nextWidth ? currentWidth : nextWidth,
-    );
-  }, []);
+  const requestLayoutSync = useCallback(() => {
+    if (layoutFrame.current != null) {
+      return;
+    }
+
+    // A tab produces separate label and pressable layout events. Coalescing
+    // them avoids re-rendering the whole bar once for every measurement.
+    layoutFrame.current = requestAnimationFrame(() => {
+      layoutFrame.current = null;
+      const metrics = tabs.map(getUnderlineMetrics);
+
+      if (metrics.some((measurement) => measurement == null)) {
+        return;
+      }
+
+      const nextLayout = {
+        tabsKey,
+        metrics: metrics as UnderlineMetrics[],
+      };
+
+      setMeasuredLayout((currentLayout) => {
+        const isUnchanged =
+          currentLayout?.tabsKey === nextLayout.tabsKey &&
+          currentLayout.metrics.every(
+            (measurement, index) =>
+              measurement.x === nextLayout.metrics[index]?.x &&
+              measurement.width === nextLayout.metrics[index]?.width,
+          );
+
+        return isUnchanged ? currentLayout : nextLayout;
+      });
+    });
+  }, [getUnderlineMetrics, tabs, tabsKey]);
+
+  const handleViewportLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const nextWidth = event.nativeEvent.layout.width;
+
+      if (viewportWidth.current === nextWidth) {
+        return;
+      }
+
+      viewportWidth.current = nextWidth;
+      lastScrollRequest.current = "";
+      scrollToTab(selected, false);
+    },
+    [scrollToTab, selected],
+  );
 
   const handleTextLayout = useCallback((tab: T, event: LayoutChangeEvent) => {
     const nextWidth = event.nativeEvent.layout.width;
@@ -157,8 +188,8 @@ export default function MainScrollTabBar<T extends string>({
     }
 
     textWidths.current.set(tab, nextWidth);
-    setLayoutRevision((revision) => revision + 1);
-  }, []);
+    requestLayoutSync();
+  }, [requestLayoutSync]);
 
   const handleTabLayout = useCallback((tab: T, event: LayoutChangeEvent) => {
     const { x, width } = event.nativeEvent.layout;
@@ -169,8 +200,17 @@ export default function MainScrollTabBar<T extends string>({
     }
 
     tabMeasurements.current.set(tab, { x, width });
-    setLayoutRevision((revision) => revision + 1);
-  }, []);
+    requestLayoutSync();
+  }, [requestLayoutSync]);
+
+  useEffect(
+    () => () => {
+      if (layoutFrame.current != null) {
+        cancelAnimationFrame(layoutFrame.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (previousTabsKey.current === tabsKey) {
@@ -193,7 +233,7 @@ export default function MainScrollTabBar<T extends string>({
     }
 
     isUnderlineInitialized.current = false;
-    lastScrollProgress.current = selectedIndex;
+    lastScrollRequest.current = "";
   }, [selectedIndex, tabs, tabsKey]);
 
   useEffect(() => {
@@ -202,8 +242,16 @@ export default function MainScrollTabBar<T extends string>({
     }
 
     if (scrollProgress) {
+      const metrics = getUnderlineMetrics(selected);
+
+      if (!metrics) {
+        return;
+      }
+
       const wasInitialized = isUnderlineInitialized.current;
-      setUnderlineAtProgress(lastScrollProgress.current);
+      underlineX.setValue(metrics.x);
+      underlineWidth.setValue(metrics.width);
+      isUnderlineInitialized.current = true;
       scrollToTab(selected, wasInitialized);
       return;
     }
@@ -248,31 +296,52 @@ export default function MainScrollTabBar<T extends string>({
     };
   }, [
     getUnderlineMetrics,
-    layoutRevision,
+    measuredLayout,
     scrollProgress,
     scrollToTab,
     selected,
     selectedIndex,
-    setUnderlineAtProgress,
     underlineWidth,
     underlineX,
-    viewportWidth,
   ]);
 
-  useEffect(() => {
-    if (!scrollProgress) {
-      return;
+  const scrollProgressUnderlineStyle = useMemo(() => {
+    if (!scrollProgress || tabs.length === 0) {
+      return null;
     }
 
-    const listenerId = scrollProgress.addListener(({ value }) => {
-      lastScrollProgress.current = value;
-      setUnderlineAtProgress(value);
-    });
+    if (!measuredLayout || measuredLayout.tabsKey !== tabsKey) {
+      return null;
+    }
 
-    return () => {
-      scrollProgress.removeListener(listenerId);
+    const measuredMetrics = measuredLayout.metrics;
+
+    if (measuredMetrics.length === 1) {
+      return {
+        width: measuredMetrics[0].width,
+        transform: [{ translateX: measuredMetrics[0].x }],
+      };
+    }
+
+    const inputRange = measuredMetrics.map((_, index) => index);
+
+    return {
+      width: scrollProgress.interpolate({
+        inputRange,
+        outputRange: measuredMetrics.map(({ width }) => width),
+        extrapolate: "clamp",
+      }),
+      transform: [
+        {
+          translateX: scrollProgress.interpolate({
+            inputRange,
+            outputRange: measuredMetrics.map(({ x }) => x),
+            extrapolate: "clamp",
+          }),
+        },
+      ],
     };
-  }, [scrollProgress, setUnderlineAtProgress]);
+  }, [measuredLayout, scrollProgress, tabs.length, tabsKey]);
 
   const underlineColor = isDark ? Colors.white : Colors.black;
   const tabItems = useMemo(
@@ -285,6 +354,8 @@ export default function MainScrollTabBar<T extends string>({
             key={tab}
             accessibilityRole="tab"
             accessibilityState={{ selected: isSelected }}
+            accessibilityLabel={`Switch to ${tab} tab`}
+            hitSlop={6}
             onPress={() => onTabPress(tab)}
             onLayout={(event) => handleTabLayout(tab, event)}
             style={styles.tabPressable}
@@ -319,6 +390,8 @@ export default function MainScrollTabBar<T extends string>({
         horizontal
         bounces={false}
         contentContainerStyle={styles.scrollContainer}
+        decelerationRate="fast"
+        directionalLockEnabled
         onLayout={handleViewportLayout}
         showsHorizontalScrollIndicator={false}
       >
@@ -329,10 +402,12 @@ export default function MainScrollTabBar<T extends string>({
             pointerEvents="none"
             style={[
               styles.underline,
-              {
+              scrollProgressUnderlineStyle ?? {
                 width: underlineWidth,
-                backgroundColor: underlineColor,
                 transform: [{ translateX: underlineX }],
+              },
+              {
+                backgroundColor: underlineColor,
               },
             ]}
           />
