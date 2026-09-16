@@ -26,6 +26,7 @@ import {
 import type { Team } from "types/types";
 import { subscribeAuthSession } from "utils/apiClient";
 import { removeCachedUserProfile } from "utils/userProfileCache";
+import { useNotifications } from "contexts/NotificationContext";
 import { useFavoriteSports } from "./useFavoriteSports";
 
 export type TeamWithLeague = Team & {
@@ -53,6 +54,7 @@ export function useFavoriteTeams() {
   const currentUserIdRef = useRef<number | null>(null);
   const hasLoadedFavoritesRef = useRef(false);
   const router = useRouter();
+  const { refreshTeamSubscriptions } = useNotifications();
   const favoriteSportsState = useFavoriteSports(userId);
   const { clearFavoriteSports } = favoriteSportsState;
 
@@ -301,6 +303,7 @@ export function useFavoriteTeams() {
         );
 
         await removeCachedUserProfile(String(userId));
+        await refreshTeamSubscriptions();
 
         return true;
       } catch (error: any) {
@@ -314,7 +317,7 @@ export function useFavoriteTeams() {
         return false;
       }
     },
-    [userId],
+    [refreshTeamSubscriptions, userId],
   );
 
   /* ---------------- TOGGLE FAVORITE ---------------- */

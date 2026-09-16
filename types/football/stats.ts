@@ -166,6 +166,21 @@ export type BuiltStatMaps = {
  * easier in the UI.
  */
 export type TeamStats = {
+  team: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    recordSummary: string;
+    standingSummary: string;
+  };
+
+  season: {
+    year: string;
+    type: string;
+    name: string;
+    displayName: string;
+  };
+
   // --------------------------------------------------------------------------
   // Passing
   // --------------------------------------------------------------------------

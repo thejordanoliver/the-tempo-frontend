@@ -19,7 +19,10 @@ import {
   View,
 } from "react-native";
 import { formStyles } from "styles/FormStyles";
-import type { SignupFormValues } from "schemas/auth/signupSchema";
+import {
+  SIGNUP_PASSWORD_REQUIREMENTS,
+  type SignupFormValues,
+} from "schemas/auth/signupSchema";
 import type { LeagueType } from "types/types";
 
 import { getNBATeamLogo } from "@/constants/teams";
@@ -342,6 +345,10 @@ export default function SignUpForm({
                       {fieldState.error.message}
                     </Text>
                   )}
+
+                  <Text selectable style={styles.fieldHelperText}>
+                    {SIGNUP_PASSWORD_REQUIREMENTS}
+                  </Text>
                 </View>
               )}
             />

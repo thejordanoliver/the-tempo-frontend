@@ -61,7 +61,7 @@ export default function ForYouFeed({
     [articles, posts],
   );
 
-  if (loading) {
+  if (loading || feed.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <NewsCardSkeleton />

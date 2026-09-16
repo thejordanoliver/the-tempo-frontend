@@ -8,7 +8,16 @@ import { z } from "zod";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const USERNAME_PATTERN = /^[a-z0-9._-]+$/;
+const SIGNUP_PASSWORD_MIN_LENGTH = 12;
+const SIGNUP_PASSWORD_MAX_LENGTH = 128;
+const LOWERCASE_PATTERN = /[a-z]/;
+const UPPERCASE_PATTERN = /[A-Z]/;
+const NUMBER_PATTERN = /\d/;
+const SYMBOL_PATTERN = /[^A-Za-z0-9\s]/;
 const FAVORITE_SPORT_IDS = new Set<string>(BROWSEABLE_LEAGUES);
+
+export const SIGNUP_PASSWORD_REQUIREMENTS =
+  "Use 12–128 characters with uppercase, lowercase, a number, and a symbol.";
 
 const favoriteTeamSchema = z.custom<FavoriteTeamKey>(
   (value) => normalizeFavoriteTeamKey(value) !== null,
@@ -48,8 +57,18 @@ export const signupSchema = z
     password: z
       .string()
       .min(1, "Password is required.")
-      .min(8, "Password must be at least 8 characters.")
-      .max(128, "Password must be 128 characters or fewer."),
+      .min(
+        SIGNUP_PASSWORD_MIN_LENGTH,
+        `Password must be at least ${SIGNUP_PASSWORD_MIN_LENGTH} characters.`,
+      )
+      .max(
+        SIGNUP_PASSWORD_MAX_LENGTH,
+        `Password must be ${SIGNUP_PASSWORD_MAX_LENGTH} characters or fewer.`,
+      )
+      .regex(LOWERCASE_PATTERN, "Password must include a lowercase letter.")
+      .regex(UPPERCASE_PATTERN, "Password must include an uppercase letter.")
+      .regex(NUMBER_PATTERN, "Password must include a number.")
+      .regex(SYMBOL_PATTERN, "Password must include a symbol."),
     confirmPassword: z
       .string()
       .min(1, "Confirm your password.")

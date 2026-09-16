@@ -9,8 +9,8 @@ const validSignup = {
   fullName: "Tempo Fan",
   username: "tempo.fan",
   email: "fan@example.com",
-  password: "password123",
-  confirmPassword: "password123",
+  password: "TempoFan123!",
+  confirmPassword: "TempoFan123!",
   favoriteTeams: ["nba:1"],
   favoriteSports: ["nba"],
   profileImage: null,
@@ -47,6 +47,34 @@ test("signup schema enforces backend limits and matching passwords", () => {
     assert.ok(paths.includes("password"));
     assert.ok(paths.includes("confirmPassword"));
   }
+});
+
+test("signup schema requires a strong password for new accounts", () => {
+  const missingUppercase = signupSchema.safeParse({
+    ...validSignup,
+    password: "tempofan123!",
+    confirmPassword: "tempofan123!",
+  });
+  const missingLowercase = signupSchema.safeParse({
+    ...validSignup,
+    password: "TEMPOFAN123!",
+    confirmPassword: "TEMPOFAN123!",
+  });
+  const missingNumber = signupSchema.safeParse({
+    ...validSignup,
+    password: "TempoFanPass!",
+    confirmPassword: "TempoFanPass!",
+  });
+  const missingSymbol = signupSchema.safeParse({
+    ...validSignup,
+    password: "TempoFan1234",
+    confirmPassword: "TempoFan1234",
+  });
+
+  assert.equal(missingUppercase.success, false);
+  assert.equal(missingLowercase.success, false);
+  assert.equal(missingNumber.success, false);
+  assert.equal(missingSymbol.success, false);
 });
 
 test("forgot-password schema validates and normalizes the recovery payload", () => {

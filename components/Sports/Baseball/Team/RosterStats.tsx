@@ -685,7 +685,6 @@ export default function RosterStats({
     }
 
     const summaryRows: readonly TeamStatRow[] = [
-      { label: "Team", value: teamStats.team.fullName || teamStats.team.name },
       { label: "Record", value: teamStats.team.recordSummary },
       { label: "Standing", value: teamStats.team.standingSummary },
       { label: "Season", value: teamStats.season.displayName },

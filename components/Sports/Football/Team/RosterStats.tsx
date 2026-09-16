@@ -1,4 +1,4 @@
-import PillTabs, { PillTabOption } from "@/components/TabBars/PillTabs";
+import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import {
   FootballLeaderConfig,
   FootballPlayerStatTable,
@@ -31,13 +31,6 @@ import {
   View,
 } from "react-native";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
-
-const STAT_TAB_OPTIONS = STAT_TABS.map(
-  (tab): PillTabOption<StatTab> => ({
-    label: tab,
-    value: tab,
-  }),
-);
 
 const formatValue = (value: number | undefined | null, suffix = "") => {
   const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
@@ -936,6 +929,40 @@ export default function RosterStats({
     );
   };
 
+  const renderTeamStatsSection = (
+    title: string,
+    rows: readonly { label: string; value: string | number }[],
+  ) => (
+    <View>
+      <Text style={styles.categoryTitle}>{title}</Text>
+
+      <View style={styles.table}>
+        {rows.map((row, index) => (
+          <View
+            key={row.label}
+            style={[
+              styles.teamTableRow,
+              index === rows.length - 1 && { borderBottomWidth: 0 },
+              index % 2 === 1 && {
+                backgroundColor: isDark
+                  ? Colors.dark.itemBackground
+                  : Colors.light.itemBackground,
+              },
+            ]}
+          >
+            <Text style={[styles.tableCell, styles.headerText]}>
+              {row.label}
+            </Text>
+
+            <Text style={[styles.tableCell, styles.teamStatValue]}>
+              {row.value === "" ? "-" : row.value}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+
   const renderTeamStats = () => {
     if (!teamStats) {
       return (
@@ -951,39 +978,26 @@ export default function RosterStats({
       ? categories.filter((statCategory) => statCategory.key === category)
       : categories;
 
+    const summaryRows = [
+      { label: "Record", value: teamStats.team.recordSummary },
+      { label: "Standing", value: teamStats.team.standingSummary },
+      { label: "Season", value: teamStats.season.displayName },
+    ];
+
     return (
-      <View>
+      <View style={styles.teamTableContainer}>
+        {!category && renderTeamStatsSection("Team Summary", summaryRows)}
+
         {statsToDisplay.map((cat) => (
-          <View key={cat.key} style={{ marginBottom: 20 }}>
-            <Text style={styles.categoryTitle}>{cat.name}</Text>
-
-            <View style={styles.table}>
-              {cat.stats.map((stat: StatRow, index: number) => (
-                <View
-                  key={`${cat.key}-${stat.name}-${index}`}
-                  style={[
-                    styles.teamTableRow,
-                    index === cat.stats.length - 1 && {
-                      borderBottomWidth: 0,
-                    },
-                    index % 2 === 1 && {
-                      backgroundColor: isDark
-                        ? Colors.dark.itemBackground
-                        : Colors.light.itemBackground,
-                    },
-                  ]}
-                >
-                  <Text style={[styles.tableCell, styles.headerText]}>
-                    {stat.displayName}
-                  </Text>
-
-                  <Text style={[styles.tableCell, styles.statValue]}>
-                    {stat.displayValue}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
+          <React.Fragment key={cat.key}>
+            {renderTeamStatsSection(
+              cat.name,
+              cat.stats.map((stat: StatRow) => ({
+                label: stat.displayName,
+                value: stat.displayValue,
+              })),
+            )}
+          </React.Fragment>
         ))}
       </View>
     );
@@ -1023,10 +1037,11 @@ export default function RosterStats({
       }
       keyboardShouldPersistTaps="handled"
     >
-      <PillTabs<StatTab>
-        tabs={STAT_TAB_OPTIONS}
-        selectedValue={selectedTab}
-        onChange={handleTabPress}
+      <MainScrollTabBar
+        tabs={STAT_TABS}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
       />
 
       {mountedTabs["Player Stats"] && (
@@ -1040,7 +1055,7 @@ export default function RosterStats({
           {renderPlayerStats()}
         </View>
       )}
-      
+
       {mountedTabs["Team Stats"] && (
         <View
           style={[

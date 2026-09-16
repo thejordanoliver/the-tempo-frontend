@@ -99,6 +99,7 @@ type NotificationContextType = {
   clearCenterNotifications: () => void;
   teamSubscriptions: TeamNotificationSubscription[];
   gameSubscriptions: GameNotificationSubscription[];
+  refreshTeamSubscriptions: () => Promise<boolean>;
   toggleTeamNotifications: (
     sport: NotificationTeamSport,
     league: string,
@@ -629,6 +630,38 @@ export function NotificationProvider({
     [teamSubscriptions],
   );
 
+  const refreshTeamSubscriptions = useCallback(async () => {
+    const generation = generationRef.current;
+    const userId = userIdRef.current;
+
+    if (!userId) return false;
+
+    try {
+      const subscriptions = await getTeamNotificationSubscriptions();
+      if (
+        generationRef.current !== generation ||
+        userIdRef.current !== userId
+      ) {
+        return false;
+      }
+
+      setTeamSubscriptions(subscriptions);
+      return true;
+    } catch (caught) {
+      if (
+        generationRef.current === generation &&
+        userIdRef.current === userId
+      ) {
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : "Failed to refresh team alerts",
+        );
+      }
+      return false;
+    }
+  }, []);
+
   const toggleTeamNotifications = useCallback(
     async (
       sport: NotificationTeamSport,
@@ -964,6 +997,7 @@ export function NotificationProvider({
       clearCenterNotifications,
       teamSubscriptions,
       gameSubscriptions,
+      refreshTeamSubscriptions,
       toggleTeamNotifications,
       isTeamNotified,
       toggleGameNotifications,
@@ -995,6 +1029,7 @@ export function NotificationProvider({
       markConversationNotificationsRead,
       mergeRealtimeNotification,
       refreshing,
+      refreshTeamSubscriptions,
       refreshNotifications,
       removeCenterNotification,
       removeAllCenterNotifications,

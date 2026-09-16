@@ -120,6 +120,14 @@ export const formStyles = (isDark: boolean) => {
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
+    fieldHelperText: {
+      paddingHorizontal: SPACING.xs,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 13,
+      lineHeight: 18,
+      color: subtleText,
+    },
+
     reviewInput: {
       marginTop: SPACING.xs,
       paddingVertical: SPACING.md,

@@ -421,6 +421,20 @@ export function useTeamStats(teamId: string | number, league: string) {
         0;
 
       const aggregated: TeamStats = {
+        team: {
+          id: String(response.data.team?.id ?? ""),
+          name: response.data.team?.name ?? "",
+          abbreviation: response.data.team?.abbreviation ?? "",
+          recordSummary: response.data.team?.recordSummary ?? "",
+          standingSummary: response.data.team?.standingSummary ?? "",
+        },
+        season: {
+          year: String(response.data.season?.year ?? ""),
+          type: String(response.data.season?.type ?? ""),
+          name: response.data.season?.name ?? "",
+          displayName: response.data.season?.displayName ?? "",
+        },
+
         // ================= Passing =================
         completionPct:
           normalizePercent(

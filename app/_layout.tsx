@@ -359,15 +359,15 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PreferencesProvider>
-        <FavoriteTeamsProvider>
-          <ExploreWidgetsProvider>
-            <BottomSheetModalProvider>
-              <NotificationProvider>
+        <BottomSheetModalProvider>
+          <NotificationProvider>
+            <FavoriteTeamsProvider>
+              <ExploreWidgetsProvider>
                 <AppLayout />
-              </NotificationProvider>
-            </BottomSheetModalProvider>
-          </ExploreWidgetsProvider>
-        </FavoriteTeamsProvider>
+              </ExploreWidgetsProvider>
+            </FavoriteTeamsProvider>
+          </NotificationProvider>
+        </BottomSheetModalProvider>
       </PreferencesProvider>
     </GestureHandlerRootView>
   );
