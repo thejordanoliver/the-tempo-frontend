@@ -1,5 +1,6 @@
 // components/Sports/Basketball/TournamentBracket/TournamentTreeBracket.tsx
 
+import Button from "@/components/Buttons/Button";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, globalStyles } from "@/constants/styles";
 import { getCBBTeamLogo } from "@/constants/teamsCBB";
@@ -17,7 +18,7 @@ import {
   CBBTournamentBracketStyles,
 } from "@/styles/PlayoffStyles/CBBTournamentBracketStyles";
 import React, { useMemo, useRef } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {
   BRACKET_LAYOUT,
@@ -1312,11 +1313,20 @@ export default function TournamentTreeBracket({
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyTitle}>Tournament unavailable</Text>
-        <Text style={styles.emptyBody}>{error}</Text>
+        <Button variant={"text"} onPress={() => void refresh()} isDark>
+          Try Again
+        </Button>
+      </View>
+    );
+  }
 
-        <Pressable onPress={() => void refresh()}>
-          <Text style={styles.retryText}>Try Again</Text>
-        </Pressable>
+  if (regions.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>No bracket data</Text>
+        <Text style={styles.emptyBody}>
+          No regional tournament games are available.
+        </Text>
       </View>
     );
   }
@@ -1356,38 +1366,29 @@ export default function TournamentTreeBracket({
           ) : null}
         </View>
 
-        {regions.length > 0 ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator
-            scrollEventThrottle={16}
-            onScroll={(event) => {
-              roundHeaderScrollRef.current?.scrollTo({
-                x: event.nativeEvent.contentOffset.x,
-                animated: false,
-              });
-            }}
-            contentContainerStyle={[
-              styles.horizontalScrollContent,
-              { paddingHorizontal: 12 },
-            ]}
-          >
-            <TournamentQuadrant
-              regions={regions}
-              finalFourGames={finalFourGames}
-              championshipGame={championshipGame}
-              isDark={isDark}
-              league={league}
-            />
-          </ScrollView>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyTitle}>No bracket data</Text>
-            <Text style={styles.emptyBody}>
-              No regional tournament games are available.
-            </Text>
-          </View>
-        )}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator
+          scrollEventThrottle={16}
+          onScroll={(event) => {
+            roundHeaderScrollRef.current?.scrollTo({
+              x: event.nativeEvent.contentOffset.x,
+              animated: false,
+            });
+          }}
+          contentContainerStyle={[
+            styles.horizontalScrollContent,
+            { paddingHorizontal: 12 },
+          ]}
+        >
+          <TournamentQuadrant
+            regions={regions}
+            finalFourGames={finalFourGames}
+            championshipGame={championshipGame}
+            isDark={isDark}
+            league={league}
+          />
+        </ScrollView>
       </ScrollView>
     </View>
   );

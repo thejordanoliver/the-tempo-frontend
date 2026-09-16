@@ -1553,6 +1553,13 @@ function printList(title: string, values: string[]): void {
 }
 
 async function main(): Promise<void> {
+  // npx tsx scripts/downloadTeamLogos.ts --soccer [--dry-run]
+  if (process.argv.includes("--soccer")) {
+    const { downloadSoccerTeamLogos } = await import("./downloadSoccerTeamLogos");
+    await downloadSoccerTeamLogos();
+    return;
+  }
+
   if (!fs.existsSync(LOGO_DIR)) {
     throw new Error("College logo directory not found: " + LOGO_DIR);
   }
@@ -1732,7 +1739,7 @@ async function main(): Promise<void> {
 
 main().catch((error) => {
   console.error("");
-  console.error("College logo refresh failed:");
+  console.error("Team logo refresh failed:");
   console.error(error instanceof Error ? error.message : String(error));
   console.error("");
   process.exitCode = 1;

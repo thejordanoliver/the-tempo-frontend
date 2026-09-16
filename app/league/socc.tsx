@@ -96,7 +96,7 @@ export default function SoccerLeagueScreen() {
     navigation.setOptions({
       header: () => (
         <CustomHeader
-          tabName={league.toUpperCase()}
+          tabName={leagueLabel}
           league={leagueLabel}
           onBack={goBack}
           {...favoriteHeaderProps}
