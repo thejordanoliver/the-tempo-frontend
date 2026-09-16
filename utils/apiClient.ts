@@ -23,6 +23,13 @@ export const verifyResetCode = (email: string, code: string) =>
 export const resetPassword = (email: string, code: string, password: string) =>
   apiClient.post("/api/reset-password", { email, code, password });
 
+export type SignupIdentityField = "username" | "email";
+
+export const checkSignupAvailability = (
+  field: SignupIdentityField,
+  value: string,
+) => apiClient.post("/api/signup/check-availability", { field, value });
+
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
 export const getAccessToken = () => AsyncStorage.getItem("accessToken");

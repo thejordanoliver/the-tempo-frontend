@@ -206,4 +206,7 @@ export const globalStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
+    pressed: {
+      opacity: activeOpacity,
+    },
   });

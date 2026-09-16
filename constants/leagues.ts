@@ -21,6 +21,7 @@ import GLeagueLogo from "assets/NBA/Logos/GLeague.png";
 import GLeagueLogoLight from "assets/NBA/Logos/GLeagueLight.png";
 import NBALogo from "assets/NBA/Logos/NBA.png";
 import F1Logo from "assets/Racing/Logos/f1.png";
+import F1LogoLight from "assets/Racing/Logos/f1Light.png";
 import NascarLogo from "assets/Racing/Logos/Nascar.png";
 import NascarLightLogo from "assets/Racing/Logos/NascarLight.png";
 import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
@@ -153,7 +154,7 @@ export const LEAGUE_CONFIG = {
     color: "#E10600",
     secondaryColor: "#15151E",
     logo: F1Logo,
-    logoLight: F1Logo,
+    logoLight: F1LogoLight,
     route: "/league/racing",
   },
 

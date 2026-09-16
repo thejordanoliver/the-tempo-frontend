@@ -373,109 +373,108 @@ export const TeamRowStyles = (isDark: boolean, _isTie?: boolean) =>
     },
   });
 
+export const CompetitorRowStyles = (isDark: boolean, isTie?: boolean) =>
+  StyleSheet.create({
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 8,
+    },
+    teamInfoContainer: {
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    teamInfo: {
+      justifyContent: "center",
+    },
+    flagStack: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
 
-  export const CompetitorRowStyles = (isDark: boolean, isTie?: boolean) =>
-    StyleSheet.create({
-      row: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: 8,
-      },
-      teamInfoContainer: {
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      teamInfo: {
-        justifyContent: "center",
-      },
-      flagStack: {
-        flexDirection: "row",
-        alignItems: "center",
-      },
+    flagContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+      width: 40,
+      height: 40,
+      borderRadius: 999,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.white : Colors.black,
+      overflow: "hidden",
+      marginBottom: 4,
+    },
 
-      flagContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        width: 40,
-        height: 40,
-        borderRadius: 999,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: isDark ? Colors.white : Colors.black,
-        overflow: "hidden",
-        marginBottom: 4,
-      },
+    flag: {
+      width: 68,
+      height: 68,
+    },
 
-      flag: {
-        width: 68,
-        height: 68,
-      },
+    overlappingFlag: {
+      marginLeft: -20,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
 
-      overlappingFlag: {
-        marginLeft: -20,
-        backgroundColor: isDark
-          ? Colors.dark.itemBackground
-          : Colors.light.itemBackground,
-      },
-
-      nameRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      name: {
-        width: 80,
-        fontFamily: Fonts.REGULAR,
-        fontSize: 12,
-        color: isDark ? Colors.white : Colors.black,
-        textAlign: "center",
-      },
-      rank: {
-        fontSize: 10,
-        color: Colors.lightGray,
-      },
-      record: {
-        fontFamily: Fonts.REGULAR,
-        fontSize: 12,
-        color: isTie
-          ? isDark
-            ? Colors.white
-            : Colors.black
-          : isDark
-            ? Colors.white
-            : Colors.black,
-        textAlign: "center",
-      },
-      score: {
-        width: 60,
-        marginHorizontal: 16,
-        fontFamily: Fonts.BOLD,
-        fontSize: 36,
-        textAlign: "center",
-      },
-      preGameRecord: {
-        width: 80,
-        marginHorizontal: 8,
-        fontFamily: Fonts.BOLD,
-        fontSize: 20,
-        color: isDark ? Colors.white : Colors.black,
-        textAlign: "center",
-      },
-      scoreWrapper: {
-        position: "relative",
-        alignItems: "center",
-        justifyContent: "center",
-      },
-      serveIndicator: {
-        position: "absolute",
-        bottom: -10,
-        width: 7,
-        height: 7,
-        borderRadius: 999,
-        backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
-      },
-    });
+    nameRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    name: {
+      width: 80,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    rank: {
+      fontSize: 10,
+      color: Colors.lightGray,
+    },
+    record: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isTie
+        ? isDark
+          ? Colors.white
+          : Colors.black
+        : isDark
+          ? Colors.white
+          : Colors.black,
+      textAlign: "center",
+    },
+    score: {
+      width: 60,
+      marginHorizontal: 16,
+      fontFamily: Fonts.BOLD,
+      fontSize: 36,
+      textAlign: "center",
+    },
+    preGameRecord: {
+      width: 80,
+      marginHorizontal: 8,
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    scoreWrapper: {
+      position: "relative",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    serveIndicator: {
+      position: "absolute",
+      bottom: -10,
+      width: 7,
+      height: 7,
+      borderRadius: 999,
+      backgroundColor: isDark ? Colors.dark.limeGreen : Colors.light.green,
+    },
+  });
 
 /* ============================================================
  * Racing Driver Row Styles
@@ -492,11 +491,9 @@ export const DriverRowStyles = (isDark: boolean, _isTie?: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      padding: 12,
-
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderRadius: 8,
+      paddingVertical: 12,
     },
 
     driverContainer: {
@@ -519,11 +516,9 @@ export const DriverRowStyles = (isDark: boolean, _isTie?: boolean) =>
       width: 40,
       height: 40,
       marginHorizontal: 8,
-
       borderWidth: 1,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderRadius: 999,
-
       overflow: "hidden",
     },
 

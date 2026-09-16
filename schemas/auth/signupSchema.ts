@@ -34,7 +34,6 @@ export const signupSchema = z
     fullName: z
       .string()
       .trim()
-      .min(1, "Name is required.")
       .max(80, "Name must be 80 characters or fewer."),
     username: z
       .string()

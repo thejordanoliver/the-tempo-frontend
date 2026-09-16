@@ -2,10 +2,10 @@ import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { useFavoriteTeamsContext } from "@/contexts/FavoriteTeamsContext";
 import FavoriteSportsSelector from "components/Favorites/FavoriteSportsSelector";
 import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Controller, type Control, useWatch } from "react-hook-form";
+import { type Control, useWatch } from "react-hook-form";
 import {
   Animated,
   Easing,
@@ -14,7 +14,6 @@ import {
   Pressable,
   ScrollView,
   Text,
-  TextInput,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -38,6 +37,7 @@ import { getWNBATeamLogo } from "@/constants/teamsWNBA";
 import Button from "../Buttons/Button";
 import SelectionCard from "../Favorites/SelectionCard";
 import TabBar from "../TabBars/TabBar";
+import FormInput from "./FormInput";
 
 export type SignupStepsProps = {
   control: Control<SignupFormValues>;
@@ -207,184 +207,66 @@ export default function SignUpForm({
 
   const renderStep = () => {
     switch (signupStep) {
-      // Step 0: Name & Username
       case 0:
         return (
           <View style={styles.formWrapper}>
-            <Controller
+            <FormInput
               control={control}
               name="fullName"
-              render={({ field, fieldState }) => (
-                <View style={styles.field}>
-                  <View
-                    style={[styles.input, fieldState.error && styles.inputError]}
-                  >
-                    <TextInput
-                      placeholder="Name"
-                      ref={field.ref}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
-                      style={styles.inputText}
-                      placeholderTextColor={Colors.midTone}
-                      autoComplete="name"
-                      textContentType="name"
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  {fieldState.error?.message && (
-                    <Text style={styles.fieldErrorText}>
-                      {fieldState.error.message}
-                    </Text>
-                  )}
-                </View>
-              )}
+              placeholder="Name (optional)"
+              autoComplete="name"
+              textContentType="name"
+              returnKeyType="next"
             />
-
-            <Controller
+            <FormInput
               control={control}
               name="username"
-              render={({ field, fieldState }) => (
-                <View style={styles.field}>
-                  <View
-                    style={[styles.input, fieldState.error && styles.inputError]}
-                  >
-                    <TextInput
-                      placeholder="Username"
-                      ref={field.ref}
-                      value={field.value}
-                      onChangeText={(value) => field.onChange(value.toLowerCase())}
-                      onBlur={field.onBlur}
-                      style={styles.inputText}
-                      placeholderTextColor={Colors.midTone}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      autoComplete="username-new"
-                      textContentType="username"
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  {fieldState.error?.message && (
-                    <Text style={styles.fieldErrorText}>
-                      {fieldState.error.message}
-                    </Text>
-                  )}
-                </View>
-              )}
+              placeholder="Username"
+              normalize={(value) => value.toLowerCase()}
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="username-new"
+              textContentType="username"
+              returnKeyType="next"
             />
           </View>
         );
-
-      // Step 1: Email & Password
       case 1:
         return (
           <View style={styles.formWrapper}>
-            <Controller
+            <FormInput
               control={control}
               name="email"
-              render={({ field, fieldState }) => (
-                <View style={styles.field}>
-                  <View
-                    style={[styles.input, fieldState.error && styles.inputError]}
-                  >
-                    <TextInput
-                      placeholder="johndoe@example.com"
-                      keyboardType="email-address"
-                      ref={field.ref}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
-                      style={styles.inputText}
-                      placeholderTextColor={Colors.midTone}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      autoComplete="email"
-                      textContentType="emailAddress"
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  {fieldState.error?.message && (
-                    <Text style={styles.fieldErrorText}>
-                      {fieldState.error.message}
-                    </Text>
-                  )}
-                </View>
-              )}
+              placeholder="johndoe@example.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="email"
+              textContentType="emailAddress"
+              returnKeyType="next"
             />
-
-            <Controller
+            <FormInput
               control={control}
               name="password"
-              render={({ field, fieldState }) => (
-                <View style={styles.field}>
-                  <View
-                    style={[styles.input, fieldState.error && styles.inputError]}
-                  >
-                    <TextInput
-                      placeholder="Password"
-                      secureTextEntry
-                      ref={field.ref}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
-                      style={styles.inputText}
-                      placeholderTextColor={Colors.midTone}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      autoComplete="new-password"
-                      textContentType="newPassword"
-                      returnKeyType="next"
-                    />
-                  </View>
-
-                  {fieldState.error?.message && (
-                    <Text style={styles.fieldErrorText}>
-                      {fieldState.error.message}
-                    </Text>
-                  )}
-
-                  <Text selectable style={styles.fieldHelperText}>
-                    {SIGNUP_PASSWORD_REQUIREMENTS}
-                  </Text>
-                </View>
-              )}
+              placeholder="Password"
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="new-password"
+              textContentType="newPassword"
+              returnKeyType="next"
+              helperText={SIGNUP_PASSWORD_REQUIREMENTS}
             />
-
-            <Controller
+            <FormInput
               control={control}
               name="confirmPassword"
-              render={({ field, fieldState }) => (
-                <View style={styles.field}>
-                  <View
-                    style={[styles.input, fieldState.error && styles.inputError]}
-                  >
-                    <TextInput
-                      placeholder="Confirm Password"
-                      secureTextEntry
-                      ref={field.ref}
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      onBlur={field.onBlur}
-                      style={styles.inputText}
-                      placeholderTextColor={Colors.midTone}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      autoComplete="new-password"
-                      textContentType="newPassword"
-                      returnKeyType="done"
-                    />
-                  </View>
-
-                  {fieldState.error?.message && (
-                    <Text style={styles.fieldErrorText}>
-                      {fieldState.error.message}
-                    </Text>
-                  )}
-                </View>
-              )}
+              placeholder="Confirm Password"
+              secureTextEntry
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoComplete="new-password"
+              textContentType="newPassword"
+              returnKeyType="done"
             />
           </View>
         );

@@ -5,15 +5,15 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  Keyboard,
   Pressable,
   TextInput,
-  TouchableWithoutFeedback,
   View,
-} from "react-native"; // FIX #9: merged into a single import block
+} from "react-native";
 import { formStyles } from "styles/FormStyles";
+import AuthFormLayout from "./AuthFormLayout";
 
 type SignInFormProps = {
+  isSubmitting?: boolean;
   username: string;
   password: string;
   showPassword: boolean;
@@ -51,12 +51,15 @@ export default function SignInForm({ ...props }: SignInFormProps) {
   }, [props.showPassword, scaleAnim]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+    <AuthFormLayout>
       <View style={styles.sectionContainer}>
         <View style={styles.formWrapper}>
           <View style={styles.input}>
             <TextInput
               placeholder="Username"
+              editable={!props.isSubmitting}
+              autoCorrect={false}
+              textContentType="username"
               value={props.username}
               onChangeText={props.onUsernameChange}
               style={styles.inputText}
@@ -68,6 +71,10 @@ export default function SignInForm({ ...props }: SignInFormProps) {
           <View style={styles.input}>
             <TextInput
               placeholder="Password"
+              editable={!props.isSubmitting}
+              autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="password"
               value={props.password}
               onChangeText={props.onPasswordChange}
               secureTextEntry={!props.showPassword}
@@ -92,18 +99,19 @@ export default function SignInForm({ ...props }: SignInFormProps) {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Button isDark={isDark} onPress={props.onSubmit}>
-            Sign In
+          <Button isDark={isDark} onPress={props.onSubmit} disabled={props.isSubmitting}>
+            {props.isSubmitting ? "Signing In…" : "Sign In"}
           </Button>
           <Button
             isDark={isDark}
             onPress={props.onForgotPassword}
+            disabled={props.isSubmitting}
             variant="text"
           >
             Forgot Password?
           </Button>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </AuthFormLayout>
   );
 }

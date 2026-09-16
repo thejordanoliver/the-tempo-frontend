@@ -25,7 +25,7 @@ type Props = {
 };
 
 const ITEM_WIDTH = 70;
-const ITEM_HEIGHT = 44;
+const ITEM_HEIGHT = 50;
 const SIDE_PADDING = 12;
 const ITEM_SPACING = 0;
 

@@ -114,7 +114,8 @@ function AppLayout() {
 
   const { resolvedColorScheme } = usePreferences();
 
-  const { clearCenterNotifications } = useNotifications();
+  const { clearCenterNotifications, refreshTeamSubscriptions } =
+    useNotifications();
 
   const isDark = resolvedColorScheme === "dark";
 
@@ -230,6 +231,12 @@ function AppLayout() {
   }, [pathname, shouldHideTabBar]);
 
   useEffect(() => {
+    if (pathname?.startsWith("/team/")) {
+      void refreshTeamSubscriptions();
+    }
+  }, [pathname, refreshTeamSubscriptions]);
+
+  useEffect(() => {
     if (!loadingUser && !checkingStoredSession) {
       SplashScreen.hideAsync().catch(() => {
         // Prevents app crashes if the splash screen is already hidden.
@@ -293,7 +300,7 @@ function AppLayout() {
 
           <Stack.Screen
             name="forgot-password"
-            options={{ headerShown: false }}
+            options={{ headerShown: true }}
           />
 
           <Stack.Screen

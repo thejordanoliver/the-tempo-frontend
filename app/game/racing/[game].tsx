@@ -2,7 +2,7 @@ import {
   GameLiveChatOverlay,
   GameLocation,
 } from "@/components/Sports/Basketball/GameDetails";
-import GameHeader from "@/components/Sports/Racing/GameDetails/GameHeader";
+import DriversHeader from "@/components/Sports/Racing/GameDetails/DriversHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
 import { shouldShowGameChat } from "@/utils/dateUtils";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -135,7 +135,7 @@ export default function GameDetailsScreen(
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}
       >
-        <GameHeader
+        <DriversHeader
           drivers={drivers}
           gameStatusDescription={gameStatusDescription}
           isDark={isDark}

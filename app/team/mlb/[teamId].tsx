@@ -269,7 +269,7 @@ export default function TeamDetailScreen() {
 
         {/* FORUM */}
         <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamIdStr ?? ""} league={league} />
+          <ForumFeed teamId={teamIdStr} league={league} />
         </View>
       </PagerView>
 

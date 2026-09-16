@@ -9,7 +9,6 @@ import {
 } from "@/services/notificationsApi";
 import {
   deleteGameNotificationSubscription,
-  deleteTeamNotificationSubscription,
   getGameNotificationSubscriptions,
   getTeamNotificationSubscriptions,
   saveGameNotificationSubscription,
@@ -24,6 +23,7 @@ import type {
 import type { NotificationEventSettings } from "@/utils/notification-settings";
 import {
   DEFAULT_NOTIFICATION_EVENT_SETTINGS,
+  DISABLED_NOTIFICATION_EVENT_SETTINGS,
   hasEnabledNotificationSetting,
   mergeNotificationSettings,
   notificationSettingsFromSubscription,
@@ -619,13 +619,17 @@ export function NotificationProvider({
 
   const isTeamNotified = useCallback(
     (sport: NotificationTeamSport, league: string, teamId: string | number) =>
-      teamSubscriptions.some(
-        (subscription) =>
-          subscriptionKey(
-            subscription.sport,
-            subscription.league,
-            subscription.teamId,
-          ) === subscriptionKey(sport, league, teamId),
+      hasEnabledNotificationSetting(
+        teamSubscriptions
+          .filter(
+            (subscription) =>
+              subscriptionKey(
+                subscription.sport,
+                subscription.league,
+                subscription.teamId,
+              ) === subscriptionKey(sport, league, teamId),
+          )
+          .map(notificationSettingsFromSubscription)[0] ?? null,
       ),
     [teamSubscriptions],
   );
@@ -677,9 +681,20 @@ export function NotificationProvider({
             subscription.teamId,
           ) === key,
       );
-      if (existing) {
-        setTeamSubscriptions((current) =>
-          current.filter(
+      const existingEnabled = existing
+        ? hasEnabledNotificationSetting(
+            notificationSettingsFromSubscription(existing),
+          )
+        : false;
+
+      if (existing && existingEnabled) {
+        const optimistic = {
+          ...existing,
+          ...DISABLED_NOTIFICATION_EVENT_SETTINGS,
+          updatedAt: new Date().toISOString(),
+        };
+        setTeamSubscriptions((current) => [
+          ...current.filter(
             (subscription) =>
               subscriptionKey(
                 subscription.sport,
@@ -687,11 +702,38 @@ export function NotificationProvider({
                 subscription.teamId,
               ) !== key,
           ),
-        );
+          optimistic,
+        ]);
         try {
-          await deleteTeamNotificationSubscription(sport, league, teamId);
+          const saved = await saveTeamNotificationSubscription(
+            sport,
+            league,
+            teamId,
+            DISABLED_NOTIFICATION_EVENT_SETTINGS,
+          );
+          setTeamSubscriptions((current) => [
+            ...current.filter(
+              (subscription) =>
+                subscriptionKey(
+                  subscription.sport,
+                  subscription.league,
+                  subscription.teamId,
+                ) !== key,
+            ),
+            saved,
+          ]);
         } catch (caught) {
-          setTeamSubscriptions((current) => [...current, existing]);
+          setTeamSubscriptions((current) => [
+            ...current.filter(
+              (subscription) =>
+                subscriptionKey(
+                  subscription.sport,
+                  subscription.league,
+                  subscription.teamId,
+                ) !== key,
+            ),
+            existing,
+          ]);
           setError(
             caught instanceof Error
               ? caught.message
@@ -714,7 +756,17 @@ export function NotificationProvider({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      setTeamSubscriptions((current) => [...current, optimistic]);
+      setTeamSubscriptions((current) => [
+        ...current.filter(
+          (subscription) =>
+            subscriptionKey(
+              subscription.sport,
+              subscription.league,
+              subscription.teamId,
+            ) !== key,
+        ),
+        optimistic,
+      ]);
       try {
         const saved = await saveTeamNotificationSubscription(
           sport,
@@ -1109,7 +1161,11 @@ export function NotificationProvider({
 
   const activeSheetEnabled =
     notificationSettingsTarget?.scope === "team"
-      ? Boolean(activeTeamSubscription)
+      ? hasEnabledNotificationSetting(
+          activeTeamSubscription
+            ? notificationSettingsFromSubscription(activeTeamSubscription)
+            : null,
+        )
       : hasEnabledNotificationSetting(
           activeGameSubscription
             ? notificationSettingsFromSubscription(activeGameSubscription)
@@ -1134,13 +1190,14 @@ export function NotificationProvider({
             target.teamId,
           );
           if (!enabled) {
-            await deleteTeamNotificationSubscription(
+            const saved = await saveTeamNotificationSubscription(
               target.sport,
               target.league,
               target.teamId,
+              DISABLED_NOTIFICATION_EVENT_SETTINGS,
             );
-            setTeamSubscriptions((current) =>
-              current.filter(
+            setTeamSubscriptions((current) => [
+              ...current.filter(
                 (subscription) =>
                   subscriptionKey(
                     subscription.sport,
@@ -1148,7 +1205,8 @@ export function NotificationProvider({
                     subscription.teamId,
                   ) !== key,
               ),
-            );
+              saved,
+            ]);
           } else {
             const saved = await saveTeamNotificationSubscription(
               target.sport,

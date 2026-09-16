@@ -53,9 +53,9 @@ export const gameHeaderStyles = (isDark: boolean) =>
     },
   });
 
-export const DriverHeaderStyles = (isDark: boolean) =>
+export const DriversHeaderStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      padding: 12,
+      paddingHorizontal: 12,
     },
   });

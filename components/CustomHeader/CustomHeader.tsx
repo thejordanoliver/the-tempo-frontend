@@ -27,6 +27,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { AuthHeader } from "./AuthHeader";
 import { ConferenceBackground } from "./ConferenceBackground";
 import { EditFavoritesHeader } from "./EditFavoritesHeader";
 import { GameHeader } from "./GameHeader";
@@ -56,8 +57,10 @@ export function CustomHeader({
   onBack,
   onOpenLeagueModal,
   onHomeTabPress,
+  onAuthTabPress,
   onEditTabPress,
   homeScrollProgress,
+  authScrollProgress,
   onToggleLayout,
   isGrid,
   teamColor,
@@ -105,6 +108,7 @@ export function CustomHeader({
   messageIsOnline,
   messageIsVerified,
   homeSelectedTab = "scores",
+  authSelectedTab = "sign in",
   editFavoritesSelectedTab = "teams",
 }: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
@@ -451,6 +455,13 @@ export function CustomHeader({
             selectedTab={homeSelectedTab}
             onTabPress={onHomeTabPress ?? (() => undefined)}
             scrollProgress={homeScrollProgress}
+          />
+        ) : tabName === "Login" && onAuthTabPress ? (
+          <AuthHeader
+            isDark={isDark}
+            selectedTab={authSelectedTab}
+            onTabPress={onAuthTabPress}
+            scrollProgress={authScrollProgress}
           />
         ) : tabName === "Edit Favorites" ? (
           <EditFavoritesHeader

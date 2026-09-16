@@ -1,7 +1,7 @@
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { RacingEvent } from "@/types/racing/racing";
 import { FlatList, View } from "react-native";
-import { DriverHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
+import { DriversHeaderStyles } from "styles/GameDetailStyles/GameHeaderStyles";
 import { DriverRow } from "./DriverRow";
 type RacingDriver = NonNullable<RacingEvent["drivers"]>[number];
 type RacingStatistics = RacingDriver["statistics"];
@@ -33,18 +33,19 @@ type Props = {
   isDark: boolean;
 };
 
-export default function GameHeader({
+export default function DriversHeader({
   drivers,
   gameStatusDescription,
   isDark,
 }: Props) {
-  const styles = DriverHeaderStyles(isDark);
+  const styles = DriversHeaderStyles(isDark);
 
   return (
     <View style={styles.container}>
       <HeadingTwo isDark={isDark}>Drivers</HeadingTwo>
       <FlatList
         data={drivers}
+        scrollEnabled={false}
         keyExtractor={(item, index) => String(item.id ?? `driver-${index}`)}
         renderItem={({ item }) => {
           const rank = getStatisticValue(item.statistics, "place");
