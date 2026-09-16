@@ -280,6 +280,8 @@ export default function ConversationScreen() {
     conversation?.fullName ?? conversation?.full_name ?? "Direct message";
   const displayAvatar = conversation?.profileImageUrl || FALLBACK_AVATAR;
   const usesCustomMessageAccent = messageThemePreference.mode !== "default";
+  const usesGradient =
+    usesCustomMessageAccent && messageThemePreference.bubbleStyle === "gradient";
   const otherParticipantReadPosition = useMemo(
     () => getParticipantReadPosition(conversation),
     [conversation],
@@ -528,6 +530,7 @@ export default function ConversationScreen() {
         primaryAccent={messageAccent.primary}
         secondaryAccent={messageAccent.secondary}
         usesCustomMessageAccent={usesCustomMessageAccent}
+        usesGradient={usesGradient}
       />
     ),
     [
@@ -537,6 +540,7 @@ export default function ConversationScreen() {
       messageReceiptLabels,
       styles,
       usesCustomMessageAccent,
+      usesGradient,
     ],
   );
 

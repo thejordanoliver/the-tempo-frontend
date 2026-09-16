@@ -140,6 +140,14 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       textTransform: "uppercase",
     },
 
+    sectionDescription: {
+      paddingTop: 3,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      lineHeight: 15,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
     loadingRow: {
       alignItems: "center",
       justifyContent: "center",
@@ -190,6 +198,81 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
       borderRadius: 9,
+    },
+
+    styleOptions: {
+      flexDirection: "row",
+      gap: 10,
+    },
+
+    styleOption: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      minHeight: 52,
+      paddingHorizontal: 12,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 10,
+    },
+
+    optionDisabled: {
+      opacity: 0.42,
+    },
+
+    bubblePreview: {
+      width: 38,
+      height: 24,
+      borderRadius: 12,
+      borderBottomRightRadius: 5,
+      overflow: "hidden",
+    },
+
+    styleOptionText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    styleHint: {
+      paddingHorizontal: 2,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    customGradientGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+
+    customGradientOption: {
+      flexBasis: "48%",
+      flexGrow: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: 58,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderWidth: 1,
+      borderColor: "transparent",
+      borderRadius: 12,
+      overflow: "hidden",
+    },
+
+    customGradientSelected: {
+      borderWidth: 2,
+      borderColor: isDark ? Colors.white : Colors.black,
+    },
+
+    customGradientName: {
+      flexShrink: 1,
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      lineHeight: 17,
     },
 
     errorText: {

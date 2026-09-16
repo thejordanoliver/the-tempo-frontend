@@ -12,6 +12,7 @@ export type MessageAttachment = {
 
 export type MessageThemePreference = {
   mode: "default" | "favorite_team" | "manual";
+  bubbleStyle: "solid" | "gradient";
   league: string | null;
   teamId: string | number | null;
   primaryColor: string | null;

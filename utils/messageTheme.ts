@@ -1,5 +1,4 @@
 import { Colors } from "constants/styles";
-import { getWCBBTeam } from "constants/teamsWCBB";
 import type { MessageAccent, MessageThemePreference } from "types/messages";
 import { favoriteTeamsList } from "utils/teams";
 
@@ -13,6 +12,7 @@ const VALID_THEME_MODES = new Set<MessageThemePreference["mode"]>([
 
 export const DEFAULT_MESSAGE_THEME_PREFERENCE: MessageThemePreference = {
   mode: "default",
+  bubbleStyle: "solid",
   league: null,
   teamId: null,
   primaryColor: null,
@@ -61,6 +61,7 @@ export const normalizeMessageThemePreference = (
   const raw = parseThemePreference(value);
   const rawRecord = raw as
     | (Partial<MessageThemePreference> & {
+        bubble_style?: unknown;
         team_id?: unknown;
         primary_color?: unknown;
         secondary_color?: unknown;
@@ -68,6 +69,10 @@ export const normalizeMessageThemePreference = (
     | null
     | undefined;
   const mode = rawRecord?.mode;
+  const bubbleStyle =
+    (rawRecord?.bubbleStyle ?? rawRecord?.bubble_style) === "gradient"
+      ? "gradient"
+      : "solid";
 
   if (!mode || !VALID_THEME_MODES.has(mode)) {
     return DEFAULT_MESSAGE_THEME_PREFERENCE;
@@ -79,6 +84,7 @@ export const normalizeMessageThemePreference = (
 
   return {
     mode,
+    bubbleStyle,
     league: normalizeString(rawRecord.league),
     teamId: normalizeTeamId(rawRecord.teamId ?? rawRecord.team_id),
     primaryColor: normalizeString(
@@ -95,10 +101,6 @@ const findThemeTeam = (
   teamId: string | number | null,
 ) => {
   if (!league || teamId == null) return null;
-
-  if (String(league).toUpperCase() === "WCBB") {
-    return getWCBBTeam(teamId) ?? null;
-  }
 
   return (
     favoriteTeamsList.find(
@@ -215,3 +217,15 @@ export const getReadableTimestampColor = (backgroundColor: string) =>
   isLightColor(backgroundColor)
     ? "rgba(29, 29, 29, 0.68)"
     : "rgba(255, 255, 255, 0.72)";
+
+export const getReadableGradientTextColor = (
+  startColor: string,
+  endColor: string,
+) => {
+  const averageLuminance =
+    (getRelativeLuminance(startColor) + getRelativeLuminance(endColor)) / 2;
+  const contrastWithWhite = 1.05 / (averageLuminance + 0.05);
+  const contrastWithBlack = (averageLuminance + 0.05) / 0.05;
+
+  return contrastWithBlack >= contrastWithWhite ? Colors.black : Colors.white;
+};

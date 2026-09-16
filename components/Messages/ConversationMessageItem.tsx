@@ -5,6 +5,7 @@ import { memo } from "react";
 import { Text, View } from "react-native";
 import type { DirectMessageItem } from "types/messages";
 import { getContrastingTextColor } from "utils/color";
+import { getReadableGradientTextColor } from "utils/messageTheme";
 
 type ConversationMessageStyles = ReturnType<typeof ConversationScreenStyles>;
 
@@ -17,6 +18,7 @@ interface ConversationMessageItemProps {
   primaryAccent: string;
   secondaryAccent: string;
   usesCustomMessageAccent: boolean;
+  usesGradient: boolean;
 }
 
 function ConversationMessageItem({
@@ -28,6 +30,7 @@ function ConversationMessageItem({
   primaryAccent,
   secondaryAccent,
   usesCustomMessageAccent,
+  usesGradient,
 }: ConversationMessageItemProps) {
   const hasText = item.text.trim().length > 0;
   const hasAttachment = Boolean(item.attachment);
@@ -36,12 +39,73 @@ function ConversationMessageItem({
     ? primaryAccent
     : secondaryAccent;
 
-  const customTextColor = usesCustomMessageAccent
-    ? getContrastingTextColor(customBubbleColor)
-    : undefined;
+  const gradientColors = item.isCurrentUser
+    ? ([primaryAccent, secondaryAccent] as const)
+    : ([secondaryAccent, primaryAccent] as const);
+
+  const customTextColor = usesGradient
+    ? getReadableGradientTextColor(gradientColors[0], gradientColors[1])
+    : usesCustomMessageAccent
+      ? getContrastingTextColor(customBubbleColor)
+      : undefined;
 
   const avatarUrl =
     item.senderProfileImageUrl || conversationProfileImageUrl || fallbackAvatar;
+  const bubbleStyle = [
+    styles.messageBubble,
+    hasAttachment && styles.attachmentMessageBubble,
+    item.isCurrentUser ? styles.currentUserBubble : styles.otherUserBubble,
+    usesCustomMessageAccent &&
+      !usesGradient && { backgroundColor: customBubbleColor },
+    usesGradient && {
+      experimental_backgroundImage: `linear-gradient(135deg, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+    },
+  ];
+
+  const bubbleContent = (
+    <>
+      {item.attachment && (
+        <AuthorizedMessageImage
+          attachment={item.attachment}
+          style={styles.messageAttachment}
+          contentFit="cover"
+        />
+      )}
+
+      {hasText && (
+        <Text
+          style={[
+            styles.messageText,
+            hasAttachment && styles.attachmentCaptionText,
+            item.isCurrentUser &&
+              !usesCustomMessageAccent &&
+              styles.currentUserMessageText,
+            (usesCustomMessageAccent || usesGradient) && {
+              color: customTextColor,
+            },
+          ]}
+        >
+          {item.text}
+        </Text>
+      )}
+
+      <Text
+        style={[
+          styles.messageTime,
+          hasAttachment && styles.attachmentMessageTime,
+          item.isCurrentUser &&
+            !usesCustomMessageAccent &&
+            styles.currentUserMessageTime,
+          (usesCustomMessageAccent || usesGradient) && {
+            color: customTextColor,
+            opacity: 0.72,
+          },
+        ]}
+      >
+        {item.timestamp}
+      </Text>
+    </>
+  );
 
   return (
     <View
@@ -66,59 +130,7 @@ function ConversationMessageItem({
             : styles.otherUserMessageStack,
         ]}
       >
-        <View
-          style={[
-            styles.messageBubble,
-            hasAttachment && styles.attachmentMessageBubble,
-            item.isCurrentUser
-              ? styles.currentUserBubble
-              : styles.otherUserBubble,
-            usesCustomMessageAccent && {
-              backgroundColor: customBubbleColor,
-            },
-          ]}
-        >
-          {item.attachment && (
-            <AuthorizedMessageImage
-              attachment={item.attachment}
-              style={styles.messageAttachment}
-              contentFit="cover"
-            />
-          )}
-
-          {hasText && (
-            <Text
-              style={[
-                styles.messageText,
-                hasAttachment && styles.attachmentCaptionText,
-                item.isCurrentUser &&
-                  !usesCustomMessageAccent &&
-                  styles.currentUserMessageText,
-                usesCustomMessageAccent && {
-                  color: customTextColor,
-                },
-              ]}
-            >
-              {item.text}
-            </Text>
-          )}
-
-          <Text
-            style={[
-              styles.messageTime,
-              hasAttachment && styles.attachmentMessageTime,
-              item.isCurrentUser &&
-                !usesCustomMessageAccent &&
-                styles.currentUserMessageTime,
-              usesCustomMessageAccent && {
-                color: customTextColor,
-                opacity: 0.72,
-              },
-            ]}
-          >
-            {item.timestamp}
-          </Text>
-        </View>
+        <View style={bubbleStyle}>{bubbleContent}</View>
 
         {item.isCurrentUser && Boolean(receiptLabel) && (
           <Text style={styles.messageReceiptText}>{receiptLabel}</Text>
