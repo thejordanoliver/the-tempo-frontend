@@ -7,6 +7,7 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
+import { getSOCCTeam, getSOCCTeamLogo } from "constants/teamsSOCC";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import type { ImageSourcePropType } from "react-native";
 import type { FavoriteLeague, FavoriteTeamItem } from "types/favorites";
@@ -21,7 +22,8 @@ export type FavoriteTeamRoute =
   | "/team/mlb/[teamId]"
   | "/team/cb/[teamId]"
   | "/team/sb/[teamId]"
-  | "/team/nhl/[teamId]";
+  | "/team/nhl/[teamId]"
+  | "/team/soccer/[teamId]";
 
 export type FavoriteBaseTeam = {
   name: string;
@@ -55,6 +57,8 @@ export function getFavoriteBaseTeam(
       return getSBTeam(teamId);
     case "nhl":
       return getNHLTeam(teamId);
+    case "socc":
+      return getSOCCTeam(teamId);
   }
 }
 
@@ -98,6 +102,9 @@ export function getFavoriteTeamLogo(
     case "nhl":
       return getNHLTeamLogo(teamId, true);
 
+    case "socc":
+      return getSOCCTeamLogo(teamId, true);
+
     default:
       return team.logo ?? null;
   }
@@ -134,6 +141,9 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
 
     case "nhl":
       return "/team/nhl/[teamId]";
+
+    case "socc":
+      return "/team/soccer/[teamId]";
 
     default:
       throw new Error(`Unsupported favorite team league: ${league}`);

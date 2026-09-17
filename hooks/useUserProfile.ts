@@ -7,6 +7,7 @@ import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
 import { nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
+import { soccerTeams } from "constants/teamsSOCC";
 import { wcbbTeams } from "constants/teamsWCBB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import { useFocusEffect } from "expo-router";
@@ -216,6 +217,7 @@ export function useUserProfile(userId?: string) {
       cb: createTeamLookup(cbTeams),
       sb: createTeamLookup(sbTeams),
       nhl: createTeamLookup(nhlTeams),
+      socc: createTeamLookup(soccerTeams),
     }),
     [],
   );

@@ -1,7 +1,5 @@
-import { supportsLiquidGlass } from "@/utils/glass";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
-import { GlassView } from "expo-glass-effect";
 import { usePathname, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -14,7 +12,7 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const iconColor = isDark ? Colors.white : Colors.black;
-  const liquid = supportsLiquidGlass();
+  const styles = CustomTabBarStyles(isDark);
 
   const TABS = [
     {
@@ -159,164 +157,108 @@ export default function CustomTabBar({ isDark }: TabBarProps) {
 
   return (
     <View style={styles.tabBarWrapper}>
-      {liquid ? (
-        <GlassView style={styles.tabBarContainer} glassEffectStyle="regular">
-          <View style={styles.tabRow}>
-            {TABS.map(({ name, route, renderIcon }) => {
-              const focused = activeTabRoute === route;
+      <View style={styles.tabBarContainer}>
+        <BlurView intensity={100} style={StyleSheet.absoluteFill} />
 
-              const handlePress = () => {
-                if (route === pathname) {
-                  return;
-                }
+        <View style={styles.tabRow}>
+          {TABS.map(({ name, route, renderIcon }) => {
+            const focused = activeTabRoute === route;
 
-                if (detailScreen && MAIN_TABS.includes(route)) {
-                  router.replace(route as any);
-                  return;
-                }
+            const handlePress = () => {
+              if (route === pathname) {
+                return;
+              }
 
-                router.push(route as any);
-              };
+              if (detailScreen && MAIN_TABS.includes(route)) {
+                router.replace(route as any);
+                return;
+              }
 
-              return (
-                <TouchableOpacity
-                  key={name}
-                  onPress={handlePress}
-                  style={styles.tabButton}
-                  activeOpacity={activeOpacity}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: focused }}
-                  accessibilityLabel={`Go to ${name} tab`}
+              router.push(route as any);
+            };
+
+            return (
+              <TouchableOpacity
+                key={name}
+                onPress={handlePress}
+                style={styles.tabButton}
+                activeOpacity={activeOpacity}
+                accessibilityRole="button"
+                accessibilityState={{ selected: focused }}
+                accessibilityLabel={`Go to ${name} tab`}
+              >
+                {renderIcon(focused)}
+
+                <Text
+                  style={[
+                    styles.tabLabel,
+                    {
+                      color: focused
+                        ? isDark
+                          ? Colors.white
+                          : Colors.black
+                        : Colors.midTone,
+                    },
+                  ]}
                 >
-                  {renderIcon(focused)}
-
-                  <Text
-                    style={[
-                      styles.tabLabel,
-                      {
-                        color: focused
-                          ? isDark
-                            ? Colors.white
-                            : Colors.black
-                          : Colors.midTone,
-                      },
-                    ]}
-                  >
-                    {name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </GlassView>
-      ) : (
-        <View style={styles.tabBarContainer}>
-          <BlurView intensity={100} style={StyleSheet.absoluteFill} />
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              {
-                backgroundColor: isDark
-                  ? "rgba(0, 0, 0, 0.3)"
-                  : "rgba(255, 255, 255, 0.5)",
-              },
-            ]}
-          />
-
-          <View style={styles.tabRow}>
-            {TABS.map(({ name, route, renderIcon }) => {
-              const focused = activeTabRoute === route;
-
-              const handlePress = () => {
-                if (route === pathname) {
-                  return;
-                }
-
-                if (detailScreen && MAIN_TABS.includes(route)) {
-                  router.replace(route as any);
-                  return;
-                }
-
-                router.push(route as any);
-              };
-
-              return (
-                <TouchableOpacity
-                  key={name}
-                  onPress={handlePress}
-                  style={styles.tabButton}
-                  activeOpacity={activeOpacity}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: focused }}
-                  accessibilityLabel={`Go to ${name} tab`}
-                >
-                  {renderIcon(focused)}
-
-                  <Text
-                    style={[
-                      styles.tabLabel,
-                      {
-                        color: focused
-                          ? isDark
-                            ? Colors.white
-                            : Colors.black
-                          : Colors.midTone,
-                      },
-                    ]}
-                  >
-                    {name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                  {name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-      )}
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  tabBarWrapper: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
-    shadowColor: "rgba(0, 0, 0, 0.8)",
-    shadowOffset: {
-      width: 0,
-      height: 5,
+const CustomTabBarStyles = (isDark: boolean) =>
+  StyleSheet.create({
+    tabBarWrapper: {
+      overflow: "hidden",
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      left: 0,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
+      backgroundColor: isDark
+        ? Colors.dark.transparentBackground
+        : Colors.light.transparentBackground,
+      shadowColor: "rgba(0, 0, 0, 0.8)",
+      shadowOffset: {
+        width: 0,
+        height: 5,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 12,
+      elevation: 12,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 12,
-  },
 
-  tabBarContainer: {
-    height: 80,
-    backgroundColor: "transparent",
-    overflow: "hidden",
-  },
+    tabBarContainer: {
+      height: 80,
+      backgroundColor: "transparent",
+      overflow: "hidden",
+    },
 
-  tabRow: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    marginBottom: 10,
-    paddingVertical: 20,
-  },
+    tabRow: {
+      flex: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-around",
+      marginBottom: 10,
+      paddingVertical: 20,
+    },
 
-  tabButton: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+    tabButton: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-  tabLabel: {
-    marginTop: 4,
-    fontFamily: Fonts.REGULAR,
-    fontSize: 12,
-  },
-});
+    tabLabel: {
+      marginTop: 4,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+    },
+  });

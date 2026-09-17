@@ -475,8 +475,10 @@ export function useFavoriteTeams() {
                     ? "/team/mlb/[teamId]"
                     : league === "cb"
                       ? "/team/cb/[teamId]"
-                      : league === "sb"
-                        ? "/team/sb/[teamId]"
+                    : league === "sb"
+                      ? "/team/sb/[teamId]"
+                      : league === "socc"
+                        ? "/team/soccer/[teamId]"
                         : "/team/nhl/[teamId]";
 
     router.push({

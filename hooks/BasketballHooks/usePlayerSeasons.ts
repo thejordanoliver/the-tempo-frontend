@@ -98,7 +98,7 @@ export interface BasketballCanonicalProfile {
 }
 
 interface CollegeStatsResponse {
-  league: "cbb";
+  league: "cbb" | "wcbb";
   playerId: string;
   seasons?: Season[] | null;
 }
@@ -238,7 +238,8 @@ export function usePlayerSeasons(
           : [],
       );
       setCollegeSeasons(
-        res.data.collegeStats?.league === "cbb" &&
+        (res.data.collegeStats?.league === "cbb" ||
+          res.data.collegeStats?.league === "wcbb") &&
           Array.isArray(res.data.collegeStats.seasons)
           ? res.data.collegeStats.seasons.map(normalizeApiSeason)
           : [],

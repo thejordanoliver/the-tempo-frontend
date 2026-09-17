@@ -57,6 +57,9 @@ const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "mls",
   "fifa",
   "bundesliga",
+  "ligue1",
+  "ligue2",
+  "laliga",
   "champions",
   "europa",
   "leaguescup",
@@ -81,6 +84,54 @@ const isChampionshipGame = (item: HomeGameItem): boolean => {
     headline.includes("Championship") ||
     headline.includes("Final")
   );
+};
+
+const getGameDate = (item: HomeGameItem): Date | null => {
+  const { game } = item;
+  const value =
+    "date" in game
+      ? game.date
+      : "startDate" in game
+        ? game.startDate
+        : "timestamp" in game
+          ? game.timestamp
+          : null;
+
+  if (typeof value !== "string" && typeof value !== "number") return null;
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const getSectionTitle = (section: HomeGameSection): string => {
+  if (section.id === "nfl") {
+    const hasMondayNightGame = section.data.some((item) => {
+      const date = getGameDate(item);
+
+      return date?.getDay() === 1 && date.getHours() >= 18;
+    });
+
+    if (hasMondayNightGame) return "Monday Night Football";
+
+    const hasThursdayNightGame = section.data.some((item) => {
+      const date = getGameDate(item);
+
+      return date?.getDay() === 4 && date.getHours() >= 18;
+    });
+
+    if (hasThursdayNightGame) return "Thursday Night Football";
+  }
+
+  if (section.id === "cfb") {
+    const hasSaturdayGame = section.data.some(
+      (item) => getGameDate(item)?.getDay() === 6,
+    );
+
+    if (hasSaturdayGame) return "College Football Saturday";
+  }
+
+  return section.title;
 };
 
 export default function LeagueGamesList({
@@ -265,6 +316,9 @@ export default function LeagueGamesList({
       case "mls":
       case "fifa":
       case "bundesliga":
+      case "laliga":
+      case "ligue1":
+      case "ligue2":
       case "champions":
       case "europa":
       case "leaguescup":
@@ -451,7 +505,9 @@ export default function LeagueGamesList({
                 marginTop: multipleSections && !isFirstSection ? 8 : 0,
               }}
             >
-              <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
+              <HeadingTwo isDark={isDark}>
+                {getSectionTitle(section)}
+              </HeadingTwo>
             </View>
           );
         }}

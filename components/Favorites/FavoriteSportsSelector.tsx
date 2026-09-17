@@ -4,7 +4,7 @@ import {
 } from "constants/leagues";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
-import { Animated, FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 
 import FavoriteTeamsSelectorSkeleton from "../Skeletons/FavoriteTeamsSelectorSkeleton";
 import { FavoritesSelectorStyles } from "./FavoriteTeamsSelector";
@@ -15,10 +15,8 @@ type FavoriteSportOption = (typeof FAVORITE_SPORT_OPTIONS)[number];
 type Props = {
   favorites: FavoriteSportId[];
   loading: boolean;
-  isGridView: boolean;
   saving: boolean;
   toggleFavorite: (league: FavoriteSportId) => void;
-  fadeAnim: Animated.Value;
   search: string;
   itemWidth: number;
 };
@@ -26,8 +24,6 @@ type Props = {
 export default function FavoriteSportsSelector({
   favorites,
   toggleFavorite,
-  isGridView,
-  fadeAnim,
   search,
   itemWidth,
   loading,
@@ -37,10 +33,7 @@ export default function FavoriteSportsSelector({
 
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = useMemo(
-    () => FavoritesSelectorStyles(isGridView, itemWidth),
-    [isGridView, itemWidth],
-  );
+  const styles = useMemo(() => FavoritesSelectorStyles(itemWidth), [itemWidth]);
 
   /**
    * O(1) selected-state lookup.
@@ -114,43 +107,29 @@ export default function FavoriteSportsSelector({
           logo={logo}
           isSelected={isSelected}
           onPress={handleToggle}
-          isGridView={isGridView}
           itemWidth={itemWidth}
         />
       );
     },
-    [favoritesSet, handleToggle, isDark, isGridView, itemWidth],
+    [favoritesSet, handleToggle, isDark, itemWidth],
   );
 
   const keyExtractor = useCallback((item: FavoriteSportOption) => item.id, []);
 
   if (loading) {
-    return (
-      <FavoriteTeamsSelectorSkeleton
-        isGridView={isGridView}
-        itemWidth={itemWidth}
-        fadeAnim={fadeAnim}
-      />
-    );
+    return <FavoriteTeamsSelectorSkeleton itemWidth={itemWidth} />;
   }
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: fadeAnim,
-        },
-      ]}
-    >
+    <View style={styles.container}>
       <FlatList
-        key={isGridView ? "sports-grid" : "sports-list"}
+        key={"sports-grid"}
         data={filteredSports}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        numColumns={isGridView ? 3 : 1}
+        numColumns={3}
         contentContainerStyle={styles.contentContainer}
-        columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
+        columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
         removeClippedSubviews
         windowSize={5}
@@ -160,6 +139,6 @@ export default function FavoriteSportsSelector({
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       />
-    </Animated.View>
+    </View>
   );
 }

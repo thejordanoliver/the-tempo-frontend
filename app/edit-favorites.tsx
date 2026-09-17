@@ -35,8 +35,6 @@ export default function EditFavoritesScreen() {
 
   const {
     favorites,
-    isGridView,
-    fadeAnim,
     syncFavorites,
     isLoading,
     ready: favoriteTeamsReady,
@@ -357,8 +355,8 @@ export default function EditFavoritesScreen() {
       <SearchBar
         visible
         value={activeSearch}
-        onFocus={() => { }}
-        onBlur={() => { }}
+        onFocus={() => {}}
+        onBlur={() => {}}
         onChangeText={handleSearchChange}
         placeholder={
           selectedTab === "teams" ? "Search teams..." : "Search sports..."
@@ -377,8 +375,6 @@ export default function EditFavoritesScreen() {
             teams={filteredTeams}
             favorites={draftFavoriteTeams}
             toggleFavorite={handleToggleFavoriteTeam}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
             itemWidth={itemWidth}
             loading={isLoading || !favoriteTeamsReady}
           />
@@ -390,8 +386,6 @@ export default function EditFavoritesScreen() {
             loading={favoriteSportsLoading}
             saving={favoriteSportsSaving || saving}
             toggleFavorite={handleToggleFavoriteSport}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
             itemWidth={itemWidth}
             search={sportSearch}
           />

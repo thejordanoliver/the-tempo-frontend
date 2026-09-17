@@ -1,9 +1,6 @@
 import type { HomeLeagueSource, LeagueGame } from "@/types/leagues";
 import { filterByDate, getFootballSeason } from "@/utils/dateUtils";
-import {
-  HOME_SCORE_LEAGUES,
-  type HomeLeagueId,
-} from "constants/leagues";
+import { HOME_SCORE_LEAGUES, type HomeLeagueId } from "constants/leagues";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
@@ -171,6 +168,24 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshBundesligaGames,
   } = useSoccerGames(selectedDate, "bundesliga");
 
+  const {
+    games: laligaGames,
+    loading: laligaLoading,
+    refreshGames: refreshLaligaGames,
+  } = useSoccerGames(selectedDate, "laliga");
+
+  const {
+    games: ligue1Games,
+    loading: ligue1Loading,
+    refreshGames: refreshLigue1Games,
+  } = useSoccerGames(selectedDate, "ligue1");
+
+  const {
+    games: ligue2Games,
+    loading: ligue2Loading,
+    refreshGames: refreshLigue2Games,
+  } = useSoccerGames(selectedDate, "ligue2");
+
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
     [nbaGames],
@@ -234,6 +249,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   const normalizedBundesliga = useMemo(
     () => normalizeGames(bundesligaGames, "bundesliga"),
     [bundesligaGames],
+  );
+  const normalizedLaliga = useMemo(
+    () => normalizeGames(laligaGames, "laliga"),
+    [laligaGames],
+  );
+  const normalizedLigue1 = useMemo(
+    () => normalizeGames(ligue1Games, "ligue1"),
+    [ligue1Games],
+  );
+  const normalizedLigue2 = useMemo(
+    () => normalizeGames(ligue2Games, "ligue2"),
+    [ligue2Games],
   );
   const normalizedMMA = useMemo(
     () => normalizeGames(mmaGames, "ufc"),
@@ -320,62 +347,77 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedBundesliga),
     [normalizedBundesliga, safeFilterByDate],
   );
+  const filteredLaliga = useMemo(
+    () => safeFilterByDate(normalizedLaliga),
+    [normalizedLaliga, safeFilterByDate],
+  );
+  const filteredLigue1 = useMemo(
+    () => safeFilterByDate(normalizedLigue1),
+    [normalizedLigue1, safeFilterByDate],
+  );
+  const filteredLigue2 = useMemo(
+    () => safeFilterByDate(normalizedLigue2),
+    [normalizedLigue2, safeFilterByDate],
+  );
   const filteredMMA = useMemo(
     () => safeFilterByDate(normalizedMMA, true),
     [normalizedMMA, safeFilterByDate],
   );
 
-  const homeLeagueSources = useMemo<HomeLeagueSource[]>(
-    () => {
-      const gamesByLeague: Record<HomeLeagueId, readonly LeagueGame[]> = {
-        nba: filteredNBA,
-        nfl: filteredNFL,
-        ufl: filteredUFL,
-        mlb: filteredMLB,
-        nhl: filteredNHL,
-        cfb: filteredCFB,
-        mls: filteredMLS,
-        leaguescup: filteredLeaguesCup,
-        fifa: filteredFIFA,
-        europa: filteredEuropa,
-        champions: filteredChampions,
-        epl: filteredEPL,
-        bundesliga: filteredBundesliga,
-        cbb: filteredMensCBB,
-        wcbb: filteredWomensCBB,
-        wnba: filteredWNBA,
-        ufc: filteredMMA,
-        atp: atpMatches,
-        wta: wtaMatches,
-      };
+  const homeLeagueSources = useMemo<HomeLeagueSource[]>(() => {
+    const gamesByLeague: Record<HomeLeagueId, readonly LeagueGame[]> = {
+      nba: filteredNBA,
+      nfl: filteredNFL,
+      ufl: filteredUFL,
+      mlb: filteredMLB,
+      nhl: filteredNHL,
+      cfb: filteredCFB,
+      mls: filteredMLS,
+      leaguescup: filteredLeaguesCup,
+      fifa: filteredFIFA,
+      europa: filteredEuropa,
+      champions: filteredChampions,
+      epl: filteredEPL,
+      bundesliga: filteredBundesliga,
+      laliga: filteredLaliga,
+      ligue1: filteredLigue1,
+      ligue2: filteredLigue2,
+      cbb: filteredMensCBB,
+      wcbb: filteredWomensCBB,
+      wnba: filteredWNBA,
+      ufc: filteredMMA,
+      atp: atpMatches,
+      wta: wtaMatches,
+    };
 
-      return HOME_SCORE_LEAGUES.map((id) => ({
-        id,
-        games: gamesByLeague[id],
-      }));
-    },
-    [
-      filteredNBA,
-      filteredNFL,
-      filteredUFL,
-      filteredMLB,
-      filteredNHL,
-      filteredCFB,
-      filteredMLS,
-      filteredLeaguesCup,
-      filteredFIFA,
-      filteredEuropa,
-      filteredChampions,
-      filteredEPL,
-      filteredBundesliga,
-      filteredMensCBB,
-      filteredWomensCBB,
-      filteredWNBA,
-      filteredMMA,
-      atpMatches,
-      wtaMatches,
-    ],
-  );
+    return HOME_SCORE_LEAGUES.map((id) => ({
+      id,
+      games: gamesByLeague[id],
+    }));
+  }, [
+    filteredNBA,
+    filteredNFL,
+    filteredUFL,
+    filteredMLB,
+    filteredNHL,
+    filteredCFB,
+    filteredMLS,
+    filteredLeaguesCup,
+    filteredFIFA,
+    filteredEuropa,
+    filteredChampions,
+    filteredEPL,
+    filteredBundesliga,
+    filteredLaliga,
+    filteredLigue1,
+    filteredLigue2,
+    filteredMensCBB,
+    filteredWomensCBB,
+    filteredWNBA,
+    filteredMMA,
+    atpMatches,
+    wtaMatches,
+  ]);
 
   const homeGameSections = useMemo(
     () =>
@@ -385,12 +427,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
         favoriteSports,
         favoriteSportsReady,
       }),
-    [
-      favoriteSports,
-      favoriteSportsReady,
-      favorites,
-      homeLeagueSources,
-    ],
+    [favoriteSports, favoriteSportsReady, favorites, homeLeagueSources],
   );
 
   const handleRefresh = async () => {
@@ -427,6 +464,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
           refreshChampionsGames(),
           refreshEuropaGames(),
           refreshBundesligaGames(),
+          refreshLaligaGames(),
+          refreshLigue1Games(),
+          refreshLigue2Games(),
           refreshMMAGames(),
           refreshATPMatches(),
           refreshWTAMatches(),
@@ -463,6 +503,9 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     eplLoading ||
     europaLoading ||
     bundesligaLoading ||
+    laligaLoading ||
+    ligue1Loading ||
+    ligue2Loading ||
     championsLoading ||
     mmaLoading ||
     atpLoading ||
@@ -483,6 +526,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     forYouPosts: forYouFeed.posts,
     favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
-      selectedTab === "scores" ? scoresLoading || refreshing : forYouFeed.loading,
+      selectedTab === "scores"
+        ? scoresLoading || refreshing
+        : forYouFeed.loading,
   };
 }

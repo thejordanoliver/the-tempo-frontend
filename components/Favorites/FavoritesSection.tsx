@@ -1,4 +1,4 @@
-// components/Favorites/FavoriteTeamsList.tsx
+// components/Favorites/FavoritesSection.tsx
 
 import Button from "@/components/Buttons/Button";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
@@ -29,7 +29,7 @@ import {
   View,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { favoriteTeamsListStyles } from "styles/FavorieTeamsListStyles";
+import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import type { Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 import HeaderWithToggle from "../Headings/HeaderWithToggle";
@@ -146,7 +146,7 @@ export default function FavoritesSection({
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = favoriteTeamsListStyles(isDark, itemWidth, isGridView);
+  const styles = FavoritesSectionStyles(isDark, itemWidth, isGridView);
 
   const {
     previewTeam,

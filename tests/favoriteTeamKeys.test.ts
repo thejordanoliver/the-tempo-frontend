@@ -12,6 +12,7 @@ import {
 test("favorite-team keys are canonical lowercase league-plus-team identities", () => {
   assert.equal(normalizeFavoriteTeamKey(" NBA:017 "), "nba:17");
   assert.equal(buildFavoriteTeamKey("CFB", 113), "cfb:113");
+  assert.equal(normalizeFavoriteTeamKey("SOCC:18418"), "socc:18418");
 });
 
 test("favorite-team normalization preserves order and removes duplicates", () => {

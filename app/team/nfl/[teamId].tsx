@@ -192,10 +192,10 @@ export default function TeamDetailScreen() {
             refreshing={refreshing}
             onRefresh={handleRefresh}
             error={gamesError}
-            showHeaders={true}
-            showCountdown={true}
             countdownGame={firstSeasonGame}
             isNFL={true}
+            showHeaders={true}
+            showCountdown={true}
             teamLogo={teamLogo}
             teamColor={teamColor}
             teamSecondaryColor={teamSecondaryColor}

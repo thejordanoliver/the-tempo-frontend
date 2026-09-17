@@ -44,13 +44,27 @@ function createLeagueGameItems(source: HomeLeagueSource): HomeGameItem[] {
   const seen = new Set<string>();
   const items: HomeGameItem[] = [];
 
-  source.games.forEach((game, index) => {
+  const games = Array.isArray(source.games) ? source.games : [];
+
+  if (__DEV__ && !Array.isArray(source.games)) {
+    console.warn(
+      `[homeGames] ${source.id} received invalid games value:`,
+      source.games,
+    );
+  }
+
+  games.forEach((game, index) => {
     const key = `${source.id}:${getGameIdentity(game, index)}`;
 
     if (seen.has(key)) return;
 
     seen.add(key);
-    items.push({ key, league: source.id, game });
+
+    items.push({
+      key,
+      league: source.id,
+      game,
+    });
   });
 
   return items;
@@ -123,14 +137,15 @@ export function buildHomeGameSections({
   favoriteSportsReady,
   maxGamesPerLeague = 5,
 }: BuildHomeGameSectionsOptions): HomeGameSection[] {
-  const favoriteTeamKeys = new Set(favoriteTeams);
-  const sourceById = new Map<FavoriteSportId, HomeLeagueSource>();
+  const safeSources = Array.isArray(sources) ? sources : [];
+
+  const favoriteTeamKeys = new Set(favoriteTeams ?? []);
   const nonFavoriteGamesByLeague = new Map<HomeLeagueId, HomeGameItem[]>();
   const favoriteTeamGames: HomeGameItem[] = [];
   const seenFavoriteGames = new Set<string>();
 
-  for (const source of sources) {
-    sourceById.set(source.id, source);
+  for (const source of safeSources) {
+    if (!source?.id) continue;
 
     const items = createLeagueGameItems(source);
     const nonFavoriteItems: HomeGameItem[] = [];
@@ -166,8 +181,8 @@ export function buildHomeGameSections({
   const orderedLeagueIds: HomeLeagueId[] = [];
   const seenLeagueIds = new Set<HomeLeagueId>();
 
-  const appendSupportedLeague = (league: FavoriteSportId) => {
-    const source = sourceById.get(league);
+  const appendFavoriteLeague = (league: FavoriteSportId) => {
+    const source = safeSources.find(({ id }) => id === league);
 
     if (!source || seenLeagueIds.has(source.id)) return;
 
@@ -175,13 +190,9 @@ export function buildHomeGameSections({
     orderedLeagueIds.push(source.id);
   };
 
-  getPersonalizedLeagueOrder({
-    favoriteTeams,
-    favoriteSports,
-    favoriteSportsReady,
-  }).forEach(appendSupportedLeague);
-
-  sources.forEach((source) => appendSupportedLeague(source.id));
+  if (favoriteSportsReady) {
+    (favoriteSports ?? []).forEach(appendFavoriteLeague);
+  }
 
   for (const league of orderedLeagueIds) {
     const data = nonFavoriteGamesByLeague.get(league) ?? [];

@@ -1,9 +1,7 @@
-import { supportsLiquidGlass } from "@/utils/glass";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
-import { GlassView } from "expo-glass-effect";
 import { memo, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 
@@ -17,7 +15,6 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
-  const liquid = supportsLiquidGlass();
   const [opacityAnim] = useState(() => new Animated.Value(isOpen ? 0 : 1));
 
   useEffect(() => {
@@ -38,39 +35,19 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
         },
       ]}
     >
-      {liquid ? (
-        <GlassView
-          style={styles.floatingButton}
-          glassEffectStyle="regular"
-          isInteractive
-        >
-          <TouchableOpacity
-            style={styles.touchable}
-            onPress={onPress}
-            activeOpacity={activeOpacity}
-          >
-            <Ionicons
-              name={icon}
-              size={24}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </TouchableOpacity>
-        </GlassView>
-      ) : (
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={onPress}
-          activeOpacity={activeOpacity}
-        >
-          <BlurView intensity={25} style={StyleSheet.absoluteFill} />
+      <TouchableOpacity
+        style={styles.floatingButton}
+        onPress={onPress}
+        activeOpacity={activeOpacity}
+      >
+        <BlurView intensity={25} style={StyleSheet.absoluteFill} />
 
-          <Ionicons
-            name={icon}
-            size={24}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </TouchableOpacity>
-      )}
+        <Ionicons
+          name={icon}
+          size={24}
+          color={isDark ? Colors.white : Colors.black}
+        />
+      </TouchableOpacity>
     </Animated.View>
   );
 }

@@ -1,9 +1,6 @@
 import type { ImageSourcePropType } from "react-native";
 
-import {
-  BROWSEABLE_LEAGUES,
-  type BrowseableLeague,
-} from "constants/leagueIds";
+import { BROWSEABLE_LEAGUES, type BrowseableLeague } from "constants/leagueIds";
 
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
@@ -27,8 +24,14 @@ import NascarLightLogo from "assets/Racing/Logos/NascarLight.png";
 import BundesligaLogo from "assets/Soccer/Logos/Bundesliga.png";
 import BundesligaLightLogo from "assets/Soccer/Logos/BundesligaLight.png";
 import EPLLogo from "assets/Soccer/Logos/EPL.png";
+import LaLigaLogo from "assets/Soccer/Logos/LaLiga.png";
+import LaLigaLightLogo from "assets/Soccer/Logos/LaLigaLight.png";
 import LeaguesCupLogo from "assets/Soccer/Logos/LeaguesCup.png";
 import LeaguesCupLogoLight from "assets/Soccer/Logos/LeaguesCupLight.png";
+import Ligue1Logo from "assets/Soccer/Logos/Ligue1.png";
+import Ligue1LightLogo from "assets/Soccer/Logos/Ligue1Light.png";
+import Ligue2Logo from "assets/Soccer/Logos/Ligue2.png";
+import Ligue2LightLogo from "assets/Soccer/Logos/Ligue2Light.png";
 import MLSLogo from "assets/Soccer/Logos/MLS.png";
 import UEFAChampionsLogo from "assets/Soccer/Logos/UEFAChampions.png";
 import UEFAChampionsLightLogo from "assets/Soccer/Logos/UEFAChampionsLight.png";
@@ -188,6 +191,16 @@ export const LEAGUE_CONFIG = {
     route: "/league/basketball",
   },
 
+  laliga: {
+    id: "laliga",
+    label: "Spanish LALIGA",
+    color: "#FF4B44",
+    secondaryColor: "#ffffff",
+    logo: LaLigaLogo,
+    logoLight: LaLigaLightLogo,
+    route: "/league/socc",
+  },
+
   leaguescup: {
     id: "leaguescup",
     label: "Leagues Cup",
@@ -195,6 +208,26 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#00C2FF",
     logo: LeaguesCupLogo,
     logoLight: LeaguesCupLogoLight,
+    route: "/league/socc",
+  },
+
+  ligue1: {
+    id: "ligue1",
+    label: "French Ligue",
+    color: "#FF4B44",
+    secondaryColor: "#ffffff",
+    logo: Ligue1Logo,
+    logoLight: Ligue1LightLogo,
+    route: "/league/socc",
+  },
+
+  ligue2: {
+    id: "ligue2",
+    label: "French Ligue 2",
+    color: "#FF4B44",
+    secondaryColor: "#ffffff",
+    logo: Ligue2Logo,
+    logoLight: Ligue2LightLogo,
     route: "/league/socc",
   },
 
@@ -318,8 +351,8 @@ export const LEAGUE_CONFIG = {
     route: "/league/tennis",
   },
 } as const satisfies Record<LeagueType, LeagueDefinition>;
-export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
 
+export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
 export const HOME_SCORE_LEAGUES = [
   "nba",
   "nfl",
@@ -334,6 +367,9 @@ export const HOME_SCORE_LEAGUES = [
   "champions",
   "epl",
   "bundesliga",
+  "laliga",
+  "ligue1",
+  "ligue2",
   "cbb",
   "wcbb",
   "wnba",

@@ -15,7 +15,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { getTeamRoute } from "utils/teams";
+import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
 
 export type FavoriteTeamSlide = {
@@ -76,7 +76,7 @@ export default function FavoriteTeamsSlider({
             style={styles.slideButton}
             onPress={() =>
               router.push({
-                pathname: getTeamRoute(item.favorite.league) as any,
+                pathname: getFavoriteTeamRoute(item.favorite.league),
                 params: { teamId: item.favorite.id },
               })
             }

@@ -81,9 +81,11 @@ export default function PlayerDetailScreen() {
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
   const canonicalPlayerId = useMemo(() => {
+    const isCollegeRequest =
+      requestedLeague === "cbb" || requestedLeague === "wcbb";
     const resolvedId =
       canonicalProfile?.playerId ??
-      (requestedLeague !== "cbb" ? requestedPlayerId : undefined);
+      (!isCollegeRequest ? requestedPlayerId : undefined);
 
     if (resolvedId === undefined) return undefined;
 
@@ -100,7 +102,8 @@ export default function PlayerDetailScreen() {
   const { player, loading, error } = usePlayerById(
     canonicalPlayerId,
     canonicalLeague,
-    requestedLeague !== "cbb" || Boolean(canonicalProfile),
+    (requestedLeague !== "cbb" && requestedLeague !== "wcbb") ||
+      Boolean(canonicalProfile),
   );
 
   const currentTeamId = useMemo(() => {

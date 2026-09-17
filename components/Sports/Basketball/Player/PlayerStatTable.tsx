@@ -95,11 +95,6 @@ const SEASON_TYPE_OPTIONS: { label: string; value: SeasonType }[] = [
   { label: "Postseason", value: "postseason" },
 ];
 
-const CAREER_VIEW_OPTIONS: { label: string; value: CareerView }[] = [
-  { label: "NBA", value: "pro" },
-  { label: "College", value: "college" },
-];
-
 const PRO_LEAGUES_WITH_POSTSEASON_TABS = new Set<BasketballLeague>([
   "nba",
   "wnba",
@@ -1024,14 +1019,26 @@ export default function PlayerStatTable({
   const [selectedCareerView, setSelectedCareerView] =
     useState<CareerView>("pro");
 
-  const hasCollegeStats = league === "nba" && collegeSeasons.length > 0;
+  const hasCollegeStats =
+    (league === "nba" || league === "wnba") && collegeSeasons.length > 0;
   const activeCareerView: CareerView =
     selectedCareerView === "college" && hasCollegeStats ? "college" : "pro";
   const activeSeasons =
     activeCareerView === "college" ? collegeSeasons : seasons;
   const activeLeague: BasketballLeague =
-    activeCareerView === "college" ? "cbb" : league;
-  const showCareerViewTabs = league === "nba" && hasCollegeStats;
+    activeCareerView === "college"
+      ? league === "wnba"
+        ? "wcbb"
+        : "cbb"
+      : league;
+  const showCareerViewTabs = hasCollegeStats;
+  const careerViewOptions = useMemo(
+    () => [
+      { label: league === "wnba" ? "WNBA" : "NBA", value: "pro" },
+      { label: "College", value: "college" },
+    ],
+    [league],
+  );
   const showSeasonTypeTabs =
     PRO_LEAGUES_WITH_POSTSEASON_TABS.has(activeLeague);
 
@@ -1109,7 +1116,7 @@ export default function PlayerStatTable({
             {showCareerViewTabs ? (
               <Dropdown
                 isDark={isDark}
-                options={CAREER_VIEW_OPTIONS}
+                options={careerViewOptions}
                 selectedValue={activeCareerView}
                 onSelect={(value) =>
                   setSelectedCareerView(value as CareerView)

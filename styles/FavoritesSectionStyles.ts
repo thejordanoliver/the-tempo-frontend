@@ -6,7 +6,7 @@ const CARD_HEIGHT = 130;
 
 /* ---------------- STYLES ---------------- */
 
-export const favoriteTeamsListStyles = (
+export const FavoritesSectionStyles = (
   isDark: boolean,
   itemWidth: number,
   isGridView: boolean,

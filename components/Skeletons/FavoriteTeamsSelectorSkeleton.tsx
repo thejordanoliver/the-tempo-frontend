@@ -1,30 +1,26 @@
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
-import { Animated, FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { SkeletonBlock, SkeletonCircle } from "./primitives";
 
 type Props = {
-  isGridView: boolean;
   itemWidth: number;
   count?: number;
-  fadeAnim: Animated.Value;
 };
 
 const CARD_HEIGHT = 130;
 
 export default function FavoritesSelectorSkeleton({
-  isGridView,
   itemWidth,
-  fadeAnim,
   count = 30,
 }: Props) {
   const skeletons = Array.from({ length: count });
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(
-    () => FavoritesSelectorSkeletonStyles(isDark, isGridView, itemWidth),
-    [isDark, isGridView, itemWidth],
+    () => FavoritesSelectorSkeletonStyles(isDark, itemWidth),
+    [isDark, itemWidth],
   );
 
   const renderItem = useCallback(
@@ -34,8 +30,8 @@ export default function FavoritesSelectorSkeleton({
           style={[
             styles.skeletonCard,
             {
-              width: isGridView ? itemWidth : "100%",
-              height: isGridView ? CARD_HEIGHT : 60,
+              width: itemWidth,
+              height: CARD_HEIGHT,
               marginBottom: 12,
             },
           ]}
@@ -45,49 +41,33 @@ export default function FavoritesSelectorSkeleton({
         </SkeletonBlock>
       );
     },
-    [styles, isGridView, itemWidth],
-  );
-
-  const getItemLayout = useCallback(
-    (_: any | null | undefined, index: number) => {
-      const itemHeight = 76;
-      const separatorHeight = 12;
-
-      return {
-        length: itemHeight + separatorHeight,
-        offset: (itemHeight + separatorHeight) * index,
-        index,
-      };
-    },
-    [],
+    [styles, itemWidth],
   );
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <View style={styles.container}>
       <FlatList
-        key={isGridView ? "grid" : "list"}
+        key={"grid"}
         data={skeletons}
         renderItem={renderItem}
-        numColumns={isGridView ? 3 : 1}
+        numColumns={3}
         contentContainerStyle={styles.contentContainer}
-        columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
+        columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
         removeClippedSubviews
         windowSize={5}
         initialNumToRender={12}
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={50}
-        getItemLayout={isGridView ? undefined : getItemLayout}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       />
-    </Animated.View>
+    </View>
   );
 }
 
 const FavoritesSelectorSkeletonStyles = (
   isDark: boolean,
-  isGridView: boolean,
   itemWidth: number,
 ) => {
   const skeletonColor = isDark ? Colors.darkGray : Colors.lightGray;
@@ -98,7 +78,7 @@ const FavoritesSelectorSkeletonStyles = (
     },
     contentContainer: {
       flexGrow: 1,
-      alignItems: isGridView ? "center" : "stretch",
+      alignItems: "center",
       paddingBottom: 20,
     },
     columnWrapper: {

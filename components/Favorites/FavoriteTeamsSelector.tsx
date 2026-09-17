@@ -7,11 +7,12 @@ import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeamLogo } from "constants/teamsNHL";
 import { getSBTeamLogo } from "constants/teamsSB";
+import { getSOCCTeamLogo } from "constants/teamsSOCC";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import type { ImageSourcePropType } from "react-native";
-import { Animated, FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import { buildFavoriteTeamKey } from "types/favorites";
 import type { Team } from "types/team";
 
@@ -22,16 +23,11 @@ type Props = {
   teams: Team[];
   favorites: string[];
   toggleFavorite: (league: string, id: string) => void;
-  isGridView: boolean;
-  fadeAnim: Animated.Value;
   itemWidth: number;
   loading?: boolean;
 };
 
 const COLLEGE_LEAGUES = new Set(["cfb", "cbb", "wcbb", "cb", "sb"]);
-
-const LIST_ITEM_HEIGHT = 76;
-const LIST_ITEM_GAP = 12;
 
 const getTeamLogo = (
   league: string,
@@ -69,6 +65,9 @@ const getTeamLogo = (
     case "nhl":
       return getNHLTeamLogo(id, useAltLogo);
 
+    case "socc":
+      return getSOCCTeamLogo(id, useAltLogo);
+
     default:
       return undefined;
   }
@@ -78,23 +77,12 @@ const FavoriteTeamsSelector = ({
   teams,
   favorites,
   toggleFavorite,
-  isGridView,
-  fadeAnim,
   itemWidth,
   loading = false,
 }: Props) => {
   const { resolvedColorScheme } = usePreferences();
-
   const isDark = resolvedColorScheme === "dark";
-
-  const styles = useMemo(
-    () => FavoritesSelectorStyles(isGridView, itemWidth),
-    [isGridView, itemWidth],
-  );
-
-  /**
-   * O(1) favorite lookup for each rendered item.
-   */
+  const styles = useMemo(() => FavoritesSelectorStyles(itemWidth), [itemWidth]);
   const favoritesSet = useMemo(() => new Set(favorites), [favorites]);
 
   const handleToggle = useCallback(
@@ -107,11 +95,8 @@ const FavoriteTeamsSelector = ({
   const renderItem = useCallback(
     ({ item }: { item: Team }) => {
       const favoriteKey = buildFavoriteTeamKey(item.league, item.id);
-
       const isSelected = favoriteKey ? favoritesSet.has(favoriteKey) : false;
-
       const useAltLogo = isDark || isSelected;
-
       const logo = getTeamLogo(item.league, Number(item.id), useAltLogo);
 
       return (
@@ -120,13 +105,12 @@ const FavoriteTeamsSelector = ({
           logo={logo}
           isSelected={isSelected}
           onPress={handleToggle}
-          isGridView={isGridView}
           itemWidth={itemWidth}
           showSportTag={COLLEGE_LEAGUES.has(item.league)}
         />
       );
     },
-    [favoritesSet, handleToggle, isDark, isGridView, itemWidth],
+    [favoritesSet, handleToggle, isDark, itemWidth],
   );
 
   const keyExtractor = useCallback(
@@ -134,64 +118,34 @@ const FavoriteTeamsSelector = ({
     [],
   );
 
-  const getItemLayout = useCallback(
-    (_data: ArrayLike<Team> | null | undefined, index: number) => {
-      const length = LIST_ITEM_HEIGHT + LIST_ITEM_GAP;
-
-      return {
-        length,
-        offset: length * index,
-        index,
-      };
-    },
-    [],
-  );
-
   if (loading) {
-    return (
-      <FavoriteTeamsSelectorSkeleton
-        isGridView={isGridView}
-        itemWidth={itemWidth}
-        fadeAnim={fadeAnim}
-      />
-    );
+    return <FavoriteTeamsSelectorSkeleton itemWidth={itemWidth} />;
   }
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: fadeAnim,
-        },
-      ]}
-    >
+    <View style={styles.container}>
       <FlatList
-        key={isGridView ? "teams-grid" : "teams-list"}
+        key={"teams-grid"}
         data={teams}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        numColumns={isGridView ? 3 : 1}
+        numColumns={3}
         contentContainerStyle={styles.contentContainer}
-        columnWrapperStyle={isGridView ? styles.columnWrapper : undefined}
+        columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
         removeClippedSubviews
         windowSize={5}
         initialNumToRender={12}
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={50}
-        getItemLayout={isGridView ? undefined : getItemLayout}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       />
-    </Animated.View>
+    </View>
   );
 };
 
-export const FavoritesSelectorStyles = (
-  isGridView: boolean,
-  itemWidth: number,
-) =>
+export const FavoritesSelectorStyles = (itemWidth: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -199,7 +153,7 @@ export const FavoritesSelectorStyles = (
 
     contentContainer: {
       flexGrow: 1,
-      alignItems: isGridView ? "center" : "stretch",
+      alignItems: "center",
       paddingBottom: 20,
     },
 

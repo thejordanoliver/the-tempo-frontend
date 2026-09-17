@@ -3,6 +3,9 @@ import type { LeagueType } from "types/types";
 export const BROWSEABLE_LEAGUES = [
   "atp",
   "bundesliga",
+  "ligue1",
+  "ligue2",
+  "laliga",
   "cb",
   "cbb",
   "cfb",

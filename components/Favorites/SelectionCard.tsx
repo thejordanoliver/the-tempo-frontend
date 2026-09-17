@@ -24,7 +24,6 @@ type Props = {
   item: SelectionCardItem;
   logo?: ImageSourcePropType;
   isSelected: boolean;
-  isGridView: boolean;
   onPress: (league: string, id: string) => void;
   itemWidth: number;
   onImageLoad?: () => void;
@@ -35,7 +34,6 @@ function SelectionCard({
   item,
   logo,
   isSelected,
-  isGridView,
   onPress,
   itemWidth,
   onImageLoad,
@@ -55,7 +53,7 @@ function SelectionCard({
     onPress(item.league, String(item.id));
   }, [item.id, item.league, onPress]);
 
-  const logoSize = isGridView ? 50 : 40;
+  const logoSize = 50;
 
   const displayName =
     item.name ??
@@ -92,22 +90,22 @@ function SelectionCard({
       onPress={handlePress}
       style={({ pressed }) => ({
         opacity: pressed ? 0.7 : 1,
-        width: isGridView ? itemWidth : "100%",
-        marginBottom: isGridView ? 0 : 12,
+        width: itemWidth,
+        marginBottom: 0,
       })}
     >
       <View
         style={[
           styles.selectionCard,
           {
-            width: isGridView ? itemWidth : "100%",
+            width: itemWidth,
             backgroundColor,
-            flexDirection: isGridView ? "column" : "row",
-            justifyContent: isGridView ? "center" : "flex-start",
+            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            paddingHorizontal: isGridView ? 8 : 12,
+            paddingHorizontal: 8,
             paddingVertical: 12,
-            minHeight: isGridView ? 130 : 64,
+            minHeight: 130,
           },
         ]}
       >
@@ -124,17 +122,7 @@ function SelectionCard({
           </View>
         )}
 
-        <View
-          style={[
-            styles.logoWrapper,
-            !isGridView && {
-              marginRight: 12,
-              marginBottom: 0,
-              width: logoSize,
-              height: logoSize,
-            },
-          ]}
-        >
+        <View style={[styles.logoWrapper]}>
           {logo ? (
             <Image
               source={logo}
@@ -152,13 +140,13 @@ function SelectionCard({
 
         <View
           style={{
-            alignItems: isGridView ? "center" : "flex-start",
-            flexDirection: isGridView ? "column" : "row",
-            flex: isGridView ? 0 : 1,
+            alignItems: "center",
+            flexDirection: "column",
+            flex: 0,
           }}
         >
           <Text style={[styles.teamName, { color: textColor }]}>
-            {isGridView ? displayName : (item.fullName ?? displayName)}
+            {displayName}
           </Text>
         </View>
       </View>
@@ -176,7 +164,6 @@ export default React.memo(
     prevProps.item.color === nextProps.item.color &&
     prevProps.logo === nextProps.logo &&
     prevProps.isSelected === nextProps.isSelected &&
-    prevProps.isGridView === nextProps.isGridView &&
     prevProps.itemWidth === nextProps.itemWidth &&
     prevProps.showSportTag === nextProps.showSportTag,
 );

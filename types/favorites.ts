@@ -12,6 +12,7 @@ export const FAVORITE_LEAGUES = [
   "cb",
   "sb",
   "nhl",
+  "socc",
 ] as const;
 
 export type FavoriteLeague = (typeof FAVORITE_LEAGUES)[number];

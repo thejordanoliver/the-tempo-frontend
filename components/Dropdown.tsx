@@ -1,8 +1,6 @@
-import { supportsLiquidGlass } from "@/utils/glass";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { BlurView } from "expo-blur";
-import { GlassView } from "expo-glass-effect";
 import { useMemo, useState } from "react";
 import {
   Animated,
@@ -38,17 +36,7 @@ export default function Dropdown({
   style,
 }: DropdownProps) {
   const [visible, setVisible] = useState(false);
-
-  /**
-   * Keep the Animated.Value stable without useRef.
-   *
-   * React's newer refs lint does not want refs read during render.
-   * Animated.Value is stateful/mutable internally, so a lazy state
-   * initializer is a good fit here.
-   */
   const [anim] = useState(() => new Animated.Value(0));
-
-  const liquid = supportsLiquidGlass();
 
   const styles = dropDownStyles({
     isDark,
@@ -56,9 +44,6 @@ export default function Dropdown({
     visible,
   });
 
-  /**
-   * Derive interpolation nodes from the stable Animated.Value.
-   */
   const translateY = useMemo(
     () =>
       anim.interpolate({
@@ -204,17 +189,11 @@ export default function Dropdown({
             },
           ]}
         >
-          {liquid ? (
-            <GlassView style={styles.glassSurface} glassEffectStyle="regular">
-              {renderOptions()}
-            </GlassView>
-          ) : (
-            <View style={styles.fallbackSurface}>
-              <BlurView intensity={100} style={StyleSheet.absoluteFill} />
+          <View style={styles.fallbackSurface}>
+            <BlurView intensity={100} style={StyleSheet.absoluteFill} />
 
-              {renderOptions()}
-            </View>
-          )}
+            {renderOptions()}
+          </View>
         </Animated.View>
       ) : null}
     </View>

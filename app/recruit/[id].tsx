@@ -32,8 +32,8 @@ export default function RecruitDetailScreen() {
   const teamColor = team?.color ?? Colors.midTone;
   const teamLogo =
     league === "cfb"
-      ? getCFBTeamLogo(teamId, isDark)
-      : getCBBTeamLogo(teamId, isDark);
+      ? getCFBTeamLogo(teamId, true)
+      : getCBBTeamLogo(teamId, true);
 
   const predictionPercentage = useMemo(() => {
     const rawPercentage = player?.prediction_percentage;
