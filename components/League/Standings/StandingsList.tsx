@@ -59,6 +59,7 @@ export const standingLabels = [
   "Pts Against",
   "PPG",
   "OPP PPG",
+  "POFF",
 ];
 
 const columnKeyMap: Record<string, keyof StandingsTeam> = {
@@ -75,6 +76,7 @@ const columnKeyMap: Record<string, keyof StandingsTeam> = {
   "Pts Against": "pointsAgainst",
   PPG: "avgPointsFor",
   "OPP PPG": "avgPointsAgainst",
+  POFF: "playoffPercent",
 };
 
 const getActiveColumns = (data: StandingsTeam[]) => {
@@ -507,6 +509,9 @@ export const StandingsList = ({
 
             if (key === "winPercent" && value != null) {
               value = `${(Number(value) * 100).toFixed(1)}%`;
+            }
+            if (key === "playoffPercent" && value != null) {
+              value = `${(Number(value) * 1).toFixed(1)}%`;
             }
 
             if ((label === "PPG" || label === "OPP PPG") && value != null) {

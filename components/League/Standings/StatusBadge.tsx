@@ -12,15 +12,15 @@ export const statusConfigs: Record<string, StatusConfig> = {
   mlb: {
     colors: {
       "*": Colors.dark.leafGreen,
-      y: Colors.dark.blue,
-      x: Colors.dark.orange,
+      z: Colors.dark.leafGreen,
+      x: Colors.dark.blue,
       e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Division + Bye",
-      y: "Clinched Wild Card",
+      z: "Clinched Playoff Berth",
       x: "Clinched Division",
-      e: "Eliminated",
+      e: "Eliminated from Playoff Contention",
     },
   },
 

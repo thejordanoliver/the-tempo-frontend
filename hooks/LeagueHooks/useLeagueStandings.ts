@@ -31,6 +31,7 @@ export type StandingsTeam = {
   avgDifferential?: number | null;
   points?: number | null;
   divisionWinPercent?: number | null;
+  playoffPercent?: number | null;
   leagueWinPercent?: number | null;
   clincher?: string | null;
   playoffSeed?: number | null;
