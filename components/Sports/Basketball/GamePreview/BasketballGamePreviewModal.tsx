@@ -30,6 +30,7 @@ import {
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo, TeamRow } from "../GameDetails";
 import GamePreviewContent from "./GamePreviewContent";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 
 type Props = {
   visible: boolean;
@@ -90,6 +91,7 @@ export default function GamePreviewModal({
         ? getCBBTeam(homeId)
         : isSL
           ? getTeamBySummerId(homeId)
+          : isGLEAGUE ? getGLeagueTeam(homeId)
           : getNBATeam(homeId);
 
   const awayTeam = isWNBA
@@ -100,7 +102,9 @@ export default function GamePreviewModal({
         ? getCBBTeam(awayId)
         : isSL
           ? getTeamBySummerId(awayId)
-          : getNBATeam(awayId);
+          : isGLEAGUE
+            ? getGLeagueTeam(awayId)
+            : getNBATeam(awayId);
 
   const homeCode = homeTeam?.code ?? home?.code ?? "";
   const awayCode = awayTeam?.code ?? away?.code ?? "";
@@ -119,7 +123,9 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
-        : getNBATeamLogo(homeId, isDark);
+        : isGLEAGUE
+          ? getGLeagueTeamLogo(homeId, isDark)
+          : getNBATeamLogo(homeId, isDark);
 
   const awayLogo = isCBB
     ? getCBBTeamLogo(awayId, isDark)
@@ -127,7 +133,9 @@ export default function GamePreviewModal({
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
         ? getWNBATeamLogo(awayId, isDark)
-        : getNBATeamLogo(awayId, isDark);
+        : isGLEAGUE
+          ? getGLeagueTeamLogo(awayId, isDark)
+          : getNBATeamLogo(awayId, isDark);
 
   const homeHeaderLogo = isCBB
     ? getCBBTeamLogo(homeId, true)
