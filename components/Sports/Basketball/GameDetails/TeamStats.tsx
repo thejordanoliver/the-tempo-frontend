@@ -1,3 +1,4 @@
+import { TeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, Colors } from "constants/styles";
 import { useEffect, useMemo, useState } from "react";
@@ -11,7 +12,6 @@ import {
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
-import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
 
 type StatType = "text" | "percent" | "number" | "time";
 type BaseballStatCategory = "batting" | "pitching" | "fielding";
@@ -48,7 +48,7 @@ export type TeamStatsEntry = {
   statistics?: StatItem[] | StatGroup[];
 };
 
-type GameTeamStatsProps = {
+type TeamStatsProps = {
   awayLogo?: any;
   homeLogo?: any;
   awayColor?: string;
@@ -344,8 +344,30 @@ function findGroupedStat(team: TeamStatsEntry | undefined, config: StatConfig) {
   return group?.stats?.find((stat) => stat.name === config.key);
 }
 
+const MISSING_STAT_VALUES = new Set([
+  "",
+  "-",
+  "--",
+  "—",
+  "–",
+  "n/a",
+  "na",
+  "null",
+  "undefined",
+]);
+
 function hasStatValue(stat?: StatItem) {
-  return stat?.displayValue !== undefined || stat?.value !== undefined;
+  if (!stat) return false;
+
+  const value = stat.displayValue ?? stat.value;
+
+  if (value === undefined || value === null) return false;
+
+  if (typeof value === "number") {
+    return Number.isFinite(value);
+  }
+
+  return !MISSING_STAT_VALUES.has(value.trim().toLowerCase());
 }
 
 function getDisplayValue(stat: StatItem | undefined, type?: StatType) {
@@ -485,7 +507,7 @@ function buildRows(
     .filter(Boolean) as StatRow[];
 }
 
-export default function GameTeamStats({
+export default function TeamStats({
   stats,
   teamStats,
   state,
@@ -499,11 +521,13 @@ export default function GameTeamStats({
   homeCode,
   isDark,
   league,
-}: GameTeamStatsProps) {
-  const styles = gameTeamStatsStyles(isDark);
+}: TeamStatsProps) {
+  const styles = TeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
-  const [heightAnim] = useState(() => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT));
+  const [heightAnim] = useState(
+    () => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
+  );
 
   const teams = useMemo(() => getTeams(stats, teamStats), [stats, teamStats]);
   const away = getSideTeam(teams, "away") ?? teams[0];
@@ -522,6 +546,32 @@ export default function GameTeamStats({
       : buildRows(away, home, configs, false);
   }, [away, home, isBaseball, league]);
 
+  const hasMeaningfulStats = useMemo(() => {
+    if (rows.length === 0) return false;
+
+    // Pregame ESPN payloads can contain placeholder rows such as "-" and
+    // synthetic 0/0.0 values even when no real team stats are available yet.
+    // Hide the entire section until at least one real pregame stat exists.
+    if (state === "pre") {
+      return rows.some((row) => {
+        if (row.awayNum !== 0 || row.homeNum !== 0) return true;
+
+        // Text-based stats such as a real W/L streak are meaningful even
+        // though their numeric comparison value may be zero.
+        if (row.id.endsWith("-streak")) {
+          return (
+            row.awayDisplay !== EMPTY_DISPLAY ||
+            row.homeDisplay !== EMPTY_DISPLAY
+          );
+        }
+
+        return false;
+      });
+    }
+
+    return true;
+  }, [rows, state]);
+
   const canExpand = rows.length > COLLAPSED_ROWS;
   const collapsedHeight =
     Math.min(rows.length || COLLAPSED_ROWS, COLLAPSED_ROWS) * ROW_HEIGHT;
@@ -535,7 +585,13 @@ export default function GameTeamStats({
     }).start();
   }, [collapsedHeight, expanded, fullHeight, heightAnim]);
 
-  if (teams.length < 2 || !away || !home || rows.length === 0) {
+  if (
+    teams.length < 2 ||
+    !away ||
+    !home ||
+    rows.length === 0 ||
+    !hasMeaningfulStats
+  ) {
     return null;
   }
 

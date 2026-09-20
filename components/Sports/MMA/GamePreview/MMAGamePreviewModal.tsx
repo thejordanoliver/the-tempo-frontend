@@ -59,8 +59,6 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
   const secondFighter = game?.competitors?.[1];
   const firstFighterId = Number(firstFighter?.id);
   const secondFighterId = Number(secondFighter?.id);
-  const firstFighterLastName = firstFighter?.lastName ?? "TBD";
-  const secondFighterLastName = secondFighter?.lastName ?? "TBD";
   const firstFighterName = firstFighter?.shortName ?? "TBD";
   const secondFighterName = secondFighter?.shortName ?? "TBD";
   const firstFighterColor = firstFighter?.color ?? Colors.midTone;
@@ -223,8 +221,8 @@ export default function MMAGamePreviewModal({ game, visible, onClose }: Props) {
               secondFighterHeight={secondFighterHeight}
               firstFighterWeight={firstFighterWeight}
               secondFighterWeight={secondFighterWeight}
-              firstFighterName={firstFighterLastName}
-              secondFighterName={secondFighterLastName}
+              firstFighterName={firstFighterName}
+              secondFighterName={secondFighterName}
               firstFighterFlag={firstFighterFlag}
               secondFighterFlag={secondFighterFlag}
               firstFighterCountry={firstFighterCountry}

@@ -26,7 +26,7 @@ import AwardSeasons from "@/components/League/Awards/AwardSeasons";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
-import { getMLBStandingsSeason } from "@/utils/dateUtils";
+import { getMLBSeason, getMLBStandingsSeason } from "@/utils/dateUtils";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
@@ -91,22 +91,25 @@ export default function BaseballLeagueScreen() {
 function MLBLeagueScreen() {
   const league = "mlb";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-
+  const currentSeason = getMLBSeason();
+  const mlbStandingsSeason = getMLBStandingsSeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
-
-  const [standingsYear, setStandingsYear] = useState(getMLBStandingsSeason());
+  const [standingsYear, setStandingsYear] = useState(mlbStandingsSeason);
   const navigation = useNavigation();
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [gamesRefreshing, setGamesRefreshing] = useState(false);
-
   const { calendar } = useLeagueCalendar(league);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
-  const { categories, loading, error } = useSeasonLeaders(2025, league, {
-    enabled: hasVisitedTab("stats"),
-  });
+  const { categories, loading, error } = useSeasonLeaders(
+    currentSeason,
+    league,
+    {
+      enabled: hasVisitedTab("stats"),
+    },
+  );
   const [selectedDate, setSelectedDate] = useState<Date>(
     dayjs().startOf("day").toDate(),
   );

@@ -153,12 +153,11 @@ export default function GameDetailsScreen(
 
   const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
   const headline = game?.headline ?? holidayLabel;
   const results = game?.method;
   const broadcasts = game?.broadcasts;

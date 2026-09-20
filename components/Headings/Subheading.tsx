@@ -12,19 +12,18 @@ export default function Subheading({ children }: Props) {
 
   const isDark = resolvedColorScheme === "dark";
 
-  const styles = subHeadingStyles(isDark);
+  const styles = SubheadingStyles(isDark);
 
   return <Text style={styles.heading}>{children}</Text>;
 }
 
-const subHeadingStyles = (isDark: boolean) =>
+const SubheadingStyles = (isDark: boolean) =>
   StyleSheet.create({
     heading: {
       marginBottom: 8,
       paddingBottom: 4,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });

@@ -19,40 +19,16 @@ export const BoxScoreStyles = (isDark: boolean) => {
       gap: 16,
     },
     teamGap: { height: 24 },
-    messageCard: {
-      alignItems: "center",
-      justifyContent: "center",
-      minHeight: 96,
-      padding: 16,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: Colors.midTone,
-      borderRadius: 14,
-      backgroundColor: surfaceColor,
-    },
-    emptyText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 15,
-      color: textColor,
-      textAlign: "center",
-    },
-    errorText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 15,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
+
     playerColumn: {
       flexDirection: "row",
       width: "100%",
     },
     teamContainer: {
       width: "100%",
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: 1,
       borderColor: Colors.midTone,
-      borderRadius: 14,
-      backgroundColor: isDark
-        ? Colors.dark.background
-        : Colors.light.background,
+      borderRadius: 8,
       overflow: "hidden",
     },
     teamHeader: {
@@ -114,24 +90,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
       fontSize: 13,
       color: textColor,
     },
-    tableIntro: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      minHeight: 36,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-    },
-    tableTitle: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      color: textColor,
-    },
-    scrollHint: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      color: Colors.midTone,
-    },
+
     playerNameColumn: {
       zIndex: 1,
       width: NAME_COLUMN_WIDTH,

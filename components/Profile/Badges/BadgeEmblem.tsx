@@ -13,7 +13,7 @@ type BadgeEmblemProps = {
 
 export default function BadgeEmblem({
   badge,
-  size = 72,
+  size = 40,
   showLockedState = true,
 }: BadgeEmblemProps) {
   const { resolvedColorScheme } = usePreferences();
@@ -26,8 +26,8 @@ export default function BadgeEmblem({
   const categoryColor =
     BADGE_CATEGORY_COLORS[badge.category] ?? BADGE_CATEGORY_COLORS.community;
 
-  const outerBorderWidth = Math.max(size * 0.07, 3);
-  const innerSize = size - outerBorderWidth * 2 - 6;
+  const outerBorderWidth = Math.max(size * 0.1, 3);
+  const innerSize = size - outerBorderWidth * 2 - 10;
 
   return (
     <View

@@ -12,6 +12,7 @@ import {
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import CalendarModal from "components/CalendarModal";
 import { CustomHeader } from "components/CustomHeader";
 import DateNavigator from "components/DateNavigator";
@@ -72,39 +73,37 @@ export default function TennisLeagueScreen() {
     leagueLabel?: string | string[];
   }>();
 
+  const { resolvedColorScheme } = usePreferences();
+  const isDark = resolvedColorScheme === "dark";
+  const styles = LeagueScreenStyles(isDark);
   const league = normalizeLeague(params.league);
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
-
-  const { resolvedColorScheme } = usePreferences();
-
-  const isDark = resolvedColorScheme === "dark";
-  const styles = LeagueScreenStyles(isDark);
-
-  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
+  const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const [selectedDate, setSelectedDate] = useState(() =>
     dayjs().startOf("day").toDate(),
   );
-
   const [calendarAnchor, setCalendarAnchor] = useState(() =>
     dayjs().format("YYYY-MM-DD"),
   );
-
   const [showCalendar, setShowCalendar] = useState(false);
-
-  /**
-   * Leave this empty initially.
-   *
-   * availableDivisions comes from the tennis response, so we select
-   * Women's Singles once the actual division slug is known.
-   */
   const [selectedDivision, setSelectedDivision] = useState("");
-
   const { calendar } = useLeagueCalendar(league, "raw", calendarAnchor);
 
   const {
@@ -124,15 +123,6 @@ export default function TennisLeagueScreen() {
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
 
-  /**
-   * Select the preferred singles division as soon as divisions load.
-   *
-   * WTA -> Women's Singles
-   * ATP -> Men's Singles
-   *
-   * If the preferred division isn't present, fall back to the first
-   * available division.
-   */
   useEffect(() => {
     let cancelled = false;
 
@@ -169,7 +159,7 @@ export default function TennisLeagueScreen() {
 
   const markedDates = useMemo(
     () =>
-      calendar.reduce<Record<string, { marked: boolean; dotColor: string; }>>(
+      calendar.reduce<Record<string, { marked: boolean; dotColor: string }>>(
         (result, value) => {
           if (typeof value !== "string") {
             return result;
@@ -239,30 +229,21 @@ export default function TennisLeagueScreen() {
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-
-          const page = tabs.indexOf(tab);
-
-          if (page >= 0) {
-            pagerRef.current?.setPage(page);
-          }
-        }}
+        onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          onPageSelected={(event) => {
-            const tab = tabs[event.nativeEvent.position];
-
-            if (tab) {
-              setSelectedTab(tab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           <View key="scores" style={styles.contentArea}>
             <DateNavigator
@@ -290,14 +271,16 @@ export default function TennisLeagueScreen() {
           </View>
 
           <View key="news" style={styles.contentArea}>
-            {hasVisitedTab("news") ? <NewsList
-              items={articles}
-              loading={newsLoading}
-              error={newsError}
-              refreshing={newsRefreshing}
-              onRefresh={refreshNews}
-              isDark={isDark}
-            /> : null}
+            {hasVisitedTab("news") ? (
+              <NewsList
+                items={articles}
+                loading={newsLoading}
+                error={newsError}
+                refreshing={newsRefreshing}
+                onRefresh={refreshNews}
+                isDark={isDark}
+              />
+            ) : null}
           </View>
 
           <View key="forum" style={styles.contentArea}>

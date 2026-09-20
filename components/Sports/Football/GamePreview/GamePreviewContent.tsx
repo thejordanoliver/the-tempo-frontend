@@ -9,8 +9,8 @@ import {
   Officials,
 } from "@/components/Sports/Basketball/GameDetails";
 import {
-  FootballDrive,
   BoxScorePlayerTeam,
+  FootballDrive,
   PlayObject,
   TeamInjury,
   TeamLeaders,
@@ -22,10 +22,10 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
-import { TeamStatsEntry } from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
-import GameLeaders from "../GameDetails/Leaders";
+import { TeamStatsEntry } from "../../Basketball/GameDetails/TeamStats";
 import BoxScore from "../GameDetails/BoxScore";
+import GameLeaders from "../GameDetails/Leaders";
 import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
 
 type GamePreviewContentProps = {

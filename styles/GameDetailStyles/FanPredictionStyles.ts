@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 
 export const FanPredictionStyles = (isDark: boolean) =>
   StyleSheet.create({
-   
     wrapper: {
       flex: 1,
       flexDirection: "row",

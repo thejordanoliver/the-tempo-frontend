@@ -126,9 +126,8 @@ export function getCBBSeason(): number {
   return year + 1;
 }
 
-export function getMLBSeason(date: Date = new Date()): string {
-  // MLB seasons use a single calendar year.
-  return String(date.getFullYear());
+export function getMLBSeason(date: Date = new Date()): number {
+  return Number(date.getFullYear());
 }
 
 export function getNHLSeason(date: Date = new Date()): string {

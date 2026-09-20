@@ -1,18 +1,16 @@
-import HeaderWithSeeAll from "@/components/Headings/HeaderWithSeeAll";
+import Button from "@/components/Buttons/Button";
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import HeadingTwo from "@/components/Headings/HeadingTwo";
+import Subheading from "@/components/Headings/Subheading";
 import { BADGE_TIER_COLORS } from "@/constants/badges";
-import { Colors, Fonts } from "@/constants/styles";
+import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import { BadgeProgress } from "@/types/badges";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { router } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BadgeEmblem from "./BadgeEmblem";
 
 const BADGE_GRID_GAP = 8;
-const BADGE_CARD_HEIGHT = 148;
+const CARD_HEIGHT = 130;
 
 type BadgePreviewSectionProps = {
   badges: BadgeProgress[];
@@ -49,7 +47,7 @@ function BadgePreviewCard({ badge, isDark, itemWidth }: BadgePreviewCardProps) {
       accessibilityRole="text"
       accessibilityLabel={`${badge.name}, ${statusText}`}
       style={[
-        styles.previewCard,
+        styles.gridItem,
         {
           borderColor: badge.isEarned
             ? tierColor
@@ -98,31 +96,24 @@ export default function BadgePreviewSection({
   totalCount,
   isDark,
   itemWidth,
-  onPressSeeAll,
   loading = false,
   error = null,
   onRetry,
 }: BadgePreviewSectionProps) {
   const styles = badgePreviewSectionStyles(isDark, itemWidth);
+  const global = globalStyles(isDark);
   const earnedSummary = `${earnedCount} of ${totalCount} earned`;
 
   if (loading)
     return (
-      <View style={styles.statusContainer}>
-        <ActivityIndicator
-          color={isDark ? Colors.white : Colors.black}
-          size="small"
-        />
-
-        <Text selectable style={styles.statusText}>
-          Loading badges
-        </Text>
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
       </View>
     );
 
   if (error)
     return (
-      <View style={styles.statusContainer}>
+      <View style={global.emptyContainer}>
         <Text selectable style={styles.errorText}>
           {error}
         </Text>
@@ -141,12 +132,12 @@ export default function BadgePreviewSection({
 
   if (badges.length < 0)
     return (
-      <View style={styles.emptyContainer}>
+      <View style={global.emptyContainer}>
         <Text selectable style={styles.emptyTitle}>
           No badges earned yet
         </Text>
 
-        <Text selectable style={styles.emptyText}>
+        <Text selectable style={global.emptyText}>
           Badges are earned through forum posts, comments, likes, and shares.
         </Text>
       </View>
@@ -154,11 +145,8 @@ export default function BadgePreviewSection({
 
   return (
     <View>
-      <HeaderWithSeeAll
-        title="Badges"
-        subtitle={earnedSummary}
-        onPressSeeAll={onPressSeeAll}
-      />
+      <HeadingTwo isDark={isDark}>Badges</HeadingTwo>
+      <Subheading>{earnedSummary}</Subheading>
       <View style={styles.grid}>
         {badges.map((badge) => (
           <BadgePreviewCard
@@ -168,6 +156,12 @@ export default function BadgePreviewSection({
             itemWidth={itemWidth}
           />
         ))}
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button onPress={() => router.push("/badges")} isDark={isDark}>
+          See All Badges
+        </Button>
       </View>
     </View>
   );
@@ -183,20 +177,21 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       rowGap: BADGE_GRID_GAP,
       columnGap: BADGE_GRID_GAP,
     },
-
-    previewCard: {
+    gridItem: {
+      position: "relative",
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      padding: 20,
       width: itemWidth,
-      height: BADGE_CARD_HEIGHT,
+      height: CARD_HEIGHT,
       paddingHorizontal: 8,
       paddingVertical: 12,
-      borderWidth: 1,
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      overflow: "hidden",
     },
 
     cardText: {
@@ -242,21 +237,6 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       textAlign: "center",
     },
 
-    statusContainer: {
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 10,
-      minHeight: BADGE_CARD_HEIGHT,
-      paddingHorizontal: 12,
-      paddingVertical: 24,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-
     statusText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
@@ -283,5 +263,9 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       fontFamily: Fonts.BOLD,
       fontSize: 13,
       color: isDark ? Colors.black : Colors.white,
+    },
+    buttonContainer: {
+      width: "100%",
+      marginVertical: 12,
     },
   });

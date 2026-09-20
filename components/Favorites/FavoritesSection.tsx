@@ -3,6 +3,7 @@
 import Button from "@/components/Buttons/Button";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
+import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { isFavoriteLeague } from "@/types/favorites";
 import { Ionicons } from "@expo/vector-icons";
 import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
@@ -29,20 +30,18 @@ import {
   View,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import type { Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
-import HeaderWithToggle from "../Headings/HeaderWithToggle";
+import HeadingTwo from "../Headings/HeadingTwo";
+import Subheading from "../Headings/Subheading";
 
 type Props = {
   favoriteTeams: Team[];
   favoriteSports?: FavoriteSportId[];
   favoriteSportsLoading?: boolean;
   favoriteSportsReady?: boolean;
-  isGridView: boolean;
   itemWidth: number;
   isCurrentUser: boolean;
-  onToggleView: () => void;
   fadeAnim: Animated.Value;
 };
 
@@ -137,16 +136,14 @@ export default function FavoritesSection({
   favoriteSports,
   favoriteSportsLoading = false,
   favoriteSportsReady = true,
-  isGridView,
   itemWidth,
   isCurrentUser,
-  onToggleView,
   fadeAnim,
 }: Props) {
   const router = useRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = FavoritesSectionStyles(isDark, itemWidth, isGridView);
+  const styles = FavoritesSectionStyles(isDark, itemWidth);
 
   const {
     previewTeam,
@@ -163,7 +160,7 @@ export default function FavoritesSection({
 
   const showSportsLoader = favoriteSportsLoading && !favoriteSportsReady;
   const sections = useMemo<FavoriteSection[]>(() => {
-    const columns = isGridView ? 3 : 1;
+    const columns = 3;
 
     const favoriteSportItems: FavoriteSportItem[] = showSportsLoader
       ? []
@@ -194,7 +191,7 @@ export default function FavoritesSection({
     });
 
     return nextSections;
-  }, [favoriteTeams, isGridView, showFavoriteSports, showSportsLoader, sports]);
+  }, [favoriteTeams, showFavoriteSports, showSportsLoader, sports]);
 
   const renderSport = (sport: FavoriteSportId) => {
     const config = LEAGUE_CONFIG[sport];
@@ -215,33 +212,23 @@ export default function FavoritesSection({
         }}
         style={({ pressed }) => [
           pressed && styles.pressed,
-          isGridView ? styles.gridItem : styles.listItem,
+          styles.gridItem,
           {
             backgroundColor: config.color,
-            padding: isGridView ? 20 : 12,
           },
         ]}
       >
         <View style={styles.teamItem}>
           <Image
             source={config.logoLight}
-            style={[
-              styles.teamLogo,
-              isGridView ? styles.logoGridMargin : styles.logoListMargin,
-            ]}
+            style={[styles.teamLogo, styles.logoGridMargin]}
           />
 
-          {isGridView ? (
-            <View style={styles.gridNameContainer}>
-              <Text style={[styles.teamName, styles.gridNameText]}>
-                {config.label}
-              </Text>
-            </View>
-          ) : (
-            <Text style={[styles.teamName, styles.listNameText]}>
+          <View style={styles.gridNameContainer}>
+            <Text style={[styles.teamName, styles.gridNameText]}>
               {config.label}
             </Text>
-          )}
+          </View>
         </View>
       </Pressable>
     );
@@ -272,10 +259,9 @@ export default function FavoritesSection({
         <Pressable
           style={({ pressed }) => [
             pressed && styles.pressed,
-            isGridView ? styles.gridItem : styles.listItem,
+            styles.gridItem,
             {
               backgroundColor: teamBackgroundColor,
-              padding: isGridView ? 20 : 12,
             },
           ]}
           onPress={() => {
@@ -310,24 +296,15 @@ export default function FavoritesSection({
             {logo && (
               <Image
                 source={logo}
-                style={[
-                  styles.teamLogo,
-                  isGridView ? styles.logoGridMargin : styles.logoListMargin,
-                ]}
+                style={[styles.teamLogo, styles.logoGridMargin]}
               />
             )}
 
-            {isGridView ? (
-              <View style={styles.gridNameContainer}>
-                <Text style={[styles.teamName, styles.gridNameText]}>
-                  {teamName}
-                </Text>
-              </View>
-            ) : (
-              <Text style={[styles.teamName, styles.listNameText]}>
+            <View style={styles.gridNameContainer}>
+              <Text style={[styles.teamName, styles.gridNameText]}>
                 {teamName}
               </Text>
-            )}
+            </View>
           </View>
         </Pressable>
       </LongPressGestureHandler>
@@ -336,7 +313,7 @@ export default function FavoritesSection({
 
   const renderRow = ({ item }: { item: FavoriteRow }) => {
     return (
-      <View style={[isGridView ? styles.grid : styles.list]}>
+      <View style={styles.grid}>
         {item.map((favorite) => {
           if (favorite.type === "sport") {
             return renderSport(favorite.sport);
@@ -361,17 +338,12 @@ export default function FavoritesSection({
         />
       )}
 
-      <HeaderWithToggle
-        title={"Favorites"}
-        isGridView={isGridView}
-        onToggleView={onToggleView}
-      />
+      <HeadingTwo isDark={isDark}>Favorites</HeadingTwo>
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <SectionList
           sections={sections}
           scrollEnabled={false}
-          key={isGridView ? "grid" : "list"}
           keyExtractor={(row, index) => {
             const rowKey = row
               .map((item) => {
@@ -391,18 +363,7 @@ export default function FavoritesSection({
               return null;
             }
 
-            return (
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  section.key === "teams" &&
-                    showFavoriteSports &&
-                    styles.nextSectionTitle,
-                ]}
-              >
-                {section.title}
-              </Text>
-            );
+            return <Subheading>{section.title}</Subheading>;
           }}
           renderSectionFooter={({ section }) => {
             if (section.key !== "sports") {

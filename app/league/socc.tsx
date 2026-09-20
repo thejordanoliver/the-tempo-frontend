@@ -14,6 +14,7 @@ import { CustomHeader } from "../../components/CustomHeader";
 import DateNavigator from "../../components/DateNavigator";
 import ForumFeed from "../../components/Forum/ForumFeed";
 
+import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Soccer/Games/GamesList";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
@@ -45,10 +46,21 @@ export default function SoccerLeagueScreen() {
   const { calendar } = useLeagueCalendar(league);
 
   const navigation = useNavigation();
-  const pagerRef = useRef<PagerView>(null);
-
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
+  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
+  const indexToTab = (index: number) => tabs[index];
+  const handleTabPress = (tab: (typeof tabs)[number]) => {
+    setSelectedTab(tab);
+    pagerRef.current?.setPage(tabToIndex(tab));
+  };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
   const [refreshing, setRefreshing] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -122,28 +134,21 @@ export default function SoccerLeagueScreen() {
       <MainScrollTabBar
         tabs={tabs}
         selected={selectedTab}
-        onTabPress={(tab) => {
-          setSelectedTab(tab);
-
-          const index = tabs.indexOf(tab);
-          pagerRef.current?.setPage(index);
-        }}
+        onTabPress={handleTabPress}
         isDark={isDark}
+        scrollProgress={scrollProgress}
       />
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={styles.contentArea}
-          initialPage={0}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
-            const nextTab = tabs[index];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           <View key="scores">
             <DateNavigator

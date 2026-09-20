@@ -179,12 +179,11 @@ export default function GameDetailsScreen(
   const awayWins = score?.away?.winner;
   const isTie = awayWins === homeWins;
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
   const teamStats = score?.teamStats;
   const lineScore = score?.periodScores?.length
     ? {

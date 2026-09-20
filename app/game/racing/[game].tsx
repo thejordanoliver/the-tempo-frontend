@@ -90,13 +90,11 @@ export default function GameDetailsScreen(
   const gameStatusDescription = game?.status?.description ?? "";
   const state = game?.status.state ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
-
+    isCanceled || isPostponed || isSuspended || isForfeited;
   const gameName = game?.name ?? "";
   const circuitDiagram = game?.venue.image?.href;
   const circuitName = game?.venue.name;

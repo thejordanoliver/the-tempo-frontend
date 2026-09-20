@@ -6,11 +6,7 @@ const CARD_HEIGHT = 130;
 
 /* ---------------- STYLES ---------------- */
 
-export const FavoritesSectionStyles = (
-  isDark: boolean,
-  itemWidth: number,
-  isGridView: boolean,
-) =>
+export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -29,6 +25,7 @@ export const FavoritesSectionStyles = (
       alignItems: "center",
       justifyContent: "center",
       gap: 10,
+      padding: 20,
       width: itemWidth,
       height: CARD_HEIGHT,
       paddingHorizontal: 8,
@@ -100,8 +97,8 @@ export const FavoritesSectionStyles = (
       paddingHorizontal: 4,
     },
     teamItem: {
-      flexDirection: isGridView ? "column" : "row",
-      alignItems: isGridView ? "center" : "center",
+      flexDirection: "column",
+      alignItems: "center",
     },
     teamLogo: {
       width: 50,
@@ -109,7 +106,7 @@ export const FavoritesSectionStyles = (
       resizeMode: "contain",
     },
     teamName: {
-      flex: isGridView ? 0 : 1,
+      flex: 0,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.white,
     },

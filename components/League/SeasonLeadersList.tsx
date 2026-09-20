@@ -91,11 +91,11 @@ export default function SeasonLeadersList({
             <View style={styles.playersList}>
               {players!.map((item) => {
                 const statValue = item.value ?? "0";
-                const name = item.player.short_name;
-                const headshot = item.player.headshot_url;
-                const playerId = item.player.id;
-                const teamId = item.player.team_id;
-                const rank = item.rank;
+                const name = item?.player?.short_name;
+                const headshot = item?.player?.headshot_url;
+                const playerId = item?.player?.id;
+                const teamId = item?.player?.team_id;
+                const rank = item?.rank;
 
                 return (
                   <PlayerCard

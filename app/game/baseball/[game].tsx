@@ -1,4 +1,5 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
+import Leaders from "@/components/Sports/Baseball/GameDetails/Leaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
@@ -45,7 +46,6 @@ import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "../../../types/baseball/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
-import Leaders from "@/components/Sports/Baseball/GameDetails/Leaders";
 
 type RouteParams = {
   game?: string | string[];

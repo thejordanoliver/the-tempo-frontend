@@ -144,13 +144,15 @@ export const InfoCardStyles = (isDark: boolean, teamObj: TeamColors) =>
       borderColor: Colors.white,
       borderRadius: 100,
       overflow: "hidden",
-      resizeMode: "contain",
+      width: 54,
+      height: 54,
+      paddingTop: 8,
     },
 
     image: {
-      width: 54,
-      height: 54,
-      paddingTop: 4,
+      width: 64,
+      height: 64,
+      resizeMode: "contain",
     },
 
     value: {

@@ -35,6 +35,7 @@ type GameHeaderProps = {
   gameStatusShortDetail: string;
   gameStatusDescription: string;
   league: string;
+  isCFB: boolean;
   redzone: boolean | undefined;
 };
 
@@ -70,6 +71,7 @@ export default function GameHeader({
   gameStatusShortDetail,
   gameStatusDescription,
   league,
+  isCFB = false,
   redzone = false,
 }: GameHeaderProps) {
   const styles = gameHeaderStyles(isDark);
@@ -113,6 +115,7 @@ export default function GameHeader({
           state={state}
           gameStatusShortDetail={gameStatusShortDetail}
           gameStatusDescription={gameStatusDescription}
+          isCFB={isCFB}
           redzone={redzone}
         />
 

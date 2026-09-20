@@ -11,7 +11,7 @@ export interface Leader {
   last_name: string | null;
   short_name: string | null;
   height: string | null;
-  weight: string | null;
+  weight: string | number | null;
   position: string | null;
   jersey_number: number | string | null;
   experience: number | string | null;
@@ -21,15 +21,24 @@ export interface Leader {
   birth_state: string | null;
   birth_country: string | null;
   birth_display: string | null;
+  birth_date: string | null;
   team_id: number | string | null;
   headshot_url: string | null;
   active: boolean | null;
   created_at: string | null;
   updated_at: string | null;
-  birth_date: string | null;
   rank: number | string | null;
   value: number | string | null;
   displayValue: string | null;
+
+  teamId?: number | string | null;
+  teamName?: string | null;
+  teamAbbrev?: string | null;
+  teamLogo?: string | null;
+  seasonTeamId?: number | string | null;
+  seasonTeamSlug?: string | null;
+
+  [key: string]: unknown;
 }
 
 export interface LeaderCategory {
@@ -39,10 +48,28 @@ export interface LeaderCategory {
   leaders: Leader[];
 }
 
+export type LeaderDataSource = "database" | null;
+
+interface SeasonLeadersApiResponse {
+  league?: string;
+  requestedLeague?: string;
+  requestedSeason?: number;
+  season?: number;
+  displaySeason?: string;
+  source?: LeaderDataSource;
+  seasonType?: number;
+  seasonTypeLabel?: string;
+  limit?: number;
+  categories?: LeaderCategory[];
+}
+
 interface SeasonLeaderResult {
   categories: LeaderCategory[];
   loading: boolean;
   error: string | null;
+  source: LeaderDataSource;
+  returnedSeason: number | null;
+  displaySeason: string | null;
   refresh: () => void;
 }
 
@@ -56,62 +83,111 @@ export function useSeasonLeaders(
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
+  const [source, setSource] = useState<LeaderDataSource>(null);
+  const [returnedSeason, setReturnedSeason] = useState<number | null>(null);
+  const [displaySeason, setDisplaySeason] = useState<string | null>(null);
 
-  const cacheRef = useRef<Partial<Record<string, LeaderCategory[]>>>({});
+  /**
+   * This is not a data cache.
+   *
+   * It prevents an older request from overwriting state if the
+   * league or season changes before that request finishes.
+   */
+  const requestIdRef = useRef(0);
 
-  const cacheKey = `${league}:${season}`;
+  const normalizedLeague = league.trim().toLowerCase();
 
-  const fetchLeaders = useCallback(
-    async (forceRefresh = false) => {
-      if (!enabled) {
-        return;
-      }
+  const fetchLeaders = useCallback(async () => {
+    if (!enabled) {
+      return;
+    }
 
-      const cachedCategories = cacheRef.current[cacheKey];
+    const requestId = ++requestIdRef.current;
 
-      if (!forceRefresh && cachedCategories) {
-        setCategories(cachedCategories);
-        setLoading(false);
-        return;
-      }
+    setLoading(true);
+    setError(null);
 
-      setLoading(true);
-      setError(null);
-
-      try {
-        const leaguePath = league.toLowerCase();
-
-        const response = await apiClient.get(`api/leaders/${leaguePath}`, {
+    try {
+      const response = await apiClient.get<SeasonLeadersApiResponse>(
+        `api/leaders/${normalizedLeague}`,
+        {
           params: {
             season,
           },
-        });
+        },
+      );
 
-        const rawCategories: LeaderCategory[] = response.data.categories ?? [];
+      /**
+       * Ignore stale responses from an older league/season request.
+       */
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
 
-        cacheRef.current[cacheKey] = rawCategories;
+      const data = response.data;
 
-        setCategories(rawCategories);
-      } catch (error: unknown) {
-        console.error(`❌ [${league}] Season Leaders Error:`, error);
+      setCategories(Array.isArray(data.categories) ? data.categories : []);
 
-        const message =
-          error instanceof Error ? error.message : "Failed to fetch leaders";
+      setSource(data.source ?? null);
 
-        setError(message);
-      } finally {
+      setReturnedSeason(data.season ?? null);
+
+      setDisplaySeason(
+        data.displaySeason ??
+          (data.season !== null && data.season !== undefined
+            ? String(data.season)
+            : null),
+      );
+    } catch (error: unknown) {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      console.error(`❌ [${normalizedLeague}] Season Leaders Error:`, error);
+
+      const message =
+        error instanceof Error ? error.message : "Failed to fetch leaders";
+
+      setCategories([]);
+      setSource(null);
+      setReturnedSeason(null);
+      setDisplaySeason(null);
+      setError(message);
+    } finally {
+      if (requestId === requestIdRef.current) {
         setLoading(false);
       }
-    },
-    [cacheKey, enabled, league, season],
-  );
+    }
+  }, [enabled, normalizedLeague, season]);
 
   useEffect(() => {
     if (!enabled) {
       return;
     }
 
-    void fetchLeaders();
+    let cancelled = false;
+
+    /**
+     * Schedule the request after the current synchronous effect execution.
+     *
+     * This avoids synchronously calling setState from inside the effect,
+     * which satisfies react-hooks/set-state-in-effect.
+     */
+    queueMicrotask(() => {
+      if (!cancelled) {
+        void fetchLeaders();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+
+      /**
+       * Ignore any response belonging to the previous
+       * league/season request.
+       */
+      requestIdRef.current += 1;
+    };
   }, [enabled, fetchLeaders]);
 
   const refresh = useCallback(() => {
@@ -119,18 +195,16 @@ export function useSeasonLeaders(
       return;
     }
 
-    void fetchLeaders(true);
+    void fetchLeaders();
   }, [enabled, fetchLeaders]);
 
   return {
     categories,
-
-    // No state update is necessary when the hook is disabled.
-    // We can derive the disabled loading state directly.
     loading: enabled ? loading : false,
-
-    error,
-
+    error: enabled ? error : null,
+    source,
+    returnedSeason,
+    displaySeason,
     refresh,
   };
 }

@@ -47,21 +47,25 @@ function UFCLeagueScreen() {
   const styles = LeagueScreenStyles(isDark);
   const navigation = useNavigation();
 
-  const pagerRef = useRef<PagerView>(null);
-
   const [selectedEventIndex, setSelectedEventIndex] = useState<number | null>(
     null,
   );
-  const { scrollProgress } = usePagerTabScrollProgress();
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useLeagueTabs(league);
+  const pagerRef = useRef<PagerView>(null);
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
   const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
-
+  const indexToTab = (index: number) => tabs[index];
   const handleTabPress = (tab: (typeof tabs)[number]) => {
     setSelectedTab(tab);
     pagerRef.current?.setPage(tabToIndex(tab));
   };
+  const handlePageChange = (index: number) => {
+    syncPageScrollProgress(index);
+    setSelectedTab(indexToTab(index));
+  };
 
-  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
-    useLeagueTabs(league);
   const { calendar } = useLeagueCalendar(league, league);
 
   const sortedCalendar = useMemo(() => {
@@ -133,17 +137,14 @@ function UFCLeagueScreen() {
 
       <View style={styles.container}>
         <PagerView
+          key={league}
           ref={pagerRef}
-          style={{ flex: 1 }}
-          initialPage={0}
-          onPageSelected={(e) => {
-            const index = e.nativeEvent.position;
-            const nextTab = tabs[index];
-
-            if (nextTab) {
-              setSelectedTab(nextTab);
-            }
-          }}
+          style={styles.container}
+          initialPage={tabToIndex(selectedTab)}
+          onPageScroll={handlePageScroll}
+          onPageSelected={(event) =>
+            handlePageChange(event.nativeEvent.position)
+          }
         >
           <View key="fights" style={styles.contentArea}>
             <EventSelector

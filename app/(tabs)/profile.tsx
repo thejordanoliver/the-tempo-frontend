@@ -73,7 +73,7 @@ export default function ProfileScreen() {
   const [fadeAnim] = useState(() => new Animated.Value(1));
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);
-  const [isGridView, setIsGridView] = useState(true);
+
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser | null>(null);
   const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
@@ -172,22 +172,6 @@ export default function ProfileScreen() {
     },
     [removeBookmarkedPost, updateBookmarkedPost],
   );
-
-  const toggleFavoriteTeamsView = useCallback(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsGridView((previousValue) => !previousValue);
-
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-  }, [fadeAnim]);
 
   const signOut = useCallback(async () => {
     try {
@@ -482,9 +466,7 @@ export default function ProfileScreen() {
               favoriteSports={favoriteSports}
               favoriteSportsLoading={favoriteSportsLoading}
               favoriteSportsReady={favoriteSportsReady}
-              isGridView={isGridView}
               fadeAnim={fadeAnim}
-              onToggleView={toggleFavoriteTeamsView}
               itemWidth={itemWidth}
               isCurrentUser={currentUserId === viewedUserId}
             />

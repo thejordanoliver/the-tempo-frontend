@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 const ROW_HEIGHT = 80;
 
-export const gameTeamStatsStyles = (isDark: boolean) =>
+export const TeamStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderLeftWidth: 1,

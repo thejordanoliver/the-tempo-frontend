@@ -10,12 +10,10 @@ export const FighterRow = ({
   id,
   headshot,
   name,
-  flag,
   record = "0-0",
   isDark,
   isFirstFighter = false,
   isWinner,
-
   gameStatusDescription,
 }: MMAProps) => {
   const router = useRouter();

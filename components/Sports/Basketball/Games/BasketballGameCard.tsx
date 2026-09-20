@@ -31,7 +31,6 @@ export default function BasketballGameCard({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {
-    console.log(league);
     router.push({
       pathname: "/game/basketball/[game]",
       params: {

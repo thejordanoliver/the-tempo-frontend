@@ -159,14 +159,12 @@ export default function GameDetailsScreen(
   const lastPlay = score?.lastPlay;
   // const playerStats = score?.playerStats ?? [];
   const teamStats = score?.teamStats ?? [];
-  console.log(LEAGUE);
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
   const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts);
   const period = formatPeriod({ period: score?.status.period, isNHL: true });

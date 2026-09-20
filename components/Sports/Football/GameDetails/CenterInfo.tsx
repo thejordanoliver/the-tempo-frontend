@@ -14,6 +14,7 @@ type CenterInfoProps = {
   state?: string;
   gameStatusDescription?: string;
   gameStatusShortDetail?: string;
+  isCFB: boolean;
   redzone: boolean;
 };
 
@@ -28,6 +29,7 @@ export function CenterInfo({
   gameStatusDescription,
   gameStatusShortDetail,
   redzone = false,
+  isCFB = false,
   isDark,
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
@@ -41,6 +43,7 @@ export function CenterInfo({
   const isForfeited = gameStatusDescription === "Forfeit";
   const isPostponed = gameStatusDescription === "Postponed";
   const isHalftime = gameStatusDescription === "Halftime";
+  const isOT = isCFB ? gameStatusShortDetail?.includes("OT") : false;
 
   const renderDownAndDistance = () => {
     if (!downDistance) return null;
@@ -79,13 +82,19 @@ export function CenterInfo({
 
       {inProgress && !isHalftime && !endOfPeriod && (
         <>
-          <View style={styles.infoWrapper}>
-            <>
-              <Text style={styles.date}>{period}</Text>
-              <View style={styles.statusDivider} />
-              <Text style={styles.clock}>{clock}</Text>
-            </>
-          </View>
+          <>
+            {!isOT && (
+              <>
+                <View style={styles.infoWrapper}>
+                  <Text style={styles.date}>{period}</Text>
+                  <View style={styles.statusDivider} />
+                  <Text style={styles.clock}>{clock}</Text>
+                </View>
+              </>
+            )}
+
+            {isOT && <Text style={styles.clock}>{period}</Text>}
+          </>
           {renderDownAndDistance()}
         </>
       )}

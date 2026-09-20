@@ -63,19 +63,11 @@ export const GamePreviewModalStyles = ({
       justifyContent: "space-between",
       marginBottom: 20,
     },
-    bottomSheetScrollViewContainer: {
-      flex: 1,
-    },
     bottomSheetScrollViewWrapper: {
       gap: 24,
     },
     loadingContainer: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    headlineContainer: {
-      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
     },

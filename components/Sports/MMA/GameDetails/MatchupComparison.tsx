@@ -218,7 +218,7 @@ export default function MatchupComparison({
       pathname: ROUTE,
       params: {
         id: fighterId,
-        league: "mma"
+        league: "mma",
       },
     });
   };
@@ -309,10 +309,7 @@ export default function MatchupComparison({
       >
         {fighter.name}
       </Text>
-      <View style={styles.metaRow}>
-        {renderFlag(fighter)}
-
-      </View>
+      <View style={styles.metaRow}>{renderFlag(fighter)}</View>
     </View>
   );
 
@@ -541,13 +538,12 @@ export const matchupComparisonStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 5,
       width: "100%",
       minHeight: 18,
     },
     flag: {
-      width: 22,
-      height: 15,
+      width: "100%",
+      height: "100%",
     },
     recordText: {
       fontFamily: Fonts.MEDIUM,

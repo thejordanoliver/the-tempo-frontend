@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import MatchInformation from "@/components/Sports/Tennis/GameDetails/MatchInformation";
 import GameHeader from "@/components/Sports/Tennis/GamePreview/GameHeader";
@@ -10,7 +10,6 @@ import { gameDetailsScreenStyles } from "@/styles/GameDetailStyles/GameDetailsSc
 import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";
 import { getBroadcastDisplay } from "@/utils/games";
 import { CustomHeader } from "components/CustomHeader";
-import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { TennisMatch } from "types/tennis/tennis";
 
@@ -111,33 +110,7 @@ export default function TennisMatchDetailsScreen() {
     });
   }, [match?.tournamentShortName, navigation]);
 
-  if (!match) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 24,
-          backgroundColor: isDark
-            ? Colors.dark.background
-            : Colors.light.background,
-        }}
-      >
-        <Text
-          selectable
-          style={{
-            color: isDark ? Colors.white : Colors.black,
-            fontFamily: Fonts.MEDIUM,
-            fontSize: 18,
-            textAlign: "center",
-          }}
-        >
-          Match details are unavailable.
-        </Text>
-      </View>
-    );
-  }
+  if (!match) return <View />;
 
   return (
     <ScrollView

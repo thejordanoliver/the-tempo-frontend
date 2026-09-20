@@ -215,19 +215,19 @@ export default function GameDetailsScreen(
 
   const homeCode = useMemo(
     () => homeTeam?.code ?? home?.code ?? "",
-    [home?.code, homeTeam?.code],
+    [homeTeam?.code, home?.code],
   );
   const awayCode = useMemo(
     () => awayTeam?.code ?? away?.code ?? "",
-    [away?.code, awayTeam?.code],
+    [awayTeam?.code, away?.code],
   );
   const homeName = useMemo(
-    () => homeTeam?.name ?? home?.name ?? "",
-    [home?.name, homeTeam?.name],
+    () => homeTeam?.fullName ?? home?.name ?? "",
+    [homeTeam?.fullName, home?.name],
   );
   const awayName = useMemo(
-    () => awayTeam?.name ?? away?.name ?? "",
-    [away?.name, awayTeam?.name],
+    () => awayTeam?.fullName ?? away?.name ?? "",
+    [awayTeam?.fullName, away?.name],
   );
 
   const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
@@ -256,12 +256,11 @@ export default function GameDetailsScreen(
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
   const isCanceled = gameStatusDescription === "Canceled";
-  const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
-    isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
+    isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
   const redzone = game?.situation?.isRedZone ?? false;
@@ -473,6 +472,7 @@ export default function GameDetailsScreen(
           // Status
           gameStatusShortDetail={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
+          isCFB={isCFB}
         />
 
         {!dontShowDetails && (

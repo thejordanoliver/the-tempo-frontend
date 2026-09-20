@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
-import { gameTeamStatsStyles } from "styles/GameDetailStyles/GameTeamStatsStyles";
+import { gameTeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
