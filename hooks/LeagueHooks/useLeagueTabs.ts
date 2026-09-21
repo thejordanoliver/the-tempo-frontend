@@ -83,6 +83,9 @@ export function useTeamTabs(team: string) {
   }, [normalizedTeam]);
 
   const [selectedTab, setSelectedTab] = useState<string>(tabs[0]);
+  const [visitedTabs, setVisitedTabs] = useState<ReadonlySet<string>>(
+    () => new Set([tabs[0]]),
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -91,6 +94,7 @@ export function useTeamTabs(team: string) {
       if (cancelled) return;
 
       setSelectedTab(tabs[0]);
+      setVisitedTabs(new Set([tabs[0]]));
     });
 
     return () => {
@@ -98,9 +102,32 @@ export function useTeamTabs(team: string) {
     };
   }, [tabs]);
 
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+      setVisitedTabs((current) => {
+        if (current.has(selectedTab)) return current;
+        const next = new Set(current);
+        next.add(selectedTab);
+        return next;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedTab]);
+
+  const hasVisitedTab = useCallback(
+    (tab: string) => visitedTabs.has(tab),
+    [visitedTabs],
+  );
+
   return {
     tabs,
     selectedTab,
     setSelectedTab,
+    visitedTabs,
+    hasVisitedTab,
   };
 }

@@ -2,10 +2,17 @@ import HeadingTwo from "@/components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
-import { FlatList, SectionList, Text, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  SectionList,
+  Text,
+  View,
+} from "react-native";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import type { TennisMatch } from "types/tennis/tennis";
 import TennisGameCard from "./TennisGameCard";
@@ -90,7 +97,18 @@ export default function TennisGamesList({
 
   if (error && matches.length === 0) {
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
         <Text selectable style={global.errorText}>
           Unable to load tennis matches.
         </Text>
@@ -98,13 +116,24 @@ export default function TennisGamesList({
         <Text selectable style={global.emptySubText}>
           Pull down to try again.
         </Text>
-      </View>
+      </ScrollView>
     );
   }
 
   if (!matches.length) {
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
         <Text selectable style={global.emptyTitle}>
           No matches on court today.
         </Text>
@@ -112,7 +141,7 @@ export default function TennisGamesList({
         <Text selectable style={global.emptyText}>
           Comeback later to see the next serve.
         </Text>
-      </View>
+      </ScrollView>
     );
   }
 

@@ -298,6 +298,7 @@ function NBALeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -469,6 +470,7 @@ function NBALeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />
@@ -634,6 +636,7 @@ function WNBALeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -793,6 +796,7 @@ function WNBALeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />
@@ -923,6 +927,7 @@ function GLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -1082,6 +1087,7 @@ function GLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />
@@ -1265,6 +1271,7 @@ function CBBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -1362,6 +1369,7 @@ function CBBLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />
@@ -1646,6 +1654,7 @@ function WCBBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -1743,6 +1752,7 @@ function WCBBLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />

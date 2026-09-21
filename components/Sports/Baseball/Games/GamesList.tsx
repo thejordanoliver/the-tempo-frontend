@@ -3,12 +3,14 @@ import { BaseballGame } from "@/types/baseball/baseball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
+  RefreshControl,
+  ScrollView,
   SectionList,
   SectionListData,
   Text,
@@ -72,6 +74,7 @@ export default function GamesList({
   teamName,
   teamColor,
   teamSecondaryColor,
+  error,
 }: GamesListProps) {
   const { viewMode } = usePreferences();
   const { resolvedColorScheme } = usePreferences();
@@ -196,16 +199,22 @@ export default function GamesList({
     return renderSkeletons(count);
   }
 
-  if (games.length === 0) {
+  if (error) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>
-          {day === "todayTomorrow"
-            ? "No games at the ballpark today."
-            : "The bases were empty on this date."}
-        </Text>
-        <Text style={global.emptyText}>More first pitches are on deck.</Text>
-      </View>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>{error.message}</Text>
+      </ScrollView>
     );
   }
 
@@ -242,12 +251,10 @@ export default function GamesList({
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
                 {day === "todayTomorrow"
-                  ? "No games hitting the hardwood today."
-                  : "The court was quiet on this date."}
+                  ? "No games at the ballpark today."
+                  : "The bases were empty on this date."}
               </Text>
-              <Text style={global.emptyText}>
-                The next tipoff won’t be far away.
-              </Text>
+              <Text style={global.emptyText}>More first pitches are on deck.</Text>
             </View>
           }
         />
@@ -274,6 +281,16 @@ export default function GamesList({
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
+          ListEmptyComponent={
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
+                {day === "todayTomorrow"
+                  ? "No games at the ballpark today."
+                  : "The bases were empty on this date."}
+              </Text>
+              <Text style={global.emptyText}>More first pitches are on deck.</Text>
+            </View>
+          }
         />
       )}
 

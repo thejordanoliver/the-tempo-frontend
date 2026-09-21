@@ -18,7 +18,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
+import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useLayoutEffect, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -46,7 +46,8 @@ export default function TeamDetailScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
@@ -59,8 +60,11 @@ export default function TeamDetailScreen() {
     loading: newsLoading,
     error: newsError,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     refresh: refreshNews,
-  } = useLeaguesNews(league, 10);
+  } = useTeamNews(league, teamIdNum, 10, {
+    enabled: hasVisitedTab("news"),
+  });
 
   const {
     players,
@@ -167,10 +171,10 @@ export default function TeamDetailScreen() {
 
       <PagerView
         ref={pagerRef}
-        style={{ flex: 1 }}
-        initialPage={tabToIndex(selectedTab)}
+        style={styles.contentArea}
+        initialPage={0}
         onPageScroll={handlePageScroll}
-        onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
+        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
       >
         <View key="schedule" style={styles.contentArea}>
           <View style={styles.monthSelector}>
@@ -205,6 +209,7 @@ export default function TeamDetailScreen() {
             loading={newsLoading}
             error={newsError}
             refreshing={refreshingNews}
+            loadingMore={loadingMoreNews}
             onRefresh={refreshNews}
             isDark={isDark}
           />

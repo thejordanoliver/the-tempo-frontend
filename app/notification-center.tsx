@@ -1,3 +1,4 @@
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
 import { Colors, PLACEHOLDER_AVATAR } from "@/constants/styles";
@@ -27,7 +28,6 @@ import {
   useState,
 } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   type ListRenderItem,
   Pressable,
@@ -359,9 +359,7 @@ export default function NotificationsCenter() {
     setSelectedIds(
       allNotificationsSelected
         ? new Set()
-        : new Set(
-            visibleNotifications.map((notification) => notification.id),
-          ),
+        : new Set(visibleNotifications.map((notification) => notification.id)),
     );
   }, [allNotificationsSelected, visibleNotifications]);
 
@@ -498,9 +496,7 @@ export default function NotificationsCenter() {
           suppressEmptyState ? null : (
             <View style={styles.emptyState}>
               {loading ? (
-                <ActivityIndicator
-                  color={isDark ? Colors.white : Colors.black}
-                />
+                <CustomActivityIndicator />
               ) : (
                 <>
                   <Ionicons
@@ -521,14 +517,7 @@ export default function NotificationsCenter() {
             </View>
           )
         }
-        ListFooterComponent={
-          loadingMore ? (
-            <ActivityIndicator
-              style={{ paddingVertical: 16 }}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          ) : null
-        }
+        ListFooterComponent={loadingMore ? <CustomActivityIndicator /> : null}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -555,10 +544,7 @@ export default function NotificationsCenter() {
         <Animated.View
           entering={FadeInDown.duration(180)}
           exiting={FadeOutDown.duration(140)}
-          style={[
-            styles.selectionToolbar,
-            { bottom: CUSTOM_TAB_BAR_HEIGHT },
-          ]}
+          style={[styles.selectionToolbar, { bottom: CUSTOM_TAB_BAR_HEIGHT }]}
         >
           <Pressable
             disabled={selectedCount === 0}

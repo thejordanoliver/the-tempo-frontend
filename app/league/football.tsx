@@ -235,6 +235,7 @@ function NFLLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -339,6 +340,7 @@ function NFLLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />
@@ -555,6 +557,7 @@ function CFBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -695,6 +698,7 @@ function CFBLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />
@@ -860,6 +864,7 @@ function UFLLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -995,6 +1000,7 @@ function UFLLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

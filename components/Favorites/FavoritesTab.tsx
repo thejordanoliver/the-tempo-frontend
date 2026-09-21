@@ -18,6 +18,8 @@ type Props = RenderItemParams<FavoriteItem> & {
   styles: ReturnType<typeof FavoritesScrollStyles>;
 };
 
+const FAVORITE_DRAG_HOLD_DELAY_MS = 400;
+
 function FavoritesTabComponent({
   item,
   drag,
@@ -43,7 +45,7 @@ function FavoritesTabComponent({
           accessibilityHint="Long press and drag to reorder"
           accessibilityState={{ disabled: isActive }}
           disabled={isActive}
-          delayLongPress={220}
+          delayLongPress={FAVORITE_DRAG_HOLD_DELAY_MS}
           onPress={handlePress}
           onLongPress={drag}
           style={({ pressed }) => [

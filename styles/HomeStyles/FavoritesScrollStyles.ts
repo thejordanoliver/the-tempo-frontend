@@ -18,6 +18,7 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
     },
     cell: {
       alignItems: "center",
+      position: "relative",
       width: FAVORITES_RAIL_CELL_WIDTH,
     },
     tabContainer: {
@@ -78,11 +79,17 @@ export const FavoritesScrollStyles = (isDark: boolean) =>
     },
     sectionDivider: {
       position: "absolute",
-      top: 24,
-      zIndex: 20,
+      top: 0,
+      left: 0,
       width: StyleSheet.hairlineWidth,
       height: FAVORITES_RAIL_ITEM_SIZE,
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    sectionDividerSlot: {
+      width: 0,
+      height: FAVORITES_RAIL_ITEM_SIZE,
+      zIndex: 20,
+      overflow: "visible",
     },
 
     dragPlaceholder: {

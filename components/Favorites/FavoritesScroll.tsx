@@ -10,21 +10,15 @@ import {
   Pressable,
   Text,
   View,
-  type StyleProp,
-  type ViewStyle,
 } from "react-native";
 import DraggableFlatList, {
   type DragEndParams,
   type DraggableFlatListProps,
   type RenderItemParams,
 } from "react-native-draggable-flatlist";
-import Animated, {
-  useAnimatedReaction,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { useAnimatedReaction } from "react-native-reanimated";
 import {
   FAVORITES_RAIL_CELL_WIDTH,
-  FAVORITES_RAIL_HORIZONTAL_PADDING,
   FavoritesScrollStyles,
 } from "styles/HomeStyles/FavoritesScrollStyles";
 import type {
@@ -34,6 +28,7 @@ import type {
 } from "types/favorites";
 import {
   isFavoriteLeague,
+  normalizeFavoriteTeamKeys,
   reorderFavoriteRailItems,
   splitFavoriteRailOrder,
 } from "types/favorites";
@@ -79,6 +74,7 @@ const FAVORITES_SNAP_ANIMATION = {
 };
 
 const FAVORITE_NAVIGATION_LOCK_MS = 750;
+const FAVORITE_DRAG_ACTIVATION_DISTANCE = 16;
 
 type FavoriteDragAnimationValues = Parameters<
   NonNullable<DraggableFlatListProps<FavoriteItem>["onAnimValInit"]>
@@ -145,32 +141,6 @@ function FavoriteDragBoundary({
   return null;
 }
 
-type FavoriteSectionDividerProps = {
-  animationValues: FavoriteDragAnimationValues;
-  sportCount: number;
-  style: StyleProp<ViewStyle>;
-};
-
-function FavoriteSectionDivider({
-  animationValues,
-  sportCount,
-  style,
-}: FavoriteSectionDividerProps) {
-  const dividerContentPosition =
-    FAVORITES_RAIL_HORIZONTAL_PADDING +
-    sportCount * FAVORITES_RAIL_CELL_WIDTH;
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: -animationValues.scrollOffset.value }],
-  }));
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={[style, { left: dividerContentPosition }, animatedStyle]}
-    />
-  );
-}
-
 function orderFavoriteItems<T extends FavoriteItem>(
   items: readonly T[],
   orderedKeys: readonly string[],
@@ -190,6 +160,10 @@ function orderFavoriteItems<T extends FavoriteItem>(
   return [...orderedItems, ...itemsByKey.values()];
 }
 
+type FavoriteItemSeparatorProps = {
+  leadingItem?: FavoriteItem;
+};
+
 export default function FavoritesScroll({
   onInteractionStart,
   onInteractionEnd,
@@ -206,6 +180,11 @@ export default function FavoritesScroll({
     league: Promise.resolve(),
     team: Promise.resolve(),
   });
+  const committedOrderRef = useRef<Record<FavoriteSection, string[]>>({
+    league: [],
+    team: [],
+  });
+  const currentUserIdRef = useRef<number | null>(null);
   const interactionActiveRef = useRef(false);
   const navigationLockedRef = useRef(false);
   const navigationUnlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
@@ -295,9 +274,34 @@ export default function FavoritesScroll({
   }, [leagueData, railOrder, teamData, userId]);
 
   useEffect(() => {
+    currentUserIdRef.current = userId;
     latestReorderIdRef.current.league += 1;
     latestReorderIdRef.current.team += 1;
-  }, [userId]);
+    reorderQueueRef.current = {
+      league: Promise.resolve(),
+      team: Promise.resolve(),
+    };
+    committedOrderRef.current = {
+      league: [],
+      team: [],
+    };
+  }, [userId]); // Data for the new user is committed below as it hydrates.
+
+  useEffect(() => {
+    if (railOrder.userId === userId && railOrder.sectionKeys.league.length > 0) {
+      return;
+    }
+
+    committedOrderRef.current.league = leagueData.map((item) => item.key);
+  }, [leagueData, railOrder, userId]);
+
+  useEffect(() => {
+    if (railOrder.userId === userId && railOrder.sectionKeys.team.length > 0) {
+      return;
+    }
+
+    committedOrderRef.current.team = teamData.map((item) => item.key);
+  }, [railOrder, teamData, userId]);
 
   const handleInteractionStart = useCallback(() => {
     if (interactionActiveRef.current) {
@@ -435,10 +439,23 @@ export default function FavoritesScroll({
       }
 
       const persistReorder = async () => {
+        // A queued save may outlive the signed-in account that created it.
+        if (currentUserIdRef.current !== userId) {
+          return;
+        }
+
         const saved =
           section === "team"
             ? await syncFavorites(orderedTeamFavorites)
             : await updateFavoriteSports(orderedFavoriteSports);
+
+        if (currentUserIdRef.current !== userId) {
+          return;
+        }
+
+        if (saved) {
+          committedOrderRef.current[section] = orderedKeys;
+        }
 
         if (reorderId !== latestReorderIdRef.current[section]) {
           return;
@@ -461,6 +478,8 @@ export default function FavoritesScroll({
           return;
         }
 
+        const committedKeys = committedOrderRef.current[section];
+
         setRailOrder((current) => {
           const activeOrder =
             current.userId === userId ? current : createRailOrder(userId);
@@ -469,13 +488,13 @@ export default function FavoritesScroll({
             ...activeOrder,
             sectionKeys: {
               ...activeOrder.sectionKeys,
-              [section]: previousKeys,
+              [section]: committedKeys,
             },
           };
         });
 
         if (section === "team") {
-          setFavorites(favoriteTeamIds);
+          setFavorites(normalizeFavoriteTeamKeys(committedKeys));
         }
 
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -488,7 +507,6 @@ export default function FavoritesScroll({
     },
     [
       data,
-      favoriteTeamIds,
       handleInteractionEnd,
       setFavorites,
       syncFavorites,
@@ -506,6 +524,27 @@ export default function FavoritesScroll({
       />
     ),
     [handleFavoritePress, styles],
+  );
+
+  const renderItemSeparator = useCallback(
+    ({ leadingItem }: FavoriteItemSeparatorProps) => {
+      const lastLeague = data[leagueData.length - 1];
+
+      if (
+        teamData.length === 0 ||
+        leadingItem?.kind !== "league" ||
+        leadingItem.key !== lastLeague?.key
+      ) {
+        return null;
+      }
+
+      return (
+        <View pointerEvents="none" style={styles.sectionDividerSlot}>
+          <View style={styles.sectionDivider} />
+        </View>
+      );
+    },
+    [data, leagueData.length, styles, teamData.length],
   );
 
   const renderPlaceholder = useCallback(() => {
@@ -578,16 +617,6 @@ export default function FavoritesScroll({
         />
       )}
 
-      {dragAnimationValues &&
-        leagueData.length > 0 &&
-        teamData.length > 0 && (
-          <FavoriteSectionDivider
-            animationValues={dragAnimationValues}
-            sportCount={leagueData.length}
-            style={styles.sectionDivider}
-          />
-        )}
-
       <DraggableFlatList
         data={data}
         horizontal
@@ -602,12 +631,13 @@ export default function FavoritesScroll({
         contentContainerStyle={styles.container}
         directionalLockEnabled
         nestedScrollEnabled
-        activationDistance={10}
+        activationDistance={FAVORITE_DRAG_ACTIVATION_DISTANCE}
         autoscrollThreshold={56}
         autoscrollSpeed={180}
         dragItemOverflow={false}
         animationConfig={FAVORITES_SNAP_ANIMATION}
         renderItem={renderItem}
+        ItemSeparatorComponent={renderItemSeparator}
         onTouchStart={handleInteractionStart}
         onTouchEnd={handleInteractionEnd}
         onTouchCancel={handleInteractionEnd}

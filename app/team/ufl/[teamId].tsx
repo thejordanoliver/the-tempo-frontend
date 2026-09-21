@@ -15,7 +15,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
+import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
@@ -45,7 +45,8 @@ export default function TeamDetailScreen() {
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
@@ -65,8 +66,13 @@ export default function TeamDetailScreen() {
   const {
     articles,
     loading: newsLoading,
+    refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
-  } = useLeaguesNews(league, 10);
+    refresh: refreshNews,
+  } = useTeamNews(league, teamIdNum, 10, {
+    enabled: hasVisitedTab("news"),
+  });
 
   const {
     games: teamGames,
@@ -172,8 +178,9 @@ export default function TeamDetailScreen() {
             items={articles}
             loading={newsLoading}
             error={newsError}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
+            refreshing={refreshingNews}
+            loadingMore={loadingMoreNews}
+            onRefresh={refreshNews}
             isDark={isDark}
           />
         </View>

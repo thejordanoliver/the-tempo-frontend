@@ -144,6 +144,7 @@ export default function RacingLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -223,7 +224,8 @@ export default function RacingLeagueScreen() {
                 items={articles}
                 loading={newsLoading}
                 error={newsError}
-                refreshing={refreshingNews}
+              refreshing={refreshingNews}
+              loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

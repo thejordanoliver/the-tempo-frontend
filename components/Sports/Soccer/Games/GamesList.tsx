@@ -1,12 +1,14 @@
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
+  RefreshControl,
+  ScrollView,
   SectionList,
   SectionListData,
   Text,
@@ -187,14 +189,24 @@ export default function GamesList({
     return renderSkeletons(count);
   }
 
-  if (!loading && games.length === 0) {
+  if (error) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>No matches on the pitch...</Text>
-        <Text style={global.emptyText}>
-          More goals and matchday action are coming.
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>
+          {typeof error === "string" ? error : error.message}
         </Text>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -243,6 +255,14 @@ export default function GamesList({
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
+          ListEmptyComponent={
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>No matches on the pitch...</Text>
+              <Text style={global.emptyText}>
+                More goals and matchday action are coming.
+              </Text>
+            </View>
+          }
         />
       )}
 

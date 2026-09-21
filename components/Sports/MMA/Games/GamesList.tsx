@@ -2,11 +2,18 @@ import { MMAEvent } from "@/hooks/MMAHooks/useMMAEvents";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useState } from "react";
-import { FlatList, Text, View, ViewStyle } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import { MMAFight } from "types/mma/mma";
@@ -162,16 +169,22 @@ export default function GamesList({
     return renderSkeletons(count);
   }
 
-  if (loading && games.length === 0) {
+  if (error) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>
-          No one is stepping into the Octagon...
-        </Text>
-        <Text style={global.emptyText}>
-          The next showdown is worth the wait.
-        </Text>
-      </View>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>{error.message}</Text>
+      </ScrollView>
     );
   }
 
@@ -198,6 +211,16 @@ export default function GamesList({
           contentContainerStyle={styles.gridListContainer}
           showsVerticalScrollIndicator={false}
           scrollEnabled={scrollEnabled}
+          ListEmptyComponent={
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>
+                No one is stepping into the Octagon...
+              </Text>
+              <Text style={global.emptyText}>
+                The next showdown is worth the wait.
+              </Text>
+            </View>
+          }
         />
 
         {modalVisible && previewGame && (
@@ -226,6 +249,16 @@ export default function GamesList({
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
+        ListEmptyComponent={
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyTitle}>
+              No one is stepping into the Octagon...
+            </Text>
+            <Text style={global.emptyText}>
+              The next showdown is worth the wait.
+            </Text>
+          </View>
+        }
       />
 
       {modalVisible && previewGame && (

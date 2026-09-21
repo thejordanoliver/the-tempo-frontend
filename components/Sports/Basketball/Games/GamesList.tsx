@@ -3,12 +3,14 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
+  RefreshControl,
+  ScrollView,
   SectionList,
   SectionListData,
   Text,
@@ -235,14 +237,23 @@ export default function GamesList({
     return renderSkeletons(count);
   }
 
-  if (!loading && games.length === 0) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>The court is quiet...</Text>
-        <Text style={global.emptyText}>The next tipoff won’t be far away.</Text>
-      </View>
-    );
-  }
+  if (error)
+      return (
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={global.emptyContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={isDark ? Colors.white : Colors.black}
+            />
+          }
+        >
+          <Text style={global.errorText}>{error.message}</Text>
+        </ScrollView>
+      );
 
   /* ----------------------------- CONTENT ------------------------------ */
 
@@ -309,6 +320,14 @@ export default function GamesList({
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
+          ListEmptyComponent={
+            <View style={global.emptyContainer}>
+              <Text style={global.emptyTitle}>The court is quiet...</Text>
+              <Text style={global.emptyText}>
+                The next tipoff won’t be far away.
+              </Text>
+            </View>
+          }
         />
       )}
 

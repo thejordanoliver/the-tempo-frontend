@@ -5,14 +5,16 @@ import FootballSquareGameCard from "@/components/Sports/Football/Games/FootballS
 import { FootballGame } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
-import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
 import {
+  RefreshControl,
+  ScrollView,
   SectionList,
   SectionListData,
   Text,
@@ -321,8 +323,24 @@ export default function GamesList({
       </View>
     );
   }
-  
-  if (error) return <Text style={global.errorText}>Error: {error}</Text>;
+
+  if (error)
+    return (
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>{error}</Text>
+      </ScrollView>
+    );
 
   return (
     <>
@@ -357,7 +375,9 @@ export default function GamesList({
           contentContainerStyle={styles.gridListContainer}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
-              <Text style={global.emptyTitle}>No kickoffs on the schedule...</Text>
+              <Text style={global.emptyTitle}>
+                No kickoffs on the schedule...
+              </Text>
               <Text style={global.emptyText}>
                 The next drive is just downfield.
               </Text>

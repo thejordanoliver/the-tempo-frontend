@@ -3,11 +3,17 @@ import { HockeyGame } from "@/types/hockey/hockey";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
 import React, { useCallback, useMemo, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import NHLGamePreviewModal from "../GamePreview/HockeyGamePreviewModal";
@@ -55,6 +61,7 @@ export default function GamesList({
   teamName,
   teamColor,
   teamSecondaryColor,
+  error,
 }: GamesListProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -165,12 +172,22 @@ export default function GamesList({
     return renderSkeletons(count);
   }
 
-  if (games.length === 0) {
+  if (error) {
     return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>The ice is quiet...</Text>
-        <Text style={global.emptyText}>The puck will drop again soon.</Text>
-      </View>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>{error.message}</Text>
+      </ScrollView>
     );
   }
 
@@ -207,6 +224,12 @@ export default function GamesList({
         onRefresh={onRefresh}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
+        ListEmptyComponent={
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyTitle}>The ice is quiet...</Text>
+            <Text style={global.emptyText}>The puck will drop again soon.</Text>
+          </View>
+        }
       />
       {modalVisible && previewGame && (
         <NHLGamePreviewModal

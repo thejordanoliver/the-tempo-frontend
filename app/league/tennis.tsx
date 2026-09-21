@@ -119,6 +119,7 @@ export default function TennisLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: newsRefreshing,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -277,6 +278,7 @@ export default function TennisLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={newsRefreshing}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

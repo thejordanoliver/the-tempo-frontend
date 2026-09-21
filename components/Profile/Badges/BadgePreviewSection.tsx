@@ -2,15 +2,24 @@ import Button from "@/components/Buttons/Button";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import Subheading from "@/components/Headings/Subheading";
-import { BADGE_TIER_COLORS } from "@/constants/badges";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
+import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { BadgeProgress } from "@/types/badges";
 import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import BadgeEmblem from "./BadgeEmblem";
+import BadgePreviewCard from "./BadgePreviewCard";
 
-const BADGE_GRID_GAP = 8;
-const CARD_HEIGHT = 130;
+const BADGE_GRID_COLUMNS = 3;
+
+const chunkBadges = (badges: BadgeProgress[]) => {
+  const rows: BadgeProgress[][] = [];
+
+  for (let index = 0; index < badges.length; index += BADGE_GRID_COLUMNS) {
+    rows.push(badges.slice(index, index + BADGE_GRID_COLUMNS));
+  }
+
+  return rows;
+};
 
 type BadgePreviewSectionProps = {
   badges: BadgeProgress[];
@@ -24,72 +33,6 @@ type BadgePreviewSectionProps = {
   onRetry?: () => void;
 };
 
-type BadgePreviewCardProps = {
-  badge: BadgeProgress;
-  isDark: boolean;
-  itemWidth: number;
-};
-
-function BadgePreviewCard({ badge, isDark, itemWidth }: BadgePreviewCardProps) {
-  const styles = badgePreviewSectionStyles(isDark, itemWidth);
-  const primaryText = isDark ? Colors.white : Colors.black;
-  const secondaryText = isDark ? Colors.lightGray : Colors.darkGray;
-  const tierColor = BADGE_TIER_COLORS[badge.tier];
-  const statusText = badge.isEarned
-    ? "Earned"
-    : `${Math.round(badge.progressPercent)}%`;
-  const statusColor = badge.isEarned ? tierColor : secondaryText;
-  const emblemSize = Math.min(64, Math.max(54, itemWidth * 0.55));
-
-  return (
-    <View
-      accessible
-      accessibilityRole="text"
-      accessibilityLabel={`${badge.name}, ${statusText}`}
-      style={[
-        styles.gridItem,
-        {
-          borderColor: badge.isEarned
-            ? tierColor
-            : isDark
-              ? Colors.darkGray
-              : Colors.lightGray,
-        },
-      ]}
-    >
-      <BadgeEmblem badge={badge} size={emblemSize} />
-
-      <View style={styles.cardText}>
-        <Text
-          selectable
-          numberOfLines={2}
-          style={[
-            styles.badgeName,
-            {
-              color: primaryText,
-            },
-          ]}
-        >
-          {badge.name}
-        </Text>
-
-        <Text
-          selectable
-          numberOfLines={1}
-          style={[
-            styles.badgeStatus,
-            {
-              color: statusColor,
-            },
-          ]}
-        >
-          {statusText}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
 export default function BadgePreviewSection({
   badges,
   earnedCount,
@@ -100,9 +43,11 @@ export default function BadgePreviewSection({
   error = null,
   onRetry,
 }: BadgePreviewSectionProps) {
-  const styles = badgePreviewSectionStyles(isDark, itemWidth);
+  const styles = badgePreviewSectionStyles(isDark);
+  const cardGridStyles = FavoritesSectionStyles(isDark, itemWidth);
   const global = globalStyles(isDark);
   const earnedSummary = `${earnedCount} of ${totalCount} earned`;
+  const badgeRows = chunkBadges(badges);
 
   if (loading)
     return (
@@ -147,16 +92,21 @@ export default function BadgePreviewSection({
     <View>
       <HeadingTwo isDark={isDark}>Badges</HeadingTwo>
       <Subheading>{earnedSummary}</Subheading>
-      <View style={styles.grid}>
-        {badges.map((badge) => (
-          <BadgePreviewCard
-            key={badge.id}
-            badge={badge}
-            isDark={isDark}
-            itemWidth={itemWidth}
-          />
-        ))}
-      </View>
+      {badgeRows.map((row) => (
+        <View
+          key={row.map((badge) => badge.id).join("|")}
+          style={cardGridStyles.grid}
+        >
+          {row.map((badge) => (
+            <BadgePreviewCard
+              key={badge.id}
+              badge={badge}
+              isDark={isDark}
+              itemWidth={itemWidth}
+            />
+          ))}
+        </View>
+      ))}
 
       <View style={styles.buttonContainer}>
         <Button onPress={() => router.push("/badges")} isDark={isDark}>
@@ -167,33 +117,8 @@ export default function BadgePreviewSection({
   );
 }
 
-const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
+const badgePreviewSectionStyles = (isDark: boolean) =>
   StyleSheet.create({
-    grid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      alignItems: "flex-start",
-      justifyContent: "flex-start",
-      rowGap: BADGE_GRID_GAP,
-      columnGap: BADGE_GRID_GAP,
-    },
-    gridItem: {
-      position: "relative",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 10,
-      padding: 20,
-      width: itemWidth,
-      height: CARD_HEIGHT,
-      paddingHorizontal: 8,
-      paddingVertical: 12,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      overflow: "hidden",
-    },
-
     cardText: {
       alignItems: "center",
       gap: 4,
@@ -206,6 +131,7 @@ const badgePreviewSectionStyles = (isDark: boolean, itemWidth: number) =>
       fontSize: 13,
       lineHeight: 18,
       textAlign: "center",
+      color: isDark ? Colors.white : Colors.black,
     },
 
     badgeStatus: {

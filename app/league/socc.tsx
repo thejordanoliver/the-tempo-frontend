@@ -100,6 +100,7 @@ export default function SoccerLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -175,6 +176,7 @@ export default function SoccerLeagueScreen() {
                 loading={newsLoading}
                 error={newsError}
                 refreshing={refreshingNews}
+                loadingMore={loadingMoreNews}
                 onRefresh={refreshNews}
                 isDark={isDark}
               />

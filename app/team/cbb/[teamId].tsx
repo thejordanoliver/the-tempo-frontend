@@ -24,7 +24,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
-import { useLeaguesNews } from "hooks/NewsHooks/useLeaguesNews";
+import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useLayoutEffect, useRef, useState } from "react";
 import { View } from "react-native";
@@ -56,7 +56,8 @@ export default function TeamDetailScreen() {
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const { tabs, selectedTab, setSelectedTab } = useTeamTabs(league);
+  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
+    useTeamTabs(league);
   const pagerRef = useRef<PagerView>(null);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
@@ -76,8 +77,11 @@ export default function TeamDetailScreen() {
     loading: newsLoading,
     error: newsError,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     refresh: refreshNews,
-  } = useLeaguesNews(league, 10);
+  } = useTeamNews(league, teamIdNum, 10, {
+    enabled: hasVisitedTab("news"),
+  });
 
   const {
     teamRoster,
@@ -226,6 +230,7 @@ export default function TeamDetailScreen() {
             loading={newsLoading}
             error={newsError}
             refreshing={refreshingNews}
+            loadingMore={loadingMoreNews}
             onRefresh={refreshNews}
             isDark={isDark}
           />

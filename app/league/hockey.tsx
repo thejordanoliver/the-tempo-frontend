@@ -141,6 +141,7 @@ function NHLLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -213,6 +214,7 @@ function NHLLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />

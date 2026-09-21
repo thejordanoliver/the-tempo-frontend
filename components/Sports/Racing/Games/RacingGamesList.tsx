@@ -2,10 +2,17 @@ import { RacingEvent } from "@/types/racing/racing";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
-import { globalStyles } from "constants/styles";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React from "react";
-import { FlatList, Text, View, ViewStyle } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import RacingGameCard from "./RacingGameCard";
 import RacingSquareGameCard from "./RacingSquareGameCard";
@@ -173,20 +180,20 @@ export default function GamesList({
 
   if (error && safeGames.length === 0) {
     return (
-      <View style={styles.emptyWrapper}>
-        <Text style={global.emptyText}>
-          Unable to load racing events. Pull down to try again.
-        </Text>
-      </View>
-    );
-  }
-
-  if (safeGames.length === 0) {
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.emptyTitle}>No engines firing up today...</Text>
-        <Text style={global.emptyText}>The next green flag is coming up.</Text>
-      </View>
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>Unable to load racing events.</Text>
+      </ScrollView>
     );
   }
 
@@ -222,6 +229,14 @@ export default function GamesList({
         contentContainerStyle={styles.gridListContainer}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
+        ListEmptyComponent={
+          <View style={global.emptyContainer}>
+            <Text style={global.emptyTitle}>No engines firing up today...</Text>
+            <Text style={global.emptyText}>
+              The next green flag is coming up.
+            </Text>
+          </View>
+        }
       />
     );
   }
@@ -237,6 +252,12 @@ export default function GamesList({
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       showsVerticalScrollIndicator={false}
       scrollEnabled={scrollEnabled}
+      ListEmptyComponent={
+        <View style={global.emptyContainer}>
+          <Text style={global.emptyTitle}>No engines firing up today...</Text>
+          <Text style={global.emptyText}>The next green flag is coming up.</Text>
+        </View>
+      }
     />
   );
 }

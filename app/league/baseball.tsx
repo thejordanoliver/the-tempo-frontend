@@ -175,6 +175,7 @@ function MLBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -246,6 +247,7 @@ function MLBLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />
@@ -427,6 +429,7 @@ function CBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -498,6 +501,7 @@ function CBLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />
@@ -648,6 +652,7 @@ function SBLeagueScreen() {
     articles,
     loading: newsLoading,
     refreshing: refreshingNews,
+    loadingMore: loadingMoreNews,
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
@@ -719,6 +724,7 @@ function SBLeagueScreen() {
           loading={newsLoading}
           error={newsError}
           refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
           onRefresh={refreshNews}
           isDark={isDark}
         />

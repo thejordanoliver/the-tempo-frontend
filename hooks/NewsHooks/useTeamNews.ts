@@ -1,39 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
-
-export interface NewsArticle {
-  id: number;
-  keyId: string;
-  headline: string;
-  description: string;
-  published: string;
-  image: string;
-  link: string;
-  lastModified: string;
-  byline: string;
-}
-
-export interface NewsResponse {
-  success: boolean;
-  count: number;
-  articles: NewsArticle[];
-  hasMore?: boolean;
-}
+import type { NewsArticle, NewsResponse } from "./useLeaguesNews";
 
 type FetchMode = "initial" | "refresh" | "loadMore";
 
-type UseLeaguesNewsOptions = {
-  enabled?: boolean;
-};
-
-export function useLeaguesNews(
+export function useTeamNews(
   league: string,
+  teamId: number,
   limit: number = 10,
-  { enabled = true }: UseLeaguesNewsOptions = {},
+  { enabled = true }: { enabled?: boolean } = {},
 ) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [loading, setLoading] = useState<boolean>(enabled);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [loading, setLoading] = useState(enabled);
+  const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,11 +35,10 @@ export function useLeaguesNews(
         setError(null);
         return;
       }
-
-      if (!league) {
+      if (!league || !Number.isInteger(teamId) || teamId <= 0) {
         activeRequestRef.current = null;
         setArticles([]);
-        setError("League is required.");
+        setError("A valid team is required.");
         setLoading(false);
         setRefreshing(false);
         setLoadingMore(false);
@@ -72,15 +50,12 @@ export function useLeaguesNews(
       setRefreshing(mode === "refresh");
       setLoadingMore(mode === "loadMore");
       if (mode === "initial") setHasMore(true);
-
       setError(null);
 
       try {
         const { data } = await apiClient.get<NewsResponse>(
-          `/api/news/league/${String(league).toLowerCase()}`,
-          {
-            params: { limit, offset },
-          },
+          `/api/news/team/${String(league).toLowerCase()}/${teamId}`,
+          { params: { limit, offset } },
         );
 
         if (requestId !== requestIdRef.current) return;
@@ -99,13 +74,12 @@ export function useLeaguesNews(
       } catch (err: unknown) {
         if (requestId !== requestIdRef.current) return;
 
-        const message =
+        if (offset === 0) setArticles([]);
+        setError(
           err instanceof Error
             ? err.message
-            : "An error occurred while fetching news.";
-
-        if (offset === 0) setArticles([]);
-        setError(message);
+            : "An error occurred while fetching news.",
+        );
       } finally {
         if (requestId !== requestIdRef.current) return;
 
@@ -115,11 +89,11 @@ export function useLeaguesNews(
         setLoadingMore(false);
       }
     },
-    [enabled, league, limit],
+    [enabled, league, limit, teamId],
   );
 
   useEffect(() => {
-    // Entering the new league's initial state before awaiting the request is
+    // Entering the new team's initial state before awaiting the request is
     // intentional; deferring this call causes the empty-state loading flash.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchNews("initial");

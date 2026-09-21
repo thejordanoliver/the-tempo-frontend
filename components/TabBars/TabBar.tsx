@@ -129,8 +129,21 @@ export default function TabBar<T extends string>({
       pressableMeasurements.current.every(Boolean)
     ) {
       initialized.current = true;
-      const initialIndex = tabs.indexOf(selected);
-      setUnderlineProgress(initialIndex);
+
+      if (scrollProgress) {
+        // The header can be remounted while PagerView is still settling. In
+        // that case `selected` already points at the destination page, while
+        // the pager's visual position is still between pages. Starting from
+        // `selected` makes the underline jump to the destination and then
+        // briefly backtrack when the next scroll event arrives.
+        scrollProgress.stopAnimation((currentProgress) => {
+          setUnderlineProgress(currentProgress);
+          setIsInitialized(true);
+        });
+        return;
+      }
+
+      setUnderlineProgress(tabs.indexOf(selected));
       setIsInitialized(true);
     }
   };

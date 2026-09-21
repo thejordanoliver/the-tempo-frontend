@@ -57,7 +57,7 @@ export default function BadgeCard({ badge, isDark }: BadgeCardProps) {
         },
       ]}
     >
-      <BadgeEmblem badge={badge} size={40} />
+      <BadgeEmblem badge={badge} size={60} />
 
       <View style={styles.content}>
         <View style={styles.header}>
