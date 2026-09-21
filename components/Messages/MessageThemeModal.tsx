@@ -10,7 +10,6 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import type { MessageThemePreference } from "types/messages";
 import {
   DEFAULT_MESSAGE_THEME_PREFERENCE,
-  getReadableGradientTextColor,
   normalizeMessageThemePreference,
 } from "utils/messageTheme";
 import { snapPoints } from "utils/modalUtils";
@@ -27,7 +26,7 @@ type Props = {
   onSave: (preference: MessageThemePreference) => Promise<unknown>;
 };
 
-const CUSTOM_GRADIENTS = [
+const CUSTOM_THEMES = [
   {
     id: "electric-violet",
     name: "Electric Violet",
@@ -64,9 +63,141 @@ const CUSTOM_GRADIENTS = [
     primaryColor: "#B76E79",
     secondaryColor: "#F7CAC9",
   },
+  {
+    id: "cosmic-purple",
+    name: "Cosmic Purple",
+    primaryColor: "#6A11CB",
+    secondaryColor: "#2575FC",
+  },
+  {
+    id: "neon-night",
+    name: "Neon Night",
+    primaryColor: "#8E2DE2",
+    secondaryColor: "#00F5FF",
+  },
+  {
+    id: "emerald-wave",
+    name: "Emerald Wave",
+    primaryColor: "#11998E",
+    secondaryColor: "#38EF7D",
+  },
+  {
+    id: "firestorm",
+    name: "Firestorm",
+    primaryColor: "#F12711",
+    secondaryColor: "#F5AF19",
+  },
+  {
+    id: "crimson-night",
+    name: "Crimson Night",
+    primaryColor: "#8E0E00",
+    secondaryColor: "#1F1C18",
+  },
+  {
+    id: "royal-blue",
+    name: "Royal Blue",
+    primaryColor: "#1E3C72",
+    secondaryColor: "#2A5298",
+  },
+  {
+    id: "miami-vice",
+    name: "Miami Vice",
+    primaryColor: "#FF2D95",
+    secondaryColor: "#00D4FF",
+  },
+  {
+    id: "mint-breeze",
+    name: "Mint Breeze",
+    primaryColor: "#00B09B",
+    secondaryColor: "#96C93D",
+  },
+  {
+    id: "golden-hour",
+    name: "Golden Hour",
+    primaryColor: "#F7971E",
+    secondaryColor: "#FFD200",
+  },
+  {
+    id: "cherry-blossom",
+    name: "Cherry Blossom",
+    primaryColor: "#F857A6",
+    secondaryColor: "#FF5858",
+  },
+  {
+    id: "deep-space",
+    name: "Deep Space",
+    primaryColor: "#000428",
+    secondaryColor: "#004E92",
+  },
+  {
+    id: "arctic",
+    name: "Arctic",
+    primaryColor: "#74EBD5",
+    secondaryColor: "#9FACE6",
+  },
+  {
+    id: "lava",
+    name: "Lava",
+    primaryColor: "#CB2D3E",
+    secondaryColor: "#EF473A",
+  },
+  {
+    id: "grape-soda",
+    name: "Grape Soda",
+    primaryColor: "#654EA3",
+    secondaryColor: "#EAAFC8",
+  },
+  {
+    id: "forest",
+    name: "Forest",
+    primaryColor: "#134E5E",
+    secondaryColor: "#71B280",
+  },
+  {
+    id: "peach",
+    name: "Peach",
+    primaryColor: "#ED4264",
+    secondaryColor: "#FFEDBC",
+  },
+  {
+    id: "steel",
+    name: "Steel",
+    primaryColor: "#485563",
+    secondaryColor: "#29323C",
+  },
+  {
+    id: "skyline",
+    name: "Skyline",
+    primaryColor: "#56CCF2",
+    secondaryColor: "#2F80ED",
+  },
+  {
+    id: "magenta-flame",
+    name: "Magenta Flame",
+    primaryColor: "#D31027",
+    secondaryColor: "#EA384D",
+  },
+  {
+    id: "lime-electric",
+    name: "Lime Electric",
+    primaryColor: "#A8E063",
+    secondaryColor: "#56AB2F",
+  },
+  {
+    id: "purple-haze",
+    name: "Purple Haze",
+    primaryColor: "#4E54C8",
+    secondaryColor: "#8F94FB",
+  },
+  {
+    id: "candy",
+    name: "Candy",
+    primaryColor: "#FF6FD8",
+    secondaryColor: "#3813C2",
+  },
 ] as const;
 
-type CustomGradient = (typeof CUSTOM_GRADIENTS)[number];
+type CustomTheme = (typeof CUSTOM_THEMES)[number];
 
 const colorsMatch = (first: string | null, second: string) =>
   first?.toUpperCase() === second.toUpperCase();
@@ -209,15 +340,15 @@ export default function MessageThemeModal({
     setSaveError(null);
   };
 
-  const handleSelectCustomGradient = (gradient: CustomGradient) => {
-    setDraftPreference({
+  const handleSelectCustomTheme = (theme: CustomTheme) => {
+    setDraftPreference((current) => ({
       mode: "manual",
-      bubbleStyle: "gradient",
+      bubbleStyle: current.bubbleStyle,
       league: null,
       teamId: null,
-      primaryColor: gradient.primaryColor,
-      secondaryColor: gradient.secondaryColor,
-    });
+      primaryColor: theme.primaryColor,
+      secondaryColor: theme.secondaryColor,
+    }));
     setSaveError(null);
   };
 
@@ -285,8 +416,6 @@ export default function MessageThemeModal({
 
             <View style={styles.optionBody}>
               <Text style={styles.optionTitle}>Default</Text>
-
-              <Text style={styles.optionMeta}>Tempo</Text>
             </View>
 
             {draftPreference.mode === "default" && (
@@ -373,64 +502,73 @@ export default function MessageThemeModal({
 
           {draftPreference.mode === "default" && (
             <Text style={styles.styleHint}>
-              Choose a gradient or favorite team to enable bubble styles.
+              Choose a custom theme or favorite team to enable bubble styles.
             </Text>
           )}
 
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Custom Gradients</Text>
-            <Text style={styles.sectionDescription}>
-              Color themes independent of your favorite teams
-            </Text>
+            <Text style={styles.sectionTitle}>Custom Themes</Text>
           </View>
-
-          <View style={styles.customGradientGrid}>
-            {CUSTOM_GRADIENTS.map((gradient) => {
+          <View>
+            {CUSTOM_THEMES.map((theme) => {
               const selected =
                 draftPreference.mode === "manual" &&
-                draftPreference.bubbleStyle === "gradient" &&
-                colorsMatch(
-                  draftPreference.primaryColor,
-                  gradient.primaryColor,
-                ) &&
+                colorsMatch(draftPreference.primaryColor, theme.primaryColor) &&
                 colorsMatch(
                   draftPreference.secondaryColor,
-                  gradient.secondaryColor,
+                  theme.secondaryColor,
                 );
-              const textColor = getReadableGradientTextColor(
-                gradient.primaryColor,
-                gradient.secondaryColor,
-              );
 
               return (
                 <Pressable
-                  key={gradient.id}
-                  onPress={() => handleSelectCustomGradient(gradient)}
+                  key={theme.id}
+                  onPress={() => handleSelectCustomTheme(theme)}
                   style={({ pressed }) => [
-                    styles.customGradientOption,
-                    {
-                      experimental_backgroundImage: `linear-gradient(135deg, ${gradient.primaryColor} 0%, ${gradient.secondaryColor} 100%)`,
-                    },
-                    selected && styles.customGradientSelected,
+                    styles.optionRow,
+                    selected && styles.optionSelected,
                     pressed && styles.optionPressed,
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={`Use the ${gradient.name} gradient`}
+                  accessibilityLabel={`Use the ${theme.name} theme`}
                   accessibilityState={{ selected }}
                 >
-                  <Text
-                    style={[styles.customGradientName, { color: textColor }]}
-                  >
-                    {gradient.name}
-                  </Text>
+                  <View style={styles.logoWrap}>
+                    <View
+                      style={[
+                        styles.customThemePreview,
+                        {
+                          experimental_backgroundImage: `linear-gradient(135deg, ${theme.primaryColor} 0%, ${theme.secondaryColor} 100%)`,
+                        },
+                      ]}
+                    />
+                  </View>
+
+                  <View style={styles.optionBody}>
+                    <Text style={styles.optionTitle}>{theme.name}</Text>
+                  </View>
 
                   {selected && (
                     <Ionicons
                       name="checkmark-circle"
-                      size={20}
-                      color={textColor}
+                      size={22}
+                      color={isDark ? Colors.white : Colors.black}
                     />
                   )}
+
+                  <View style={styles.swatchRow}>
+                    <View
+                      style={[
+                        styles.colorSwatch,
+                        { backgroundColor: theme.primaryColor },
+                      ]}
+                    />
+                    <View
+                      style={[
+                        styles.colorSwatch,
+                        { backgroundColor: theme.secondaryColor },
+                      ]}
+                    />
+                  </View>
                 </Pressable>
               );
             })}
@@ -534,9 +672,7 @@ export default function MessageThemeModal({
           <Button
             isDark={isDark}
             onPress={handleSave}
-            disabled={
-              isLoading || isSaving || isFavoriteSelectionIncomplete
-            }
+            disabled={isLoading || isSaving || isFavoriteSelectionIncomplete}
             variant="filled"
             style={styles.button}
           >

@@ -222,10 +222,18 @@ export const getReadableGradientTextColor = (
   startColor: string,
   endColor: string,
 ) => {
-  const averageLuminance =
-    (getRelativeLuminance(startColor) + getRelativeLuminance(endColor)) / 2;
-  const contrastWithWhite = 1.05 / (averageLuminance + 0.05);
-  const contrastWithBlack = (averageLuminance + 0.05) / 0.05;
+  const endpointLuminances = [
+    getRelativeLuminance(startColor),
+    getRelativeLuminance(endColor),
+  ];
+  const minimumContrastWithWhite = Math.min(
+    ...endpointLuminances.map((luminance) => 1.05 / (luminance + 0.05)),
+  );
+  const minimumContrastWithBlack = Math.min(
+    ...endpointLuminances.map((luminance) => (luminance + 0.05) / 0.05),
+  );
 
-  return contrastWithBlack >= contrastWithWhite ? Colors.black : Colors.white;
+  return minimumContrastWithBlack >= minimumContrastWithWhite
+    ? Colors.black
+    : Colors.white;
 };

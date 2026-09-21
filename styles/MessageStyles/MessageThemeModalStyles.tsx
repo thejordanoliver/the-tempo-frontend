@@ -140,14 +140,6 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       textTransform: "uppercase",
     },
 
-    sectionDescription: {
-      paddingTop: 3,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      lineHeight: 15,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
     loadingRow: {
       alignItems: "center",
       justifyContent: "center",
@@ -242,37 +234,11 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    customGradientGrid: {
-      flexDirection: "row",
-      flexWrap: "wrap",
-      gap: 8,
-    },
-
-    customGradientOption: {
-      flexBasis: "48%",
-      flexGrow: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      minHeight: 58,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      borderWidth: 1,
-      borderColor: "transparent",
-      borderRadius: 12,
+    customThemePreview: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       overflow: "hidden",
-    },
-
-    customGradientSelected: {
-      borderWidth: 2,
-      borderColor: isDark ? Colors.white : Colors.black,
-    },
-
-    customGradientName: {
-      flexShrink: 1,
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      lineHeight: 17,
     },
 
     errorText: {

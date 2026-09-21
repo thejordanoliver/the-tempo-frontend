@@ -1,20 +1,19 @@
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { ReactNode } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TextStyle } from "react-native";
 
 type Props = {
   children: ReactNode;
+  style?: TextStyle | TextStyle[];
 };
 
-export default function Subheading({ children }: Props) {
+export default function Subheading({ children, style }: Props) {
   const { resolvedColorScheme } = usePreferences();
-
   const isDark = resolvedColorScheme === "dark";
-
   const styles = SubheadingStyles(isDark);
 
-  return <Text style={styles.heading}>{children}</Text>;
+  return <Text style={[styles.heading, style]}>{children}</Text>;
 }
 
 const SubheadingStyles = (isDark: boolean) =>
