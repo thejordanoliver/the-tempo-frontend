@@ -7,6 +7,7 @@ import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
 import { resolveWCBBConferenceselection } from "@/constants/wcbbConferences";
 import { Colors, Fonts } from "constants/styles";
+import { resolveLeagueConfig } from "constants/leagues";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
 import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
@@ -214,6 +215,20 @@ export function CustomHeader({
       ? Colors.black
       : Colors.white;
 
+  const leagueConfig = useMemo(
+    () => resolveLeagueConfig(league) ?? resolveLeagueConfig(tabName),
+    [league, tabName],
+  );
+  const isLeagueScreen = Boolean(
+    leagueConfig &&
+      league !== "Leagues" &&
+      !isTeamScreen &&
+      !isPlayerScreen &&
+      tabName !== "Game",
+  );
+  const leagueHeaderLogo = leagueConfig?.logoLight ?? null;
+  const leagueHeaderColor = leagueConfig?.color;
+
   const [rotateAnim] = useState(() => new Animated.Value(0));
 
   useEffect(() => {
@@ -352,6 +367,7 @@ export function CustomHeader({
     tabName === "Game" ||
     isRacingHeader ||
     selectedConference ||
+    isLeagueScreen ||
     isTeamScreen ||
     isPlayerScreen
       ? Colors.white
@@ -372,13 +388,15 @@ export function CustomHeader({
         overflow: "visible",
       }}
     >
-      {isConferenceSelectorTab(tabName) ? (
+      {isConferenceSelectorTab(tabName) || isLeagueScreen ? (
         <ConferenceBackground
           insets={insets}
           isDark={isDark}
           selectedTeam={selectedConference}
-          logo={conferenceLogo}
-          conferenceColor={primaryColor}
+          logo={conferenceLogo ?? leagueHeaderLogo}
+          conferenceColor={
+            selectedConference ? primaryColor : leagueHeaderColor
+          }
           isConferenceScreen
         />
       ) : (
@@ -433,7 +451,7 @@ export function CustomHeader({
             eventLogo={logo ?? homeLogo}
             isDark={false}
           />
-        ) : isConferenceSelectorTab(tabName) ? (
+        ) : isConferenceSelectorTab(tabName) || isLeagueScreen ? (
           <LeagueHeader
             selectedConference={selectedConference}
             selectedConferenceName={selectedConferenceName}
@@ -441,6 +459,8 @@ export function CustomHeader({
             onOpenLeagueModal={onOpenLeagueModal}
             rotate={rotate}
             isDark={isDark}
+            logo={selectedConference?.logoLight ?? leagueHeaderLogo}
+            hasLeagueColor={isLeagueScreen}
           />
         ) : tabName === "Message" ? (
           <MessageThreadHeader

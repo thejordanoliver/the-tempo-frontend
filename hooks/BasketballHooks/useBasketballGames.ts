@@ -1,7 +1,7 @@
 import { BasketballGame } from "@/types/basketball/basketball";
 import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
@@ -53,6 +53,7 @@ export function useBasketballGames(
   const [games, setGames] = useState<BasketballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
@@ -102,6 +103,8 @@ export function useBasketballGames(
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
+      const requestId = ++requestIdRef.current;
+
       try {
         setError(null);
 
@@ -124,15 +127,18 @@ export function useBasketballGames(
           ? data.games
           : [];
 
-        setGames(gamesData);
+        if (requestId === requestIdRef.current) {
+          setGames(gamesData);
+        }
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         console.error(`Failed to fetch ${league} games:`, err);
 
         setError(new Error(`Failed to fetch ${league} games`));
 
         setGames([]);
       } finally {
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -157,7 +163,14 @@ export function useBasketballGames(
    * of fetchGames' dependency chain.
    */
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
@@ -179,6 +192,7 @@ export function useBasketballGames(
     },
 
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });

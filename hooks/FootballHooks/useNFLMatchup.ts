@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
 
@@ -13,9 +13,13 @@ export function useNFLMatchup(
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
+  const year = options?.year;
+  const week = options?.week;
 
   const fetchMatchup = useCallback(async () => {
     if (!team1 || !team2) return;
+    const requestId = ++requestIdRef.current;
 
     try {
       setLoading(true);
@@ -26,23 +30,31 @@ export function useNFLMatchup(
         team2: String(team2),
       };
 
-      if (options?.year) params.year = options.year;
-      if (options?.week) params.week = options.week;
+      if (year) params.year = year;
+      if (week) params.week = week;
 
       const res = await apiClient.get(`api/pfr/matchup`, {
         params,
       });
 
-      setData(res.data);
+      if (requestId === requestIdRef.current) setData(res.data);
     } catch (err: any) {
+      if (requestId !== requestIdRef.current) return;
       setError(err.message || "Failed to fetch matchup.");
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
-  }, [options, team1, team2]);
+  }, [team1, team2, week, year]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchMatchup());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchMatchup();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchMatchup]);
 
   return {

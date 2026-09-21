@@ -352,6 +352,24 @@ export const LEAGUE_CONFIG = {
   },
 } as const satisfies Record<LeagueType, LeagueDefinition>;
 
+export type LeagueConfig = (typeof LEAGUE_CONFIG)[LeagueType];
+
+export function resolveLeagueConfig(
+  value?: string | null,
+): LeagueConfig | null {
+  if (!value) return null;
+
+  const normalizedValue = value.trim().toLowerCase();
+  const leagueEntry = Object.entries(LEAGUE_CONFIG).find(
+    ([leagueId, config]) =>
+      leagueId === normalizedValue ||
+      config.id.toLowerCase() === normalizedValue ||
+      config.label.toLowerCase() === normalizedValue,
+  );
+
+  return leagueEntry?.[1] ?? null;
+}
+
 export type FavoriteSportId = (typeof LEAGUE_CONFIG)[BrowseableLeague]["id"];
 export const HOME_SCORE_LEAGUES = [
   "nba",

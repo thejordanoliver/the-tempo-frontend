@@ -3,6 +3,7 @@ import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { HeaderTitle } from "expo-router/react-navigation";
 import {
   Animated,
+  type ImageSourcePropType,
   TouchableOpacity,
   View,
   useWindowDimensions,
@@ -16,6 +17,8 @@ type LeagueHeaderProps = {
   onOpenLeagueModal?: () => void;
   rotate: Animated.AnimatedInterpolation<string | number>;
   isDark: boolean;
+  logo?: ImageSourcePropType | null;
+  hasLeagueColor?: boolean;
 };
 
 export function LeagueHeader({
@@ -25,18 +28,22 @@ export function LeagueHeader({
   onOpenLeagueModal,
   rotate,
   isDark,
+  logo,
+  hasLeagueColor = false,
 }: LeagueHeaderProps) {
   const { width } = useWindowDimensions();
   const styles = customHeaderStyles(isDark, width);
 
   const textStyle = {
+    flexShrink: 1,
     fontFamily: Fonts.REGULAR,
     fontSize: 20,
     color: isDark ? Colors.white : Colors.black,
     textAlign: "center" as const,
   };
 
-  const constantTextStyle = {
+  const brandedTextStyle = {
+    flexShrink: 1,
     fontFamily: Fonts.REGULAR,
     fontSize: 20,
     color: Colors.white,
@@ -49,32 +56,39 @@ export function LeagueHeader({
         activeOpacity={activeOpacity}
         onPress={onOpenLeagueModal}
         style={styles.leagueHeaderButton}
+        disabled={!onOpenLeagueModal}
       >
-        <HeaderTitle style={selectedConference ? constantTextStyle : textStyle}>
+        <HeaderTitle
+          style={
+            selectedConference || hasLeagueColor ? brandedTextStyle : textStyle
+          }
+        >
           {selectedConferenceName || tabName}
         </HeaderTitle>
 
-        <Animated.View
-          style={{
-            transform: [
-              {
-                rotate,
-              },
-            ],
-          }}
-        >
-          <Ionicons
-            name="chevron-down"
-            size={24}
-            color={
-              selectedConference
-                ? Colors.white
-                : isDark
+        {onOpenLeagueModal ? (
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotate,
+                },
+              ],
+            }}
+          >
+            <Ionicons
+              name="chevron-down"
+              size={24}
+              color={
+                selectedConference
                   ? Colors.white
-                  : Colors.black
-            }
-          />
-        </Animated.View>
+                  : isDark
+                    ? Colors.white
+                    : Colors.black
+              }
+            />
+          </Animated.View>
+        ) : null}
       </TouchableOpacity>
     </View>
   );

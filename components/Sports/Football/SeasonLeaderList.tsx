@@ -23,6 +23,15 @@ interface SeasonLeadersListProps {
   league: string;
 }
 
+const normalizeNumericTeamId = (
+  value: string | number | null | undefined,
+): number => {
+  if (value === null || value === undefined || value === "") return 0;
+
+  const numericValue = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+};
+
 export default function SeasonLeadersList({
   loading,
   error,
@@ -77,7 +86,7 @@ export default function SeasonLeadersList({
                     headshot={player.headshot_url}
                     statNumber={isMLB ? player.value : player.displayValue}
                     league={league}
-                    teamId={player?.teamId ?? 0}
+                    teamId={normalizeNumericTeamId(player.teamId)}
                   />
                 );
               })}

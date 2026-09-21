@@ -231,6 +231,7 @@ export default function WidgetSlider({
 
   const [scrollPosition] = useState(() => new Animated.Value(0));
   const flatListRef = useRef<FlatList>(null);
+  const autoSlideFrameRef = useRef<number | null>(null);
   const currentOffset = useRef(0);
 
   const [slideHeight, setSlideHeight] = useState(initialHeight);
@@ -331,17 +332,27 @@ export default function WidgetSlider({
         });
 
         if (progress < 1) {
-          requestAnimationFrame(animate);
+          autoSlideFrameRef.current = requestAnimationFrame(animate);
         } else {
+          autoSlideFrameRef.current = null;
           currentOffset.current = to;
           setCurrentIndex(nextIndex >= slides.length ? 0 : nextIndex);
         }
       };
 
-      requestAnimationFrame(animate);
+      if (autoSlideFrameRef.current !== null) {
+        cancelAnimationFrame(autoSlideFrameRef.current);
+      }
+      autoSlideFrameRef.current = requestAnimationFrame(animate);
     }, 15000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (autoSlideFrameRef.current !== null) {
+        cancelAnimationFrame(autoSlideFrameRef.current);
+        autoSlideFrameRef.current = null;
+      }
+    };
   }, [isHorizontal, slides.length]);
 
   const onScroll = useCallback(
@@ -454,7 +465,7 @@ export default function WidgetSlider({
   ]);
 
   const [progressOpacity] = useState(() => new Animated.Value(0));
-  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const progressHeight = useMemo(
     () =>

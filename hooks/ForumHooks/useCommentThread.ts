@@ -1,7 +1,7 @@
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { isAxiosError } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertConfig } from "types/alert";
 import type {
   ForumComment,
@@ -420,6 +420,7 @@ export function useCommentThread(postId: string | null) {
 
   const [alertConfig, setAlertConfig] =
     useState<AlertConfig | null>(null);
+  const fetchRequestIdRef = useRef(0);
 
   const {
     handleBadgeAwards,
@@ -431,8 +432,10 @@ export function useCommentThread(postId: string | null) {
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
+    let cancelled = false;
     AsyncStorage.getItem("userId")
       .then((id) => {
+        if (cancelled) return;
         const parsed = id
           ? Number.parseInt(id, 10)
           : NaN;
@@ -443,7 +446,13 @@ export function useCommentThread(postId: string | null) {
             : parsed,
         );
       })
-      .catch(() => setCurrentUserId(null));
+      .catch(() => {
+        if (!cancelled) setCurrentUserId(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   /* ------------------------------------------------------------------------ */
@@ -451,6 +460,7 @@ export function useCommentThread(postId: string | null) {
   /* ------------------------------------------------------------------------ */
 
   const fetchThread = useCallback(async () => {
+    const requestId = ++fetchRequestIdRef.current;
     if (!postId) {
       setLoading(false);
       return;
@@ -470,6 +480,8 @@ export function useCommentThread(postId: string | null) {
           >(`/api/forum/post/${postId}/comments`),
         ]);
 
+      if (requestId !== fetchRequestIdRef.current) return;
+
       setPost(postRes.data.post ?? null);
 
       const normalizedComments = (
@@ -488,6 +500,7 @@ export function useCommentThread(postId: string | null) {
 
       setComments(normalizedComments);
     } catch (error) {
+      if (requestId !== fetchRequestIdRef.current) return;
       console.error(
         "Failed to fetch thread",
         error,
@@ -502,12 +515,19 @@ export function useCommentThread(postId: string | null) {
         confirmText: "OK",
       });
     } finally {
-      setLoading(false);
+      if (requestId === fetchRequestIdRef.current) setLoading(false);
     }
   }, [postId]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchThread());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchThread();
+    });
+    return () => {
+      cancelled = true;
+      fetchRequestIdRef.current += 1;
+    };
   }, [fetchThread]);
 
   /* ------------------------------------------------------------------------ */

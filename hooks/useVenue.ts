@@ -1,6 +1,6 @@
 import { apiClient } from "@/utils/apiClient";
 import { isAxiosError } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type Venue = {
   league_key: string;
@@ -46,9 +46,11 @@ export const useVenue = ({ sport, id }: UseVenueParams): UseVenueResponse => {
   const [venueLoading, setVenueLoading] = useState<boolean>(false);
   const [venueError, setVenueError] = useState<string | null>(null);
   const [venueRefreshing, setVenueRefreshing] = useState<boolean>(false);
+  const requestIdRef = useRef(0);
 
   const fetchVenue = useCallback(
     async (isRefresh = false) => {
+      const requestId = ++requestIdRef.current;
       try {
         if (isRefresh) {
           setVenueRefreshing(true);
@@ -64,8 +66,11 @@ export const useVenue = ({ sport, id }: UseVenueParams): UseVenueResponse => {
           message?: string;
         }>(`api/venues/${sport}/${id}`);
 
-        setVenue(response.data.data ?? null);
+        if (requestId === requestIdRef.current) {
+          setVenue(response.data.data ?? null);
+        }
       } catch (err: unknown) {
+        if (requestId !== requestIdRef.current) return;
         setVenue(null);
 
         if (isAxiosError(err)) {
@@ -81,8 +86,10 @@ export const useVenue = ({ sport, id }: UseVenueParams): UseVenueResponse => {
           setVenueError("Failed to fetch venue");
         }
       } finally {
-        setVenueLoading(false);
-        setVenueRefreshing(false);
+        if (requestId === requestIdRef.current) {
+          setVenueLoading(false);
+          setVenueRefreshing(false);
+        }
       }
     },
     [sport, id],
@@ -93,7 +100,14 @@ export const useVenue = ({ sport, id }: UseVenueParams): UseVenueResponse => {
   }, [fetchVenue]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchVenue());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchVenue();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchVenue]);
 
   return {

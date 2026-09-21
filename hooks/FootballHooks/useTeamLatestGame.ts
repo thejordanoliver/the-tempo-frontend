@@ -1,5 +1,5 @@
 import { FootballGame } from "@/types/football/football";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type FootballLeague = "nfl" | "cfb";
@@ -36,6 +36,7 @@ export function useTeamLatestGame(
     refreshing: false,
     error: requestKey ? null : "Missing team id",
   }));
+  const requestIdRef = useRef(0);
 
   const requestLastGame = useCallback(async () => {
     if (!teamId || !requestKey) {
@@ -58,13 +59,13 @@ export function useTeamLatestGame(
       return;
     }
 
-    let isCancelled = false;
+    const requestId = ++requestIdRef.current;
 
     const loadLastGame = async () => {
       try {
         const resolvedGame = await requestLastGame();
 
-        if (isCancelled) {
+        if (requestId !== requestIdRef.current) {
           return;
         }
 
@@ -76,7 +77,7 @@ export function useTeamLatestGame(
           error: null,
         });
       } catch (err) {
-        if (isCancelled) {
+        if (requestId !== requestIdRef.current) {
           return;
         }
 
@@ -96,7 +97,7 @@ export function useTeamLatestGame(
     void loadLastGame();
 
     return () => {
-      isCancelled = true;
+      requestIdRef.current += 1;
     };
   }, [requestKey, requestLastGame]);
 
@@ -104,6 +105,8 @@ export function useTeamLatestGame(
     if (!requestKey) {
       return;
     }
+
+    const requestId = ++requestIdRef.current;
 
     setState((currentState) => ({
       key: requestKey,
@@ -115,6 +118,7 @@ export function useTeamLatestGame(
 
     void requestLastGame()
       .then((resolvedGame) => {
+        if (requestId !== requestIdRef.current) return;
         setState({
           key: requestKey,
           game: resolvedGame,
@@ -124,6 +128,7 @@ export function useTeamLatestGame(
         });
       })
       .catch((err: unknown) => {
+        if (requestId !== requestIdRef.current) return;
         console.error("LAST FOOTBALL TEAM GAME ERROR:", err);
 
         setState((currentState) => ({

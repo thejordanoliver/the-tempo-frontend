@@ -1,6 +1,5 @@
-import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BASE_URL } from "utils/apiClient";
+import { apiClient } from "utils/apiClient";
 
 type FetchMode = "initial" | "refresh" | "silent";
 
@@ -61,11 +60,15 @@ export function useDraft(league: string, year: number | string | undefined) {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
+  const requestInFlightRef = useRef(false);
 
   const fetchDraft = useCallback(
     async (mode: FetchMode = "initial") => {
       if (!year || !league) return;
+      const requestId = ++requestIdRef.current;
+      requestInFlightRef.current = true;
 
       try {
         if (mode === "refresh") setRefreshing(true);
@@ -73,19 +76,25 @@ export function useDraft(league: string, year: number | string | undefined) {
 
         setError(null);
 
-        const { data } = await axios.get<DraftProps>(
-          `${BASE_URL}/api/draft/${league}/${year}`,
+        const { data } = await apiClient.get<DraftProps>(
+          `api/draft/${league}/${year}`,
         );
 
-        setDraft(data);
+        if (requestId === requestIdRef.current) {
+          setDraft(data);
+        }
       } catch (err: unknown) {
+        if (requestId !== requestIdRef.current) return;
         const message = err instanceof Error ? err.message : "Unknown error";
 
         console.error("Draft fetch failed:", message);
         setError("Failed to load Draft data");
       } finally {
-        if (mode === "refresh") setRefreshing(false);
-        if (mode === "initial") setLoading(false);
+        if (requestId === requestIdRef.current) {
+          requestInFlightRef.current = false;
+          if (mode === "refresh") setRefreshing(false);
+          if (mode === "initial") setLoading(false);
+        }
       }
     },
     [league, year],
@@ -95,7 +104,14 @@ export function useDraft(league: string, year: number | string | undefined) {
   // INITIAL LOAD
   // ---------------------------
   useEffect(() => {
-    void Promise.resolve().then(() => fetchDraft("initial"));
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchDraft("initial");
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchDraft]);
 
   // ---------------------------
@@ -104,21 +120,36 @@ export function useDraft(league: string, year: number | string | undefined) {
   useEffect(() => {
     const state = draft?.status?.state;
 
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (pollTimerRef.current) {
+      clearTimeout(pollTimerRef.current);
+      pollTimerRef.current = null;
     }
 
     if (state !== "in") return;
 
-    intervalRef.current = setInterval(() => {
-      fetchDraft("silent");
-    }, 10000);
+    let cancelled = false;
+
+    const poll = async () => {
+      if (requestInFlightRef.current) {
+        if (!cancelled) {
+          pollTimerRef.current = setTimeout(() => void poll(), 10000);
+        }
+        return;
+      }
+
+      await fetchDraft("silent");
+      if (!cancelled) {
+        pollTimerRef.current = setTimeout(() => void poll(), 10000);
+      }
+    };
+
+    pollTimerRef.current = setTimeout(() => void poll(), 10000);
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      cancelled = true;
+      if (pollTimerRef.current) {
+        clearTimeout(pollTimerRef.current);
+        pollTimerRef.current = null;
       }
     };
   }, [draft?.status?.state, fetchDraft]);

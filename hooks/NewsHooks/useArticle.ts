@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export interface ArticleImage {
@@ -38,9 +38,11 @@ export function useArticle(articleId: number | string) {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchArticle = useCallback(async () => {
     if (!articleId) return;
+    const requestId = ++requestIdRef.current;
 
     setLoading(true);
     setError(null);
@@ -50,20 +52,30 @@ export function useArticle(articleId: number | string) {
         `api/news/article/${articleId}`,
       );
 
+      if (requestId !== requestIdRef.current) return;
+
       if (res.data.success) {
         setArticle(res.data.article);
       } else {
         setError("Failed to fetch article");
       }
     } catch (err: any) {
+      if (requestId !== requestIdRef.current) return;
       setError(err.message || "Error fetching article");
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   }, [articleId]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchArticle());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchArticle();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchArticle]);
 
   return {

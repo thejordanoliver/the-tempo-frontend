@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type WeatherData = {
@@ -95,6 +95,7 @@ export function useWeather({
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => formatDateForWeatherRoute(date), [date]);
 
@@ -107,6 +108,8 @@ export function useWeather({
   }, [enabled, formattedDate, lat, lon, location]);
 
   const refetch = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
+
     if (!canFetch || !formattedDate) {
       setWeather(null);
       setLoading(false);
@@ -135,9 +138,11 @@ export function useWeather({
         params,
       });
 
+      if (requestId !== requestIdRef.current) return null;
       setWeather(response.data);
       return response.data;
     } catch (err: any) {
+      if (requestId !== requestIdRef.current) return null;
       const message =
         err?.response?.data?.error ||
         err?.message ||
@@ -147,12 +152,21 @@ export function useWeather({
       setWeather(null);
       return null;
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   }, [canFetch, formattedDate, lat, lon, location]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => refetch());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void refetch();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [refetch]);
 
   return {

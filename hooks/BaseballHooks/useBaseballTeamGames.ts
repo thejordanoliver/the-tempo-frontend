@@ -1,6 +1,6 @@
 import { BaseballGame } from "@/types/baseball/baseball";
 import { useTeamMonthSelector } from "hooks/LeagueHooks/useMonthSelector";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import type {
   ScheduleMonthGroup,
@@ -82,12 +82,14 @@ export function useBaseballTeamGames(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchSchedule = useCallback(
     async ({
       isRefresh = false,
       silent = false,
     }: FetchScheduleOptions = {}) => {
+      const requestId = ++requestIdRef.current;
       if (!league || !hasValidValue(teamId) || !hasValidValue(season)) {
         setData(null);
         setLoading(false);
@@ -120,8 +122,9 @@ export function useBaseballTeamGames(
           months: responseMonths,
         };
 
-        setData(nextData);
+        if (requestId === requestIdRef.current) setData(nextData);
       } catch (err: any) {
+        if (requestId !== requestIdRef.current) return;
         const message =
           err?.response?.data?.error ??
           err?.message ??
@@ -138,11 +141,11 @@ export function useBaseballTeamGames(
           }
         }
       } finally {
-        if (isRefresh) {
+        if (isRefresh && requestId === requestIdRef.current) {
           setRefreshing(false);
         }
 
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -151,7 +154,14 @@ export function useBaseballTeamGames(
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchSchedule());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchSchedule();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchSchedule]);
 
   const allGames = useMemo(() => data?.games ?? [], [data?.games]);
@@ -191,6 +201,7 @@ export function useBaseballTeamGames(
       season: season || "",
     },
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       const nextData: BaseballTeamScheduleResponse = {
         league: payload.league,
         team: payload.team ?? null,

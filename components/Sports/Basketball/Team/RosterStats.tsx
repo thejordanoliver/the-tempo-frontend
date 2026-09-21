@@ -196,8 +196,8 @@ export default function RosterStats({
 }: RosterStatsComponentProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = rosterStatsStyles(isDark);
-  const global = globalStyles(isDark);
+  const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
   const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
@@ -243,19 +243,23 @@ export default function RosterStats({
     backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
   };
 
-  const statLeaders = LEADER_STATS.map((item) => {
-    const player = [...activeRoster].sort(
-      (a, b) =>
-        getNumericStatValue(getAverages(b)[item.averageKey]) -
-        getNumericStatValue(getAverages(a)[item.averageKey]),
-    )[0];
+  const statLeaders = useMemo(
+    () =>
+      LEADER_STATS.map((item) => {
+        const player = [...activeRoster].sort(
+          (a, b) =>
+            getNumericStatValue(getAverages(b)[item.averageKey]) -
+            getNumericStatValue(getAverages(a)[item.averageKey]),
+        )[0];
 
-    return {
-      ...item,
-      player,
-      value: player ? getAverages(player)[item.averageKey] : null,
-    };
-  });
+        return {
+          ...item,
+          player,
+          value: player ? getAverages(player)[item.averageKey] : null,
+        };
+      }),
+    [activeRoster],
+  );
 
   const handlePress = (playerId: string | number) => {
     const id = String(playerId);
@@ -368,6 +372,14 @@ export default function RosterStats({
     ];
   };
 
+  const playerCellsById = useMemo(
+    () =>
+      new Map(
+        activeRoster.map((player) => [player.playerId, getPlayerCells(player)]),
+      ),
+    [activeRoster],
+  );
+
   const renderStickyPlayerCell = (player: RosterPlayer, index: number) => (
     <View
       key={`${player.playerId}-sticky-name`}
@@ -396,7 +408,7 @@ export default function RosterStats({
   );
 
   const renderScrollableStatRow = (player: RosterPlayer, index: number) => {
-    const cells = getPlayerCells(player);
+    const cells = playerCellsById.get(player.playerId) ?? [];
 
     return (
       <View

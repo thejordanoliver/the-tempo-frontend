@@ -1,6 +1,6 @@
 import { BaseballGame } from "@/types/baseball/baseball";
 import { isGameLive } from "@/utils/games";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
@@ -28,12 +28,14 @@ export function useTeamLatestGame(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchLastGame = useCallback(
     async ({
       isRefresh = false,
       silent = false,
     }: FetchLastGameOptions = {}) => {
+      const requestId = ++requestIdRef.current;
       if (!teamId) {
         setGame(null);
         setLoading(false);
@@ -61,8 +63,9 @@ export function useTeamLatestGame(
 
         const resolvedGame = data.game ?? data.games?.[0] ?? null;
 
-        setGame(resolvedGame);
+        if (requestId === requestIdRef.current) setGame(resolvedGame);
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         console.error("LAST BASEBALL TEAM GAME ERROR:", err);
 
         const message =
@@ -75,11 +78,11 @@ export function useTeamLatestGame(
           setGame(null);
         }
       } finally {
-        if (isRefresh) {
+        if (isRefresh && requestId === requestIdRef.current) {
           setRefreshing(false);
         }
 
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -88,7 +91,14 @@ export function useTeamLatestGame(
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchLastGame());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchLastGame();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchLastGame]);
 
   const hasLiveGame = useMemo(() => {
@@ -105,6 +115,7 @@ export function useTeamLatestGame(
       teamId: teamId || "",
     },
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       setGame(payload.game ?? payload.games?.[0] ?? null);
     },
   });

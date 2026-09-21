@@ -28,7 +28,7 @@ export const gameWidgetStyles = (
   const logo = isSmallLayout
     ? clamp(Math.min(w * 0.14, h * 0.2), 26, 34)
     : isLargeLayout
-      ? clamp(Math.min(w * 0.15, h * 0.14), 50, 56)
+      ? clamp(Math.min(w * 0.15, h * 0.14), 40, 54)
       : clamp(Math.min(w * 0.14, h * 0.2), 40, 54);
   const scoreFz = isSmallLayout
     ? clamp(Math.min(w * 0.12, h * 0.18), 20, 26)

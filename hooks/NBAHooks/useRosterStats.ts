@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type BasketballRosterLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
@@ -92,9 +92,11 @@ export function useRosterStats(
   const [loading, setLoading] = useState(true);
   const [refreshingStats, setRefreshing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchRoster = useCallback(
     async (isRefresh = false) => {
+      const requestId = ++requestIdRef.current;
       if (!normalizedTeamId) {
         setTeamRoster(null);
         setLoading(false);
@@ -119,17 +121,20 @@ export function useRosterStats(
           normalizedTeamId,
         );
 
-        setTeamRoster(normalizedRoster);
+        if (requestId === requestIdRef.current) {
+          setTeamRoster(normalizedRoster);
+        }
       } catch (err: unknown) {
+        if (requestId !== requestIdRef.current) return;
         const errorObject = getErrorObject(err);
 
         console.error("❌ Error fetching roster stats:", errorObject.message);
         setError(errorObject);
         setTeamRoster(EMPTY_ROSTER_STATS(normalizedTeamId));
       } finally {
-        if (isRefresh) {
+        if (isRefresh && requestId === requestIdRef.current) {
           setRefreshing(false);
-        } else {
+        } else if (requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -138,7 +143,14 @@ export function useRosterStats(
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchRoster());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchRoster();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchRoster]);
 
   return {

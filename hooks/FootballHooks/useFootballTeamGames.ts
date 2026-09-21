@@ -1,6 +1,6 @@
 import { FootballGame } from "@/types/football/football";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 type FetchTeamGamesOptions = {
@@ -56,12 +56,14 @@ export function useFootballTeamGames(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchGames = useCallback(
     async ({
       forceRefresh = false,
       silent = false,
     }: FetchTeamGamesOptions = {}) => {
+      const requestId = ++requestIdRef.current;
       if (teamId == null || teamId === "" || !league) {
         if (!silent) {
           setGames([]);
@@ -97,8 +99,9 @@ export function useFootballTeamGames(
 
         const nextGames = Array.isArray(data?.games) ? data.games : [];
 
-        setGames(nextGames);
+        if (requestId === requestIdRef.current) setGames(nextGames);
       } catch (err: unknown) {
+        if (requestId !== requestIdRef.current) return;
         const message =
           err instanceof Error ? err.message : "Unknown request error";
 
@@ -111,11 +114,11 @@ export function useFootballTeamGames(
           setGames([]);
         }
       } finally {
-        if (forceRefresh) {
+        if (forceRefresh && requestId === requestIdRef.current) {
           setRefreshing(false);
         }
 
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -124,7 +127,14 @@ export function useFootballTeamGames(
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchGames]);
 
   const subscriptionEnabled =
@@ -143,6 +153,7 @@ export function useFootballTeamGames(
     },
 
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       const updatedGames = Array.isArray(payload?.games) ? payload.games : [];
 
       if (updatedGames.length === 0) {

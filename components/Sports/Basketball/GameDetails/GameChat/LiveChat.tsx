@@ -85,6 +85,9 @@ export default function LiveChat({
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
   const listRef = useRef<BottomSheetFlatListMethods>(null);
+  const scrollFrameRef = useRef<number | null>(null);
+  const scrollTimeoutOneRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimeoutTwoRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [inputHeight, setInputHeight] = useState(FALLBACK_INPUT_HEIGHT);
   const [showLatestButton, setShowLatestButton] = useState(false);
@@ -107,7 +110,24 @@ export default function LiveChat({
     setContentPanningEnabled(true);
   }, []);
 
+  const clearScheduledScroll = useCallback(() => {
+    if (scrollFrameRef.current !== null) {
+      cancelAnimationFrame(scrollFrameRef.current);
+      scrollFrameRef.current = null;
+    }
+    if (scrollTimeoutOneRef.current !== null) {
+      clearTimeout(scrollTimeoutOneRef.current);
+      scrollTimeoutOneRef.current = null;
+    }
+    if (scrollTimeoutTwoRef.current !== null) {
+      clearTimeout(scrollTimeoutTwoRef.current);
+      scrollTimeoutTwoRef.current = null;
+    }
+  }, []);
+
   const scrollToLatestMessage = useCallback((animated = true) => {
+    clearScheduledScroll();
+
     const scroll = (shouldAnimate: boolean) => {
       listRef.current?.scrollToEnd({ animated: shouldAnimate });
       listRef.current?.scrollToOffset?.({
@@ -119,12 +139,21 @@ export default function LiveChat({
       setShowLatestButton(false);
     };
 
-    requestAnimationFrame(() => {
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
       scroll(animated);
-      setTimeout(() => scroll(false), 60);
-      setTimeout(() => scroll(false), 160);
+      scrollTimeoutOneRef.current = setTimeout(() => {
+        scrollTimeoutOneRef.current = null;
+        scroll(false);
+      }, 60);
+      scrollTimeoutTwoRef.current = setTimeout(() => {
+        scrollTimeoutTwoRef.current = null;
+        scroll(false);
+      }, 160);
     });
-  }, []);
+  }, [clearScheduledScroll]);
+
+  useEffect(() => clearScheduledScroll, [clearScheduledScroll]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {

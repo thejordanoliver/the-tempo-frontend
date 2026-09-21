@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
-import { gameTeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
+import { TeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -180,7 +180,7 @@ export default function GameTeamStats({
   isDark: boolean;
 }) {
   const isScheduled = state === "pre";
-  const styles = gameTeamStatsStyles(isDark);
+  const styles = TeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const [heightAnim] = useState(() => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT));

@@ -1,5 +1,5 @@
 import { SoccerGame } from "@/types/soccer/soccer";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 interface UseTeamGamesReturn {
@@ -17,9 +17,11 @@ export function useSoccerTeamGames(
   const [games, setGames] = useState<SoccerGame[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchGames = useCallback(async () => {
     if (!teamId || !league) return;
+    const requestId = ++requestIdRef.current;
 
     try {
       setLoading(true);
@@ -37,17 +39,29 @@ export function useSoccerTeamGames(
 
       const rawGames: SoccerGame[] = res.data?.games || [];
 
-      setGames(rawGames);
+      if (requestId === requestIdRef.current) {
+        setGames(rawGames);
+      }
     } catch (err: any) {
+      if (requestId !== requestIdRef.current) return;
       console.error("Error fetching soccer team games:", err?.message || err);
       setError("Failed to load team games");
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+      }
     }
   }, [teamId, league, season]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchGames]);
 
   const refreshGames = useCallback(async () => {

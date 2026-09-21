@@ -1,5 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Appearance } from "react-native";
 
 export type ViewMode = "list" | "grid" | "stacked";
@@ -80,37 +87,46 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   /* ---------------- Persist helpers ---------------- */
 
-  const persistViewMode = async (mode: ViewMode) => {
+  const persistViewMode = useCallback(async (mode: ViewMode) => {
     try {
       await AsyncStorage.setItem(VIEW_MODE_KEY, mode);
     } catch (e) {
       console.warn("Failed to save view mode:", e);
     }
-  };
+  }, []);
 
-  const persistColorScheme = async (scheme: ColorSchemePreference) => {
-    try {
-      await AsyncStorage.setItem(COLOR_SCHEME_KEY, scheme);
-    } catch (e) {
-      console.warn("Failed to save color scheme:", e);
-    }
-  };
+  const persistColorScheme = useCallback(
+    async (scheme: ColorSchemePreference) => {
+      try {
+        await AsyncStorage.setItem(COLOR_SCHEME_KEY, scheme);
+      } catch (e) {
+        console.warn("Failed to save color scheme:", e);
+      }
+    },
+    [],
+  );
 
   /* ---------------- Setters ---------------- */
 
-  const setViewMode = (mode: ViewMode) => {
-    setViewModeState(mode);
-    void persistViewMode(mode);
-  };
+  const setViewMode = useCallback(
+    (mode: ViewMode) => {
+      setViewModeState(mode);
+      void persistViewMode(mode);
+    },
+    [persistViewMode],
+  );
 
-  const setColorScheme = (scheme: ColorSchemePreference) => {
-    setColorSchemeState(scheme);
-    void persistColorScheme(scheme);
-  };
+  const setColorScheme = useCallback(
+    (scheme: ColorSchemePreference) => {
+      setColorSchemeState(scheme);
+      void persistColorScheme(scheme);
+    },
+    [persistColorScheme],
+  );
 
   /* ---------------- Toggles ---------------- */
 
-  const toggleViewMode = () => {
+  const toggleViewMode = useCallback(() => {
     setViewModeState((currentMode) => {
       const nextMode =
         currentMode === "list"
@@ -122,9 +138,9 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       void persistViewMode(nextMode);
       return nextMode;
     });
-  };
+  }, [persistViewMode]);
 
-  const toggleColorScheme = () => {
+  const toggleColorScheme = useCallback(() => {
     setColorSchemeState((currentScheme) => {
       const nextScheme: ColorSchemePreference =
         currentScheme === "light"
@@ -136,20 +152,31 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       void persistColorScheme(nextScheme);
       return nextScheme;
     });
-  };
+  }, [persistColorScheme]);
+
+  const value = useMemo<PreferencesContextType>(
+    () => ({
+      viewMode,
+      setViewMode,
+      toggleViewMode,
+      colorScheme,
+      resolvedColorScheme,
+      setColorScheme,
+      toggleColorScheme,
+    }),
+    [
+      colorScheme,
+      resolvedColorScheme,
+      setColorScheme,
+      setViewMode,
+      toggleColorScheme,
+      toggleViewMode,
+      viewMode,
+    ],
+  );
 
   return (
-    <PreferencesContext.Provider
-      value={{
-        viewMode,
-        setViewMode,
-        toggleViewMode,
-        colorScheme,
-        resolvedColorScheme,
-        setColorScheme,
-        toggleColorScheme,
-      }}
-    >
+    <PreferencesContext.Provider value={value}>
       {children}
     </PreferencesContext.Provider>
   );

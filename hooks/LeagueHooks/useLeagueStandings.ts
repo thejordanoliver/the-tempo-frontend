@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type StandingsTeam = {
@@ -82,10 +82,12 @@ export function useLeagueStandings(
   const [data, setData] = useState<LeagueStandingsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const seasonType = options?.seasonType ?? "2";
 
   const fetchStandings = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
     try {
       setLoading(true);
       setError(null);
@@ -100,6 +102,7 @@ export function useLeagueStandings(
         },
       );
 
+      if (requestId !== requestIdRef.current) return;
       setData({
         ...res.data,
         availableSeasons: res.data.availableSeasons ?? [],
@@ -107,6 +110,7 @@ export function useLeagueStandings(
         divisions: res.data.divisions ?? {},
       });
     } catch (err: any) {
+      if (requestId !== requestIdRef.current) return;
       console.error(`Failed to fetch ${league} standings:`, err);
 
       setError(
@@ -117,12 +121,19 @@ export function useLeagueStandings(
 
       setData(null);
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) setLoading(false);
     }
   }, [league, year, seasonType]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchStandings());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchStandings();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchStandings]);
 
   const availableSeasons = useMemo(() => {

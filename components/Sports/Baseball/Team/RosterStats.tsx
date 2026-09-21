@@ -316,8 +316,8 @@ export default function RosterStats({
 }: RosterStatsComponentProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = rosterStatsStyles(isDark);
-  const global = globalStyles(isDark);
+  const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
   const [selectedPlayerView, setSelectedPlayerView] =
@@ -348,17 +348,22 @@ export default function RosterStats({
   const activeLeaders =
     selectedPlayerView === "Batting" ? BATTING_LEADERS : PITCHING_LEADERS;
 
-  const statLeaders = activeLeaders.reduce<
-    (LeaderDefinition & { leader: StatLeader })[]
-  >((acc, definition) => {
-    const leader = getStatLeader(activeRows, definition);
+  const statLeaders = useMemo(
+    () =>
+      activeLeaders.reduce<(LeaderDefinition & { leader: StatLeader })[]>(
+        (acc, definition) => {
+          const leader = getStatLeader(activeRows, definition);
 
-    if (leader) {
-      acc.push({ ...definition, leader });
-    }
+          if (leader) {
+            acc.push({ ...definition, leader });
+          }
 
-    return acc;
-  }, []);
+          return acc;
+        },
+        [],
+      ),
+    [activeLeaders, activeRows],
+  );
 
   const handleTabPress = (tab: StatTab) => {
     setSelectedTab(tab);

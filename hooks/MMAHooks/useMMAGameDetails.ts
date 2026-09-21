@@ -228,12 +228,16 @@ export const useMMAGameDetails = (
   const [warning, setWarning] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
+  const requestInFlightRef = useRef(false);
   const skipFetch = !enabled || !league || !gameId;
 
   const fetchDetails = useCallback(
     async ({ silent = false }: FetchDetailsOptions = {}) => {
       if (skipFetch) return;
+      const requestId = ++requestIdRef.current;
+      requestInFlightRef.current = true;
 
       try {
         if (!silent) setLoading(true);
@@ -249,6 +253,8 @@ export const useMMAGameDetails = (
         const nextDetails =
           data?.details ?? normalizeDetailsFromEvent(eventData);
 
+        if (requestId !== requestIdRef.current) return;
+
         if (nextScore) {
           setScore(nextScore);
           setDetails(nextDetails);
@@ -257,6 +263,7 @@ export const useMMAGameDetails = (
           setWarning("Fight data unavailable");
         }
       } catch (err: any) {
+        if (requestId !== requestIdRef.current) return;
         console.warn(`[${league}] MMA game details fetch failed`, err);
 
         setWarning(
@@ -265,7 +272,10 @@ export const useMMAGameDetails = (
           "Unable to refresh MMA game data",
         );
       } finally {
-        if (!silent) setLoading(false);
+        if (requestId === requestIdRef.current) {
+          requestInFlightRef.current = false;
+          if (!silent) setLoading(false);
+        }
       }
     },
     [league, gameId, skipFetch],
@@ -273,28 +283,55 @@ export const useMMAGameDetails = (
 
   useEffect(() => {
     if (skipFetch) return;
-    void Promise.resolve().then(() => fetchDetails({ silent: false }));
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchDetails({ silent: false });
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [skipFetch, fetchDetails]);
 
+  const isLive = isLiveMMAScore(score);
+
   useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    if (pollTimerRef.current) {
+      clearTimeout(pollTimerRef.current);
+      pollTimerRef.current = null;
     }
 
-    if (!pollLiveEvents || !isLiveMMAScore(score)) return;
+    if (!pollLiveEvents || !isLive) return;
 
-    intervalRef.current = setInterval(() => {
-      fetchDetails({ silent: true });
-    }, pollIntervalMs);
+    let cancelled = false;
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+    const poll = async () => {
+      if (requestInFlightRef.current) {
+        if (!cancelled) {
+          pollTimerRef.current = setTimeout(
+            () => void poll(),
+            pollIntervalMs,
+          );
+        }
+        return;
+      }
+
+      await fetchDetails({ silent: true });
+      if (!cancelled) {
+        pollTimerRef.current = setTimeout(() => void poll(), pollIntervalMs);
       }
     };
-  }, [fetchDetails, pollIntervalMs, pollLiveEvents, score, score?.status]);
+
+    pollTimerRef.current = setTimeout(() => void poll(), pollIntervalMs);
+
+    return () => {
+      cancelled = true;
+      if (pollTimerRef.current) {
+        clearTimeout(pollTimerRef.current);
+        pollTimerRef.current = null;
+      }
+    };
+  }, [fetchDetails, isLive, pollIntervalMs, pollLiveEvents]);
 
   const refresh = useCallback(() => {
     if (!skipFetch) {

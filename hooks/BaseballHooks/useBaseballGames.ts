@@ -1,7 +1,7 @@
 import { BaseballGame } from "@/types/baseball/baseball";
 import { isGameLive } from "@/utils/games";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
@@ -32,6 +32,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
   const [games, setGames] = useState<BaseballGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
@@ -44,6 +45,8 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
+      const requestId = ++requestIdRef.current;
+
       try {
         setError(null);
 
@@ -58,13 +61,16 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
 
         const gamesData = Array.isArray(data?.games) ? data.games : [];
 
-        setGames(gamesData);
+        if (requestId === requestIdRef.current) {
+          setGames(gamesData);
+        }
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
         setGames([]);
       } finally {
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -77,7 +83,14 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
   }, [fetchGames]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
@@ -93,6 +106,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
       date: formattedDate !== "today" ? formattedDate : undefined,
     },
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });

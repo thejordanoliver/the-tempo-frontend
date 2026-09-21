@@ -1,6 +1,6 @@
 import { SoccerGame } from "@/types/soccer/soccer";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
@@ -13,17 +13,18 @@ type SoccerGamesResponse = {
   games?: SoccerGame[];
 };
 
-const LIVE_STATES = "in";
+const LIVE_STATES = new Set(["in"]);
 
 function isLiveSoccerGame(game: any) {
-  const state = String(game?.status?.state || "").toLowerCase();
-  return LIVE_STATES.includes(state);
+  const state = String(game?.status?.state || "").trim().toLowerCase();
+  return LIVE_STATES.has(state);
 }
 
 export function useSoccerGames(date?: Date, league = "epl") {
   const [games, setGames] = useState<SoccerGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const requestIdRef = useRef(0);
 
   const formattedDate = useMemo(() => {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
@@ -34,6 +35,8 @@ export function useSoccerGames(date?: Date, league = "epl") {
       forceRefresh = false,
       silent = false,
     }: FetchGamesOptions = {}) => {
+      const requestId = ++requestIdRef.current;
+
       try {
         setError(null);
 
@@ -48,13 +51,16 @@ export function useSoccerGames(date?: Date, league = "epl") {
 
         const gamesData = Array.isArray(data?.games) ? data.games : [];
 
-        setGames(gamesData);
+        if (requestId === requestIdRef.current) {
+          setGames(gamesData);
+        }
       } catch (err) {
+        if (requestId !== requestIdRef.current) return;
         console.error(err);
         setError(new Error(`Failed to fetch ${league} games`));
         setGames([]);
       } finally {
-        if (!silent) {
+        if (!silent && requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
@@ -67,7 +73,14 @@ export function useSoccerGames(date?: Date, league = "epl") {
   }, [fetchGames]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchGames());
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchGames();
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchGames]);
 
   const hasLiveGame = useMemo(() => {
@@ -83,6 +96,7 @@ export function useSoccerGames(date?: Date, league = "epl") {
       date: formattedDate !== "today" ? formattedDate : undefined,
     },
     onUpdate: (payload) => {
+      requestIdRef.current += 1;
       setGames(Array.isArray(payload?.games) ? payload.games : []);
     },
   });

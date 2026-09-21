@@ -1,6 +1,6 @@
 // hooks/TeamHooks/useTeams.ts
 import { LeagueType } from "@/types/types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type BaseTeam = {
@@ -54,10 +54,12 @@ export function useTeams(
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const fetchTeams = useCallback(
     async (isRefresh = false) => {
       if (!league) return;
+      const requestId = ++requestIdRef.current;
 
       try {
         if (isRefresh) {
@@ -82,6 +84,8 @@ export function useTeams(
           throw new Error("Failed to fetch teams");
         }
 
+        if (requestId !== requestIdRef.current) return;
+
         if (teamId) {
           const data = response.data as TeamResponse;
 
@@ -94,21 +98,31 @@ export function useTeams(
           setTeam(null);
         }
       } catch (err: any) {
+        if (requestId !== requestIdRef.current) return;
         console.error("useTeams error:", err?.response?.data || err.message);
 
         setError(
           err?.response?.data?.error || err?.message || "Failed to fetch teams",
         );
       } finally {
-        setLoading(false);
-        setRefreshing(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
     },
     [league, teamId],
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchTeams(false));
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchTeams(false);
+    });
+    return () => {
+      cancelled = true;
+      requestIdRef.current += 1;
+    };
   }, [fetchTeams]);
 
   const refetch = useCallback(async () => {

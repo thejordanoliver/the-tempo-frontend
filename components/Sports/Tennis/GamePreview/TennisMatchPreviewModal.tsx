@@ -30,11 +30,11 @@ export default function TennisMatchPreviewModal({
 
   useEffect(() => {
     if (!sheetRef.current) return;
-    if (visible) {
-      requestAnimationFrame(() => sheetRef.current?.present());
-    } else {
-      requestAnimationFrame(() => sheetRef.current?.dismiss());
-    }
+    const frame = requestAnimationFrame(() => {
+      if (visible) sheetRef.current?.present();
+      else sheetRef.current?.dismiss();
+    });
+    return () => cancelAnimationFrame(frame);
   }, [visible]);
 
   const gameDate = safeDate(match.date);

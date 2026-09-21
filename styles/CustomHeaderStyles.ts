@@ -28,7 +28,7 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
       bottom: 0,
       left: 0,
       zIndex: 100,
-      fontFamily: Fonts.SPORTS_EXTRA_BOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: isTablet ? 32 : 24,
       lineHeight: 56,
       letterSpacing: 1,
@@ -98,6 +98,14 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
       zIndex: 2,
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "center",
+      gap: isTablet ? 10 : 8,
+      maxWidth: "100%",
+    },
+
+    leagueHeaderLogo: {
+      width: isTablet ? 38 : 32,
+      height: isTablet ? 38 : 32,
     },
 
     /* ---------------------------------------------------------------- */
@@ -151,7 +159,7 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
 
     teamCode: {
       zIndex: 2,
-      fontFamily: Fonts.SPORTS_EXTRA_BOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: isTablet ? 32 : 24,
       lineHeight: isTablet ? 42 : 30,
       color: Colors.white,
@@ -171,7 +179,7 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
     },
 
     dividerText: {
-      fontFamily: Fonts.SPORTS_EXTRA_BOLD,
+      fontFamily: Fonts.BOLD,
       fontSize: isTablet ? 32 : 24,
       color: Colors.white,
       textAlign: "center",
