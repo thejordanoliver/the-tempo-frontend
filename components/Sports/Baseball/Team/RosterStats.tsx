@@ -10,18 +10,22 @@ import type {
 } from "@/hooks/BaseballHooks/useRosterStats";
 import type { TeamAggregatedStats } from "@/hooks/BaseballHooks/useTeamStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import SyncedHorizontalStatViewport from "components/Sports/shared/synced-horizontal-stat-viewport";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
+  FlatList,
   Image,
+  LayoutChangeEvent,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SharedValue, useSharedValue } from "react-native-reanimated";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 type RosterStatsComponentProps = {
@@ -75,8 +79,11 @@ const PLAYER_STAT_VIEW_TABS: readonly PillTabOption<PlayerStatView>[] = [
   { label: "Pitching", value: "Pitching" },
 ];
 
-const PLAYER_NAME_WIDTH = 140;
 const STAT_CELL_WIDTH = 80;
+const ROW_HEIGHT = 40;
+const INITIAL_ROWS_TO_RENDER = 12;
+const MAX_ROWS_PER_BATCH = 10;
+const VIRTUALIZATION_WINDOW_SIZE = 7;
 
 const BATTING_LEADERS: readonly LeaderDefinition[] = [
   {
@@ -304,6 +311,84 @@ const getStatLeader = (rows: PlayerStatRow[], definition: LeaderDefinition) => {
   }, null);
 };
 
+type BaseballRosterRowProps = {
+  columns: readonly StatColumn[];
+  index: number;
+  isDark: boolean;
+  isLast: boolean;
+  onPlayerPress: (player: BaseballRosterPlayer) => void;
+  row: PlayerStatRow;
+  scrollX: SharedValue<number>;
+  viewportWidth: number;
+};
+
+const BaseballRosterRow = memo(function BaseballRosterRow({
+  columns,
+  index,
+  isDark,
+  isLast,
+  onPlayerPress,
+  row,
+  scrollX,
+  viewportWidth,
+}: BaseballRosterRowProps) {
+  const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
+  const playerId = getPlayerId(row.player);
+  const rowBackground =
+    index % 2 === 1
+      ? isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground
+      : undefined;
+
+  return (
+    <View
+      style={[
+        styles.virtualizedTableRow,
+        rowBackground ? { backgroundColor: rowBackground } : undefined,
+        isLast && { borderBottomWidth: 0 },
+      ]}
+    >
+      <TouchableOpacity
+        activeOpacity={activeOpacity}
+        onPress={() => onPlayerPress(row.player)}
+        style={[
+          styles.frozenPlayerCell,
+          {
+            backgroundColor:
+              rowBackground ??
+              (isDark ? Colors.dark.background : Colors.light.background),
+          },
+        ]}
+      >
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={[styles.tableCell, styles.playerName]}
+        >
+          {getPlayerDisplayName(row.player)}{" "}
+          <Text style={styles.number}>#{row.player.jersey_number ?? "—"}</Text>
+        </Text>
+      </TouchableOpacity>
+
+      <SyncedHorizontalStatViewport
+        contentWidth={columns.length * STAT_CELL_WIDTH}
+        scrollX={scrollX}
+        viewportWidth={viewportWidth}
+      >
+        {columns.map((column) => (
+          <Text
+            key={`${playerId}-${column.header}`}
+            style={[styles.tableCell, styles.statValue]}
+          >
+            {formatStatValue(column.getValue(row))}
+          </Text>
+        ))}
+      </SyncedHorizontalStatViewport>
+    </View>
+  );
+});
+
 export default function RosterStats({
   rosterStats,
   teamId,
@@ -322,10 +407,8 @@ export default function RosterStats({
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
   const [selectedPlayerView, setSelectedPlayerView] =
     useState<PlayerStatView>("Batting");
-  const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
-    "Player Stats": true,
-    "Team Stats": false,
-  });
+  const horizontalOffset = useSharedValue(0);
+  const [statsViewportWidth, setStatsViewportWidth] = useState(0);
 
   const players = useMemo(
     () => getPlayersFromRosterStats(rosterStats),
@@ -365,37 +448,34 @@ export default function RosterStats({
     [activeLeaders, activeRows],
   );
 
-  const handleTabPress = (tab: StatTab) => {
+  const handleTabPress = useCallback((tab: StatTab) => {
     setSelectedTab(tab);
+  }, []);
 
-    setMountedTabs((prev) => ({
-      ...prev,
-      [tab]: true,
-    }));
-  };
+  const handlePress = useCallback(
+    (player: BaseballRosterPlayer) => {
+      router.push({
+        pathname: "/player/baseball/[id]",
+        params: {
+          id: String(getPlayerId(player)),
+          teamId: String(teamId),
+          league,
+        },
+      });
+    },
+    [league, teamId],
+  );
 
-  const handlePress = (player: BaseballRosterPlayer) => {
-    const id = String(getPlayerId(player));
-    const currentTeamId = String(teamId);
+  const handleStatsViewportLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      setStatsViewportWidth(event.nativeEvent.layout.width);
+    },
+    [],
+  );
 
-    router.push({
-      pathname: "/player/baseball/[id]",
-      params: {
-        id,
-        teamId: currentTeamId,
-        league,
-      },
-    });
-  };
-
-  const rowBg = (idx: number) =>
-    idx % 2 === 1
-      ? {
-          backgroundColor: isDark
-            ? Colors.dark.itemBackground
-            : Colors.light.itemBackground,
-        }
-      : {};
+  useEffect(() => {
+    horizontalOffset.value = 0;
+  }, [activeRows, horizontalOffset, selectedPlayerView]);
 
   const headerBg = {
     backgroundColor: isDark
@@ -459,189 +539,100 @@ export default function RosterStats({
     );
   };
 
-  const renderStickyPlayerCell = (row: PlayerStatRow, index: number) => (
-    <View
-      key={`${getPlayerId(row.player)}-${selectedPlayerView}-sticky-name`}
-      style={[
-        styles.tableRow,
-        stickyColumnBg,
-        rowBg(index),
-        index === activeRows.length - 1 && { borderBottomWidth: 0 },
-      ]}
-    >
-      <TouchableOpacity
-        activeOpacity={activeOpacity}
-        onPress={() => handlePress(row.player)}
-        style={{ width: PLAYER_NAME_WIDTH }}
+  const emptyPlayerMessage =
+    selectedPlayerView === "Batting"
+      ? "No batting stats available."
+      : "No pitching stats available.";
+
+  const renderRosterRow = useCallback(
+    ({ item, index }: { item: PlayerStatRow; index: number }) => (
+      <BaseballRosterRow
+        columns={activeColumns}
+        index={index}
+        isDark={isDark}
+        isLast={index === activeRows.length - 1}
+        onPlayerPress={handlePress}
+        row={item}
+        scrollX={horizontalOffset}
+        viewportWidth={statsViewportWidth}
+      />
+    ),
+    [
+      activeColumns,
+      activeRows.length,
+      handlePress,
+      horizontalOffset,
+      isDark,
+      statsViewportWidth,
+    ],
+  );
+
+  const playerListHeader = (
+    <>
+      <MainScrollTabBar
+        tabs={STAT_TABS}
+        selected={selectedTab}
+        onTabPress={handleTabPress}
+        isDark={isDark}
+      />
+      <PillTabs<PlayerStatView>
+        tabs={PLAYER_STAT_VIEW_TABS}
+        selectedValue={selectedPlayerView}
+        onChange={setSelectedPlayerView}
+        containerStyle={styles.playerStatSelector}
+        scrollable={false}
+        minTabWidth={120}
+      />
+      <ScrollView
+        horizontal
+        nestedScrollEnabled={false}
+        showsHorizontalScrollIndicator={false}
+        style={{ marginBottom: 16 }}
+        snapToInterval={276}
+        decelerationRate="fast"
+        snapToAlignment="start"
       >
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          style={[styles.tableCell, styles.playerName]}
-        >
-          {getPlayerDisplayName(row.player)}{" "}
-          <Text style={styles.number}>#{row.player.jersey_number ?? "—"}</Text>
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const renderScrollableStatRow = (row: PlayerStatRow, index: number) => (
-    <View
-      key={`${getPlayerId(row.player)}-${selectedPlayerView}-stats-row`}
-      style={[
-        styles.tableRow,
-        rowBg(index),
-        index === activeRows.length - 1 && { borderBottomWidth: 0 },
-      ]}
-    >
-      {activeColumns.map((column) => (
-        <Text
-          key={`${getPlayerId(row.player)}-${column.header}`}
-          style={[
-            styles.tableCell,
-            styles.statValue,
-            {
-              width: STAT_CELL_WIDTH,
-            },
-          ]}
-        >
-          {formatStatValue(column.getValue(row))}
-        </Text>
-      ))}
-    </View>
-  );
-
-  const renderPlayerStatsTable = () => (
-    <View style={styles.tableWrapper}>
-      <View style={styles.tableContent}>
-        <View
-          style={[
-            stickyColumnBg,
-            {
-              width: PLAYER_NAME_WIDTH,
-              zIndex: 10,
-              elevation: 10,
-            },
-          ]}
-        >
-          <View
-            style={[
-              styles.tableRow,
-              headerBg,
-              {
-                width: PLAYER_NAME_WIDTH,
-                zIndex: 10,
-                elevation: 10,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                styles.tableCell,
-                styles.nameHeaderText,
-                {
-                  width: PLAYER_NAME_WIDTH,
-                },
-              ]}
-            >
-              NAME
-            </Text>
+        {statLeaders.map((item, index) => (
+          <LeaderCard
+            key={item.label}
+            row={item.leader.row}
+            label={item.label}
+            value={item.leader.value}
+            index={index}
+            total={statLeaders.length}
+          />
+        ))}
+      </ScrollView>
+      {activeRows.length > 0 && (
+        <View style={styles.virtualizedTableHeader}>
+          <View style={[styles.frozenPlayerCell, headerBg, stickyColumnBg]}>
+            <Text style={[styles.tableCell, styles.nameHeaderText]}>NAME</Text>
           </View>
-
-          {activeRows.map((row, index) => renderStickyPlayerCell(row, index))}
-        </View>
-
-        <ScrollView
-          horizontal
-          nestedScrollEnabled={false}
-          showsHorizontalScrollIndicator={false}
-          bounces={false}
-          style={styles.scrollSection}
-          contentContainerStyle={styles.scrollContentContainer}
-        >
-          <View
-            style={[
-              styles.statScrollContent,
-              { width: activeColumns.length * STAT_CELL_WIDTH },
-            ]}
-          >
-            <View style={[styles.tableRow, headerBg]}>
+          <View style={{ flex: 1 }} onLayout={handleStatsViewportLayout}>
+            <SyncedHorizontalStatViewport
+              contentWidth={activeColumns.length * STAT_CELL_WIDTH}
+              scrollX={horizontalOffset}
+              viewportWidth={statsViewportWidth}
+            >
               {activeColumns.map((column) => (
                 <Text
                   key={column.header}
                   style={[
                     styles.tableCell,
                     styles.headerText,
-                    {
-                      width: STAT_CELL_WIDTH,
-                    },
+                    headerBg,
+                    { width: STAT_CELL_WIDTH },
                   ]}
                 >
                   {column.header}
                 </Text>
               ))}
-            </View>
-
-            {activeRows.map((row, index) =>
-              renderScrollableStatRow(row, index),
-            )}
+            </SyncedHorizontalStatViewport>
           </View>
-        </ScrollView>
-      </View>
-    </View>
+        </View>
+      )}
+    </>
   );
-
-  const renderPlayerStats = () => {
-    const emptyMessage =
-      selectedPlayerView === "Batting"
-        ? "No batting stats available."
-        : "No pitching stats available.";
-
-    return (
-      <>
-        <PillTabs<PlayerStatView>
-          tabs={PLAYER_STAT_VIEW_TABS}
-          selectedValue={selectedPlayerView}
-          onChange={setSelectedPlayerView}
-          containerStyle={styles.playerStatSelector}
-          scrollable={false}
-          minTabWidth={120}
-        />
-
-        {!activeRows.length ? (
-          <View style={styles.center}>
-            <Text style={global.emptyText}>{emptyMessage}</Text>
-          </View>
-        ) : (
-          <>
-            <ScrollView
-              horizontal
-              nestedScrollEnabled={false}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 16 }}
-              snapToInterval={276}
-              decelerationRate="fast"
-              snapToAlignment="start"
-            >
-              {statLeaders.map((item, idx) => (
-                <LeaderCard
-                  key={item.label}
-                  row={item.leader.row}
-                  label={item.label}
-                  value={item.leader.value}
-                  index={idx}
-                  total={statLeaders.length}
-                />
-              ))}
-            </ScrollView>
-
-            {renderPlayerStatsTable()}
-          </>
-        )}
-      </>
-    );
-  };
 
   const renderTeamTable = (rows: readonly TeamStatRow[]) => (
     <View style={styles.table}>
@@ -770,6 +761,39 @@ export default function RosterStats({
     return <Text style={global.emptyText}>No player stats available.</Text>;
   }
 
+  if (selectedTab === "Player Stats") {
+    return (
+      <FlatList
+        data={activeRows}
+        renderItem={renderRosterRow}
+        keyExtractor={(row) =>
+          `${selectedPlayerView}-${String(getPlayerId(row.player))}`
+        }
+        ListHeaderComponent={playerListHeader}
+        ListEmptyComponent={
+          <View style={styles.center}>
+            <Text style={global.emptyText}>{emptyPlayerMessage}</Text>
+          </View>
+        }
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={
+          onRefresh ? (
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          ) : undefined
+        }
+        keyboardShouldPersistTaps="handled"
+        getItemLayout={(_, index) => ({
+          length: ROW_HEIGHT,
+          offset: ROW_HEIGHT * index,
+          index,
+        })}
+        initialNumToRender={INITIAL_ROWS_TO_RENDER}
+        maxToRenderPerBatch={MAX_ROWS_PER_BATCH}
+        windowSize={VIRTUALIZATION_WINDOW_SIZE}
+      />
+    );
+  }
+
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContainer}
@@ -787,29 +811,7 @@ export default function RosterStats({
         isDark={isDark}
       />
 
-      {mountedTabs["Player Stats"] && (
-        <View
-          style={[
-            styles.tabScene,
-            selectedTab !== "Player Stats" && styles.hiddenTabScene,
-          ]}
-          pointerEvents={selectedTab === "Player Stats" ? "auto" : "none"}
-        >
-          {renderPlayerStats()}
-        </View>
-      )}
-
-      {mountedTabs["Team Stats"] && (
-        <View
-          style={[
-            styles.tabScene,
-            selectedTab !== "Team Stats" && styles.hiddenTabScene,
-          ]}
-          pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
-        >
-          {renderTeamStats()}
-        </View>
-      )}
+      <View style={styles.tabScene}>{renderTeamStats()}</View>
     </ScrollView>
   );
 }

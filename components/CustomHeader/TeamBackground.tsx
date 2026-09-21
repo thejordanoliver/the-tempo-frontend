@@ -1,11 +1,5 @@
 import { Colors } from "constants/styles";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, HeaderTeamLike } from "./types";
 import { resolveImage } from "./utils";
@@ -64,9 +58,6 @@ export function TeamBackground({
         zIndex: 0,
       }}
     >
-      <Text numberOfLines={1} style={styles.teamName}>
-        {teamName}
-      </Text>
       <View
         style={{
           ...StyleSheet.absoluteFill,

@@ -20,33 +20,6 @@ interface UseTeamGamesReturn {
   refreshGames: () => Promise<void>;
 }
 
-function mergeFootballGames(
-  currentGames: FootballGame[],
-  updatedGames: FootballGame[],
-): FootballGame[] {
-  if (updatedGames.length === 0) {
-    return currentGames;
-  }
-
-  const updates = new Map(updatedGames.map((game) => [String(game.id), game]));
-
-  const merged = currentGames.map((game) => {
-    const updatedGame = updates.get(String(game.id));
-
-    if (!updatedGame) {
-      return game;
-    }
-
-    updates.delete(String(game.id));
-
-    return updatedGame;
-  });
-
-  // Include any games returned by realtime that were not already
-  // present in the original schedule.
-  return [...merged, ...updates.values()];
-}
-
 export function useFootballTeamGames(
   teamId: string | number | null,
   league: string = "nfl",
@@ -152,17 +125,27 @@ export function useFootballTeamGames(
       season,
     },
 
-    onUpdate: (payload) => {
+    onUpdate: (payload, envelope) => {
+      const expectedSeason =
+        season === undefined || season === null || season === ""
+          ? undefined
+          : String(season);
+      const isCurrentSchedule =
+        envelope.sport === "football" &&
+        envelope.league === league &&
+        envelope.feed === "teamSchedule" &&
+        envelope.params?.teamId === String(teamId) &&
+        envelope.params?.season === expectedSeason;
+
+      if (!isCurrentSchedule) return;
+
       requestIdRef.current += 1;
       const updatedGames = Array.isArray(payload?.games) ? payload.games : [];
 
-      if (updatedGames.length === 0) {
-        return;
-      }
-
-      setGames((currentGames) =>
-        mergeFootballGames(currentGames, updatedGames),
-      );
+      setError(null);
+      setGames(updatedGames);
+      setLoading(false);
+      setRefreshing(false);
     },
   });
 

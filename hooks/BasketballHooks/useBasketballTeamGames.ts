@@ -199,7 +199,16 @@ export function useBasketballTeamGames(
       teamId: teamId || "",
       season: season || "",
     },
-    onUpdate: (payload) => {
+    onUpdate: (payload, envelope) => {
+      const isCurrentSchedule =
+        envelope.sport === "basketball" &&
+        envelope.league === league &&
+        envelope.feed === "teamSchedule" &&
+        envelope.params?.teamId === String(teamId) &&
+        envelope.params?.season === String(season);
+
+      if (!isCurrentSchedule) return;
+
       requestIdRef.current += 1;
       const nextData: BasketballTeamScheduleResponse = {
         league: payload.league,
@@ -211,6 +220,8 @@ export function useBasketballTeamGames(
 
       setError(null);
       setData(nextData);
+      setLoading(false);
+      setRefreshing(false);
     },
   });
 

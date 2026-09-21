@@ -114,9 +114,20 @@ export function useTeamLatestGame(
       feed: "teamLatest",
       teamId: teamId || "",
     },
-    onUpdate: (payload) => {
+    onUpdate: (payload, envelope) => {
+      const isCurrentTeam =
+        envelope.sport === "baseball" &&
+        envelope.league === league &&
+        envelope.feed === "teamLatest" &&
+        envelope.params?.teamId === String(teamId);
+
+      if (!isCurrentTeam) return;
+
       requestIdRef.current += 1;
+      setError(null);
       setGame(payload.game ?? payload.games?.[0] ?? null);
+      setLoading(false);
+      setRefreshing(false);
     },
   });
 
