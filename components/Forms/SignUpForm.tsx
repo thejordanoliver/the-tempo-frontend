@@ -5,7 +5,7 @@ import FavoriteTeamsSelector from "components/Favorites/FavoriteTeamsSelector";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { type Control, useWatch } from "react-hook-form";
+import { useWatch, type Control } from "react-hook-form";
 import {
   Animated,
   Easing,
@@ -17,11 +17,11 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { formStyles } from "styles/FormStyles";
 import {
   SIGNUP_PASSWORD_REQUIREMENTS,
   type SignupFormValues,
 } from "schemas/auth/signupSchema";
+import { formStyles } from "styles/FormStyles";
 import type { LeagueType } from "types/types";
 
 import { getNBATeamLogo } from "@/constants/teams";
@@ -287,8 +287,6 @@ export default function SignUpForm({
                 teams={filteredTeams}
                 favorites={favoriteTeams}
                 toggleFavorite={onToggleFavorite}
-                isGridView={isGridView}
-                fadeAnim={fadeAnim}
                 itemWidth={itemWidth}
               />
             ) : (
@@ -297,8 +295,6 @@ export default function SignUpForm({
                 loading={false}
                 saving={isSubmitting}
                 toggleFavorite={onToggleFavoriteSport}
-                isGridView={isGridView}
-                fadeAnim={fadeAnim}
                 search={search}
                 itemWidth={itemWidth}
               />
@@ -441,7 +437,6 @@ export default function SignUpForm({
                   logo={logo}
                   isSelected
                   onPress={() => onToggleFavorite(team.league, String(team.id))}
-                  isGridView={false}
                   itemWidth={itemWidth}
                   showSportTag={COLLEGE_LEAGUES.has(team.league)}
                 />
@@ -481,7 +476,6 @@ export default function SignUpForm({
                     logo={leagueLogo}
                     isSelected
                     onPress={() => onToggleFavoriteSport(sport)}
-                    isGridView={false}
                     itemWidth={itemWidth}
                   />
                 );

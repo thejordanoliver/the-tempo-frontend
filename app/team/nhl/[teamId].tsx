@@ -125,6 +125,7 @@ export default function TeamDetailScreen() {
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen
           isFavorite={favorited}
@@ -143,6 +144,7 @@ export default function TeamDetailScreen() {
     team,
     teamLogo,
     teamColor,
+    teamName,
     favorited,
     toggleFavorite,
     teamIdNum,

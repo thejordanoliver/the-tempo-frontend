@@ -147,6 +147,7 @@ export default function TeamDetailScreen() {
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -161,16 +162,18 @@ export default function TeamDetailScreen() {
       ),
     });
   }, [
-    favorited,
     navigation,
+    isDark,
     team,
     teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
     league,
-    teamLogo,
     teamColor,
+    teamLogo,
     toggleFavorite,
+    favorited,
   ]);
 
   if (!team) {

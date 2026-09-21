@@ -44,6 +44,7 @@ export default function TeamDetailScreen() {
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getWNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getWNBATeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -145,6 +146,7 @@ export default function TeamDetailScreen() {
         <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
+          teamName={teamName}
           teamColor={teamColor}
           onBack={goBack}
           isTeamScreen
@@ -161,15 +163,17 @@ export default function TeamDetailScreen() {
     });
   }, [
     navigation,
+    isDark,
     team,
-    teamLogo,
-    teamColor,
-    favorited,
-    toggleFavorite,
     teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
     league,
+    teamColor,
+    teamLogo,
+    toggleFavorite,
+    favorited,
   ]);
 
   if (!team) {

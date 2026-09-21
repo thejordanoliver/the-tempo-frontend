@@ -5,7 +5,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 export const isSmallGameWidgetLayout = (height: number, width: number) =>
-  width < 260 || height < 180;
+  width < 260;
 
 export const gameWidgetStyles = (
   isDark: boolean,
@@ -15,50 +15,73 @@ export const gameWidgetStyles = (
   const w = width;
   const h = height;
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
+  const isLargeLayout = width >= 260 && height >= 320;
 
-  // When height > width (tall widget), height becomes the dominant scale driver.
-  // When width >= height (wide/square widget), width drives layout as before.
-  // Using the larger dimension means content grows proportionally in both axes.
-  const dominant = Math.max(w, h);
-
-  // 1% of the dominant dimension, clamped generously so tall widgets fill space.
-  const unit = clamp(dominant / 100, 1.5, 9);
+  // Scale from the constrained axis. Using the taller axis made narrow/tall
+  // widgets grow past their available width, while using width alone made
+  // wide/short widgets overflow vertically.
+  const constrained = Math.min(w, h);
+  const unit = clamp(constrained / 100, 1.5, 5);
 
   // Logo scales with the shorter of the two so it never overflows horizontally,
   // but the envelope is wider to allow filling vertical space.
   const logo = isSmallLayout
-    ? clamp(Math.min(w * 0.14, h * 0.2), 30, 30)
-    : clamp(Math.min(w * 0.18, h * 0.22), 60, 60);
+    ? clamp(Math.min(w * 0.14, h * 0.2), 26, 34)
+    : isLargeLayout
+      ? clamp(Math.min(w * 0.15, h * 0.14), 50, 56)
+      : clamp(Math.min(w * 0.14, h * 0.2), 40, 54);
   const scoreFz = isSmallLayout
-    ? clamp(Math.min(w * 0.12, h * 0.18), 20, 24)
-    : clamp(unit * 5.5, 30, 60);
+    ? clamp(Math.min(w * 0.12, h * 0.18), 20, 26)
+    : isLargeLayout
+      ? clamp(w * 0.115, 28, 34)
+      : clamp(constrained * 0.13, 36, 46);
   const recordFz = isSmallLayout
-    ? clamp(Math.min(w * 0.07, h * 0.11), 14, 18)
-    : clamp(unit * 3.2, 18, 32);
+    ? clamp(Math.min(w * 0.07, h * 0.11), 13, 18)
+    : isLargeLayout
+      ? clamp(w * 0.06, 20, 24)
+      : clamp(constrained * 0.08, 16, 26);
   const nameFz = isSmallLayout
-    ? clamp(Math.min(w * 0.12, h * 0.18), 16, 16)
-    : clamp(unit * 5.5, 30, 60);
+    ? clamp(Math.min(w * 0.09, h * 0.12), 14, 18)
+    : isLargeLayout
+      ? clamp(w * 0.045, 16, 18)
+      : clamp(constrained * 0.065, 16, 20);
   const rankFz = isSmallLayout
-    ? clamp(Math.min(w * 0.055, h * 0.08), 11, 14)
-    : clamp(unit * 1.8, 9, 18);
+    ? clamp(Math.min(w * 0.055, h * 0.08), 10, 13)
+    : isLargeLayout
+      ? clamp(w * 0.04, 13, 17)
+      : clamp(constrained * 0.04, 10, 16);
   const infoFz = isSmallLayout
-    ? clamp(Math.min(w * 0.065, h * 0.1), 12, 12)
-    : clamp(unit * 20, 14, 18);
+    ? clamp(Math.min(w * 0.065, h * 0.1), 11, 14)
+    : isLargeLayout
+      ? clamp(w * 0.04, 14, 16)
+      : clamp(constrained * 0.055, 12, 16);
   const metaFz = isSmallLayout
-    ? clamp(Math.min(w * 0.055, h * 0.085), 12, 12)
-    : clamp(unit * 2.8, 11, 28);
-  const gap = isSmallLayout ? clamp(w * 0.035, 6, 10) : clamp(w * 0.04, 10, 28);
+    ? clamp(Math.min(w * 0.055, h * 0.085), 10, 13)
+    : isLargeLayout
+      ? clamp(w * 0.034, 12, 14)
+      : clamp(constrained * 0.045, 10, 15);
+  const gap = isSmallLayout
+    ? clamp(w * 0.035, 6, 10)
+    : isLargeLayout
+      ? clamp(w * 0.035, 10, 14)
+      : clamp(w * 0.04, 10, 28);
   const divH = isSmallLayout
     ? clamp(unit * 2.8, 12, 18)
-    : clamp(unit * 3.5, 14, 44);
+    : clamp(unit * 3.5, 16, 44);
 
   // Vertical padding scales with height so content isn't a tiny island on tall
   // widgets — a larger h fraction gives natural breathing room at the edges.
   const paddingV = isSmallLayout
     ? clamp(h * 0.035, 5, 8)
     : clamp(h * 0.08, 8, h * 0.15);
-  const paddingH = isSmallLayout ? clamp(w * 0.045, 8, 12) : 0;
+  const paddingH = isSmallLayout
+    ? clamp(w * 0.045, 8, 12)
+    : clamp(w * 0.035, 12, 24);
   const teamNameMaxWidth = Math.max(w - logo - scoreFz * 3 - paddingH * 2, 64);
+  const wideTeamNameMaxWidth = Math.max(
+    (w - paddingH * 2) * 0.3 - gap - recordFz * 2.5,
+    48,
+  );
 
   return StyleSheet.create({
     container: {
@@ -71,10 +94,10 @@ export const gameWidgetStyles = (
     },
 
     wrapper: {
-      flex: isSmallLayout ? 1 : undefined,
+      flex: 1,
       flexDirection: isSmallLayout ? "column" : "row",
       alignItems: isSmallLayout ? "stretch" : "center",
-      justifyContent: "center",
+      justifyContent: isSmallLayout ? "space-evenly" : "center",
       gap: isSmallLayout ? clamp(h * 0.018, 2, 5) : 0,
       width: "100%",
     },
@@ -102,7 +125,7 @@ export const gameWidgetStyles = (
     },
 
     teamWrapper: {
-      flexShrink: isSmallLayout ? 1 : undefined,
+      flexShrink: 1,
       flexDirection: isSmallLayout ? "row" : "column",
       alignItems: "center",
       justifyContent: "center",
@@ -144,8 +167,8 @@ export const gameWidgetStyles = (
     },
 
     teamName: {
-      flexShrink: isSmallLayout ? 1 : undefined,
-      maxWidth: isSmallLayout ? teamNameMaxWidth : undefined,
+      flexShrink: 1,
+      maxWidth: isSmallLayout ? teamNameMaxWidth : wideTeamNameMaxWidth,
       marginTop: isSmallLayout ? 0 : clamp(unit * 0.4, 2, 8),
       fontFamily: Fonts.REGULAR,
       fontSize: nameFz,
@@ -160,7 +183,7 @@ export const gameWidgetStyles = (
 
     awayScore: {
       minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
-      marginLeft: isSmallLayout ? gap : gap * 1.5,
+      marginLeft: isSmallLayout ? gap : gap * (isLargeLayout ? 1.2 : 1.5),
       fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
@@ -170,7 +193,7 @@ export const gameWidgetStyles = (
     homeScore: {
       minWidth: isSmallLayout ? scoreFz * 1.25 : recordFz * 2.5,
       marginLeft: isSmallLayout ? gap : 0,
-      marginRight: isSmallLayout ? 0 : gap * 1.5,
+      marginRight: isSmallLayout ? 0 : gap * (isLargeLayout ? 1.2 : 1.5),
       fontFamily: Fonts.BOLD,
       fontSize: scoreFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
@@ -179,7 +202,7 @@ export const gameWidgetStyles = (
 
     awayRecord: {
       minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
-      marginLeft: isSmallLayout ? gap : gap * 1.5,
+      marginLeft: isSmallLayout ? gap : gap * (isLargeLayout ? 1.2 : 1.5),
       fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
@@ -189,7 +212,7 @@ export const gameWidgetStyles = (
     homeRecord: {
       minWidth: isSmallLayout ? recordFz * 2.8 : recordFz * 2.5,
       marginLeft: isSmallLayout ? gap : 0,
-      marginRight: isSmallLayout ? 0 : gap * 1.5,
+      marginRight: isSmallLayout ? 0 : gap * (isLargeLayout ? 1.2 : 1.5),
       fontFamily: Fonts.BOLD,
       fontSize: recordFz,
       color: isDark ? Colors.dark.white : Colors.light.black,
@@ -199,10 +222,9 @@ export const gameWidgetStyles = (
     /* -------- CENTER INFO -------- */
 
     headlineContainer: {
-      width: "100%",
       ...(isSmallLayout
         ? { marginBottom: clamp(h * 0.01, 2, 4) }
-        : { top: 0, position: "absolute" as const }),
+        : { top: 0, left: 0, right: 0, position: "absolute" as const }),
     },
     headline: {
       fontFamily: Fonts.REGULAR,
@@ -212,7 +234,7 @@ export const gameWidgetStyles = (
     },
 
     gameInfo: {
-      flex: isSmallLayout ? 0 : 1,
+      flex: isSmallLayout ? 0 : 0.9,
       flexShrink: 1,
       flexDirection: isSmallLayout ? "row" : "column",
       alignItems: "center",
@@ -223,6 +245,7 @@ export const gameWidgetStyles = (
     },
 
     infoWrapper: {
+      flexShrink: 1,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
@@ -267,7 +290,7 @@ export const gameWidgetStyles = (
     },
 
     divider: {
-      width: .5,
+      width: 0.5,
       height: divH,
       marginHorizontal: clamp(gap * 0.2, 3, 12),
       backgroundColor: isDark ? Colors.lightGray : Colors.darkGray,
@@ -275,7 +298,7 @@ export const gameWidgetStyles = (
     finalDivder: {
       width: StyleSheet.hairlineWidth,
       height: divH,
-      marginHorizontal: clamp(gap * 0.4, 3, 12),
+      marginHorizontal: clamp(gap * 0.1, 3, 12),
       backgroundColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
     broadcast: {
@@ -284,7 +307,7 @@ export const gameWidgetStyles = (
       fontFamily: Fonts.REGULAR,
       fontSize: metaFz,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "right",
+      textAlign: "center",
     },
     outsContainer: {
       flexDirection: "row",
@@ -294,8 +317,8 @@ export const gameWidgetStyles = (
 
     basesContainer: {
       position: "absolute",
-      top: 12,
-      right: 12,
+      top: clamp(paddingV, 8, 16),
+      right: paddingH,
     },
   });
 };

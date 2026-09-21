@@ -211,7 +211,9 @@ function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
       </View>
 
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headlineText}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headlineText}
+      </Text>
     </>
   );
 

@@ -20,9 +20,6 @@ export default function StackedGameCardSkeleton() {
           <SkeletonBlock style={styles.scoreSkeleton} />
         </View>
 
-        {/* Spacer */}
-        <View style={{ height: 8 }} />
-
         {/* Home Team */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
@@ -47,8 +44,10 @@ const getStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       justifyContent: "space-between",
+      minHeight: 94,
       paddingHorizontal: 12,
-      paddingVertical: 12,
+      paddingTop: 22,
+      paddingBottom: 12,
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
@@ -56,8 +55,10 @@ const getStyles = (isDark: boolean) =>
     },
     cardWrapper: {
       flex: 1,
+      minWidth: 0,
       flexDirection: "column",
       justifyContent: "center",
+      gap: 4,
       paddingRight: 12,
       borderRightWidth: 0.5,
       borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
@@ -71,11 +72,11 @@ const getStyles = (isDark: boolean) =>
 
     teamWrapper: {
       flex: 1,
+      minWidth: 0,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "flex-start",
       gap: 8,
-      width: 100,
     },
     logoSkeleton: {
       width: 24,
@@ -84,7 +85,7 @@ const getStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     nameSkeleton: {
-      width: 120,
+      flex: 1,
       height: 14,
       marginHorizontal: 8,
       borderRadius: 4,
@@ -100,7 +101,8 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "center",
       gap: 6,
-      width: 100,
+      width: 96,
+      flexShrink: 0,
       minHeight: 30,
     },
     dateSkeleton: {

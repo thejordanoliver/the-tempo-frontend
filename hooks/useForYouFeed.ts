@@ -63,7 +63,12 @@ export function useForYouFeed(enabled: boolean) {
 
   useEffect(() => {
     if (!enabled || hasLoaded) return;
-    void fetchFeed();
+
+    const timeoutId = setTimeout(() => {
+      void fetchFeed();
+    }, 0);
+
+    return () => clearTimeout(timeoutId);
   }, [enabled, fetchFeed, hasLoaded]);
 
   return {

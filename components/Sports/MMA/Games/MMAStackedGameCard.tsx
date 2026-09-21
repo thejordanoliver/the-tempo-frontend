@@ -217,7 +217,9 @@ export default function MMAStackedGameCard({ game }: MMAFightCardProps) {
         )}
       </View>
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headline}
+      </Text>
     </>
   );
 

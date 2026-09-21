@@ -3,22 +3,41 @@ import { StyleSheet } from "react-native";
 
 export const teamPreviewModalStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { flex: 1 },
-
-    blurViewContainer: {
-      flex: 1,
-      justifyContent: "flex-end",
-    },
-
-    linearGradient: {
-      marginTop: "auto",
-      padding: 1.5,
+    sheetBackground: {
+      backgroundColor: "transparent",
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
     },
 
-    blurViewWrapper: {
+    handleIndicator: {
+      backgroundColor: isDark ? Colors.white : Colors.black,
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      opacity: 0.6,
+    },
+
+    handleContainer: {
+      position: "absolute",
+      top: 10,
+      right: 0,
+      left: 0,
+      zIndex: 1,
       alignItems: "center",
+    },
+
+    linearGradient: {
+      flex: 1,
+      padding: 1.5,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      overflow: "hidden",
+    },
+
+    blurViewWrapper: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
       paddingHorizontal: 20,
       paddingVertical: 40,
       borderTopLeftRadius: 18.5,
@@ -57,7 +76,6 @@ export const teamPreviewModalStyles = (isDark: boolean) =>
       marginBottom: 12,
       padding: 16,
       borderRadius: 10,
-      backgroundColor: isDark ? Colors.white : Colors.black,
     },
 
     goText: {

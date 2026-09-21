@@ -207,7 +207,7 @@ function FootballSquareGameCard({
       );
 
     return (
-      <View style={styles.infoWrapper}>
+      <View>
         <Text style={styles.date}>{formattedDate}</Text>
         <Text style={styles.date}>{tbd || formattedTime}</Text>
       </View>
@@ -235,13 +235,13 @@ function FootballSquareGameCard({
               {awayRank && <Text style={styles.rank}>{awayRank} </Text>}
               {awayName}
             </Text>
+            {inProgress && awayHasPossession && (
+              <Image
+                source={isDark ? FootballLight : Football}
+                style={styles.possession}
+              />
+            )}
           </View>
-          {inProgress && awayHasPossession && (
-            <Image
-              source={isDark ? FootballLight : Football}
-              style={styles.possession}
-            />
-          )}
           <ScoreText
             score={awayScore}
             record={awayRecord}
@@ -267,13 +267,13 @@ function FootballSquareGameCard({
               {homeRank && <Text style={styles.rank}>{homeRank} </Text>}
               {homeName}
             </Text>
+            {inProgress && homeHasPossession && (
+              <Image
+                source={isDark ? FootballLight : Football}
+                style={styles.possession}
+              />
+            )}
           </View>
-          {inProgress && homeHasPossession && (
-            <Image
-              source={isDark ? FootballLight : Football}
-              style={styles.possession}
-            />
-          )}
           <ScoreText
             score={homeScore}
             record={homeRecord}
@@ -282,7 +282,9 @@ function FootballSquareGameCard({
         </View>
       </View>
 
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headline}
+      </Text>
 
       <View style={styles.info}>
         {renderStatus()}

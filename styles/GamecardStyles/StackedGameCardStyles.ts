@@ -28,8 +28,10 @@ export const stackedGameCardStyles = (
       flex: 1,
       flexDirection: "row",
       justifyContent: "space-between",
-      height: 94,
-      padding: 12,
+      minHeight: 94,
+      paddingHorizontal: 12,
+      paddingTop: 22,
+      paddingBottom: 12,
       borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
@@ -37,6 +39,7 @@ export const stackedGameCardStyles = (
     },
     cardWrapper: {
       flex: 1,
+      minWidth: 0,
       justifyContent: "center",
       gap: 4,
       paddingRight: 12,
@@ -45,15 +48,17 @@ export const stackedGameCardStyles = (
     },
     teamSection: {
       flexDirection: "row",
-      alignContent: "center",
+      alignItems: "center",
       justifyContent: "center",
       gap: 8,
     },
     teamWrapper: {
       flex: 1,
+      minWidth: 0,
+      flexShrink: 1,
       flexDirection: "row",
+      alignItems: "center",
       gap: 8,
-      width: 100,
     },
     logo: {
       width: 24,
@@ -82,21 +87,26 @@ export const stackedGameCardStyles = (
     },
     teamScore: {
       width: 40,
+      flexShrink: 0,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: textColor,
       textAlign: "right",
+      fontVariant: ["tabular-nums"],
     },
     teamRecord: {
+      flexShrink: 0,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
       color: textColor,
       textAlign: "right",
+      fontVariant: ["tabular-nums"],
     },
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 100,
+      width: 96,
+      flexShrink: 0,
       minHeight: 30,
     },
     finalText: {
@@ -167,8 +177,9 @@ export const stackedGameCardStyles = (
       position: "absolute",
       top: 4,
       left: 12,
+      right: 12,
       fontFamily: Fonts.REGULAR,
-      fontSize: 8,
+      fontSize: 10,
       color: headlineColor,
     },
     downDistance: {

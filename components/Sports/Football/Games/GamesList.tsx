@@ -19,10 +19,10 @@ import {
   SectionListData,
   Text,
   View,
-  ViewStyle,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
+import { chunkIntoGridRows } from "utils/gameGrid";
 import FootballStackedGameCard from "./FootballStackedGameCard";
 
 type Props = {
@@ -79,25 +79,6 @@ export default function GamesList({
   const PAGE_SIZE = 20;
   const [page, setPage] = useState(1);
 
-  const chunkIntoRows = (
-    data: FootballGame[],
-    size = 2,
-  ): (FootballGame | null)[][] => {
-    const rows: (FootballGame | null)[][] = [];
-
-    for (let i = 0; i < data.length; i += size) {
-      const row: (FootballGame | null)[] = data.slice(i, i + size);
-
-      if (row.length < size) {
-        row.push(null);
-      }
-
-      rows.push(row);
-    }
-
-    return rows;
-  };
-
   const paginatedGames = useMemo(() => {
     return games.slice(0, page * PAGE_SIZE);
   }, [games, page]);
@@ -148,7 +129,7 @@ export default function GamesList({
   const gridSections = useMemo(() => {
     return sections.map((section) => ({
       title: section.title,
-      data: chunkIntoRows(section.data),
+      data: chunkIntoGridRows(section.data),
     }));
   }, [sections]);
 
@@ -182,18 +163,7 @@ export default function GamesList({
   };
 
   const renderGameCard = (game: FootballGame, index?: number) => {
-    const wrapper = (child: React.ReactNode, indexInRow?: number) => {
-      let wrapperStyle: ViewStyle = {};
-
-      // ✅ ONLY apply grid styles in grid mode
-      if (viewMode === "grid" && indexInRow !== undefined) {
-        wrapperStyle = {
-          ...styles.gridItem,
-          marginLeft: indexInRow % 2 === 0 ? 12 : 6,
-          marginRight: indexInRow % 2 === 0 ? 6 : 12,
-        };
-      }
-
+    const wrapper = (child: React.ReactNode) => {
       return (
         <LongPressGestureHandler
           key={game?.id ?? index}
@@ -202,7 +172,7 @@ export default function GamesList({
             if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
           }}
         >
-          <View style={wrapperStyle}>{child}</View>
+          <View>{child}</View>
         </LongPressGestureHandler>
       );
     };
@@ -212,11 +182,6 @@ export default function GamesList({
         <View>
           <FootballGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
         </View>,
-      );
-    if (viewMode === "grid")
-      return wrapper(
-        <FootballSquareGameCard game={game} isNFL={isNFL} isCFB={isCFB} />,
-        index,
       );
     return wrapper(
       <View>

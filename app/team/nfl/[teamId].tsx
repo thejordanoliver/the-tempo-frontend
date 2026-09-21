@@ -138,6 +138,7 @@ export default function TeamDetailScreen() {
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -156,6 +157,7 @@ export default function TeamDetailScreen() {
     isDark,
     team,
     teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
     league,

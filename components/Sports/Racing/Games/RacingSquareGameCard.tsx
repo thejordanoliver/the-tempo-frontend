@@ -1,12 +1,11 @@
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
-import { activeOpacity } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
-import { racingCardStyles } from "styles/GamecardStyles/GameCardStyles";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getBroadcastDisplay } from "utils/games";
 
 export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
@@ -47,11 +46,14 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
     }) || "";
 
   const drivers = game.drivers?.length ? game.drivers : game.competitors;
-  const topDrivers = [...(drivers ?? [])]
-    .sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
-    .slice(0, 4);
+  const sortedDrivers = [...(drivers ?? [])].sort(
+    (a, b) => (a.order ?? 99) - (b.order ?? 99),
+  );
+  const topDrivers = sortedDrivers
+    .slice(0, 3);
+  const remainingDriverCount = Math.max(0, sortedDrivers.length - 3);
 
-  const styles = racingCardStyles(isDark);
+  const styles = getStyles(isDark);
   const gameStatusDescription = game?.status?.description;
   const gameStatusDetail = game?.status?.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
@@ -148,8 +150,9 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
                 ? styles.finalText
                 : inProgress
                 ? styles.liveText
-                : styles.scheduledText
+              : styles.scheduledText
             }
+            numberOfLines={1}
           >
             {statusLabel}
           </Text>
@@ -158,6 +161,10 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
         <View style={styles.driverList}>
           {topDrivers.map(renderDriverRow)}
         </View>
+
+        {remainingDriverCount > 0 && (
+          <Text style={styles.moreText}>+{remainingDriverCount} more</Text>
+        )}
 
         {broadcast ? (
           <Text style={styles.broadcast} numberOfLines={1}>
@@ -168,3 +175,117 @@ export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
     </TouchableOpacity>
   );
 }
+
+const getStyles = (isDark: boolean) => {
+  const textColor = isDark ? Colors.dark.text : Colors.light.text;
+  const subTextColor = isDark ? Colors.lightGray : Colors.darkGray;
+  const borderColor = isDark ? Colors.darkGray : Colors.lightGray;
+  const accentRed = isDark ? Colors.dark.lightRed : Colors.light.red;
+
+  return StyleSheet.create({
+    card: {
+      minHeight: 144,
+      padding: 10,
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    headlineContainer: { marginBottom: 4 },
+    headlineText: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 10,
+      color: textColor,
+      textAlign: "center",
+    },
+    cardHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minWidth: 0,
+      gap: 6,
+      marginBottom: 4,
+    },
+    eventInfo: { flex: 1, minWidth: 0 },
+    eventName: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 11,
+      color: textColor,
+    },
+    trackName: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: subTextColor,
+    },
+    finalText: {
+      flexShrink: 0,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: accentRed,
+    },
+    liveText: {
+      flexShrink: 0,
+      fontFamily: Fonts.BOLD,
+      fontSize: 10,
+      color: accentRed,
+    },
+    scheduledText: {
+      flexShrink: 0,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: subTextColor,
+    },
+    driverList: { gap: 1 },
+    driverRow: {
+      minHeight: 26,
+      flexDirection: "row",
+      alignItems: "center",
+      minWidth: 0,
+      gap: 4,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: borderColor,
+    },
+    lastDriverRow: { borderBottomWidth: 0 },
+    positionContainer: { width: 16, alignItems: "center" },
+    position: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 11,
+      color: subTextColor,
+    },
+    leaderPosition: { color: isDark ? Colors.dark.gold : Colors.light.gold },
+    driverImageContainer: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor,
+      overflow: "hidden",
+    },
+    driverImage: { width: 22, height: 22 },
+    driverInfoWrapper: { flex: 1, minWidth: 0 },
+    driverName: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: textColor,
+    },
+    teamName: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 9,
+      color: subTextColor,
+    },
+    moreText: {
+      marginTop: 2,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 9,
+      color: subTextColor,
+      textAlign: "center",
+    },
+    broadcast: {
+      marginTop: 3,
+      fontFamily: Fonts.REGULAR,
+      fontSize: 9,
+      color: subTextColor,
+      textAlign: "center",
+    },
+  });
+};

@@ -6,7 +6,9 @@ import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { isFavoriteLeague } from "@/types/favorites";
 import { Ionicons } from "@expo/vector-icons";
-import TeamPreviewModal from "components/Favorites/TeamPreviewModal";
+import PreviewModal, {
+  type PreviewItem,
+} from "components/Favorites/PreviewModal";
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
@@ -20,16 +22,16 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Animated,
   Image,
+  LayoutAnimation,
   Pressable,
   SectionList,
   Text,
   View,
 } from "react-native";
-import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import type { Team } from "types/types";
 import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 import HeadingTwo from "../Headings/HeadingTwo";
@@ -152,7 +154,17 @@ export default function FavoritesSection({
     handleLongPress,
     handleGoToTeam,
     handleRemoveFavorite,
+    toggleFavoriteSport,
   } = useFavoriteTeamsContext();
+  const [previewSport, setPreviewSport] = useState<FavoriteSportId | null>(
+    null,
+  );
+  const [collapsedSections, setCollapsedSections] = useState<
+    Record<FavoriteSection["key"], boolean>
+  >({
+    sports: false,
+    teams: false,
+  });
 
   const showFavoriteSports = favoriteSports !== undefined;
 
@@ -193,6 +205,23 @@ export default function FavoritesSection({
     return nextSections;
   }, [favoriteTeams, showFavoriteSports, showSportsLoader, sports]);
 
+  const visibleSections = useMemo(
+    () =>
+      sections.map((section) => ({
+        ...section,
+        data: collapsedSections[section.key] ? [] : section.data,
+      })),
+    [collapsedSections, sections],
+  );
+
+  const toggleSection = useCallback((sectionKey: FavoriteSection["key"]) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setCollapsedSections((current) => ({
+      ...current,
+      [sectionKey]: !current[sectionKey],
+    }));
+  }, []);
+
   const renderSport = (sport: FavoriteSportId) => {
     const config = LEAGUE_CONFIG[sport];
 
@@ -201,6 +230,11 @@ export default function FavoritesSection({
         key={`sport:${sport}`}
         accessibilityRole="button"
         accessibilityLabel={`Open ${config.label}`}
+        delayLongPress={300}
+        onLongPress={() => {
+          setPreviewSport(sport);
+          setModalVisible(true);
+        }}
         onPress={() => {
           router.push({
             pathname: config.route,
@@ -247,67 +281,63 @@ export default function FavoritesSection({
     const teamName = team.name ?? team.shortName ?? String(id);
 
     return (
-      <LongPressGestureHandler
+      <Pressable
         key={`${league}:${id}`}
-        minDurationMs={300}
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.ACTIVE) {
-            handleLongPress(team);
+        delayLongPress={300}
+        onLongPress={() => {
+          setPreviewSport(null);
+          handleLongPress(team);
+        }}
+        style={({ pressed }) => [
+          pressed && styles.pressed,
+          styles.gridItem,
+          {
+            backgroundColor: teamBackgroundColor,
+          },
+        ]}
+        onPress={() => {
+          if (!isFavoriteLeague(league)) {
+            console.warn(`Unsupported favorite league: ${league}`);
+            return;
           }
+
+          router.push({
+            pathname: getFavoriteTeamRoute(league),
+            params: {
+              teamId: String(id),
+              league,
+            },
+          });
         }}
       >
-        <Pressable
-          style={({ pressed }) => [
-            pressed && styles.pressed,
-            styles.gridItem,
-            {
-              backgroundColor: teamBackgroundColor,
-            },
-          ]}
-          onPress={() => {
-            if (!isFavoriteLeague(league)) {
-              console.warn(`Unsupported favorite league: ${league}`);
-              return;
-            }
-
-            router.push({
-              pathname: getFavoriteTeamRoute(league),
-              params: {
-                teamId: String(id),
-                league,
+        {showLeagueBadge && (
+          <View
+            style={[
+              styles.sportTag,
+              {
+                backgroundColor: getLeagueBadgeColor(league),
               },
-            });
-          }}
-        >
-          {showLeagueBadge && (
-            <View
-              style={[
-                styles.sportTag,
-                {
-                  backgroundColor: getLeagueBadgeColor(league),
-                },
-              ]}
-            >
-              <Text style={styles.sportTagText}>{league}</Text>
-            </View>
+            ]}
+          >
+            <Text style={styles.sportTagText}>{league}</Text>
+          </View>
+        )}
+
+        <View style={styles.teamItem}>
+          {logo && (
+            <Image
+              source={logo}
+              style={[styles.teamLogo, styles.logoGridMargin]}
+            />
           )}
 
-          <View style={styles.teamItem}>
-            {logo && (
-              <Image
-                source={logo}
-                style={[styles.teamLogo, styles.logoGridMargin]}
-              />
-            )}
-
-            <View style={styles.gridNameContainer}>
-              <Text style={[styles.teamName, styles.gridNameText]}>
-                {teamName}
-              </Text>
-            </View>
+          <View style={styles.gridNameContainer}>
+            <Text style={[styles.teamName, styles.gridNameText]}>
+              {teamName}
+            </Text>
           </View>
-        </Pressable>
-      </LongPressGestureHandler>
+        </View>
+      </Pressable>
     );
   };
 
@@ -327,22 +357,58 @@ export default function FavoritesSection({
 
   return (
     <>
-      {previewTeam && (
-        <TeamPreviewModal
-          visible={modalVisible}
-          team={previewTeam}
-          onClose={() => setModalVisible(false)}
-          onGo={handleGoToTeam}
-          onRemove={handleRemoveFavorite}
-          currentUser={isCurrentUser}
-        />
-      )}
+      <PreviewModal
+        visible={modalVisible}
+        item={
+          previewSport
+            ? ({ type: "sport", sport: previewSport } satisfies PreviewItem)
+            : previewTeam
+              ? ({ type: "team", team: previewTeam } satisfies PreviewItem)
+              : null
+        }
+        onClose={() => {
+          setModalVisible(false);
+          setPreviewSport(null);
+        }}
+        onGo={() => {
+          if (previewSport) {
+            const config = LEAGUE_CONFIG[previewSport];
+            router.push({
+              pathname: config.route,
+              params: {
+                league: previewSport,
+                leagueLabel: config.label,
+              },
+            });
+            setModalVisible(false);
+            setPreviewSport(null);
+            return;
+          }
+
+          if (previewTeam) {
+            handleGoToTeam();
+          }
+        }}
+        onRemove={() => {
+          if (previewSport) {
+            void toggleFavoriteSport(previewSport);
+            setModalVisible(false);
+            setPreviewSport(null);
+            return;
+          }
+
+          if (previewTeam) {
+            void handleRemoveFavorite(previewTeam);
+          }
+        }}
+        currentUser={isCurrentUser}
+      />
 
       <HeadingTwo isDark={isDark}>Favorites</HeadingTwo>
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
         <SectionList
-          sections={sections}
+          sections={visibleSections}
           scrollEnabled={false}
           keyExtractor={(row, index) => {
             const rowKey = row
@@ -363,7 +429,17 @@ export default function FavoritesSection({
               return null;
             }
 
-            return <Subheading>{section.title}</Subheading>;
+            const isCollapsed = collapsedSections[section.key];
+
+            return (
+              <Subheading
+                collapsible
+                collapsed={isCollapsed}
+                onToggle={() => toggleSection(section.key)}
+              >
+                {section.title}
+              </Subheading>
+            );
           }}
           renderSectionFooter={({ section }) => {
             if (section.key !== "sports") {

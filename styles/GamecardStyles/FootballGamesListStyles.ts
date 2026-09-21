@@ -36,5 +36,6 @@ export const footballGamesListStyle = StyleSheet.create({
 
   gridItem: {
     flex: 1,
+    minWidth: 0,
   },
 });

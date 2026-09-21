@@ -199,7 +199,9 @@ function HockeySqaureGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
           />
         </View>
       </View>
-      <Text style={styles.headlineText}>{headlineText}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headlineText}
+      </Text>
 
       {/* Game Info */}
       <View style={styles.info}>

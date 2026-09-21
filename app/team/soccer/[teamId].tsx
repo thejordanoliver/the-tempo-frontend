@@ -38,6 +38,7 @@ export default function TeamDetailScreen() {
   const team = getSOCCTeam(teamId);
   const teamLogo = getSOCCTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamName = team?.name;
   const [refreshing, setRefreshing] = useState(false);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useTeamTabs("SOCC");
@@ -109,6 +110,7 @@ export default function TeamDetailScreen() {
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen={true}
           onToggleNotifications={() =>
@@ -121,13 +123,15 @@ export default function TeamDetailScreen() {
     });
   }, [
     navigation,
+    isDark,
     team,
     teamIdNum,
-    teamLogo,
-    teamColor,
-    league,
+    teamName,
     toggleNotifications,
     isNotified,
+    league,
+    teamColor,
+    teamLogo,
   ]);
 
   if (!team) {

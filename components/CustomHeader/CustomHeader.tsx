@@ -64,6 +64,7 @@ export function CustomHeader({
   onToggleLayout,
   isGrid,
   teamColor,
+  teamName,
   isTeamScreen = false,
   onSearchToggle,
   onNotificationsCenter,
@@ -349,10 +350,10 @@ export function CustomHeader({
 
   const headerIconColor =
     tabName === "Game" ||
-      isRacingHeader ||
-      selectedConference ||
-      isTeamScreen ||
-      isPlayerScreen
+    isRacingHeader ||
+    selectedConference ||
+    isTeamScreen ||
+    isPlayerScreen
       ? Colors.white
       : isDark
         ? Colors.white
@@ -387,6 +388,7 @@ export function CustomHeader({
           selectedTeam={selectedTeam}
           logo={logo}
           teamColor={teamColor}
+          teamName={teamName}
           isTeamScreen={isTeamScreen}
           isPlayerScreen={isPlayerScreen}
         />

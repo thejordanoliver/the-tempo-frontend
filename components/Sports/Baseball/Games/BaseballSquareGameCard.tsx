@@ -251,7 +251,9 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
 
   const renderCardContent = () => (
     <>
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headline}
+      </Text>
       <View style={styles.cardWrapper}>
         {/* Away Team */}
         <View style={styles.teamSection}>

@@ -254,7 +254,9 @@ export default function BasketballStackedGameCard({
       </View>
 
       {/* headlineText */}
-      <Text style={[styles.headlineText]}>{headline}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headline}
+      </Text>
 
       {/* Game Info */}
       <View style={styles.info}>

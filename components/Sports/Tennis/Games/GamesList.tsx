@@ -16,6 +16,8 @@ import {
 import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import type { TennisMatch } from "types/tennis/tennis";
 import TennisGameCard from "./TennisGameCard";
+import TennisSquareGameCard from "./TennisSquareGameCard";
+import TennisStackedGameCard from "./TennisStackedGameCard";
 
 type Props = {
   matches: TennisMatch[];
@@ -31,6 +33,13 @@ type MatchSection = {
   tournamentId: string;
   data: TennisMatch[];
 };
+
+type TennisGridPlaceholder = { _isPlaceholder: true; id: string };
+type TennisGridItem = TennisMatch | TennisGridPlaceholder;
+
+const isGridPlaceholder = (
+  item: TennisGridItem,
+): item is TennisGridPlaceholder => "_isPlaceholder" in item;
 
 export default function TennisGamesList({
   matches,
@@ -70,21 +79,49 @@ export default function TennisGamesList({
     return Array.from(sectionMap.values());
   }, [matches]);
 
-  const renderGameCard = useCallback((match: TennisMatch) => {
-    return <TennisGameCard match={match} />;
-  }, []);
+  const renderGameCard = useCallback(
+    (match: TennisMatch) => {
+      if (viewMode === "grid") {
+        return <TennisSquareGameCard match={match} />;
+      }
+
+      if (viewMode === "stacked") {
+        return <TennisStackedGameCard match={match} />;
+      }
+
+      return <TennisGameCard match={match} />;
+    },
+    [viewMode],
+  );
+
+  const gridMatches = useMemo<TennisGridItem[]>(
+    () =>
+      matches.length % 2 === 1
+        ? [...matches, { _isPlaceholder: true, id: "tennis-grid-placeholder" }]
+        : matches,
+    [matches],
+  );
 
   const keyExtractor = useCallback((item: TennisMatch, index: number) => {
     return `${item.id ?? "tennis-match"}-${index}`;
   }, []);
 
   if (loading && matches.length === 0) {
+    if (viewMode === "grid") {
+      return (
+        <View style={styles.skeletonGridWrapper}>
+          {[0, 1].map((row) => (
+            <View key={`tennis-skeleton-row-${row}`} style={styles.gridRow}>
+              <SquareGameCardSkeleton style={styles.gridItem} />
+              <SquareGameCardSkeleton style={styles.gridItem} />
+            </View>
+          ))}
+        </View>
+      );
+    }
+
     const Skeleton =
-      viewMode === "grid"
-        ? SquareGameCardSkeleton
-        : viewMode === "stacked"
-          ? StackedGameCardSkeleton
-          : GameCardSkeleton;
+      viewMode === "stacked" ? StackedGameCardSkeleton : GameCardSkeleton;
 
     return (
       <View style={styles.skeletonWrapper}>
@@ -149,10 +186,16 @@ export default function TennisGamesList({
     return (
       <FlatList
         key="tennis-grid"
-        data={matches}
-        keyExtractor={keyExtractor}
+        data={gridMatches}
+        keyExtractor={(item, index) =>
+          isGridPlaceholder(item) ? item.id : keyExtractor(item, index)
+        }
         numColumns={2}
-        renderItem={({ item }) => renderGameCard(item)}
+        renderItem={({ item }) => (
+          <View style={styles.gridItem}>
+            {!isGridPlaceholder(item) && renderGameCard(item)}
+          </View>
+        )}
         columnWrapperStyle={styles.gridRow}
         contentContainerStyle={styles.gridListContainer}
         refreshing={refreshing}

@@ -27,8 +27,9 @@ export const squareGameCardStyles = (
     card: {
       flexDirection: "row",
       justifyContent: "space-between",
-      height: 120,
-      paddingVertical: 28,
+      minHeight: 120,
+      paddingTop: 28,
+      paddingBottom: 20,
       paddingHorizontal: 12,
       borderRadius: 8,
       backgroundColor: isDark
@@ -39,7 +40,8 @@ export const squareGameCardStyles = (
       flexDirection: "column",
       justifyContent: "center",
       gap: 8,
-      width: 120,
+      flex: 1,
+      minWidth: 0,
       borderRightWidth: 0.5,
       borderRightColor: borderColor,
     },
@@ -48,10 +50,14 @@ export const squareGameCardStyles = (
       alignItems: "center",
       justifyContent: "space-between",
       gap: 4,
-      width: "100%",
+      flex: 1,
+      minWidth: 0,
       paddingRight: 8,
     },
     teamWrapper: {
+      flex: 1,
+      minWidth: 0,
+      flexShrink: 1,
       flexDirection: "row",
       alignItems: "center",
       gap: 4,
@@ -70,7 +76,7 @@ export const squareGameCardStyles = (
     },
 
     teamName: {
-      width: 40,
+      flexShrink: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: textColor,
@@ -81,21 +87,27 @@ export const squareGameCardStyles = (
     },
 
     teamScore: {
+      minWidth: 20,
+      flexShrink: 0,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      color: Colors.midTone,
+      color: textColor,
       textAlign: "right",
+      fontVariant: ["tabular-nums"],
     },
     teamRecord: {
+      flexShrink: 0,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: textColor,
       textAlign: "right",
+      fontVariant: ["tabular-nums"],
     },
     info: {
       alignItems: "center",
       justifyContent: "center",
-      width: 60,
+      width: 70,
+      flexShrink: 0,
     },
     infoWrapper: {
       flexDirection: "row",
@@ -167,9 +179,9 @@ export const squareGameCardStyles = (
       position: "absolute",
       top: 4,
       left: 8,
-      width: "100%",
+      right: 8,
       fontFamily: Fonts.REGULAR,
-      fontSize: 8,
+      fontSize: 10,
       color: headlineColor,
     },
     downDistance: {

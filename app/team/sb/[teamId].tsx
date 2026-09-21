@@ -40,6 +40,7 @@ export default function SoftballTeamDetailScreen() {
   const team = getSBTeam(teamIdNum);
   const teamLogo = getSBTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamName = team?.name;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
@@ -116,6 +117,7 @@ export default function SoftballTeamDetailScreen() {
           teamId={team?.id}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -135,6 +137,7 @@ export default function SoftballTeamDetailScreen() {
     team,
     teamLogo,
     teamColor,
+    teamName,
     toggleFavorite,
     toggleNotifications,
     isNotified,

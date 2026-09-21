@@ -147,6 +147,7 @@ export default function TeamDetailScreen() {
         <CustomHeader
           teamId={teamIdNum}
           logo={teamLogo}
+          teamName={teamName}
           teamColor={teamColor}
           onBack={goBack}
           isTeamScreen
@@ -163,15 +164,17 @@ export default function TeamDetailScreen() {
     });
   }, [
     navigation,
+    isDark,
     team,
-    teamLogo,
-    teamColor,
-    favorited,
-    toggleFavorite,
     teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
     league,
+    teamColor,
+    teamLogo,
+    toggleFavorite,
+    favorited,
   ]);
 
   if (!team) {

@@ -29,6 +29,9 @@ export const settingsStyles = (isDark: boolean) =>
       height: 20,
     },
     optionButtonContainer: {
+      flex: 1,
+      paddingVertical: 4,
+      marginBottom: 12,
       justifyContent: "space-between",
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: isDark
@@ -36,8 +39,6 @@ export const settingsStyles = (isDark: boolean) =>
         : Colors.transparentDarkGray,
     },
     optionButton: {
-      flex: 1,
-      paddingVertical: 12,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
@@ -52,23 +53,5 @@ export const settingsStyles = (isDark: boolean) =>
       fontFamily: Fonts.MEDIUM,
       fontSize: 18,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
-    },
-    closeButton: {
-      position: "absolute",
-      top: 24,
-      right: 15,
-    },
-    input: {
-      width: "100%",
-      marginVertical: 12,
-      padding: 20,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
     },
   });

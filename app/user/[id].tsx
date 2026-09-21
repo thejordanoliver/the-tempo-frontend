@@ -1,5 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
-import FavoriteTeamsSection from "@/components/Favorites/FavoritesSection";
+import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import Forum from "@/components/Forum/Forum";
 import TabBar from "@/components/TabBars/TabBar";
 import { globalStyles } from "@/constants/styles";
@@ -14,18 +14,11 @@ import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScree
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import {
-  Animated,
-  ScrollView,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
-
-type UserProfileTab = "favorite teams" | "badges" | "posts";
+import type { ProfileTab } from "../(tabs)/profile";
 
 type RouteParam = string | string[] | undefined;
 
@@ -51,10 +44,7 @@ export default function UserProfileScreen() {
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-  const [selectedTab, setSelectedTab] =
-    useState<UserProfileTab>("favorite teams");
-  const [isGridView, setIsGridView] = useState(true);
-  const isAnimatingRef = useRef(false);
+  const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
 
   const {
     isLoading,
@@ -69,6 +59,9 @@ export default function UserProfileScreen() {
     isFollowing,
     followLoading,
     favoriteTeamsWithLeague,
+    favoriteSports,
+    favoriteSportsLoading,
+    favoriteSportsReady,
     fadeAnim,
     currentUserId,
     toggleFollow,
@@ -112,7 +105,7 @@ export default function UserProfileScreen() {
     [currentUserIdString, userId],
   );
 
-  const handleTabPress = useCallback((tab: UserProfileTab) => {
+  const handleTabPress = useCallback((tab: ProfileTab) => {
     setSelectedTab(tab);
   }, []);
 
@@ -143,28 +136,6 @@ export default function UserProfileScreen() {
       ),
     });
   }, [navigation, headerTitle, handleBack]);
-
-  const toggleFavoriteTeamsView = useCallback(() => {
-    if (isAnimatingRef.current) return;
-
-    isAnimatingRef.current = true;
-
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsGridView((prev) => !prev);
-
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start(() => {
-        isAnimatingRef.current = false;
-      });
-    });
-  }, [fadeAnim]);
 
   const onFollowersPress = useCallback(() => {
     if (!currentUserIdString || !userId) return;
@@ -248,24 +219,28 @@ export default function UserProfileScreen() {
       <BioSection bio={bio} isDark={isDark} />
 
       <TabBar
-        tabs={["favorite teams", "badges", "posts"]}
+        tabs={["favorites", "badges", "posts"]}
         selected={selectedTab}
         onTabPress={handleTabPress}
         isDark={isDark}
       />
 
-      {selectedTab === "favorite teams" && (
-        <View style={styles.contentContainer}>
-          <FavoriteTeamsSection
-            favoriteTeams={favoriteTeamsWithLeague}
-            isGridView={isGridView}
-            fadeAnim={fadeAnim}
-            onToggleView={toggleFavoriteTeamsView}
-            itemWidth={itemWidth}
-            isCurrentUser={isCurrentUser}
-          />
-        </View>
-      )}
+      <View
+        style={[
+          styles.contentContainer,
+          selectedTab !== "favorites" && { display: "none" },
+        ]}
+      >
+        <FavoritesSection
+          favoriteTeams={favoriteTeamsWithLeague}
+          favoriteSports={favoriteSports}
+          favoriteSportsLoading={favoriteSportsLoading}
+          favoriteSportsReady={favoriteSportsReady}
+          fadeAnim={fadeAnim}
+          itemWidth={itemWidth}
+          isCurrentUser={isCurrentUser}
+        />
+      </View>
 
       {selectedTab === "badges" && (
         <View style={styles.contentContainer}>

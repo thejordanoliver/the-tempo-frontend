@@ -72,6 +72,7 @@ export type CustomHeaderProps = {
   homeColor?: string | null;
   awayColor?: string | null;
   teamColor?: string;
+  teamName?: string | null;
 
   isTeamScreen?: boolean;
   isPlayerScreen?: boolean;

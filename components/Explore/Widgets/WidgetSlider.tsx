@@ -279,6 +279,31 @@ export default function WidgetSlider({
   }, [games]);
 
   useEffect(() => {
+    if (!dashboardMode || slides.length === 0) return;
+
+    const frame = requestAnimationFrame(() => {
+      const index = Math.min(currentIndexRef.current, slides.length - 1);
+      const itemLength = isHorizontal ? slideWidth : slideHeight;
+      const offset = index * itemLength;
+
+      currentIndexRef.current = index;
+      currentOffset.current = offset;
+      scrollPosition.setValue(offset);
+      setCurrentIndex(index);
+      flatListRef.current?.scrollToOffset({ offset, animated: false });
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [
+    dashboardMode,
+    isHorizontal,
+    scrollPosition,
+    slideHeight,
+    slideWidth,
+    slides.length,
+  ]);
+
+  useEffect(() => {
     if (!ENABLE_AUTO_SLIDE || slides.length <= 1 || !flatListRef.current) {
       return;
     }

@@ -39,6 +39,9 @@ export function useUserPosts({
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchingRef = useRef(false);
+  const activeQueryKeyRef = useRef<string | null>(null);
+  const loadedQueryKeyRef = useRef<string | null>(null);
+  const queryKey = userId ? `${String(userId)}:${limit}` : null;
 
   const fetchUserPosts = useCallback(
     async (pageNumber = 1, isRefresh = false) => {
@@ -90,6 +93,10 @@ export function useUserPosts({
 
         setPage(pageNumber);
         setTotalPages(nextTotalPages);
+
+        if (pageNumber === 1) {
+          loadedQueryKeyRef.current = queryKey;
+        }
       } catch (err: unknown) {
         setError(getErrorMessage(err, "Failed to load user posts"));
       } finally {
@@ -98,7 +105,7 @@ export function useUserPosts({
         setRefreshing(false);
       }
     },
-    [enabled, limit, userId],
+    [enabled, limit, queryKey, userId],
   );
 
   useEffect(() => {
@@ -107,14 +114,22 @@ export function useUserPosts({
     void Promise.resolve().then(() => {
       if (cancelled) return;
 
-      setPosts([]);
-      setPage(1);
-      setTotalPages(1);
-      setError(null);
+      if (activeQueryKeyRef.current !== queryKey) {
+        activeQueryKeyRef.current = queryKey;
+        loadedQueryKeyRef.current = null;
+        setPosts([]);
+        setPage(1);
+        setTotalPages(1);
+        setError(null);
+      }
 
       if (!enabled || !userId) {
         setLoading(false);
         setRefreshing(false);
+        return;
+      }
+
+      if (loadedQueryKeyRef.current === queryKey) {
         return;
       }
 
@@ -124,7 +139,7 @@ export function useUserPosts({
     return () => {
       cancelled = true;
     };
-  }, [enabled, fetchUserPosts, userId]);
+  }, [enabled, fetchUserPosts, queryKey, userId]);
 
   const refresh = useCallback(async () => {
     if (!userId) {

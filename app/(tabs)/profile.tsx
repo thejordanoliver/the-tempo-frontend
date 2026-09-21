@@ -459,19 +459,22 @@ export default function ProfileScreen() {
           isDark={isDark}
         />
 
-        {selectedTab === "favorites" && (
-          <View style={styles.contentContainer}>
-            <FavoritesSection
-              favoriteTeams={favoriteTeamsWithLeague}
-              favoriteSports={favoriteSports}
-              favoriteSportsLoading={favoriteSportsLoading}
-              favoriteSportsReady={favoriteSportsReady}
-              fadeAnim={fadeAnim}
-              itemWidth={itemWidth}
-              isCurrentUser={currentUserId === viewedUserId}
-            />
-          </View>
-        )}
+        <View
+          style={[
+            styles.contentContainer,
+            selectedTab !== "favorites" && { display: "none" },
+          ]}
+        >
+          <FavoritesSection
+            favoriteTeams={favoriteTeamsWithLeague}
+            favoriteSports={favoriteSports}
+            favoriteSportsLoading={favoriteSportsLoading}
+            favoriteSportsReady={favoriteSportsReady}
+            fadeAnim={fadeAnim}
+            itemWidth={itemWidth}
+            isCurrentUser={currentUserId === viewedUserId}
+          />
+        </View>
 
         {selectedTab === "badges" && (
           <View style={styles.contentContainer}>

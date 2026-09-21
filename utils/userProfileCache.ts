@@ -3,8 +3,9 @@ import {
   normalizeFavoriteTeamKeys,
   type FavoriteTeamKey,
 } from "types/favorites";
+import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 
-export const USER_PROFILE_CACHE_VERSION = 2;
+export const USER_PROFILE_CACHE_VERSION = 3;
 export const USER_PROFILE_CACHE_TTL = 1000 * 60 * 10;
 export const USER_PROFILE_STALE_TTL = 1000 * 60 * 60 * 24;
 export const USER_PROFILE_CACHE_KEY_PREFIX = "userProfileCache:";
@@ -21,6 +22,7 @@ export type CachedUserProfilePayload = {
   profileImage: string | null;
   bannerImage: string | null;
   favoriteTeams: FavoriteTeamKey[];
+  favoriteSports: FavoriteSportId[];
   updatedAt?: string | null;
   cachedAt: number;
   version: number;
@@ -63,6 +65,12 @@ const normalizeId = (value: unknown): string | null => {
 
 const normalizeFavoriteTeams = (value: unknown): FavoriteTeamKey[] => {
   return normalizeFavoriteTeamKeys(value);
+};
+
+const normalizeFavoriteSports = (value: unknown): FavoriteSportId[] => {
+  if (!Array.isArray(value)) return [];
+
+  return Array.from(new Set(value.filter(isFavoriteSportId)));
 };
 
 const parseDateTime = (value?: string | null) => {
@@ -111,6 +119,7 @@ const parseCachedPayload = (
     profileImage: normalizeImageUrl(value.profileImage),
     bannerImage: normalizeImageUrl(value.bannerImage),
     favoriteTeams: normalizeFavoriteTeams(value.favoriteTeams),
+    favoriteSports: normalizeFavoriteSports(value.favoriteSports),
     updatedAt: normalizeString(value.updatedAt),
     cachedAt,
     version: USER_PROFILE_CACHE_VERSION,
@@ -190,6 +199,7 @@ export async function setCachedUserProfile(
     profileImage: normalizeImageUrl(profile.profileImage),
     bannerImage: normalizeImageUrl(profile.bannerImage),
     favoriteTeams: normalizeFavoriteTeams(profile.favoriteTeams),
+    favoriteSports: normalizeFavoriteSports(profile.favoriteSports),
     updatedAt: normalizeString(profile.updatedAt),
     cachedAt: Date.now(),
     version: USER_PROFILE_CACHE_VERSION,

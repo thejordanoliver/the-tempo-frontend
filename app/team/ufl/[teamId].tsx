@@ -39,6 +39,7 @@ export default function TeamDetailScreen() {
   const team = getUFLTeam(teamIdNum);
   const teamLogo = getUFLTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamName = team?.name;
   const favorited = team ? isFavorite(league, team.id) : false;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -106,6 +107,7 @@ export default function TeamDetailScreen() {
           teamId={teamIdNum}
           logo={teamLogo}
           teamColor={teamColor}
+          teamName={teamName}
           onBack={goBack}
           isTeamScreen={true}
           isFavorite={favorited}
@@ -124,6 +126,7 @@ export default function TeamDetailScreen() {
     isDark,
     team,
     teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
     league,

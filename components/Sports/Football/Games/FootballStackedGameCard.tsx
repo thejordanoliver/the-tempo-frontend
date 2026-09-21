@@ -299,7 +299,9 @@ function FootballStackedGameCard({
         </View>
       </View>
 
-      <Text style={styles.headlineText}>{headline}</Text>
+      <Text style={styles.headlineText} numberOfLines={1}>
+        {headline}
+      </Text>
       <View style={styles.info}>
         {renderStatus()}
         {!isFinal && broadcast && (

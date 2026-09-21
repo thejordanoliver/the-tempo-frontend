@@ -20,7 +20,7 @@ export default function SquareGameCardSkeleton({
         {/* Away team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <SkeletonCircle size={28} style={styles.logoSkeleton} />
+            <SkeletonCircle size={20} style={styles.logoSkeleton} />
             <SkeletonBlock style={styles.nameSkeleton} />
           </View>
           <SkeletonBlock style={styles.scoreSkeleton} />
@@ -29,7 +29,7 @@ export default function SquareGameCardSkeleton({
         {/* Home team section */}
         <View style={styles.teamSection}>
           <View style={styles.teamWrapper}>
-            <SkeletonCircle size={28} style={styles.logoSkeleton} />
+            <SkeletonCircle size={20} style={styles.logoSkeleton} />
             <SkeletonBlock style={styles.nameSkeleton} />
           </View>
           <SkeletonBlock style={styles.scoreSkeleton} />
@@ -50,19 +50,21 @@ const getStyles = (isDark: boolean) =>
     card: {
       flexDirection: "row",
       justifyContent: "space-between",
-      height: 120,
-      paddingHorizontal: 8,
-      paddingVertical: 16,
-      borderRadius: 12,
+      minHeight: 120,
+      paddingHorizontal: 12,
+      paddingTop: 28,
+      paddingBottom: 20,
+      borderRadius: 8,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
     },
     cardWrapper: {
+      flex: 1,
+      minWidth: 0,
       flexDirection: "column",
       justifyContent: "center",
       gap: 8,
-      paddingRight: 12,
       borderRightWidth: 0.5,
       borderRightColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
@@ -71,36 +73,41 @@ const getStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "space-between",
       gap: 4,
+      flex: 1,
+      minWidth: 0,
+      paddingRight: 8,
     },
     teamWrapper: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "flex-start",
-      gap: 8,
-      width: 88,
+      gap: 4,
+      flex: 1,
+      minWidth: 0,
     },
     logoSkeleton: {
-      width: 28,
-      height: 28,
+      width: 20,
+      height: 20,
       borderRadius: 100,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     nameSkeleton: {
-      width: 28,
-      height: 24,
+      flex: 1,
+      height: 14,
       borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     scoreSkeleton: {
-      width: 24,
-      height: 24,
+      width: 20,
+      height: 14,
       borderRadius: 6,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     info: {
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 40,
+      width: 70,
+      flexShrink: 0,
     },
     dateSkeleton: {
       width: 36,

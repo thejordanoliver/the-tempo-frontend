@@ -305,6 +305,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     ========================= */
     card: {
       flexDirection: "column",
+      minWidth: 0,
       padding: 8,
       borderRadius: 8,
       backgroundColor: isDark
@@ -320,6 +321,8 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
     },
 
     eventInfo: {
+      flex: 1,
+      minWidth: 0,
       flexDirection: "column",
     },
 
@@ -556,7 +559,7 @@ export const racingCardStyles = (isDark: boolean, isChampionship?: boolean) => {
 
     headlineText: {
       fontFamily: Fonts.REGULAR,
-      fontSize: 8,
+      fontSize: 10,
       color: headlineColor,
       textAlign: "center",
     },

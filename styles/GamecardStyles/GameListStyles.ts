@@ -38,7 +38,8 @@ export const gameListStyles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  gridItem: {
-    flex: 1,
-  },
+    gridItem: {
+      flex: 1,
+      minWidth: 0,
+    },
 });

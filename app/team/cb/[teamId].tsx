@@ -41,6 +41,7 @@ export default function TeamDetailScreen() {
   const team = getCBTeam(teamIdNum);
   const teamLogo = getCBTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
+  const teamName = team?.name;
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
@@ -131,15 +132,18 @@ export default function TeamDetailScreen() {
       ),
     });
   }, [
-    favorited,
     navigation,
+    isDark,
     team,
-    teamLogo,
-    teamColor,
-    toggleFavorite,
+    teamIdNum,
+    teamName,
     toggleNotifications,
     isNotified,
-    teamIdNum,
+    league,
+    teamColor,
+    teamLogo,
+    toggleFavorite,
+    favorited,
   ]);
 
   if (!team) {

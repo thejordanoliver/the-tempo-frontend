@@ -10,16 +10,19 @@ export const leagueGamesListStyles = (isDark: boolean) =>
     },
     skeletonGridWrapper: {
       gap: 12,
+      paddingHorizontal: 12,
       paddingBottom: 12,
     },
     gridRow: {
-      justifyContent: "space-between",
+      flexDirection: "row",
+      gap: 12,
       marginBottom: 12,
     },
-    skeletonGridRow: { justifyContent: "space-between" },
-    gridItem: { flex: 1 },
+    gridItem: { flex: 1, minWidth: 0 },
     listItem: { marginHorizontal: 12 },
-    gridListContainer: { paddingBottom: 100 },
+    gridListContainer: { paddingHorizontal: 12, paddingBottom: 100 },
+    gridSection: { paddingBottom: 4 },
+    sectionSpacing: { marginTop: 8 },
     contentContainer: { paddingBottom: 100 },
     headerSkeleton: { paddingHorizontal: 12 },
     emptyText: {

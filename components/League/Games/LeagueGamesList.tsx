@@ -12,6 +12,8 @@ import type { HockeyGame } from "@/types/hockey/hockey";
 import type { HomeGameItem, HomeGameSection } from "@/types/leagues";
 import type { SoccerGame } from "@/types/soccer/soccer";
 import type { TennisMatch } from "@/types/tennis/tennis";
+import TennisSquareGameCard from "@/components/Sports/Tennis/Games/TennisSquareGameCard";
+import TennisStackedGameCard from "@/components/Sports/Tennis/Games/TennisStackedGameCard";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
@@ -20,10 +22,11 @@ import BaseballSquareGameCard from "components/Sports/Baseball/Games/BaseballSqu
 import BaseballStackedGameCard from "components/Sports/Baseball/Games/BaseballStackedGameCard";
 import * as Haptics from "expo-haptics";
 import { useMemo, useState, type ReactNode } from "react";
-import { FlatList, SectionList, View, type ViewStyle } from "react-native";
+import { SectionList, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import { leagueGamesListStyles } from "styles/GamecardStyles/LeagueGamesListStyles";
 import type { MMAFight } from "types/mma/mma";
+import { chunkIntoGridRows } from "utils/gameGrid";
 
 import TennisGameCard from "@/components/Sports/Tennis/Games/TennisGameCard";
 import HeadingTwo from "../../Headings/HeadingTwo";
@@ -182,33 +185,8 @@ export default function LeagueGamesList({
     setModalVisible(true);
   };
 
-  const renderGameCard = (
-    item: HomeGameItem,
-    index?: number,
-    total?: number,
-  ) => {
-    const wrapper = (child: ReactNode, indexInRow?: number) => {
-      let itemStyle: ViewStyle =
-        viewMode === "grid" ? styles.gridItem : styles.listItem;
-
-      if (viewMode === "grid" && typeof indexInRow === "number") {
-        const isLastOdd =
-          typeof total === "number" &&
-          total % 2 === 1 &&
-          indexInRow === total - 1;
-
-        if (isLastOdd) {
-          itemStyle = { marginLeft: 12, marginRight: 12, flex: 0.49 };
-        } else {
-          const isFirst = indexInRow % 2 === 0;
-          itemStyle = {
-            ...itemStyle,
-            marginLeft: isFirst ? 12 : 6,
-            marginRight: isFirst ? 6 : 12,
-          };
-        }
-      }
-
+  const renderGameCard = (item: HomeGameItem) => {
+    const wrapper = (child: ReactNode) => {
       return (
         <LongPressGestureHandler
           key={item.key}
@@ -217,7 +195,9 @@ export default function LeagueGamesList({
             if (nativeEvent.state === State.ACTIVE) handleLongPress(item);
           }}
         >
-          <View style={itemStyle}>{child}</View>
+          <View style={viewMode === "grid" ? styles.gridItem : styles.listItem}>
+            {child}
+          </View>
         </LongPressGestureHandler>
       );
     };
@@ -228,7 +208,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BasketballGameCard game={game} />);
         if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} />, index);
+          return wrapper(<BasketballSquareGameCard game={game} />);
         return wrapper(<BasketballStackedGameCard game={game} />);
       }
 
@@ -237,7 +217,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BasketballGameCard game={game} isCBB />);
         if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isCBB />, index);
+          return wrapper(<BasketballSquareGameCard game={game} isCBB />);
         return wrapper(<BasketballStackedGameCard game={game} isCBB />);
       }
 
@@ -248,7 +228,6 @@ export default function LeagueGamesList({
         if (viewMode === "grid")
           return wrapper(
             <BasketballSquareGameCard game={game} isWCBB />,
-            index,
           );
         return wrapper(<BasketballStackedGameCard game={game} isWCBB />);
       }
@@ -260,7 +239,6 @@ export default function LeagueGamesList({
         if (viewMode === "grid")
           return wrapper(
             <BasketballSquareGameCard game={game} isWNBA />,
-            index,
           );
         return wrapper(<BasketballStackedGameCard game={game} isWNBA />);
       }
@@ -270,7 +248,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<FootballGameCard game={game} isNFL />);
         if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} isNFL />, index);
+          return wrapper(<FootballSquareGameCard game={game} isNFL />);
         return wrapper(<FootballStackedGameCard game={game} isNFL />);
       }
 
@@ -279,7 +257,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<FootballGameCard game={game} isCFB />);
         if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} isCFB />, index);
+          return wrapper(<FootballSquareGameCard game={game} isCFB />);
         return wrapper(<FootballStackedGameCard game={game} isCFB />);
       }
 
@@ -288,7 +266,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<FootballGameCard game={game} />);
         if (viewMode === "grid")
-          return wrapper(<FootballSquareGameCard game={game} />, index);
+          return wrapper(<FootballSquareGameCard game={game} />);
         return wrapper(<FootballStackedGameCard game={game} />);
       }
 
@@ -297,7 +275,7 @@ export default function LeagueGamesList({
         if (viewMode === "list")
           return wrapper(<BaseballGameCard game={game} isMLB />);
         if (viewMode === "grid")
-          return wrapper(<BaseballSquareGameCard game={game} isMLB />, index);
+          return wrapper(<BaseballSquareGameCard game={game} isMLB />);
         return wrapper(<BaseballStackedGameCard game={game} isMLB />);
       }
 
@@ -308,7 +286,6 @@ export default function LeagueGamesList({
         if (viewMode === "grid")
           return wrapper(
             <NHLGameSquareCard game={game} isNHL isMCH={false} />,
-            index,
           );
         return wrapper(<NHLStackedGameCard game={game} isNHL isMCH={false} />);
       }
@@ -326,7 +303,7 @@ export default function LeagueGamesList({
         const game = item.game as SoccerGame;
         if (viewMode === "list") return wrapper(<SoccerGameCard game={game} />);
         if (viewMode === "grid")
-          return wrapper(<SoccerSquareGameCard game={game} />, index);
+          return wrapper(<SoccerSquareGameCard game={game} />);
         return wrapper(<SoccerStackedGameCard game={game} />);
       }
 
@@ -334,14 +311,18 @@ export default function LeagueGamesList({
         const game = item.game as MMAFight;
         if (viewMode === "list") return wrapper(<MMAGameCard game={game} />);
         if (viewMode === "grid")
-          return wrapper(<MMASquareGameCard game={game} />, index);
+          return wrapper(<MMASquareGameCard game={game} />);
         return wrapper(<MMAStackedGameCard game={game} />);
       }
 
       case "atp":
       case "wta": {
         const match = item.game as TennisMatch;
-        return wrapper(<TennisGameCard match={match} />, index);
+        if (viewMode === "grid")
+          return wrapper(<TennisSquareGameCard match={match} />);
+        if (viewMode === "stacked")
+          return wrapper(<TennisStackedGameCard match={match} />);
+        return wrapper(<TennisGameCard match={match} />);
       }
     }
   };
@@ -358,42 +339,18 @@ export default function LeagueGamesList({
     }
 
     if (viewMode === "grid") {
-      const dataWithPlaceholder =
-        count % 2 === 1
-          ? [...Array.from({ length: count }), { _isPlaceholder: true }]
-          : Array.from({ length: count });
-
       return (
-        <FlatList
-          data={dataWithPlaceholder}
-          keyExtractor={(_, index) => `skeleton-${index}`}
-          numColumns={2}
-          columnWrapperStyle={styles.skeletonGridRow}
-          renderItem={({ item, index }) => {
-            const isPlaceholder =
-              typeof item === "object" &&
-              item !== null &&
-              "_isPlaceholder" in item;
-            const marginLeft = index % 2 === 0 ? 12 : 6;
-            const marginRight = index % 2 === 0 ? 6 : 12;
-
-            return (
-              <View
-                style={[
-                  styles.gridItem,
-                  {
-                    marginLeft,
-                    marginRight,
-                  },
-                ]}
-              >
-                {!isPlaceholder && <SquareGameCardSkeleton />}
-              </View>
-            );
-          }}
-          scrollEnabled={false}
-          contentContainerStyle={styles.skeletonGridWrapper}
-        />
+        <View style={styles.skeletonGridWrapper}>
+          {chunkIntoGridRows(Array.from({ length: count })).map((row, rowIndex) => (
+            <View key={`skeleton-row-${rowIndex}`} style={styles.gridRow}>
+              {row.map((item, columnIndex) => (
+                <View key={columnIndex} style={styles.gridItem}>
+                  {item !== null && <SquareGameCardSkeleton />}
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
       );
     }
 
@@ -484,63 +441,65 @@ export default function LeagueGamesList({
       )}
 
       {/* Regular Games Section */}
-      <SectionList<HomeGameItem, HomeGameSection>
-        sections={visibleSections}
-        keyExtractor={(item) => item.key}
-        renderItem={({ item, section, index }) => {
-          if (viewMode === "grid") return null;
-
-          return renderGameCard(item, index, section.data.length);
-        }}
-        renderSectionHeader={({ section }) => {
-          if (!showHeaders) return null;
-
-          const multipleSections = visibleSections.length > 1;
-          const isFirstSection = visibleSections[0]?.id === section.id;
-
-          return (
-            <View
-              style={{
-                marginHorizontal: 12,
-                marginTop: multipleSections && !isFirstSection ? 8 : 0,
-              }}
-            >
-              <HeadingTwo isDark={isDark}>
-                {getSectionTitle(section)}
-              </HeadingTwo>
+      {viewMode === "grid" ? (
+        <View style={styles.gridListContainer}>
+          {visibleSections.map((section, sectionIndex) => (
+            <View key={section.id} style={styles.gridSection}>
+              {showHeaders && (
+                <View style={sectionIndex > 0 ? styles.sectionSpacing : undefined}>
+                  <HeadingTwo isDark={isDark}>
+                    {getSectionTitle(section)}
+                  </HeadingTwo>
+                </View>
+              )}
+              {chunkIntoGridRows(section.data).map((row, rowIndex) => (
+                <View key={`${section.id}-row-${rowIndex}`} style={styles.gridRow}>
+                  {row.map((item, columnIndex) => (
+                    <View
+                      key={item?.key ?? `${section.id}-empty-${columnIndex}`}
+                      style={styles.gridItem}
+                    >
+                      {item ? renderGameCard(item) : null}
+                    </View>
+                  ))}
+                </View>
+              ))}
             </View>
-          );
-        }}
-        contentContainerStyle={styles.contentContainer}
-        stickySectionHeadersEnabled={false}
-        scrollEnabled={false}
-        ItemSeparatorComponent={() =>
-          viewMode !== "grid" ? (
-            <View style={styles.itemSeparatorComponent} />
-          ) : null
-        }
-        renderSectionFooter={({ section }) => {
-          if (viewMode === "grid") {
+          ))}
+        </View>
+      ) : (
+        <SectionList<HomeGameItem, HomeGameSection>
+          sections={visibleSections}
+          keyExtractor={(item) => item.key}
+          renderItem={({ item }) => renderGameCard(item)}
+          renderSectionHeader={({ section }) => {
+            if (!showHeaders) return null;
+
+            const multipleSections = visibleSections.length > 1;
+            const isFirstSection = visibleSections[0]?.id === section.id;
+
             return (
-              <View style={{ marginBottom: 16 }}>
-                <FlatList
-                  data={section.data}
-                  keyExtractor={(item) => item.key}
-                  numColumns={2}
-                  columnWrapperStyle={styles.gridRow}
-                  renderItem={({ item, index }) =>
-                    renderGameCard(item, index, section.data.length)
-                  }
-                  scrollEnabled={false}
-                  contentContainerStyle={styles.gridListContainer}
-                />
+              <View
+                style={{
+                  marginHorizontal: 12,
+                  marginTop: multipleSections && !isFirstSection ? 8 : 0,
+                }}
+              >
+                <HeadingTwo isDark={isDark}>
+                  {getSectionTitle(section)}
+                </HeadingTwo>
               </View>
             );
-          }
-
-          return <View style={{ height: 16 }} />;
-        }}
-      />
+          }}
+          contentContainerStyle={styles.contentContainer}
+          stickySectionHeadersEnabled={false}
+          scrollEnabled={false}
+          ItemSeparatorComponent={() => (
+            <View style={styles.itemSeparatorComponent} />
+          )}
+          renderSectionFooter={() => <View style={{ height: 16 }} />}
+        />
+      )}
 
       {modalVisible &&
         previewGame &&

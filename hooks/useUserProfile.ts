@@ -14,6 +14,7 @@ import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import { useFollowersStore } from "store/followersStore";
+import { isFavoriteSportId, type FavoriteSportId } from "constants/leagues";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
 import { isFavoriteLeague, normalizeFavoriteTeamKeys } from "types/favorites";
 import type { Team as TeamConfig } from "types/team";
@@ -43,6 +44,7 @@ type UserProfileResponse = {
   followersCount?: number | null;
   followingCount?: number | null;
   favoriteTeams?: unknown;
+  favoriteSports?: unknown;
   isFollowing?: boolean | null;
   updatedAt?: string | null;
   updated_at?: string | null;
@@ -56,6 +58,7 @@ type DisplayProfile = {
   profileImage: string | null;
   bannerImage: string | null;
   favoriteTeams: FavoriteTeamKey[];
+  favoriteSports: FavoriteSportId[];
   updatedAt: string | null;
 };
 
@@ -98,6 +101,12 @@ function normalizeFavoriteTeams(value: unknown): FavoriteTeamKey[] {
   return normalizeFavoriteTeamKeys(value);
 }
 
+function normalizeFavoriteSports(value: unknown): FavoriteSportId[] {
+  if (!Array.isArray(value)) return [];
+
+  return Array.from(new Set(value.filter(isFavoriteSportId)));
+}
+
 function parseProfileId(value: unknown, fallback: string): string {
   if (typeof value === "number" && Number.isFinite(value)) {
     return String(value);
@@ -126,6 +135,7 @@ function normalizeDisplayProfile(
     profileImage: parseImageUrl(data.profileImage ?? data.profile_image),
     bannerImage: parseImageUrl(data.bannerImage ?? data.banner_image),
     favoriteTeams: normalizeFavoriteTeams(data.favoriteTeams),
+    favoriteSports: normalizeFavoriteSports(data.favoriteSports),
     updatedAt: parseUpdatedAt(data),
   };
 }
@@ -141,6 +151,7 @@ function buildCachedProfilePayload(
     profileImage: profile.profileImage,
     bannerImage: profile.bannerImage,
     favoriteTeams: profile.favoriteTeams,
+    favoriteSports: profile.favoriteSports,
     updatedAt: profile.updatedAt,
     cachedAt: Date.now(),
     version: USER_PROFILE_CACHE_VERSION,
@@ -189,6 +200,7 @@ export function useUserProfile(userId?: string) {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
+  const [favoriteSports, setFavoriteSports] = useState<FavoriteSportId[]>([]);
 
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
   const [followLoading, setFollowLoading] = useState(false);
@@ -240,6 +252,7 @@ export function useUserProfile(userId?: string) {
     setFollowersCount(0);
     setFollowingCount(0);
     setFavoriteTeams([]);
+    setFavoriteSports([]);
     setIsFollowing(false);
   }, []);
 
@@ -251,6 +264,7 @@ export function useUserProfile(userId?: string) {
       setProfileImage(profile.profileImage);
       setBannerImage(profile.bannerImage);
       setFavoriteTeams(profile.favoriteTeams);
+      setFavoriteSports(profile.favoriteSports);
     },
     [],
   );
@@ -561,6 +575,9 @@ export function useUserProfile(userId?: string) {
     isFollowing: isFollowing ?? false,
     followLoading,
     favoriteTeamsWithLeague,
+    favoriteSports,
+    favoriteSportsLoading: isLoading,
+    favoriteSportsReady: hasCachedProfile,
     fadeAnim,
     currentUserId,
 
