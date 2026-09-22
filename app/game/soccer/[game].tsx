@@ -3,7 +3,7 @@ import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats"
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import { useVenue } from "@/hooks/useVenue";

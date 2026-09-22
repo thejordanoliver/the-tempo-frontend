@@ -25,7 +25,7 @@ import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";

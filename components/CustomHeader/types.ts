@@ -79,9 +79,11 @@ export type CustomHeaderProps = {
 
   onSearchToggle?: () => void;
   onNotificationsCenter?: () => void;
+  onMarkAllNotificationsRead?: () => void;
   onToggleNotificationEditing?: () => void;
   isNotificationEditing?: boolean;
   hasNotifications?: boolean;
+  hasUnreadNotifications?: boolean;
   onOpenThemesSettings?: () => void;
   onAddWidget?: () => void;
   onToggleWidgetEditing?: () => void;

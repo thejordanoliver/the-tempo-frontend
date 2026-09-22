@@ -1,62 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import type {
+  BaseballRosterLeague,
+  BaseballRosterPlayer,
+  BaseballRosterStats,
+} from "@/types/baseball/stats";
 
-export type BaseballRosterLeague = "mlb";
-
-export type BaseballStatValue = string | number | null;
-export type BaseballStatMap = Record<string, BaseballStatValue>;
-
-export type BaseballSeasonStatGroups = {
-  "career-batting"?: BaseballStatMap | null;
-  "expanded-batting"?: BaseballStatMap | null;
-  "advanced-batting"?: BaseballStatMap | null;
-  pitching?: BaseballStatMap | null;
-  "opponent-batting"?: BaseballStatMap | null;
-  "expanded-pitching"?: BaseballStatMap | null;
-};
-
-export type BaseballSeasonStats = {
-  id?: number | string | null;
-  season?: number | string | null;
-  stats?: BaseballSeasonStatGroups | null;
-  team_id?: string | number | null;
-  team_slug?: string | null;
-  position?: string | null;
-  player_id?: number | string | null;
-  player_name?: string | null;
-  season_type?: string | null;
-  season_type_label?: string | null;
-  season_type_value?: string | number | null;
-  display_season?: string | null;
-  created_at?: string | null;
-  updated_at?: string | null;
-};
-
-export type RosterPlayer = {
-  id: number;
-  playerId?: number | string | null;
-  full_name: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  team_id?: number | string | null;
-  position?: string | null;
-  jersey_number?: number | string | null;
-  headshot_url?: string | null;
-  active?: boolean;
-  short_name?: string | null;
-  team?: string | null;
-  currentSeasonStats?: BaseballSeasonStats | null;
-  latestSeason?: BaseballSeasonStats | null;
-  latestSeasonStats?: BaseballSeasonStats | null;
-  seasonStats?: BaseballSeasonStats[] | null;
-  careerStats?: BaseballSeasonStats[] | null;
-};
-
-export type BaseballRosterStats = {
-  teamId: string;
-  count: number;
-  players: RosterPlayer[];
-};
+export type {
+  BaseballRosterLeague,
+  BaseballRosterStats,
+  BaseballSeasonStatGroups,
+  BaseballSeasonStats,
+  BaseballStatMap,
+  BaseballStatValue,
+  RosterPlayer,
+} from "@/types/baseball/stats";
 
 const EMPTY_ROSTER_STATS = (teamId: string): BaseballRosterStats => ({
   teamId,
@@ -65,7 +23,11 @@ const EMPTY_ROSTER_STATS = (teamId: string): BaseballRosterStats => ({
 });
 
 const normalizeRosterStatsResponse = (
-  data: Partial<BaseballRosterStats> | RosterPlayer[] | null | undefined,
+  data:
+    | Partial<BaseballRosterStats>
+    | BaseballRosterPlayer[]
+    | null
+    | undefined,
   teamId: string,
 ): BaseballRosterStats => {
   const players = Array.isArray(data)
@@ -130,7 +92,7 @@ export function useRosterStats(
         const url = `/api/team/stats/${league.toLowerCase()}/roster/${normalizedTeamId}`;
 
         const response = await apiClient.get<
-          Partial<BaseballRosterStats> | RosterPlayer[]
+          Partial<BaseballRosterStats> | BaseballRosterPlayer[]
         >(url);
         const normalizedRoster = normalizeRosterStatsResponse(
           response.data,

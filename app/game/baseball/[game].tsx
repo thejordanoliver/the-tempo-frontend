@@ -40,7 +40,7 @@ import {
   type BaseballPlay,
   useBaseballGameDetails,
 } from "../../../hooks/BaseballHooks/useBaseballGameDetails";
-import { useLastFiveGames } from "../../../hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "../../../hooks/useLastFiveGames";
 import { useScrollFade } from "../../../hooks/useScrollFade";
 import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";

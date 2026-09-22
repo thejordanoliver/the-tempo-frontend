@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
+import type { TeamAggregatedStats } from "@/types/baseball/stats";
 import { apiClient } from "utils/apiClient";
+
+export type { TeamAggregatedStats } from "@/types/baseball/stats";
 
 type StatItem = {
   name: string;
@@ -44,83 +47,6 @@ type UseTeamStatsOptions = {
   teamId: number;
   season?: string | number;
   league?: "mlb";
-};
-
-export type TeamAggregatedStats = {
-  team: {
-    id: string;
-    name: string;
-    fullName: string;
-    code: string;
-    recordSummary: string;
-    standingSummary: string;
-  };
-
-  season: {
-    year: string;
-    type: string;
-    name: string;
-    displayName: string;
-  };
-
-  batting: {
-    gamesPlayed: number;
-    atBats: number;
-    runs: number;
-    hits: number;
-    doubles: number;
-    triples: number;
-    homeRuns: number;
-    rbis: number;
-    stolenBases: number;
-    caughtStealing: number;
-    walks: number;
-    strikeouts: number;
-    totalBases: number;
-    plateAppearances: number;
-    extraBaseHits: number;
-    battingAverage: number;
-    onBasePct: number;
-    sluggingPct: number;
-    ops: number;
-  };
-
-  pitching: {
-    gamesPlayed: number;
-    wins: number;
-    losses: number;
-    winPct: number;
-    saves: number;
-    saveOpportunities: number;
-    holds: number;
-    qualityStarts: number;
-    innings: number;
-    hitsAllowed: number;
-    runsAllowed: number;
-    earnedRuns: number;
-    homeRunsAllowed: number;
-    walksAllowed: number;
-    strikeouts: number;
-    era: number;
-    whip: number;
-    strikeoutsPerNine: number;
-    opponentAvg: number;
-    opponentOnBasePct: number;
-    opponentSluggingPct: number;
-    opponentOps: number;
-  };
-
-  fielding: {
-    gamesPlayed: number;
-    inningsPlayed: number;
-    totalChances: number;
-    putouts: number;
-    assists: number;
-    errors: number;
-    doublePlays: number;
-    fieldingPct: number;
-    rangeFactor: number;
-  };
 };
 
 const toNumber = (value: string | number | null | undefined): number => {

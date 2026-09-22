@@ -1,7 +1,6 @@
-import { Colors, Fonts } from "constants/styles";
-import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, Easing, StyleSheet, TextInput } from "react-native";
+import { Animated, Easing, TextInput } from "react-native";
+import BaseSearchInput from "./BaseSearchInput";
 
 type Props = {
   value: string;
@@ -18,10 +17,6 @@ export default function SearchBar({
 }: Props) {
   const [anim] = useState(() => new Animated.Value(0));
   const inputRef = useRef<TextInput>(null); // ← ref for auto-blur
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
-  const styles = searchBarStyles(isDark);
-
   useEffect(() => {
     Animated.timing(anim, {
       toValue: visible ? 1 : 0,
@@ -48,11 +43,9 @@ export default function SearchBar({
       }}
       pointerEvents={visible ? "auto" : "none"} // disable touches when closed
     >
-      <TextInput
+      <BaseSearchInput
         ref={inputRef} // ← attach ref
-        placeholder={placeholder ?? "Search..."}
-        placeholderTextColor={Colors.midTone}
-        style={styles.input}
+        placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
         autoCapitalize="none"
@@ -63,20 +56,3 @@ export default function SearchBar({
     </Animated.View>
   );
 }
-
-const searchBarStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    input: {
-      height: 40,
-      paddingHorizontal: 10,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-  });

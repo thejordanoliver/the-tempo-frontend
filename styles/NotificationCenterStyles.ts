@@ -21,13 +21,6 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       justifyContent: "center",
     },
 
-    listHeader: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-    },
-
     selectionHeader: {
       flexDirection: "row",
       alignItems: "center",
@@ -50,12 +43,6 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
 
     markAllButtonPressed: {
       opacity: 0.55,
-    },
-
-    markAllText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 13,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
     selectAllText: {

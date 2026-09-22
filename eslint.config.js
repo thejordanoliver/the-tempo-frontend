@@ -21,7 +21,7 @@ module.exports = defineConfig([
     ignores: ['dist/*', '.expo/*'],
   },
   {
-    files: ['CommonJS.js', 'metro.config.cjs'],
+    files: ['metro.config.cjs'],
     languageOptions: {
       globals: {
         __dirname: 'readonly',

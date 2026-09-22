@@ -1,7 +1,7 @@
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";

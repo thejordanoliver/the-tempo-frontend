@@ -1,8 +1,8 @@
 //./CFB/GamePreview/CFBGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";

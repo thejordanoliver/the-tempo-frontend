@@ -17,7 +17,7 @@ import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";

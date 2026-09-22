@@ -1,57 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import type { BasketballRosterStatsResponse } from "@/types/basketball/stats";
 
-export type BasketballRosterLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+export type {
+  BasketballRosterLeague,
+  BasketballRosterPlayer as Player,
+  BasketballRosterStatsResponse as RosterStats,
+  BasketballSeasonStats,
+  BasketballStatMap as BasketballStatGroup,
+  BasketballStatValue as StatValue,
+} from "@/types/basketball/stats";
 
-export type StatValue = string | number | null;
-
-export type BasketballStatGroup = Record<string, StatValue>;
-
-export type BasketballSeasonStats = {
-  id: number;
-  season: number;
-  totals: BasketballStatGroup;
-  averages: BasketballStatGroup;
-  miscellaneous: BasketballStatGroup | null;
-  team_id: string | number | null;
-  team_slug: string | null;
-  position: string | null;
-  player_id: number;
-  player_name: string;
-  season_type: string | null;
-  season_type_label: string | null;
-  season_type_value: string | number | null;
-  display_season: string | null;
-  created_at: string | null;
-  updated_at: string | null;
-};
-
-export type Player = {
-  id: number;
-  playerId: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  team_id: number;
-  position: string | null;
-  jersey_number: number | null;
-  headshot_url: string | null;
-  active: boolean;
-  short_name: string;
-  team: string;
-
-  currentSeasonStats: BasketballSeasonStats | null;
-  latestSeason: BasketballSeasonStats | null;
-  latestSeasonStats: BasketballSeasonStats | null;
-  seasonStats: BasketballSeasonStats[];
-  careerStats: BasketballSeasonStats[];
-};
-
-export type RosterStats = {
-  teamId: string;
-  count: number;
-  players: Player[];
-};
+type RosterStats = BasketballRosterStatsResponse;
 
 const EMPTY_ROSTER_STATS = (teamId: string): RosterStats => ({
   teamId,

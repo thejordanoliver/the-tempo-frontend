@@ -99,6 +99,9 @@ export const rosterStatsStyles = (isDark: boolean) =>
     playerStatSelector: {
       marginBottom: 16,
     },
+    playerTableSection: {
+      marginBottom: 20,
+    },
 
     teamTableRow: {
       flexDirection: "row",

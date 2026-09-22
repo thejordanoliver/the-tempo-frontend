@@ -1,8 +1,9 @@
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePreferences } from "@/contexts/PreferencesContext";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
 import { useWeather } from "@/hooks/useWeather";
@@ -30,7 +31,6 @@ import {
 import { snapPoints } from "utils/modalUtils";
 import { CenterInfo, TeamRow } from "../GameDetails";
 import GamePreviewContent from "./GamePreviewContent";
-import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 
 type Props = {
   visible: boolean;
@@ -91,8 +91,9 @@ export default function GamePreviewModal({
         ? getCBBTeam(homeId)
         : isSL
           ? getTeamBySummerId(homeId)
-          : isGLEAGUE ? getGLeagueTeam(homeId)
-          : getNBATeam(homeId);
+          : isGLEAGUE
+            ? getGLeagueTeam(homeId)
+            : getNBATeam(homeId);
 
   const awayTeam = isWNBA
     ? getWNBATeam(awayId)

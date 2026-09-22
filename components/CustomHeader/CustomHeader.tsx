@@ -69,9 +69,11 @@ export function CustomHeader({
   isTeamScreen = false,
   onSearchToggle,
   onNotificationsCenter,
+  onMarkAllNotificationsRead,
   onToggleNotificationEditing,
   isNotificationEditing = false,
   hasNotifications = false,
+  hasUnreadNotifications = false,
   unreadNotificationCount,
   onOpenThemesSettings,
   onAddWidget,
@@ -159,6 +161,11 @@ export function CustomHeader({
     setNotificationsMenuVisible(false);
     onToggleNotificationEditing?.();
   }, [onToggleNotificationEditing]);
+
+  const handleMarkAllNotificationsRead = useCallback(() => {
+    setNotificationsMenuVisible(false);
+    onMarkAllNotificationsRead?.();
+  }, [onMarkAllNotificationsRead]);
 
   useEffect(() => {
     let cancelled = false;
@@ -527,7 +534,9 @@ export function CustomHeader({
                 visible={notificationsMenuVisible}
                 isDark={isDark}
                 isEditing={isNotificationEditing}
-                disabled={!hasNotifications && !isNotificationEditing}
+                selectionDisabled={!hasNotifications && !isNotificationEditing}
+                markAllDisabled={!hasUnreadNotifications}
+                onMarkAllRead={handleMarkAllNotificationsRead}
                 onToggleEditing={handleToggleNotificationEditing}
               />
             ) : undefined

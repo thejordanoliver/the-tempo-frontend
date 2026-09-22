@@ -265,6 +265,13 @@ export default function NotificationsCenter() {
       ),
     [centerNotifications, hiddenIds],
   );
+  const hasUnreadNotifications = visibleNotifications.some(
+    (notification) => !notification.readAt,
+  );
+
+  const handleMarkAllRead = useCallback(() => {
+    void markAllCenterNotificationsRead();
+  }, [markAllCenterNotificationsRead]);
 
   const toggleSelectionMode = useCallback(() => {
     setIsSelectionMode((current) => {
@@ -281,13 +288,17 @@ export default function NotificationsCenter() {
         <CustomHeader
           tabName="Notifications"
           onBack={() => router.back()}
+          onMarkAllNotificationsRead={handleMarkAllRead}
           onToggleNotificationEditing={toggleSelectionMode}
           isNotificationEditing={isSelectionMode}
           hasNotifications={visibleNotifications.length > 0}
+          hasUnreadNotifications={hasUnreadNotifications}
         />
       ),
     });
   }, [
+    handleMarkAllRead,
+    hasUnreadNotifications,
     isSelectionMode,
     navigation,
     router,
@@ -328,10 +339,6 @@ export default function NotificationsCenter() {
     },
     [markCenterNotificationRead, router],
   );
-
-  const handleMarkAllRead = useCallback(() => {
-    void markAllCenterNotificationsRead();
-  }, [markAllCenterNotificationsRead]);
 
   const handleToggleSelection = useCallback((id: string) => {
     setSelectedIds((current) => {
@@ -438,10 +445,6 @@ export default function NotificationsCenter() {
     ],
   );
 
-  const hasUnreadNotifications = centerNotifications.some(
-    (notification) => !notification.readAt,
-  );
-
   return (
     <View style={styles.screen}>
       <FlatList
@@ -473,21 +476,6 @@ export default function NotificationsCenter() {
                 <Text style={styles.selectAllText}>
                   {allNotificationsSelected ? "Deselect All" : "Select All"}
                 </Text>
-              </Pressable>
-            </View>
-          ) : hasUnreadNotifications ? (
-            <View style={styles.listHeader}>
-              <Pressable
-                onPress={handleMarkAllRead}
-                accessibilityRole="button"
-                accessibilityLabel="Mark all notifications as read"
-                hitSlop={8}
-                style={({ pressed }) => [
-                  styles.markAllButton,
-                  pressed && styles.markAllButtonPressed,
-                ]}
-              >
-                <Text style={styles.markAllText}>Mark all as read</Text>
               </Pressable>
             </View>
           ) : null

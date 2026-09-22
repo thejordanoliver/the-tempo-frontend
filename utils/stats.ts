@@ -1,100 +1,13 @@
-export type TeamStats = {
-  team: {
-    id: string;
-    name: string;
-    fullName: string;
-    code: string;
-    recordSummary: string;
-    standingSummary: string;
-  };
+import type {
+  BasketballTeamStatRow as TeamStatRow,
+  BasketballTeamStats as TeamStats,
+} from "@/types/basketball/stats";
 
-  season: {
-    year: string;
-    type: string;
-    name: string;
-    displayName: string;
-  };
-
-  gamesPlayed: number;
-
-  pointsPerGame: number;
-  reboundsPerGame: number;
-  assistsPerGame: number;
-  stealsPerGame: number;
-  blocksPerGame: number;
-  turnoversPerGame: number;
-  foulsPerGame: number;
-
-  fgPercent: number;
-  ftPercent: number;
-  tpPercent: number;
-
-  totalPoints: number;
-  totalRebounds: number;
-  totalAssists: number;
-  totalSteals: number;
-  totalBlocks: number;
-  totalTurnovers: number;
-  totalFouls: number;
-};
-
-export type TeamStatRow = {
-  label: string;
-  value: string;
-};
-
-export type PlayerStats = {
-  playerId: number;
-  full_name: string;
-  first_name: string;
-  last_name: string;
-  short_name: string;
-  team_id: number;
-  position: string;
-  jersey_number: string;
-  headshot_url?: string;
-  active: boolean;
-  team: string;
-  pos: string | null;
-  latestSeason: {
-    season: string;
-    g: number;
-    gs: number | null;
-    mpg: number;
-    fg: number;
-    fga: number;
-    fg_pct: string;
-    three_p: number;
-    three_pa: number;
-    three_pct: string;
-    two_p: number;
-    two_pa: number;
-    two_pct: string;
-    efg_pct: string;
-    ft: number;
-    fta: number;
-    ft_pct: string;
-    orb: number;
-    drb: number;
-    trb: number;
-    ast: number;
-    stl: number;
-    blk: number;
-    tov: number;
-    pf: number;
-    pts: number;
-  } | null;
-};
-
-export type RosterStatsProps = {
-  rosterStats: PlayerStats[] | null;
-  teamId: string;
-  teamStats?: TeamStats | null;
-  loading?: boolean;
-  error?: Error | null;
-  refreshing: boolean;
-  onRefresh: () => void;
-};
+export type { TeamStatRow, TeamStats } from "@/types/basketball/stats";
+export type {
+  BasketballLegacyRosterStatsProps as RosterStatsProps,
+  BasketballPlayerStats as PlayerStats,
+} from "@/types/basketball/stats";
 
 // Team Stats
 export const numberFormatter = new Intl.NumberFormat("en-US");

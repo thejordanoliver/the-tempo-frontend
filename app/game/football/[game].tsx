@@ -7,7 +7,7 @@ import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamSco
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useLastFiveGames } from "@/hooks/BaseballHooks/useLastFiveGames";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
