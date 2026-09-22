@@ -4,7 +4,6 @@ import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
-import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import { Colors } from "@/constants/styles";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
@@ -45,7 +44,7 @@ export default function TeamDetailScreen() {
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
-  const teamName = team?.name
+  const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getNBATeamLogo(teamIdNum, true);
   const [refreshing, setRefreshing] = useState(false);
@@ -242,15 +241,6 @@ export default function TeamDetailScreen() {
             error={playersError}
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            league={league}
-          />
-        </View>
-
-        <View key="depth" style={styles.contentArea}>
-          <DepthChart
-            teamId={espnId}
-            season={currentSeason}
-            isDark={isDark}
             league={league}
           />
         </View>

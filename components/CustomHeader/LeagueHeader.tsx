@@ -3,12 +3,12 @@ import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { HeaderTitle } from "expo-router/react-navigation";
 import {
   Animated,
-  type ImageSourcePropType,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import type { HeaderImageSource } from "./types";
 
 type LeagueHeaderProps = {
   selectedConference?: unknown | null;
@@ -17,7 +17,7 @@ type LeagueHeaderProps = {
   onOpenLeagueModal?: () => void;
   rotate: Animated.AnimatedInterpolation<string | number>;
   isDark: boolean;
-  logo?: ImageSourcePropType | null;
+  logo?: HeaderImageSource;
   hasLeagueColor?: boolean;
 };
 
@@ -28,7 +28,6 @@ export function LeagueHeader({
   onOpenLeagueModal,
   rotate,
   isDark,
-  logo,
   hasLeagueColor = false,
 }: LeagueHeaderProps) {
   const { width } = useWindowDimensions();

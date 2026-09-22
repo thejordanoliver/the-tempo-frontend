@@ -2,7 +2,6 @@ import ForumFeed from "@/components/Forum/ForumFeed";
 import Roster from "@/components/Sports/Baseball/Team/Roster";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Football/Games/GamesList";
-import DepthChart from "@/components/Sports/Football/Team/DepthChart";
 import RosterStats from "@/components/Sports/Football/Team/RosterStats";
 import { Colors } from "@/constants/styles";
 import { useFootballTeamGames } from "@/hooks/FootballHooks/useFootballTeamGames";
@@ -187,7 +186,7 @@ export default function TeamDetailScreen() {
 
       <PagerView
         ref={pagerRef}
-        style={{ flex: 1 }}
+        style={styles.contentArea}
         initialPage={0}
         onPageScroll={handlePageScroll}
         onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
@@ -247,16 +246,6 @@ export default function TeamDetailScreen() {
             refreshing={refreshingStats}
             onRefresh={refetch}
             league={league}
-          />
-        </View>
-
-        {/* DEPTH */}
-        <View key="depth" style={styles.contentArea}>
-          <DepthChart
-            teamId={espnId}
-            season={2026}
-            isDark={isDark}
-            league={"nfl"}
           />
         </View>
 

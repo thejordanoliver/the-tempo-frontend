@@ -55,7 +55,7 @@ export type LeagueRoute =
   | "/league/mma"
   | "/league/racing"
   | "/league/tennis"
-  | "/league/socc";
+  | "/league/soccer";
 
 type LeagueDefinition = {
   id: string;
@@ -88,7 +88,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#000000",
     logo: BundesligaLogo,
     logoLight: BundesligaLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   cb: {
@@ -128,7 +128,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#FFFFFF",
     logo: UEFAChampionsLogo,
     logoLight: UEFAChampionsLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   epl: {
@@ -138,7 +138,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#00FF85",
     logo: EPLLogo,
     logoLight: EPLLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   europa: {
@@ -148,7 +148,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#000000",
     logo: UEFAEuropaLogo,
     logoLight: UEFAEuropaLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   f1: {
@@ -168,7 +168,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#8A1538",
     logo: WorldCupLogo,
     logoLight: WorldCupLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   fifaw: {
@@ -178,7 +178,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#FFB81C",
     logo: WorldCupLogo,
     logoLight: WorldCupLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   gleague: {
@@ -198,7 +198,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#ffffff",
     logo: LaLigaLogo,
     logoLight: LaLigaLightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   leaguescup: {
@@ -208,7 +208,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#00C2FF",
     logo: LeaguesCupLogo,
     logoLight: LeaguesCupLogoLight,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   ligue1: {
@@ -218,7 +218,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#ffffff",
     logo: Ligue1Logo,
     logoLight: Ligue1LightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   ligue2: {
@@ -228,7 +228,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#ffffff",
     logo: Ligue2Logo,
     logoLight: Ligue2LightLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   mlb: {
@@ -248,7 +248,7 @@ export const LEAGUE_CONFIG = {
     secondaryColor: "#E2231A",
     logo: MLSLogo,
     logoLight: MLSLogo,
-    route: "/league/socc",
+    route: "/league/soccer",
   },
 
   nascarpremier: {

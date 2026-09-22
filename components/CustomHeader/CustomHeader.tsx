@@ -228,7 +228,6 @@ export function CustomHeader({
   );
   const isLeagueScreen = Boolean(
     leagueConfig &&
-      league !== "Leagues" &&
       !isTeamScreen &&
       !isPlayerScreen &&
       tabName !== "Game",

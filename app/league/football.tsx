@@ -275,6 +275,7 @@ function NFLLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={league.toUpperCase()}
+          league={league}
           onBack={goBack}
           {...favoriteHeaderProps}
         />
@@ -623,6 +624,7 @@ function CFBLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={"College Football"}
+          league={league}
           onBack={goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
@@ -935,6 +937,7 @@ function UFLLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={league.toUpperCase()}
+          league={league}
           onBack={goBack}
           {...favoriteHeaderProps}
         />

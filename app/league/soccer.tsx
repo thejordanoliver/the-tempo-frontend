@@ -110,7 +110,7 @@ export default function SoccerLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={leagueLabel}
-          league={leagueLabel}
+          league={league}
           onBack={goBack}
           {...favoriteHeaderProps}
         />

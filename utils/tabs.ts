@@ -93,28 +93,26 @@ export const LEAGUE_TABS = {
 } as const;
 
 export const TEAM_TABS = {
-  nba: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
-
-  wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
-
-  nfl: ["schedule", "news", "roster", "depth", "stats", "standings", "forum"],
-
-  mlb: ["schedule", "news", "roster", "stats", "standings", "forum"],
-
-  cb: ["schedule", "news", "standings", "forum"],
-
-  sb: ["schedule", "news", "standings", "forum"],
-
-  nhl: ["schedule", "news", "roster", "stats", "standings", "forum"],
-
-  cfb: ["schedule", "news", "roster", "stats", "standings", "forum"],
-
-  ufl: ["schedule", "news", "standings", "forum"],
-
+  // Basketball
+  nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   cbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
-
+  wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
 
+  // Football
+  nfl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  cfb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  ufl: ["schedule", "news", "standings", "forum"],
+
+  // Baseball
+  mlb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  cb: ["schedule", "news", "standings", "forum"],
+  sb: ["schedule", "news", "standings", "forum"],
+
+  // Hockey
+  nhl: ["schedule", "news", "roster", "stats", "standings", "forum"],
+
+  // Soccer
   socc: ["schedule", "news", "roster", "forum"],
 } as const;
 

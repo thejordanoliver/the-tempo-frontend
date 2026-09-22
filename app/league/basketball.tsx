@@ -1290,7 +1290,7 @@ function CBBLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={"Men's College Basketball"}
-          league={"Men's Colege Basketball"}
+          league={league}
           onBack={goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
@@ -1673,7 +1673,7 @@ function WCBBLeagueScreen() {
       header: () => (
         <CustomHeader
           tabName={"Women's College Basketball"}
-          league={"Women's Colege Basketball"}
+          league={league}
           onBack={goBack}
           modalVisible={isConferenceModalOpen}
           setModalVisible={setIsConferenceModalOpen}
