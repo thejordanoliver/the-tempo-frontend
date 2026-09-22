@@ -1,35 +1,30 @@
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
-import PillTabs, { type PillTabOption } from "@/components/TabBars/PillTabs";
 import type {
   BaseballRosterLeague,
-  BaseballRosterPlayer,
   BaseballRosterStats,
   BaseballSeasonStats,
   BaseballStatMap,
   BaseballStatValue,
+  RosterPlayer,
 } from "@/hooks/BaseballHooks/useRosterStats";
 import type { TeamAggregatedStats } from "@/hooks/BaseballHooks/useTeamStats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import SyncedHorizontalStatViewport from "components/Sports/shared/synced-horizontal-stat-viewport";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { router } from "expo-router";
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  FlatList,
   Image,
-  LayoutChangeEvent,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { SharedValue, useSharedValue } from "react-native-reanimated";
 import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 type RosterStatsComponentProps = {
-  rosterStats: BaseballRosterStats | BaseballRosterPlayer[] | null | undefined;
+  rosterStats: BaseballRosterStats | RosterPlayer[] | null | undefined;
   teamId: string | number;
   teamStats?: TeamAggregatedStats | null;
   loading: boolean;
@@ -40,14 +35,13 @@ type RosterStatsComponentProps = {
 };
 
 type StatTab = "Player Stats" | "Team Stats";
-type PlayerStatView = "Batting" | "Pitching";
 type StatGroupKey = "career-batting" | "advanced-batting" | "pitching";
 
 type PlayerStatRow = {
-  player: BaseballRosterPlayer;
-  season: BaseballSeasonStats;
-  primaryStats: BaseballStatMap;
-  advancedBattingStats?: BaseballStatMap | null;
+  player: RosterPlayer;
+  battingStats: BaseballStatMap | null;
+  advancedBattingStats: BaseballStatMap | null;
+  pitchingStats: BaseballStatMap | null;
 };
 
 type StatLeader = {
@@ -74,18 +68,10 @@ type TeamStatRow = {
 };
 
 const STAT_TABS = ["Player Stats", "Team Stats"] as const;
-const PLAYER_STAT_VIEW_TABS: readonly PillTabOption<PlayerStatView>[] = [
-  { label: "Batting", value: "Batting" },
-  { label: "Pitching", value: "Pitching" },
-];
 
 const STAT_CELL_WIDTH = 80;
-const ROW_HEIGHT = 40;
-const INITIAL_ROWS_TO_RENDER = 12;
-const MAX_ROWS_PER_BATCH = 10;
-const VIRTUALIZATION_WINDOW_SIZE = 7;
 
-const BATTING_LEADERS: readonly LeaderDefinition[] = [
+const LEADER_STATS: readonly LeaderDefinition[] = [
   {
     label: "Batting Average",
     group: "career-batting",
@@ -106,9 +92,6 @@ const BATTING_LEADERS: readonly LeaderDefinition[] = [
     key: "stolenBases",
     order: "desc",
   },
-];
-
-const PITCHING_LEADERS: readonly LeaderDefinition[] = [
   { label: "ERA", group: "pitching", key: "ERA", order: "asc" },
   { label: "Wins", group: "pitching", key: "wins", order: "desc" },
   { label: "Strikeouts", group: "pitching", key: "strikeouts", order: "desc" },
@@ -116,47 +99,47 @@ const PITCHING_LEADERS: readonly LeaderDefinition[] = [
   { label: "WHIP", group: "pitching", key: "WHIP", order: "asc" },
 ];
 
-const BATTING_COLUMNS: readonly StatColumn[] = [
-  { header: "GP", getValue: (row) => row.primaryStats.gamesPlayed },
-  { header: "AB", getValue: (row) => row.primaryStats.atBats },
-  { header: "R", getValue: (row) => row.primaryStats.runs },
-  { header: "H", getValue: (row) => row.primaryStats.hits },
-  { header: "2B", getValue: (row) => row.primaryStats.doubles },
-  { header: "3B", getValue: (row) => row.primaryStats.triples },
-  { header: "HR", getValue: (row) => row.primaryStats.homeRuns },
-  { header: "RBI", getValue: (row) => row.primaryStats.RBIs },
-  { header: "BB", getValue: (row) => row.primaryStats.walks },
-  { header: "SO", getValue: (row) => row.primaryStats.strikeouts },
-  { header: "SB", getValue: (row) => row.primaryStats.stolenBases },
-  { header: "AVG", getValue: (row) => row.primaryStats.avg },
-  { header: "OBP", getValue: (row) => row.primaryStats.onBasePct },
-  { header: "SLG", getValue: (row) => row.primaryStats.slugAvg },
-  { header: "OPS", getValue: (row) => row.primaryStats.OPS },
+const PLAYER_STAT_COLUMNS: readonly StatColumn[] = [
+  { header: "B-GP", getValue: (row) => row.battingStats?.gamesPlayed },
+  { header: "AB", getValue: (row) => row.battingStats?.atBats },
+  { header: "R", getValue: (row) => row.battingStats?.runs },
+  { header: "H", getValue: (row) => row.battingStats?.hits },
+  { header: "2B", getValue: (row) => row.battingStats?.doubles },
+  { header: "3B", getValue: (row) => row.battingStats?.triples },
+  { header: "HR", getValue: (row) => row.battingStats?.homeRuns },
+  { header: "RBI", getValue: (row) => row.battingStats?.RBIs },
+  { header: "B-BB", getValue: (row) => row.battingStats?.walks },
+  { header: "B-SO", getValue: (row) => row.battingStats?.strikeouts },
+  { header: "SB", getValue: (row) => row.battingStats?.stolenBases },
+  { header: "AVG", getValue: (row) => row.battingStats?.avg },
+  { header: "OBP", getValue: (row) => row.battingStats?.onBasePct },
+  { header: "SLG", getValue: (row) => row.battingStats?.slugAvg },
+  { header: "OPS", getValue: (row) => row.battingStats?.OPS },
   {
-    header: "WAR",
+    header: "bWAR",
     getValue: (row) =>
-      row.primaryStats.WARBR ?? row.advancedBattingStats?.WARBR,
+      row.battingStats?.WARBR ?? row.advancedBattingStats?.WARBR,
   },
-];
-
-const PITCHING_COLUMNS: readonly StatColumn[] = [
-  { header: "GP", getValue: (row) => row.primaryStats.gamesPlayed },
-  { header: "GS", getValue: (row) => row.primaryStats.gamesStarted },
-  { header: "W", getValue: (row) => row.primaryStats.wins },
-  { header: "L", getValue: (row) => row.primaryStats.losses },
-  { header: "ERA", getValue: (row) => row.primaryStats.ERA },
-  { header: "IP", getValue: (row) => row.primaryStats.innings },
-  { header: "H", getValue: (row) => row.primaryStats.hits },
-  { header: "R", getValue: (row) => row.primaryStats.runs },
-  { header: "ER", getValue: (row) => row.primaryStats.earnedRuns },
-  { header: "BB", getValue: (row) => row.primaryStats.walks },
-  { header: "SO", getValue: (row) => row.primaryStats.strikeouts },
-  { header: "WHIP", getValue: (row) => row.primaryStats.WHIP },
-  { header: "SV", getValue: (row) => row.primaryStats.saves },
-  { header: "HLD", getValue: (row) => row.primaryStats.holds },
-  { header: "BS", getValue: (row) => row.primaryStats.blownSaves },
-  { header: "K/BB", getValue: (row) => row.primaryStats.strikeoutToWalkRatio },
-  { header: "WAR", getValue: (row) => row.primaryStats.WARBR },
+  { header: "P-GP", getValue: (row) => row.pitchingStats?.gamesPlayed },
+  { header: "GS", getValue: (row) => row.pitchingStats?.gamesStarted },
+  { header: "W", getValue: (row) => row.pitchingStats?.wins },
+  { header: "L", getValue: (row) => row.pitchingStats?.losses },
+  { header: "ERA", getValue: (row) => row.pitchingStats?.ERA },
+  { header: "IP", getValue: (row) => row.pitchingStats?.innings },
+  { header: "P-H", getValue: (row) => row.pitchingStats?.hits },
+  { header: "P-R", getValue: (row) => row.pitchingStats?.runs },
+  { header: "ER", getValue: (row) => row.pitchingStats?.earnedRuns },
+  { header: "P-BB", getValue: (row) => row.pitchingStats?.walks },
+  { header: "P-SO", getValue: (row) => row.pitchingStats?.strikeouts },
+  { header: "WHIP", getValue: (row) => row.pitchingStats?.WHIP },
+  { header: "SV", getValue: (row) => row.pitchingStats?.saves },
+  { header: "HLD", getValue: (row) => row.pitchingStats?.holds },
+  { header: "BS", getValue: (row) => row.pitchingStats?.blownSaves },
+  {
+    header: "K/BB",
+    getValue: (row) => row.pitchingStats?.strikeoutToWalkRatio,
+  },
+  { header: "pWAR", getValue: (row) => row.pitchingStats?.WARBR },
 ];
 
 const numberFormatter = new Intl.NumberFormat("en-US");
@@ -204,10 +187,7 @@ const hasUsableSeasonStats = (
   );
 };
 
-const getBestSeasonStats = (
-  player: BaseballRosterPlayer,
-  group?: StatGroupKey,
-) => {
+const getBestSeasonStats = (player: RosterPlayer, group?: StatGroupKey) => {
   const candidates = [
     player.latestSeasonStats,
     player.currentSeasonStats,
@@ -228,7 +208,7 @@ const getBestSeasonStats = (
 };
 
 const getPlayersFromRosterStats = (
-  rosterStats: BaseballRosterStats | BaseballRosterPlayer[] | null | undefined,
+  rosterStats: BaseballRosterStats | RosterPlayer[] | null | undefined,
 ) => {
   if (Array.isArray(rosterStats)) return rosterStats;
 
@@ -254,34 +234,36 @@ const formatStatValue = (value: BaseballStatValue | undefined): string => {
 const getGamesPlayed = (stats: BaseballStatMap | null | undefined) =>
   parseNumericStat(stats?.gamesPlayed) ?? 0;
 
-const getPlayerId = (player: BaseballRosterPlayer) =>
-  player.playerId ?? player.id;
+const getPlayerId = (player: RosterPlayer) => player.playerId ?? player.id;
 
-const getPlayerDisplayName = (player: BaseballRosterPlayer) =>
+const getPlayerDisplayName = (player: RosterPlayer) =>
   player.short_name ||
   [player.first_name, player.last_name].filter(Boolean).join(" ") ||
   player.full_name;
 
-const getPlayerRows = (
-  players: BaseballRosterPlayer[],
-  view: PlayerStatView,
-) => {
-  const group: StatGroupKey =
-    view === "Batting" ? "career-batting" : "pitching";
-
+const getPlayerRows = (players: RosterPlayer[]) => {
   return players
     .map<PlayerStatRow | null>((player) => {
-      const season = getBestSeasonStats(player, group);
-      const primaryStats = getStatsGroup(season, group);
+      const battingSeason = getBestSeasonStats(player, "career-batting");
+      const pitchingSeason = getBestSeasonStats(player, "pitching");
+      const battingStats = getStatsGroup(battingSeason, "career-batting");
+      const pitchingStats = getStatsGroup(pitchingSeason, "pitching");
+      const advancedBattingStats = getStatsGroup(
+        battingSeason,
+        "advanced-batting",
+      );
+      const hasBattingStats =
+        hasUsableStatMap(battingStats) && getGamesPlayed(battingStats) > 0;
+      const hasPitchingStats =
+        hasUsableStatMap(pitchingStats) && getGamesPlayed(pitchingStats) > 0;
 
-      if (!season || !hasUsableStatMap(primaryStats)) return null;
-      if (getGamesPlayed(primaryStats) <= 0) return null;
+      if (!hasBattingStats && !hasPitchingStats) return null;
 
       return {
         player,
-        season,
-        primaryStats,
-        advancedBattingStats: getStatsGroup(season, "advanced-batting"),
+        battingStats: hasBattingStats ? battingStats : null,
+        advancedBattingStats,
+        pitchingStats: hasPitchingStats ? pitchingStats : null,
       };
     })
     .filter((row): row is PlayerStatRow => row !== null);
@@ -292,7 +274,9 @@ const getStatLeader = (rows: PlayerStatRow[], definition: LeaderDefinition) => {
     const stats =
       definition.group === "advanced-batting"
         ? row.advancedBattingStats
-        : row.primaryStats;
+        : definition.group === "pitching"
+          ? row.pitchingStats
+          : row.battingStats;
     const value = stats?.[definition.key];
     const numericValue = parseNumericStat(value);
 
@@ -311,84 +295,6 @@ const getStatLeader = (rows: PlayerStatRow[], definition: LeaderDefinition) => {
   }, null);
 };
 
-type BaseballRosterRowProps = {
-  columns: readonly StatColumn[];
-  index: number;
-  isDark: boolean;
-  isLast: boolean;
-  onPlayerPress: (player: BaseballRosterPlayer) => void;
-  row: PlayerStatRow;
-  scrollX: SharedValue<number>;
-  viewportWidth: number;
-};
-
-const BaseballRosterRow = memo(function BaseballRosterRow({
-  columns,
-  index,
-  isDark,
-  isLast,
-  onPlayerPress,
-  row,
-  scrollX,
-  viewportWidth,
-}: BaseballRosterRowProps) {
-  const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
-  const playerId = getPlayerId(row.player);
-  const rowBackground =
-    index % 2 === 1
-      ? isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground
-      : undefined;
-
-  return (
-    <View
-      style={[
-        styles.virtualizedTableRow,
-        rowBackground ? { backgroundColor: rowBackground } : undefined,
-        isLast && { borderBottomWidth: 0 },
-      ]}
-    >
-      <TouchableOpacity
-        activeOpacity={activeOpacity}
-        onPress={() => onPlayerPress(row.player)}
-        style={[
-          styles.frozenPlayerCell,
-          {
-            backgroundColor:
-              rowBackground ??
-              (isDark ? Colors.dark.background : Colors.light.background),
-          },
-        ]}
-      >
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          style={[styles.tableCell, styles.playerName]}
-        >
-          {getPlayerDisplayName(row.player)}{" "}
-          <Text style={styles.number}>#{row.player.jersey_number ?? "—"}</Text>
-        </Text>
-      </TouchableOpacity>
-
-      <SyncedHorizontalStatViewport
-        contentWidth={columns.length * STAT_CELL_WIDTH}
-        scrollX={scrollX}
-        viewportWidth={viewportWidth}
-      >
-        {columns.map((column) => (
-          <Text
-            key={`${playerId}-${column.header}`}
-            style={[styles.tableCell, styles.statValue]}
-          >
-            {formatStatValue(column.getValue(row))}
-          </Text>
-        ))}
-      </SyncedHorizontalStatViewport>
-    </View>
-  );
-});
-
 export default function RosterStats({
   rosterStats,
   teamId,
@@ -405,37 +311,23 @@ export default function RosterStats({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<StatTab>(STAT_TABS[0]);
-  const [selectedPlayerView, setSelectedPlayerView] =
-    useState<PlayerStatView>("Batting");
-  const horizontalOffset = useSharedValue(0);
-  const [statsViewportWidth, setStatsViewportWidth] = useState(0);
+  const [mountedTabs, setMountedTabs] = useState<Record<StatTab, boolean>>({
+    "Player Stats": true,
+    "Team Stats": false,
+  });
 
   const players = useMemo(
     () => getPlayersFromRosterStats(rosterStats),
     [rosterStats],
   );
 
-  const battingRows = useMemo(
-    () => getPlayerRows(players, "Batting"),
-    [players],
-  );
-  const pitchingRows = useMemo(
-    () => getPlayerRows(players, "Pitching"),
-    [players],
-  );
-
-  const activeRows =
-    selectedPlayerView === "Batting" ? battingRows : pitchingRows;
-  const activeColumns =
-    selectedPlayerView === "Batting" ? BATTING_COLUMNS : PITCHING_COLUMNS;
-  const activeLeaders =
-    selectedPlayerView === "Batting" ? BATTING_LEADERS : PITCHING_LEADERS;
+  const playerRows = useMemo(() => getPlayerRows(players), [players]);
 
   const statLeaders = useMemo(
     () =>
-      activeLeaders.reduce<(LeaderDefinition & { leader: StatLeader })[]>(
+      LEADER_STATS.reduce<(LeaderDefinition & { leader: StatLeader })[]>(
         (acc, definition) => {
-          const leader = getStatLeader(activeRows, definition);
+          const leader = getStatLeader(playerRows, definition);
 
           if (leader) {
             acc.push({ ...definition, leader });
@@ -445,46 +337,42 @@ export default function RosterStats({
         },
         [],
       ),
-    [activeLeaders, activeRows],
+    [playerRows],
   );
 
-  const handleTabPress = useCallback((tab: StatTab) => {
+  const handleTabPress = (tab: StatTab) => {
     setSelectedTab(tab);
-  }, []);
 
-  const handlePress = useCallback(
-    (player: BaseballRosterPlayer) => {
-      router.push({
-        pathname: "/player/baseball/[id]",
-        params: {
-          id: String(getPlayerId(player)),
-          teamId: String(teamId),
-          league,
-        },
-      });
-    },
-    [league, teamId],
-  );
+    setMountedTabs((previousTabs) => ({
+      ...previousTabs,
+      [tab]: true,
+    }));
+  };
 
-  const handleStatsViewportLayout = useCallback(
-    (event: LayoutChangeEvent) => {
-      setStatsViewportWidth(event.nativeEvent.layout.width);
-    },
-    [],
-  );
+  const handlePress = (player: RosterPlayer) => {
+    router.push({
+      pathname: "/player/baseball/[id]",
+      params: {
+        id: String(getPlayerId(player)),
+        teamId: String(teamId),
+        league,
+      },
+    });
+  };
 
-  useEffect(() => {
-    horizontalOffset.value = 0;
-  }, [activeRows, horizontalOffset, selectedPlayerView]);
+  const rowBg = (index: number) =>
+    index % 2 === 1
+      ? {
+          backgroundColor: isDark
+            ? Colors.dark.itemBackground
+            : Colors.light.itemBackground,
+        }
+      : {};
 
   const headerBg = {
     backgroundColor: isDark
       ? Colors.dark.itemBackground
       : Colors.light.itemBackground,
-  };
-
-  const stickyColumnBg = {
-    backgroundColor: isDark ? Colors.dark.background : Colors.light.background,
   };
 
   const LeaderCard = ({
@@ -539,100 +427,140 @@ export default function RosterStats({
     );
   };
 
-  const emptyPlayerMessage =
-    selectedPlayerView === "Batting"
-      ? "No batting stats available."
-      : "No pitching stats available.";
+  const renderPlayerStats = () => {
+    if (!playerRows.length) {
+      return (
+        <View style={styles.center}>
+          <Text style={global.emptyText}>No player stats available.</Text>
+        </View>
+      );
+    }
 
-  const renderRosterRow = useCallback(
-    ({ item, index }: { item: PlayerStatRow; index: number }) => (
-      <BaseballRosterRow
-        columns={activeColumns}
-        index={index}
-        isDark={isDark}
-        isLast={index === activeRows.length - 1}
-        onPlayerPress={handlePress}
-        row={item}
-        scrollX={horizontalOffset}
-        viewportWidth={statsViewportWidth}
-      />
-    ),
-    [
-      activeColumns,
-      activeRows.length,
-      handlePress,
-      horizontalOffset,
-      isDark,
-      statsViewportWidth,
-    ],
-  );
+    return (
+      <>
+        <ScrollView
+          horizontal
+          nestedScrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          style={{ marginBottom: 16 }}
+          snapToInterval={276}
+          decelerationRate="fast"
+          snapToAlignment="start"
+        >
+          {statLeaders.map((item, index) => (
+            <LeaderCard
+              key={item.label}
+              row={item.leader.row}
+              label={item.label}
+              value={item.leader.value}
+              index={index}
+              total={statLeaders.length}
+            />
+          ))}
+        </ScrollView>
 
-  const playerListHeader = (
-    <>
-      <MainScrollTabBar
-        tabs={STAT_TABS}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-      />
-      <PillTabs<PlayerStatView>
-        tabs={PLAYER_STAT_VIEW_TABS}
-        selectedValue={selectedPlayerView}
-        onChange={setSelectedPlayerView}
-        containerStyle={styles.playerStatSelector}
-        scrollable={false}
-        minTabWidth={120}
-      />
-      <ScrollView
-        horizontal
-        nestedScrollEnabled={false}
-        showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 16 }}
-        snapToInterval={276}
-        decelerationRate="fast"
-        snapToAlignment="start"
-      >
-        {statLeaders.map((item, index) => (
-          <LeaderCard
-            key={item.label}
-            row={item.leader.row}
-            label={item.label}
-            value={item.leader.value}
-            index={index}
-            total={statLeaders.length}
-          />
-        ))}
-      </ScrollView>
-      {activeRows.length > 0 && (
-        <View style={styles.virtualizedTableHeader}>
-          <View style={[styles.frozenPlayerCell, headerBg, stickyColumnBg]}>
-            <Text style={[styles.tableCell, styles.nameHeaderText]}>NAME</Text>
+        <View style={styles.tableWrapper}>
+          <View style={styles.fixedColumnContainer}>
+            <View style={[styles.tableRow, headerBg]}>
+              <Text
+                style={[
+                  styles.tableCell,
+                  styles.nameHeaderText,
+                  { width: 140 },
+                ]}
+              >
+                Player
+              </Text>
+            </View>
+
+            {playerRows.map((row, index) => (
+              <View
+                key={`baseball-name-${getPlayerId(row.player)}`}
+                style={[
+                  styles.tableRow,
+                  rowBg(index),
+                  index === playerRows.length - 1 && { borderBottomWidth: 0 },
+                ]}
+              >
+                <TouchableOpacity
+                  activeOpacity={activeOpacity}
+                  onPress={() => handlePress(row.player)}
+                  style={[styles.tableCell, { width: 140 }]}
+                >
+                  <Text
+                    numberOfLines={1}
+                    style={[styles.playerName, { width: 132 }]}
+                  >
+                    {getPlayerDisplayName(row.player)}{" "}
+                    {row.player.jersey_number ? (
+                      <Text style={styles.number}>
+                        #{row.player.jersey_number}
+                      </Text>
+                    ) : null}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
-          <View style={{ flex: 1 }} onLayout={handleStatsViewportLayout}>
-            <SyncedHorizontalStatViewport
-              contentWidth={activeColumns.length * STAT_CELL_WIDTH}
-              scrollX={horizontalOffset}
-              viewportWidth={statsViewportWidth}
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.scrollSection}
+            contentContainerStyle={styles.scrollContentContainer}
+          >
+            <View
+              style={[
+                styles.statScrollContent,
+                { width: PLAYER_STAT_COLUMNS.length * STAT_CELL_WIDTH },
+              ]}
             >
-              {activeColumns.map((column) => (
-                <Text
-                  key={column.header}
+              <View style={[styles.tableRow, headerBg]}>
+                {PLAYER_STAT_COLUMNS.map((column) => (
+                  <Text
+                    key={column.header}
+                    style={[
+                      styles.tableCell,
+                      styles.headerText,
+                      { width: STAT_CELL_WIDTH },
+                    ]}
+                  >
+                    {column.header}
+                  </Text>
+                ))}
+              </View>
+
+              {playerRows.map((row, index) => (
+                <View
+                  key={`baseball-stats-${getPlayerId(row.player)}`}
                   style={[
-                    styles.tableCell,
-                    styles.headerText,
-                    headerBg,
-                    { width: STAT_CELL_WIDTH },
+                    styles.tableRow,
+                    rowBg(index),
+                    index === playerRows.length - 1 && {
+                      borderBottomWidth: 0,
+                    },
                   ]}
                 >
-                  {column.header}
-                </Text>
+                  {PLAYER_STAT_COLUMNS.map((column) => (
+                    <Text
+                      key={`${getPlayerId(row.player)}-${column.header}`}
+                      style={[
+                        styles.tableCell,
+                        styles.statValue,
+                        { width: STAT_CELL_WIDTH },
+                      ]}
+                    >
+                      {formatStatValue(column.getValue(row))}
+                    </Text>
+                  ))}
+                </View>
               ))}
-            </SyncedHorizontalStatViewport>
-          </View>
+            </View>
+          </ScrollView>
         </View>
-      )}
-    </>
-  );
+      </>
+    );
+  };
 
   const renderTeamTable = (rows: readonly TeamStatRow[]) => (
     <View style={styles.table}>
@@ -757,41 +685,8 @@ export default function RosterStats({
     return <Text style={global.errorText}>{error.message}</Text>;
   }
 
-  if (!battingRows.length && !pitchingRows.length && !teamStats) {
+  if (!playerRows.length && !teamStats) {
     return <Text style={global.emptyText}>No player stats available.</Text>;
-  }
-
-  if (selectedTab === "Player Stats") {
-    return (
-      <FlatList
-        data={activeRows}
-        renderItem={renderRosterRow}
-        keyExtractor={(row) =>
-          `${selectedPlayerView}-${String(getPlayerId(row.player))}`
-        }
-        ListHeaderComponent={playerListHeader}
-        ListEmptyComponent={
-          <View style={styles.center}>
-            <Text style={global.emptyText}>{emptyPlayerMessage}</Text>
-          </View>
-        }
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          onRefresh ? (
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          ) : undefined
-        }
-        keyboardShouldPersistTaps="handled"
-        getItemLayout={(_, index) => ({
-          length: ROW_HEIGHT,
-          offset: ROW_HEIGHT * index,
-          index,
-        })}
-        initialNumToRender={INITIAL_ROWS_TO_RENDER}
-        maxToRenderPerBatch={MAX_ROWS_PER_BATCH}
-        windowSize={VIRTUALIZATION_WINDOW_SIZE}
-      />
-    );
   }
 
   return (
@@ -811,7 +706,29 @@ export default function RosterStats({
         isDark={isDark}
       />
 
-      <View style={styles.tabScene}>{renderTeamStats()}</View>
+      {mountedTabs["Player Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Player Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Player Stats" ? "auto" : "none"}
+        >
+          {renderPlayerStats()}
+        </View>
+      )}
+
+      {mountedTabs["Team Stats"] && (
+        <View
+          style={[
+            styles.tabScene,
+            selectedTab !== "Team Stats" && styles.hiddenTabScene,
+          ]}
+          pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
+        >
+          {renderTeamStats()}
+        </View>
+      )}
     </ScrollView>
   );
 }

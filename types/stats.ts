@@ -11,23 +11,20 @@ export const STAT_CATEGORIES = [
 export type StatCategory = (typeof STAT_CATEGORIES)[number];
 
 export interface PlayerLeader {
-  stat: string;
-  value: number;
-  player_name: string;
-  gp: number;
   rank: number;
-  player: {
-    id: number;
-    nba_api_id: number;
-    player_id: number;
-    team_id: number;
-    first_name: string;
-    last_name: string;
-    full_name: string;
-    short_name: string;
-    headshot_url?: string;
-    position: string;
-  };
+  id: number | string | null;
+  headshot: string | null;
+  full_name: string | null;
+  short_name: string | null;
+  team_id: number | string | null;
+  stat_value: number | null;
+}
+
+export interface SeasonLeaderCategory {
+  categoryName: string;
+  shortName: string;
+  abbreviation: string;
+  leaders: PlayerLeader[];
 }
 
 export type PlayerStats = {

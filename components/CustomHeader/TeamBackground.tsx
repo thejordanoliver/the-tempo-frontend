@@ -1,4 +1,5 @@
 import { Colors } from "constants/styles";
+import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, HeaderTeamLike } from "./types";
@@ -22,7 +23,7 @@ export function TeamBackground({
   isDark,
   selectedTeam,
   logo,
-  teamColor,
+  teamColor = Colors.midTone,
   teamName,
   isTeamScreen,
   isPlayerScreen,
@@ -66,6 +67,18 @@ export function TeamBackground({
         }}
       />
 
+      <LinearGradient
+        colors={[
+          "rgba(0,0,0,0.48)",
+          "rgba(0,0,0,0.28)",
+          "rgba(0,0,0,0.08)",
+          "transparent",
+        ]}
+        locations={[0, 0.35, 0.72, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
       {selectedTeamLogo ? (
         <Image source={selectedTeamLogo} style={styles.bgImage} />
       ) : null}

@@ -32,7 +32,7 @@ export type BaseballSeasonStats = {
   updated_at?: string | null;
 };
 
-export type BaseballRosterPlayer = {
+export type RosterPlayer = {
   id: number;
   playerId?: number | string | null;
   full_name: string;
@@ -55,7 +55,7 @@ export type BaseballRosterPlayer = {
 export type BaseballRosterStats = {
   teamId: string;
   count: number;
-  players: BaseballRosterPlayer[];
+  players: RosterPlayer[];
 };
 
 const EMPTY_ROSTER_STATS = (teamId: string): BaseballRosterStats => ({
@@ -65,7 +65,7 @@ const EMPTY_ROSTER_STATS = (teamId: string): BaseballRosterStats => ({
 });
 
 const normalizeRosterStatsResponse = (
-  data: Partial<BaseballRosterStats> | BaseballRosterPlayer[] | null | undefined,
+  data: Partial<BaseballRosterStats> | RosterPlayer[] | null | undefined,
   teamId: string,
 ): BaseballRosterStats => {
   const players = Array.isArray(data)
@@ -130,7 +130,7 @@ export function useRosterStats(
         const url = `/api/team/stats/${league.toLowerCase()}/roster/${normalizedTeamId}`;
 
         const response = await apiClient.get<
-          Partial<BaseballRosterStats> | BaseballRosterPlayer[]
+          Partial<BaseballRosterStats> | RosterPlayer[]
         >(url);
         const normalizedRoster = normalizeRosterStatsResponse(
           response.data,

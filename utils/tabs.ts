@@ -115,7 +115,7 @@ export const TEAM_TABS = {
 
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
 
-  socc: ["schedule", "news", "roster"],
+  socc: ["schedule", "news", "roster", "forum"],
 } as const;
 
 export type League = keyof typeof LEAGUE_TABS;

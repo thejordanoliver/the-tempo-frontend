@@ -3,13 +3,11 @@ import { EXPLORE_WIDGET_HEIGHTS } from "constants/exploreWidgetSizes";
 import { Colors, Fonts } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { BlurView } from "expo-blur";
-import { GlassView } from "expo-glass-effect";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { isFavoriteLeague } from "types/favorites";
 import { ExploreWidgetSize } from "types/widgets";
 
-import { supportsLiquidGlass } from "@/utils/glass";
 import FavoriteTeamsSlider, { FavoriteTeamSlide } from "./FavoriteTeamsSlider";
 import { WidgetEditControls } from "./WidgetSlider";
 
@@ -53,8 +51,6 @@ export default function FavoriteTeamsWidget({
   canMoveDown,
 }: FavoriteTeamsWidgetProps) {
   const { favorites, isLoading, ready, allTeams } = useFavoriteTeamsContext();
-
-  const liquid = supportsLiquidGlass();
 
   const resolvedWidth = Math.max(
     width ?? containerWidth ?? sizeFallback[size],
@@ -200,18 +196,6 @@ export default function FavoriteTeamsWidget({
       )}
     </View>
   );
-
-  if (liquid) {
-    return (
-      <GlassView
-        style={cardStyle}
-        glassEffectStyle="regular"
-        
-      >
-        {widgetContent}
-      </GlassView>
-    );
-  }
 
   return (
     <BlurView

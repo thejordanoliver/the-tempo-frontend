@@ -6,6 +6,7 @@ import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { isFavoriteLeague } from "@/types/favorites";
 import { Ionicons } from "@expo/vector-icons";
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import PreviewModal, {
   type PreviewItem,
 } from "components/Favorites/PreviewModal";
@@ -22,7 +23,7 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -149,7 +150,6 @@ export default function FavoritesSection({
 
   const {
     previewTeam,
-    modalVisible,
     setModalVisible,
     handleLongPress,
     handleGoToTeam,
@@ -159,6 +159,7 @@ export default function FavoritesSection({
   const [previewSport, setPreviewSport] = useState<FavoriteSportId | null>(
     null,
   );
+  const previewSheetRef = useRef<BottomSheetModal>(null);
   const [collapsedSections, setCollapsedSections] = useState<
     Record<FavoriteSection["key"], boolean>
   >({
@@ -234,6 +235,7 @@ export default function FavoritesSection({
         onLongPress={() => {
           setPreviewSport(sport);
           setModalVisible(true);
+          requestAnimationFrame(() => previewSheetRef.current?.present());
         }}
         onPress={() => {
           router.push({
@@ -287,6 +289,7 @@ export default function FavoritesSection({
         onLongPress={() => {
           setPreviewSport(null);
           handleLongPress(team);
+          requestAnimationFrame(() => previewSheetRef.current?.present());
         }}
         style={({ pressed }) => [
           pressed && styles.pressed,
@@ -358,7 +361,7 @@ export default function FavoritesSection({
   return (
     <>
       <PreviewModal
-        visible={modalVisible}
+        sheetRef={previewSheetRef}
         item={
           previewSport
             ? ({ type: "sport", sport: previewSport } satisfies PreviewItem)
@@ -373,6 +376,7 @@ export default function FavoritesSection({
         onGo={() => {
           if (previewSport) {
             const config = LEAGUE_CONFIG[previewSport];
+            previewSheetRef.current?.dismiss();
             router.push({
               pathname: config.route,
               params: {
@@ -386,11 +390,13 @@ export default function FavoritesSection({
           }
 
           if (previewTeam) {
+            previewSheetRef.current?.dismiss();
             handleGoToTeam();
           }
         }}
         onRemove={() => {
           if (previewSport) {
+            previewSheetRef.current?.dismiss();
             void toggleFavoriteSport(previewSport);
             setModalVisible(false);
             setPreviewSport(null);
@@ -398,6 +404,7 @@ export default function FavoritesSection({
           }
 
           if (previewTeam) {
+            previewSheetRef.current?.dismiss();
             void handleRemoveFavorite(previewTeam);
           }
         }}

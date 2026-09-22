@@ -23,9 +23,9 @@ import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceSta
 import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";
 import { useFootballGames } from "@/hooks/FootballHooks/useFootballGames";
 import { useNFLPlayoffs } from "@/hooks/FootballHooks/useNFLPlayoffs";
-import { useSeasonLeaders } from "@/hooks/FootballHooks/useSeasonLeaders";
 import { useLeagueCalendar } from "@/hooks/LeagueHooks/useLeagueCalendar";
 import { useLeagueTabs } from "@/hooks/LeagueHooks/useLeagueTabs";
+import { useSeasonLeaders } from "@/hooks/LeagueHooks/useSeasonLeaders";
 import { useLeaguesNews } from "@/hooks/NewsHooks/useLeaguesNews";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";

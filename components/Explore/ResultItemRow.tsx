@@ -63,9 +63,7 @@ export default function ResultItemRow({
     else if (team.isCBB && team.id != null)
       teamLogo = getCBBTeamLogo(team.id, isDark);
     else if (team.isWCBB && team.id != null)
-      teamLogo = team.logo
-        ? { uri: team.logo }
-        : getWCBBTeamLogo(team.id, isDark);
+      teamLogo = getWCBBTeamLogo(team.id, isDark);
     else if (team.id != null) teamLogo = getNBATeamLogo(team.id, isDark);
 
     return (

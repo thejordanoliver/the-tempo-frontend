@@ -38,6 +38,13 @@ export default function NewsList({
       </View>
     );
   }
+  if (error) {
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Failed to load news</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
@@ -60,17 +67,6 @@ export default function NewsList({
       contentContainerStyle={styles.container}
       renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
       ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : null}
-      ListEmptyComponent={
-        error ? (
-          <View style={global.emptyContainer}>
-            <Text style={global.errorText}>Failed to load news</Text>
-          </View>
-        ) : (
-          <View style={global.emptyContainer}>
-            <Text style={global.emptyText}>No news or highlights found.</Text>
-          </View>
-        )
-      }
     />
   );
 }

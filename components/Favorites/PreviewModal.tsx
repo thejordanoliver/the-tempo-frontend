@@ -20,7 +20,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { GlassView } from "expo-glass-effect";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, type RefObject } from "react";
 import { Image, Text, View } from "react-native";
 import { teamPreviewModalStyles } from "styles/TeamStyles/TeamPreviewModalStyles";
 
@@ -29,7 +29,7 @@ export type PreviewItem =
   | { type: "sport"; sport: FavoriteSportId };
 
 type Props = {
-  visible: boolean;
+  sheetRef: RefObject<BottomSheetModal | null>;
   item: PreviewItem | null;
   onClose: () => void;
   onGo: () => void;
@@ -65,7 +65,7 @@ const getTeamLogo = (team: Team, isDark: boolean) => {
 };
 
 export default function PreviewModal({
-  visible,
+  sheetRef,
   item,
   onClose,
   onGo,
@@ -73,21 +73,10 @@ export default function PreviewModal({
   currentUser,
 }: Props) {
   const liquid = supportsLiquidGlass();
-  const sheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["42%"], []);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = teamPreviewModalStyles(isDark);
-
-  useEffect(() => {
-    if (!visible || !item) {
-      sheetRef.current?.dismiss();
-      return;
-    }
-
-    const timeout = setTimeout(() => sheetRef.current?.present(), 0);
-    return () => clearTimeout(timeout);
-  }, [item, visible]);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (

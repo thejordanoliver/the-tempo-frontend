@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 
 /* -------------------------------------------------------------------------- */
@@ -44,12 +44,10 @@ import { getLeagueCalendarDateKey } from "../../utils/leagueCalendarCache";
 import Draft, {
   getDefaultDraftYear,
 } from "../../components/League/Draft/Draft";
-import NBASeasonLeadersList from "../../components/League/SeasonLeadersList";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
 import { NBAPlayoffBracket } from "../../components/Sports/Basketball/NBAPlayoffs/NBAPlayoffBracket";
 
 import { useNBAPlayoffGames } from "../../hooks/NBAHooks/useNBAPlayoffGames";
-import { useSeasonLeaders as useNBASeasonLeaders } from "../../hooks/NBAHooks/useSeasonLeaders";
 
 /* -------------------------------------------------------------------------- */
 /*                                     CBB/WCBB                                    */
@@ -65,12 +63,13 @@ import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import TournamentTreeBracket from "../../components/Sports/Basketball/CBBTournament/TournamentTreeBracket";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
-import CollegeSeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
+import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
-import { useSeasonLeaders } from "../../hooks/FootballHooks/useSeasonLeaders";
+import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
   getCBBSeason,
   getNBACalendarSeason,
+  getNBASeason,
   getRecruitYear,
   getWNBASeason,
 } from "../../utils/dateUtils";
@@ -133,7 +132,7 @@ export default function BasketballLeagueScreen() {
 function NBALeagueScreen() {
   const league = "nba";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-
+  const currentSeason = getNBASeason();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
@@ -285,11 +284,12 @@ function NBALeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   const {
-    leaders,
+    categories,
     loading: leadersLoading,
     error: leadersError,
-  } = useNBASeasonLeaders({ enabled: hasVisitedTab("stats") });
-
+  } = useSeasonLeaders(currentSeason, league, {
+    enabled: hasVisitedTab("stats"),
+  });
   /* ------------------------------------------------------------------------ */
   /*                                  News                                    */
   /* ------------------------------------------------------------------------ */
@@ -442,7 +442,6 @@ function NBALeagueScreen() {
             handlePageChange(event.nativeEvent.position)
           }
         >
-          {/* SCORES */}
           <View key="scores">
             <DateNavigator
               selectedDate={selectedDate}
@@ -462,7 +461,6 @@ function NBALeagueScreen() {
             />
           </View>
 
-          {/* NEWS */}
           <View key="news" style={styles.contentArea}>
             {hasVisitedTab("news") ? (
               <NewsList
@@ -477,7 +475,6 @@ function NBALeagueScreen() {
             ) : null}
           </View>
 
-          {/* STANDINGS */}
           <View key="standings">
             {hasVisitedTab("standings") ? (
               <StandingsList
@@ -488,7 +485,6 @@ function NBALeagueScreen() {
             ) : null}
           </View>
 
-          {/* PLAYOFFS */}
           <View key="playoffs" style={styles.contentArea}>
             {hasVisitedTab("playoffs") ? (
               <NBAPlayoffBracket
@@ -501,18 +497,17 @@ function NBALeagueScreen() {
             ) : null}
           </View>
 
-          {/* STATS */}
-          <ScrollView key="stats">
+          <View key="stats" style={styles.contentArea}>
             {hasVisitedTab("stats") ? (
-              <NBASeasonLeadersList
-                leadersByStat={leaders}
+              <SeasonLeadersList
                 loading={leadersLoading}
                 error={leadersError}
+                categories={categories}
+                league={league}
               />
             ) : null}
-          </ScrollView>
+          </View>
 
-          {/* DRAFT */}
           <View key="draft" style={styles.contentArea}>
             {hasVisitedTab("draft") ? (
               <Draft
@@ -527,12 +522,10 @@ function NBALeagueScreen() {
             ) : null}
           </View>
 
-          {/* AWARDS */}
           <View key="awards" style={styles.contentArea}>
             {hasVisitedTab("awards") ? <AwardSeasons league={league} /> : null}
           </View>
 
-          {/* FORUM */}
           <View key="forum" style={styles.contentArea}>
             {hasVisitedTab("forum") ? <ForumFeed league={league} /> : null}
           </View>
@@ -1397,7 +1390,7 @@ function CBBLeagueScreen() {
   const statsPage = (
     <View key="stats" style={styles.contentArea}>
       {hasVisitedTab("stats") ? (
-        <CollegeSeasonLeadersList
+        <SeasonLeadersList
           loading={leadersLoading}
           error={leadersError}
           categories={categories}
@@ -1780,7 +1773,7 @@ function WCBBLeagueScreen() {
   const statsPage = (
     <View key="stats" style={styles.contentArea}>
       {hasVisitedTab("stats") ? (
-        <CollegeSeasonLeadersList
+        <SeasonLeadersList
           loading={leadersLoading}
           error={leadersError}
           categories={categories}

@@ -1,25 +1,18 @@
 import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
+import { SeasonLeaderCategory } from "@/types/stats";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { Leader } from "hooks/FootballHooks/useSeasonLeaders";
 import { FlatList, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
 
 import HeadingTwo from "../../Headings/HeadingTwo";
 
-interface Category {
-  categoryName: string;
-  abbreviation: string;
-  shortName: string;
-  leaders: Leader[];
-}
-
 interface SeasonLeadersListProps {
   loading?: boolean;
   error?: string | null;
-  categories?: Category[];
+  categories?: SeasonLeaderCategory[];
   league: string;
 }
 
@@ -32,6 +25,15 @@ const normalizeNumericTeamId = (
   return Number.isFinite(numericValue) ? numericValue : 0;
 };
 
+const normalizeNumericPlayerId = (
+  value: string | number | null | undefined,
+): number | null => {
+  if (value === null || value === undefined || value === "") return null;
+
+  const numericValue = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numericValue) ? numericValue : null;
+};
+
 export default function SeasonLeadersList({
   loading,
   error,
@@ -42,7 +44,6 @@ export default function SeasonLeadersList({
   const isDark = resolvedColorScheme === "dark";
   const styles = leadersListStyles(isDark);
   const global = globalStyles(isDark);
-  const isMLB = league === "mlb";
 
   if (loading) {
     return (
@@ -75,18 +76,23 @@ export default function SeasonLeadersList({
             <HeadingTwo isDark={isDark}>{item.categoryName} Leaders</HeadingTwo>
 
             <View style={styles.playersList}>
-              {item.leaders.slice(0, 5).map((player) => {
+              {item.leaders.map((player) => {
+                const playerId = normalizeNumericPlayerId(player.id);
+
+                if (playerId === null) {
+                  return null;
+                }
+
                 return (
                   <PlayerCard
-                    key={player.id}
+                    key={`${player.id}-${player.rank}`}
                     rank={player.rank}
-                    id={Number(player.id)}
+                    id={playerId}
                     name={player.short_name}
-                    position={player.position}
-                    headshot={player.headshot_url}
-                    statNumber={isMLB ? player.value : player.displayValue}
+                    headshot={player.headshot}
+                    statNumber={player.stat_value}
                     league={league}
-                    teamId={normalizeNumericTeamId(player.teamId)}
+                    teamId={normalizeNumericTeamId(player.team_id)}
                   />
                 );
               })}

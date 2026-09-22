@@ -1,24 +1,31 @@
 import { apiClient } from "@/utils/apiClient";
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { PlayerLeader, StatCategory } from "types/stats";
+import { SeasonLeaderCategory } from "types/stats";
 
-type LeadersByStat = Partial<Record<StatCategory, PlayerLeader[]>>;
-
-interface ApiResponse {
-  season: string;
-  perMode: string;
-  seasonType: string;
-  leaderboards: LeadersByStat;
+interface SeasonLeadersApiResponse {
+  league: string;
+  requestedLeague: string;
+  requestedSeason: number;
+  season: number;
+  displaySeason: string;
+  fallbackUsed: boolean;
+  source: "database";
+  seasonType: number;
+  seasonTypeLabel: string;
+  limit: number;
+  categories: SeasonLeaderCategory[];
 }
 
 export function useSeasonLeaders({
+  season,
   enabled = true,
 }: {
+  season: number | string;
   enabled?: boolean;
-} = {}) {
-  const [leaders, setLeaders] = useState<LeadersByStat>({});
-  const [loading, setLoading] = useState(true);
+}) {
+  const [categories, setCategories] = useState<SeasonLeaderCategory[]>([]);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,24 +36,29 @@ export function useSeasonLeaders({
     let isCancelled = false;
 
     async function fetchLeaders() {
+      setLoading(true);
+      setError(null);
+
       try {
-        const { data } = await apiClient.get<ApiResponse>(
-          "api/leaders/nba/leaders",
+        const { data } = await apiClient.get<SeasonLeadersApiResponse>(
+          "api/leaders/nba",
+          { params: { season } },
         );
 
         if (isCancelled) {
           return;
         }
 
-        setLeaders(data.leaderboards);
-        setError(null);
+        setCategories(Array.isArray(data.categories) ? data.categories : []);
       } catch (err) {
         if (isCancelled) {
           return;
         }
 
-        if (isAxiosError(err)) {
-          setError(err.response?.data?.error || err.message);
+        setCategories([]);
+
+        if (isAxiosError<{ error?: string }>(err)) {
+          setError(err.response?.data?.error ?? err.message);
         } else if (err instanceof Error) {
           setError(err.message);
         } else {
@@ -64,11 +76,11 @@ export function useSeasonLeaders({
     return () => {
       isCancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, season]);
 
   return {
-    leaders,
+    categories,
     loading: enabled ? loading : false,
-    error,
+    error: enabled ? error : null,
   };
 }

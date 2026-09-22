@@ -1,66 +1,29 @@
+import { PlayerLeader, SeasonLeaderCategory } from "@/types/stats";
+import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { apiClient } from "utils/apiClient";
 
 /* ----------------------------- Types ----------------------------- */
 
-export interface Leader {
-  id: number | string | null;
-  full_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  short_name: string | null;
-  height: string | null;
-  weight: string | number | null;
-  position: string | null;
-  jersey_number: number | string | null;
-  experience: number | string | null;
-  experience_display: string | null;
-  experience_abbr: string | null;
-  birth_city: string | null;
-  birth_state: string | null;
-  birth_country: string | null;
-  birth_display: string | null;
-  birth_date: string | null;
-  team_id: number | string | null;
-  headshot_url: string | null;
-  active: boolean | null;
-  created_at: string | null;
-  updated_at: string | null;
-  rank: number | string | null;
-  value: number | string | null;
-  displayValue: string | null;
+export type Leader = PlayerLeader;
 
-  teamId?: number | string | null;
-  teamName?: string | null;
-  teamAbbrev?: string | null;
-  teamLogo?: string | null;
-  seasonTeamId?: number | string | null;
-  seasonTeamSlug?: string | null;
-
-  [key: string]: unknown;
-}
-
-export interface LeaderCategory {
-  categoryName: string;
-  shortName: string;
-  abbreviation: string;
-  leaders: Leader[];
-}
+export type LeaderCategory = SeasonLeaderCategory;
 
 export type LeaderDataSource = "database" | null;
 
 interface SeasonLeadersApiResponse {
-  league?: string;
-  requestedLeague?: string;
-  requestedSeason?: number;
-  season?: number;
-  displaySeason?: string;
-  source?: LeaderDataSource;
-  seasonType?: number;
-  seasonTypeLabel?: string;
-  limit?: number;
-  categories?: LeaderCategory[];
+  league: string;
+  requestedLeague: string;
+  requestedSeason: number;
+  season: number;
+  displaySeason: string;
+  fallbackUsed: boolean;
+  source: Exclude<LeaderDataSource, null>;
+  seasonType: number;
+  seasonTypeLabel: string;
+  limit: number;
+  categories: LeaderCategory[];
 }
 
 interface SeasonLeaderResult {
@@ -145,8 +108,11 @@ export function useSeasonLeaders(
 
       console.error(`❌ [${normalizedLeague}] Season Leaders Error:`, error);
 
-      const message =
-        error instanceof Error ? error.message : "Failed to fetch leaders";
+      const message = isAxiosError<{ error?: string }>(error)
+        ? (error.response?.data?.error ?? error.message)
+        : error instanceof Error
+          ? error.message
+          : "Failed to fetch leaders";
 
       setCategories([]);
       setSource(null);

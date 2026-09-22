@@ -21,6 +21,7 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { getMLBSeason } from "utils/dateUtils";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
+import ForumFeed from "@/components/Forum/ForumFeed";
 
 export default function TeamDetailScreen() {
   const navigation = useNavigation();
@@ -33,7 +34,6 @@ export default function TeamDetailScreen() {
     league: string;
   }>();
   const { toggleNotifications, isNotified } = useNotifications();
-
   const teamIdNum = Number(teamId);
   const team = getSOCCTeam(teamId);
   const teamLogo = getSOCCTeamLogo(teamId, true);
@@ -96,6 +96,9 @@ export default function TeamDetailScreen() {
       }
 
       if (selectedTab === "news") {
+        await refreshNews();
+      }
+      if (selectedTab === "forum") {
         await refreshNews();
       }
     } finally {
@@ -195,6 +198,11 @@ export default function TeamDetailScreen() {
             onRefresh={handleRefresh}
             league={"soccer"}
           />
+        </View>
+
+        {/* FORUM */}
+        <View key="forum" style={styles.contentArea}>
+          <ForumFeed teamId={teamId as string} league={league} />
         </View>
       </PagerView>
     </View>
