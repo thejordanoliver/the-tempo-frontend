@@ -81,18 +81,9 @@ export default function PlayerHeader({ player, isDark }: Props) {
       {/* Info grid */}
       <View style={styles.infoGrid}>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>COLLEGE</Text>
-          <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
-            {player.college ?? "Unknown"}
-          </Text>
+          <Text style={styles.infoLabel}>BORN</Text>
+          <Text style={styles.infoValue}>{birthDate}</Text>
         </View>
-
-        {birthDate ? (
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>BORN</Text>
-            <Text style={styles.infoValue}>{birthDate}</Text>
-          </View>
-        ) : null}
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>DRAFT</Text>

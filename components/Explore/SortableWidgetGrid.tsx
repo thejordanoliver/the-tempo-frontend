@@ -1,12 +1,6 @@
 import * as Haptics from "expo-haptics";
 import type { ReactNode } from "react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AppState,
   type LayoutChangeEvent,
@@ -14,8 +8,8 @@ import {
   ScrollView,
   type StyleProp,
   StyleSheet,
-  type ViewStyle,
   View,
+  type ViewStyle,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -253,9 +247,12 @@ function SortableWidget({
           // handler will commit the optimistic layout and start the final spring;
           // targetX/targetY can still describe the previous slot on this frame.
           setSharedValue(positionX, dragOriginX.value + translationX.value);
-          setSharedValue(positionY, dragOriginY.value +
-            translationY.value +
-            (scrollOffset.value - dragStartScrollOffset.value));
+          setSharedValue(
+            positionY,
+            dragOriginY.value +
+              translationY.value +
+              (scrollOffset.value - dragStartScrollOffset.value),
+          );
           setSharedValue(isGestureActive, false);
           setSharedValue(edgeDirection, 0);
           setSharedValue(scale, withSpring(1, LIFT_SPRING));
@@ -301,9 +298,7 @@ function SortableWidget({
 
   const animatedStyle = useAnimatedStyle(() => {
     const active = isGestureActive.value;
-    const x = active
-      ? dragOriginX.value + translationX.value
-      : positionX.value;
+    const x = active ? dragOriginX.value + translationX.value : positionX.value;
     const y = active
       ? dragOriginY.value +
         translationY.value +
@@ -534,11 +529,7 @@ export default function SortableWidgetGrid({
         return;
       }
 
-      const nextOrder = moveWidgetToIndex(
-        currentOrder,
-        fromIndex,
-        targetIndex,
-      );
+      const nextOrder = moveWidgetToIndex(currentOrder, fromIndex, targetIndex);
       const nextDrag = { ...drag, currentIndex: targetIndex };
 
       orderRef.current = nextOrder;
@@ -633,11 +624,7 @@ export default function SortableWidgetGrid({
   );
 
   return (
-    <View
-      ref={viewportRef}
-      style={style}
-      onLayout={handleViewportLayout}
-    >
+    <View ref={viewportRef} style={style} onLayout={handleViewportLayout}>
       <ScrollView
         ref={scrollRef}
         style={sortableStyles.scroll}

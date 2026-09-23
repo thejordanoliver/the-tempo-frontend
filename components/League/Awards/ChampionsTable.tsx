@@ -11,7 +11,7 @@ import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useChampions } from "hooks/LeagueHooks/useChampions";
 import { Image, Text, View } from "react-native";
-import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
+import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 
 type Props = {
   title: string;
@@ -26,7 +26,7 @@ export default function ChampionsTable({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = awardTableStyles(isDark);
+  const styles = AwardTableStyles(isDark);
   const global = globalStyles(isDark);
 
   const { data, loading, error } = useChampions({
@@ -60,23 +60,23 @@ export default function ChampionsTable({
 
         {data.map((row, index) => {
           const logo =
-            row.team && league === "CFB"
+            row.team && league === "cfb"
               ? getCFBTeamLogo(row.team.id, isDark)
-              : row.team && league === "NBA"
+              : row.team && league === "nba"
                 ? getNBATeamLogo(row.team.id, isDark)
-                : row.team && league === "WNBA"
+                : row.team && league === "wnba"
                   ? getWNBATeamLogo(row.team.id, isDark)
-                  : row.team && league === "MLB"
+                  : row.team && league === "mlb"
                     ? getMLBTeamLogo(row.team.id, isDark)
-                    : row.team && league === "NHL"
+                    : row.team && league === "nhl"
                       ? getNHLTeamLogo(row.team.id, isDark)
-                      : row.team && league === "CBB"
+                      : row.team && league === "cbb"
                         ? getCBBTeamLogo(row.team.id, isDark)
-                        : row.team && league === "WCBB"
+                        : row.team && league === "wcbb"
                           ? getWCBBTeamLogo(row.team.id, isDark)
                           : getNFLTeamLogo(row.team?.id ?? 0, isDark);
 
-          const isSuperBowl = league === "NFL";
+          const isSuperBowl = league === "nfl";
 
           return (
             <View

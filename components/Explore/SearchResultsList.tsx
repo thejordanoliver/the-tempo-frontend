@@ -28,6 +28,7 @@ type Props = {
 
 function getTeamLeagueKey(item: TeamResult) {
   if (item.isNFL) return "nfl";
+  if (item.isGLEAGUE) return "gleague";
   if (item.isWNBA) return "wnba";
   if (item.isMLB) return "mlb";
   if (item.isNHL) return "nhl";

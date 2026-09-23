@@ -76,6 +76,24 @@ function normalizeSearchValue(value: string | number | null | undefined) {
     .trim();
 }
 
+function getRecruitTeamNames(recruit: Recruit) {
+  const names = [
+    recruit.committed_team_name,
+    recruit.projected_team_name,
+    recruit.predicted_team_name,
+    ...(recruit.predicted_schools?.map((school) => school.team_name) ?? []),
+  ];
+
+  return Array.from(
+    new Set(
+      names
+        .filter((name): name is string => typeof name === "string")
+        .map((name) => name.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
 const RecruitsHeader = memo(function RecruitsHeader({
   isDark,
   styles,
@@ -247,11 +265,7 @@ export default function RecruitsList({
 
   const teamOptions = useMemo(() => {
     const uniqueTeams = Array.from(
-      new Set(
-        playerData
-          .map((r: Recruit) => r.predicted_team_name)
-          .filter((t): t is string => Boolean(t)),
-      ),
+      new Set(playerData.flatMap((recruit) => getRecruitTeamNames(recruit))),
     ).sort((a, b) => a.localeCompare(b));
 
     return [
@@ -273,7 +287,7 @@ export default function RecruitsList({
 
     if (team !== "all") {
       list = list.filter((r: Recruit) => {
-        return r.predicted_team_name === team;
+        return getRecruitTeamNames(r).includes(team);
       });
     }
 

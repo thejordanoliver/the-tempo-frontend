@@ -95,6 +95,7 @@ export const LEAGUE_TABS = {
 export const TEAM_TABS = {
   // Basketball
   nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  gleague: ["schedule", "news", "roster", "forum"],
   cbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],

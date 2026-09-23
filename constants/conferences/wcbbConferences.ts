@@ -1,49 +1,49 @@
 import MWCLogo from "assets/College_Logos/Conference_Logos/MWC.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
-import A10Logo from "../assets/College_Logos/Conference_Logos/A10.png";
-import ACCLogo from "../assets/College_Logos/Conference_Logos/ACC.png";
-import ACCLogoLight from "../assets/College_Logos/Conference_Logos/ACCLight.png";
-import AMEastLogo from "../assets/College_Logos/Conference_Logos/AmericaEast.png";
-import AACLogo from "../assets/College_Logos/Conference_Logos/American.png";
-import BIG12Logo from "../assets/College_Logos/Conference_Logos/Big12.png";
-import BIG12Logolight from "../assets/College_Logos/Conference_Logos/BIG12Light.png";
-import BigEastLogo from "../assets/College_Logos/Conference_Logos/BigEast.png";
-import BigSkyLogo from "../assets/College_Logos/Conference_Logos/BigSky.png";
-import BigSouthLogo from "../assets/College_Logos/Conference_Logos/BigSouth.png";
-import BIG10Logo from "../assets/College_Logos/Conference_Logos/BigTen.png";
-import BIG10Logolight from "../assets/College_Logos/Conference_Logos/BIGTenLight.png";
-import BigWestLogo from "../assets/College_Logos/Conference_Logos/BigWest.png";
-import CAALogo from "../assets/College_Logos/Conference_Logos/CAA.png";
-import CBBLogo from "../assets/College_Logos/Conference_Logos/CBB.png";
-import CUSALogo from "../assets/College_Logos/Conference_Logos/CUSA.png";
-import CUSALogoLight from "../assets/College_Logos/Conference_Logos/CUSALight.png";
-import IvyLeagueLogo from "../assets/College_Logos/Conference_Logos/IvyLeague.png";
-import MAACLogo from "../assets/College_Logos/Conference_Logos/MAAC.png";
-import MACLogo from "../assets/College_Logos/Conference_Logos/MAC.png";
-import MEACLogo from "../assets/College_Logos/Conference_Logos/MEAC.png";
-import MVFCLogo from "../assets/College_Logos/Conference_Logos/MVFC.png";
-import NECLogo from "../assets/College_Logos/Conference_Logos/NEC.png";
-import OVCLogo from "../assets/College_Logos/Conference_Logos/OVC.png";
-import PatriotLeagueLogo from "../assets/College_Logos/Conference_Logos/PatriotLeague.png";
-import SECLogo from "../assets/College_Logos/Conference_Logos/SEC.png";
-import SLCLogo from "../assets/College_Logos/Conference_Logos/SLC.png";
-import SoConLogo from "../assets/College_Logos/Conference_Logos/SoCon.png";
-import SunBeltLogo from "../assets/College_Logos/Conference_Logos/SunBelt.png";
-import SWACLogo from "../assets/College_Logos/Conference_Logos/SWAC.png";
-import WACLogo from "../assets/College_Logos/Conference_Logos/WAC.png";
+import A10Logo from "../../assets/College_Logos/Conference_Logos/A10.png";
+import ACCLogo from "../../assets/College_Logos/Conference_Logos/ACC.png";
+import ACCLogoLight from "../../assets/College_Logos/Conference_Logos/ACCLight.png";
+import AMEastLogo from "../../assets/College_Logos/Conference_Logos/AmericaEast.png";
+import AACLogo from "../../assets/College_Logos/Conference_Logos/American.png";
+import BIG12Logo from "../../assets/College_Logos/Conference_Logos/Big12.png";
+import BIG12Logolight from "../../assets/College_Logos/Conference_Logos/BIG12Light.png";
+import BigEastLogo from "../../assets/College_Logos/Conference_Logos/BigEast.png";
+import BigSkyLogo from "../../assets/College_Logos/Conference_Logos/BigSky.png";
+import BigSouthLogo from "../../assets/College_Logos/Conference_Logos/BigSouth.png";
+import BIG10Logo from "../../assets/College_Logos/Conference_Logos/BigTen.png";
+import BIG10Logolight from "../../assets/College_Logos/Conference_Logos/BIGTenLight.png";
+import BigWestLogo from "../../assets/College_Logos/Conference_Logos/BigWest.png";
+import CAALogo from "../../assets/College_Logos/Conference_Logos/CAA.png";
+import CUSALogo from "../../assets/College_Logos/Conference_Logos/CUSA.png";
+import CUSALogoLight from "../../assets/College_Logos/Conference_Logos/CUSALight.png";
+import IvyLeagueLogo from "../../assets/College_Logos/Conference_Logos/IvyLeague.png";
+import MAACLogo from "../../assets/College_Logos/Conference_Logos/MAAC.png";
+import MACLogo from "../../assets/College_Logos/Conference_Logos/MAC.png";
+import MEACLogo from "../../assets/College_Logos/Conference_Logos/MEAC.png";
+import MVFCLogo from "../../assets/College_Logos/Conference_Logos/MVFC.png";
+import NECLogo from "../../assets/College_Logos/Conference_Logos/NEC.png";
+import OVCLogo from "../../assets/College_Logos/Conference_Logos/OVC.png";
+import PatriotLeagueLogo from "../../assets/College_Logos/Conference_Logos/PatriotLeague.png";
+import SECLogo from "../../assets/College_Logos/Conference_Logos/SEC.png";
+import SLCLogo from "../../assets/College_Logos/Conference_Logos/SLC.png";
+import SoConLogo from "../../assets/College_Logos/Conference_Logos/SoCon.png";
+import SunBeltLogo from "../../assets/College_Logos/Conference_Logos/SunBelt.png";
+import SWACLogo from "../../assets/College_Logos/Conference_Logos/SWAC.png";
+import WACLogo from "../../assets/College_Logos/Conference_Logos/WAC.png";
+import WCBBLogo from "../../assets/College_Logos/Conference_Logos/WCBB.png";
 import type { Conference } from "./cfbConferences";
 
-export type CBBConferenceSelection = number | string | null | undefined;
+export type WCBBConferenceSelection = number | string | null | undefined;
 
-export const cbbConferences: Conference[] = [
+export const wcbbConferences: Conference[] = [
   {
     id: 0,
     uid: "top25",
     groupId: null,
     name: "Top 25",
     shortName: "Top 25",
-    logo: CBBLogo,
-    logoLight: CBBLogo,
+    logo: WCBBLogo,
+    logoLight: WCBBLogo,
     parentGroupId: 80,
     color: "#009CDE",
     secondaryColor: "#000000",
@@ -422,26 +422,28 @@ export const cbbConferences: Conference[] = [
   },
 ];
 
-function normalizeCBBConferenceselection(selection: CBBConferenceSelection) {
+function normalizeWCBBConferenceselection(selection: WCBBConferenceSelection) {
   return String(selection ?? "").trim();
 }
 
 export const getCFBConference = (groupId: number | string | null) => {
   if (groupId == null) return undefined;
-  return cbbConferences.find((c) => String(c.groupId) === String(groupId));
+  return wcbbConferences.find((c) => String(c.groupId) === String(groupId));
 };
 
 export const getCFBConferenceName = (groupId: number | string | null) => {
   if (groupId == null) return undefined;
-  const conference = cbbConferences.find(
+  const conference = wcbbConferences.find(
     (c) => String(c.groupId) === String(groupId),
   );
 
   return conference?.shortName || conference?.name;
 };
 
-export const resolveCBBConferenceselection = (selection: CBBConferenceSelection) => {
-  const normalizedSelection = normalizeCBBConferenceselection(selection);
+export const resolveWCBBConferenceselection = (
+  selection: WCBBConferenceSelection,
+) => {
+  const normalizedSelection = normalizeWCBBConferenceselection(selection);
 
   if (!normalizedSelection) {
     return undefined;
@@ -453,7 +455,7 @@ export const resolveCBBConferenceselection = (selection: CBBConferenceSelection)
     return getCFBConference(50);
   }
 
-  return cbbConferences.find((conference) => {
+  return wcbbConferences.find((conference) => {
     return (
       conference.uid.toLowerCase() === lowerSelection ||
       conference.shortName.toLowerCase() === lowerSelection ||
@@ -464,8 +466,10 @@ export const resolveCBBConferenceselection = (selection: CBBConferenceSelection)
   });
 };
 
-export const getCBBConferenceSelectionName = (selection: CBBConferenceSelection) => {
-  const conference = resolveCBBConferenceselection(selection);
+export const getWCBBConferenceSelectionName = (
+  selection: WCBBConferenceSelection,
+) => {
+  const conference = resolveWCBBConferenceselection(selection);
 
   if (!conference) {
     return undefined;
@@ -478,11 +482,11 @@ export const getCBBConferenceSelectionName = (selection: CBBConferenceSelection)
   return conference.shortName || conference.name;
 };
 
-export function getCBBConferenceLogo(
+export function getWCBBConferenceLogo(
   groupId: number | string | null,
   isDark: boolean,
 ) {
-  const conference = cbbConferences.find(
+  const conference = wcbbConferences.find(
     (t) => String(t.groupId) === String(groupId),
   );
 

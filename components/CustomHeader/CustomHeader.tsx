@@ -1,13 +1,13 @@
-import { resolveCBBConferenceselection } from "@/constants/cbbConferences";
+import { resolveCBBConferenceselection } from "@/constants/conferences/cbbConferences";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
-} from "@/constants/cfbConferences";
+} from "@/constants/conferences/cfbConferences";
+import { resolveWCBBConferenceselection } from "@/constants/conferences/wcbbConferences";
 import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
-import { resolveWCBBConferenceselection } from "@/constants/wcbbConferences";
-import { Colors, Fonts } from "constants/styles";
 import { resolveLeagueConfig } from "constants/leagues";
+import { Colors, Fonts } from "constants/styles";
 import { getNBATeam, teams as nbaTeams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
 import { cfbTeams, getCFBTeam } from "constants/teamsCFB";
@@ -227,10 +227,7 @@ export function CustomHeader({
     [league, tabName],
   );
   const isLeagueScreen = Boolean(
-    leagueConfig &&
-      !isTeamScreen &&
-      !isPlayerScreen &&
-      tabName !== "Game",
+    leagueConfig && !isTeamScreen && !isPlayerScreen && tabName !== "Game",
   );
   const leagueHeaderLogo = leagueConfig?.logoLight ?? null;
   const leagueHeaderColor = leagueConfig?.color;

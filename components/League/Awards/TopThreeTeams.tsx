@@ -1,7 +1,7 @@
-import { Colors, Fonts } from "constants/styles";
+import { TopThreeTeamsStyles } from "@/styles/LeagueStyles/AwardTableSyles";
 import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useState } from "react";
-import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, Image, Text, View } from "react-native";
 
 type TeamStat = {
   team: {
@@ -15,7 +15,7 @@ type TeamStat = {
 
 type Props = {
   teams: TeamStat[];
-  limit?: number; // ✅ NEW
+  limit?: number;
 };
 
 function TeamBubble({
@@ -31,7 +31,7 @@ function TeamBubble({
 }) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = topThreeTeamsStyles(isDark, teamCount);
+  const styles = TopThreeTeamsStyles(isDark, teamCount);
 
   const [scale] = useState(() => new Animated.Value(0.85));
   const [opacity] = useState(() => new Animated.Value(0));
@@ -77,7 +77,7 @@ export default function TopThreeTeams({ teams, limit = 3 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const visibleTeams = teams.slice(0, limit);
-  const styles = topThreeTeamsStyles(isDark, visibleTeams.length);
+  const styles = TopThreeTeamsStyles(isDark, visibleTeams.length);
 
   return (
     <View style={styles.container}>
@@ -96,75 +96,3 @@ export default function TopThreeTeams({ teams, limit = 3 }: Props) {
     </View>
   );
 }
-
-export const topThreeTeamsStyles = (isDark: boolean, teamCount: number) => {
-  const logoSize = teamCount > 4 ? 40 : teamCount > 3 ? 44 : 50;
-  const fontSize = teamCount > 4 ? 16 : 20;
-
-  return StyleSheet.create({
-    container: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 12,
-      paddingVertical: 12,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 12,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-
-    itemWrapper: {
-      flexGrow: 1, // ✅ key change
-      alignItems: "center",
-      justifyContent: "center",
-      paddingHorizontal: 6,
-    },
-
-    logoWrapper: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: logoSize,
-      height: logoSize,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: logoSize / 2,
-    },
-
-    logo: {
-      width: logoSize * 0.65,
-      height: logoSize * 0.65,
-    },
-
-    teamContainer: {
-      alignItems: "center",
-    },
-
-    teamRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginTop: 6,
-    },
-
-    value: {
-      marginRight: 4,
-      fontFamily: Fonts.BOLD,
-      fontSize,
-      color: isDark ? Colors.white : Colors.black,
-    },
-
-    label: {
-      fontFamily: Fonts.BOLD,
-      fontSize,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    divider: {
-      alignSelf: "stretch", // ✅ dynamic height
-      width: StyleSheet.hairlineWidth,
-      backgroundColor: isDark ? Colors.white : Colors.black,
-      marginVertical: 6,
-    },
-  });
-};

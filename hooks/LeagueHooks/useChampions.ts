@@ -22,12 +22,14 @@ type Options = {
   enabled?: boolean;
   refreshToken?: number;
   league: string;
+  season?: string;
 };
 
 export function useChampions({
   league,
   enabled = true,
   refreshToken,
+  season,
 }: Options) {
   const [data, setData] = useState<ChampionSeason[]>([]);
   const [loading, setLoading] = useState(false);
@@ -40,22 +42,23 @@ export function useChampions({
       setLoading(true);
       setError(null);
 
-      const endpoint = `api/${league}/champion-seasons`;
+      const endpoint = `api/champions/${league}/seasons`;
 
-      const res = await apiClient.get(`${endpoint}`, {
+      const res = await apiClient.get(endpoint, {
         params: {
+          ...(season ? { season } : {}),
           _refresh: refreshToken ?? Date.now(), // cache buster
         },
       });
 
-      setData(res.data ?? []);
+      setData(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(`❌ Failed to fetch ${league} champions`, err);
       setError(`Failed to load ${league} championships`);
     } finally {
       setLoading(false);
     }
-  }, [league, enabled, refreshToken]);
+  }, [league, enabled, refreshToken, season]);
 
   useEffect(() => {
     void Promise.resolve().then(() => fetchChampions());

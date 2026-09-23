@@ -14,13 +14,13 @@ import { useAwardSeasons } from "hooks/LeagueHooks/useAwardSeasons";
 import { useChampionTeams } from "hooks/LeagueHooks/useChampionTeams";
 import { useMemo, useState } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
-import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
+import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import { AWARD_CONFIG, AwardCategory } from "types/types";
 import AwardSchoolsTable from "./AwardSchoolsTable";
 import { AwardSeasonsTable } from "./AwardSeasonsTable";
 import ChampionsTable from "./ChampionsTable";
 import TopThreeTeams from "./TopThreeTeams";
-type ViewMode = "champions" | "players" | "teams";
+type ViewMode = "players" | "champions" | "teams";
 
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
   cfb: "College Football Champions",
@@ -40,15 +40,15 @@ type Props = {
 export default function AwardSeasons({ league }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => awardTableStyles(isDark), [isDark]);
+  const styles = useMemo(() => AwardTableStyles(isDark), [isDark]);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshSignal, setRefreshSignal] = useState(0);
   const [selectedAward, setSelectedAward] = useState<AwardCategory>("all");
   const [viewMode, setViewMode] = useState<ViewMode>("players");
 
   const VIEW_MODE_OPTIONS = [
-    { label: "Championships", value: "champions" },
     { label: "Players", value: "players" },
+    { label: "Championships", value: "champions" },
 
     // Only show "Teams" for CFB, CBB, WCBB
     ...(league === "cfb" || league === "cbb" || league === "wcbb"
@@ -123,11 +123,11 @@ export default function AwardSeasons({ league }: Props) {
   const championTeamsResult = useChampionTeams({
     league,
     enabled: supportsChampionTeams && showChampionTopThree,
+    refreshToken: refreshSignal,
   });
 
   const championTeams = supportsChampionTeams ? championTeamsResult.data : [];
   const awards = AWARD_CONFIG[league] ?? [];
-
   /* ------------------------------------------------ */
   /* Refresh                                          */
   /* ------------------------------------------------ */

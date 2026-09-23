@@ -10,7 +10,7 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { awardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
+import { AwardTableStyles } from "styles/LeagueStyles/AwardTableSyles";
 import { AwardCategory } from "types/types";
 
 const NAME_COLUMN_WIDTH = "100%";
@@ -32,7 +32,7 @@ type Props = {
 export function AwardSeasonsTable({ title, loading, error, data }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = awardTableStyles(isDark);
+  const styles = AwardTableStyles(isDark);
   const global = globalStyles(isDark);
   const [expanded, setExpanded] = useState(false);
 

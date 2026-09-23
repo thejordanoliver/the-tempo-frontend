@@ -12,6 +12,11 @@ export type ChampionTeam = {
   total_championships: number;
 };
 
+type ChampionTeamsResponse = {
+  champions?: ChampionTeam[];
+  top_champions?: ChampionTeam[];
+};
+
 type Options = {
   league: string;
   enabled?: boolean;
@@ -24,22 +29,45 @@ export function useChampionTeams({
   refreshToken,
 }: Options) {
   const [data, setData] = useState<ChampionTeam[]>([]);
+  const [champions, setChampions] = useState<ChampionTeam[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetch = useCallback(async () => {
     if (!enabled) return;
 
-    setLoading(true);
-    const res = await apiClient.get(`api/champions/${league}/teams`, {
-      params: { _refresh: refreshToken ?? Date.now() },
-    });
-    setData(res.data ?? []);
-    setLoading(false);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await apiClient.get<ChampionTeamsResponse>(
+        `api/champions/${league}/teams`,
+        {
+          params: { _refresh: refreshToken ?? Date.now() },
+        },
+      );
+      const rankedTeams = Array.isArray(res.data?.champions)
+        ? res.data.champions
+        : [];
+      const topTeams = Array.isArray(res.data?.top_champions)
+        ? res.data.top_champions
+        : rankedTeams.slice(0, 3);
+
+      setChampions(rankedTeams);
+      setData(topTeams);
+    } catch (err) {
+      console.error(`Failed to fetch ${league} champion teams`, err);
+      setChampions([]);
+      setData([]);
+      setError(`Failed to load ${league} champion teams`);
+    } finally {
+      setLoading(false);
+    }
   }, [league, enabled, refreshToken]);
 
   useEffect(() => {
     void Promise.resolve().then(() => fetch());
   }, [fetch]);
 
-  return { data, loading };
+  return { data, champions, loading, error, refetch: fetch };
 }

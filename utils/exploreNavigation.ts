@@ -21,6 +21,7 @@ type PlayerLeagueRoute = {
 
 const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
   { flag: "isNFL", routePrefix: "/team/nfl" },
+  { flag: "isGLEAGUE", routePrefix: "/team/gleague" },
   { flag: "isMLB", routePrefix: "/team/mlb" },
   { flag: "isWNBA", routePrefix: "/team/wnba" },
   { flag: "isNHL", routePrefix: "/team/nhl" },
@@ -67,6 +68,11 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
     flag: "isNBA",
     pathname: "/player/basketball/[id]",
     league: "nba",
+  },
+  {
+    flag: "isGLEAGUE",
+    pathname: "/player/basketball/[id]",
+    league: "gleague",
   },
   {
     flag: "isCBB",

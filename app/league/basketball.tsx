@@ -57,14 +57,14 @@ import ConferenceListModal, {
   ConferenceListModalRef,
 } from "@/components/League/ConferenceListModal";
 import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standings/ConferenceStandingsList";
-import { getWCBBConferenceSelectionName } from "@/constants/wcbbConferences";
+import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConferences";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import TournamentTreeBracket from "../../components/Sports/Basketball/CBBTournament/TournamentTreeBracket";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
-import { getCBBConferenceSelectionName } from "../../constants/cbbConferences";
+import { getCBBConferenceSelectionName } from "../../constants/conferences/cbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
   getCBBSeason,

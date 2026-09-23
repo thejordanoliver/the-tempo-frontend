@@ -3,7 +3,7 @@ import { isAxiosError } from "axios";
 import { useMonthlyTeamSchedule } from "hooks/Sports/useTeamSchedule";
 import type { ScheduleMonthGroup, ScheduleMonthKey, ScheduleMonthOption } from "types/schedule";
 
-export type BasketballTeamScheduleLeague = "nba" | "wnba" | "cbb" | "wcbb";
+export type BasketballTeamScheduleLeague = "nba" | "gleague" | "wnba" | "cbb" | "wcbb";
 export type BasketballScheduleMonth = ScheduleMonthGroup<BasketballGame>;
 export type BasketballTeamScheduleTeam = {
   id?: string; code?: string; location?: string; name?: string;

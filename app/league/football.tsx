@@ -17,7 +17,7 @@ import { NFLPlayoffBracket } from "@/components/Sports/Football/Playoffs/NFLPlay
 import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
-import { getCFBConferenceSelectionName } from "@/constants/cfbConferences";
+import { getCFBConferenceSelectionName } from "@/constants/conferences/cfbConferences";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useCFBPlayoffs } from "@/hooks/FootballHooks/useCFBPlayoffs";

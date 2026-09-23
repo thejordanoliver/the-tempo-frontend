@@ -2,17 +2,17 @@ import {
   cbbConferences,
   getCBBConferenceLogo,
   getCBBConferenceSelectionName,
-} from "@/constants/cbbConferences";
+} from "@/constants/conferences/cbbConferences";
 import {
   cfbConferences,
   getCFBConferenceLogo,
   getCFBConferenceSelectionName,
-} from "@/constants/cfbConferences";
+} from "@/constants/conferences/cfbConferences";
 import {
   getWCBBConferenceLogo,
   getWCBBConferenceSelectionName,
   wcbbConferences,
-} from "@/constants/wcbbConferences";
+} from "@/constants/conferences/wcbbConferences";
 import { Ionicons } from "@expo/vector-icons";
 import {
   BottomSheetBackdrop,

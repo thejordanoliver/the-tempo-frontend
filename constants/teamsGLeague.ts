@@ -1,5 +1,69 @@
 // Logos
 import { Team } from "@/types/team";
+import AUSLogo from "../assets/GLeague/Logos/aus.png";
+import AUSLogoLight from "../assets/GLeague/Logos/ausLight.png";
+import BIRLogo from "../assets/GLeague/Logos/bir.png";
+import BIRLogoLight from "../assets/GLeague/Logos/birLight.png";
+import CAPLogo from "../assets/GLeague/Logos/cap.png";
+import CAPLogoLight from "../assets/GLeague/Logos/capLight.png";
+import CLCLogo from "../assets/GLeague/Logos/clc.png";
+import CLCLogoLight from "../assets/GLeague/Logos/clcLight.png";
+import CPSLogo from "../assets/GLeague/Logos/cps.png";
+import CPSLogoLight from "../assets/GLeague/Logos/cpsLight.png";
+import CVLLogo from "../assets/GLeague/Logos/cvl.png";
+import CVLLogoLight from "../assets/GLeague/Logos/cvlLight.png";
+import DELLogo from "../assets/GLeague/Logos/del.png";
+import DELLogoLight from "../assets/GLeague/Logos/delLight.png";
+import GBOLogo from "../assets/GLeague/Logos/gbo.png";
+import GBOLogoLight from "../assets/GLeague/Logos/gboLight.png";
+import GLILogo from "../assets/GLeague/Logos/gli.png";
+import GLILogoLight from "../assets/GLeague/Logos/gliLight.png";
+import GRDLogo from "../assets/GLeague/Logos/grd.png";
+import GRDLogoLight from "../assets/GLeague/Logos/grdLight.png";
+import IWALogo from "../assets/GLeague/Logos/iwa.png";
+import IWALogoLight from "../assets/GLeague/Logos/iwaLight.png";
+import LINLogo from "../assets/GLeague/Logos/lin.png";
+import LINLogoLight from "../assets/GLeague/Logos/linLight.png";
+import MCCLogo from "../assets/GLeague/Logos/mcc.png";
+import MCCLogoLight from "../assets/GLeague/Logos/mccLight.png";
+import MHULogo from "../assets/GLeague/Logos/mhu.png";
+import MHULogoLight from "../assets/GLeague/Logos/mhuLight.png";
+import MNELogo from "../assets/GLeague/Logos/mne.png";
+import MNELogoLight from "../assets/GLeague/Logos/mneLight.png";
+import MXCLogo from "../assets/GLeague/Logos/mxc.png";
+import MXCLogoLight from "../assets/GLeague/Logos/mxcLight.png";
+import NOBLogo from "../assets/GLeague/Logos/nob.png";
+import NOBLogoLight from "../assets/GLeague/Logos/nobLight.png";
+import OKLLogo from "../assets/GLeague/Logos/okl.png";
+import OKLLogoLight from "../assets/GLeague/Logos/oklLight.png";
+import OSCLogo from "../assets/GLeague/Logos/osc.png";
+import OSCLogoLight from "../assets/GLeague/Logos/oscLight.png";
+import RAPLogo from "../assets/GLeague/Logos/rap.png";
+import RAPLogoLight from "../assets/GLeague/Logos/rapLight.png";
+import RCITYLogo from "../assets/GLeague/Logos/rcity.png";
+import RCITYLogoLight from "../assets/GLeague/Logos/rcityLight.png";
+import RGVLogo from "../assets/GLeague/Logos/rgv.png";
+import RGVLogoLight from "../assets/GLeague/Logos/rgvLight.png";
+import SANLogo from "../assets/GLeague/Logos/san.png";
+import SANLogoLight from "../assets/GLeague/Logos/sanLight.png";
+import SCWLogo from "../assets/GLeague/Logos/scw.png";
+import SCWLogoLight from "../assets/GLeague/Logos/scwLight.png";
+import SLCLogo from "../assets/GLeague/Logos/slc.png";
+import SLCLogoLight from "../assets/GLeague/Logos/slcLight.png";
+import STOLogo from "../assets/GLeague/Logos/sto.png";
+import STOLogoLight from "../assets/GLeague/Logos/stoLight.png";
+import SXFLogo from "../assets/GLeague/Logos/sxf.png";
+import SXFLogoLight from "../assets/GLeague/Logos/sxfLight.png";
+import TEXLogo from "../assets/GLeague/Logos/tex.png";
+import TEXLogoLight from "../assets/GLeague/Logos/texLight.png";
+import VALLEYLogo from "../assets/GLeague/Logos/valley.png";
+import VALLEYLogoLight from "../assets/GLeague/Logos/valleyLight.png";
+import WCBLogo from "../assets/GLeague/Logos/wcb.png";
+import WCBLogoLight from "../assets/GLeague/Logos/wcbLight.png";
+import WESLogo from "../assets/GLeague/Logos/wes.png";
+import WESLogoLight from "../assets/GLeague/Logos/wesLight.png";
+import WISLogo from "../assets/GLeague/Logos/wis.png";
+import WISLogoLight from "../assets/GLeague/Logos/wisLight.png";
 const placeholderLogo =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1781619331/placeholder/team.png";
 
@@ -13,9 +77,8 @@ export const gleagueTeams: Team[] = [
     code: "SAN",
     color: "#C8102E",
     secondaryColor: "#1D428A",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/san.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/san.png",
+    logo: SANLogo,
+    logoLight: SANLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -33,9 +96,8 @@ export const gleagueTeams: Team[] = [
     code: "AUS",
     color: "#000000",
     secondaryColor: "#C4CED4",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/aus.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/aus.png",
+    logo: AUSLogo,
+    logoLight: AUSLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -53,9 +115,8 @@ export const gleagueTeams: Team[] = [
     code: "CLC",
     color: "#061642",
     secondaryColor: "#fdbb30",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/clc.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/clc.png",
+    logo: CLCLogo,
+    logoLight: CLCLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -73,9 +134,8 @@ export const gleagueTeams: Team[] = [
     code: "CAP",
     color: "#002B5C",
     secondaryColor: "#E31837",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/cap.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/cap.png",
+    logo: CAPLogo,
+    logoLight: CAPLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -93,9 +153,8 @@ export const gleagueTeams: Team[] = [
     code: "DEL",
     color: "#003DA6",
     secondaryColor: "#DD0031",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/del.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/del.png",
+    logo: DELLogo,
+    logoLight: DELLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -113,9 +172,8 @@ export const gleagueTeams: Team[] = [
     code: "BIR",
     color: "#002A5C",
     secondaryColor: "#b4975a",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/bir.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/bir.png",
+    logo: BIRLogo,
+    logoLight: BIRLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -133,9 +191,8 @@ export const gleagueTeams: Team[] = [
     code: "NOB",
     color: "#002D62",
     secondaryColor: "#FDBB30",
-    logo: "https://a.espncdn.com/guid/373d77e0-4edd-aaeb-ec83-eefc2ca511cb/logos/default.png",
-    logoLight:
-      "https://a.espncdn.com/guid/373d77e0-4edd-aaeb-ec83-eefc2ca511cb/logos/default-dark.png",
+    logo: NOBLogo,
+    logoLight: NOBLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -153,9 +210,8 @@ export const gleagueTeams: Team[] = [
     code: "GRD",
     color: "#C8102E",
     secondaryColor: "#1D428A",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/grd.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/grd.png",
+    logo: GRDLogo,
+    logoLight: GRDLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -173,9 +229,8 @@ export const gleagueTeams: Team[] = [
     code: "GBO",
     color: "#007BBC",
     secondaryColor: "#1D1160",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/gbo.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/gbo.png",
+    logo: GBOLogo,
+    logoLight: GBOLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -193,9 +248,8 @@ export const gleagueTeams: Team[] = [
     code: "IWA",
     color: "#0C2340",
     secondaryColor: "#236192",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/iwa.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/iwa.png",
+    logo: IWALogo,
+    logoLight: IWALogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -213,9 +267,8 @@ export const gleagueTeams: Team[] = [
     code: "OSC",
     color: "#000000",
     secondaryColor: "#0077C0",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/osc.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/osc.png",
+    logo: OSCLogo,
+    logoLight: OSCLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -233,9 +286,8 @@ export const gleagueTeams: Team[] = [
     code: "LIN",
     color: "#006BB6",
     secondaryColor: "#ED174C",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/lin.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/lin.png",
+    logo: LINLogo,
+    logoLight: LINLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -253,9 +305,8 @@ export const gleagueTeams: Team[] = [
     code: "MNE",
     color: "#006532",
     secondaryColor: "#f1f2f3",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/mne.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/mne.png",
+    logo: MNELogo,
+    logoLight: MNELogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -273,9 +324,8 @@ export const gleagueTeams: Team[] = [
     code: "MHU",
     color: "#E2231A",
     secondaryColor: "#717271",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/mhu.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/mhu.png",
+    logo: MHULogo,
+    logoLight: MHULogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -293,9 +343,8 @@ export const gleagueTeams: Team[] = [
     code: "MCC",
     color: "#FA002C",
     secondaryColor: "#006bb6",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/mcc.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/mcc.png",
+    logo: MCCLogo,
+    logoLight: MCCLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -313,9 +362,8 @@ export const gleagueTeams: Team[] = [
     code: "OKL",
     color: "#007AC1",
     secondaryColor: "#EF3B24",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/okl.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/okl.png",
+    logo: OKLLogo,
+    logoLight: OKLLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -333,9 +381,8 @@ export const gleagueTeams: Team[] = [
     code: "RAP",
     color: "#CE1141",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/rap.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/rap.png",
+    logo: RAPLogo,
+    logoLight: RAPLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -353,9 +400,8 @@ export const gleagueTeams: Team[] = [
     code: "RGV",
     color: "#CE1141",
     secondaryColor: "#BEC0C2",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/rgv.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/rgv.png",
+    logo: RGVLogo,
+    logoLight: RGVLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -373,9 +419,8 @@ export const gleagueTeams: Team[] = [
     code: "SLC",
     color: "#002B5C",
     secondaryColor: "#F9A01B",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/slc.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/slc.png",
+    logo: SLCLogo,
+    logoLight: SLCLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -393,9 +438,8 @@ export const gleagueTeams: Team[] = [
     code: "SCW",
     color: "#006BB6",
     secondaryColor: "#FDB927",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/scw.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/scw.png",
+    logo: SCWLogo,
+    logoLight: SCWLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -413,9 +457,8 @@ export const gleagueTeams: Team[] = [
     code: "SXF",
     color: "#000000",
     secondaryColor: "#98002E",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/sxf.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/sxf.png",
+    logo: SXFLogo,
+    logoLight: SXFLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -433,9 +476,8 @@ export const gleagueTeams: Team[] = [
     code: "CVL",
     color: "#552583",
     secondaryColor: "#FDB927",
-    logo: "https://a.espncdn.com/guid/ed81f2d5-eaa5-343d-5b76-c685a731f733/logos/default.png",
-    logoLight:
-      "https://a.espncdn.com/guid/ed81f2d5-eaa5-343d-5b76-c685a731f733/logos/default-dark.png",
+    logo: CVLLogo,
+    logoLight: CVLLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -453,9 +495,8 @@ export const gleagueTeams: Team[] = [
     code: "STO",
     color: "#5A2D81",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/sto.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/sto.png",
+    logo: STOLogo,
+    logoLight: STOLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -473,9 +514,8 @@ export const gleagueTeams: Team[] = [
     code: "TEX",
     color: "#0053BC",
     secondaryColor: "#00285E",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/tex.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/tex.png",
+    logo: TEXLogo,
+    logoLight: TEXLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -493,9 +533,8 @@ export const gleagueTeams: Team[] = [
     code: "WES",
     color: "#006BB6",
     secondaryColor: "#F58426",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/wes.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/wes.png",
+    logo: WESLogo,
+    logoLight: WESLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -513,9 +552,8 @@ export const gleagueTeams: Team[] = [
     code: "WCB",
     color: "#CE1141",
     secondaryColor: "#000000",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/wcb.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/wcb.png",
+    logo: WCBLogo,
+    logoLight: WCBLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -533,9 +571,8 @@ export const gleagueTeams: Team[] = [
     code: "WIS",
     color: "#00471B",
     secondaryColor: "#EEE1C6",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/wis.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/wis.png",
+    logo: WISLogo,
+    logoLight: WISLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -553,9 +590,8 @@ export const gleagueTeams: Team[] = [
     code: "CPS",
     color: "#000000",
     secondaryColor: "#b3042a",
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/cps.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/cps.png",
+    logo: CPSLogo,
+    logoLight: CPSLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -573,9 +609,8 @@ export const gleagueTeams: Team[] = [
     code: "GLI",
     color: null,
     secondaryColor: null,
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/gli.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/gli.png",
+    logo: GLILogo,
+    logoLight: GLILogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -593,9 +628,8 @@ export const gleagueTeams: Team[] = [
     code: "MXC",
     color: "#3A4C98",
     secondaryColor: null,
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/mxc.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/mxc.png",
+    logo: MXCLogo,
+    logoLight: MXCLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -613,9 +647,8 @@ export const gleagueTeams: Team[] = [
     code: "RCITY",
     color: null,
     secondaryColor: null,
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/rcity.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/rcity.png",
+    logo: RCITYLogo,
+    logoLight: RCITYLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,
@@ -633,9 +666,8 @@ export const gleagueTeams: Team[] = [
     code: "VALLEY",
     color: null,
     secondaryColor: null,
-    logo: "https://a.espncdn.com/i/teamlogos/nba-development/500/valley.png",
-    logoLight:
-      "https://a.espncdn.com/i/teamlogos/nba-development/500-dark/valley.png",
+    logo: VALLEYLogo,
+    logoLight: VALLEYLogoLight,
     isActive: false,
     isAllStar: false,
     isNational: false,

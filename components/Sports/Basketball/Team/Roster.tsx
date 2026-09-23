@@ -1,9 +1,9 @@
 // components/Roster.tsx
-import { Player } from "@/hooks/LeagueHooks/useRoster";
+import type { Player } from "@/hooks/LeagueHooks/useRoster";
+import { rosterStyles } from "@/styles/TeamStyles/RosterStyles";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React from "react";
-import { RefreshControl, ScrollView, Text } from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import PlayerCardSkeletonList from "../../../Skeletons/PlayerCardListSkeleton";
 import { PlayerCard } from "../Player/PlayerCard";
 
@@ -28,21 +28,39 @@ export default function Roster({
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const tintColor = isDark ? Colors.white : Colors.black;
+  const styles = rosterStyles;
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;
 
-  if (error) return <Text style={global.errorText}>{error}</Text>;
-
-  if (players.length === 0)
-    return <Text style={global.emptyText}>No players found.</Text>;
+  if (error)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>{error}</Text>
+      </View>
+    );
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingBottom: 100,
-        paddingHorizontal: 12,
-        gap: 12,
-      }}
+    <FlatList
+      data={players}
+      keyExtractor={(player) => String(player.id)}
+      contentContainerStyle={styles.contentContainer}
+      contentInsetAdjustmentBehavior="automatic"
+      renderItem={({ item: player }) => (
+        <PlayerCard
+          id={player.id}
+          name={player.full_name}
+          position={player.position}
+          headshot={player.headshot_url}
+          number={player.jersey_number}
+          teamId={player.team_id}
+          league={league}
+        />
+      )}
+      ListEmptyComponent={
+        <View style={global.emptyContainer}>
+          <Text style={global.emptyTitle}>No players found.</Text>
+        </View>
+      }
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -50,22 +68,6 @@ export default function Roster({
           tintColor={tintColor}
         />
       }
-    >
-      {players &&
-        [...players].map((player) => {
-          return (
-            <PlayerCard
-              key={player.id}
-              id={player.id}
-              name={player.full_name}
-              position={player.position}
-              headshot={player.headshot_url}
-              number={player.jersey_number}
-              teamId={player.team_id}
-              league={league}
-            />
-          );
-        })}
-    </ScrollView>
+    />
   );
 }

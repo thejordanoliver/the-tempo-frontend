@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { PlayerResult, UserResult } from "../types/explore";
+import type { PlayerResult, TeamResult, UserResult } from "../types/explore";
+import { getExploreRouteForResult } from "../utils/exploreNavigation";
 import {
   canSearchExploreQuery,
   getExploreResultIdentity,
@@ -70,4 +71,19 @@ test("user recent-search identity remains globally keyed by user id", () => {
   };
 
   assert.equal(getExploreResultIdentity(user), "user:42");
+});
+
+test("routes G League team search results to the G League team screen", () => {
+  const team: TeamResult = {
+    ...ranking,
+    id: 2,
+    name: "Austin Spurs",
+    short_name: "Spurs",
+    affiliation: "gleague",
+    isGLEAGUE: true,
+    type: "team",
+  };
+
+  assert.equal(getExploreResultIdentity(team), "team:gleague:2");
+  assert.equal(getExploreRouteForResult(team), "/team/gleague/2");
 });

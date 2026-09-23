@@ -1,5 +1,6 @@
 export type SearchAffiliation =
   | "nba"
+  | "gleague"
   | "wnba"
   | "mlb"
   | "nhl"
@@ -30,6 +31,7 @@ export type PlayerResult = SearchRankingFields & {
   isNFL?: boolean;
   isMMA?: boolean;
   isNBA?: boolean;
+  isGLEAGUE?: boolean;
   isMLB?: boolean;
   isCFB?: boolean;
   isCBB?: boolean;
@@ -54,6 +56,7 @@ export type TeamResult = SearchRankingFields & {
   leagueKey?: string | null;
   isNFL?: boolean;
   isNBA?: boolean;
+  isGLEAGUE?: boolean;
   isMLB?: boolean;
   isNHL?: boolean;
   isCFB?: boolean;

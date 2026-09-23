@@ -2,6 +2,7 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
 import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
@@ -50,6 +51,8 @@ export default function ResultItemRow({
 
     if (team.isNFL && team.id != null)
       teamLogo = getNFLTeamLogo(team.id, isDark);
+    else if (team.isGLEAGUE && team.id != null)
+      teamLogo = getGLeagueTeamLogo(team.id, isDark);
     else if (team.isWNBA && team.id != null)
       teamLogo = getWNBATeamLogo(team.id, isDark);
     else if (team.isMLB && team.id != null)
@@ -78,6 +81,7 @@ export default function ResultItemRow({
             {teamLogo && <Image source={teamLogo} style={styles.teamLogo} />}
             <View>
               <Text style={styles.name}>{team.full_name || team.name}</Text>
+              {team.isGLEAGUE && <Text style={styles.tag}>G LEAGUE</Text>}
               {team.isWCBB && <Text style={styles.tag}>WCBB</Text>}
               {team.isCBB && <Text style={styles.tag}>CBB</Text>}
               {team.isCFB && <Text style={styles.tag}>CFB</Text>}
@@ -112,6 +116,8 @@ export default function ResultItemRow({
     const team =
       teamId && player.isNBA
         ? getNBATeam(teamId)
+        : teamId && player.isGLEAGUE
+          ? getGLeagueTeam(teamId)
         : teamId && player.isWNBA
           ? getWNBATeam(teamId)
           : teamId && player.isCBB
