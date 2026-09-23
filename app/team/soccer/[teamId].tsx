@@ -1,50 +1,39 @@
-import { CustomHeader } from "@/components/CustomHeader";
+import ForumFeed from "@/components/Forum/ForumFeed";
+import MonthSelector from "@/components/League/MonthSelector";
+import Roster, {
+  SupportedRosterLeague,
+} from "@/components/Sports/Baseball/Team/Roster";
+import GamesList from "@/components/Sports/Soccer/Games/GamesList";
 import { Colors } from "@/constants/styles";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
-import NewsList from "components/News/NewsList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
-import { useNotifications } from "contexts/NotificationContext";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-
-import Roster from "@/components/Sports/Baseball/Team/Roster";
-import GamesList from "@/components/Sports/Soccer/Games/GamesList";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useSoccerTeamGames } from "@/hooks/SoccerHooks/useSoccerTeamGames";
-import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
+import NewsList from "components/News/NewsList";
+import TeamDetailScreenShell from "components/Team/TeamDetailScreen";
+import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
-import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
 import { getMLBSeason } from "utils/dateUtils";
 import { teamDetailStyles } from "../../../styles/TeamStyles/TeamDetailsStyles";
-import ForumFeed from "@/components/Forum/ForumFeed";
 
 export default function TeamDetailScreen() {
-  const navigation = useNavigation();
   const currentSeason = getMLBSeason();
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
   const { teamId, league } = useLocalSearchParams<{
     teamId: string;
-    league: string;
+    league: SupportedRosterLeague;
   }>();
-  const { toggleNotifications, isNotified } = useNotifications();
   const teamIdNum = Number(teamId);
   const team = getSOCCTeam(teamId);
   const teamLogo = getSOCCTeamLogo(teamId, true);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
-  const [refreshing, setRefreshing] = useState(false);
-  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
-    useTeamTabs("SOCC");
-  const pagerRef = useRef<PagerView>(null);
-  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
-    usePagerTabScrollProgress();
+  const screen = useTeamDetailScreen({
+    tabLeague: "SOCC",
+    header: { league, teamId: teamIdNum, teamName, teamColor, logo: teamLogo },
+  });
+  const { selectedTab, hasVisitedTab, refreshing, isDark } = screen;
 
   const {
     articles,
@@ -59,9 +48,13 @@ export default function TeamDetailScreen() {
 
   const {
     games: teamGames,
+    months,
+    selectedMonthKey,
+    selectMonth,
     loading: gamesLoading,
+    refreshing: gamesRefreshing,
     error: gamesError,
-    refreshGames: refreshTeamGames,
+    refresh: refreshTeamGames,
   } = useSoccerTeamGames(teamIdNum, league, currentSeason);
 
   const {
@@ -70,27 +63,8 @@ export default function TeamDetailScreen() {
     error: playersError,
   } = useRoster(teamIdNum, "SOCC");
 
-  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
-  const indexToTab = (index: number) => tabs[index];
-
-  const handleTabPress = (tab: (typeof tabs)[number]) => {
-    setSelectedTab(tab);
-    pagerRef.current?.setPage(tabToIndex(tab));
-  };
-
-  const handlePageChange = (index: number) => {
-    syncPageScrollProgress(index);
-    const nextTab = indexToTab(index);
-
-    if (nextTab) {
-      setSelectedTab(nextTab);
-    }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-
-    try {
+  const handleRefresh = () =>
+    screen.runRefresh(async () => {
       if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
@@ -101,110 +75,59 @@ export default function TeamDetailScreen() {
       if (selectedTab === "forum") {
         await refreshNews();
       }
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <CustomHeader
-          teamId={teamIdNum}
-          logo={teamLogo}
-          teamColor={teamColor}
-          teamName={teamName}
-          onBack={goBack}
-          isTeamScreen={true}
-          onToggleNotifications={() =>
-            void toggleNotifications(league, teamIdNum)
-          }
-          isNotified={isNotified(league, teamIdNum)}
-          league={league}
-        />
-      ),
     });
-  }, [
-    navigation,
-    isDark,
-    team,
-    teamIdNum,
-    teamName,
-    toggleNotifications,
-    isNotified,
-    league,
-    teamColor,
-    teamLogo,
-  ]);
-
-  if (!team) {
-    return (
-      <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
 
   return (
-    <View style={styles.container}>
-      <MainScrollTabBar
-        tabs={tabs}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-        scrollProgress={scrollProgress}
-      />
+    <TeamDetailScreenShell ready={Boolean(team)} screen={screen}>
+      {/* SCHEDULE */}
+      <View key="schedule" style={styles.contentArea}>
+        <MonthSelector
+          months={months}
+          selected={selectedMonthKey}
+          onSelect={selectMonth}
+          loading={gamesLoading}
+        />
 
-      <PagerView
-        ref={pagerRef}
-        style={styles.contentArea}
-        initialPage={0}
-        onPageScroll={handlePageScroll}
-        onPageSelected={(e) => handlePageChange(e.nativeEvent.position)}
-      >
-        {/* SCHEDULE */}
-        <View key="schedule" style={styles.contentArea}>
-          <GamesList
-            games={teamGames}
-            error={gamesError}
-            loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            showHeaders={true}
-            scrollEnabled={true}
-          />
-        </View>
+        <GamesList
+          games={teamGames}
+          error={gamesError}
+          loading={gamesLoading}
+          refreshing={gamesRefreshing || refreshing}
+          onRefresh={handleRefresh}
+          showHeaders={true}
+          scrollEnabled={true}
+        />
+      </View>
 
-        {/* NEWS */}
-        <View key="news" style={styles.contentArea}>
-          <NewsList
-            items={articles}
-            loading={newsLoading}
-            error={newsError}
-            refreshing={refreshingNews}
-            loadingMore={loadingMoreNews}
-            onRefresh={refreshNews}
-            isDark={isDark}
-          />
-        </View>
+      {/* NEWS */}
+      <View key="news" style={styles.contentArea}>
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={isDark}
+        />
+      </View>
 
-        {/* ROSTER */}
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={playersLoading}
-            error={playersError}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            league={"soccer"}
-          />
-        </View>
+      {/* ROSTER */}
+      <View key="roster" style={styles.contentArea}>
+        <Roster
+          players={players}
+          loading={playersLoading}
+          error={playersError}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          league={league}
+        />
+      </View>
 
-        {/* FORUM */}
-        <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamId as string} league={league} />
-        </View>
-      </PagerView>
-    </View>
+      {/* FORUM */}
+      <View key="forum" style={styles.contentArea}>
+        <ForumFeed teamId={teamId as string} league={league} />
+      </View>
+    </TeamDetailScreenShell>
   );
 }

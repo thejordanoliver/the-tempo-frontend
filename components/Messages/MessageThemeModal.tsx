@@ -4,8 +4,8 @@ import { MessageThemeModalStyles } from "@/styles/MessageStyles/MessageThemeModa
 import { Team } from "@/types/team";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
-import type { RefObject } from "react";
-import { useEffect, useMemo, useState } from "react";
+import type { ComponentProps, RefObject } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import type { MessageThemePreference } from "types/messages";
 import {
@@ -15,7 +15,6 @@ import {
 import { snapPoints } from "utils/modalUtils";
 import Button from "../Buttons/Button";
 import CustomActivityIndicator from "../CustomActivityIndicator";
-
 type Props = {
   sheetRef: RefObject<BottomSheetModal | null>;
   visible: boolean;
@@ -366,6 +365,18 @@ export default function MessageThemeModal({
     }
   };
 
+  const renderBackdrop = useCallback(
+    (props: ComponentProps<typeof BottomSheetBackdrop>) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    [],
+  );
+
   return (
     <BottomSheetModal
       ref={sheetRef}
@@ -374,14 +385,7 @@ export default function MessageThemeModal({
       enableDynamicSizing={false}
       enablePanDownToClose
       onDismiss={onClose}
-      backdropComponent={(props) => (
-        <BottomSheetBackdrop
-          {...props}
-          appearsOnIndex={0}
-          disappearsOnIndex={-1}
-          pressBehavior="close"
-        />
-      )}
+      backdropComponent={renderBackdrop}
       handleStyle={styles.handleStyle}
       handleIndicatorStyle={styles.handleIndicatorStyle}
       backgroundStyle={styles.backgroundStyle}

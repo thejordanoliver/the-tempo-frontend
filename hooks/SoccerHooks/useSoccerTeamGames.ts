@@ -1,77 +1,70 @@
-import { SoccerGame } from "@/types/soccer/soccer";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { apiClient } from "utils/apiClient";
+import type { SoccerGame } from "@/types/soccer/soccer";
+import { isAxiosError } from "axios";
+import { useMonthlyTeamSchedule } from "hooks/Sports/useTeamSchedule";
+import type {
+  ScheduleMonthGroup,
+  ScheduleMonthKey,
+  ScheduleMonthOption,
+} from "types/schedule";
 
-interface UseTeamGamesReturn {
+export type SoccerScheduleMonth = ScheduleMonthGroup<SoccerGame>;
+
+type SoccerTeamScheduleResponse = {
+  league: string;
+  team: unknown;
+  season: unknown;
   games: SoccerGame[];
+  months: SoccerScheduleMonth[];
+};
+
+interface UseSoccerTeamGamesResult {
+  games: SoccerGame[];
+  months: ScheduleMonthOption[];
+  selectedMonthKey: ScheduleMonthKey | null;
+  selectMonth: (key: ScheduleMonthKey) => void;
   loading: boolean;
-  error: string | null;
-  refreshGames: () => Promise<void>;
+  refreshing: boolean;
+  error: Error | null;
+  refresh: () => Promise<void>;
+}
+
+function normalize(
+  response: SoccerTeamScheduleResponse,
+): SoccerTeamScheduleResponse {
+  return {
+    ...response,
+    games: response.games ?? [],
+    months: response.months ?? [],
+  };
+}
+
+function getError(error: unknown): Error {
+  const serverError = isAxiosError<{ error?: string }>(error)
+    ? error.response?.data?.error
+    : undefined;
+  const message =
+    serverError ??
+    (error instanceof Error
+      ? error.message
+      : "Failed to fetch soccer team schedule");
+
+  console.error("SOCCER TEAM SCHEDULE ERROR:", error);
+  return new Error(message);
 }
 
 export function useSoccerTeamGames(
   teamId: string | number | null,
   league: string,
   season?: number | string,
-): UseTeamGamesReturn {
-  const [games, setGames] = useState<SoccerGame[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const requestIdRef = useRef(0);
-
-  const fetchGames = useCallback(async () => {
-    if (!teamId || !league) return;
-    const requestId = ++requestIdRef.current;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const params: Record<string, string | number> = {};
-
-      if (season) {
-        params.season = season;
-      }
-
-      const res = await apiClient.get(
-        `/api/games/soccer/team/${league}/${teamId}/${season}`,
-      );
-
-      const rawGames: SoccerGame[] = res.data?.games || [];
-
-      if (requestId === requestIdRef.current) {
-        setGames(rawGames);
-      }
-    } catch (err: any) {
-      if (requestId !== requestIdRef.current) return;
-      console.error("Error fetching soccer team games:", err?.message || err);
-      setError("Failed to load team games");
-    } finally {
-      if (requestId === requestIdRef.current) {
-        setLoading(false);
-      }
-    }
-  }, [teamId, league, season]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void Promise.resolve().then(() => {
-      if (!cancelled) void fetchGames();
-    });
-    return () => {
-      cancelled = true;
-      requestIdRef.current += 1;
-    };
-  }, [fetchGames]);
-
-  const refreshGames = useCallback(async () => {
-    await fetchGames();
-  }, [fetchGames]);
-
-  return {
-    games,
-    loading,
-    error,
-    refreshGames,
-  };
+): UseSoccerTeamGamesResult {
+  return useMonthlyTeamSchedule({
+    sport: "soccer",
+    league,
+    teamId,
+    season,
+    requireSeason: true,
+    endpoint: `api/games/soccer/team/${league}/${teamId}/${season}`,
+    normalize,
+    errorFrom: getError,
+  });
 }

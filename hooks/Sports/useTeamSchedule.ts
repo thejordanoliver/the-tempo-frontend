@@ -42,8 +42,6 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
   const validSeason = season !== null && season !== undefined && season !== "";
   const enabled = Boolean(league && validTeam && (!requireSeason || validSeason));
   const identity = `${sport}:${league}:${String(teamId ?? "")}:${String(season ?? "")}`;
-  const identityRef = useRef(identity);
-  identityRef.current = identity;
   const mountedRef = useRef(false);
   const freshnessRef = useRef(new ScheduleFreshness());
   const [state, setState] = useState<{
@@ -62,8 +60,8 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
   const fetchSchedule = useCallback(async (mode: RequestMode = "initial") => {
     const freshness = freshnessRef.current;
     const request = freshness.startRequest();
-    const isCurrent = () => mountedRef.current && identityRef.current === identity &&
-      freshnessRef.current === freshness && freshness.canComplete(request);
+    const isCurrent = () => mountedRef.current && freshnessRef.current === freshness &&
+      freshness.canComplete(request);
 
     if (!enabled) {
       setState({ identity, data: null, loading: false, refreshing: false, error: null });
@@ -107,7 +105,6 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
   useEffect(() => {
     mountedRef.current = true;
     freshnessRef.current = new ScheduleFreshness();
-    setState({ identity, data: null, loading: enabled, refreshing: false, error: null });
     let cancelled = false;
     void Promise.resolve().then(() => {
       if (!cancelled) void fetchSchedule();
@@ -125,8 +122,7 @@ export function useTeamSchedule<TGame, TResponse, TData extends ScheduleData<TGa
     payload: { sport, league, feed: "teamSchedule", teamId: teamId ?? "", season },
     onUpdate: (payload, envelope) => {
       const expectedSeason = validSeason ? String(season) : undefined;
-      if (!mountedRef.current || identityRef.current !== identity ||
-          envelope.sport !== sport || envelope.league !== league ||
+      if (!mountedRef.current || envelope.sport !== sport || envelope.league !== league ||
           envelope.feed !== "teamSchedule" ||
           envelope.params?.teamId !== String(teamId) ||
           envelope.params?.season !== expectedSeason) return;

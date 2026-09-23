@@ -22,6 +22,7 @@ import {
   DISABLED_NOTIFICATION_EVENT_SETTINGS,
   type NotificationEventSettings,
 } from "utils/notification-settings";
+import Button from "../Buttons/Button";
 
 type NotificationSettingsModalProps = {
   visible: boolean;
@@ -209,30 +210,22 @@ export default function NotificationSettingsModal({
   return (
     <BottomSheetModal
       ref={sheetRef}
-      index={1}
-      snapPoints={snapPoints}
+      index={0}
+      snapPoints={[snapPoints[2]]}
       enableDynamicSizing={false}
       enablePanDownToClose={!isSaving}
       onDismiss={onClose}
       backdropComponent={renderBackdrop}
-      backgroundStyle={styles.sheetBackground}
-      handleIndicatorStyle={styles.handleIndicator}
+      handleStyle={styles.handleStyle}
+      handleIndicatorStyle={styles.handleIndicatorStyle}
+      backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerIcon}>
-            <Ionicons
-              name="notifications-outline"
-              size={22}
-              color={isDark ? Colors.white : Colors.black}
-            />
-          </View>
-          <View style={styles.headerCopy}>
-            <Text style={styles.title}>
-              {scope === "team" ? "Team notifications" : "Game notifications"}
-            </Text>
-            <Text style={styles.subtitle}>{scopeCopy}</Text>
-          </View>
+          <Text style={styles.title}>
+            {scope === "team" ? "Team notifications" : "Game notifications"}
+          </Text>
+          <Text style={styles.subtitle}>{scopeCopy}</Text>
         </View>
 
         <BottomSheetScrollView
@@ -296,23 +289,17 @@ export default function NotificationSettingsModal({
             ))}
           </View>
 
-          <Pressable
+          <Button
             onPress={() => void handleSave()}
             disabled={isSaving}
-            style={({ pressed }) => [
-              styles.saveButton,
-              pressed && styles.pressed,
-              isSaving && styles.saving,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Save notification settings"
+            isDark={isDark}
           >
             {isSaving ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
-              <Text style={styles.saveButtonText}>Save preferences</Text>
+              "Save preferences"
             )}
-          </Pressable>
+          </Button>
 
           {saveError ? <Text style={styles.errorText}>{saveError}</Text> : null}
 
@@ -350,32 +337,51 @@ const createStyles = (isDark: boolean) => {
       borderTopRightRadius: 24,
     },
     handleIndicator: { backgroundColor: Colors.midTone, width: 38 },
-    container: { flex: 1, paddingHorizontal: 16 },
-    header: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
-      paddingTop: 8,
-      paddingBottom: 16,
-    },
-    headerIcon: {
-      width: 42,
-      height: 42,
-      borderRadius: 21,
+    handleStyle: {
+      position: "absolute",
+      top: 0,
+      right: 8,
+      left: 8,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: cardColor,
+      height: 40,
+      backgroundColor: "transparent",
     },
-    headerCopy: { flex: 1 },
-    title: { color: textColor, fontFamily: Fonts.SEMIBOLD, fontSize: 22 },
+    handleIndicatorStyle: {
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: Colors.midTone,
+    },
+    backgroundStyle: { backgroundColor: isDark ? Colors.black : Colors.white },
+    container: {
+      flex: 1,
+      padding: 12,
+      paddingTop: 40,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+    },
+
+    header: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 14,
+    },
+
+    title: {
+      textAlign: "center",
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
+      color: isDark ? Colors.white : Colors.black,
+    },
     subtitle: {
-      color: mutedColor,
       fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      lineHeight: 19,
-      marginTop: 2,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textTransform: "uppercase",
     },
-    content: { paddingBottom: 40 },
+
+    content: { paddingBottom: 0 },
     sectionLabel: {
       color: mutedColor,
       fontFamily: Fonts.MEDIUM,
@@ -389,6 +395,7 @@ const createStyles = (isDark: boolean) => {
       backgroundColor: cardColor,
       borderRadius: 16,
       overflow: "hidden",
+      marginBottom: 12,
     },
     row: {
       minHeight: 72,
@@ -421,11 +428,7 @@ const createStyles = (isDark: boolean) => {
       backgroundColor: Colors.light.blue,
       marginTop: 20,
     },
-    saveButtonText: {
-      color: Colors.white,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 16,
-    },
+
     defaultsButton: {
       height: 48,
       alignItems: "center",

@@ -97,7 +97,9 @@ export const ConferenceStandingsList = ({
 
     const handleTeamPress = () => {
       if (!teamId) return;
-      router.push(`/team/cfb/${teamId}`);
+      if (league === "cfb") return router.push(`/team/cfb/${teamId}`);
+      if (league === "cbb") return router.push(`/team/cbb/${teamId}`);
+      if (league === "wcbb") return router.push(`/team/wcbb/${teamId}`);
     };
 
     return (

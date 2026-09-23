@@ -1,11 +1,6 @@
-// components/TeamPlayerList.tsx
+// components/Roster.tsx
 import { useMemo } from "react";
-import {
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 
 import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { Player } from "@/hooks/LeagueHooks/useRoster";
@@ -15,12 +10,163 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { rosterStyles } from "styles/TeamStyles/RosterStyles";
 
-type SupportedRosterLeague =
+export type SupportedRosterLeague =
   | "mlb"
   | "nhl"
   | "nfl"
   | "cfb"
-  | "soccer";
+  // soccer
+  | "afcon"
+  | "aleague"
+  | "aleaguewomen"
+  | "argentina"
+  | "asian"
+  | "austria"
+  | "belgium"
+  | "bolivia"
+  | "brasileirao"
+  | "bundesliga"
+  | "bundesliga2"
+  | "carabao"
+  | "championship"
+  | "champions"
+  | "chile"
+  | "china"
+  | "colombia"
+  | "concacaf"
+  | "conference"
+  | "copaamerica"
+  | "copadelrey"
+  | "coppaitalia"
+  | "costarica"
+  | "denmark"
+  | "dfbpokal"
+  | "ecuador"
+  | "elsalvador"
+  | "epl"
+  | "eredivisie"
+  | "euro"
+  | "europa"
+  | "fa"
+  | "fifa"
+  | "fifaf"
+  | "fifaw"
+  | "friendlies"
+  | "goldcup"
+  | "greece"
+  | "guatemala"
+  | "honduras"
+  | "india"
+  | "jleague"
+  | "laliga"
+  | "laliga2"
+  | "leaguescup"
+  | "ligaf"
+  | "ligamx"
+  | "libertadores"
+  | "ligue1"
+  | "ligue2"
+  | "mls"
+  | "nations"
+  | "norway"
+  | "nwsl"
+  | "paraguay"
+  | "peru"
+  | "portugal"
+  | "premiereleague"
+  | "russia"
+  | "saudi"
+  | "scotland"
+  | "seriea"
+  | "serieb"
+  | "southafrica"
+  | "sudamericana"
+  | "supercup"
+  | "sweden"
+  | "turkey"
+  | "uefa"
+  | "uruguay"
+  | "usopen"
+  | "venezuela"
+  | "womensfriendlies"
+  | "wsl";
+
+const SOCCER_LEAGUES: readonly SupportedRosterLeague[] = [
+  "afcon",
+  "aleague",
+  "aleaguewomen",
+  "argentina",
+  "asian",
+  "austria",
+  "belgium",
+  "bolivia",
+  "brasileirao",
+  "bundesliga",
+  "bundesliga2",
+  "carabao",
+  "championship",
+  "champions",
+  "chile",
+  "china",
+  "colombia",
+  "concacaf",
+  "conference",
+  "copaamerica",
+  "copadelrey",
+  "coppaitalia",
+  "costarica",
+  "denmark",
+  "dfbpokal",
+  "ecuador",
+  "elsalvador",
+  "epl",
+  "eredivisie",
+  "euro",
+  "europa",
+  "fa",
+  "fifa",
+  "fifaf",
+  "fifaw",
+  "friendlies",
+  "goldcup",
+  "greece",
+  "guatemala",
+  "honduras",
+  "india",
+  "jleague",
+  "laliga",
+  "laliga2",
+  "leaguescup",
+  "ligaf",
+  "ligamx",
+  "libertadores",
+  "ligue1",
+  "ligue2",
+  "mls",
+  "nations",
+  "norway",
+  "nwsl",
+  "paraguay",
+  "peru",
+  "portugal",
+  "premiereleague",
+  "russia",
+  "saudi",
+  "scotland",
+  "seriea",
+  "serieb",
+  "southafrica",
+  "sudamericana",
+  "supercup",
+  "sweden",
+  "turkey",
+  "uefa",
+  "uruguay",
+  "usopen",
+  "venezuela",
+  "womensfriendlies",
+  "wsl",
+];
 
 interface RosterProps {
   players: Player[];
@@ -64,12 +210,7 @@ const FOOTBALL_POSITION_ORDER = [
   "Other",
 ];
 
-const NHL_GROUP_ORDER = [
-  "Forwards",
-  "Defensemen",
-  "Goalies",
-  "Other",
-];
+const NHL_GROUP_ORDER = ["Forwards", "Defensemen", "Goalies", "Other"];
 
 const SOCCER_GROUP_ORDER = [
   "Forwards",
@@ -79,12 +220,7 @@ const SOCCER_GROUP_ORDER = [
   "Other",
 ];
 
-const DEFAULT_GROUP_ORDER = [
-  "Guards",
-  "Forwards",
-  "Centers",
-  "Other",
-];
+const DEFAULT_GROUP_ORDER = ["Guards", "Forwards", "Centers", "Other"];
 
 function getPositionGroup(
   position?: string | null,
@@ -114,23 +250,11 @@ function getPositionGroup(
       return "Catchers";
     }
 
-    if (
-      [
-        "1B",
-        "2B",
-        "3B",
-        "SS",
-        "IF",
-        "INF",
-        "INFIELDER",
-      ].includes(pos)
-    ) {
+    if (["1B", "2B", "3B", "SS", "IF", "INF", "INFIELDER"].includes(pos)) {
       return "Infielders";
     }
 
-    if (
-      ["LF", "CF", "RF", "OF", "OUTFIELDER"].includes(pos)
-    ) {
+    if (["LF", "CF", "RF", "OF", "OUTFIELDER"].includes(pos)) {
       return "Outfielders";
     }
 
@@ -138,9 +262,7 @@ function getPositionGroup(
       return "Designated Hitters";
     }
 
-    if (
-      ["TWP", "TWO-WAY PLAYER", "TWO WAY PLAYER"].includes(pos)
-    ) {
+    if (["TWP", "TWO-WAY PLAYER", "TWO WAY PLAYER"].includes(pos)) {
       return "Two-Way Players";
     }
 
@@ -219,10 +341,8 @@ function getPositionGroup(
 
   // This must come before basketball grouping because soccer uses
   // overlapping abbreviations such as G and F.
-  if (league === "soccer") {
-    if (
-      ["F", "FW", "FORWARD", "ST", "STRIKER"].includes(pos)
-    ) {
+  if (league && SOCCER_LEAGUES.includes(league)) {
+    if (["F", "FW", "FORWARD", "ST", "STRIKER"].includes(pos)) {
       return "Forwards";
     }
 
@@ -246,24 +366,11 @@ function getPositionGroup(
       return "Midfielders";
     }
 
-    if (
-      [
-        "D",
-        "DF",
-        "DEFENDER",
-        "CB",
-        "LB",
-        "RB",
-        "LWB",
-        "RWB",
-      ].includes(pos)
-    ) {
+    if (["D", "DF", "DEFENDER", "CB", "LB", "RB", "LWB", "RWB"].includes(pos)) {
       return "Defenders";
     }
 
-    if (
-      ["G", "GK", "GOALKEEPER", "GOALIE"].includes(pos)
-    ) {
+    if (["G", "GK", "GOALKEEPER", "GOALIE"].includes(pos)) {
       return "Goalkeepers";
     }
 
@@ -286,14 +393,9 @@ function getPositionGroup(
 }
 
 function getJerseySortValue(player: Player) {
-  const jersey = Number.parseInt(
-    String(player.jersey_number ?? ""),
-    10,
-  );
+  const jersey = Number.parseInt(String(player.jersey_number ?? ""), 10);
 
-  return Number.isFinite(jersey)
-    ? jersey
-    : Number.MAX_SAFE_INTEGER;
+  return Number.isFinite(jersey) ? jersey : Number.MAX_SAFE_INTEGER;
 }
 
 function sortPlayers(players: Player[]) {
@@ -305,9 +407,7 @@ function sortPlayers(players: Player[]) {
       return jerseyA - jerseyB;
     }
 
-    return (a.full_name ?? "").localeCompare(
-      b.full_name ?? "",
-    );
+    return (a.full_name ?? "").localeCompare(b.full_name ?? "");
   });
 }
 
@@ -319,7 +419,7 @@ function getGroupOrder(league?: SupportedRosterLeague) {
     return FOOTBALL_POSITION_ORDER;
   }
 
-  if (league === "soccer") {
+  if (league && SOCCER_LEAGUES.includes(league)) {
     return SOCCER_GROUP_ORDER;
   }
 
@@ -384,9 +484,7 @@ export default function Roster({
   if (players.length === 0) {
     return (
       <View style={styles.contentContainer}>
-        <Text style={global.emptyText}>
-          No players found.
-        </Text>
+        <Text style={global.emptyText}>No players found.</Text>
       </View>
     );
   }
@@ -405,9 +503,7 @@ export default function Roster({
     >
       {groupedPlayers.map((group) => (
         <View key={group.title}>
-          <HeadingTwo isDark={isDark}>
-            {group.title}
-          </HeadingTwo>
+          <HeadingTwo isDark={isDark}>{group.title}</HeadingTwo>
 
           <View style={styles.playerList}>
             {group.data.map((player) => (

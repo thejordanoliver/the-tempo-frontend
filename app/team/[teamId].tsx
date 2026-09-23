@@ -1,4 +1,3 @@
-import { CustomHeader } from "@/components/CustomHeader";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import GamesList from "@/components/Sports/Basketball/Games/GamesList";
 import Roster from "@/components/Sports/Basketball/Team/Roster";
@@ -10,64 +9,52 @@ import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import { useRosterStats } from "@/hooks/NBAHooks/useRosterStats";
 import useTeamDetails from "@/hooks/useTeams";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
 import MonthSelector from "components/League/MonthSelector";
 import { StandingsList } from "components/League/Standings/StandingsList";
 import NewsList from "components/News/NewsList";
-import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
+import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
-import { useNotifications } from "contexts/NotificationContext";
-import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
+import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
-import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
+import { useState } from "react";
 import { View } from "react-native";
-import PagerView from "react-native-pager-view";
 import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getNBASeason } from "utils/dateUtils";
 
 export default function TeamDetailScreen() {
   const league = "nba";
-  const { toggleNotifications, isNotified } = useNotifications();
   const currentSeason = getNBASeason();
-  const { resolvedColorScheme } = usePreferences();
-  const isDark = resolvedColorScheme === "dark";
   const styles = teamDetailStyles;
-  const navigation = useNavigation();
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
   const team = getNBATeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getNBATeamLogo(teamIdNum, true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [standingsYear, setStandingsYear] = useState(getNBASeason().toString());
-  const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
-    useTeamTabs(league);
-  const pagerRef = useRef<PagerView>(null);
-  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
-    usePagerTabScrollProgress();
-
-  const tabToIndex = (tab: (typeof tabs)[number]) => tabs.indexOf(tab);
-  const indexToTab = (index: number) => tabs[index];
-
-  const handleTabPress = (tab: (typeof tabs)[number]) => {
-    setSelectedTab(tab);
-    pagerRef.current?.setPage(tabToIndex(tab));
-  };
-
-  const handlePageChange = (index: number) => {
-    syncPageScrollProgress(index);
-    setSelectedTab(indexToTab(index));
-  };
+  const screen = useTeamDetailScreen({
+    tabLeague: league,
+    header: {
+      league,
+      teamId: teamIdNum,
+      teamName,
+      teamColor,
+      logo: teamLogo,
+      favorite: team ? { lookupId: team.id, toggleId: teamIdNum } : undefined,
+      infoEnabled: true,
+    },
+  });
+  const {
+    hasVisitedTab,
+    selectedTab,
+    refreshing,
+    modalVisible,
+    setModalVisible,
+    isDark,
+  } = screen;
 
   const { teamDetails } = useTeamDetails(league, teamIdNum);
 
@@ -105,8 +92,6 @@ export default function TeamDetailScreen() {
     error: playersError,
   } = useRoster(teamIdNum, league);
 
-  const favorited = team ? isFavorite(league, team.id) : false;
-
   const {
     games,
     months,
@@ -121,9 +106,7 @@ export default function TeamDetailScreen() {
   } = useBasketballTeamGames(league, teamIdNum, currentSeason);
 
   const handleRefresh = async () => {
-    setRefreshing(true);
-
-    try {
+    await screen.runRefresh(async () => {
       if (selectedTab === "schedule") {
         await refreshTeamGames();
       }
@@ -135,72 +118,24 @@ export default function TeamDetailScreen() {
       if (selectedTab === "stats") {
         await refetch();
       }
-    } finally {
-      setRefreshing(false);
-    }
+    });
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <CustomHeader
+  return (
+    <SharedTeamDetailScreen
+      ready={Boolean(team)}
+      screen={screen}
+      footer={
+        <TeamInfoModal
+          teamDetails={teamDetails}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
           teamId={teamIdNum}
-          logo={teamLogo}
-          teamName={teamName}
-          teamColor={teamColor}
-          onBack={goBack}
-          isTeamScreen
-          isFavorite={favorited}
-          onToggleFavorite={() => team && toggleFavorite(league, teamIdNum)}
-          onToggleNotifications={() =>
-            void toggleNotifications(league, teamIdNum)
-          }
-          isNotified={isNotified(league, teamIdNum)}
-          onOpenInfo={() => setModalVisible(true)}
+          teamLogo={teamLogo}
           league={league}
         />
-      ),
-    });
-  }, [
-    navigation,
-    isDark,
-    team,
-    teamIdNum,
-    teamName,
-    toggleNotifications,
-    isNotified,
-    league,
-    teamColor,
-    teamLogo,
-    toggleFavorite,
-    favorited,
-  ]);
-
-  if (!team) {
-    return (
-      <View style={styles.loadContainer}>
-        <CustomActivityIndicator />
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <MainScrollTabBar
-        tabs={tabs}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-        scrollProgress={scrollProgress}
-      />
-
-      <PagerView
-        ref={pagerRef}
-        style={styles.contentArea}
-        initialPage={tabToIndex(selectedTab)}
-        onPageScroll={handlePageScroll}
-        onPageSelected={(event) => handlePageChange(event.nativeEvent.position)}
-      >
+      }
+    >
         <View key="schedule" style={styles.contentArea}>
           <MonthSelector
             months={months}
@@ -269,16 +204,6 @@ export default function TeamDetailScreen() {
         <View key="forum" style={styles.contentArea}>
           <ForumFeed teamId={teamIdStr} league={league} />
         </View>
-      </PagerView>
-
-      <TeamInfoModal
-        teamDetails={teamDetails}
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        teamId={teamIdNum}
-        teamLogo={teamLogo}
-        league={league}
-      />
-    </View>
+    </SharedTeamDetailScreen>
   );
 }

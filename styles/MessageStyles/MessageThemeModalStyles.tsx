@@ -27,16 +27,6 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
     },
-    blurViewContainer: {
-      flex: 1,
-      padding: 12,
-      paddingTop: 40,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-    },
-    contentContainerStyle: {
-      paddingBottom: 100,
-    },
 
     header: {
       flexDirection: "row",
@@ -51,14 +41,6 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
       fontFamily: Fonts.BOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
-    },
-
-    subtitle: {
-      marginTop: 2,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textTransform: "uppercase",
     },
 
     scrollContent: {
