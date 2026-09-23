@@ -15,7 +15,10 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { blockUser, reportUser, unblockUser, type ReportReason } from "services/usersApi";
+import { Colors } from "constants/styles";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
 import type { ProfileTab } from "../(tabs)/profile";
@@ -65,7 +68,11 @@ export default function UserProfileScreen() {
     fadeAnim,
     currentUserId,
     toggleFollow,
+    isBlockedByViewer,
+    canInteract,
+    refreshProfile,
   } = useUserProfile(userId);
+  const [safetyPending, setSafetyPending] = useState(false);
 
   const {
     featuredBadges,
@@ -129,13 +136,93 @@ export default function UserProfileScreen() {
     router.back();
   }, [router]);
 
+  const submitReport = useCallback(async (reasonCode: ReportReason) => {
+    if (!userId || safetyPending) return;
+    setSafetyPending(true);
+    try {
+      await reportUser(userId, reasonCode);
+      Alert.alert("Report received", "Thanks for helping keep Tempo safe.");
+    } catch {
+      Alert.alert("Could not submit report", "Please try again later.");
+    } finally {
+      setSafetyPending(false);
+    }
+  }, [safetyPending, userId]);
+
+  const handleReport = useCallback(() => {
+    Alert.alert("Report user", "Why are you reporting this account?", [
+      { text: "Spam", onPress: () => void submitReport("spam") },
+      { text: "Harassment", onPress: () => void submitReport("harassment") },
+      { text: "Other", onPress: () => void submitReport("other") },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  }, [submitReport]);
+
+  const changeBlockState = useCallback(async () => {
+    if (!userId || safetyPending) return;
+    setSafetyPending(true);
+    try {
+      if (isBlockedByViewer) await unblockUser(userId);
+      else await blockUser(userId);
+      await refreshProfile();
+    } catch {
+      Alert.alert("Could not update block", "Please try again later.");
+    } finally {
+      setSafetyPending(false);
+    }
+  }, [isBlockedByViewer, refreshProfile, safetyPending, userId]);
+
+  const handleSafetyMenu = useCallback(() => {
+    Alert.alert(username ? `@${username}` : "User actions", undefined, [
+      { text: "Report", onPress: handleReport },
+      {
+        text: isBlockedByViewer ? "Unblock" : "Block",
+        style: isBlockedByViewer ? "default" : "destructive",
+        onPress: () => {
+          if (isBlockedByViewer) {
+            void changeBlockState();
+            return;
+          }
+          Alert.alert(
+            "Block user?",
+            "You won't be able to follow, message, or see each other's activity. They won't be notified.",
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Block", style: "destructive", onPress: () => void changeBlockState() },
+            ],
+          );
+        },
+      },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  }, [changeBlockState, handleReport, isBlockedByViewer, username]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <CustomHeader title={headerTitle} tabName="User" onBack={handleBack} />
+        <CustomHeader
+          title={headerTitle}
+          tabName="User"
+          onBack={handleBack}
+          rightAction={!isCurrentUser ? (
+            <TouchableOpacity
+              onPress={handleSafetyMenu}
+              disabled={safetyPending}
+              accessibilityRole="button"
+              accessibilityLabel="User safety actions"
+              hitSlop={8}
+            >
+              <Ionicons
+                name="ellipsis-horizontal"
+                size={24}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          ) : undefined}
+        />
       ),
     });
-  }, [navigation, headerTitle, handleBack]);
+  }, [navigation, headerTitle, handleBack, handleSafetyMenu, isCurrentUser, isDark, safetyPending]);
 
   const onFollowersPress = useCallback(() => {
     if (!currentUserIdString || !userId) return;
@@ -212,7 +299,7 @@ export default function UserProfileScreen() {
         isCurrentUser={isCurrentUser}
         isFollowing={isFollowing}
         loading={followLoading}
-        onToggleFollow={handleToggleFollow}
+        onToggleFollow={canInteract ? handleToggleFollow : undefined}
         onEditPress={isCurrentUser ? handleEditPress : undefined}
       />
 

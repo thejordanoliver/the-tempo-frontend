@@ -1,7 +1,8 @@
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { Image } from "expo-image";
 import { memo, useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafetyActions } from "hooks/useSafetyActions";
 import type { ChatMessageItem } from "types/chat";
 
 interface Props {
@@ -10,12 +11,13 @@ interface Props {
   isDark: boolean;
   emojis: string[];
   onReaction: (messageId: string, emoji: string) => void;
+  onBlockedUser: (userId: number) => void;
 }
 
 const profilePlaceholder =
   "https://res.cloudinary.com/dm3qtdhag/image/upload/v1776393764/BannerPlaceholder_som0xw.png";
 
-function ChatMessage({ item, userName, isDark, emojis, onReaction }: Props) {
+function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser }: Props) {
   const styles = useMemo(() => ChatMessageStyles(isDark), [isDark]);
 
   const time = new Date(item.time).toLocaleTimeString([], {
@@ -28,10 +30,20 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction }: Props) {
   const hasGif = Boolean(gifUrl);
 
   const isCurrentUser = item.user === userName;
+  const safety = useSafetyActions({
+    userId: item.senderId,
+    username: item.user,
+    targetType: "game_chat_message",
+    targetId: item.id,
+    onBlocked: item.senderId ? () => onBlockedUser(item.senderId!) : undefined,
+  });
   const profileImage = item.profile_image ?? profilePlaceholder;
 
   return (
-    <View
+    <Pressable
+      onLongPress={isCurrentUser ? undefined : safety.open}
+      delayLongPress={350}
+      accessibilityHint={isCurrentUser ? undefined : "Long press for safety actions"}
       style={[
         styles.messageContainer,
         isCurrentUser ? styles.currentUserContainer : styles.otherUserContainer,
@@ -107,7 +119,7 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction }: Props) {
           );
         })}
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -118,7 +130,8 @@ export default memo(
     prevProps.userName === nextProps.userName &&
     prevProps.isDark === nextProps.isDark &&
     prevProps.emojis === nextProps.emojis &&
-    prevProps.onReaction === nextProps.onReaction,
+    prevProps.onReaction === nextProps.onReaction &&
+    prevProps.onBlockedUser === nextProps.onBlockedUser,
 );
 
 const ChatMessageStyles = (isDark: boolean) =>

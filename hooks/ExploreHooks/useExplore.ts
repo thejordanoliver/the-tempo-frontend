@@ -14,6 +14,7 @@ import {
   sendExploreSearchEvent,
   type ExploreSearchSettledEvent,
 } from "services/exploreSearchAnalytics";
+import { getVisibleUserIds } from "services/usersApi";
 import { apiClient } from "utils/apiClient";
 import {
   EXPLORE_SEARCH_MAX_QUERY_LENGTH,
@@ -234,7 +235,35 @@ export function useExplore() {
 
       if (requestId !== recentSearchLoadRequestIdRef.current) return;
 
-      setRecentSearches(safeParseRecentSearches(stored));
+      const parsedSearches = safeParseRecentSearches(stored);
+      const userSearches = parsedSearches.filter(
+        (item): item is UserResult => item.type === "user",
+      );
+      let visibleSearches = parsedSearches;
+
+      if (userSearches.length > 0) {
+        try {
+          const visibleUserIds = await getVisibleUserIds(
+            userSearches.map(({ id }) => id),
+          );
+          visibleSearches = parsedSearches.filter(
+            (item) =>
+              item.type !== "user" || visibleUserIds.has(String(item.id)),
+          );
+        } catch {
+          // Fail closed for locally cached accounts when visibility cannot be
+          // verified; sports results can still be shown safely.
+          visibleSearches = parsedSearches.filter(
+            (item) => item.type !== "user",
+          );
+        }
+      }
+
+      if (requestId !== recentSearchLoadRequestIdRef.current) return;
+      if (visibleSearches.length !== parsedSearches.length) {
+        await persistRecentSearches(storageKey, visibleSearches);
+      }
+      setRecentSearches(visibleSearches);
     } catch (err) {
       if (requestId !== recentSearchLoadRequestIdRef.current) return;
       console.warn("Error loading recent searches", err);

@@ -430,6 +430,10 @@ export function useLiveGameChat(gameId: string | number) {
     [applyReactionUpdate, currentUserName, messages, syncHistory],
   );
 
+  const hideBlockedUser = useCallback((userId: number) => {
+    setMessages((current) => current.filter((message) => message.senderId !== userId));
+  }, []);
+
   return {
     messages,
     userCount,
@@ -437,5 +441,6 @@ export function useLiveGameChat(gameId: string | number) {
     isReady,
     sendMessage,
     addReaction,
+    hideBlockedUser,
   };
 }

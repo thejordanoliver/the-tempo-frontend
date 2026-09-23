@@ -172,6 +172,21 @@ export default function SettingsScreen() {
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}
+            onPress={() => router.push("/settings/blocked-users")}
+          >
+            <Text style={styles.optionText}>Blocked Accounts</Text>
+
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color={isDark ? Colors.white : Colors.black}
+            />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.optionButtonContainer}>
+          <TouchableOpacity
+            style={styles.optionButton}
             onPress={() => setshowLogoutModal(true)}
           >
             <Text style={styles.dangerText}>Logout</Text>

@@ -46,6 +46,9 @@ type UserProfileResponse = {
   favoriteTeams?: unknown;
   favoriteSports?: unknown;
   isFollowing?: boolean | null;
+  isBlockedByViewer?: boolean | null;
+  hasBlockedViewer?: boolean | null;
+  canInteract?: boolean | null;
   updatedAt?: string | null;
   updated_at?: string | null;
 };
@@ -203,6 +206,8 @@ export function useUserProfile(userId?: string) {
   const [favoriteSports, setFavoriteSports] = useState<FavoriteSportId[]>([]);
 
   const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
+  const [isBlockedByViewer, setIsBlockedByViewer] = useState(false);
+  const [hasBlockedViewer, setHasBlockedViewer] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
   const [fadeAnim] = useState(() => new Animated.Value(1));
@@ -254,6 +259,8 @@ export function useUserProfile(userId?: string) {
     setFavoriteTeams([]);
     setFavoriteSports([]);
     setIsFollowing(false);
+    setIsBlockedByViewer(false);
+    setHasBlockedViewer(false);
   }, []);
 
   const applyDisplayProfile = useCallback(
@@ -391,6 +398,8 @@ export function useUserProfile(userId?: string) {
         setIsFollowing(
           typeof data.isFollowing === "boolean" ? data.isFollowing : false,
         );
+        setIsBlockedByViewer(Boolean(data.isBlockedByViewer));
+        setHasBlockedViewer(Boolean(data.hasBlockedViewer));
         setHasCachedProfile(true);
         if (displayProfile !== cachedProfile) {
           setCacheState("fresh");
@@ -573,6 +582,9 @@ export function useUserProfile(userId?: string) {
     followersCount,
     followingCount,
     isFollowing: isFollowing ?? false,
+    isBlockedByViewer,
+    hasBlockedViewer,
+    canInteract: !isBlockedByViewer && !hasBlockedViewer,
     followLoading,
     favoriteTeamsWithLeague,
     favoriteSports,

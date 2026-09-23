@@ -16,6 +16,86 @@ export type UserSearchResult = {
   isVerified?: boolean;
 };
 
+export type BlockedUser = {
+  id: number;
+  username: string;
+  fullName: string | null;
+  profileImage: string | null;
+  blockedAt: string;
+};
+
+export type ReportReason =
+  | "spam"
+  | "harassment"
+  | "hate"
+  | "threats"
+  | "sexual_content"
+  | "impersonation"
+  | "scam"
+  | "misinformation"
+  | "other";
+
+export type ReportTargetType =
+  | "user"
+  | "forum_post"
+  | "forum_comment"
+  | "dm_message"
+  | "game_chat_message";
+
+export async function blockUser(userId: string | number): Promise<void> {
+  await apiClient.post(`/api/safety/blocks/${encodeURIComponent(String(userId))}`);
+}
+
+export async function unblockUser(userId: string | number): Promise<void> {
+  await apiClient.delete(`/api/safety/blocks/${encodeURIComponent(String(userId))}`);
+}
+
+export async function getBlockedUsers(): Promise<BlockedUser[]> {
+  const response = await apiClient.get<{ users?: BlockedUser[] }>(
+    "/api/safety/blocks",
+  );
+  return response.data.users ?? [];
+}
+
+export async function getVisibleUserIds(
+  userIds: (string | number)[],
+): Promise<Set<string>> {
+  if (userIds.length === 0) return new Set();
+
+  const response = await apiClient.post<{ visibleUserIds?: number[] }>(
+    "/api/safety/visibility/users",
+    { userIds },
+  );
+  return new Set((response.data.visibleUserIds ?? []).map(String));
+}
+
+export async function reportUser(
+  userId: string | number,
+  reasonCode: ReportReason,
+  details?: string,
+): Promise<void> {
+  await apiClient.post("/api/safety/reports", {
+    targetType: "user",
+    targetId: String(userId),
+    reasonCode,
+    ...(details?.trim() ? { details: details.trim() } : {}),
+  });
+}
+
+export async function reportContent(
+  targetType: Exclude<ReportTargetType, "user">,
+  targetId: string | number,
+  reasonCode: ReportReason,
+  details?: string,
+): Promise<void> {
+  await apiClient.post("/api/safety/reports", {
+    targetType,
+    targetId: String(targetId),
+    reasonCode,
+    ...(details?.trim() ? { details: details.trim() } : {}),
+  });
+}
+
 export async function searchUsers(
   query: string,
 ): Promise<UserSearchResult[]> {

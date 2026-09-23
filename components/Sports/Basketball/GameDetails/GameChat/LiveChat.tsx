@@ -63,6 +63,7 @@ type Props = {
   currentUserName: string;
   onReaction: (messageId: string, emoji: string) => void;
   onSend: (payload: ChatSendPayload) => boolean | Promise<boolean>;
+  onBlockedUser: (userId: number) => void;
   inputDisabled?: boolean;
   sendDisabled?: boolean;
   onDismiss: () => void;
@@ -74,6 +75,7 @@ export default function LiveChat({
   currentUserName,
   onReaction,
   onSend,
+  onBlockedUser,
   inputDisabled = false,
   sendDisabled = false,
   onDismiss,
@@ -223,9 +225,10 @@ export default function LiveChat({
         isDark={isDark}
         emojis={EMOJIS}
         onReaction={onReaction}
+        onBlockedUser={onBlockedUser}
       />
     ),
-    [currentUserName, isDark, onReaction],
+    [currentUserName, isDark, onBlockedUser, onReaction],
   );
 
   const handleSend = useCallback(

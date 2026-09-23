@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Animated, ImageSourcePropType } from "react-native";
 
 export type RacingLeague =
@@ -44,6 +45,7 @@ export type CustomHeaderProps = {
   title?: string;
   playerName?: string;
   tabName?: string;
+  rightAction?: ReactNode;
 
   onLogout?: () => void;
   onSettings?: () => void;

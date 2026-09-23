@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useState } from "react";
+import { useSafetyActions } from "hooks/useSafetyActions";
 import {
   Animated,
   Easing,
@@ -20,6 +21,7 @@ type UserHeaderProps = {
   currentUserId: number | null;
   onEdit: () => void;
   onDelete: () => void;
+  onBlocked: () => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -171,6 +173,7 @@ export const UserHeader = memo(function UserHeader({
   currentUserId,
   onEdit,
   onDelete,
+  onBlocked,
 }: UserHeaderProps) {
   const [submenuVisible, setSubmenuVisible] = useState(false);
 
@@ -181,6 +184,13 @@ export const UserHeader = memo(function UserHeader({
 
   const isAuthor =
     currentUserId != null && currentUserId === item.user_id;
+  const safety = useSafetyActions({
+    userId: item.user_id,
+    username: item.username,
+    targetType: "forum_post",
+    targetId: item.id,
+    onBlocked,
+  });
 
   /* -------------------------------------------------------------------------- */
   /*                                Navigation                                  */
@@ -297,7 +307,21 @@ export const UserHeader = memo(function UserHeader({
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.menuPlaceholder} />
+        <TouchableOpacity
+          activeOpacity={activeOpacity}
+          onPress={safety.open}
+          disabled={safety.pending}
+          style={styles.menuButton}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Post safety actions"
+        >
+          <Ionicons
+            name="ellipsis-horizontal"
+            size={22}
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </TouchableOpacity>
       )}
     </View>
   );

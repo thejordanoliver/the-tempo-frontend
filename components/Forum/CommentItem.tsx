@@ -4,6 +4,7 @@ import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSafetyActions } from "hooks/useSafetyActions";
 import {
   Image,
   PixelRatio,
@@ -192,11 +193,19 @@ export const CommentItem = ({
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const [submenuVisible, setSubmenuVisible] = useState(false);
   const [repliesExpanded, setRepliesExpanded] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const previousReplyCountRef = useRef(replyCount);
 
   const animatedHeight = useSharedValue(COLLAPSED_HEIGHT);
 
   const isAuthor = currentUserId != null && comment.user_id === currentUserId;
+  const safety = useSafetyActions({
+    userId: comment.user_id,
+    username: comment.username,
+    targetType: "forum_comment",
+    targetId: comment.id,
+    onBlocked: () => setHidden(true),
+  });
   const profileImageUri = comment.profile_image?.trim() || null;
   const profileInitial = (comment.username?.[0] ?? "T").toUpperCase();
 
@@ -368,6 +377,8 @@ export const CommentItem = ({
   const visibleReplies =
     shouldCollapseReplies && !repliesExpanded ? [] : replies;
 
+  if (hidden) return null;
+
   return (
     <View
       style={[
@@ -466,7 +477,21 @@ export const CommentItem = ({
               </TouchableOpacity>
             </View>
           ) : (
-            <View style={styles.menuPlaceholder} />
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={safety.open}
+              disabled={safety.pending}
+              style={styles.menuButton}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Comment safety actions"
+            >
+              <Ionicons
+                name="ellipsis-horizontal"
+                size={20}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
           )}
         </View>
 

@@ -50,6 +50,7 @@ const isConferenceSelectorTab = (tabName?: string) =>
 export function CustomHeader({
   title,
   tabName,
+  rightAction,
   onLogout,
   onSettings,
   onEdit,
@@ -504,6 +505,7 @@ export function CustomHeader({
         )}
 
         <HeaderRightActions
+          rightAction={rightAction}
           isTeamScreen={isTeamScreen}
           isPlayerScreen={isPlayerScreen}
           showFavoriteAction={showFavoriteAction}

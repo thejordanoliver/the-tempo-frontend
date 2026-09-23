@@ -17,6 +17,7 @@ import {
 import { ProfileHeaderMenu } from "./ProfileHeaderMenu";
 
 type HeaderRightActionsProps = {
+  rightAction?: ReactNode;
   isTeamScreen: boolean;
   isPlayerScreen?: boolean;
   showFavoriteAction?: boolean;
@@ -92,6 +93,7 @@ function FavoriteHeaderButton({
 }
 
 export function HeaderRightActions({
+  rightAction,
   isTeamScreen,
   isPlayerScreen,
   showFavoriteAction = false,
@@ -124,6 +126,8 @@ export function HeaderRightActions({
 }: HeaderRightActionsProps) {
   const { width } = useWindowDimensions();
   const styles = customHeaderStyles(isDark, width);
+
+  if (rightAction) return <>{rightAction}</>;
 
   if (isTeamScreen) {
     return (

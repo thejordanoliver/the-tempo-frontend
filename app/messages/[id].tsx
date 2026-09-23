@@ -531,6 +531,7 @@ export default function ConversationScreen() {
         secondaryAccent={messageAccent.secondary}
         usesCustomMessageAccent={usesCustomMessageAccent}
         usesGradient={usesGradient}
+        onBlocked={() => router.back()}
       />
     ),
     [
@@ -541,6 +542,7 @@ export default function ConversationScreen() {
       styles,
       usesCustomMessageAccent,
       usesGradient,
+      router,
     ],
   );
 

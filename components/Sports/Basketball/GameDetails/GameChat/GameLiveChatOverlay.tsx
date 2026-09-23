@@ -13,6 +13,7 @@ type GameChatSessionProps = {
   isReady: boolean;
   sendMessage: (payload: ChatSendPayload) => boolean;
   addReaction: (messageId: string, emoji: string) => void;
+  hideBlockedUser: (userId: number) => void;
   onClose: () => void;
 };
 
@@ -37,6 +38,7 @@ const GameChatSession = memo(function GameChatSession({
   isReady,
   sendMessage,
   addReaction,
+  hideBlockedUser,
   onClose,
 }: GameChatSessionProps) {
   const handleSend = useCallback(
@@ -52,6 +54,7 @@ const GameChatSession = memo(function GameChatSession({
       userCount={userCount}
       currentUserName={currentUserName}
       onReaction={addReaction}
+      onBlockedUser={hideBlockedUser}
       onSend={handleSend}
       sendDisabled={!isReady}
       onDismiss={onClose}
@@ -73,6 +76,7 @@ function MountedGameLiveChatOverlay({
     isReady,
     sendMessage,
     addReaction,
+    hideBlockedUser,
   } = useLiveGameChat(gameId);
 
   return (
@@ -96,6 +100,7 @@ function MountedGameLiveChatOverlay({
           isReady={isReady}
           sendMessage={sendMessage}
           addReaction={addReaction}
+          hideBlockedUser={hideBlockedUser}
           onClose={onCloseChat}
         />
       )}

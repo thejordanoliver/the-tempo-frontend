@@ -24,6 +24,7 @@ export const PostItem = memo(function PostItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [hidden, setHidden] = useState(false);
 
   const styles = PostItemStyles(isDark);
 
@@ -79,6 +80,8 @@ export const PostItem = memo(function PostItem({
   /*                                   Render                                   */
   /* -------------------------------------------------------------------------- */
 
+  if (hidden) return null;
+
   return (
     <View style={styles.container}>
       <View style={styles.postContainer}>
@@ -89,6 +92,7 @@ export const PostItem = memo(function PostItem({
           currentUserId={currentUserId}
           onEdit={handleStartEdit}
           onDelete={handleDeleteRequest}
+          onBlocked={() => setHidden(true)}
         />
 
         {/* Post Body */}

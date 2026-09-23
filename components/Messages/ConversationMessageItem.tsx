@@ -2,7 +2,8 @@ import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Image } from "expo-image";
 import { memo } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { useSafetyActions } from "hooks/useSafetyActions";
 import type { DirectMessageItem } from "types/messages";
 import { getContrastingTextColor } from "utils/color";
 import { getReadableGradientTextColor } from "utils/messageTheme";
@@ -19,6 +20,7 @@ interface ConversationMessageItemProps {
   secondaryAccent: string;
   usesCustomMessageAccent: boolean;
   usesGradient: boolean;
+  onBlocked?: () => void;
 }
 
 function ConversationMessageItem({
@@ -31,9 +33,17 @@ function ConversationMessageItem({
   secondaryAccent,
   usesCustomMessageAccent,
   usesGradient,
+  onBlocked,
 }: ConversationMessageItemProps) {
   const hasText = item.text.trim().length > 0;
   const hasAttachment = Boolean(item.attachment);
+  const safety = useSafetyActions({
+    userId: item.senderId,
+    username: item.senderUsername,
+    targetType: "dm_message",
+    targetId: item.id,
+    onBlocked,
+  });
 
   const customBubbleColor = item.isCurrentUser
     ? primaryAccent
@@ -130,7 +140,14 @@ function ConversationMessageItem({
             : styles.otherUserMessageStack,
         ]}
       >
-        <View style={bubbleStyle}>{bubbleContent}</View>
+        <Pressable
+          style={bubbleStyle}
+          onLongPress={item.isCurrentUser ? undefined : safety.open}
+          delayLongPress={350}
+          accessibilityHint={item.isCurrentUser ? undefined : "Long press for safety actions"}
+        >
+          {bubbleContent}
+        </Pressable>
 
         {item.isCurrentUser && Boolean(receiptLabel) && (
           <Text style={styles.messageReceiptText}>{receiptLabel}</Text>
