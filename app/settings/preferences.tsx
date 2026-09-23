@@ -6,7 +6,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import {
   getActivityStatusPreference,
   updateActivityStatusPreference,
@@ -28,6 +28,7 @@ const PreferencesScreen = () => {
   const [isUpdatingActivityStatus, setIsUpdatingActivityStatus] =
     useState(false);
   const textColor = isDark ? Colors.white : Colors.black;
+  const selectedBorderColor = isDark ? Colors.white : Colors.black;
   const notSelected = isDark
     ? Colors.transparentLightGray
     : Colors.transparentDarkGray;
@@ -54,11 +55,10 @@ const PreferencesScreen = () => {
     };
   }, []);
 
-  const handleToggleActivityStatus = useCallback(async () => {
+  const handleToggleActivityStatus = useCallback(async (next: boolean) => {
     if (isUpdatingActivityStatus) return;
 
     const previous = showActivityStatus;
-    const next = !previous;
 
     setShowActivityStatus(next);
     setIsUpdatingActivityStatus(true);
@@ -78,7 +78,12 @@ const PreferencesScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <HeadingTwo isDark={isDark}>Gamecard Layout</HeadingTwo>
         <View>
-          <View style={styles.optionButtonContainer}>
+          <View
+            style={[
+              styles.optionButtonContainer,
+              viewMode === "list" && { borderBottomColor: selectedBorderColor },
+            ]}
+          >
             <TouchableOpacity
               onPress={() => setViewMode("list")}
               style={styles.optionButton}
@@ -99,7 +104,12 @@ const PreferencesScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.optionButtonContainer}>
+          <View
+            style={[
+              styles.optionButtonContainer,
+              viewMode === "grid" && { borderBottomColor: selectedBorderColor },
+            ]}
+          >
             <TouchableOpacity
               onPress={() => setViewMode("grid")}
               style={styles.optionButton}
@@ -119,7 +129,14 @@ const PreferencesScreen = () => {
               )}
             </TouchableOpacity>
           </View>
-          <View style={styles.optionButtonContainer}>
+          <View
+            style={[
+              styles.optionButtonContainer,
+              viewMode === "stacked" && {
+                borderBottomColor: selectedBorderColor,
+              },
+            ]}
+          >
             <TouchableOpacity
               onPress={() => setViewMode("stacked")}
               style={styles.optionButton}
@@ -144,7 +161,14 @@ const PreferencesScreen = () => {
         <View style={styles.seperator} />
 
         <HeadingTwo isDark={isDark}>Theme</HeadingTwo>
-        <View style={styles.optionButtonContainer}>
+        <View
+          style={[
+            styles.optionButtonContainer,
+            colorScheme === "light" && {
+              borderBottomColor: selectedBorderColor,
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => setColorScheme("light")}
             style={styles.optionButton}
@@ -166,7 +190,14 @@ const PreferencesScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.optionButtonContainer}>
+        <View
+          style={[
+            styles.optionButtonContainer,
+            colorScheme === "dark" && {
+              borderBottomColor: selectedBorderColor,
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => setColorScheme("dark")}
             style={styles.optionButton}
@@ -188,7 +219,14 @@ const PreferencesScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.optionButtonContainer}>
+        <View
+          style={[
+            styles.optionButtonContainer,
+            colorScheme === "system" && {
+              borderBottomColor: selectedBorderColor,
+            },
+          ]}
+        >
           <TouchableOpacity
             onPress={() => setColorScheme("system")}
             style={styles.optionButton}
@@ -214,29 +252,15 @@ const PreferencesScreen = () => {
 
         <HeadingTwo isDark={isDark}>Activity Status</HeadingTwo>
         <View style={styles.optionButtonContainer}>
-          <TouchableOpacity
-            onPress={handleToggleActivityStatus}
-            style={styles.optionButton}
-            disabled={isUpdatingActivityStatus}
-          >
-            <Text
-              style={[
-                styles.optionText,
-                {
-                  color: showActivityStatus ? textColor : notSelected,
-                },
-              ]}
-            >
-              Show Activity Status
-            </Text>
-            {showActivityStatus && (
-              <Ionicons
-                name={"checkmark"}
-                size={24}
-                color={showActivityStatus ? textColor : notSelected}
-              />
-            )}
-          </TouchableOpacity>
+          <View style={styles.optionButton}>
+            <Text style={styles.optionText}>Show Activity Status</Text>
+            <Switch
+              accessibilityLabel="Show Activity Status"
+              value={showActivityStatus}
+              onValueChange={handleToggleActivityStatus}
+              disabled={isUpdatingActivityStatus}
+            />
+          </View>
         </View>
       </ScrollView>
     </View>
