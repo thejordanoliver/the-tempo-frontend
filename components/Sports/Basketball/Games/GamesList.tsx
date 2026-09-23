@@ -30,7 +30,6 @@ type Props = {
   onRefresh: () => void;
   error: Error | null;
   expectedCount?: number;
-  day?: "todayTomorrow";
   showHeaders?: boolean;
   scrollEnabled?: boolean;
   isCBB?: boolean;
@@ -64,7 +63,6 @@ export default function GamesList({
   onRefresh,
   error,
   expectedCount,
-  day,
   showHeaders,
   scrollEnabled = true,
   showCountdown = false,
@@ -98,6 +96,7 @@ export default function GamesList({
   /* ----------------------------- Sections ----------------------------- */
 
   const sections: GameSection[] = useMemo(() => {
+    if (games.length === 0) return [];
     if (!showHeaders) return [{ title: "All", data: games }];
     return [{ title: "Regular Season", data: games }];
   }, [games, showHeaders]);
@@ -238,22 +237,22 @@ export default function GamesList({
   }
 
   if (error)
-      return (
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={global.emptyContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={isDark ? Colors.white : Colors.black}
-            />
-          }
-        >
-          <Text style={global.errorText}>{error.message}</Text>
-        </ScrollView>
-      );
+    return (
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={isDark ? Colors.white : Colors.black}
+          />
+        }
+      >
+        <Text style={global.errorText}>{error.message}</Text>
+      </ScrollView>
+    );
 
   /* ----------------------------- CONTENT ------------------------------ */
 

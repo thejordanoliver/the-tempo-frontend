@@ -17,9 +17,8 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   formatPeriod,
   formatVenueAddress,
@@ -153,6 +152,8 @@ export default function HockeyGamePreviewModal({
       index={2}
       snapPoints={snapPoints}
       onDismiss={onClose}
+      enableContentPanningGesture
+      enableHandlePanningGesture
       enableDynamicSizing={false}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
@@ -166,18 +167,6 @@ export default function HockeyGamePreviewModal({
       backgroundStyle={styles.backgroundStyle}
     >
       <View style={styles.container}>
-        <LinearGradient
-          colors={
-            isChampionship
-              ? [Colors.dark.gold, Colors.dark.gold]
-              : [awayColor, awayColor, homeColor, homeColor]
-          }
-          locations={isChampionship ? undefined : [0, 0.4, 0.6, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 0 }}
-          style={StyleSheet.absoluteFill}
-        />
-
         <View style={styles.leftCircle} />
         <View style={styles.rightCircle} />
 

@@ -90,32 +90,31 @@ export default function PlayerDetailScreen() {
     });
   }, [navigation, teamLogo, teamColor]);
 
-  if (!playerId)
-    return (
-      <View style={global.emptyContainer}>
-        <Text style={global.errorText}>Invalid player ID</Text>
-      </View>
-    );
-
-  if (loading)
+  if (seasonsLoading || loading)
     return (
       <View style={global.emptyContainer}>
         <CustomActivityIndicator />
       </View>
     );
 
-  if (error || !player)
+  if (seasonsError || error)
     return (
       <View style={global.emptyContainer}>
-        <Text style={global.errorText}>{error ?? "Player not found"}</Text>
+        <Text style={global.errorText}>
+          {seasonsError || error || "Failed to load player"}
+        </Text>
+      </View>
+    );
+
+  if (!player)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Player not found</Text>
       </View>
     );
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.contentContainerStyle}
-      contentInsetAdjustmentBehavior="automatic"
-    >
+    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
       <PlayerHeader player={player} isDark={isDark} />
 
       <PlayerStatTable

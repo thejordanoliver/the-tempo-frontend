@@ -20,13 +20,13 @@ type StatTableProps = {
   loading?: boolean;
   error?: string | null;
   position?: string | null;
-  league: "MLB" | "CB" | "SB";
+  league: "mlb" | "cb" | "sb";
 };
 
-type SeasonTypeTab = "regular" | "postseason";
+type SeasonTypeTab = "regularseason" | "postseason";
 
-const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab; }[] = [
-  { label: "Regular Season", value: "regular" },
+const SEASON_TYPE_TABS: { label: string; value: SeasonTypeTab }[] = [
+  { label: "Regular Season", value: "regularseason" },
   { label: "Postseason", value: "postseason" },
 ];
 
@@ -514,7 +514,7 @@ function normalizeSeasonTypeTab(seasonType?: string | number | null) {
     return "postseason";
   }
 
-  return "regular";
+  return "regularseason";
 }
 
 function getNormalizedSeasonType(season: BaseballPlayerSeason) {
@@ -527,33 +527,30 @@ function getSeasonTypeRank(season: BaseballPlayerSeason) {
   return getNormalizedSeasonType(season) === "postseason" ? 1 : 0;
 }
 
-function getSeasonTeamCode(
-  season: BaseballPlayerSeason,
-  league: "MLB" | "CB" | "SB",
-) {
+function getSeasonTeamCode(season: BaseballPlayerSeason, league: string) {
   const teamId = Number(season.teamId);
 
   if (!Number.isFinite(teamId)) {
     return "—";
   }
 
-  if (league === "MLB") {
+  if (league === "mlb") {
     const team = getMLBTeamByEspnId(teamId);
     return team?.code || "—";
   }
 
-  if (league === "CB") {
+  if (league === "cb") {
     const team = getCBTeam(teamId);
     return team?.code || "—";
   }
 
   return season.teamSlug
     ? season.teamSlug
-      .split("-")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 4)
-      .toUpperCase()
+        .split("-")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 4)
+        .toUpperCase()
     : String(teamId);
 }
 
@@ -567,7 +564,7 @@ function getSeasonLabel(
     showSeasonTypeSuffix &&
     getNormalizedSeasonType(season) === "postseason"
   ) {
-    return `${displaySeason} POST`;
+    return `${displaySeason}`;
   }
 
   return String(displaySeason);
@@ -628,10 +625,9 @@ function isPostseasonCategory(categoryName: string) {
   return categoryName.startsWith("postseason-");
 }
 
-function hasPostseasonStats(season: BaseballPlayerSeason) {
+function hasUsableSeasonStats(season: BaseballPlayerSeason) {
   return (season.categories || []).some(
-    (category) =>
-      isPostseasonCategory(category.name) && category.stats.length > 0,
+    (category) => category.stats.length > 0,
   );
 }
 
@@ -639,7 +635,7 @@ function shouldSkipCategoryForSeasonType(
   category: Category,
   selectedSeasonType: SeasonTypeTab | null,
 ) {
-  if (selectedSeasonType === "regular") {
+  if (selectedSeasonType === "regularseason") {
     return isPostseasonCategory(category.name);
   }
 
@@ -693,7 +689,7 @@ function formatCareerValue(key: string, displayValues: string[]) {
 
   const madeAttemptValues = cleanedValues
     .map(parseMadeAttemptValue)
-    .filter(Boolean) as { made: number; attempted: number; }[];
+    .filter(Boolean) as { made: number; attempted: number }[];
 
   if (madeAttemptValues.length === cleanedValues.length) {
     const made = madeAttemptValues.reduce((sum, value) => sum + value.made, 0);
@@ -746,10 +742,10 @@ export default function PlayerStatTable({
   const styles = statsTableStyles(isDark);
   const global = globalStyles(isDark);
 
-  const showSeasonTypeTabs = league === "MLB";
+  const showSeasonTypeTabs = league === "mlb";
 
   const [selectedSeasonType, setSelectedSeasonType] =
-    useState<SeasonTypeTab>("regular");
+    useState<SeasonTypeTab>("regularseason");
 
   const sortedData = useMemo(() => {
     return [...data].sort((a, b) => {
@@ -772,17 +768,15 @@ export default function PlayerStatTable({
       return sortedData;
     }
 
+    const rowsForSeasonType = sortedData.filter(
+      (season) => getNormalizedSeasonType(season) === selectedSeasonType,
+    );
+
     if (selectedSeasonType === "postseason") {
-      return sortedData.filter(
-        (season) =>
-          getNormalizedSeasonType(season) === "postseason" &&
-          hasPostseasonStats(season),
-      );
+      return rowsForSeasonType.filter(hasUsableSeasonStats);
     }
 
-    return sortedData.filter(
-      (season) => getNormalizedSeasonType(season) === "regular",
-    );
+    return rowsForSeasonType;
   }, [selectedSeasonType, showSeasonTypeTabs, sortedData]);
 
   const seasonTypeContext = showSeasonTypeTabs ? selectedSeasonType : null;
