@@ -99,13 +99,12 @@ export default function Forum({
 
   const renderEmptyState = () => (
     <View style={global.emptyContainer}>
-      <View style={global.emptyIconContainer}>
-        <Ionicons
-          name={emptyIcon as keyof typeof Ionicons.glyphMap}
-          size={30}
-          color={isDark ? Colors.white : Colors.black}
-        />
-      </View>
+      <Ionicons
+        name={emptyIcon as keyof typeof Ionicons.glyphMap}
+        size={42}
+        color={isDark ? Colors.white : Colors.black}
+      />
+
       <Text style={global.emptyTitle}>{emptyTitle}</Text>
       <Text style={global.emptyText}>{emptyMessage}</Text>
     </View>

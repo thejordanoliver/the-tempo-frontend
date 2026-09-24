@@ -399,13 +399,8 @@ function createCFBRow(
     ? (getCFBTeam(apiTeam.id) ?? getCFBTeamByESPNId(apiTeam.espnId))
     : undefined;
   const teamId = team?.id;
-  const teamCode = team?.code || apiTeam?.code || "N/A";
-  const teamName =
-    team?.fullName ||
-    team?.shortName ||
-    team?.name ||
-    apiTeam?.name ||
-    teamCode;
+  const teamCode = team?.code || "N/A";
+  const teamName = team?.fullName || "N/A";
   const teamColor = team?.color || Colors.midTone;
   const teamLogo = getCFBTeamLogo(teamId, isDark);
 
@@ -431,18 +426,11 @@ function createCBBRow(
   const apiTeam = rank.team;
   const team = apiTeam
     ? (getCBBTeam(apiTeam.id ?? undefined) ??
-      (apiTeam.espnId != null
-        ? getCBBTeamByESPNId(apiTeam.espnId)
-        : undefined))
+      (apiTeam.espnId != null ? getCBBTeamByESPNId(apiTeam.espnId) : undefined))
     : undefined;
   const teamId = team?.id;
-  const teamCode = team?.code || apiTeam?.code || "N/A";
-  const teamName =
-    team?.fullName ||
-    team?.shortName ||
-    team?.name ||
-    apiTeam?.name ||
-    teamCode;
+  const teamCode = team?.code || "N/A";
+  const teamName = team?.fullName || "N/A";
   const teamColor = team?.color || apiTeam?.color || Colors.midTone;
   const teamLogo = getCBBTeamLogo(teamId, isDark);
 
