@@ -70,6 +70,7 @@ type ExploreWidgetDashboardProps = {
     league: ExploreCollegePollLeague,
     pollType: ExploreCollegePollType,
   ) => void;
+  onSetCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
   onReorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
   isEditing: boolean;
@@ -171,6 +172,7 @@ export default function ExploreWidgetDashboard({
   onResizeWidget,
   onSetStandingsLeague,
   onSetCollegePollSelection,
+  onSetCollegePollAutoPlay,
   onMoveWidget,
   onReorderWidgets,
   isEditing,
@@ -402,6 +404,10 @@ export default function ExploreWidgetDashboard({
             pollType={widget.collegePollType ?? "ap"}
             onChangeSelection={(league, pollType) =>
               onSetCollegePollSelection(widget.id, league, pollType)
+            }
+            autoPlay={widget.collegePollAutoPlay !== false}
+            onChangeAutoPlay={(autoPlay) =>
+              onSetCollegePollAutoPlay(widget.id, autoPlay)
             }
             {...editProps}
           />

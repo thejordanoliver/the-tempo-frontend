@@ -30,6 +30,8 @@ export type ExploreWidgetConfig = {
   standingsLeague?: ExploreStandingsLeague;
   collegePollLeague?: ExploreCollegePollLeague;
   collegePollType?: ExploreCollegePollType;
+  /** Defaults to true for new and legacy College Poll widgets. */
+  collegePollAutoPlay?: boolean;
 };
 
 export const EXPLORE_COLLEGE_POLL_LEAGUES = ["cfb", "cbb"] as const;

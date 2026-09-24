@@ -6,12 +6,14 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { LEAGUE_CONFIG } from "constants/leagues";
-import { Colors, Fonts, activeOpacity } from "constants/styles";
+import { Colors } from "constants/styles";
 import { Image } from "expo-image";
 import type { ComponentProps } from "react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Switch, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { collegePollSettingsStyles } from "styles/ExploreStyles/CollegePollSettingsStyles";
+import type { CollegePollSettingsModalProps } from "types/collegePollWidget";
 import {
   EXPLORE_COLLEGE_POLL_LEAGUES,
   type ExploreCollegePollLeague,
@@ -22,27 +24,17 @@ import {
   normalizeCollegePollType,
 } from "utils/collegePollWidget";
 
-type CollegePollSettingsModalProps = {
-  visible: boolean;
-  isDark: boolean;
-  selectedLeague: ExploreCollegePollLeague;
-  selectedPollType: ExploreCollegePollType;
-  onClose: () => void;
-  onSelect: (
-    league: ExploreCollegePollLeague,
-    pollType: ExploreCollegePollType,
-  ) => void;
-};
-
-const collegePollSnapPoints = [snapPoints[0]];
+const collegePollSnapPoints = [snapPoints[1]];
 
 export default function CollegePollSettingsModal({
   visible,
   isDark,
   selectedLeague,
   selectedPollType,
+  autoPlay,
   onClose,
   onSelect,
+  onChangeAutoPlay,
 }: CollegePollSettingsModalProps) {
   const sheetRef = useRef<BottomSheetModal>(null);
   const hasPresentedRef = useRef(false);
@@ -190,117 +182,29 @@ export default function CollegePollSettingsModal({
               </Pressable>
             );
           })}
+
+          <Text style={styles.sectionLabel}>Playback</Text>
+          <View style={styles.settingRow}>
+            <View style={styles.settingCopy}>
+              <Text style={styles.settingTitle}>Autoplay rankings</Text>
+              <Text style={styles.settingDescription}>
+                Automatically advance through the poll slides.
+              </Text>
+            </View>
+            <Switch
+              value={autoPlay}
+              onValueChange={onChangeAutoPlay}
+              trackColor={{
+                false: isDark ? Colors.darkGray : Colors.lightGray,
+                true: isDark ? Colors.dark.blue : Colors.light.blue,
+              }}
+              thumbColor={Colors.white}
+              ios_backgroundColor={isDark ? Colors.darkGray : Colors.lightGray}
+              accessibilityLabel="Automatically advance college poll slides"
+            />
+          </View>
         </BottomSheetScrollView>
       </View>
     </BottomSheetModal>
   );
 }
-
-const collegePollSettingsStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    background: {
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-    },
-    handle: {
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-    },
-    handleIndicator: {
-      width: 38,
-      backgroundColor: Colors.midTone,
-    },
-    container: {
-      flex: 1,
-      paddingHorizontal: 16,
-      backgroundColor: isDark ? Colors.black : Colors.white,
-    },
-    header: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
-      paddingTop: 4,
-      paddingBottom: 14,
-    },
-    headerCopy: {
-      flex: 1,
-    },
-    title: {
-      textAlign: "center",
-      fontFamily: Fonts.BOLD,
-      fontSize: 20,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      textAlign: "center",
-      marginTop: 2,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-
-    sectionLabel: {
-      paddingTop: 8,
-      paddingBottom: 8,
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 13,
-      color: Colors.midTone,
-      textTransform: "uppercase",
-      letterSpacing: 0.7,
-    },
-    sportRow: {
-      flexDirection: "row",
-      gap: 10,
-      paddingBottom: 12,
-    },
-    sportOption: {
-      flex: 1,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 8,
-      minHeight: 54,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 17,
-    },
-    optionSelected: {
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    logo: {
-      width: 28,
-      height: 28,
-    },
-    sportText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 15,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    pollOption: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
-      minHeight: 52,
-      paddingHorizontal: 4,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    pollOptionSelected: {
-      borderBottomColor: isDark ? Colors.white : Colors.black,
-    },
-    pollText: {
-      flex: 1,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 16,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    pressed: {
-      opacity: activeOpacity,
-    },
-  });

@@ -4,7 +4,6 @@ import { BasketballGame } from "@/types/basketball/basketball";
 import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
 import { Ionicons } from "@expo/vector-icons";
-import { EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM } from "constants/exploreWidgetSizes";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
 import { Colors, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
@@ -29,6 +28,7 @@ import BaseballGameWidget from "./GameCards/BaseballGameWidget";
 import BasketballGameWidget from "./GameCards/BasketballGameWidget";
 import FootballGameWidget from "./GameCards/FootballGameWidget";
 import NHLGameWidget from "./GameCards/HockeyGameWidget";
+import WidgetCarousel from "./WidgetCarousel";
 
 // Outside component — never changes
 const ENABLE_AUTO_SLIDE = false;
@@ -522,12 +522,12 @@ export default function WidgetSlider({
   );
 
   const keyExtractor = useCallback(
-    (_: unknown, index: number) => String(index),
+    (_item: WidgetSlide, index: number) => String(index),
     [],
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: WidgetSlide }) => {
+  const renderSlide = useCallback(
+    (item: WidgetSlide) => {
       switch (item.type) {
         case "nba":
           return (
@@ -668,13 +668,17 @@ export default function WidgetSlider({
     [slideHeight, slideWidth, isDark],
   );
 
+  const renderItem = useCallback(
+    ({ item }: { item: WidgetSlide }) => renderSlide(item),
+    [renderSlide],
+  );
+
   const styles = useMemo(
     () => sliderStyles(isDark, dashboardMode),
     [dashboardMode, isDark],
   );
 
   const showEditControls = isEditing && widgetId != null && widgetSize != null;
-  const showDots = dashboardMode && slides.length > 1 && !showEditControls;
 
   if (loading)
     return (
@@ -695,28 +699,44 @@ export default function WidgetSlider({
     >
       <View style={styles.container}>
         <BlurView style={styles.glassSurface} intensity={100}>
-          <FlatList
-            ref={flatListRef}
-            data={slides}
-            keyExtractor={keyExtractor}
-            horizontal={isHorizontal}
-            pagingEnabled
-            snapToInterval={isHorizontal ? slideWidth : slideHeight}
-            decelerationRate="fast"
-            disableIntervalMomentum
-            directionalLockEnabled
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            getItemLayout={getItemLayout}
-            onScrollBeginDrag={showProgress}
-            onMomentumScrollBegin={showProgress}
-            onMomentumScrollEnd={hideProgress}
-            onScrollEndDrag={hideProgress}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-            renderItem={renderItem}
-            scrollEnabled={!showEditControls}
-          />
+          {dashboardMode && isHorizontal ? (
+            <WidgetCarousel
+              items={slides}
+              initialWidth={slideWidth}
+              height={slideHeight}
+              isDark={isDark}
+              disabled={showEditControls}
+              showDots={!showEditControls}
+              keyExtractor={keyExtractor}
+              renderItem={renderSlide}
+              accessibilityLabel={(pageIndex, pageCount) =>
+                `Games, page ${pageIndex + 1} of ${pageCount}`
+              }
+            />
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={slides}
+              keyExtractor={keyExtractor}
+              horizontal={isHorizontal}
+              pagingEnabled
+              snapToInterval={isHorizontal ? slideWidth : slideHeight}
+              decelerationRate="fast"
+              disableIntervalMomentum
+              directionalLockEnabled
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              getItemLayout={getItemLayout}
+              onScrollBeginDrag={showProgress}
+              onMomentumScrollBegin={showProgress}
+              onMomentumScrollEnd={hideProgress}
+              onScrollEndDrag={hideProgress}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+              renderItem={renderItem}
+              scrollEnabled={!showEditControls}
+            />
+          )}
 
           {canResize && (
             <View style={styles.resizeHandle} {...panResponder.panHandlers} />
@@ -747,17 +767,6 @@ export default function WidgetSlider({
             style={[styles.progressBar, { height: progressHeight }]}
           />
         </Animated.View>
-      )}
-
-      {showDots && (
-        <View style={styles.dots}>
-          {slides.map((_, index) => (
-            <View
-              key={index}
-              style={[styles.dot, index === currentIndex && styles.activeDot]}
-            />
-          ))}
-        </View>
       )}
     </Animated.View>
   );
@@ -814,24 +823,6 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       width: 20,
       height: 20,
       borderTopLeftRadius: 8,
-      backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
-    },
-    dots: {
-      position: "absolute",
-      bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
-      zIndex: 5,
-      flexDirection: "row",
-      alignSelf: "center",
-      gap: 5,
-    },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.25)",
-    },
-    activeDot: {
-      width: 16,
       backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
     },
   });

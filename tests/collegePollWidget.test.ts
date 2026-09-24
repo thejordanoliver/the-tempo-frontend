@@ -3,7 +3,7 @@ import test from "node:test";
 import {
   getCollegePollLabel,
   getCollegePollOptions,
-  getCollegePollPreviewLimit,
+  getCollegePollPageSize,
   isCollegePollTypeAvailable,
   normalizeCollegePollType,
 } from "../utils/collegePollWidget";
@@ -25,11 +25,13 @@ test("normalizes unsupported basketball poll selections to AP", () => {
   assert.equal(normalizeCollegePollType("cfb", "cfp"), "cfp");
 });
 
-test("provides stable poll labels and responsive preview limits", () => {
+test("provides stable poll labels", () => {
   assert.equal(getCollegePollLabel("cfb", "fcs"), "FCS Coaches Poll");
   assert.equal(getCollegePollLabel("cbb", "coaches"), "Coaches Poll");
-  assert.equal(getCollegePollPreviewLimit(200), 3);
-  assert.equal(getCollegePollPreviewLimit(220, true), 4);
-  assert.equal(getCollegePollPreviewLimit(420), 10);
-  assert.equal(getCollegePollPreviewLimit(1_000), 10);
+});
+
+test("college poll page sizes match each widget mode", () => {
+  assert.equal(getCollegePollPageSize("small"), 1);
+  assert.equal(getCollegePollPageSize("medium"), 5);
+  assert.equal(getCollegePollPageSize("large"), 5);
 });

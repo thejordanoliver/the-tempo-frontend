@@ -115,6 +115,12 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
           type === "college_polls" ? collegePollLeague : undefined,
         collegePollType:
           type === "college_polls" ? collegePollType : undefined,
+        // Older stored widgets predate this field; only an explicit false
+        // disables autoplay so those widgets retain the default behavior.
+        collegePollAutoPlay:
+          type === "college_polls"
+            ? widget.collegePollAutoPlay !== false
+            : undefined,
       };
     })
     .filter((widget) => {

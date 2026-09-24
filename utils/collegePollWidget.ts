@@ -1,13 +1,9 @@
 import type {
   ExploreCollegePollLeague,
   ExploreCollegePollType,
+  ExploreWidgetSize,
 } from "types/widgets";
-
-export type CollegePollOption = {
-  label: string;
-  shortLabel: string;
-  value: ExploreCollegePollType;
-};
+import type { CollegePollOption } from "types/collegePollWidget";
 
 const CFB_POLL_OPTIONS: readonly CollegePollOption[] = [
   { label: "AP Poll", shortLabel: "AP", value: "ap" },
@@ -55,7 +51,13 @@ export function getCollegePollLabel(
   );
 }
 
-export function getCollegePollPreviewLimit(height: number, compact = false) {
-  const reservedHeight = compact ? 82 : 108;
-  return Math.max(3, Math.min(10, Math.floor((height - reservedHeight) / 30)));
+export function getCollegePollPageSize(size: ExploreWidgetSize) {
+  switch (size) {
+    case "small":
+      return 1;
+    case "medium":
+      return 5;
+    case "large":
+      return 5;
+  }
 }

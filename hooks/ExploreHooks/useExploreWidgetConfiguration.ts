@@ -113,6 +113,7 @@ export function useExploreWidgetConfiguration(userId: number | null) {
             standingsLeague: type === "standings" ? "nba" : undefined,
             collegePollLeague: type === "college_polls" ? "cfb" : undefined,
             collegePollType: type === "college_polls" ? "ap" : undefined,
+            collegePollAutoPlay: type === "college_polls" ? true : undefined,
           },
         ];
       });
@@ -173,6 +174,19 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     [],
   );
 
+  const setCollegePollAutoPlay = useCallback(
+    (widgetId: string, autoPlay: boolean) => {
+      setWidgets((previous) =>
+        previous.map((widget) =>
+          widget.id === widgetId && widget.type === "college_polls"
+            ? { ...widget, collegePollAutoPlay: autoPlay }
+            : widget,
+        ),
+      );
+    },
+    [],
+  );
+
   const moveWidget = useCallback((widgetId: string, direction: -1 | 1) => {
     setWidgets((previous) => {
       const ordered = withSequentialOrder(previous);
@@ -225,6 +239,7 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     resizeWidget,
     setStandingsLeague,
     setCollegePollSelection,
+    setCollegePollAutoPlay,
     moveWidget,
     reorderWidgets,
   };

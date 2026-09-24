@@ -1,8 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
-import { Colors, Fonts } from "constants/styles";
-import { getCBBTeamByESPNId, getCBBTeamLogo } from "constants/teamsCBB";
+import { Colors } from "constants/styles";
+import {
+  getCBBTeam,
+  getCBBTeamByESPNId,
+  getCBBTeamLogo,
+} from "constants/teamsCBB";
 import {
   getCFBTeam,
   getCFBTeamByESPNId,
@@ -10,6 +14,7 @@ import {
 } from "constants/teamsCFB";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
   type CBBTeamRank,
@@ -19,69 +24,54 @@ import {
   type CFBTeamRank,
   useCFBRankings,
 } from "hooks/FootballHooks/useCFBRankings";
-import type { ComponentProps } from "react";
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
 import type {
-  ExploreCollegePollLeague,
-  ExploreCollegePollType,
-  ExploreWidgetSize,
-} from "types/widgets";
+  CollegePollRow,
+  CollegePollSourceProps,
+  CollegePollTableProps,
+  CollegePollWidgetProps,
+} from "types/collegePollWidget";
 import {
   getCollegePollLabel,
-  getCollegePollPreviewLimit,
+  getCollegePollPageSize,
   normalizeCollegePollType,
 } from "utils/collegePollWidget";
 import CollegePollSettingsModal from "../CollegePollSettingsModal";
+import WidgetCarousel from "./WidgetCarousel";
 import { WidgetEditControls } from "./WidgetSlider";
 
-type CollegePollWidgetProps = {
-  isDark: boolean;
-  size: ExploreWidgetSize;
-  width: number;
-  height: number;
-  league: ExploreCollegePollLeague;
-  pollType: ExploreCollegePollType;
-  onChangeSelection: (
-    league: ExploreCollegePollLeague,
-    pollType: ExploreCollegePollType,
-  ) => void;
-  widgetId: string;
-  widgetSize: ExploreWidgetSize;
-  isEditing: boolean;
-  availableSizeOptions: readonly ExploreWidgetSize[];
-  onResizeWidget: (widgetId: string, size: ExploreWidgetSize) => void;
-  onRemoveWidget: (widgetId: string) => void;
-  onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
-  canMoveUp: boolean;
-  canMoveDown: boolean;
-};
+// -----------------------------------------------------------------------------
+// Constants and helpers
+// -----------------------------------------------------------------------------
 
-type CollegePollRow = {
-  key: string;
-  rank: number;
-  trend: number;
-  points: number;
-  record: string;
-  teamId?: string | number;
-  teamCode: string;
-  teamName: string;
-  logo?: ComponentProps<typeof Image>["source"];
-};
+const MAX_RANKED_TEAMS = 25;
 
-type CollegePollTableProps = {
-  compact: boolean;
-  isDark: boolean;
-  isEditing: boolean;
-  league: ExploreCollegePollLeague;
-  loading: boolean;
-  error: string | null;
-  rows: CollegePollRow[];
-  onRetry: () => void | Promise<void>;
-};
+function createPollPages(rows: CollegePollRow[], pageSize: number) {
+  const top25 = rows.slice(0, MAX_RANKED_TEAMS);
 
-function CollegePollTable({
-  compact,
+  return Array.from(
+    { length: Math.ceil(top25.length / pageSize) },
+    (_, index) => top25.slice(index * pageSize, (index + 1) * pageSize),
+  );
+}
+
+function getTrendColor(trend: number, isDark: boolean) {
+  if (trend > 0) {
+    return isDark ? Colors.dark.leafGreen : Colors.light.green;
+  }
+
+  return isDark ? Colors.dark.lightRed : Colors.light.red;
+}
+
+// -----------------------------------------------------------------------------
+// Paginated poll presentation
+// -----------------------------------------------------------------------------
+
+const CollegePollTable = memo(function CollegePollTable({
+  size,
+  width,
   isDark,
   isEditing,
   league,
@@ -89,11 +79,31 @@ function CollegePollTable({
   error,
   rows,
   onRetry,
+  autoPlay,
 }: CollegePollTableProps) {
   const router = useRouter();
+  const compact = size === "small";
+  const pageSize = getCollegePollPageSize(size);
+  const pages = useMemo(
+    () => createPollPages(rows, pageSize),
+    [pageSize, rows],
+  );
   const styles = useMemo(
-    () => collegePollWidgetStyles(isDark, compact),
-    [compact, isDark],
+    () => collegePollWidgetStyles(isDark, size),
+    [isDark, size],
+  );
+
+  const openTeam = useCallback(
+    (row: CollegePollRow) => {
+      if (row.teamId == null) return;
+
+      router.push({
+        pathname:
+          league === "cfb" ? "/team/cfb/[teamId]" : "/team/cbb/[teamId]",
+        params: { teamId: String(row.teamId) },
+      });
+    },
+    [league, router],
   );
 
   if (loading) {
@@ -139,43 +149,25 @@ function CollegePollTable({
     );
   }
 
-  return (
-    <View style={[styles.table, isEditing && styles.tableEditing]}>
+  const renderTable = (pageRows: CollegePollRow[]) => (
+    <View style={styles.page}>
       <View style={styles.tableHeader}>
         <Text style={[styles.columnLabel, styles.rankColumn]}>#</Text>
         <Text style={[styles.columnLabel, styles.teamColumn]}>Team</Text>
         <Text style={[styles.columnLabel, styles.recordColumn]}>Record</Text>
-        {!compact ? (
-          <Text style={[styles.columnLabel, styles.pointsColumn]}>PTS</Text>
-        ) : null}
+        <Text style={[styles.columnLabel, styles.pointsColumn]}>PTS</Text>
       </View>
 
-      {rows.map((row) => {
+      {pageRows.map((row) => {
         const movement = row.trend;
         const movedUp = movement > 0;
-        const movementColor = movedUp
-          ? isDark
-            ? Colors.dark.leafGreen
-            : Colors.light.green
-          : isDark
-            ? Colors.dark.lightRed
-            : Colors.light.red;
+        const movementColor = getTrendColor(movement, isDark);
 
         return (
           <Pressable
             key={row.key}
             disabled={isEditing || row.teamId == null}
-            onPress={() => {
-              if (row.teamId == null) return;
-
-              router.push({
-                pathname:
-                  league === "cfb"
-                    ? "/team/cfb/[teamId]"
-                    : "/team/cbb/[teamId]",
-                params: { teamId: String(row.teamId) },
-              });
-            }}
+            onPress={() => openTeam(row)}
             style={({ pressed }) => [
               styles.row,
               pressed && !isEditing && styles.pressed,
@@ -220,44 +212,131 @@ function CollegePollTable({
             <Text style={[styles.stat, styles.recordColumn]} numberOfLines={1}>
               {row.record || "—"}
             </Text>
-            {!compact ? (
-              <Text style={[styles.stat, styles.pointsColumn]}>
-                {row.points}
-              </Text>
-            ) : null}
+            <Text style={[styles.stat, styles.pointsColumn]}>{row.points}</Text>
           </Pressable>
         );
       })}
     </View>
   );
-}
 
-function CFBPollTable({
-  compact,
+  const renderCompactSlide = (row: CollegePollRow) => {
+    const movement = row.trend;
+    const movedUp = movement > 0;
+    const movementColor = getTrendColor(movement, isDark);
+    return (
+      <Pressable
+        disabled={isEditing || row.teamId == null}
+        onPress={() => openTeam(row)}
+        style={({ pressed }) => [
+          styles.compactSlide,
+          pressed && !isEditing && styles.pressed,
+        ]}
+        accessibilityRole={row.teamId == null ? undefined : "button"}
+        accessibilityLabel={
+          row.teamId == null
+            ? undefined
+            : `${row.rank}. ${row.teamName}, ${row.record || "record unavailable"}, ${row.points} points`
+        }
+        accessibilityState={{ disabled: isEditing || row.teamId == null }}
+      >
+        <LinearGradient
+          colors={[row.color, isDark ? Colors.black : Colors.white]}
+          locations={[0, 0.8]}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={[styles.compactTeamGlow, StyleSheet.absoluteFill]}
+        />
+
+        <BlurView intensity={100} style={styles.compactRankContainer}>
+          <Text style={styles.compactRank}>#{row.rank}</Text>
+        </BlurView>
+
+        <Image
+          source={row.logo}
+          style={styles.compactLogo}
+          contentFit="contain"
+        />
+        {movement !== 0 ? (
+          <View style={styles.compactTrend}>
+            <Ionicons
+              name={movedUp ? "arrow-up" : "arrow-down"}
+              size={20}
+              color={movementColor}
+            />
+            <Text style={[styles.compactTrendText, { color: movementColor }]}>
+              {Math.abs(movement)}
+            </Text>
+          </View>
+        ) : null}
+
+        <View style={styles.compactCopy}>
+          <Text style={styles.compactTeamName} numberOfLines={1}>
+            {row.teamName}
+          </Text>
+
+          <View style={styles.compactStatsContainer}>
+            <Text style={styles.compactStats} numberOfLines={1}>
+              {row.record || "—"}
+            </Text>
+            <View style={styles.compactStatsDivider} />
+            <Text style={styles.compactStats} numberOfLines={1}>
+              {row.points} PTS
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    );
+  };
+
+  return (
+    <View style={[styles.table, isEditing && styles.tableEditing]}>
+      <WidgetCarousel
+        items={pages}
+        initialWidth={Math.max(width - StyleSheet.hairlineWidth * 2, 1)}
+        isDark={isDark}
+        autoPlay={autoPlay}
+        disabled={isEditing}
+        style={styles.carousel}
+        keyExtractor={(pageRows, index) => pageRows[0]?.key ?? String(index)}
+        renderItem={(pageRows) =>
+          compact && pageRows[0]
+            ? renderCompactSlide(pageRows[0])
+            : renderTable(pageRows)
+        }
+        accessibilityLabel={(pageIndex, pageCount) =>
+          `College poll, page ${pageIndex + 1} of ${pageCount}`
+        }
+      />
+    </View>
+  );
+});
+
+// -----------------------------------------------------------------------------
+// League-specific data sources
+// -----------------------------------------------------------------------------
+
+const CFBPollTable = memo(function CFBPollTable({
+  size,
+  width,
   isDark,
   isEditing,
   pollType,
-  rowLimit,
-}: {
-  compact: boolean;
-  isDark: boolean;
-  isEditing: boolean;
-  pollType: ExploreCollegePollType;
-  rowLimit: number;
-}) {
+  autoPlay,
+}: CollegePollSourceProps) {
   const { rankings, loading, error, refresh } = useCFBRankings();
   const selectedPoll = rankings.find((poll) => poll.type === pollType);
   const rows = useMemo<CollegePollRow[]>(
     () =>
       (selectedPoll?.ranks ?? [])
-        .slice(0, rowLimit)
+        .slice(0, MAX_RANKED_TEAMS)
         .map((rank, index) => createCFBRow(rank, index, isDark)),
-    [isDark, rowLimit, selectedPoll?.ranks],
+    [isDark, selectedPoll?.ranks],
   );
 
   return (
     <CollegePollTable
-      compact={compact}
+      size={size}
+      width={width}
       isDark={isDark}
       isEditing={isEditing}
       league="cfb"
@@ -265,23 +344,19 @@ function CFBPollTable({
       error={error}
       rows={rows}
       onRetry={refresh}
+      autoPlay={autoPlay}
     />
   );
-}
+});
 
-function CBBPollTable({
-  compact,
+const CBBPollTable = memo(function CBBPollTable({
+  size,
+  width,
   isDark,
   isEditing,
   pollType,
-  rowLimit,
-}: {
-  compact: boolean;
-  isDark: boolean;
-  isEditing: boolean;
-  pollType: ExploreCollegePollType;
-  rowLimit: number;
-}) {
+  autoPlay,
+}: CollegePollSourceProps) {
   const { rankings, loading, error, refresh } = useCBBRankings("cbb");
   const selectedPoll =
     rankings.find((poll) => poll.type === pollType) ??
@@ -293,14 +368,15 @@ function CBBPollTable({
   const rows = useMemo<CollegePollRow[]>(
     () =>
       (selectedPoll?.ranks ?? [])
-        .slice(0, rowLimit)
+        .slice(0, MAX_RANKED_TEAMS)
         .map((rank, index) => createCBBRow(rank, index, isDark)),
-    [isDark, rowLimit, selectedPoll?.ranks],
+    [isDark, selectedPoll?.ranks],
   );
 
   return (
     <CollegePollTable
-      compact={compact}
+      size={size}
+      width={width}
       isDark={isDark}
       isEditing={isEditing}
       league="cbb"
@@ -308,9 +384,10 @@ function CBBPollTable({
       error={error}
       rows={rows}
       onRetry={refresh}
+      autoPlay={autoPlay}
     />
   );
-}
+});
 
 function createCFBRow(
   rank: CFBTeamRank,
@@ -318,23 +395,31 @@ function createCFBRow(
   isDark: boolean,
 ): CollegePollRow {
   const apiTeam = rank.team;
-  const localTeam = apiTeam
-    ? (getCFBTeam(apiTeam.id) ??
-      (apiTeam.espnId != null ? getCFBTeamByESPNId(apiTeam.espnId) : undefined))
+  const team = apiTeam
+    ? (getCFBTeam(apiTeam.id) ?? getCFBTeamByESPNId(apiTeam.espnId))
     : undefined;
-  const teamCode = localTeam?.code || apiTeam?.code || "N/A";
+  const teamId = team?.id;
+  const teamCode = team?.code || apiTeam?.code || "N/A";
+  const teamName =
+    team?.fullName ||
+    team?.shortName ||
+    team?.name ||
+    apiTeam?.name ||
+    teamCode;
+  const teamColor = team?.color || Colors.midTone;
+  const teamLogo = getCFBTeamLogo(teamId, isDark);
 
   return {
-    key: `cfb:${localTeam?.id ?? apiTeam?.id ?? index}:${rank.current}`,
+    key: `cfb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,
     record: rank.recordSummary,
-    teamId: localTeam?.id,
-    teamCode,
-    teamName:
-      localTeam?.shortName || localTeam?.name || apiTeam?.name || teamCode,
-    logo: localTeam ? getCFBTeamLogo(localTeam.id, isDark) : undefined,
+    teamId: teamId,
+    teamCode: teamCode,
+    teamName: teamName,
+    color: teamColor,
+    logo: teamLogo,
   };
 }
 
@@ -344,28 +429,42 @@ function createCBBRow(
   isDark: boolean,
 ): CollegePollRow {
   const apiTeam = rank.team;
-  const localTeam = apiTeam
-    ? getCBBTeamByESPNId(apiTeam.espnId ?? apiTeam.id ?? "")
+  const team = apiTeam
+    ? (getCBBTeam(apiTeam.id ?? undefined) ??
+      (apiTeam.espnId != null
+        ? getCBBTeamByESPNId(apiTeam.espnId)
+        : undefined))
     : undefined;
-  const teamCode = localTeam?.code || apiTeam?.code || "N/A";
+  const teamId = team?.id;
+  const teamCode = team?.code || apiTeam?.code || "N/A";
+  const teamName =
+    team?.fullName ||
+    team?.shortName ||
+    team?.name ||
+    apiTeam?.name ||
+    teamCode;
+  const teamColor = team?.color || apiTeam?.color || Colors.midTone;
+  const teamLogo = getCBBTeamLogo(teamId, isDark);
 
   return {
-    key: `cbb:${localTeam?.id ?? apiTeam?.id ?? index}:${rank.current}`,
+    key: `cbb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,
     record: rank.recordSummary,
-    teamId: localTeam?.id ?? undefined,
-    teamCode,
-    teamName:
-      localTeam?.shortName || localTeam?.name || apiTeam?.name || teamCode,
-    logo: localTeam
-      ? getCBBTeamLogo(localTeam.id ?? undefined, isDark)
-      : undefined,
+    teamId: teamId,
+    teamCode: teamCode,
+    teamName: teamName,
+    color: teamColor,
+    logo: teamLogo,
   };
 }
 
-export default function CollegePollWidget({
+// -----------------------------------------------------------------------------
+// Public widget shell
+// -----------------------------------------------------------------------------
+
+const CollegePollWidget = memo(function CollegePollWidget({
   isDark,
   size,
   width,
@@ -373,6 +472,8 @@ export default function CollegePollWidget({
   league,
   pollType,
   onChangeSelection,
+  autoPlay,
+  onChangeAutoPlay,
   widgetId,
   widgetSize,
   isEditing,
@@ -384,67 +485,67 @@ export default function CollegePollWidget({
   canMoveDown,
 }: CollegePollWidgetProps) {
   const [pickerVisible, setPickerVisible] = useState(false);
-  const compact = size === "small" || width < 240;
+  const compact = size === "small";
   const styles = useMemo(
-    () => collegePollWidgetStyles(isDark, compact),
-    [compact, isDark],
+    () => collegePollWidgetStyles(isDark, size),
+    [isDark, size],
   );
   const leagueConfig = LEAGUE_CONFIG[league];
   const normalizedPollType = normalizeCollegePollType(league, pollType);
   const pollLabel = getCollegePollLabel(league, normalizedPollType);
-  const rowLimit = getCollegePollPreviewLimit(height, compact);
 
   return (
     <>
       <BlurView intensity={100} style={[styles.container, { width, height }]}>
         <View style={styles.header}>
-          <View style={styles.headingCopy}>
-            <Text style={styles.title} numberOfLines={1}>
-              College Polls
-            </Text>
-            <Text style={styles.subtitle} numberOfLines={1}>
-              {pollLabel}
-            </Text>
-          </View>
-
-          <Pressable
-            disabled={isEditing}
-            onPress={() => setPickerVisible(true)}
-            style={({ pressed }) => [
-              styles.leagueButton,
-              pressed && !isEditing && styles.pressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={`Change college poll. Currently ${leagueConfig.label}, ${pollLabel}`}
-            accessibilityState={{ disabled: isEditing }}
-          >
-            <Image
-              source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
-              style={styles.leagueLogo}
-              contentFit="contain"
-            />
-            <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
-            <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
-          </Pressable>
+          {!compact && (
+            <View style={styles.headingCopy}>
+              <Text style={styles.title} numberOfLines={1}>
+                {pollLabel}
+              </Text>
+            </View>
+          )}
         </View>
+        <Pressable
+          disabled={isEditing}
+          onPress={() => setPickerVisible(true)}
+          style={({ pressed }) => [
+            styles.leagueButton,
+            pressed && !isEditing && styles.pressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={`Change college poll. Currently ${leagueConfig.label}, ${pollLabel}`}
+          accessibilityState={{ disabled: isEditing }}
+        >
+          <BlurView intensity={100} style={[StyleSheet.absoluteFill]} />
+          <Image
+            source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
+            style={styles.leagueLogo}
+            contentFit="contain"
+          />
+          <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
+          <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
+        </Pressable>
 
         {league === "cfb" ? (
           <CFBPollTable
             key={`cfb:${normalizedPollType}`}
-            compact={compact}
+            size={size}
+            width={width}
             isDark={isDark}
             isEditing={isEditing}
             pollType={normalizedPollType}
-            rowLimit={rowLimit}
+            autoPlay={autoPlay}
           />
         ) : (
           <CBBPollTable
             key={`cbb:${normalizedPollType}`}
-            compact={compact}
+            size={size}
+            width={width}
             isDark={isDark}
             isEditing={isEditing}
             pollType={normalizedPollType}
-            rowLimit={rowLimit}
+            autoPlay={autoPlay}
           />
         )}
 
@@ -469,185 +570,13 @@ export default function CollegePollWidget({
         isDark={isDark}
         selectedLeague={league}
         selectedPollType={normalizedPollType}
+        autoPlay={autoPlay}
         onClose={() => setPickerVisible(false)}
         onSelect={onChangeSelection}
+        onChangeAutoPlay={onChangeAutoPlay}
       />
     </>
   );
-}
+});
 
-const collegePollWidgetStyles = (isDark: boolean, compact: boolean) =>
-  StyleSheet.create({
-    container: {
-      position: "relative",
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      overflow: "hidden",
-    },
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: compact ? 6 : 12,
-      minHeight: compact ? 54 : 58,
-      paddingHorizontal: compact ? 8 : 12,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    headingCopy: {
-      flex: 1,
-      minWidth: 0,
-    },
-    title: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: compact ? 14 : 17,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    subtitle: {
-      paddingTop: 1,
-      fontFamily: Fonts.REGULAR,
-      fontSize: compact ? 10 : 11,
-      color: Colors.midTone,
-    },
-    
-    leagueButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: compact ? 4 : 5,
-      minHeight: compact ? 32 : 34,
-      paddingHorizontal: compact ? 6 : 9,
-      borderRadius: 17,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    leagueLogo: {
-      width: 22,
-      height: 22,
-    },
-    leagueLabel: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    table: {
-      flex: 1,
-      minHeight: 0,
-    },
-    tableEditing: {
-      opacity: 0.62,
-    },
-    tableHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: 25,
-      paddingHorizontal: compact ? 6 : 9,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      height: 30,
-      paddingHorizontal: compact ? 6 : 9,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    columnLabel: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 9,
-      color: Colors.midTone,
-      textTransform: "uppercase",
-      letterSpacing: 0.4,
-    },
-    rankColumn: {
-      width: compact ? 22 : 25,
-      textAlign: "center",
-    },
-    teamColumn: {
-      flex: 1,
-      minWidth: 0,
-    },
-    recordColumn: {
-      width: compact ? 50 : 58,
-      textAlign: "center",
-    },
-    pointsColumn: {
-      width: 42,
-      textAlign: "right",
-    },
-    rank: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    teamCell: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: compact ? 4 : 6,
-    },
-    teamLogo: {
-      width: compact ? 20 : 21,
-      height: compact ? 20 : 21,
-    },
-    logoFallback: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: compact ? 20 : 21,
-      height: compact ? 20 : 21,
-      borderRadius: 6,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-    },
-    logoFallbackText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 7,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    teamName: {
-      flexShrink: 1,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: compact ? 10 : 11,
-      color: isDark ? Colors.white : Colors.black,
-    },
-    trend: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 1,
-    },
-    trendText: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 8,
-    },
-    stat: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 10,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontVariant: ["tabular-nums"],
-    },
-    state: {
-      flex: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 5,
-      padding: 12,
-    },
-    stateTitle: {
-      fontFamily: Fonts.SEMIBOLD,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    stateText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 11,
-      lineHeight: 15,
-      color: Colors.midTone,
-      textAlign: "center",
-    },
-    pressed: {
-      opacity: 0.72,
-    },
-  });
+export default CollegePollWidget;

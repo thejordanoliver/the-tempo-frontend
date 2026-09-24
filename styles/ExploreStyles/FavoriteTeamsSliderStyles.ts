@@ -1,23 +1,8 @@
-import { EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM } from "constants/exploreWidgetSizes";
-import { activeOpacity, Colors, Fonts } from "constants/styles";
+import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const FavoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
-    container: {
-      borderRadius: 6,
-      overflow: "hidden",
-    },
-    list: {
-      flex: 1,
-    },
-    slide: {
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    pressed: {
-      opacity: activeOpacity,
-    },
     slideButton: {
       flex: 1,
       alignItems: "center",
@@ -60,22 +45,5 @@ export const FavoriteTeamsSliderStyles = (isDark: boolean, compact: boolean) =>
       lineHeight: compact ? 20 : 27,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
-    },
-    dots: {
-      position: "absolute",
-      bottom: EXPLORE_WIDGET_SLIDE_INDICATOR_BOTTOM,
-      flexDirection: "row",
-      alignSelf: "center",
-      gap: 5,
-    },
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-    activeDot: {
-      width: 16,
-      backgroundColor: isDark ? Colors.white : Colors.black,
     },
   });

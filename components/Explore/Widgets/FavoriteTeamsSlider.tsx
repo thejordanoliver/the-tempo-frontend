@@ -3,20 +3,18 @@ import { FavoriteTeamsSliderStyles } from "@/styles/ExploreStyles/FavoriteTeamsS
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
-  FlatList,
   Image,
   ImageSourcePropType,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { getFavoriteTeamRoute } from "utils/favoriteTeams";
 import type { FavoriteLeague, FavoriteTeamKey } from "types/favorites";
+import { getFavoriteTeamRoute } from "utils/favoriteTeams";
+import WidgetCarousel from "./WidgetCarousel";
 
 export type FavoriteTeamSlide = {
   favorite: {
@@ -38,6 +36,7 @@ type FavoriteTeamsSliderProps = {
   height: number;
   isDark: boolean;
   compact?: boolean;
+  disabled?: boolean;
 };
 
 export default function FavoriteTeamsSlider({
@@ -46,111 +45,77 @@ export default function FavoriteTeamsSlider({
   height,
   isDark,
   compact = false,
+  disabled = false,
 }: FavoriteTeamsSliderProps) {
   const router = useRouter();
-  const listRef = useRef<FlatList<FavoriteTeamSlide>>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const styles = FavoriteTeamsSliderStyles(isDark, compact);
-
-  const onScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      setCurrentIndex(Math.round(event.nativeEvent.contentOffset.x / width));
-    },
-    [width],
+  const styles = useMemo(
+    () => FavoriteTeamsSliderStyles(isDark, compact),
+    [compact, isDark],
   );
-
-  const getItemLayout = useCallback(
-    (_: ArrayLike<FavoriteTeamSlide> | null | undefined, index: number) => ({
-      length: width,
-      offset: width * index,
-      index,
-    }),
-    [width],
+  const keyExtractor = useCallback(
+    (item: FavoriteTeamSlide) => item.favorite.key,
+    [],
   );
 
   const renderSlide = useCallback(
-    ({ item }: { item: FavoriteTeamSlide }) => {
+    (item: FavoriteTeamSlide) => {
       return (
-        <View style={[styles.slide, { width, height }]}>
-          <Pressable
-            style={styles.slideButton}
-            onPress={() =>
-              router.push({
-                pathname: getFavoriteTeamRoute(item.favorite.league),
-                params: { teamId: item.favorite.id },
-              })
-            }
-          >
-            <LinearGradient
-              colors={[
-                item.color ?? Colors.midTone,
-                isDark ? Colors.black : Colors.white,
-              ]}
-              locations={isDark ? [0, 0.8] : [0, 0.8]}
-              start={{
-                x: 0.5,
-                y: 0,
-              }}
-              end={{
-                x: 0.5,
-                y: 1,
-              }}
-              style={[styles.teamGlow, StyleSheet.absoluteFill]}
-            />
+        <Pressable
+          disabled={disabled}
+          style={styles.slideButton}
+          onPress={() =>
+            router.push({
+              pathname: getFavoriteTeamRoute(item.favorite.league),
+              params: { teamId: item.favorite.id },
+            })
+          }
+        >
+          <LinearGradient
+            colors={[
+              item.color ?? Colors.midTone,
+              isDark ? Colors.black : Colors.white,
+            ]}
+            locations={[0, 0.8]}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={[styles.teamGlow, StyleSheet.absoluteFill]}
+          />
 
-            {item.logo && <Image source={item.logo} style={styles.teamLogo} />}
-            {!item?.logo && (
-              <Image source={PlaceholderLogo} style={styles.teamLogo} />
-            )}
-            <View style={styles.teamTextWrap}>
-              <Text
-                style={styles.teamName}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {item.fullName}
-              </Text>
-              <Text style={styles.leagueText}>
-                {item.favorite.league.toUpperCase()}
-              </Text>
-            </View>
-          </Pressable>
-        </View>
+          <Image
+            source={item.logo ?? PlaceholderLogo}
+            style={styles.teamLogo}
+          />
+          <View style={styles.teamTextWrap}>
+            <Text
+              style={styles.teamName}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {item.fullName}
+            </Text>
+
+            <Text style={styles.leagueText}>
+              {item.favorite.league.toUpperCase()}
+            </Text>
+          </View>
+        </Pressable>
       );
     },
-    [height, router, styles, width, isDark],
+    [disabled, isDark, router, styles],
   );
 
   return (
-    <View style={[styles.container, { width, height }]}>
-      <FlatList
-        ref={listRef}
-        data={teams}
-        keyExtractor={(item) => item.favorite.key}
-        horizontal
-        pagingEnabled
-        snapToInterval={width}
-        decelerationRate="fast"
-        disableIntervalMomentum
-        directionalLockEnabled
-        showsHorizontalScrollIndicator={false}
-        getItemLayout={getItemLayout}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        renderItem={renderSlide}
-        style={styles.list}
-      />
-
-      {teams.length > 1 && (
-        <View style={styles.dots}>
-          {teams.map((team, index) => (
-            <View
-              key={team.favorite.key}
-              style={[styles.dot, index === currentIndex && styles.activeDot]}
-            />
-          ))}
-        </View>
-      )}
-    </View>
+    <WidgetCarousel
+      items={teams}
+      initialWidth={width}
+      height={height}
+      isDark={isDark}
+      disabled={disabled}
+      keyExtractor={keyExtractor}
+      renderItem={renderSlide}
+      accessibilityLabel={(pageIndex, pageCount) =>
+        `Favorite teams, page ${pageIndex + 1} of ${pageCount}`
+      }
+    />
   );
 }

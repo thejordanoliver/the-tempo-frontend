@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { ExploreWidgetSize } from "types/widgets";
 import { WidgetEditControls } from "./WidgetSlider";
-import { BlurView } from "expo-blur";
 
 type CreatePostWidgetProps = {
   isDark: boolean;
@@ -124,7 +124,7 @@ const createPostWidgetStyles = (
       position: "relative",
       flex: 1,
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderColor: Colors.midTone,
       borderRadius: 8,
       overflow: "hidden",
     },

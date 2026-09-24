@@ -156,6 +156,7 @@ export default function FavoriteTeamsWidget({
         height={resolvedHeight}
         isDark={isDark}
         compact={compact}
+        disabled={isEditing}
       />
     );
   };
@@ -208,7 +209,7 @@ export default function FavoriteTeamsWidget({
   );
 }
 
-const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
+export const favoriteTeamsWidgetStyles = (isDark: boolean, compact: boolean) =>
   StyleSheet.create({
     card: {
       position: "relative",

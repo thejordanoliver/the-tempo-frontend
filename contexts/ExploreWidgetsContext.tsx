@@ -50,6 +50,7 @@ type ExploreWidgetsContextValue = {
     league: ExploreCollegePollLeague,
     pollType: ExploreCollegePollType,
   ) => void;
+  setCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   moveWidget: (widgetId: string, direction: -1 | 1) => void;
   reorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
   ensureWidgetData: () => Promise<void>;
@@ -121,6 +122,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     resizeWidget,
     setStandingsLeague,
     setCollegePollSelection,
+    setCollegePollAutoPlay,
     moveWidget,
     reorderWidgets,
   } = useExploreWidgetConfiguration(userId);
@@ -369,6 +371,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       resizeWidget,
       setStandingsLeague,
       setCollegePollSelection,
+      setCollegePollAutoPlay,
       moveWidget,
       reorderWidgets,
       ensureWidgetData,
@@ -387,6 +390,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       reorderWidgets,
       resizeWidget,
       setCollegePollSelection,
+      setCollegePollAutoPlay,
       setStandingsLeague,
       widgets,
       widgetsReady,

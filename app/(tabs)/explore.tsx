@@ -54,6 +54,7 @@ export default function ExplorePage() {
     resizeWidget,
     setStandingsLeague,
     setCollegePollSelection,
+    setCollegePollAutoPlay,
     moveWidget,
     reorderWidgets,
     ensureWidgetData,
@@ -173,6 +174,7 @@ export default function ExplorePage() {
           onResizeWidget={resizeWidget}
           onSetStandingsLeague={setStandingsLeague}
           onSetCollegePollSelection={setCollegePollSelection}
+          onSetCollegePollAutoPlay={setCollegePollAutoPlay}
           onMoveWidget={moveWidget}
           onReorderWidgets={reorderWidgets}
           isEditing={widgetsEditing}
