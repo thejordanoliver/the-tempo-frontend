@@ -3,10 +3,10 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { StyleSheet, Text, View } from "react-native";
-import { DBPlayer } from "types/types";
+import { Player } from "types/types";
 
 type Props = {
-  player: DBPlayer | null;
+  player: Player | null;
 };
 
 export default function PlayerAwardList(player: Props) {

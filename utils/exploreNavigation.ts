@@ -61,7 +61,7 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   },
   {
     flag: "isNHL",
-    pathname: "/player/nhl/[id]",
+    pathname: "/player/hockey/[id]",
     league: "nhl",
   },
   {

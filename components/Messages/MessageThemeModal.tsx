@@ -553,7 +553,7 @@ export default function MessageThemeModal({
 
                   {selected && (
                     <Ionicons
-                      name="checkmark-circle"
+                      name="checkmark"
                       size={22}
                       color={isDark ? Colors.white : Colors.black}
                     />
@@ -562,7 +562,7 @@ export default function MessageThemeModal({
                   <View style={styles.swatchRow}>
                     <View
                       style={[
-                        styles.colorSwatch,
+                        styles.frontSwatch,
                         { backgroundColor: theme.primaryColor },
                       ]}
                     />
@@ -638,7 +638,7 @@ export default function MessageThemeModal({
                   <View style={styles.swatchRow}>
                     <View
                       style={[
-                        styles.colorSwatch,
+                        styles.frontSwatch,
                         {
                           backgroundColor: primaryColor,
                         },

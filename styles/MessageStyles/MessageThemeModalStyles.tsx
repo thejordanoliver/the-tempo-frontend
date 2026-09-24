@@ -162,16 +162,33 @@ export const MessageThemeModalStyles = (isDark: boolean) =>
     },
 
     swatchRow: {
-      flexDirection: "row",
-      gap: 4,
+      position: "relative",
+      width: 30,
+      height: 30,
+    },
+
+    frontSwatch: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: 20,
+      height: 20,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderRadius: 10,
+      zIndex: 2,
     },
 
     colorSwatch: {
-      width: 18,
-      height: 18,
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      width: 20,
+      height: 20,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: isDark ? Colors.lightGray : Colors.darkGray,
-      borderRadius: 9,
+      borderRadius: 10,
+      zIndex: 1,
     },
 
     styleOptions: {

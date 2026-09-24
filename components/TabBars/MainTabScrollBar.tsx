@@ -69,6 +69,7 @@ export default function MainScrollTabBar<T extends string>({
   style,
   scrollProgress,
 }: TabBarProps<T>) {
+  const styles = MainScrollTabBarStyles;
   const scrollRef = useRef<ScrollView>(null);
   const [underlineX] = useState(() => new Animated.Value(0));
   const [underlineWidth] = useState(() => new Animated.Value(0));
@@ -99,37 +100,31 @@ export default function MainScrollTabBar<T extends string>({
     };
   }, []);
 
-  const scrollToTab = useCallback(
-    (tab: T, animated: boolean) => {
-      const measurement = tabMeasurements.current.get(tab);
-      const visibleWidth = viewportWidth.current;
+  const scrollToTab = useCallback((tab: T, animated: boolean) => {
+    const measurement = tabMeasurements.current.get(tab);
+    const visibleWidth = viewportWidth.current;
 
-      if (!measurement || visibleWidth <= 0) {
-        return;
-      }
+    if (!measurement || visibleWidth <= 0) {
+      return;
+    }
 
-      const requestKey = [
-        tab,
-        measurement.x,
-        measurement.width,
-        visibleWidth,
-      ].join(":");
+    const requestKey = [
+      tab,
+      measurement.x,
+      measurement.width,
+      visibleWidth,
+    ].join(":");
 
-      if (lastScrollRequest.current === requestKey) {
-        return;
-      }
+    if (lastScrollRequest.current === requestKey) {
+      return;
+    }
 
-      lastScrollRequest.current = requestKey;
-      scrollRef.current?.scrollTo({
-        x: Math.max(
-          measurement.x + measurement.width / 2 - visibleWidth / 2,
-          0,
-        ),
-        animated,
-      });
-    },
-    [],
-  );
+    lastScrollRequest.current = requestKey;
+    scrollRef.current?.scrollTo({
+      x: Math.max(measurement.x + measurement.width / 2 - visibleWidth / 2, 0),
+      animated,
+    });
+  }, []);
 
   const requestLayoutSync = useCallback(() => {
     if (layoutFrame.current != null) {
@@ -180,28 +175,34 @@ export default function MainScrollTabBar<T extends string>({
     [scrollToTab, selected],
   );
 
-  const handleTextLayout = useCallback((tab: T, event: LayoutChangeEvent) => {
-    const nextWidth = event.nativeEvent.layout.width;
+  const handleTextLayout = useCallback(
+    (tab: T, event: LayoutChangeEvent) => {
+      const nextWidth = event.nativeEvent.layout.width;
 
-    if (textWidths.current.get(tab) === nextWidth) {
-      return;
-    }
+      if (textWidths.current.get(tab) === nextWidth) {
+        return;
+      }
 
-    textWidths.current.set(tab, nextWidth);
-    requestLayoutSync();
-  }, [requestLayoutSync]);
+      textWidths.current.set(tab, nextWidth);
+      requestLayoutSync();
+    },
+    [requestLayoutSync],
+  );
 
-  const handleTabLayout = useCallback((tab: T, event: LayoutChangeEvent) => {
-    const { x, width } = event.nativeEvent.layout;
-    const currentMeasurement = tabMeasurements.current.get(tab);
+  const handleTabLayout = useCallback(
+    (tab: T, event: LayoutChangeEvent) => {
+      const { x, width } = event.nativeEvent.layout;
+      const currentMeasurement = tabMeasurements.current.get(tab);
 
-    if (currentMeasurement?.x === x && currentMeasurement.width === width) {
-      return;
-    }
+      if (currentMeasurement?.x === x && currentMeasurement.width === width) {
+        return;
+      }
 
-    tabMeasurements.current.set(tab, { x, width });
-    requestLayoutSync();
-  }, [requestLayoutSync]);
+      tabMeasurements.current.set(tab, { x, width });
+      requestLayoutSync();
+    },
+    [requestLayoutSync],
+  );
 
   useEffect(
     () => () => {
@@ -373,6 +374,7 @@ export default function MainScrollTabBar<T extends string>({
         );
       }),
     [
+      styles,
       handleTabLayout,
       handleTextLayout,
       isDark,
@@ -417,7 +419,7 @@ export default function MainScrollTabBar<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
+export const MainScrollTabBarStyles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     marginBottom: 10,

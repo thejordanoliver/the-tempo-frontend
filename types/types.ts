@@ -69,7 +69,7 @@ export type Venue = {
   }[];
 };
 
-export type DBPlayer = {
+export type Player = {
   id: number;
   player_id: number;
   name: string;

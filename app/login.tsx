@@ -33,7 +33,8 @@ export default function LoginScreen() {
   } = useLoginForm();
   const pagerRef = useRef<PagerView>(null);
   const [selectedTab, setSelectedTab] = useState<AuthHeaderTab>("sign in");
-  const { scrollProgress, handlePageScroll } = usePagerTabScrollProgress();
+  const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
+    usePagerTabScrollProgress();
   const { signupStep, isGridView } = signUp;
   const isSignup = selectedTab === "sign up";
   const showAuthTabs = !isSignup || signupStep === 0;
@@ -77,6 +78,7 @@ export default function LoginScreen() {
         keyboardDismissMode="on-drag"
         onPageScroll={handlePageScroll}
         onPageSelected={({ nativeEvent }) => {
+          syncPageScrollProgress(nativeEvent.position);
           setSelectedTab(AUTH_TABS[nativeEvent.position]);
         }}
       >

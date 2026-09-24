@@ -1,5 +1,6 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
+import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
 import {
   getCFBTeam,
@@ -427,6 +428,8 @@ export default function PlayerDetailScreen() {
         position={player.position}
         league={canonicalLeague}
       />
+
+      <PlayerAwardList player={player} />
     </ScrollView>
   );
 }

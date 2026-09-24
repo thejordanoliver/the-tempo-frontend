@@ -1,9 +1,7 @@
 import { router, useNavigation } from "expo-router";
-import React, { useCallback, useRef, useState } from "react";
-import { Animated, RefreshControl, ScrollView, View } from "react-native";
-import PagerView, {
-  type PagerViewOnPageScrollEvent,
-} from "react-native-pager-view";
+import React, { useCallback, useRef } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
+import PagerView from "react-native-pager-view";
 
 import {
   CustomHeader,
@@ -16,6 +14,7 @@ import { Colors } from "../../constants/styles";
 import { useNotifications } from "../../contexts/NotificationContext";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useHomeData } from "../../hooks/useHomeData";
+import { usePagerTabScrollProgress } from "../../hooks/usePagerTabScrollProgress";
 import { homeStyles } from "../../styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
@@ -34,22 +33,17 @@ export default function HomeScreen() {
 
   const pagerRef = useRef<PagerView>(null);
 
-  const [homeTabScrollProgress] = useState(() => new Animated.Value(0));
+  const {
+    scrollProgress: homeTabScrollProgress,
+    handlePageScroll,
+    syncPageScrollProgress,
+  } = usePagerTabScrollProgress();
 
   const handleHeaderTabPress = useCallback((tab: HomeHeaderTab) => {
     setSelectedTab(tab);
 
     pagerRef.current?.setPage(tab === "scores" ? 0 : 1);
   }, []);
-
-  const handlePageScroll = useCallback(
-    (event: PagerViewOnPageScrollEvent) => {
-      const { offset, position } = event.nativeEvent;
-
-      homeTabScrollProgress.setValue(position + offset);
-    },
-    [homeTabScrollProgress],
-  );
 
   const handleFavoritesInteractionStart = useCallback(() => {
     setFavoritesInteracting(true);
@@ -117,7 +111,7 @@ export default function HomeScreen() {
           onPageSelected={(event) => {
             const index = event.nativeEvent.position;
 
-            homeTabScrollProgress.setValue(index);
+            syncPageScrollProgress(index);
 
             setSelectedTab(index === 0 ? "scores" : "for you");
           }}

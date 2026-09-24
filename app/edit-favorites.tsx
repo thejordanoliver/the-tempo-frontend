@@ -8,9 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Alert, Animated, View, useWindowDimensions } from "react-native";
+import { Alert, View, useWindowDimensions } from "react-native";
 import PagerView, {
-  type PagerViewOnPageScrollEvent,
   type PagerViewOnPageSelectedEvent,
 } from "react-native-pager-view";
 
@@ -25,6 +24,7 @@ import type { FavoriteSportId } from "../constants/leagues";
 import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { useNotifications } from "../contexts/NotificationContext";
 import { usePreferences } from "../contexts/PreferencesContext";
+import { usePagerTabScrollProgress } from "../hooks/usePagerTabScrollProgress";
 import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
 import { buildFavoriteTeamKey, type FavoriteTeamKey } from "../types/favorites";
 
@@ -59,7 +59,11 @@ export default function EditFavoritesScreen() {
 
   const pagerRef = useRef<PagerView>(null);
 
-  const [homeTabScrollProgress] = useState(() => new Animated.Value(0));
+  const {
+    scrollProgress: homeTabScrollProgress,
+    handlePageScroll,
+    syncPageScrollProgress,
+  } = usePagerTabScrollProgress();
 
   const [selectedTab, setSelectedTab] = useState<FavoritesTab>("teams");
 
@@ -205,25 +209,16 @@ export default function EditFavoritesScreen() {
     [selectedTab],
   );
 
-  const handlePageScroll = useCallback(
-    (event: PagerViewOnPageScrollEvent) => {
-      const { offset, position } = event.nativeEvent;
-
-      homeTabScrollProgress.setValue(position + offset);
-    },
-    [homeTabScrollProgress],
-  );
-
   const handlePageSelected = useCallback(
     (event: PagerViewOnPageSelectedEvent) => {
       const index = event.nativeEvent.position;
 
       const nextTab: FavoritesTab = index === 0 ? "teams" : "sports";
 
-      homeTabScrollProgress.setValue(index);
+      syncPageScrollProgress(index);
       setSelectedTab(nextTab);
     },
-    [homeTabScrollProgress],
+    [syncPageScrollProgress],
   );
 
   const handleHeaderTabPress = useCallback((tab: EditFavoritesHeaderTab) => {
