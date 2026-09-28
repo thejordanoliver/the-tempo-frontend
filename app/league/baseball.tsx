@@ -27,7 +27,7 @@ import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { CBStandingsList } from "@/components/Sports/Baseball/Standings/CBStandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { getMLBSeason, getMLBStandingsSeason } from "@/utils/dateUtils";
-import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
+import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
@@ -275,6 +275,7 @@ function MLBLeagueScreen() {
           error={error}
           categories={categories}
           league={league}
+          season={currentSeason}
         />
       ) : null}
     </View>

@@ -5,6 +5,7 @@ import ConferenceListModal, {
 } from "@/components/League/ConferenceListModal";
 import Draft, { getDefaultDraftYear } from "@/components/League/Draft/Draft";
 import RecruitsList from "@/components/League/Recruiting/RecruitsList";
+import SeasonLeadersList from "@/components/League/SeasonLeaderList";
 import { StandingsList } from "@/components/League/Standings/StandingsList";
 import WeekSelector, {
   FootballWeekGroup,
@@ -14,7 +15,6 @@ import { ConferenceStandingsList } from "@/components/Sports/Basketball/Standing
 import GamesList from "@/components/Sports/Football/Games/GamesList";
 import { CFPBracket } from "@/components/Sports/Football/Playoffs/CFBPlayoffs/CFPBracket";
 import { NFLPlayoffBracket } from "@/components/Sports/Football/Playoffs/NFLPlayoffs/NFLPlayoffBracket";
-import SeasonLeadersList from "@/components/Sports/Football/SeasonLeaderList";
 import { CFBStandingsList } from "@/components/Sports/Football/Standings/CFBStandingsList";
 import MainScrollTabBar from "@/components/TabBars/MainTabScrollBar";
 import { getCFBConferenceSelectionName } from "@/constants/conferences/cfbConferences";
@@ -377,6 +377,7 @@ function NFLLeagueScreen() {
                 error={leadersError}
                 categories={categories}
                 league={league}
+                season={currentSeason}
               />
             ) : null}
           </View>
@@ -582,10 +583,15 @@ function CFBLeagueScreen() {
     enabled: hasVisitedTab("stats"),
   });
 
-  const { conferences, conferencesLoading, conferencesError } =
-    useConferenceStandings(league, selectedConferenceGroupId, {
-      enabled: hasVisitedTab("standings"),
-    });
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } = useConferenceStandings(league, selectedConferenceGroupId, {
+    enabled: hasVisitedTab("standings"),
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -714,7 +720,9 @@ function CFBLeagueScreen() {
                 <ConferenceStandingsList
                   conferences={conferences}
                   loading={conferencesLoading}
+                  refreshing={ConferencesRefreshing}
                   error={conferencesError}
+                  onRefresh={refreshConferenceStandings}
                   league={league}
                 />
               )
@@ -728,6 +736,7 @@ function CFBLeagueScreen() {
                 error={leadersError}
                 categories={categories}
                 league={league}
+                season={currentSeason}
               />
             ) : null}
           </View>

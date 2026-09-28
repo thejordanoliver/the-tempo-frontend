@@ -18,12 +18,20 @@ export interface PlayerLeader {
   short_name: string | null;
   team_id: number | string | null;
   stat_value: number | null;
+  stats?: Record<string, number | null>;
+}
+
+export interface SeasonLeaderColumn {
+  key: string;
+  label: string;
+  abbreviation: string;
 }
 
 export interface SeasonLeaderCategory {
   categoryName: string;
   shortName: string;
   abbreviation: string;
+  columns?: SeasonLeaderColumn[];
   leaders: PlayerLeader[];
 }
 

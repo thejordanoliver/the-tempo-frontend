@@ -1,6 +1,6 @@
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 
+import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getCFBTeamByESPNId, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "@/constants/teamsWCBB";
@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -26,7 +27,9 @@ type Props = {
   selectedConference?: string | number;
   conferences: StandingConference[];
   loading: boolean;
+  refreshing: boolean;
   error: string | null;
+  onRefresh: () => void | Promise<void>;
   onlyTeamConference?: boolean;
 };
 
@@ -58,7 +61,9 @@ export const ConferenceStandingsList = ({
   league,
   conferences,
   loading,
+  refreshing,
   error,
+  onRefresh,
 }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -343,31 +348,45 @@ export const ConferenceStandingsList = ({
   }
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <StandingsSkeleton />
-      </View>
-    );
+    return <StandingsSkeleton variant="conference" />;
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <Text style={global.errorText}>{error}</Text>
-      </View>
+      </ScrollView>
     );
   }
 
-  if (conferences.length < 0) {
+  if (conferences.length === 0) {
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <Text style={global.emptyText}>No standings found.</Text>
-      </View>
+      </ScrollView>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      alwaysBounceVertical
+      contentContainerStyle={styles.contentContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       {conferences.map((conference, index) => (
         <ConferenceSection
           key={conference.id}

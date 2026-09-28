@@ -64,11 +64,17 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const global = globalStyles(isDark);
   const playerId = Number(id);
-  const team = getMLBTeam(teamId);
-  const teamLogo = getMLBTeamLogo(teamId, true);
-  const teamColor = team?.color ?? Colors.midTone;
 
   const { player, loading, error } = usePlayerById(playerId, league);
+  const currentTeamId =
+    player?.team_id != null
+      ? String(player.team_id)
+      : teamId
+        ? String(teamId)
+        : undefined;
+  const team = currentTeamId ? getMLBTeam(currentTeamId) : undefined;
+  const teamLogo = getMLBTeamLogo(currentTeamId, true);
+  const teamColor = team?.color ?? Colors.midTone;
 
   const {
     data: seasons,
@@ -84,7 +90,7 @@ export default function PlayerDetailScreen() {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useTeamLatestGame(league, teamId);
+  } = useTeamLatestGame(league, currentTeamId);
 
   /* ---------------- Header ---------------- */
   useLayoutEffect(() => {

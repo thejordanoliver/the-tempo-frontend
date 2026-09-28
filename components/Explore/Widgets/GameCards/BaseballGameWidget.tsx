@@ -5,6 +5,7 @@ import displayeValue from "@/utils/widgetUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
+import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { router } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -57,14 +58,18 @@ export default function BaseballGameWidget({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = getMLBTeam(homeId);
-  const awayTeam = getMLBTeam(awayId);
+  const homeTeam = isCB ? getCBTeam(homeId) : getMLBTeam(homeId);
+  const awayTeam = isCB ? getCBTeam(awayId) : getMLBTeam(awayId);
 
   const homeName = homeTeam?.code;
   const awayName = awayTeam?.code;
 
-  const homeLogo = getMLBTeamLogo(homeId, isDark);
-  const awayLogo = getMLBTeamLogo(awayId, isDark);
+  const homeLogo = isCB
+    ? getCBTeamLogo(homeId, isDark)
+    : getMLBTeamLogo(homeId, isDark);
+  const awayLogo = isCB
+    ? getCBTeamLogo(awayId, isDark)
+    : getMLBTeamLogo(awayId, isDark);
 
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;

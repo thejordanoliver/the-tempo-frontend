@@ -1,8 +1,8 @@
 // components/StandingsList.tsx
+import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { getUFLTeam } from "@/constants/teamsUFL";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
 import { getMLBTeamByEspnId, getMLBTeamLogo } from "constants/teamsMLB";
@@ -24,6 +24,7 @@ import React, { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -194,7 +195,9 @@ export const StandingsList = ({
     standings: conferences,
     regularSeasonOptions,
     loading,
+    refreshing,
     error,
+    refresh,
   } = useLeagueStandings(league, year);
 
   const { resolvedColorScheme } = usePreferences();
@@ -308,20 +311,36 @@ export const StandingsList = ({
   );
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <StandingsSkeleton />
-      </View>
-    );
+    return <StandingsSkeleton variant="league" />;
   }
 
   if (error) {
     return (
-      <View style={styles.center}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <Text style={global.errorText}>{error}</Text>
-      </View>
+      </ScrollView>
     );
   }
+
+  if (conferences.length === 0) {
+    return (
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
+        <Text style={global.emptyText}>No standings found.</Text>
+      </ScrollView>
+    );
+    }
 
   const getTeam = (item: StandingsTeam) => {
     if (league === "nba") {
@@ -668,7 +687,13 @@ export const StandingsList = ({
     sortMode === "conference" ? conferenceSections : divisionStandings;
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
+    <ScrollView
+      alwaysBounceVertical
+      contentContainerStyle={styles.contentContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+      }
+    >
       {isGameDetailScreen && <HeadingTwo isDark={isDark}>Standings</HeadingTwo>}
 
       <View style={styles.dropdownRow}>

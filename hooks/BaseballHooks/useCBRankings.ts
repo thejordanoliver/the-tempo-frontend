@@ -211,6 +211,7 @@ export const useCBRankings = (league: "cb" | "sb") => {
     createEmptyRankingsResponse,
   );
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /* --------------------------------------------------
@@ -323,15 +324,14 @@ export const useCBRankings = (league: "cb" | "sb") => {
 
   const refresh = useCallback(async () => {
     try {
-      setLoading(true);
+      setRefreshing(true);
+      setError(null);
 
       await AsyncStorage.removeItem(CACHE_KEY);
 
       await fetchLatest();
-
-      setLoading(false);
-    } catch {
-      setLoading(false);
+    } finally {
+      setRefreshing(false);
     }
   }, [CACHE_KEY, fetchLatest]);
 
@@ -374,6 +374,7 @@ export const useCBRankings = (league: "cb" | "sb") => {
     allRankings,
     updated,
     loading,
+    refreshing,
     error,
     refresh,
     rankedTeamIds,

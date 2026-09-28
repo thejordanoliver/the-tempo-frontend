@@ -202,10 +202,10 @@ export const StandingsStyles = (isDark: boolean) =>
     droppedoutWrapper: {
       flexDirection: "row",
       flexWrap: "wrap",
+      gap: 4,
     },
 
     droppedoutRow: {
-      gap: 4,
       padding: 8,
       borderRadius: 8,
       flexDirection: "row",

@@ -81,6 +81,7 @@ function HockeyGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
   const homeWins = game.home.winner;
   const awayWins = game.away.winner;
   const isTie = game.home.winner === game.away.winner;
+  
 
   const ScoreText = ({
     score,

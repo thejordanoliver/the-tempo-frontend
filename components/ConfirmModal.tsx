@@ -29,6 +29,7 @@ type ConfirmModalProps = {
   variant?: ConfirmModalVariant;
   confirmDisabled?: boolean;
   showCancel?: boolean;
+  showConfirm?: boolean;
   testID?: string;
 };
 
@@ -44,6 +45,7 @@ export default function ConfirmModal({
   variant = "default",
   confirmDisabled = false,
   showCancel = true,
+  showConfirm = true,
   testID = "confirm-modal",
 }: ConfirmModalProps) {
   const { resolvedColorScheme } = usePreferences();
@@ -155,7 +157,7 @@ export default function ConfirmModal({
                 </Pressable>
               )}
 
-              <Pressable
+              {showConfirm && <Pressable
                 onPress={handleConfirm}
                 disabled={isConfirmDisabled}
                 hitSlop={8}
@@ -180,7 +182,7 @@ export default function ConfirmModal({
                 ) : (
                   <Text style={styles.confirmText}>{confirmText}</Text>
                 )}
-              </Pressable>
+              </Pressable>}
             </View>
           </View>
         </ScrollView>

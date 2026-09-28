@@ -30,7 +30,8 @@ export default function TeamDetailScreen() {
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
-  const [standingsYear, setStandingsYear] = useState(getNHLSeason());
+  const currentSeason = getNHLSeason();
+  const [standingsYear, setStandingsYear] = useState(currentSeason);
   const screen = useTeamDetailScreen({
     tabLeague: league,
     header: {
@@ -74,7 +75,7 @@ export default function TeamDetailScreen() {
     selectMonth,
     firstSeasonGame,
     showCountdown,
-  } = useTeamGames("nhl", teamIdNum);
+  } = useTeamGames("nhl", teamIdNum, currentSeason);
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {

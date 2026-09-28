@@ -51,7 +51,13 @@ export default function TeamDetailScreen() {
   });
   const { selectedTab, hasVisitedTab, refreshing, isDark, modalVisible, setModalVisible } = screen;
 
-  const { conferences, conferencesLoading, conferencesError } =
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } =
     useConferenceStandings(league, conferenceId);
 
   const {
@@ -191,7 +197,9 @@ export default function TeamDetailScreen() {
           <ConferenceStandingsList
             conferences={conferences}
             loading={conferencesLoading}
+            refreshing={ConferencesRefreshing}
             error={conferencesError}
+            onRefresh={refreshConferenceStandings}
             league={league}
           />
         </View>

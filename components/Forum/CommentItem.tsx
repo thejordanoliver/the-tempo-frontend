@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
+import SafetyActionsModal from "components/SafetyActionsModal";
 import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useRouter } from "expo-router";
@@ -680,6 +681,7 @@ export const CommentItem = ({
           closeAlert();
         }}
       />
+      <SafetyActionsModal {...safety.modalProps} />
     </View>
   );
 };

@@ -81,15 +81,20 @@ export function useLeagueStandings(
 ) {
   const [data, setData] = useState<LeagueStandingsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestIdRef = useRef(0);
 
   const seasonType = options?.seasonType ?? "2";
 
-  const fetchStandings = useCallback(async () => {
+  const fetchStandings = useCallback(async (isRefresh = false) => {
     const requestId = ++requestIdRef.current;
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
 
       const res = await apiClient.get<LeagueStandingsData>(
@@ -121,7 +126,10 @@ export function useLeagueStandings(
 
       setData(null);
     } finally {
-      if (requestId === requestIdRef.current) setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, [league, year, seasonType]);
 
@@ -163,7 +171,9 @@ export function useLeagueStandings(
     seasonDisplayName: data?.seasonDisplayName ?? null,
     seasonType: data?.seasonType ?? null,
     loading,
+    refreshing,
     error,
     refetch: fetchStandings,
+    refresh: () => fetchStandings(true),
   };
 }

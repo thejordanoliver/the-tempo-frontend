@@ -34,17 +34,20 @@ import type {
   ExploreStandingsLeague,
   ExploreWidgetConfig,
   ExploreWidgetGame,
+  ExploreWidgetLeague,
   ExploreWidgetSize,
   ExploreWidgetType,
 } from "types/widgets";
+import { EXPLORE_WIDGET_LEAGUES } from "types/widgets";
 import SortableWidgetGrid, {
   type SortableWidgetRenderArgs,
 } from "./SortableWidgetGrid";
 import CollegePollWidget from "./Widgets/CollegePollWidget";
 import CreatePostWidget from "./Widgets/CreatePostWidget";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
+import FavoriteGamesWidget from "./Widgets/FavoriteGamesWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
-import WidgetSlider, {
+import {
   WidgetEditControls,
   type WidgetSlide,
 } from "./Widgets/WidgetSlider";
@@ -71,6 +74,11 @@ type ExploreWidgetDashboardProps = {
     pollType: ExploreCollegePollType,
   ) => void;
   onSetCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
+  onSetFavoriteGameLeagues: (
+    widgetId: string,
+    leagues: ExploreWidgetLeague[],
+  ) => void;
+  onSetFavoriteGamesAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   onMoveWidget: (widgetId: string, direction: -1 | 1) => void;
   onReorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
   isEditing: boolean;
@@ -115,10 +123,14 @@ function toWidgetSlide(envelope: ExploreWidgetGame): WidgetSlide {
       return { type: "wcbb", data: envelope.game };
     case "mlb":
       return { type: "mlb", data: envelope.game };
+    case "cb":
+      return { type: "cb", data: envelope.game };
     case "nfl":
       return { type: "nfl", data: envelope.game };
     case "cfb":
       return { type: "cfb", data: envelope.game };
+    case "ufl":
+      return { type: "ufl", data: envelope.game };
     case "nhl":
       return { type: "nhl", data: envelope.game };
   }
@@ -173,6 +185,8 @@ export default function ExploreWidgetDashboard({
   onSetStandingsLeague,
   onSetCollegePollSelection,
   onSetCollegePollAutoPlay,
+  onSetFavoriteGameLeagues,
+  onSetFavoriteGamesAutoPlay,
   onMoveWidget,
   onReorderWidgets,
   isEditing,
@@ -199,38 +213,6 @@ export default function ExploreWidgetDashboard({
       {
         type: "favorite_games",
         slides: favoriteGameSlides,
-      },
-      {
-        type: "nba_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "nba"),
-      },
-      {
-        type: "mlb_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "mlb"),
-      },
-      {
-        type: "wnba_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "wnba"),
-      },
-      {
-        type: "cbb_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "cbb"),
-      },
-      {
-        type: "wcbb_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "wcbb"),
-      },
-      {
-        type: "nfl_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "nfl"),
-      },
-      {
-        type: "cfb_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "cfb"),
-      },
-      {
-        type: "nhl_games",
-        slides: favoriteGameSlides.filter((slide) => slide.type === "nhl"),
       },
     ],
     [favoriteGameSlides],
@@ -337,17 +319,23 @@ export default function ExploreWidgetDashboard({
     };
     let content: ReactNode;
 
-    if (gameSection) {
+    if (gameSection && widget.type === "favorite_games") {
       content = (
         <View style={dashboardStyles.section}>
-          <WidgetSlider
+          <FavoriteGamesWidget
             games={gameSection.slides}
             loading={gameWidgetsLoading}
-            initialHeight={height}
-            initialWidth={width}
+            height={height}
+            width={width}
             isDark={isDark}
-            dashboardMode
-            orientation="horizontal"
+            selectedLeagues={widget.favoriteGameLeagues ?? EXPLORE_WIDGET_LEAGUES}
+            autoPlay={widget.favoriteGamesAutoPlay !== false}
+            onChangeLeagues={(leagues) =>
+              onSetFavoriteGameLeagues(widget.id, leagues)
+            }
+            onChangeAutoPlay={(autoPlay) =>
+              onSetFavoriteGamesAutoPlay(widget.id, autoPlay)
+            }
             {...editProps}
           />
         </View>
@@ -453,7 +441,9 @@ export default function ExploreWidgetDashboard({
         accessibilityLabel="Retry loading widget games"
       >
         <Text style={dashboardStyles.placeholderTitle}>
-          Unable to load widget games
+          {games.length > 0
+            ? "Some favorite games may be missing"
+            : "Unable to load widget games"}
         </Text>
         <Text style={dashboardStyles.placeholderText}>{error}</Text>
       </TouchableOpacity>

@@ -12,6 +12,7 @@ import { useExploreWidgetConfiguration } from "hooks/ExploreHooks/useExploreWidg
 import { useExploreWidgetLiveUpdates } from "hooks/ExploreHooks/useExploreWidgetLiveUpdates";
 import { getExploreWidgets } from "services/exploreWidgetsApi";
 import type { FavoriteTeamKey } from "types/favorites";
+import { prepareExploreFavoriteGames } from "utils/exploreFavoriteGames";
 import {
   EXPLORE_WIDGET_LEAGUES,
   type ExploreCollegePollLeague,
@@ -51,6 +52,11 @@ type ExploreWidgetsContextValue = {
     pollType: ExploreCollegePollType,
   ) => void;
   setCollegePollAutoPlay: (widgetId: string, autoPlay: boolean) => void;
+  setFavoriteGameLeagues: (
+    widgetId: string,
+    leagues: ExploreWidgetLeague[],
+  ) => void;
+  setFavoriteGamesAutoPlay: (widgetId: string, autoPlay: boolean) => void;
   moveWidget: (widgetId: string, direction: -1 | 1) => void;
   reorderWidgets: (widgets: ExploreWidgetConfig[]) => void;
   ensureWidgetData: () => Promise<void>;
@@ -59,19 +65,6 @@ type ExploreWidgetsContextValue = {
 
 const WIDGET_DATA_STALE_TIME_MS = 5 * 60 * 1000;
 
-const widgetLeagueByType: Partial<
-  Record<ExploreWidgetType, ExploreWidgetLeague>
-> = {
-  nba_games: "nba",
-  wnba_games: "wnba",
-  cbb_games: "cbb",
-  wcbb_games: "wcbb",
-  mlb_games: "mlb",
-  nfl_games: "nfl",
-  cfb_games: "cfb",
-  nhl_games: "nhl",
-};
-
 const ExploreWidgetsContext = createContext<ExploreWidgetsContextValue | null>(
   null,
 );
@@ -79,15 +72,12 @@ const ExploreWidgetsContext = createContext<ExploreWidgetsContextValue | null>(
 function getRequestedLeagues(
   widgets: readonly ExploreWidgetConfig[],
 ): ExploreWidgetLeague[] {
-  if (widgets.some((widget) => widget.type === "favorite_games")) {
-    return [...EXPLORE_WIDGET_LEAGUES];
-  }
-
   const requested = new Set(
-    widgets.flatMap((widget) => {
-      const league = widgetLeagueByType[widget.type];
-      return league ? [league] : [];
-    }),
+    widgets.flatMap((widget) =>
+      widget.type === "favorite_games"
+        ? (widget.favoriteGameLeagues ?? EXPLORE_WIDGET_LEAGUES)
+        : [],
+    ),
   );
 
   return EXPLORE_WIDGET_LEAGUES.filter((league) => requested.has(league));
@@ -123,6 +113,8 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     setStandingsLeague,
     setCollegePollSelection,
     setCollegePollAutoPlay,
+    setFavoriteGameLeagues,
+    setFavoriteGamesAutoPlay,
     moveWidget,
     reorderWidgets,
   } = useExploreWidgetConfiguration(userId);
@@ -199,7 +191,17 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
         return;
       }
 
+      const hasCurrentCache = cache?.key === dataKey;
+
       if (relevantFavoriteKeys.length === 0) {
+        if (
+          hasCurrentCache &&
+          cache.response.games.length === 0 &&
+          cache.response.favoriteTeamKeys.length === 0
+        ) {
+          return;
+        }
+
         const emptyResponse: ExploreWidgetsResponse = {
           version: 1,
           generatedAt: new Date().toISOString(),
@@ -221,7 +223,6 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
         return;
       }
 
-      const hasCurrentCache = cache?.key === dataKey;
       const cacheAge = hasCurrentCache
         ? Date.now() - cache.fetchedAt
         : Number.POSITIVE_INFINITY;
@@ -349,12 +350,14 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
   const games = useMemo(() => {
     if (!cache || cache.userId !== userId) return [];
 
-    return cache.response.games.filter(
-      (game) =>
-        requestedLeagues.includes(game.league) &&
-        game.favoriteTeamKeys.some((favoriteKey) =>
-          relevantFavoriteKeySet.has(favoriteKey),
-        ),
+    return prepareExploreFavoriteGames(
+      cache.response.games.filter(
+        (game) =>
+          requestedLeagues.includes(game.league) &&
+          game.favoriteTeamKeys.some((favoriteKey) =>
+            relevantFavoriteKeySet.has(favoriteKey),
+          ),
+      ),
     );
   }, [cache, relevantFavoriteKeySet, requestedLeagues, userId]);
 
@@ -372,6 +375,8 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       setStandingsLeague,
       setCollegePollSelection,
       setCollegePollAutoPlay,
+      setFavoriteGameLeagues,
+      setFavoriteGamesAutoPlay,
       moveWidget,
       reorderWidgets,
       ensureWidgetData,
@@ -391,6 +396,8 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       resizeWidget,
       setCollegePollSelection,
       setCollegePollAutoPlay,
+      setFavoriteGameLeagues,
+      setFavoriteGamesAutoPlay,
       setStandingsLeague,
       widgets,
       widgetsReady,

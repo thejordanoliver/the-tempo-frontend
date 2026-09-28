@@ -41,7 +41,11 @@ interface SeasonLeaderResult {
 export function useSeasonLeaders(
   season: number,
   league: string,
-  { enabled = true }: { enabled?: boolean } = {},
+  {
+    enabled = true,
+    limit,
+    category,
+  }: { enabled?: boolean; limit?: number; category?: string } = {},
 ): SeasonLeaderResult {
   const [categories, setCategories] = useState<LeaderCategory[]>([]);
   const [loading, setLoading] = useState(enabled);
@@ -76,6 +80,8 @@ export function useSeasonLeaders(
         {
           params: {
             season,
+            ...(limit !== undefined ? { limit } : {}),
+            ...(category ? { category } : {}),
           },
         },
       );
@@ -124,7 +130,7 @@ export function useSeasonLeaders(
         setLoading(false);
       }
     }
-  }, [enabled, normalizedLeague, season]);
+  }, [category, enabled, limit, normalizedLeague, season]);
 
   useEffect(() => {
     if (!enabled) {

@@ -61,9 +61,9 @@ import { getWCBBConferenceSelectionName } from "@/constants/conferences/wcbbConf
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
+import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import TournamentTreeBracket from "../../components/Sports/Basketball/CBBTournament/TournamentTreeBracket";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
-import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
 import { getCBBConferenceSelectionName } from "../../constants/conferences/cbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
@@ -504,6 +504,7 @@ function NBALeagueScreen() {
                 error={leadersError}
                 categories={categories}
                 league={league}
+                season={currentSeason}
               />
             ) : null}
           </View>
@@ -1188,10 +1189,15 @@ function CBBLeagueScreen() {
     return Number.isFinite(conferenceId) ? conferenceId : null;
   }, [selectedConference]);
 
-  const { conferences, conferencesLoading, conferencesError } =
-    useConferenceStandings(league, selectedConferenceGroupId, {
-      enabled: hasVisitedTab("standings"),
-    });
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } = useConferenceStandings(league, selectedConferenceGroupId, {
+    enabled: hasVisitedTab("standings"),
+  });
 
   /* ------------------------------------------------------------------------ */
   /*                                Calendar                                  */
@@ -1379,7 +1385,9 @@ function CBBLeagueScreen() {
           <ConferenceStandingsList
             conferences={conferences}
             loading={conferencesLoading}
+            refreshing={ConferencesRefreshing}
             error={conferencesError}
+            onRefresh={refreshConferenceStandings}
             league={league}
           />
         )
@@ -1395,6 +1403,7 @@ function CBBLeagueScreen() {
           error={leadersError}
           categories={categories}
           league={league}
+          season={currentSeason}
         />
       ) : null}
     </View>
@@ -1571,10 +1580,15 @@ function WCBBLeagueScreen() {
     return Number.isFinite(conferenceId) ? conferenceId : null;
   }, [selectedConference]);
 
-  const { conferences, conferencesLoading, conferencesError } =
-    useConferenceStandings(league, selectedConferenceGroupId, {
-      enabled: hasVisitedTab("standings"),
-    });
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } = useConferenceStandings(league, selectedConferenceGroupId, {
+    enabled: hasVisitedTab("standings"),
+  });
 
   /* ------------------------------------------------------------------------ */
   /*                                Calendar                                  */
@@ -1762,7 +1776,9 @@ function WCBBLeagueScreen() {
           <ConferenceStandingsList
             conferences={conferences}
             loading={conferencesLoading}
+            refreshing={ConferencesRefreshing}
             error={conferencesError}
+            onRefresh={refreshConferenceStandings}
             league={league}
           />
         )
@@ -1778,6 +1794,7 @@ function WCBBLeagueScreen() {
           error={leadersError}
           categories={categories}
           league={league}
+          season={currentSeason}
         />
       ) : null}
     </View>

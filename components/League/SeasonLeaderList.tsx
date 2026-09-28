@@ -3,17 +3,19 @@ import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { SeasonLeaderCategory } from "@/types/stats";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { FlatList, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
 
-import HeadingTwo from "../../Headings/HeadingTwo";
+import HeadingTwo from "../Headings/HeadingTwo";
 
 interface SeasonLeadersListProps {
   loading?: boolean;
   error?: string | null;
   categories?: SeasonLeaderCategory[];
   league: string;
+  season: number;
 }
 
 const normalizeNumericTeamId = (
@@ -38,6 +40,7 @@ export default function SeasonLeadersList({
   loading,
   error,
   league,
+  season,
   categories = [],
 }: SeasonLeadersListProps) {
   const { resolvedColorScheme } = usePreferences();
@@ -97,6 +100,29 @@ export default function SeasonLeadersList({
                 );
               })}
             </View>
+
+            <Link
+              href={{
+                pathname: "/season-leaders/[league]",
+                params: {
+                  league,
+                  season: String(season),
+                  category: item.shortName || item.categoryName,
+                },
+              }}
+              asChild
+            >
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Show more ${item.categoryName} leaders`}
+                style={({ pressed }) => [
+                  styles.showMoreButton,
+                  pressed && styles.showMoreButtonPressed,
+                ]}
+              >
+                <Text style={styles.showMoreText}>Show more</Text>
+              </Pressable>
+            </Link>
           </View>
         );
       }}

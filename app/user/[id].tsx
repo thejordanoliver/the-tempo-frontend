@@ -1,8 +1,9 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import SafetyActionsModal from "@/components/SafetyActionsModal";
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import Forum from "@/components/Forum/Forum";
 import TabBar from "@/components/TabBars/TabBar";
-import { globalStyles } from "@/constants/styles";
+import { Colors, globalStyles } from "@/constants/styles";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
 import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
@@ -15,10 +16,9 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { blockUser, reportUser, unblockUser, type ReportReason } from "services/usersApi";
-import { Colors } from "constants/styles";
+import { useSafetyActions } from "hooks/useSafetyActions";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
 import type { ProfileTab } from "../(tabs)/profile";
@@ -72,7 +72,6 @@ export default function UserProfileScreen() {
     canInteract,
     refreshProfile,
   } = useUserProfile(userId);
-  const [safetyPending, setSafetyPending] = useState(false);
 
   const {
     featuredBadges,
@@ -136,66 +135,14 @@ export default function UserProfileScreen() {
     router.back();
   }, [router]);
 
-  const submitReport = useCallback(async (reasonCode: ReportReason) => {
-    if (!userId || safetyPending) return;
-    setSafetyPending(true);
-    try {
-      await reportUser(userId, reasonCode);
-      Alert.alert("Report received", "Thanks for helping keep Tempo safe.");
-    } catch {
-      Alert.alert("Could not submit report", "Please try again later.");
-    } finally {
-      setSafetyPending(false);
-    }
-  }, [safetyPending, userId]);
-
-  const handleReport = useCallback(() => {
-    Alert.alert("Report user", "Why are you reporting this account?", [
-      { text: "Spam", onPress: () => void submitReport("spam") },
-      { text: "Harassment", onPress: () => void submitReport("harassment") },
-      { text: "Other", onPress: () => void submitReport("other") },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  }, [submitReport]);
-
-  const changeBlockState = useCallback(async () => {
-    if (!userId || safetyPending) return;
-    setSafetyPending(true);
-    try {
-      if (isBlockedByViewer) await unblockUser(userId);
-      else await blockUser(userId);
-      await refreshProfile();
-    } catch {
-      Alert.alert("Could not update block", "Please try again later.");
-    } finally {
-      setSafetyPending(false);
-    }
-  }, [isBlockedByViewer, refreshProfile, safetyPending, userId]);
-
-  const handleSafetyMenu = useCallback(() => {
-    Alert.alert(username ? `@${username}` : "User actions", undefined, [
-      { text: "Report", onPress: handleReport },
-      {
-        text: isBlockedByViewer ? "Unblock" : "Block",
-        style: isBlockedByViewer ? "default" : "destructive",
-        onPress: () => {
-          if (isBlockedByViewer) {
-            void changeBlockState();
-            return;
-          }
-          Alert.alert(
-            "Block user?",
-            "You won't be able to follow, message, or see each other's activity. They won't be notified.",
-            [
-              { text: "Cancel", style: "cancel" },
-              { text: "Block", style: "destructive", onPress: () => void changeBlockState() },
-            ],
-          );
-        },
-      },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  }, [changeBlockState, handleReport, isBlockedByViewer, username]);
+  const safety = useSafetyActions({
+    userId,
+    username,
+    targetType: "user",
+    targetId: userId,
+    isBlocked: isBlockedByViewer,
+    onBlockChanged: refreshProfile,
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -206,8 +153,8 @@ export default function UserProfileScreen() {
           onBack={handleBack}
           rightAction={!isCurrentUser ? (
             <TouchableOpacity
-              onPress={handleSafetyMenu}
-              disabled={safetyPending}
+              onPress={safety.open}
+              disabled={safety.pending}
               accessibilityRole="button"
               accessibilityLabel="User safety actions"
               hitSlop={8}
@@ -222,7 +169,7 @@ export default function UserProfileScreen() {
         />
       ),
     });
-  }, [navigation, headerTitle, handleBack, handleSafetyMenu, isCurrentUser, isDark, safetyPending]);
+  }, [navigation, headerTitle, handleBack, safety.open, safety.pending, isCurrentUser, isDark]);
 
   const onFollowersPress = useCallback(() => {
     if (!currentUserIdString || !userId) return;
@@ -275,6 +222,7 @@ export default function UserProfileScreen() {
   }
 
   return (
+    <>
     <ScrollView style={styles.container} contentInsetAdjustmentBehavior="never">
       <ProfileBanner
         bannerImage={bannerImage}
@@ -340,12 +288,6 @@ export default function UserProfileScreen() {
             loading={badgesLoading}
             error={badgesError}
             onRetry={refreshBadges}
-            onPressSeeAll={() => {
-              router.push({
-                pathname: "/badges",
-                params: { userId },
-              });
-            }}
           />
         </View>
       )}
@@ -376,5 +318,7 @@ export default function UserProfileScreen() {
         </View>
       )}
     </ScrollView>
+    <SafetyActionsModal {...safety.modalProps} />
+    </>
   );
 }

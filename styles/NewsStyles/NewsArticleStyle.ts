@@ -86,14 +86,22 @@ export const newsArticleStyles = (isDark: boolean, screenWidth: number) => {
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
 
-    content: {
-      flex: 1,
+    contentContainer: {
+      gap: isTablet ? 18 : 12,
+    },
 
+    content: {
       fontFamily: Fonts.REGULAR,
       fontSize: isTablet ? 19 : 16,
       lineHeight: isTablet ? 30 : 24,
 
       color: isDark ? Colors.white : Colors.black,
     },
+
+    inlineLink: {
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
+      textDecorationLine: "underline",
+    },
+
   });
 };

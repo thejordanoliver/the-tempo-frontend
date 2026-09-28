@@ -84,6 +84,7 @@ const hiddenRoutes = [
   "/signup/success",
   "/settings/deleteaccountsplash",
   "/player/",
+  "/season-leaders/",
   "/settings",
   "/settings/index",
   "/login",
@@ -267,9 +268,9 @@ function AppLayout() {
               headerShown: !isSplashScreen && !isTabScreen,
 
               header: !isSplashScreen
-                ? () => (
+                ? ({ options }) => (
                   <CustomHeader
-                    title={route.name}
+                    title={options.title ?? route.name}
                     onBack={
                       navigation.canGoBack() ? navigation.goBack : undefined
                     }

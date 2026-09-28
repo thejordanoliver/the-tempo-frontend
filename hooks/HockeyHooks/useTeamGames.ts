@@ -127,6 +127,7 @@ function sortGamesByDate(games: HockeyGame[]) {
 export function useTeamGames(
   league: TeamScheduleLeague,
   teamId?: string | number | null,
+  season?: string | number | null,
 ): UseTeamGamesResult {
   const [data, setData] = useState<TeamScheduleResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -135,7 +136,7 @@ export function useTeamGames(
 
   const fetchSchedule = useCallback(
     async (isRefresh = false) => {
-      if (!league || !teamId) {
+      if (!league || !teamId || season === null || season === undefined || season === "") {
         setData(null);
         setLoading(false);
         setRefreshing(false);
@@ -153,7 +154,7 @@ export function useTeamGames(
         }
 
         const response = await apiClient.get<TeamScheduleResponse>(
-          `api/games/hockey/team/${league}/${teamId}`,
+          `api/games/hockey/team/${league}/${teamId}/${season}`,
         );
 
         const games = sortGamesByDate(response.data.games || []);
@@ -185,7 +186,7 @@ export function useTeamGames(
         setRefreshing(false);
       }
     },
-    [league, teamId],
+    [league, season, teamId],
   );
 
   useEffect(() => {
@@ -198,9 +199,7 @@ export function useTeamGames(
     () => buildScheduleMonthOptions(monthGroups),
     [monthGroups],
   );
-  const scheduleIdentity = `${league}:${String(teamId ?? "")}:${String(
-    data?.season?.year ?? "",
-  )}`;
+  const scheduleIdentity = `${league}:${String(teamId ?? "")}:${String(season ?? "")}`;
   const { selectedMonthKey, selectMonth } = useTeamMonthSelector({
     months,
     scheduleIdentity,

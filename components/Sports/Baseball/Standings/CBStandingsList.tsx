@@ -1,7 +1,7 @@
 // components/CBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
+import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { Ionicons } from "@expo/vector-icons";
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
@@ -57,12 +57,12 @@ const getApiTeamLogoSource = (
 ): ImageSourcePropType | undefined => {
   if (!team) return undefined;
 
-  const logo = (team as { logo?: unknown; }).logo;
+  const logo = (team as { logo?: unknown }).logo;
   if (typeof logo === "number") return logo;
   if (typeof logo === "string" && logo.length > 0) return { uri: logo };
   if (isRecord(logo)) return logo as ImageSourcePropType;
 
-  const logos = (team as { logos?: unknown; }).logos;
+  const logos = (team as { logos?: unknown }).logos;
   if (!Array.isArray(logos)) return undefined;
 
   const logoUrl = logos
@@ -81,24 +81,14 @@ type Props = {
 export const standingLabels = ["W-L", "Points", "1st Votes"];
 
 export const CBStandingsList = ({ league }: Props) => {
-  const { rankingsByKey, loading, error, refresh } = useCBRankings(league);
+  const { rankingsByKey, loading, refreshing, error, refresh } =
+    useCBRankings(league);
   const [pollMode, setPollMode] = useState("d1BaseballPoll");
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
-
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      await refresh();
-    } finally {
-      setRefreshing(false);
-    }
-  };
 
   const primaryPollKey = useMemo(() => {
     if (league === "sb" && isRankPoll(rankingsByKey.d1SoftballPoll)) {
@@ -190,18 +180,20 @@ export const CBStandingsList = ({ league }: Props) => {
   );
 
   if (loading) {
-    return (
-      <View style={{ flex: 1 }}>
-        <StandingsSkeleton />
-      </View>
-    );
+    return <StandingsSkeleton variant="rankings" />;
   }
 
   if (error) {
     return (
-      <View style={styles.center}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <Text style={styles.errorText}>{error}</Text>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -441,22 +433,29 @@ export const CBStandingsList = ({ league }: Props) => {
     );
   };
 
-  if (!activeRanks)
+  if (activeRanks.length === 0)
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <Text style={global.emptyText}>
           {activePoll
             ? "No rankings are available for this poll."
             : "Rankings are not available for the selected poll."}
         </Text>
-      </View>
+      </ScrollView>
     );
 
   return (
     <ScrollView
+      alwaysBounceVertical
       contentContainerStyle={styles.contentContainer}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }
     >
       <View style={styles.dropdownRow}>
@@ -468,7 +467,7 @@ export const CBStandingsList = ({ league }: Props) => {
         />
       </View>
 
-      {Section({ "title": activePollTitle, "data": activeRanks })}
+      {Section({ title: activePollTitle, data: activeRanks })}
 
       {renderDroppedOut()}
     </ScrollView>

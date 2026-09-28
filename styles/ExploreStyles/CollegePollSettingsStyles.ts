@@ -55,6 +55,20 @@ export const collegePollSettingsStyles = (isDark: boolean) =>
       textTransform: "uppercase",
       letterSpacing: 0.7,
     },
+    sectionHeaderRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    sectionAction: {
+      paddingVertical: 8,
+      fontFamily: Fonts.SEMIBOLD,
+      fontSize: 13,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    sectionActionDisabled: {
+      opacity: 0.4,
+    },
     sportRow: {
       flexDirection: "row",
       gap: 10,
@@ -99,11 +113,22 @@ export const collegePollSettingsStyles = (isDark: boolean) =>
     pollOptionSelected: {
       borderBottomColor: isDark ? Colors.white : Colors.black,
     },
+    optionDisabled: {
+      opacity: 0.48,
+    },
     pollText: {
-      flex: 1,
       fontFamily: Fonts.MEDIUM,
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
+    },
+    pollCopy: {
+      flex: 1,
+      gap: 1,
+    },
+    optionMeta: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 11,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
     },
     settingRow: {
       flexDirection: "row",

@@ -14,6 +14,27 @@ export interface ArticleVideo {
   duration: number;
 }
 
+export interface ArticleStorySegment {
+  text: string;
+  link: string | null;
+  target?: ArticleStoryLinkTarget;
+}
+
+export type ArticleStoryLinkTarget =
+  | {
+      kind: "team";
+      league: string;
+      id: string;
+    }
+  | {
+      kind: "article";
+      id: string;
+    };
+
+export interface ArticleStoryParagraph {
+  segments: ArticleStorySegment[];
+}
+
 export interface Article {
   id: number;
   headline: string;
@@ -21,12 +42,14 @@ export interface Article {
   published: string;
   images: ArticleImage[];
   videos: ArticleVideo[];
-  story: string; // HTML
+  story: string;
+  storyParagraphs?: ArticleStoryParagraph[];
   byline: string;
   keywords: string[];
   caption: string;
   source: string;
   type: "Story" | "Media" | "HeadlineNews" | "Preview";
+  link: string | null;
 }
 
 interface ArticleResponse {

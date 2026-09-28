@@ -4,14 +4,6 @@ import type { FootballGame } from "./football/football";
 import type { HockeyGame } from "./hockey/hockey";
 
 export type ExploreWidgetType =
-  | "nba_games"
-  | "nfl_games"
-  | "mlb_games"
-  | "nhl_games"
-  | "wnba_games"
-  | "cbb_games"
-  | "wcbb_games"
-  | "cfb_games"
   | "favorite_games"
   | "favorite_teams"
   | "create_post"
@@ -32,6 +24,10 @@ export type ExploreWidgetConfig = {
   collegePollType?: ExploreCollegePollType;
   /** Defaults to true for new and legacy College Poll widgets. */
   collegePollAutoPlay?: boolean;
+  /** Defaults to every supported league for new and legacy Favorite Games widgets. */
+  favoriteGameLeagues?: ExploreWidgetLeague[];
+  /** Defaults to true for new and legacy Favorite Games widgets. */
+  favoriteGamesAutoPlay?: boolean;
 };
 
 export const EXPLORE_COLLEGE_POLL_LEAGUES = ["cfb", "cbb"] as const;
@@ -67,8 +63,10 @@ export const EXPLORE_WIDGET_LEAGUES = [
   "cbb",
   "wcbb",
   "mlb",
+  "cb",
   "nfl",
   "cfb",
+  "ufl",
   "nhl",
 ] as const;
 
@@ -88,12 +86,12 @@ export type ExploreWidgetGame =
     })
   | (ExploreWidgetGameBase & {
       sport: "baseball";
-      league: "mlb";
+      league: "mlb" | "cb";
       game: BaseballGame;
     })
   | (ExploreWidgetGameBase & {
       sport: "football";
-      league: "nfl" | "cfb";
+      league: "nfl" | "cfb" | "ufl";
       game: FootballGame;
     })
   | (ExploreWidgetGameBase & {

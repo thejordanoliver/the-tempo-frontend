@@ -3,6 +3,7 @@ import { Image } from "expo-image";
 import { memo, useMemo } from "react";
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
+import SafetyActionsModal from "components/SafetyActionsModal";
 import type { ChatMessageItem } from "types/chat";
 
 interface Props {
@@ -40,6 +41,7 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
   const profileImage = item.profile_image ?? profilePlaceholder;
 
   return (
+    <>
     <Pressable
       onLongPress={isCurrentUser ? undefined : safety.open}
       delayLongPress={350}
@@ -120,6 +122,8 @@ function ChatMessage({ item, userName, isDark, emojis, onReaction, onBlockedUser
         })}
       </View>
     </Pressable>
+    <SafetyActionsModal {...safety.modalProps} />
+    </>
   );
 }
 

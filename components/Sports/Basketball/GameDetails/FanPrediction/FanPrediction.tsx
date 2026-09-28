@@ -2,37 +2,44 @@ import {
   SkeletonBlock,
   SkeletonCircle,
 } from "@/components/Skeletons/primitives";
-import { CastVoteAck } from "@/hooks/useLiveVotes";
+import type { CastVoteAck } from "@/hooks/useLiveVotes";
 import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import { fetchVoteResults, PollResult } from "hooks/useGameVotes";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Text, View } from "react-native";
+import { fetchVoteResults, type PollResult } from "hooks/useGameVotes";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Text, View } from "react-native";
 
 import PredictionCard from "./PredictionCard";
 
 type TeamId = string | number;
 
+type OptimisticVote = {
+  teamId: TeamId;
+  baselineCount: number;
+};
+
 type Props = {
   votes: PollResult[] | null;
   castVote: (teamId: TeamId) => Promise<CastVoteAck>;
   gameId: number;
-
   awayId: TeamId;
-  awayCode?: string;
+  awayCode: string;
   awayLogo: any;
   awayColor?: string | null;
-
   homeId: TeamId;
-  homeCode?: string;
+  homeCode: string;
   homeLogo: any;
   homeColor?: string | null;
-
   onVoteCast?: (teamId: TeamId) => void;
-
   state?: string | null;
 };
 
@@ -88,6 +95,10 @@ function getVoteCount(votes: PollResult[], teamId: TeamId): number {
   return Number.isFinite(count) ? count : 0;
 }
 
+function formatPercentage(percentage: number): string {
+  return `${Math.round(percentage * 100)}%`;
+}
+
 export default function FanPrediction(props: Props) {
   if (props.state === "post") {
     return null;
@@ -101,11 +112,11 @@ function FanPredictionContent({
   castVote: castLiveVote,
   gameId,
   awayId,
-  awayCode,
+  awayCode = "AWY",
   awayLogo,
   awayColor,
   homeId,
-  homeCode,
+  homeCode = "HME",
   homeLogo,
   homeColor,
   onVoteCast,
@@ -114,8 +125,8 @@ function FanPredictionContent({
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
-  const styles = FanPredictionStyles(isDark);
-  const global = globalStyles(isDark);
+  const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
 
@@ -129,9 +140,9 @@ function FanPredictionContent({
 
   const [submittingTeamId, setSubmittingTeamId] = useState<TeamId | null>(null);
 
-  const [animFillAway] = useState(() => new Animated.Value(0));
-
-  const [animFillHome] = useState(() => new Animated.Value(0));
+  const [optimisticVote, setOptimisticVote] = useState<OptimisticVote | null>(
+    null,
+  );
 
   const submittingRef = useRef(false);
 
@@ -153,6 +164,7 @@ function FanPredictionContent({
         setResults([]);
         setUserVote(null);
         setResultsRevealed(false);
+        setOptimisticVote(null);
 
         const data = await fetchVoteResults(gameId, {
           signal: controller.signal,
@@ -212,15 +224,32 @@ function FanPredictionContent({
     return results;
   }, [liveVotes, results]);
 
-  const votesAway = useMemo(
+  const serverVotesAway = useMemo(
     () => getVoteCount(activeVotes, awayId),
     [activeVotes, awayId],
   );
 
-  const votesHome = useMemo(
+  const serverVotesHome = useMemo(
     () => getVoteCount(activeVotes, homeId),
     [activeVotes, homeId],
   );
+
+  const optimisticVoteIsPending =
+    optimisticVote != null &&
+    getVoteCount(activeVotes, optimisticVote.teamId) <=
+      optimisticVote.baselineCount;
+
+  const votesAway =
+    serverVotesAway +
+    (optimisticVoteIsPending && isSameTeamId(optimisticVote?.teamId, awayId)
+      ? 1
+      : 0);
+
+  const votesHome =
+    serverVotesHome +
+    (optimisticVoteIsPending && isSameTeamId(optimisticVote?.teamId, homeId)
+      ? 1
+      : 0);
 
   const totalVotes = votesAway + votesHome;
 
@@ -228,100 +257,88 @@ function FanPredictionContent({
 
   const rawPctHome = totalVotes > 0 ? votesHome / totalVotes : 0;
 
-  /*
-   * Animate each team's row independently.
-   */
-  useEffect(() => {
-    const animation = Animated.parallel([
-      Animated.timing(animFillAway, {
-        toValue: resultsRevealed ? rawPctAway : 0,
-        duration: 600,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
+  const handleVote = useCallback(
+    async (teamId: TeamId) => {
+      if (!canVote || submittingRef.current || userVote != null) {
+        return;
+      }
 
-      Animated.timing(animFillHome, {
-        toValue: resultsRevealed ? rawPctHome : 0,
-        duration: 600,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]);
+      const previousVote = userVote;
+      const previousResultsRevealed = resultsRevealed;
 
-    animation.start();
+      submittingRef.current = true;
 
-    return () => {
-      animation.stop();
-    };
-  }, [animFillAway, animFillHome, rawPctAway, rawPctHome, resultsRevealed]);
+      setSubmittingTeamId(teamId);
+      setErrorMessage(null);
+      setOptimisticVote({
+        teamId,
+        baselineCount: getVoteCount(activeVotes, teamId),
+      });
 
-  const handleVote = async (teamId: TeamId) => {
-    if (!canVote || submittingRef.current || userVote != null) {
-      return;
-    }
+      try {
+        /*
+         * Reveal the user's selection and increment the visible tally before
+         * the network round-trip completes.
+         */
+        setUserVote(teamId);
+        setResultsRevealed(true);
 
-    const previousVote = userVote;
-    const previousResultsRevealed = resultsRevealed;
+        void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(
+          () => {},
+        );
 
-    submittingRef.current = true;
+        const response = await castLiveVote(teamId);
 
-    setSubmittingTeamId(teamId);
-    setErrorMessage(null);
+        if (!response.ok) {
+          setUserVote(previousVote);
+          setResultsRevealed(previousResultsRevealed);
+          setOptimisticVote(null);
 
-    try {
-      /*
-       * Optimistically reveal the user's selection immediately.
-       */
-      setUserVote(teamId);
-      setResultsRevealed(true);
+          setErrorMessage(
+            response.error || "Your vote didn't go through. Try again.",
+          );
 
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(
-        () => {},
-      );
+          void Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Error,
+          ).catch(() => {});
 
-      const response = await castLiveVote(teamId);
+          return;
+        }
 
-      if (!response.ok) {
+        onVoteCast?.(teamId);
+
+        void Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success,
+        ).catch(() => {});
+      } catch (error: unknown) {
+        console.warn("Vote error", error);
+
         setUserVote(previousVote);
         setResultsRevealed(previousResultsRevealed);
+        setOptimisticVote(null);
 
         setErrorMessage(
-          response.error || "Your vote didn't go through. Try again.",
+          getErrorMessage(error, "Your vote didn't go through. Try again."),
         );
 
         void Haptics.notificationAsync(
           Haptics.NotificationFeedbackType.Error,
         ).catch(() => {});
-
-        return;
+      } finally {
+        submittingRef.current = false;
+        setSubmittingTeamId(null);
       }
+    },
+    [activeVotes, canVote, castLiveVote, onVoteCast, resultsRevealed, userVote],
+  );
 
-      onVoteCast?.(teamId);
+  const handleAwayVote = useCallback(() => {
+    void handleVote(awayId);
+  }, [awayId, handleVote]);
 
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success,
-      ).catch(() => {});
-    } catch (error: unknown) {
-      console.warn("Vote error", error);
-
-      setUserVote(previousVote);
-      setResultsRevealed(previousResultsRevealed);
-
-      setErrorMessage(
-        getErrorMessage(error, "Your vote didn't go through. Try again."),
-      );
-
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Error,
-      ).catch(() => {});
-    } finally {
-      submittingRef.current = false;
-      setSubmittingTeamId(null);
-    }
-  };
-
-  const formatPercentage = (percentage: number) =>
-    `${Math.round(percentage * 100)}%`;
+  const handleHomeVote = useCallback(() => {
+    void handleVote(homeId);
+  }, [handleVote, homeId]);
 
   const pickedName = useMemo(() => {
     if (isSameTeamId(userVote, awayId)) {
@@ -395,11 +412,9 @@ function FanPredictionContent({
         <PredictionCard
           code={awayCode}
           logo={awayLogo}
-          color={awayColor ?? Colors.darkGray}
-          fillAnim={animFillAway}
-          onPress={() => {
-            void handleVote(awayId);
-          }}
+          color={awayColor ?? Colors.midTone}
+          fillPercentage={resultsRevealed ? rawPctAway : 0}
+          onPress={handleAwayVote}
           disabled={!canVote || userVote != null || submittingTeamId != null}
           isSelected={isSameTeamId(userVote, awayId)}
           showPercent={resultsRevealed}
@@ -410,11 +425,9 @@ function FanPredictionContent({
         <PredictionCard
           code={homeCode}
           logo={homeLogo}
-          color={homeColor ?? Colors.lightGray}
-          fillAnim={animFillHome}
-          onPress={() => {
-            void handleVote(homeId);
-          }}
+          color={homeColor ?? Colors.midTone}
+          fillPercentage={resultsRevealed ? rawPctHome : 0}
+          onPress={handleHomeVote}
           disabled={!canVote || userVote != null || submittingTeamId != null}
           isSelected={isSameTeamId(userVote, homeId)}
           showPercent={resultsRevealed}

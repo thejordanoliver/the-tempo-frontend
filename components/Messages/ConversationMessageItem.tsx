@@ -1,4 +1,5 @@
 import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
+import SafetyActionsModal from "components/SafetyActionsModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Image } from "expo-image";
 import { memo } from "react";
@@ -118,6 +119,7 @@ function ConversationMessageItem({
   );
 
   return (
+    <>
     <View
       style={[
         styles.messageRow,
@@ -154,6 +156,8 @@ function ConversationMessageItem({
         )}
       </View>
     </View>
+    <SafetyActionsModal {...safety.modalProps} />
+    </>
   );
 }
 

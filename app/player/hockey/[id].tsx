@@ -27,6 +27,12 @@ export default function PlayerDetailScreen() {
   const navigation = useNavigation();
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
+  const currentTeamId =
+    player?.team_id != null
+      ? String(player.team_id)
+      : teamId
+        ? String(teamId)
+        : undefined;
 
   const { seasons, seasonsLoading, seasonsError } = usePlayerSeasons(
     playerId,
@@ -37,10 +43,10 @@ export default function PlayerDetailScreen() {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useTeamLatestGame(league, teamId);
+  } = useTeamLatestGame(league, currentTeamId);
 
-  const team = getNHLTeam(teamId);
-  const teamLogo = getNHLTeamLogo(teamId, true);
+  const team = currentTeamId ? getNHLTeam(currentTeamId) : undefined;
+  const teamLogo = getNHLTeamLogo(currentTeamId, true);
   const teamColor = team?.color ?? Colors.midTone;
 
   /* ---------------- Header ---------------- */

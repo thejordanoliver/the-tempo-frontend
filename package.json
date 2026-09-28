@@ -11,6 +11,8 @@
     "test:favorites": "node --experimental-strip-types --experimental-default-type=module --test tests/favoriteTeamKeys.test.ts tests/favoriteSportHeader.test.ts",
     "test:schedule": "node --experimental-strip-types --experimental-default-type=module --test tests/teamScheduleSelection.test.ts",
     "test:widget-grid": "tsx --test tests/exploreWidgetGridLayout.test.ts",
+    "test:widget-storage": "tsx --test tests/exploreWidgetStorage.test.ts",
+    "test:favorite-games": "tsx --test tests/exploreFavoriteGames.test.ts",
     "test:dm-privacy": "node --experimental-strip-types --experimental-default-type=module --test tests/dmPrivacyFrontend.test.ts",
     "test:auth-forms": "tsx --test tests/authFormSchemas.test.ts",
     "test:profile-forms": "tsx --test tests/editProfileSchema.test.ts",

@@ -55,6 +55,8 @@ export default function ExplorePage() {
     setStandingsLeague,
     setCollegePollSelection,
     setCollegePollAutoPlay,
+    setFavoriteGameLeagues,
+    setFavoriteGamesAutoPlay,
     moveWidget,
     reorderWidgets,
     ensureWidgetData,
@@ -175,6 +177,8 @@ export default function ExplorePage() {
           onSetStandingsLeague={setStandingsLeague}
           onSetCollegePollSelection={setCollegePollSelection}
           onSetCollegePollAutoPlay={setCollegePollAutoPlay}
+          onSetFavoriteGameLeagues={setFavoriteGameLeagues}
+          onSetFavoriteGamesAutoPlay={setFavoriteGamesAutoPlay}
           onMoveWidget={moveWidget}
           onReorderWidgets={reorderWidgets}
           isEditing={widgetsEditing}

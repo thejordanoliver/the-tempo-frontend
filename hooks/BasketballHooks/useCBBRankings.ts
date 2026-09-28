@@ -57,6 +57,7 @@ export const useCBBRankings = (league: "cbb" | "wcbb") => {
 
   const [rankings, setRankings] = useState<RankPoll[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /* --------------------------------------------------
@@ -169,15 +170,14 @@ export const useCBBRankings = (league: "cbb" | "wcbb") => {
 
   const refresh = async () => {
     try {
-      setLoading(true);
+      setRefreshing(true);
+      setError(null);
 
       await AsyncStorage.removeItem(CACHE_KEY);
 
       await fetchLatest();
-
-      setLoading(false);
-    } catch {
-      setLoading(false);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -207,6 +207,7 @@ export const useCBBRankings = (league: "cbb" | "wcbb") => {
   return {
     rankings,
     loading,
+    refreshing,
     error,
     refresh,
     rankedTeamIds,

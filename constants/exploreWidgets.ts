@@ -90,93 +90,6 @@ export const EXPLORE_WIDGET_REGISTRY: Record<
     emptyCopy: "College rankings are not available right now.",
   },
 
-  nba_games: {
-    title: "NBA Games",
-    description: "Track recent and upcoming games for favorite NBA teams.",
-    badge: "NBA",
-    icon: "basketball-outline",
-    league: "nba",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite NBA teams to see their games here.",
-  },
-
-  nfl_games: {
-    title: "NFL Games",
-    description: "Follow football matchups for your NFL favorites.",
-    badge: "NFL",
-    icon: "american-football-outline",
-    league: "nfl",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite NFL teams to see their games here.",
-  },
-
-  mlb_games: {
-    title: "MLB Games",
-    description: "Keep baseball scores close on Explore.",
-    badge: "MLB",
-    icon: "baseball-outline",
-    league: "mlb",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite MLB teams to see their games here.",
-  },
-
-  nhl_games: {
-    title: "NHL Games",
-    description: "Track hockey game cards from your NHL favorites.",
-    badge: "NHL",
-    icon: "ice-cream-outline",
-    league: "nhl",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite NHL teams to see their games here.",
-  },
-
-  wnba_games: {
-    title: "WNBA Games",
-    description: "Follow WNBA games for selected teams.",
-    badge: "WNBA",
-    icon: "basketball-outline",
-    league: "wnba",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite WNBA teams to see their games here.",
-  },
-
-  cbb_games: {
-    title: "CBB Games",
-    description: "Track men's college basketball team games.",
-    badge: "CBB",
-    icon: "school-outline",
-    league: "cbb",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite CBB teams to see their games here.",
-  },
-
-  wcbb_games: {
-    title: "WCBB Games",
-    description: "Track women's college basketball team games.",
-    badge: "WCBB",
-    icon: "school-outline",
-    league: "wcbb",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite WCBB teams to see their games here.",
-  },
-
-  cfb_games: {
-    title: "CFB Games",
-    description: "Follow college football games from favorite teams.",
-    badge: "CFB",
-    icon: "american-football-outline",
-    league: "cfb",
-    defaultSize: "medium",
-    sizes: EXPLORE_WIDGET_SIZES,
-    emptyCopy: "Add favorite CFB teams to see their games here.",
-  },
 };
 export const EXPLORE_WIDGET_TYPES = Object.keys(
   EXPLORE_WIDGET_REGISTRY,
@@ -199,14 +112,6 @@ export const EXPLORE_WIDGET_EMPTY_COPY: Record<ExploreWidgetType, string> =
 
 export const EXPLORE_GAME_WIDGET_TYPES = [
   "favorite_games",
-  "nba_games",
-  "nfl_games",
-  "mlb_games",
-  "nhl_games",
-  "wnba_games",
-  "cbb_games",
-  "wcbb_games",
-  "cfb_games",
 ] as const satisfies readonly ExploreWidgetType[];
 
 export type ExploreGameWidgetType = (typeof EXPLORE_GAME_WIDGET_TYPES)[number];

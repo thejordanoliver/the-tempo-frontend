@@ -9,12 +9,33 @@ import {
   isExploreWidgetType,
   widgetAllowsDuplicates,
 } from "constants/exploreWidgets";
-import type { ExploreWidgetConfig } from "types/widgets";
+import {
+  EXPLORE_WIDGET_LEAGUES,
+  type ExploreWidgetConfig,
+  type ExploreWidgetLeague,
+} from "types/widgets";
 import { normalizeCollegePollType } from "utils/collegePollWidget";
 
 export const EXPLORE_WIDGETS_KEY_PREFIX = "exploreWidgets";
 export const EXPLORE_WIDGETS_LEGACY_KEY = EXPLORE_WIDGETS_KEY_PREFIX;
-export const EXPLORE_WIDGETS_SCHEMA_VERSION = 1;
+export const EXPLORE_WIDGETS_SCHEMA_VERSION = 2;
+
+const LEGACY_GAME_WIDGET_LEAGUES = {
+  nba_games: "nba",
+  nfl_games: "nfl",
+  mlb_games: "mlb",
+  nhl_games: "nhl",
+  wnba_games: "wnba",
+  cbb_games: "cbb",
+  wcbb_games: "wcbb",
+  cfb_games: "cfb",
+} as const satisfies Record<string, ExploreWidgetLeague>;
+
+type LegacyGameWidgetType = keyof typeof LEGACY_GAME_WIDGET_LEAGUES;
+
+function isLegacyGameWidgetType(value: unknown): value is LegacyGameWidgetType {
+  return typeof value === "string" && value in LEGACY_GAME_WIDGET_LEAGUES;
+}
 
 type StoredExploreWidgetsPayload = {
   version?: number;
@@ -62,9 +83,71 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
     rawWidgets = (value as { widgets: unknown[] }).widgets;
   }
 
+  const favoriteGamesIndexes = rawWidgets.flatMap((widget, index) => {
+    if (!widget || typeof widget !== "object") return [];
+
+    const type = (widget as { type?: unknown }).type;
+    return type === "favorite_games" || isLegacyGameWidgetType(type)
+      ? [index]
+      : [];
+  });
+  const storedFavoriteGamesIndex = rawWidgets.findIndex(
+    (widget) =>
+      Boolean(widget) &&
+      typeof widget === "object" &&
+      (widget as { type?: unknown }).type === "favorite_games",
+  );
+  const hasStoredFavoriteGames = storedFavoriteGamesIndex >= 0;
+  const firstFavoriteGamesIndex = hasStoredFavoriteGames
+    ? storedFavoriteGamesIndex
+    : favoriteGamesIndexes[0];
+  const migratedFavoriteGameLeagues = EXPLORE_WIDGET_LEAGUES.filter(
+    (league) =>
+      rawWidgets.some((widget) => {
+        if (!widget || typeof widget !== "object") return false;
+
+        const stored = widget as {
+          type?: unknown;
+          favoriteGameLeagues?: unknown;
+        };
+        if (isLegacyGameWidgetType(stored.type)) {
+          return LEGACY_GAME_WIDGET_LEAGUES[stored.type] === league;
+        }
+
+        return (
+          stored.type === "favorite_games" &&
+          (!Array.isArray(stored.favoriteGameLeagues) ||
+            stored.favoriteGameLeagues.includes(league))
+        );
+      }),
+  );
+  const migratedRawWidgets = rawWidgets.flatMap((widget, index) => {
+    if (!widget || typeof widget !== "object") return [widget];
+
+    const stored = widget as Record<string, unknown>;
+    const isFavoriteGames = stored.type === "favorite_games";
+    const isLegacyGame = isLegacyGameWidgetType(stored.type);
+    if (!isFavoriteGames && !isLegacyGame) return [widget];
+    if (index !== firstFavoriteGamesIndex) return [];
+
+    return [
+      {
+        ...stored,
+        id: isFavoriteGames ? stored.id : undefined,
+        type: "favorite_games",
+        title: "Favorite Games",
+        favoriteGameLeagues: hasStoredFavoriteGames
+          ? migratedFavoriteGameLeagues
+          : EXPLORE_WIDGET_LEAGUES.filter((league) =>
+              migratedFavoriteGameLeagues.includes(league),
+            ),
+      },
+    ];
+  });
+
   const seenSingleInstanceTypes = new Set<ExploreWidgetConfig["type"]>();
 
-  const normalized = rawWidgets
+  const normalized = migratedRawWidgets
     .filter(
       (widget): widget is Partial<ExploreWidgetConfig> =>
         Boolean(widget) &&
@@ -85,6 +168,12 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
         isExploreCollegePollType(widget.collegePollType)
           ? normalizeCollegePollType(collegePollLeague, widget.collegePollType)
           : "ap";
+      const favoriteGameLeagues =
+        type === "favorite_games" && Array.isArray(widget.favoriteGameLeagues)
+          ? EXPLORE_WIDGET_LEAGUES.filter((league) =>
+              (widget.favoriteGameLeagues as unknown[]).includes(league),
+            )
+          : ([...EXPLORE_WIDGET_LEAGUES] as ExploreWidgetLeague[]);
 
       return {
         id:
@@ -120,6 +209,12 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
         collegePollAutoPlay:
           type === "college_polls"
             ? widget.collegePollAutoPlay !== false
+            : undefined,
+        favoriteGameLeagues:
+          type === "favorite_games" ? favoriteGameLeagues : undefined,
+        favoriteGamesAutoPlay:
+          type === "favorite_games"
+            ? widget.favoriteGamesAutoPlay !== false
             : undefined,
       };
     })

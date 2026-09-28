@@ -98,7 +98,6 @@ export type HockeyGame = {
   playByPlayAvailable: boolean;
   recent: true;
   wasSuspended: boolean;
-  situation: null;
   raw: {
     eventId: string;
     competitionId: string;

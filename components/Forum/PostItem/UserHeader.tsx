@@ -4,6 +4,7 @@ import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { useRouter } from "expo-router";
 import { memo, useEffect, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
+import SafetyActionsModal from "components/SafetyActionsModal";
 import {
   Animated,
   Easing,
@@ -224,6 +225,7 @@ export const UserHeader = memo(function UserHeader({
   /* -------------------------------------------------------------------------- */
 
   return (
+    <>
     <View style={styles.userRow}>
       {/* User */}
       <View style={styles.leftSide}>
@@ -324,5 +326,7 @@ export const UserHeader = memo(function UserHeader({
         </TouchableOpacity>
       )}
     </View>
+    <SafetyActionsModal {...safety.modalProps} />
+    </>
   );
 });

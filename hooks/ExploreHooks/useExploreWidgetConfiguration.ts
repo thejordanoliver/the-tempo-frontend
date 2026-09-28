@@ -7,10 +7,12 @@ import type {
   ExploreCollegePollLeague,
   ExploreCollegePollType,
   ExploreWidgetConfig,
+  ExploreWidgetLeague,
   ExploreStandingsLeague,
   ExploreWidgetSize,
   ExploreWidgetType,
 } from "types/widgets";
+import { EXPLORE_WIDGET_LEAGUES } from "types/widgets";
 import { normalizeCollegePollType } from "utils/collegePollWidget";
 import {
   cleanupLegacyExploreWidgetsKey,
@@ -114,6 +116,10 @@ export function useExploreWidgetConfiguration(userId: number | null) {
             collegePollLeague: type === "college_polls" ? "cfb" : undefined,
             collegePollType: type === "college_polls" ? "ap" : undefined,
             collegePollAutoPlay: type === "college_polls" ? true : undefined,
+            favoriteGameLeagues:
+              type === "favorite_games" ? [...EXPLORE_WIDGET_LEAGUES] : undefined,
+            favoriteGamesAutoPlay:
+              type === "favorite_games" ? true : undefined,
           },
         ];
       });
@@ -187,6 +193,52 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     [],
   );
 
+  const setFavoriteGameLeagues = useCallback(
+    (widgetId: string, leagues: ExploreWidgetLeague[]) => {
+      setWidgets((previous) => {
+        const widget = previous.find(
+          (candidate) =>
+            candidate.id === widgetId && candidate.type === "favorite_games",
+        );
+        if (!widget) return previous;
+
+        const currentLeagues =
+          widget.favoriteGameLeagues ?? EXPLORE_WIDGET_LEAGUES;
+        const nextLeagues = EXPLORE_WIDGET_LEAGUES.filter((league) =>
+          leagues.includes(league),
+        );
+
+        if (nextLeagues.length === 0) return previous;
+        if (
+          currentLeagues.length === nextLeagues.length &&
+          currentLeagues.every((league, index) => league === nextLeagues[index])
+        ) {
+          return previous;
+        }
+
+        return previous.map((candidate) =>
+          candidate.id === widgetId && candidate.type === "favorite_games"
+            ? { ...candidate, favoriteGameLeagues: nextLeagues }
+            : candidate,
+        );
+      });
+    },
+    [],
+  );
+
+  const setFavoriteGamesAutoPlay = useCallback(
+    (widgetId: string, autoPlay: boolean) => {
+      setWidgets((previous) =>
+        previous.map((widget) =>
+          widget.id === widgetId && widget.type === "favorite_games"
+            ? { ...widget, favoriteGamesAutoPlay: autoPlay }
+            : widget,
+        ),
+      );
+    },
+    [],
+  );
+
   const moveWidget = useCallback((widgetId: string, direction: -1 | 1) => {
     setWidgets((previous) => {
       const ordered = withSequentialOrder(previous);
@@ -240,6 +292,8 @@ export function useExploreWidgetConfiguration(userId: number | null) {
     setStandingsLeague,
     setCollegePollSelection,
     setCollegePollAutoPlay,
+    setFavoriteGameLeagues,
+    setFavoriteGamesAutoPlay,
     moveWidget,
     reorderWidgets,
   };

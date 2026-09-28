@@ -1,8 +1,8 @@
 // components/CFBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
+import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { Ionicons } from "@expo/vector-icons";
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
@@ -26,7 +26,7 @@ import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type PollMode = "ap" | "coaches" | "cfp" | "fcs";
 
-const POLL_OPTIONS: { label: string; value: PollMode; }[] = [
+const POLL_OPTIONS: { label: string; value: PollMode }[] = [
   { label: "AP Poll", value: "ap" },
   { label: "Coaches Poll", value: "coaches" },
   { label: "CFP Rankings", value: "cfp" },
@@ -41,7 +41,7 @@ const POLL_TITLES: Record<PollMode, string> = {
 };
 
 export const CFBStandingsList = () => {
-  const { rankings, loading, error, refresh } = useCFBRankings();
+  const { rankings, loading, refreshing, error, refresh } = useCFBRankings();
   const { resolvedColorScheme } = usePreferences();
   const { isFavorite } = useFavoriteTeamsContext();
 
@@ -50,27 +50,23 @@ export const CFBStandingsList = () => {
   const styles = StandingsStyles(isDark);
   const router = useRouter();
 
-  const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<PollMode>("ap");
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      await refresh();
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
   if (loading) {
-    return <StandingsSkeleton />;
+    return <StandingsSkeleton variant="rankings" />;
   }
 
   if (error) {
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <Text style={global.errorText}>{error}</Text>
-      </View>
+      </ScrollView>
     );
   }
 
@@ -293,7 +289,7 @@ export const CFBStandingsList = () => {
     );
   };
 
-  const Section = ({ title, data }: { title: string; data: CFBTeamRank[]; }) => {
+  const Section = ({ title, data }: { title: string; data: CFBTeamRank[] }) => {
     return (
       <View style={styles.wrapper}>
         <View style={styles.header}>
@@ -347,9 +343,10 @@ export const CFBStandingsList = () => {
 
   return (
     <ScrollView
+      alwaysBounceVertical
       contentContainerStyle={styles.contentContainer}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }
     >
       <View style={styles.dropdownRow}>
@@ -361,7 +358,7 @@ export const CFBStandingsList = () => {
         />
       </View>
 
-      {Section({ "title": pollTitle, "data": filteredRankings })}
+      {Section({ title: pollTitle, data: filteredRankings })}
 
       {renderDroppedOut()}
     </ScrollView>

@@ -34,7 +34,13 @@ export default function TeamDetailScreen() {
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
   const { teamDetails } = useTeamDetails(league, teamIdNum);
   const conferenceId = teamDetails?.conferenceId;
-  const { conferences, conferencesLoading, conferencesError } =
+  const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } =
     useConferenceStandings(league, conferenceId);
 
   const teamName = team?.name;
@@ -207,7 +213,9 @@ export default function TeamDetailScreen() {
           <ConferenceStandingsList
             conferences={conferences}
             loading={conferencesLoading}
+            refreshing={ConferencesRefreshing}
             error={conferencesError}
+            onRefresh={refreshConferenceStandings}
             league={league}
           />
         </View>

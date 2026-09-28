@@ -132,14 +132,14 @@ export function getMLBSeason(date: Date = new Date()): number {
 
 export function getNHLSeason(date: Date = new Date()): string {
   const year = date.getFullYear();
-  const month = date.getMonth(); // 0 = January, 9 = October
+  const month = date.getMonth(); // 0 = January, 8 = September
 
-  // January–September belong to the season that started last year.
-  if (month < 9) {
+  // January–August belong to the season that started the previous year.
+  if (month < 8) {
     return String(year - 1);
   }
 
-  // October–December begin the season for the current year.
+  // September–December belong to the season starting this year.
   return String(year);
 }
 

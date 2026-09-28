@@ -70,6 +70,12 @@ export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
       gap: isTablet ? 4 : 2,
     },
 
+    exploreHeaderTitleContainer: {
+      position: "absolute",
+      right: 0,
+      left: 0,
+    },
+
     exploreHeaderActionButton: {
       alignItems: "center",
       justifyContent: "center",

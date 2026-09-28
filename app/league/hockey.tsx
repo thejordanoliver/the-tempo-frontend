@@ -26,7 +26,7 @@ import { StandingsList } from "@/components/League/Standings/StandingsList";
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { getNHLSeason } from "@/utils/dateUtils";
-import SeasonLeadersList from "../../components/Sports/Football/SeasonLeaderList";
+import SeasonLeadersList from "../../components/League/SeasonLeaderList";
 import { Colors } from "../../constants/styles";
 import { usePreferences } from "../../contexts/PreferencesContext";
 import { useLeagueCalendar } from "../../hooks/LeagueHooks/useLeagueCalendar";
@@ -63,6 +63,7 @@ export default function HockeyLeagueScreen() {
 
 function NHLLeagueScreen() {
   const league = "nhl";
+  const currentSeason = Number(getNHLSeason());
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -77,9 +78,13 @@ function NHLLeagueScreen() {
   );
   const { tabs, selectedTab, setSelectedTab, hasVisitedTab } =
     useLeagueTabs(league);
-  const { categories, loading, error } = useSeasonLeaders(2025, league, {
-    enabled: hasVisitedTab("stats"),
-  });
+  const { categories, loading, error } = useSeasonLeaders(
+    currentSeason,
+    league,
+    {
+      enabled: hasVisitedTab("stats"),
+    },
+  );
   const pagerRef = useRef<PagerView>(null);
   const { scrollProgress, handlePageScroll, syncPageScrollProgress } =
     usePagerTabScrollProgress();
@@ -242,6 +247,7 @@ function NHLLeagueScreen() {
           error={error}
           categories={categories}
           league={league}
+          season={currentSeason}
         />
       ) : null}
     </View>

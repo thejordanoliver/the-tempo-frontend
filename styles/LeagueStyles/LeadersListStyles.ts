@@ -1,4 +1,4 @@
-import { Colors, Fonts } from "constants/styles";
+import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 export const leadersListStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -11,6 +11,27 @@ export const leadersListStyles = (isDark: boolean) =>
       paddingBottom: 12,
     },
     playersList: { gap: 12 },
+    showMoreButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: 44,
+      marginTop: 12,
+      borderRadius: 10,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.dark.icon : Colors.light.icon,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+    },
+    showMoreButtonPressed: {
+      opacity: activeOpacity,
+    },
+    showMoreText: {
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
+      textAlign: "center",
+    },
     centered: {
       flex: 1,
       alignItems: "center",

@@ -5,11 +5,13 @@ import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useArticle } from "hooks/NewsHooks/useArticle";
+import type { ArticleStoryLinkTarget } from "hooks/NewsHooks/useArticle";
 import { useLayoutEffect, useState } from "react";
 import {
   Image,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,6 +20,7 @@ import {
   View,
 } from "react-native";
 import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
+import { getNewsPlayerTarget } from "utils/newsArticleLinks";
 
 export default function ArticleScreen() {
   const { resolvedColorScheme } = usePreferences();
@@ -27,6 +30,7 @@ export default function ArticleScreen() {
   const global = globalStyles(isDark);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
+  const router = useRouter();
   const newsId = Array.isArray(id) ? id[0] : id;
   const { article, loading, error } = useArticle(newsId);
 
@@ -41,6 +45,7 @@ export default function ArticleScreen() {
   const hasVideo = typeof videoUrl === "string" && videoUrl.length > 0;
   const isMedia = article?.type === "Media" || article?.type === "Preview";
   const story = article?.story;
+  const storyParagraphs = article?.storyParagraphs;
   const description = article?.description;
   const duration = firstVideo?.duration ?? 0;
   const minutes = Math.floor(duration / 60);
@@ -66,6 +71,103 @@ export default function ArticleScreen() {
   const handlePlay = async () => {
     setHasPlayed(true);
     setIsPlaying(true);
+  };
+
+  const handleOpenLink = async (link: string | null | undefined) => {
+    if (!link) return;
+
+    const playerTarget = getNewsPlayerTarget(link);
+
+    if (playerTarget) {
+      const params = {
+        id: playerTarget.playerId,
+        league: playerTarget.league,
+      };
+
+      switch (playerTarget.screen) {
+        case "baseball":
+          router.push({ pathname: "/player/baseball/[id]", params });
+          return;
+        case "basketball":
+          router.push({ pathname: "/player/basketball/[id]", params });
+          return;
+        case "football":
+          router.push({ pathname: "/player/football/[id]", params });
+          return;
+        case "hockey":
+          router.push({ pathname: "/player/hockey/[id]", params });
+          return;
+        case "mma":
+          router.push({ pathname: "/player/mma/[id]", params });
+          return;
+        case "soccer":
+          router.push({ pathname: "/player/soccer/[id]", params });
+          return;
+      }
+    }
+
+    try {
+      await Linking.openURL(link);
+    } catch {
+      // Keep the article readable if the device cannot open the source URL.
+    }
+  };
+
+  const handleOpenTarget = (target: ArticleStoryLinkTarget) => {
+    if (target.kind === "article") {
+      router.push({
+        pathname: "/news/[id]",
+        params: { id: target.id },
+      });
+      return;
+    }
+
+    const params = { teamId: target.id };
+
+    switch (target.league) {
+      case "nba":
+        router.push({ pathname: "/team/[teamId]", params });
+        return;
+      case "gleague":
+        router.push({ pathname: "/team/gleague/[teamId]", params });
+        return;
+      case "wnba":
+        router.push({ pathname: "/team/wnba/[teamId]", params });
+        return;
+      case "nfl":
+        router.push({ pathname: "/team/nfl/[teamId]", params });
+        return;
+      case "ufl":
+        router.push({ pathname: "/team/ufl/[teamId]", params });
+        return;
+      case "cfb":
+        router.push({ pathname: "/team/cfb/[teamId]", params });
+        return;
+      case "cbb":
+        router.push({ pathname: "/team/cbb/[teamId]", params });
+        return;
+      case "wcbb":
+        router.push({ pathname: "/team/wcbb/[teamId]", params });
+        return;
+      case "mlb":
+        router.push({ pathname: "/team/mlb/[teamId]", params });
+        return;
+      case "cb":
+        router.push({ pathname: "/team/cb/[teamId]", params });
+        return;
+      case "sb":
+        router.push({ pathname: "/team/sb/[teamId]", params });
+        return;
+      case "nhl":
+        router.push({ pathname: "/team/nhl/[teamId]", params });
+        return;
+      default:
+        router.push({
+          pathname: "/team/soccer/[teamId]",
+          params: { ...params, league: target.league },
+        });
+        return;
+    }
   };
 
   useLayoutEffect(() => {
@@ -142,7 +244,36 @@ export default function ArticleScreen() {
         </View>
       </View>
 
-      {story && <Text style={styles.content}>{story}</Text>}
+      {storyParagraphs?.length ? (
+        <View style={styles.contentContainer}>
+          {storyParagraphs.map((paragraph, paragraphIndex) => (
+            <Text key={paragraphIndex} style={styles.content}>
+              {paragraph.segments.map((segment, segmentIndex) =>
+                segment.link || segment.target ? (
+                  <Text
+                    key={segmentIndex}
+                    accessibilityRole="link"
+                    onPress={() => {
+                      if (segment.target) {
+                        handleOpenTarget(segment.target);
+                        return;
+                      }
+                      void handleOpenLink(segment.link);
+                    }}
+                    style={styles.inlineLink}
+                  >
+                    {segment.text}
+                  </Text>
+                ) : (
+                  segment.text
+                ),
+              )}
+            </Text>
+          ))}
+        </View>
+      ) : (
+        story && <Text style={styles.content}>{story}</Text>
+      )}
     </ScrollView>
   );
 }

@@ -30,9 +30,6 @@ import FootballGameWidget from "./GameCards/FootballGameWidget";
 import NHLGameWidget from "./GameCards/HockeyGameWidget";
 import WidgetCarousel from "./WidgetCarousel";
 
-// Outside component — never changes
-const ENABLE_AUTO_SLIDE = false;
-
 if (
   Platform.OS === "android" &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -71,6 +68,12 @@ type WidgetSliderProps = {
   onMoveWidget?: (widgetId: string, direction: -1 | 1) => void;
   canMoveUp?: boolean;
   canMoveDown?: boolean;
+  autoPlay?: boolean;
+  onOpenSettings?: () => void;
+  emptyTitle?: string;
+  emptyMessage?: string;
+  emptyActionLabel?: string;
+  onEmptyAction?: () => void;
 };
 
 type WidgetEditControlsProps = {
@@ -215,6 +218,12 @@ export default function WidgetSlider({
   onMoveWidget,
   canMoveUp,
   canMoveDown,
+  autoPlay = false,
+  onOpenSettings,
+  emptyTitle = "Nothing to show yet",
+  emptyMessage = "Check back later for updates.",
+  emptyActionLabel,
+  onEmptyAction,
 }: WidgetSliderProps) {
   const { width: screenWidth, height: screenHeight } = useMemo(
     () => Dimensions.get("window"),
@@ -302,7 +311,12 @@ export default function WidgetSlider({
   ]);
 
   useEffect(() => {
-    if (!ENABLE_AUTO_SLIDE || slides.length <= 1 || !flatListRef.current) {
+    if (
+      !autoPlay ||
+      dashboardMode ||
+      slides.length <= 1 ||
+      !flatListRef.current
+    ) {
       return;
     }
 
@@ -350,7 +364,7 @@ export default function WidgetSlider({
         autoSlideFrameRef.current = null;
       }
     };
-  }, [isHorizontal, slides.length]);
+  }, [autoPlay, dashboardMode, isHorizontal, slides.length]);
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -699,12 +713,34 @@ export default function WidgetSlider({
     >
       <View style={styles.container}>
         <BlurView style={styles.glassSurface} intensity={100}>
-          {dashboardMode && isHorizontal ? (
+          {slides.length === 0 ? (
+            <View style={styles.emptyContent}>
+              <Ionicons
+                name="calendar-outline"
+                size={24}
+                color={isDark ? Colors.lightGray : Colors.darkGray}
+              />
+              <Text style={styles.emptyTitle}>{emptyTitle}</Text>
+              <Text style={styles.emptyMessage}>{emptyMessage}</Text>
+              {emptyActionLabel && onEmptyAction && !showEditControls && (
+                <TouchableOpacity
+                  activeOpacity={activeOpacity}
+                  onPress={onEmptyAction}
+                  style={styles.emptyAction}
+                  accessibilityRole="button"
+                  accessibilityLabel={emptyActionLabel}
+                >
+                  <Text style={styles.emptyActionText}>{emptyActionLabel}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ) : dashboardMode && isHorizontal ? (
             <WidgetCarousel
               items={slides}
               initialWidth={slideWidth}
               height={slideHeight}
               isDark={isDark}
+              autoPlay={autoPlay}
               disabled={showEditControls}
               showDots={!showEditControls}
               keyExtractor={keyExtractor}
@@ -740,6 +776,23 @@ export default function WidgetSlider({
 
           {canResize && (
             <View style={styles.resizeHandle} {...panResponder.panHandlers} />
+          )}
+
+          {onOpenSettings && !showEditControls && (
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={onOpenSettings}
+              style={styles.settingsButton}
+              accessibilityRole="button"
+              accessibilityLabel="Favorite team game settings"
+            >
+              <BlurView intensity={100} style={[StyleSheet.absoluteFill]} />
+              <Ionicons
+                name="options-outline"
+                size={17}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
           )}
 
           {showEditControls && widgetId && widgetSize && (
@@ -800,6 +853,38 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       borderColor: Colors.midTone,
       borderRadius: 8,
     },
+    emptyContent: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 6,
+      paddingHorizontal: 44,
+    },
+    emptyTitle: {
+      fontFamily: "System",
+      fontSize: 16,
+      fontWeight: "600",
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    emptyMessage: {
+      fontSize: 13,
+      lineHeight: 18,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textAlign: "center",
+    },
+    emptyAction: {
+      marginTop: 4,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      backgroundColor: isDark ? Colors.white : Colors.black,
+    },
+    emptyActionText: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: isDark ? Colors.black : Colors.white,
+    },
     progressContainer: {
       position: "absolute",
       top: "25%",
@@ -824,6 +909,20 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       height: 20,
       borderTopLeftRadius: 8,
       backgroundColor: isDark ? Colors.dark.white : Colors.light.black,
+    },
+    settingsButton: {
+      overflow: "hidden",
+      position: "absolute",
+      top: 8,
+      right: 8,
+      zIndex: 20,
+      alignItems: "center",
+      justifyContent: "center",
+      width: 32,
+      height: 32,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderRadius: 16,
     },
   });
 

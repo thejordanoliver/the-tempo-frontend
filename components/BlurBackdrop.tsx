@@ -4,19 +4,22 @@ import { BlurView } from "expo-blur";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import Animated, {
-  useAnimatedStyle,
-  interpolate,
   Extrapolate,
-  useDerivedValue,
+  interpolate,
   runOnJS,
+  useAnimatedStyle,
+  useDerivedValue,
 } from "react-native-reanimated";
 
-export default function BlurBackdrop({ animatedPosition, style }: BottomSheetBackdropProps) {
+export default function BlurBackdrop({
+  animatedPosition,
+  style,
+}: BottomSheetBackdropProps) {
   const { resolvedColorScheme } = usePreferences();
   const [intensity, setIntensity] = useState(0);
 
   const minPosition = 576; // 40% snap point
-  const maxPosition = 76;  // 92% snap point (top of screen)
+  const maxPosition = 76; // 92% snap point (top of screen)
 
   useDerivedValue(() => {
     const newIntensity = Math.round(
@@ -24,8 +27,8 @@ export default function BlurBackdrop({ animatedPosition, style }: BottomSheetBac
         animatedPosition.value,
         [minPosition, maxPosition],
         [0, 100],
-        Extrapolate.CLAMP
-      )
+        Extrapolate.CLAMP,
+      ),
     );
 
     runOnJS(setIntensity)(newIntensity);
@@ -36,7 +39,7 @@ export default function BlurBackdrop({ animatedPosition, style }: BottomSheetBac
       animatedPosition.value,
       [minPosition, maxPosition],
       [0, 1],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return { opacity };

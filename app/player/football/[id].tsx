@@ -2,11 +2,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import SeasonStatCard from "@/components/Sports/Football/Player/SeasonStatCard";
-import {
-  getCFBTeam,
-  getCFBTeamByESPNId,
-  getCFBTeamLogo,
-} from "@/constants/teamsCFB";
+import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import {
   FootballPlayerSeason,
   usePlayerSeasons,
@@ -17,11 +13,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import PlayerHeader from "components/Sports/Football/Player/PlayerHeader";
 import PlayerStatTable from "components/Sports/Football/Player/PlayerStatTable";
 import { Colors, globalStyles } from "constants/styles";
-import {
-  getNFLTeam,
-  getNFLTeamByESPNId,
-  getNFLTeamLogo,
-} from "constants/teamsNFL";
+import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo } from "react";
@@ -232,25 +224,15 @@ export default function PlayerDetailScreen() {
       return null;
     }
 
-    return isNFL
-      ? getNFLTeam(currentTeamId) ?? getNFLTeamByESPNId(currentTeamId)
-      : getCFBTeam(currentTeamId) ?? getCFBTeamByESPNId(currentTeamId);
+    return isNFL ? getNFLTeam(currentTeamId) : getCFBTeam(currentTeamId);
   }, [currentTeamId, isNFL]);
 
   const teamColor = team?.color ?? Colors.midTone;
-  const resolvedTeamId = team?.id != null ? String(team.id) : currentTeamId;
+  const teamId = team?.id != null ? String(team.id) : currentTeamId;
 
   const teamLogo = useMemo(() => {
-    const logoTeamId = team?.id ?? currentTeamId;
-
-    if (!logoTeamId) {
-      return undefined;
-    }
-
-    return isNFL
-      ? getNFLTeamLogo(logoTeamId, isDark)
-      : getCFBTeamLogo(logoTeamId, isDark);
-  }, [currentTeamId, isDark, isNFL, team?.id]);
+    return isNFL ? getNFLTeamLogo(teamId, true) : getCFBTeamLogo(teamId, true);
+  }, [teamId, isNFL]);
 
   /**
    * =========================================
@@ -270,7 +252,7 @@ export default function PlayerDetailScreen() {
     game,
     loading: gameLoading,
     error: gameError,
-  } = useTeamLatestGame(canonicalLeague, resolvedTeamId);
+  } = useTeamLatestGame(canonicalLeague, teamId);
 
   /**
    * =========================================
@@ -398,7 +380,7 @@ export default function PlayerDetailScreen() {
           Only current active players.
          ===================================== */}
 
-      {isActive && resolvedTeamId ? (
+      {isActive && teamId ? (
         <LatestGame
           game={game}
           loading={gameLoading}

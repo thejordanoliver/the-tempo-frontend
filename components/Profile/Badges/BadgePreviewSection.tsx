@@ -5,7 +5,6 @@ import Subheading from "@/components/Headings/Subheading";
 import { Colors, Fonts, globalStyles } from "@/constants/styles";
 import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { BadgeProgress } from "@/types/badges";
-import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BadgePreviewCard from "./BadgePreviewCard";
 
@@ -27,7 +26,7 @@ type BadgePreviewSectionProps = {
   totalCount: number;
   isDark: boolean;
   itemWidth: number;
-  onPressSeeAll: () => void;
+  onPressSeeAll?: () => void;
   loading?: boolean;
   error?: string | null;
   onRetry?: () => void;
@@ -39,6 +38,7 @@ export default function BadgePreviewSection({
   totalCount,
   isDark,
   itemWidth,
+  onPressSeeAll,
   loading = false,
   error = null,
   onRetry,
@@ -108,11 +108,13 @@ export default function BadgePreviewSection({
         </View>
       ))}
 
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => router.push("/badges")} isDark={isDark}>
-          See All Badges
-        </Button>
-      </View>
+      {onPressSeeAll && (
+        <View style={styles.buttonContainer}>
+          <Button onPress={onPressSeeAll} isDark={isDark}>
+            See All Badges
+          </Button>
+        </View>
+      )}
     </View>
   );
 }

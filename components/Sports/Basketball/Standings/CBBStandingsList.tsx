@@ -1,12 +1,12 @@
 // components/CBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
+import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import {
   CBBTeamRank,
   useCBBRankings,
 } from "@/hooks/BasketballHooks/useCBBRankings";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import {
   getCBBTeam,
@@ -37,14 +37,14 @@ type Props = {
 };
 
 export const CBBStandingsList = ({ league = "cbb" }: Props) => {
-  const { rankings, loading, error, refresh } = useCBBRankings(league);
+  const { rankings, loading, refreshing, error, refresh } =
+    useCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useRouter();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();
-  const [refreshing, setRefreshing] = useState(false);
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "wcbb";
   const getRankedTeam = (espnId: string | number) =>
@@ -54,21 +54,21 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
       ? getWCBBTeamLogo(teamId, isDark)
       : getCBBTeamLogo(teamId ?? undefined, isDark);
 
-  const handleRefresh = async () => {
-    try {
-      setRefreshing(true);
-      await refresh();
-    } finally {
-      setRefreshing(false);
-    }
-  };
-  if (loading) return <StandingsSkeleton />;
+  if (loading) {
+    return <StandingsSkeleton variant="rankings" />;
+  }
 
   if (error)
     return (
-      <View style={global.emptyContainer}>
+      <ScrollView
+        alwaysBounceVertical
+        contentContainerStyle={global.emptyContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+        }
+      >
         <Text style={global.errorText}>{error}</Text>
-      </View>
+      </ScrollView>
     );
 
   const selectedPoll = rankings.find((r) =>
@@ -278,7 +278,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: CBBTeamRank[]; }) {
+  function Section({ title, data }: { title: string; data: CBBTeamRank[] }) {
     return (
       <>
         <View style={styles.wrapper}>
@@ -325,9 +325,10 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
 
   return (
     <ScrollView
+      alwaysBounceVertical
       contentContainerStyle={styles.contentContainer}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }
     >
       <View style={styles.dropdownRow}>
@@ -342,7 +343,10 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
         />
       </View>
       {/* --- Rankings Section --- */}
-      {Section({ "title": pollMode === "ap" ? "AP Poll" : "Coaches Poll", "data": filteredRankings })}
+      {Section({
+        title: pollMode === "ap" ? "AP Poll" : "Coaches Poll",
+        data: filteredRankings,
+      })}
 
       {renderDroppedOut()}
     </ScrollView>

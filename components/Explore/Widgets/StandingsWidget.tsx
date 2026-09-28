@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import CustomActivityIndicator from "components/CustomActivityIndicator";
+import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
@@ -204,12 +204,7 @@ function StandingsTable({
   );
 
   if (loading) {
-    return (
-      <View style={styles.state}>
-        <CustomActivityIndicator />
-        <Text style={styles.stateText}>Loading standings…</Text>
-      </View>
-    );
+    return <StandingsSkeleton variant="widget" />;
   }
 
   if (error) {

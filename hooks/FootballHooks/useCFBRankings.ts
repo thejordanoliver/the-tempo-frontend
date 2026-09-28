@@ -261,6 +261,7 @@ const normalizeRankings = (rawValue: unknown): CFBRankPoll[] => {
 export const useCFBRankings = () => {
   const [rankings, setRankings] = useState<CFBRankPoll[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /* ---------------- Request ---------------- */
@@ -277,6 +278,7 @@ export const useCFBRankings = () => {
   /* ---------------- Fetch Latest ---------------- */
 
   const fetchLatest = useCallback(async () => {
+    setRefreshing(true);
     setError(null);
 
     try {
@@ -287,6 +289,8 @@ export const useCFBRankings = () => {
       console.error("❌ Fetch CFB rankings failed:", err);
 
       setError(err instanceof Error ? err.message : "Failed to fetch rankings");
+    } finally {
+      setRefreshing(false);
     }
   }, [requestRankings]);
 
@@ -330,6 +334,7 @@ export const useCFBRankings = () => {
   return {
     rankings,
     loading,
+    refreshing,
     error,
     refresh: fetchLatest,
   };

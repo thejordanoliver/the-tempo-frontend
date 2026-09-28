@@ -1,86 +1,120 @@
-import { useCallback, useState } from "react";
-import { Alert } from "react-native";
+import { useCallback, useMemo, useState } from "react";
 import {
   blockUser,
   reportContent,
+  reportUser,
+  unblockUser,
   type ReportReason,
   type ReportTargetType,
 } from "services/usersApi";
 
-type ContentTarget = Exclude<ReportTargetType, "user">;
+export type SafetyModalStep = "actions" | "report" | "block" | "status";
+
+export type SafetyActionsModalProps = {
+  visible: boolean;
+  step: SafetyModalStep;
+  username?: string | null;
+  canBlock: boolean;
+  isBlocked: boolean;
+  pending: boolean;
+  statusTitle: string;
+  statusMessage: string;
+  onClose: () => void;
+  onBack: () => void;
+  onChooseReport: () => void;
+  onChooseBlock: () => void;
+  onSubmitReport: (reason: ReportReason) => Promise<void>;
+  onConfirmBlock: () => Promise<void>;
+};
 
 export function useSafetyActions(options: {
   userId: string | number | null | undefined;
   username?: string | null;
-  targetType: ContentTarget;
+  targetType: ReportTargetType;
   targetId: string | number;
   onBlocked?: () => void;
+  onBlockChanged?: () => void | Promise<void>;
+  isBlocked?: boolean;
 }) {
   const [pending, setPending] = useState(false);
+  const [step, setStep] = useState<SafetyModalStep>("actions");
+  const [visible, setVisible] = useState(false);
+  const [status, setStatus] = useState({ title: "", message: "" });
 
-  const submitReport = useCallback(async (reason: ReportReason) => {
+  const close = useCallback(() => {
+    if (!pending) setVisible(false);
+  }, [pending]);
+
+  const open = useCallback(() => {
     if (pending) return;
+    setStep("actions");
+    setVisible(true);
+  }, [pending]);
+
+  const back = useCallback(() => {
+    if (!pending) setStep("actions");
+  }, [pending]);
+
+  const showStatus = useCallback((title: string, message: string) => {
+    setStatus({ title, message });
+    setStep("status");
+  }, []);
+
+  const submitReport = useCallback(
+    async (reason: ReportReason) => {
+      if (pending) return;
+      setPending(true);
+      try {
+        if (options.targetType === "user") {
+          await reportUser(options.targetId, reason);
+        } else {
+          await reportContent(options.targetType, options.targetId, reason);
+        }
+        showStatus("Report received", "Thanks for helping keep Tempo safe.");
+      } catch {
+        showStatus("Could not submit report", "Please try again later.");
+      } finally {
+        setPending(false);
+      }
+    },
+    [options.targetId, options.targetType, pending, showStatus],
+  );
+
+  const confirmBlock = useCallback(async () => {
+    if (!options.userId || pending) return;
     setPending(true);
     try {
-      await reportContent(options.targetType, options.targetId, reason);
-      Alert.alert("Report received", "Thanks for helping keep Tempo safe.");
+      if (options.isBlocked) await unblockUser(options.userId);
+      else await blockUser(options.userId);
+      setVisible(false);
+      if (!options.isBlocked) options.onBlocked?.();
+      await options.onBlockChanged?.();
     } catch {
-      Alert.alert("Could not submit report", "Please try again later.");
+      showStatus("Could not block account", "Please try again later.");
     } finally {
       setPending(false);
     }
-  }, [options.targetId, options.targetType, pending]);
+  }, [options, pending, showStatus]);
 
-  const report = useCallback(() => {
-    Alert.alert("Report content", "Why are you reporting this?", [
-      { text: "Spam", onPress: () => void submitReport("spam") },
-      { text: "Harassment", onPress: () => void submitReport("harassment") },
-      { text: "Hate or threats", onPress: () => void submitReport("hate") },
-      { text: "Other", onPress: () => void submitReport("other") },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  }, [submitReport]);
+  const modalProps = useMemo<SafetyActionsModalProps>(
+    () => ({
+      visible,
+      step,
+      username: options.username,
+      canBlock: Boolean(options.userId),
+      isBlocked: options.isBlocked === true,
+      pending,
+      statusTitle: status.title,
+      statusMessage: status.message,
+      onClose: close,
+      onBack: back,
+      onChooseReport: () => setStep("report"),
+      onChooseBlock: () => setStep("block"),
+      onSubmitReport: submitReport,
+      onConfirmBlock: confirmBlock,
+    }),
+    [back, close, confirmBlock, options.isBlocked, options.userId, options.username, pending, status, step, submitReport, visible],
+  );
 
-  const confirmBlock = useCallback(() => {
-    if (!options.userId || pending) return;
-    const label = options.username ? `@${options.username}` : "this user";
-    Alert.alert(
-      `Block ${label}?`,
-      "You won't be able to follow, message, or see each other's activity. They won't be notified.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Block",
-          style: "destructive",
-          onPress: async () => {
-            setPending(true);
-            try {
-              await blockUser(options.userId!);
-              options.onBlocked?.();
-            } catch {
-              Alert.alert("Could not block account", "Please try again later.");
-            } finally {
-              setPending(false);
-            }
-          },
-        },
-      ],
-    );
-  }, [options, pending]);
-
-  const open = useCallback(() => {
-    Alert.alert(
-      options.username ? `@${options.username}` : "Safety actions",
-      undefined,
-      [
-        { text: "Report", onPress: report },
-        ...(options.userId
-          ? [{ text: "Block user", style: "destructive" as const, onPress: confirmBlock }]
-          : []),
-        { text: "Cancel", style: "cancel" },
-      ],
-    );
-  }, [confirmBlock, options.userId, options.username, report]);
-
-  return { open, pending };
+  return { open, pending, modalProps };
 }

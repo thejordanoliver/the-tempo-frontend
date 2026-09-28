@@ -497,7 +497,13 @@ export function CustomHeader({
             scrollProgress={homeScrollProgress}
           />
         ) : (
-          <View style={styles.defaultHeaderTitleContainer}>
+          <View
+            pointerEvents="none"
+            style={[
+              styles.defaultHeaderTitleContainer,
+              tabName === "Explore" && styles.exploreHeaderTitleContainer,
+            ]}
+          >
             <HeaderTitle style={textStyle}>
               {title || tabName || ""}
             </HeaderTitle>
