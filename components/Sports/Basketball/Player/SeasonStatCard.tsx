@@ -1,8 +1,8 @@
 import SeasonStatCardLayout, {
   type SeasonStatItem,
 } from "@/components/Player/SeasonStatCardLayout";
+import SeasonStatCardSkeleton from "@/components/Skeletons/SeasonStatCardSkeleton";
 import type { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
-import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";

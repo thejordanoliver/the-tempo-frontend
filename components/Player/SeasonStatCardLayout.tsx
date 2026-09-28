@@ -34,7 +34,7 @@ export default function SeasonStatCardLayout({
     <View>
       <CenteredHeader isDark={isDark}>{seasonLabel} Season</CenteredHeader>
 
-      <View style={styles.card}>
+      <View style={[styles.card]}>
         <View style={[styles.rankStrip, { backgroundColor }]} />
         <View style={styles.statsRow}>
           {stats.map(({ label, value, ranking }) => (
@@ -42,8 +42,8 @@ export default function SeasonStatCardLayout({
               <Text style={[styles.statRank, { color: textColor }]}>
                 {ranking ? `#${ranking.rank}` : "NR"}
               </Text>
-              <Text style={styles.statValue}>{formatValue(value)}</Text>
-              <Text style={styles.statLabel}>{label}</Text>
+              <Text style={[styles.statValue]}>{formatValue(value)}</Text>
+              <Text style={[styles.statLabel]}>{label}</Text>
             </View>
           ))}
         </View>

@@ -18,7 +18,7 @@ export const recruitHeaderStyles = (isDark: boolean, accent: string) => {
     },
 
     // ── Avatar ──────────────────────────────────────────────
-    avatarWrapper: {
+    headshotContainer: {
       zIndex: 10,
       alignItems: "center",
     },

@@ -25,7 +25,7 @@ import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
 import { TeamStatsEntry } from "../../Basketball/GameDetails/TeamStats";
 import BoxScore from "../GameDetails/BoxScore";
-import GameLeaders from "../GameDetails/Leaders";
+import GameLeaders from "../GameDetails/GameLeaders";
 import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
 
 type GamePreviewContentProps = {

@@ -96,7 +96,7 @@ const SkeletonCard = ({ noBorder = false }: SkeletonCardProps) => {
       ]}
     >
       {/* Avatar */}
-      <View style={styles.avatarWrapper}>
+      <View style={styles.headshotContainer}>
         <PulseBlock style={styles.avatar} />
       </View>
 
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 100,
   },
-  avatarWrapper: {
+  headshotContainer: {
     alignItems: "center",
     justifyContent: "center",
     width: 60,

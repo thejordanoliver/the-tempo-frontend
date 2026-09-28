@@ -10,6 +10,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
+  LayoutChangeEvent,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -98,6 +99,7 @@ export default function BoxScore({
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {},
   );
+  const [statsViewportWidth, setStatsViewportWidth] = useState(0);
 
   const teamBlocks = useMemo(
     () => (Array.isArray(playerStats) ? playerStats.filter(Boolean) : []),
@@ -155,6 +157,13 @@ export default function BoxScore({
     }));
   }, []);
 
+  const handleStatsLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextWidth = Math.round(event.nativeEvent.layout.width);
+    setStatsViewportWidth((currentWidth) =>
+      currentWidth === nextWidth ? currentWidth : nextWidth,
+    );
+  }, []);
+
   const renderCategory = (
     category: BoxScoreStatCategory,
     teamKey: "away" | "home",
@@ -169,7 +178,12 @@ export default function BoxScore({
       : athletes.slice(0, COLLAPSED_ROWS);
     const totals = category.totals ?? [];
     const categoryKey = `${teamKey}-${category.name}-${categoryIndex}`;
-    const tableWidth = Math.max(labels.length, totals.length, 1) * COLUMN_WIDTH;
+    const columnCount = Math.max(labels.length, totals.length, 1);
+    const columnWidth = Math.max(
+      COLUMN_WIDTH,
+      statsViewportWidth / columnCount,
+    );
+    const tableWidth = columnCount * columnWidth;
 
     return (
       <View key={categoryKey} style={styles.section}>
@@ -230,14 +244,20 @@ export default function BoxScore({
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.statsScroller}
+            contentContainerStyle={styles.statsScrollerContent}
+            onLayout={handleStatsLayout}
           >
-            <View style={{ minWidth: tableWidth }}>
+            <View style={[styles.statsTable, { width: tableWidth }]}>
               <View style={styles.tableHeader}>
                 {labels.map((label, labelIndex) => (
                   <Text
                     selectable
                     key={`${categoryKey}-label-${label}-${labelIndex}`}
-                    style={[styles.cell, styles.cellHeader]}
+                    style={[
+                      styles.cell,
+                      styles.cellHeader,
+                      { width: columnWidth },
+                    ]}
                   >
                     {label}
                   </Text>
@@ -258,7 +278,7 @@ export default function BoxScore({
                     {labels.map((label, statIndex) => (
                       <View
                         key={`${categoryKey}-${label}-${statIndex}`}
-                        style={styles.cellContainer}
+                        style={[styles.cellContainer, { width: columnWidth }]}
                       >
                         <Text selectable style={styles.cell}>
                           {stats[statIndex] ?? "—"}
@@ -274,7 +294,7 @@ export default function BoxScore({
                   {labels.map((label, statIndex) => (
                     <View
                       key={`${categoryKey}-total-${label}-${statIndex}`}
-                      style={styles.cellContainer}
+                      style={[styles.cellContainer, { width: columnWidth }]}
                     >
                       <Text selectable style={[styles.cell, styles.totalText]}>
                         {totals[statIndex] ?? "—"}

@@ -1,74 +1,23 @@
+import { LeadersType } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
-import { LeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { GameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 type TeamId = string | number;
 
-type BaseballCategory =
-  | "avg"
-  | "homeRuns"
-  | "RBIs"
-  | "ERA"
-  | "wins"
-  | "strikeouts";
+type GameCategory = "points" | "assists" | "rebounds";
+
+type SeasonCategory = "pointsPerGame" | "assistsPerGame" | "reboundsPerGame";
+
+type Category = GameCategory | SeasonCategory;
 
 type TeamIdField = "id" | "espnId";
 
-type BaseballLeaderStatistic = {
-  name: string;
-  displayName?: string | null;
-  shortDisplayName?: string | null;
-  abbreviation?: string | null;
-  value?: string | number | null;
-  displayValue?: string | null;
-};
-
-type BaseballLeaderAthlete = {
-  id?: string | number | null;
-  espnId?: string | number | null;
-  teamId?: string | number | null;
-  teamEspnId?: string | number | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  fullName?: string | null;
-  displayName?: string | null;
-  shortName?: string | null;
-  headshot?: string | null;
-  jersey?: string | null;
-  position?: string | null;
-};
-
-type BaseballLeaderEntry = {
-  displayValue?: string | null;
-  value?: string | number | null;
-  mainStat?: {
-    value?: string | number | null;
-    displayValue?: string | null;
-  } | null;
-  athlete: BaseballLeaderAthlete;
-  statistics?: BaseballLeaderStatistic[];
-};
-
-type BaseballLeaderCategory = {
-  name: string;
-  displayName?: string | null;
-  leaders: BaseballLeaderEntry[];
-};
-
-type BaseballLeaderTeam = {
-  team: {
-    id: string | number;
-    espnId?: string | number | null;
-    displayName?: string | null;
-    abbreviation?: string | null;
-    logo?: string | null;
-  };
-  leaders: BaseballLeaderCategory[];
-};
+type LeaderEntry = LeadersType["leaders"][number]["leaders"][number];
 
 type DisplayStat = {
   label: string;
@@ -79,7 +28,6 @@ type DisplayPlayer = {
   fullName: string;
   headshot: ImageSourcePropType | string | null;
   jersey: string | null;
-  position: string | null;
   stats: DisplayStat[];
 };
 
@@ -94,12 +42,12 @@ type CategoryConfig = {
 };
 
 type ResolvedLeaderTeams = {
-  away: BaseballLeaderTeam | undefined;
-  home: BaseballLeaderTeam | undefined;
+  away: LeadersType | undefined;
+  home: LeadersType | undefined;
 };
 
 type Props = {
-  leaders: BaseballLeaderTeam[];
+  leaders: LeadersType[];
   awayId: TeamId;
   homeId: TeamId;
   awayLogo: ImageSourcePropType | string | null;
@@ -111,70 +59,64 @@ type Props = {
 
 type StatProps = {
   stat: DisplayStat;
-  styles: ReturnType<typeof LeadersStyles>;
+  styles: ReturnType<typeof GameLeadersStyles>;
 };
 
-const BASEBALL_CATEGORIES: BaseballCategory[] = [
-  "avg",
-  "homeRuns",
-  "RBIs",
-  "ERA",
-  "wins",
-  "strikeouts",
+const GAME_CATEGORIES: Category[] = ["points", "assists", "rebounds"];
+
+const SEASON_CATEGORIES: Category[] = [
+  "pointsPerGame",
+  "assistsPerGame",
+  "reboundsPerGame",
 ];
 
-const CATEGORY_CONFIG: Record<BaseballCategory, CategoryConfig> = {
-  avg: {
-    label: "AVG",
+const CATEGORY_CONFIG: Record<Category, CategoryConfig> = {
+  points: {
+    label: "Points",
     stats: [
-      { label: "AVG", key: "avg" },
-      { label: "OBP", key: "onBasePct" },
-      { label: "SLG", key: "slugAvg" },
+      { label: "PTS", key: "points" },
+      { label: "FG", key: "fieldGoals" },
+      { label: "FT", key: "freeThrows" },
     ],
   },
-
-  homeRuns: {
-    label: "Home Runs",
+  assists: {
+    label: "Assists",
     stats: [
-      { label: "HR", key: "homeRuns" },
-      { label: "AVG", key: "avg" },
-      { label: "RBI", key: "RBIs" },
+      { label: "AST", key: "assists" },
+      { label: "TO", key: "turnovers" },
+      { label: "AST/TO", key: "assistTurnoverRatio" },
     ],
   },
-
-  RBIs: {
-    label: "RBIs",
+  rebounds: {
+    label: "Rebounds",
     stats: [
-      { label: "RBI", key: "RBIs" },
-      { label: "HR", key: "homeRuns" },
-      { label: "AVG", key: "avg" },
+      { label: "REB", key: "rebounds" },
+      { label: "DREB", key: "defensiveRebounds" },
+      { label: "OREB", key: "offensiveRebounds" },
     ],
   },
-
-  ERA: {
-    label: "ERA",
+  pointsPerGame: {
+    label: "Points",
     stats: [
-      { label: "ERA", key: "ERA" },
-      { label: "W", key: "wins" },
-      { label: "K", key: "strikeouts" },
+      { label: "PTS", key: "avgPoints" },
+      { label: "FT%", key: "freeThrowPct" },
+      { label: "FG%", key: "fieldGoalPct" },
     ],
   },
-
-  wins: {
-    label: "Wins",
+  assistsPerGame: {
+    label: "Assists",
     stats: [
-      { label: "W", key: "wins" },
-      { label: "ERA", key: "ERA" },
-      { label: "K", key: "strikeouts" },
+      { label: "AST", key: "avgAssists" },
+      { label: "TO", key: "avgTurnovers" },
+      { label: "MIN", key: "avgMinutes" },
     ],
   },
-
-  strikeouts: {
-    label: "Strikeouts",
+  reboundsPerGame: {
+    label: "Rebounds",
     stats: [
-      { label: "K", key: "strikeouts" },
-      { label: "W", key: "wins" },
-      { label: "ERA", key: "ERA" },
+      { label: "REB", key: "avgRebounds" },
+      { label: "DREB", key: "avgDefensiveRebounds" },
+      { label: "OREB", key: "avgOffensiveRebounds" },
     ],
   },
 };
@@ -194,15 +136,15 @@ function normalizeImageSource(
 }
 
 function findTeamGroup(
-  leaders: BaseballLeaderTeam[],
+  leaders: LeadersType[],
   teamId: TeamId,
   field: TeamIdField,
-): BaseballLeaderTeam | undefined {
+): LeadersType | undefined {
   return leaders.find((group) => idsMatch(group.team[field], teamId));
 }
 
 function resolveUsingField(
-  leaders: BaseballLeaderTeam[],
+  leaders: LeadersType[],
   awayId: TeamId,
   homeId: TeamId,
   field: TeamIdField,
@@ -214,20 +156,19 @@ function resolveUsingField(
     return null;
   }
 
-  return {
-    away,
-    home,
-  };
+  return { away, home };
 }
 
 function resolveLeaderTeams(
-  leaders: BaseballLeaderTeam[],
+  leaders: LeadersType[],
   awayId: TeamId,
   homeId: TeamId,
 ): ResolvedLeaderTeams {
   /*
-   * Prefer database IDs first so a database ID cannot accidentally
-   * match another team's ESPN ID.
+   * Resolve both teams with database IDs first.
+   *
+   * This prevents a value such as 24 from matching one team's database ID
+   * and another team's ESPN ID.
    */
   const databaseIdMatch = resolveUsingField(leaders, awayId, homeId, "id");
 
@@ -235,9 +176,6 @@ function resolveLeaderTeams(
     return databaseIdMatch;
   }
 
-  /*
-   * If the caller passed ESPN IDs, resolve both teams using ESPN IDs.
-   */
   const espnIdMatch = resolveUsingField(leaders, awayId, homeId, "espnId");
 
   if (espnIdMatch) {
@@ -245,7 +183,8 @@ function resolveLeaderTeams(
   }
 
   /*
-   * Fallback for mixed ID sources.
+   * Fallback for responses where the IDs are mixed. The selected groups
+   * must still be different.
    */
   const awayCandidates = leaders.filter(
     (group) =>
@@ -261,10 +200,7 @@ function resolveLeaderTeams(
     const home = homeCandidates.find((candidate) => candidate !== away);
 
     if (home) {
-      return {
-        away,
-        home,
-      };
+      return { away, home };
     }
   }
 
@@ -275,60 +211,28 @@ function resolveLeaderTeams(
 }
 
 function getStatValue(
-  entry: BaseballLeaderEntry,
+  entry: LeaderEntry,
   statName: string,
   isPrimaryStat: boolean,
 ): string | number {
-  const statistic = entry.statistics?.find((stat) => stat.name === statName);
+  const statistic = entry.statistics.find((stat) => stat.name === statName);
 
-  if (
-    statistic?.displayValue !== undefined &&
-    statistic.displayValue !== null &&
-    statistic.displayValue !== ""
-  ) {
+  if (statistic?.displayValue) {
     return statistic.displayValue;
   }
 
-  if (statistic?.value !== undefined && statistic.value !== null) {
-    return statistic.value;
-  }
-
-  /*
-   * ESPN sometimes leaves the statistics array empty for the
-   * primary leader but still provides displayValue/value directly
-   * on the leader entry.
-   */
   if (isPrimaryStat) {
-    if (entry.mainStat?.displayValue) {
-      return entry.mainStat.displayValue;
-    }
-
-    if (entry.mainStat?.value !== undefined && entry.mainStat.value !== null) {
-      return entry.mainStat.value;
-    }
-
-    if (
-      entry.displayValue !== undefined &&
-      entry.displayValue !== null &&
-      entry.displayValue !== ""
-    ) {
-      return entry.displayValue;
-    }
-
-    if (entry.value !== undefined && entry.value !== null) {
-      return entry.value;
-    }
+    return entry.mainStat?.value ?? entry.displayValue ?? entry.value ?? "–";
   }
 
   return "–";
 }
 
-function createPlaceholder(category: BaseballCategory): DisplayPlayer {
+function createPlaceholder(category: Category): DisplayPlayer {
   return {
     fullName: "Unknown Player",
     headshot: Placeholder,
     jersey: null,
-    position: null,
     stats: CATEGORY_CONFIG[category].stats.map(({ label }) => ({
       label,
       value: "–",
@@ -337,8 +241,8 @@ function createPlaceholder(category: BaseballCategory): DisplayPlayer {
 }
 
 function getTopPlayer(
-  teamGroup: BaseballLeaderTeam | undefined,
-  category: BaseballCategory,
+  teamGroup: LeadersType | undefined,
+  category: Category,
 ): DisplayPlayer {
   const categoryGroup = teamGroup?.leaders.find(
     (group) => group.name === category,
@@ -352,17 +256,9 @@ function getTopPlayer(
 
   return {
     fullName:
-      leader.athlete.fullName ||
-      leader.athlete.displayName ||
-      leader.athlete.shortName ||
-      "Unknown Player",
-
-    headshot: leader.athlete.headshot ?? null,
-
-    jersey: leader.athlete.jersey ?? null,
-
-    position: leader.athlete.position ?? null,
-
+      leader.athlete.fullName || leader.athlete.shortName || "Unknown Player",
+    headshot: leader.athlete.headshot,
+    jersey: leader.athlete.jersey,
     stats: CATEGORY_CONFIG[category].stats.map(({ label, key }, index) => ({
       label,
       value: getStatValue(leader, key, index === 0),
@@ -374,13 +270,12 @@ function Stat({ stat, styles }: StatProps) {
   return (
     <View style={{ marginRight: 12 }}>
       <Text style={styles.statLabel}>{stat.label}</Text>
-
       <Text style={styles.statText}>{stat.value}</Text>
     </View>
   );
 }
 
-export default function Leaders({
+export default function GameLeaders({
   leaders,
   awayId,
   homeId,
@@ -390,41 +285,49 @@ export default function Leaders({
   error = false,
   state,
 }: Props) {
-  const [selectedCategory, setSelectedCategory] =
-    useState<BaseballCategory>("avg");
+  const isScheduled = state === "pre";
 
-  const styles = LeadersStyles(isDark);
+  const [selectedCategory, setSelectedCategory] = useState<Category>(
+    isScheduled ? "pointsPerGame" : "points",
+  );
+
+  const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
   const global = globalStyles(isDark);
+
+  const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setSelectedCategory(isScheduled ? "pointsPerGame" : "points");
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isScheduled]);
 
   const resolvedTeams = useMemo(
     () => resolveLeaderTeams(leaders, awayId, homeId),
     [leaders, awayId, homeId],
   );
 
-  const availableCategories = useMemo(() => {
-    return BASEBALL_CATEGORIES.filter((category) =>
-      leaders.some((teamGroup) =>
-        teamGroup.leaders.some(
-          (categoryGroup) =>
-            categoryGroup.name === category && categoryGroup.leaders.length > 0,
-        ),
-      ),
-    );
-  }, [leaders]);
-
-  /*
-   * If AVG isn't available for a particular response, select the
-   * first category ESPN actually returned.
-   */
-  const activeCategory = availableCategories.includes(selectedCategory)
-    ? selectedCategory
-    : availableCategories[0];
+  const hasAnyLeaders = leaders.some((teamGroup) =>
+    teamGroup.leaders.some(
+      (categoryGroup) =>
+        tabs.includes(categoryGroup.name as Category) &&
+        categoryGroup.leaders.length > 0,
+    ),
+  );
 
   if (error) {
     return (
       <View>
         <HeadingTwo isDark={isDark}>
-          {state === "pre" ? "Season Leaders" : "Team Leaders"}
+          {isScheduled ? "Season Leaders" : "Game Leaders"}
         </HeadingTwo>
 
         <View style={styles.wrapper}>
@@ -436,7 +339,7 @@ export default function Leaders({
     );
   }
 
-  if (!activeCategory || availableCategories.length === 0) {
+  if (!hasAnyLeaders) {
     return null;
   }
 
@@ -444,28 +347,26 @@ export default function Leaders({
     {
       side: "AWAY",
       logo: awayLogo,
-      player: getTopPlayer(resolvedTeams.away, activeCategory),
+      player: getTopPlayer(resolvedTeams.away, selectedCategory),
     },
     {
       side: "HOME",
       logo: homeLogo,
-      player: getTopPlayer(resolvedTeams.home, activeCategory),
+      player: getTopPlayer(resolvedTeams.home, selectedCategory),
     },
   ];
 
   return (
     <View>
       <HeadingTwo isDark={isDark}>
-        {state === "pre" ? "Season Leaders" : "Team Leaders"}
+        {isScheduled ? "Season Leaders" : "Game Leaders"}
       </HeadingTwo>
 
       <View style={styles.wrapper}>
         <MainScrollTabBar
-          tabs={availableCategories}
-          selected={activeCategory}
-          onTabPress={(category) =>
-            setSelectedCategory(category as BaseballCategory)
-          }
+          tabs={tabs}
+          selected={selectedCategory}
+          onTabPress={(category) => setSelectedCategory(category as Category)}
           isDark={isDark}
           renderLabel={(tab, isSelected) => (
             <Text
@@ -479,7 +380,7 @@ export default function Leaders({
                 fontFamily: Fonts.REGULAR,
               }}
             >
-              {CATEGORY_CONFIG[tab as BaseballCategory].label.toUpperCase()}
+              {CATEGORY_CONFIG[tab as Category].label.toUpperCase()}
             </Text>
           )}
         />

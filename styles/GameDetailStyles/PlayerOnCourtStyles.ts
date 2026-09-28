@@ -32,7 +32,7 @@ export const playerOnCourtStyles = (isDark: boolean) =>
       width: 44,
       height: 44,
     },
-    avatarWrapper: {
+    headshotContainer: {
       alignItems: "center",
       justifyContent: "center",
       width: 44,

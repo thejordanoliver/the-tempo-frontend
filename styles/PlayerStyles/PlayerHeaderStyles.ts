@@ -18,7 +18,7 @@ export const playerHeaderStyles = (isDark: boolean) => {
     },
 
     // ── Avatar ──────────────────────────────────────────────
-    avatarWrapper: {
+    headshotContainer: {
       alignItems: "center",
       justifyContent: "center",
     },

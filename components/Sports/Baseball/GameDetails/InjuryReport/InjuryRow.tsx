@@ -49,7 +49,7 @@ export default function InjuryRow({ injury, player, isLast, isDark }: Props) {
         },
       ]}
     >
-      <View style={styles.avatarWrapper}>
+      <View style={styles.headshotContainer}>
         {headshot && (
           <Image
             source={{ uri: headshot }}

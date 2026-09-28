@@ -133,7 +133,7 @@ export default function PlayersOnCourt({
                 }}
               >
                 <View style={styles.playerInfoWrapper}>
-                  <View style={styles.avatarWrapper}>
+                  <View style={styles.headshotContainer}>
                     <Image
                       source={
                         player.headshot ? { uri: player.headshot } : Placeholder

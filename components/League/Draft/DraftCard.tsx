@@ -183,23 +183,10 @@ export default function DraftCard({
       <LinearGradient
         colors={
           isDark
-            ? [
-                "rgba(29,29,29,0.9)",
-                "rgba(29,29,29,1)",
-                "rgba(29,29,29,1)",
-                "rgba(29,29,29,0.5)",
-                "rgba(29,29,29,0.1)",
-                "transparent",
-              ]
-            : [
-                "rgba(255,255,255,0.9)",
-                "rgba(255,255,255,1)",
-                "rgba(255,255,255,1)",
-                "rgba(255,255,255,0.5)",
-                "rgba(255,255,255,0.1)",
-                "transparent",
-              ]
+            ? [Colors.dark.background, "rgba(0, 0, 0, 0)"]
+            : [Colors.light.background, "rgba(255, 255, 255, 0)"]
         }
+        locations={[0.4, 1]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardGradient}

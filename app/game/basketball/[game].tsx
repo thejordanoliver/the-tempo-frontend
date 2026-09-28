@@ -2,6 +2,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import {
   BoxScore,
   GameHeader,
+  GameLeaders,
   GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
@@ -13,7 +14,6 @@ import {
 import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
 import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
 import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
-import Leaders from "@/components/Sports/Basketball/GameDetails/Leaders";
 import MatchupPredictor from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import PlayersInFoulTrouble from "@/components/Sports/Basketball/GameDetails/PlayersInFoulTrouble";
@@ -25,8 +25,8 @@ import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -53,6 +53,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "utils/games";
+import { isGameFinalStatus } from "utils/gameStatus";
 
 type RouteParams = {
   game?: string | string[];
@@ -298,6 +299,7 @@ export default function GameDetailsScreen(
   const awayTimeouts = score?.away.timeouts ?? 0;
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const state = score?.status.state ?? null;
+  const isFinal = isGameFinalStatus(score?.status);
   const gameNotificationsEnabled = isGameNotified(
     "basketball",
     LEAGUE,
@@ -386,14 +388,17 @@ export default function GameDetailsScreen(
           isNeutralSite={!!neutralSite}
           league={LEAGUE}
           isNotified={gameNotificationsEnabled}
-          onToggleNotifications={() =>
-            openGameNotificationSettings(
-              "basketball",
-              LEAGUE,
-              gameId,
-              homeId,
-              awayId,
-            )
+          onToggleNotifications={
+            isFinal
+              ? undefined
+              : () =>
+                  openGameNotificationSettings(
+                    "basketball",
+                    LEAGUE,
+                    gameId,
+                    homeId,
+                    awayId,
+                  )
           }
         />
       ),
@@ -412,6 +417,7 @@ export default function GameDetailsScreen(
     homeId,
     gameId,
     gameNotificationsEnabled,
+    isFinal,
     isLoading,
     navigation,
     neutralSite,
@@ -526,7 +532,7 @@ export default function GameDetailsScreen(
                 state={state}
               />
 
-              <Leaders
+              <GameLeaders
                 leaders={leaders}
                 homeId={homeId}
                 homeLogo={homeLogo}

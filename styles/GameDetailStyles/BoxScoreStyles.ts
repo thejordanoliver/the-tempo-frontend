@@ -88,7 +88,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
     categoryLabel: {
       fontFamily: Fonts.BOLD,
       fontSize: 13,
-      color: textColor,
+      color: Colors.midTone,
     },
 
     playerNameColumn: {
@@ -103,6 +103,13 @@ export const BoxScoreStyles = (isDark: boolean) => {
     },
     statsScroller: {
       flex: 1,
+    },
+    statsScrollerContent: {
+      flexGrow: 1,
+    },
+    statsTable: {
+      width: "100%",
+      flexGrow: 1,
     },
     tableHeader: {
       flexDirection: "row",
@@ -164,7 +171,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
     cellHeader: {
       fontFamily: Fonts.MEDIUM,
       fontSize: 12,
-      color: textColor,
+      color: Colors.midTone,
     },
     cellContainer: {
       alignItems: "center",

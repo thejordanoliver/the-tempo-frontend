@@ -20,7 +20,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { LeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
+import { GameLeadersStyles } from "styles/GameDetailStyles/GameLeadersStyles";
 
 const GAME_CATEGORIES = [
   "Passing",
@@ -336,14 +336,12 @@ function getDisplayStats(
 function Stat({
   label,
   value,
-  isDark,
+  styles,
 }: {
   label: string;
   value: string | number;
-  isDark: boolean;
+  styles: ReturnType<typeof GameLeadersStyles>;
 }) {
-  const styles = LeadersStyles(isDark);
-
   return (
     <View style={{ marginRight: 12 }}>
       <Text
@@ -364,11 +362,11 @@ function Stat({
 function LeaderStats({
   category,
   entry,
-  isDark,
+  styles,
 }: {
   category: LeaderCategory;
   entry: LeaderEntry;
-  isDark: boolean;
+  styles: ReturnType<typeof GameLeadersStyles>;
 }) {
   const displayStats = getDisplayStats(category, entry);
 
@@ -379,7 +377,7 @@ function LeaderStats({
           key={`${stat.label}-${stat.value}`}
           label={stat.label}
           value={stat.value}
-          isDark={isDark}
+          styles={styles}
         />
       ))}
     </>
@@ -400,7 +398,7 @@ export default function GameLeaders({
   loading = false,
   error = false,
 }: Props) {
-  const styles = LeadersStyles(isDark);
+  const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
   const global = globalStyles(isDark);
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
@@ -583,7 +581,7 @@ export default function GameLeaders({
                     <LeaderStats
                       category={category}
                       entry={entry}
-                      isDark={isDark}
+                      styles={styles}
                     />
                   </View>
                 </View>

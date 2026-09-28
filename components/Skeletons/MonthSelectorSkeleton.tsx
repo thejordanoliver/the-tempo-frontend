@@ -3,17 +3,17 @@ import { usePreferences } from "contexts/PreferencesContext";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,
-  Dimensions,
   LayoutChangeEvent,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
-
-const ITEM_WIDTH = 70;
-const ITEM_HEIGHT = 44;
-const SIDE_PADDING = 12;
-const ITEM_SPACING = 0;
+import {
+  MONTH_SELECTOR_ITEM_HEIGHT,
+  MONTH_SELECTOR_ITEM_SPACING,
+  MONTH_SELECTOR_ITEM_WIDTH,
+  MONTH_SELECTOR_SIDE_PADDING,
+} from "../League/monthSelectorConstants";
 
 type Props = {
   itemCount?: number;
@@ -25,23 +25,32 @@ export default function MonthSelectorSkeleton({ itemCount = 5 }: Props) {
 
   const [pulseAnim] = useState(() => new Animated.Value(1));
 
-  const [containerWidth, setContainerWidth] = useState(
-    Dimensions.get("window").width,
-  );
+  const [containerWidth, setContainerWidth] = useState(0);
 
-  const itemStep = ITEM_WIDTH + ITEM_SPACING;
+  const itemStep = MONTH_SELECTOR_ITEM_WIDTH + MONTH_SELECTOR_ITEM_SPACING;
 
   const rawItemsWidth = useMemo(() => {
-    return itemCount * ITEM_WIDTH + ITEM_SPACING * Math.max(0, itemCount - 1);
+    return (
+      itemCount * MONTH_SELECTOR_ITEM_WIDTH +
+      MONTH_SELECTOR_ITEM_SPACING * Math.max(0, itemCount - 1)
+    );
   }, [itemCount]);
 
-  const needsScroll = rawItemsWidth + SIDE_PADDING * 2 > containerWidth;
+  const needsScroll =
+    containerWidth > 0 &&
+    rawItemsWidth + MONTH_SELECTOR_SIDE_PADDING * 2 > containerWidth;
 
   const horizontalPadding = needsScroll
-    ? SIDE_PADDING
-    : Math.max((containerWidth - rawItemsWidth) / 2, SIDE_PADDING);
+    ? MONTH_SELECTOR_SIDE_PADDING
+    : Math.max(
+        (containerWidth - rawItemsWidth) / 2,
+        MONTH_SELECTOR_SIDE_PADDING,
+      );
 
-  const styles = getStyles(isDark, horizontalPadding);
+  const styles = useMemo(
+    () => getStyles(isDark, horizontalPadding),
+    [horizontalPadding, isDark],
+  );
 
   const onLayoutContainer = (event: LayoutChangeEvent) => {
     setContainerWidth(event.nativeEvent.layout.width);
@@ -109,8 +118,8 @@ const getStyles = (isDark: boolean, horizontalPadding: number) =>
     monthButton: {
       alignItems: "center",
       justifyContent: "center",
-      width: ITEM_WIDTH,
-      height: ITEM_HEIGHT,
+      width: MONTH_SELECTOR_ITEM_WIDTH,
+      height: MONTH_SELECTOR_ITEM_HEIGHT,
       padding: 4,
       borderRadius: 12,
     },

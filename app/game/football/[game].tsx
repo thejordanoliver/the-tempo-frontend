@@ -1,14 +1,14 @@
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
-import Leaders from "@/components/Sports/Football/GameDetails/Leaders";
+import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -18,6 +18,7 @@ import {
   formatVenueAddress,
   getBroadcastDisplay,
 } from "@/utils/games";
+import { isGameFinalStatus } from "@/utils/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -245,6 +246,7 @@ export default function GameDetailsScreen(
   const isLoading = loading || !game || !home || !away || !score || !details;
 
   const state = score?.status.state ?? "pre";
+  const isFinal = isGameFinalStatus(score?.status);
   const gameNotificationsEnabled = isGameNotified(
     "football",
     LEAGUE,
@@ -383,14 +385,17 @@ export default function GameDetailsScreen(
           isNeutralSite={neutralSite}
           league={LEAGUE}
           isNotified={gameNotificationsEnabled}
-          onToggleNotifications={() =>
-            openGameNotificationSettings(
-              "football",
-              LEAGUE,
-              gameId,
-              homeId,
-              awayId,
-            )
+          onToggleNotifications={
+            isFinal
+              ? undefined
+              : () =>
+                  openGameNotificationSettings(
+                    "football",
+                    LEAGUE,
+                    gameId,
+                    homeId,
+                    awayId,
+                  )
           }
         />
       ),
@@ -410,6 +415,7 @@ export default function GameDetailsScreen(
     homeColor,
     gameId,
     gameNotificationsEnabled,
+    isFinal,
     isLoading,
     navigation,
     neutralSite,
@@ -554,7 +560,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <Leaders
+            <GameLeaders
               leaders={leaders}
               awayId={awayId}
               homeId={homeId}

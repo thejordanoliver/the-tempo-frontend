@@ -7,12 +7,12 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import ReanimatedSwipeable, {
   type SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { MessageItem } from "types/messages";
 import Animated, {
   FadeIn,
   FadeOut,
   LinearTransition,
 } from "react-native-reanimated";
+import { MessageItem } from "types/messages";
 
 type Props = {
   item: MessageItem;
@@ -22,7 +22,6 @@ type Props = {
   onSwipeableOpen?: (id: string, close: () => void) => void;
   query?: string;
 };
-
 
 type MessageItemWithDates = MessageItem & {
   lastMessageAt?: string | number | Date | null;
@@ -209,7 +208,7 @@ export default function MessageListItem({
             accessibilityRole="button"
             accessibilityLabel={`Open conversation with ${displayUsername}`}
           >
-            <View style={styles.avatarWrapper}>
+            <View style={styles.headshotContainer}>
               <Image
                 source={{ uri: profileImageUrl }}
                 style={styles.avatar}
@@ -294,7 +293,7 @@ const MessageListItemStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
-    avatarWrapper: {
+    headshotContainer: {
       width: 50,
       height: 50,
       marginRight: 12,

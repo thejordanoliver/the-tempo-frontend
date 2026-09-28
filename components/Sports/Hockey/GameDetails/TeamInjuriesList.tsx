@@ -74,14 +74,16 @@ export default function TeamInjuriesList({ injuries, isDark }: Props) {
           source={
             typeof avatarUrl === "string" ? { uri: avatarUrl } : avatarUrl
           }
-          style={styles.avatarWrapper}
+          style={styles.headshotContainer}
           resizeMode="cover"
         />
 
         <View style={{ flex: 1 }}>
           <View style={styles.infoSection}>
             <View style={styles.playerHeader}>
-              <Text style={styles.name}>{player.shortName ?? player.displayName}</Text>
+              <Text style={styles.name}>
+                {player.shortName ?? player.displayName}
+              </Text>
               <Text style={styles.jersey}>
                 {player?.position?.abbreviation ?? "—"}{" "}
                 {player?.jersey ? `#${player.jersey}` : ""}

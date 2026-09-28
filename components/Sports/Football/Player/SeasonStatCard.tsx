@@ -716,20 +716,20 @@ export default function SeasonStatCard({
     passing: [
       rankedItem("CMP/ATT", cmpAtt),
       rankedItem("PASS YDS", passingYards),
-      rankedItem("YDS/ATT", passingAvg),
+      rankedItem("YDS AVG", passingAvg),
       rankedItem("PASS TD", passingTDs),
       rankedItem("INT", passingInterceptions),
     ],
     rushing: [
       rankedItem("RUSH ATT", rushingAttempts),
       rankedItem("RUSH YDS", rushingYards),
-      rankedItem("YDS/ATT", rushingAvg),
+      rankedItem("YDS AVG", rushingAvg),
       rankedItem("RUSH TD", rushingTDs),
     ],
     receiving: [
       rankedItem("REC", receptions),
       rankedItem("REC YDS", receivingYards),
-      rankedItem("YDS/REC", receivingYardsPer),
+      rankedItem("YDS AVG", receivingYardsPer),
       rankedItem("REC TD", receivingTDs),
     ],
     defense: [

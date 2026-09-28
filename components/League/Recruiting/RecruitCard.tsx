@@ -278,24 +278,10 @@ export default function RecruitCard({ recruit, index, league }: Props) {
         <LinearGradient
           colors={
             isDark
-              ? [
-                  "rgba(29,29,29,0.9)",
-                  "rgba(29,29,29,1)",
-                  "rgba(29,29,29,1)",
-                  "rgba(29,29,29,0.7)",
-                  "rgba(29,29,29,0.3)",
-                  "rgba(0,0,0,0)",
-                ]
-              : [
-                  "rgba(255,255,255,0.9)",
-                  "rgba(255,255,255,1)",
-                  "rgba(255,255,255,1)",
-                  "rgba(255,255,255,0.7)",
-                  "rgba(255,255,255,0.3)",
-                  "rgba(255,255,255,0)",
-                ]
+              ? [Colors.dark.background, "rgba(0, 0, 0, 0)"]
+              : [Colors.light.background, "rgba(255, 255, 255, 0)"]
           }
-          locations={[0, 0.35, 0.6, 0.75, 0.85, 1]}
+          locations={[0.55, 1]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.cardGradient}
@@ -448,7 +434,7 @@ const recruitCardStyles = (isDark: boolean) =>
     },
 
     backgroundLogo: {
-      height: "155%",
+      height: "150%",
       aspectRatio: 1,
       marginRight: -40,
       opacity: 0.55,

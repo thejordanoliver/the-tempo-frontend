@@ -12,11 +12,7 @@ type Props = {
   isCollegePlayer?: boolean;
 };
 
-export default function RecruitHeader({
-  player,
-  isDark,
-  age,
-}: Props) {
+export default function RecruitHeader({ player, isDark, age }: Props) {
   const initial = player?.first_name?.[0]?.toUpperCase() || "?";
   const accent = isDark ? Colors.white : Colors.black;
   const styles = recruitHeaderStyles(isDark, accent);
@@ -24,7 +20,7 @@ export default function RecruitHeader({
   return (
     <View style={styles.container}>
       {/* Avatar overlapping banner */}
-      <View style={styles.avatarWrapper}>
+      <View style={styles.headshotContainer}>
         <View style={styles.avatarRing}>
           {player.image_url ? (
             <Image

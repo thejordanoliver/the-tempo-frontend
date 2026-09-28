@@ -79,7 +79,7 @@ export default function PlayersInFoulTrouble({
     return (
       <View style={[styles.playerRow, isLast && styles.lastPlayerRow]}>
         <View style={styles.left}>
-          <View style={styles.avatarWrapper}>
+          <View style={styles.headshotContainer}>
             {item.headshot ? (
               <Image source={{ uri: item.headshot }} style={styles.avatar} />
             ) : null}
@@ -171,7 +171,7 @@ const foulTroubleStyles = (isDark: boolean) =>
       minWidth: 0,
       paddingRight: 12,
     },
-    avatarWrapper: {
+    headshotContainer: {
       alignItems: "center",
       justifyContent: "center",
       width: 60,

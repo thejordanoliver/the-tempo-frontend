@@ -21,7 +21,7 @@ export const teamInjuryStyles = (isDark: boolean) =>
       width: 50,
       height: 50,
     },
-    avatarWrapper: {
+    headshotContainer: {
       alignItems: "center",
       justifyContent: "center",
       width: 50,

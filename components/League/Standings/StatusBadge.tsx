@@ -9,26 +9,30 @@ type StatusConfig = {
 };
 
 export const statusConfigs: Record<string, StatusConfig> = {
+  // MLB
   mlb: {
     colors: {
-      "*": Colors.dark.leafGreen,
+      "*": Colors.dark.gold,
       z: Colors.dark.leafGreen,
       x: Colors.dark.blue,
+      y: Colors.dark.orange,
       e: Colors.dark.lightRed,
     },
     labels: {
-      "*": "Clinched Division + Bye",
+      "*": "Clinched Best League Record",
       z: "Clinched Playoff Berth",
       x: "Clinched Division",
+      y: "Clinched Wild Card",
       e: "Eliminated from Playoff Contention",
     },
   },
 
+  // NFL
   nfl: {
     colors: {
-      "*": Colors.dark.leafGreen,
-      z: Colors.dark.orange,
-      y: Colors.dark.blue,
+      "*": Colors.dark.gold,
+      z: Colors.dark.leafGreen,
+      y: Colors.dark.orange,
       e: Colors.dark.lightRed,
     },
     labels: {
@@ -39,9 +43,10 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
+  // UFL
   ufl: {
     colors: {
-      z: Colors.dark.blue,
+      z: Colors.dark.gold,
       x: Colors.dark.leafGreen,
       e: Colors.dark.lightRed,
     },
@@ -52,50 +57,53 @@ export const statusConfigs: Record<string, StatusConfig> = {
     },
   },
 
+  // NBA
   nba: {
     colors: {
-      "*": Colors.dark.leafGreen,
+      "*": Colors.dark.gold,
       z: Colors.dark.leafGreen,
-      y: Colors.dark.orange,
+      y: Colors.dark.blue,
       x: Colors.dark.blue,
-      xp: Colors.dark.blue,
-      pb: Colors.dark.yellow,
+      xp: Colors.dark.yellow,
+      pb: Colors.dark.orange,
       e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Best League Record",
       z: "Clinched Conference",
       y: "Clinched Division",
-      x: "Clinched playoff Berth",
+      x: "Clinched Playoff Berth",
       xp: "Clinched Playoff - Won Play-In",
-      pb: "Clinched Play-in Berth",
+      pb: "Clinched Play-In Berth",
       e: "Eliminated From Playoff",
     },
   },
+
+  // WNBA
   wnba: {
     colors: {
-      "*": Colors.dark.leafGreen,
+      "*": Colors.dark.gold,
       cx: Colors.dark.leafGreen,
       x: Colors.dark.blue,
-      xp: Colors.dark.blue,
-      pb: Colors.dark.yellow,
+      xp: Colors.dark.yellow,
       e: Colors.dark.lightRed,
     },
     labels: {
       "*": "Clinched Best League Record",
       cx: "Clinched Playoff Berth and Won Commissioner's Cup",
-      x: "Clinched playoff Berth",
+      x: "Clinched Playoff Berth",
       xp: "Clinched Playoff - Won Play-In",
       e: "Eliminated From Playoff",
     },
   },
 
+  // NHL
   nhl: {
     colors: {
-      "*": Colors.dark.leafGreen,
+      "*": Colors.dark.gold,
       z: Colors.dark.leafGreen,
-      y: Colors.dark.yellow,
-      x: Colors.dark.blue,
+      y: Colors.dark.blue,
+      x: Colors.dark.yellow,
       e: Colors.dark.lightRed,
     },
     labels: {
@@ -115,28 +123,33 @@ interface StatusBadgeProps {
 
 export const StatusBadge = ({ code, league }: StatusBadgeProps) => {
   const { resolvedColorScheme } = usePreferences();
+
   const isDark = resolvedColorScheme === "dark";
   const styles = StandingsStyles(isDark);
 
-  if (!code) return null;
+  if (!code) {
+    return null;
+  }
 
-  const config = statusConfigs[league];
-
+  const normalizedLeague = league.toLowerCase();
   const normalizedCode = code.toLowerCase();
-  const isNumericSeed = !isNaN(Number(code));
+
+  const config = statusConfigs[normalizedLeague];
+  const isNumericSeed = !Number.isNaN(Number(code));
+
+  const numericSeedColor = isDark ? Colors.dark.limeGreen : Colors.light.green;
+
+  const fallbackColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   const backgroundColor = isNumericSeed
-    ? isDark
-      ? Colors.dark.limeGreen
-      : Colors.light.green
-    : (config.colors[normalizedCode] ??
-      (isDark ? Colors.darkGray : Colors.lightGray));
+    ? numericSeedColor
+    : (config?.colors[normalizedCode] ?? fallbackColor);
+
+  const displayCode = isNumericSeed ? code : code.toUpperCase();
 
   return (
     <View style={[styles.statusBadge, { backgroundColor }]}>
-      <Text style={styles.statusBadgeText}>
-        {isNumericSeed ? code : code.toUpperCase()}
-      </Text>
+      <Text style={styles.statusBadgeText}>{displayCode}</Text>
     </View>
   );
 };

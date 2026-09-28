@@ -1,5 +1,5 @@
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
-import Leaders from "@/components/Sports/Baseball/GameDetails/Leaders";
+import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
@@ -35,6 +35,7 @@ import { Colors } from "../../../constants/styles";
 import { getCBTeam, getCBTeamLogo } from "../../../constants/teamsCB";
 import { getMLBTeam, getMLBTeamLogo } from "../../../constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "../../../constants/teamsSB";
+import { useNotifications } from "../../../contexts/NotificationContext";
 import { usePreferences } from "../../../contexts/PreferencesContext";
 import {
   type BaseballPlay,
@@ -46,6 +47,7 @@ import { useWeather } from "../../../hooks/useWeather";
 import { gameDetailsScreenStyles } from "../../../styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "../../../types/baseball/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "../../../utils/games";
+import { isGameFinalStatus } from "../../../utils/gameStatus";
 
 type RouteParams = {
   game?: string | string[];
@@ -97,6 +99,7 @@ export default function GameDetailsScreen(
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
+  const { isGameNotified, openGameNotificationSettings } = useNotifications();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const { opacityAnim, handleScrollStart, handleScrollEnd } = useScrollFade();
@@ -198,6 +201,14 @@ export default function GameDetailsScreen(
   const broadcast = getBroadcastDisplay(details?.broadcasts);
 
   const state = score?.status.state ?? null;
+  const isFinal = isGameFinalStatus(score?.status);
+  const gameNotificationsEnabled = isGameNotified(
+    "baseball",
+    LEAGUE,
+    gameId,
+    homeId,
+    awayId,
+  );
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";
   const gameStatusDetail = score?.status.shortDetail ?? "";
   const isTopInning = gameStatusDetail.includes("Top");
@@ -307,21 +318,41 @@ export default function GameDetailsScreen(
           homeColor={homeColor}
           awayColor={awayColor}
           isNeutralSite={neutralSite}
+          league={LEAGUE}
+          isNotified={gameNotificationsEnabled}
+          onToggleNotifications={
+            isFinal
+              ? undefined
+              : () =>
+                  openGameNotificationSettings(
+                    "baseball",
+                    LEAGUE,
+                    gameId,
+                    homeId,
+                    awayId,
+                  )
+          }
         />
       ),
     });
   }, [
     LEAGUE,
     awayCode,
+    awayId,
     game,
     awayHeaderLogo,
     homeHeaderLogo,
     homeCode,
+    homeId,
     awayColor,
     homeColor,
+    gameId,
+    gameNotificationsEnabled,
+    isFinal,
     isLoading,
     navigation,
     neutralSite,
+    openGameNotificationSettings,
   ]);
 
   if (isLoading) {
@@ -456,7 +487,7 @@ export default function GameDetailsScreen(
               isDark={isDark}
             />
 
-            <Leaders
+            <GameLeaders
               leaders={leaders}
               homeId={homeId}
               homeLogo={homeLogo}
