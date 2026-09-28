@@ -152,5 +152,3 @@ export const useConferenceStandings = (
     refresh,
   };
 };
-
-export default useConferenceStandings;

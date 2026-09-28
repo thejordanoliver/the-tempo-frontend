@@ -228,5 +228,3 @@ export const StandingsStyles = (isDark: boolean) =>
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
   });
-
-export const getStyles = StandingsStyles;

@@ -425,5 +425,3 @@ export function usePlayerSeasons(
     refresh,
   };
 }
-
-export default usePlayerSeasons;

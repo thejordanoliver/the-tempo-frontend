@@ -160,5 +160,3 @@ export function useTeamLatestGame(
     refresh,
   };
 }
-
-export default useTeamLatestGame;

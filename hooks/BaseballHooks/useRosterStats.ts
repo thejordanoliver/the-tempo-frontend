@@ -141,5 +141,3 @@ export function useRosterStats(
     refetch: () => fetchRoster(true),
   };
 }
-
-export default useRosterStats;

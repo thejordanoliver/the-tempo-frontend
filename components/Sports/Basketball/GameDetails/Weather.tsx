@@ -23,7 +23,7 @@ type Props = {
   lighter?: boolean;
 };
 
-export const Weather: React.FC<Props> = ({
+const Weather: React.FC<Props> = ({
   weather,
   loading,
   error,

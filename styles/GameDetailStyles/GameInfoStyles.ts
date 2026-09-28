@@ -82,5 +82,3 @@ export const gameInfoStyles = (isDark: boolean) =>
       marginVertical: 2,
     },
   });
-
-export const getStyles = gameInfoStyles;

@@ -156,5 +156,3 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
     </TouchableOpacity>
   );
 };
-
-export default PlayerCard;

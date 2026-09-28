@@ -176,5 +176,3 @@ export function useWeather({
     refetch,
   };
 }
-
-export default useWeather;
