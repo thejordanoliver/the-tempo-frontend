@@ -71,6 +71,7 @@ interface Props {
   leaders: PlayerLeader[];
   league: string;
   columns: SeasonLeaderColumn[];
+  primaryStatKey?: string;
   isDark: boolean;
   loadingMore: boolean;
   onEndReached: () => void;
@@ -82,6 +83,7 @@ export default function SeasonLeadersTable({
   leaders,
   league,
   columns,
+  primaryStatKey,
   isDark,
   loadingMore,
   onEndReached,
@@ -148,7 +150,7 @@ export default function SeasonLeadersTable({
       <View style={styles.table}>
         <View style={styles.fixedPane}>
           <View style={styles.fixedHeader}>
-            <Text style={[styles.headerText, styles.rankColumn]}>#</Text>
+            <Text style={[styles.headerText, styles.rankColumn]}>Rk</Text>
             <Text style={[styles.headerText, styles.playerHeader]}>Player</Text>
           </View>
           {leaders.map((item, index) => {
@@ -212,16 +214,23 @@ export default function SeasonLeadersTable({
           style={styles.statsScroller}
           contentContainerStyle={styles.statsContent}
         >
-          <View>
+          <View style={styles.statsTable}>
             <View style={styles.statsHeader}>
               {columns.map((column) => (
-                <Text
+                <View
                   key={column.key}
-                  accessibilityLabel={column.label}
-                  style={[styles.headerText, styles.statColumn]}
+                  style={[
+                    styles.statColumn,
+                    column.key === primaryStatKey && styles.mainStatColumn,
+                  ]}
                 >
-                  {column.abbreviation}
-                </Text>
+                  <Text
+                    accessibilityLabel={column.label}
+                    style={styles.headerText}
+                  >
+                    {column.abbreviation}
+                  </Text>
+                </View>
               ))}
             </View>
             {leaders.map((item, index) => (
@@ -240,13 +249,17 @@ export default function SeasonLeadersTable({
                     item.stats?.[column.key] ??
                     (columnIndex === 0 ? item.stat_value : null);
                   return (
-                    <Text
+                    <View
                       key={column.key}
-                      selectable
-                      style={[styles.statText, styles.statColumn]}
+                      style={[
+                        styles.statColumn,
+                        column.key === primaryStatKey && styles.mainStatColumn,
+                      ]}
                     >
-                      {value == null ? "—" : Number(value).toLocaleString()}
-                    </Text>
+                      <Text selectable style={styles.statText}>
+                        {value == null ? "—" : Number(value).toLocaleString()}
+                      </Text>
+                    </View>
                   );
                 })}
               </TouchableOpacity>

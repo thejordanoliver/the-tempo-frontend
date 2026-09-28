@@ -119,6 +119,7 @@ export default function PlayerDetailScreen() {
     canonicalProfile,
     loading: seasonsLoading,
     error: seasonsError,
+    currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
   /**
@@ -372,6 +373,9 @@ export default function PlayerDetailScreen() {
         loading={seasonsLoading}
         error={seasonsError}
         player={player}
+        isActive={isActive}
+        rankings={currentSeasonRankings}
+        teamColor={teamColor}
       />
 
       {/* =====================================

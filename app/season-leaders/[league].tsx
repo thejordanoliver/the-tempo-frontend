@@ -6,7 +6,7 @@ import { LeagueScreenStyles } from "@/styles/LeagueStyles/LeagueStyles";
 import { SeasonLeaderCategory } from "@/types/stats";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/router";
-import { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo } from "react";
 import { View } from "react-native";
 
 const PAGE_SIZE = 25;
@@ -24,6 +24,9 @@ const matchesCategory = (
   category.categoryName === requestedCategory ||
   category.abbreviation === requestedCategory;
 
+const normalizedStatName = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
 export default function SeasonLeadersScreen() {
   const params = useLocalSearchParams<{
     league?: string | string[];
@@ -36,16 +39,23 @@ export default function SeasonLeadersScreen() {
   const season = Number.isInteger(parsedSeason)
     ? parsedSeason
     : new Date().getFullYear();
-  const [limit, setLimit] = useState(PAGE_SIZE);
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);
 
-  const { categories, loading, error } = useSeasonLeaders(season, league, {
+  const {
+    categories,
+    loading,
+    loadingMore,
+    hasMore,
+    error,
+    loadMore,
+  } = useSeasonLeaders(season, league, {
     enabled: Boolean(league),
-    limit,
+    limit: PAGE_SIZE,
     category: requestedCategory,
+    paginated: true,
   });
 
   const category = useMemo(
@@ -64,12 +74,16 @@ export default function SeasonLeadersScreen() {
           abbreviation: category?.abbreviation ?? "Stat",
         },
       ];
-  const hasMore = leaders.length >= limit && limit < MAX_LEADERS;
-
-  const loadMore = useCallback(() => {
-    if (loading || !hasMore) return;
-    setLimit((currentLimit) => Math.min(currentLimit + PAGE_SIZE, MAX_LEADERS));
-  }, [hasMore, loading]);
+  const primaryStatKey =
+    columns.find(
+      (column) =>
+        normalizedStatName(column.label) ===
+        normalizedStatName(category?.categoryName ?? ""),
+    )?.key ?? columns[0]?.key;
+  const loadNextPage = useCallback(() => {
+    if (leaders.length >= MAX_LEADERS || !hasMore) return;
+    loadMore();
+  }, [hasMore, leaders.length, loadMore]);
 
   const title = category
     ? `${category.categoryName} Leaders`
@@ -87,9 +101,10 @@ export default function SeasonLeadersScreen() {
         leaders={leaders}
         league={league}
         columns={columns}
+        primaryStatKey={category?.primaryStatKey ?? primaryStatKey}
         isDark={isDark}
-        loadingMore={loading && leaders.length > 0}
-        onEndReached={loadMore}
+        loadingMore={loadingMore}
+        onEndReached={loadNextPage}
         loading={loading}
         error={error}
       />

@@ -1,3 +1,6 @@
+import SeasonStatCardLayout, {
+  type SeasonStatItem,
+} from "@/components/Player/SeasonStatCardLayout";
 import type {
   FootballPlayerSeason,
   Stat,
@@ -7,14 +10,17 @@ import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton"
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { getFootballSeason } from "utils/dateUtils";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 type Props = {
   player: any;
   season?: FootballPlayerSeason | null;
+  isActive: boolean;
   loading?: boolean;
   error?: string | null;
+  rankings?: PlayerSeasonRankings;
+  teamColor?: string;
 };
 
 type StatMatch = {
@@ -33,6 +39,14 @@ type StatCategoryLike = {
 };
 
 type StatOccurrence = "first" | "last";
+type PositionGroup =
+  | "passing"
+  | "rushing"
+  | "receiving"
+  | "defense"
+  | "kicking"
+  | "punting"
+  | "fallback";
 
 const EMPTY_STAT = "0";
 
@@ -96,12 +110,23 @@ function getPosition(player: any) {
   return POSITION_ALIASES[normalizedPosition] ?? position;
 }
 
+function getPositionGroup(position: string): PositionGroup {
+  if (position === "QB") return "passing";
+  if (["RB", "FB"].includes(position)) return "rushing";
+  if (["WR", "TE"].includes(position)) return "receiving";
+  if (DEFENSIVE_POSITIONS.has(position)) return "defense";
+  if (position === "K") return "kicking";
+  if (position === "P") return "punting";
+
+  return "fallback";
+}
+
 function getSeasonDisplayYear(season?: FootballPlayerSeason | null) {
   return String(
     season?.displaySeason ??
-    season?.year ??
-    season?.season ??
-    getFootballSeason(),
+      season?.year ??
+      season?.season ??
+      getFootballSeason(),
   );
 }
 
@@ -260,8 +285,8 @@ function findStat(
 
   const displayValue =
     stat.displayValue !== null &&
-      stat.displayValue !== undefined &&
-      stat.displayValue !== ""
+    stat.displayValue !== undefined &&
+    stat.displayValue !== ""
       ? String(stat.displayValue)
       : formatValue(stat.value);
 
@@ -288,6 +313,28 @@ function getStatNumber(
   occurrence: StatOccurrence = "first",
 ) {
   return findStat(stats, aliases, occurrence).numericValue;
+}
+
+function getAverageDisplay(
+  stats: Stat[],
+  averageAliases: string[],
+  yardsAliases: string[],
+  attemptAliases: string[],
+) {
+  const average = findStat(stats, averageAliases);
+
+  if (average.numericValue !== null) {
+    return average.displayValue;
+  }
+
+  const yards = getStatNumber(stats, yardsAliases);
+  const attempts = getStatNumber(stats, attemptAliases);
+
+  if (yards === null || attempts === null || attempts <= 0) {
+    return average.displayValue;
+  }
+
+  return formatValue(yards / attempts);
 }
 
 function getMadeAttemptedDisplay(
@@ -325,14 +372,18 @@ function hasAnyStats(stats: Stat[]) {
 export default function SeasonStatCard({
   player,
   season,
+  isActive,
   loading = false,
   error = null,
+  rankings = {},
+  teamColor,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
   const allStats = getAllStats(season);
+
+  if (!isActive) return null;
 
   if (loading) {
     return <SeasonStatCardSkeleton />;
@@ -363,6 +414,7 @@ export default function SeasonStatCard({
 
   const displayYear = getSeasonDisplayYear(season);
   const position = getPosition(player);
+  const positionGroup = getPositionGroup(position);
 
   const passingStats = getPreferredStats(season, [
     "passing",
@@ -400,36 +452,6 @@ export default function SeasonStatCard({
     "puntingStats",
   ]);
 
-  function StatItem({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number;
-  }) {
-    return (
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{formatValue(value)}</Text>
-        <Text style={styles.statLabel}>{label}</Text>
-      </View>
-    );
-  }
-
-  const showPassing = position === "QB";
-  const showRushing = ["RB", "FB"].includes(position);
-  const showReceiving = ["WR", "TE"].includes(position);
-  const showDefense = DEFENSIVE_POSITIONS.has(position);
-  const showKicking = position === "K";
-  const showPunting = position === "P";
-
-  const shouldShowFallback =
-    !showPassing &&
-    !showRushing &&
-    !showReceiving &&
-    !showDefense &&
-    !showKicking &&
-    !showPunting;
-
   /*
    * Passing
    *
@@ -455,6 +477,18 @@ export default function SeasonStatCard({
     "passingYards",
     "passing yards",
   ]);
+
+  const passingAvg = getAverageDisplay(
+    passingStats,
+    [
+      "yardsPerPassAttempt",
+      "yards per pass attempt",
+      "yardsPerAttempt",
+      "passingAverage",
+    ],
+    ["passingYards", "passing yards"],
+    ["passingAttempts", "attempts", "passAttempts", "passing attempts"],
+  );
 
   const passingTDs = getStatDisplay(passingStats, [
     "passingTouchdowns",
@@ -483,12 +517,17 @@ export default function SeasonStatCard({
     "rushing yards",
   ]);
 
-  const rushingAvg = getStatDisplay(rushingStats, [
-    "yardsPerRushAttempt",
-    "yards per rush attempt",
-    "yardsPerCarry",
-    "rushingAverage",
-  ]);
+  const rushingAvg = getAverageDisplay(
+    rushingStats,
+    [
+      "yardsPerRushAttempt",
+      "yards per rush attempt",
+      "yardsPerCarry",
+      "rushingAverage",
+    ],
+    ["rushingYards", "rushing yards"],
+    ["rushingAttempts", "rushing attempts", "carries"],
+  );
 
   const rushingTDs = getStatDisplay(rushingStats, [
     "rushingTouchdowns",
@@ -509,11 +548,12 @@ export default function SeasonStatCard({
     "receiving yards",
   ]);
 
-  const receivingYardsPer = getStatDisplay(receivingStats, [
-    "yardsPerReception",
-    "yards per reception",
-    "receivingAverage",
-  ]);
+  const receivingYardsPer = getAverageDisplay(
+    receivingStats,
+    ["yardsPerReception", "yards per reception", "receivingAverage"],
+    ["receivingYards", "receiving yards"],
+    ["receptions", "receivingReceptions"],
+  );
 
   const receivingTDs = getStatDisplay(receivingStats, [
     "receivingTouchdowns",
@@ -667,76 +707,64 @@ export default function SeasonStatCard({
         ? fallbackRushingYards
         : fallbackReceivingYards;
 
+  const rankedItem = (
+    label: string,
+    value: string | number,
+  ): SeasonStatItem => ({ label, value, ranking: rankings[label] });
+
+  const displayStats: Record<PositionGroup, SeasonStatItem[]> = {
+    passing: [
+      rankedItem("CMP/ATT", cmpAtt),
+      rankedItem("PASS YDS", passingYards),
+      rankedItem("YDS/ATT", passingAvg),
+      rankedItem("PASS TD", passingTDs),
+      rankedItem("INT", passingInterceptions),
+    ],
+    rushing: [
+      rankedItem("RUSH ATT", rushingAttempts),
+      rankedItem("RUSH YDS", rushingYards),
+      rankedItem("YDS/ATT", rushingAvg),
+      rankedItem("RUSH TD", rushingTDs),
+    ],
+    receiving: [
+      rankedItem("REC", receptions),
+      rankedItem("REC YDS", receivingYards),
+      rankedItem("YDS/REC", receivingYardsPer),
+      rankedItem("REC TD", receivingTDs),
+    ],
+    defense: [
+      rankedItem("TOT", totalTackles),
+      rankedItem("INT", defensiveInterceptions),
+      rankedItem("TFL", tacklesForLoss),
+      rankedItem("SACK", defensiveSacks),
+    ],
+    kicking: [
+      rankedItem("FGM/FGA", fgmFga),
+      rankedItem("FG%", fieldGoalPct),
+      rankedItem("XPM/XPA", xpmXpa),
+      rankedItem("LONG", longFieldGoal),
+    ],
+    punting: [
+      rankedItem("PUNTS", punts),
+      rankedItem("PUNT YDS", puntYards),
+      rankedItem("LONG", longestPunt),
+      rankedItem("TB", touchbacks),
+    ],
+    fallback: [
+      { label: "GP", value: fallbackGamesPlayed },
+      { label: "YDS", value: fallbackYards },
+      { label: "TD", value: fallbackTouchdowns },
+      { label: "PTS", value: fallbackPoints },
+    ],
+  };
+
   return (
-    <View>
-      <CenteredHeader isDark={isDark}>{displayYear} Season</CenteredHeader>
-
-      <View style={styles.card}>
-        <View style={styles.statsRow}>
-          {showPassing && (
-            <>
-              {StatItem({ "label": "CMP/ATT", "value": cmpAtt })}
-              {StatItem({ "label": "PASS YDS", "value": passingYards })}
-              {StatItem({ "label": "PASS TD", "value": passingTDs })}
-              {StatItem({ "label": "INT", "value": passingInterceptions })}
-            </>
-          )}
-
-          {showRushing && (
-            <>
-              {StatItem({ "label": "RUSH ATT", "value": rushingAttempts })}
-              {StatItem({ "label": "RUSH YDS", "value": rushingYards })}
-              {StatItem({ "label": "YDS/ATT", "value": rushingAvg })}
-              {StatItem({ "label": "RUSH TD", "value": rushingTDs })}
-            </>
-          )}
-
-          {showReceiving && (
-            <>
-              {StatItem({ "label": "REC", "value": receptions })}
-              {StatItem({ "label": "REC YDS", "value": receivingYards })}
-              {StatItem({ "label": "YDS/REC", "value": receivingYardsPer })}
-              {StatItem({ "label": "REC TD", "value": receivingTDs })}
-            </>
-          )}
-
-          {showDefense && (
-            <>
-              {StatItem({ "label": "TOT", "value": totalTackles })}
-              {StatItem({ "label": "INT", "value": defensiveInterceptions })}
-              {StatItem({ "label": "TFL", "value": tacklesForLoss })}
-              {StatItem({ "label": "SACK", "value": defensiveSacks })}
-            </>
-          )}
-
-          {showKicking && (
-            <>
-              {StatItem({ "label": "FGM/FGA", "value": fgmFga })}
-              {StatItem({ "label": "FG%", "value": fieldGoalPct })}
-              {StatItem({ "label": "XPM/XPA", "value": xpmXpa })}
-              {StatItem({ "label": "LONG", "value": longFieldGoal })}
-            </>
-          )}
-
-          {showPunting && (
-            <>
-              {StatItem({ "label": "PUNTS", "value": punts })}
-              {StatItem({ "label": "PUNT YDS", "value": puntYards })}
-              {StatItem({ "label": "LONG", "value": longestPunt })}
-              {StatItem({ "label": "TB", "value": touchbacks })}
-            </>
-          )}
-
-          {shouldShowFallback && (
-            <>
-              {StatItem({ "label": "GP", "value": fallbackGamesPlayed })}
-              {StatItem({ "label": "YDS", "value": fallbackYards })}
-              {StatItem({ "label": "TD", "value": fallbackTouchdowns })}
-              {StatItem({ "label": "PTS", "value": fallbackPoints })}
-            </>
-          )}
-        </View>
-      </View>
-    </View>
+    <SeasonStatCardLayout
+      isDark={isDark}
+      seasonLabel={displayYear}
+      stats={displayStats[positionGroup]}
+      teamColor={teamColor}
+      formatValue={formatValue}
+    />
   );
 }

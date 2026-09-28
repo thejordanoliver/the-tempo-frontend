@@ -117,7 +117,10 @@ export const StandingsSkeleton = ({
                 ]}
               >
                 {Array.from({ length: 4 }, (_, index) => (
-                  <View key={`season-stat-header-${index}`} style={styles.seasonLeadersStatCell}>
+                  <View
+                    key={`season-stat-header-${index}`}
+                    style={styles.seasonLeadersStatCell}
+                  >
                     {renderSeasonBlock(styles.seasonLeadersStatHeader)}
                   </View>
                 ))}
@@ -132,7 +135,10 @@ export const StandingsSkeleton = ({
                   ]}
                 >
                   {Array.from({ length: 4 }, (_, statIndex) => (
-                    <View key={`season-stat-${statIndex}`} style={styles.seasonLeadersStatCell}>
+                    <View
+                      key={`season-stat-${statIndex}`}
+                      style={styles.seasonLeadersStatCell}
+                    >
                       {renderSeasonBlock([
                         styles.seasonLeadersStatValue,
                         { width: (rowIndex + statIndex) % 2 === 0 ? 32 : 40 },
@@ -303,7 +309,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
   },
-  seasonLeadersFixedPane: { width: 250 },
+  seasonLeadersFixedPane: { width: 200 },
   seasonLeadersHeader: {
     height: 48,
     flexDirection: "row",
@@ -322,8 +328,14 @@ const styles = StyleSheet.create({
   seasonLeadersTeamLogo: { width: 17, height: 17, borderRadius: 4 },
   seasonLeadersTeamCode: { width: 28, height: 10, borderRadius: 3 },
   seasonLeadersStatsViewport: { flex: 1 },
-  seasonLeadersStatsContent: { width: 72 * 4 },
-  seasonLeadersStatCell: { width: 72, alignItems: "center", justifyContent: "center" },
+  seasonLeadersStatsContent: { minWidth: "100%" },
+  seasonLeadersStatCell: {
+    minWidth: 72,
+    flexGrow: 1,
+    flexBasis: 72,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   seasonLeadersStatHeader: { width: 34, height: 12, borderRadius: 4 },
   seasonLeadersStatValue: { height: 14, borderRadius: 4 },
   table: {

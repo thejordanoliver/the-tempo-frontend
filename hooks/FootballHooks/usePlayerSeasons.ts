@@ -1,6 +1,7 @@
 import { isAxiosError, isCancel } from "axios";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 export type StatValue = number | string | null | undefined;
 
@@ -82,6 +83,7 @@ export type PlayerStatsResponse = {
   count?: number;
   hasStats?: boolean;
   collegeStats?: CollegeStatsResponse | null;
+  currentSeasonRankings?: PlayerSeasonRankings;
 };
 
 export type Stat = {
@@ -331,6 +333,8 @@ export function usePlayerSeasons(
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(
     null,
   );
+  const [currentSeasonRankings, setCurrentSeasonRankings] =
+    useState<PlayerSeasonRankings>({});
 
   const hasValidPlayerId = Number.isFinite(playerId) && playerId > 0;
 
@@ -350,6 +354,7 @@ export function usePlayerSeasons(
         setError(null);
         setCanonicalProfile(null);
         setResolvedRequestKey(null);
+        setCurrentSeasonRankings({});
 
         const requestedLeague = league;
 
@@ -466,6 +471,7 @@ export function usePlayerSeasons(
             ? "cfb"
             : null,
         );
+        setCurrentSeasonRankings(json.currentSeasonRankings ?? {});
         setResolvedRequestKey(requestKey);
       } catch (err: unknown) {
         if (isCancel(err) || controller.signal.aborted) return;
@@ -478,6 +484,7 @@ export function usePlayerSeasons(
         setRawSeasons([]);
         setCollegeData([]);
         setRawCollegeSeasons([]);
+        setCurrentSeasonRankings({});
         setPlayer(null);
         setCanonicalProfile(null);
         setCollegeLeague(null);
@@ -544,6 +551,8 @@ export function usePlayerSeasons(
     resolvedLeague: hasCurrentResult ? resolvedLeague : fallbackLeague,
 
     canonicalProfile: hasCurrentResult ? canonicalProfile : null,
+
+    currentSeasonRankings: hasCurrentResult ? currentSeasonRankings : {},
 
     hasCollegeStats: hasCurrentResult && currentCollegeData.length > 0,
 

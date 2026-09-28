@@ -71,7 +71,8 @@ export const SeasonLeadersTableStyles = (isDark: boolean) =>
       borderRadius: 100,
     },
     statsScroller: { flex: 1 },
-    statsContent: { minWidth: "100%" },
+    statsContent: { flexGrow: 1 },
+    statsTable: { minWidth: "100%" },
     statsHeader: {
       height: 48,
       flexDirection: "row",
@@ -96,7 +97,19 @@ export const SeasonLeadersTableStyles = (isDark: boolean) =>
       borderBottomWidth: 0,
     },
 
-    statColumn: { width: 72, textAlign: "center" },
+    statColumn: {
+      minWidth: 72,
+      flexGrow: 1,
+      flexBasis: 72,
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    mainStatColumn: {
+      backgroundColor: isDark
+        ? Colors.dark.transparentGold
+        : Colors.light.transparentGold,
+    },
     headerText: {
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.SEMIBOLD,

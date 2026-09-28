@@ -1,20 +1,24 @@
-import { BaseballPlayerSeason } from "@/hooks/BaseballHooks/usePlayerSeasons";
+import SeasonStatCardLayout, {
+  type SeasonStatItem,
+} from "@/components/Player/SeasonStatCardLayout";
+import type { BaseballPlayerSeason } from "@/hooks/BaseballHooks/usePlayerSeasons";
 import type { Stat } from "@/hooks/FootballHooks/usePlayerSeasons";
 import CenteredHeader from "components/Headings/CenteredHeader";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
 import { getFootballSeason } from "utils/dateUtils";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 type Props = {
-  player: any;
-  teamColor?: string;
-  teamColorDark?: string;
+  position: string;
+  isActive: boolean;
   season?: BaseballPlayerSeason | null;
   loading?: boolean;
   error?: string | null;
+  rankings?: PlayerSeasonRankings;
+  teamColor?: string;
 };
 
 type StatMatch = {
@@ -23,22 +27,23 @@ type StatMatch = {
 };
 
 const EMPTY_STAT = "0";
+const BATTING_POSITIONS = new Set([
+  "1B",
+  "2B",
+  "3B",
+  "SS",
+  "LF",
+  "CF",
+  "RF",
+  "DH",
+]);
+const PITCHING_POSITIONS = new Set(["SP", "RP", "CP", "P"]);
 
 function normalizeText(value?: string | number | null) {
   return String(value ?? "")
     .trim()
     .toLowerCase()
     .replace(/[\s_-]/g, "");
-}
-
-function getPosition(player: any) {
-  const rawPosition =
-    player?.position?.abbreviation ??
-    player?.position?.name ??
-    player?.position ??
-    "";
-
-  return String(rawPosition).trim().toUpperCase();
 }
 
 function getSeasonDisplayYear(season?: BaseballPlayerSeason | null) {
@@ -159,19 +164,59 @@ function hasAnyStats(stats: Stat[]) {
   });
 }
 
+function getDisplayStats(
+  stats: Stat[],
+  position: string,
+  rankings: PlayerSeasonRankings,
+): SeasonStatItem[] {
+  const item = (label: string, value: string): SeasonStatItem => ({
+    label,
+    value,
+    ranking: rankings[label],
+  });
+
+  if (PITCHING_POSITIONS.has(position)) {
+    return [
+      item("ERA", getStatDisplay(stats, ["ERA"])),
+      item("K", getStatDisplay(stats, ["strikeouts"])),
+      item("SWR", getStatDisplay(stats, ["strikeoutToWalkRatio"])),
+      item("WIN%", formatPercent(getStatDisplay(stats, ["winPct"]))),
+    ];
+  }
+
+  if (BATTING_POSITIONS.has(position)) {
+    return [
+      item("HITS", getStatDisplay(stats, ["hits"])),
+      item("RBI", getStatDisplay(stats, ["RBIs"])),
+      item("RUNS", getStatDisplay(stats, ["runs"])),
+      item("AVG", getStatDisplay(stats, ["avg"])),
+    ];
+  }
+
+  return [];
+}
+
 export default function SeasonStatCard({
-  player,
   season,
+  position,
+  isActive,
   loading,
   error,
+  rankings = {},
+  teamColor,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
+
+  if (!isActive) return null;
 
   if (loading) return <SeasonStatCardSkeleton />;
   const stats = getAllStats(season);
+
+  if (error) {
+    return <Text style={global.errorText}>Failed to load stats</Text>;
+  }
 
   if (!season || !hasAnyStats(stats)) {
     return (
@@ -184,76 +229,13 @@ export default function SeasonStatCard({
     );
   }
 
-  if (error) {
-    return <Text style={global.errorText}>Failed to load stats</Text>;
-  }
-
-  const displayYear = getSeasonDisplayYear(season);
-  const position = getPosition(player);
-
-  function StatItem({
-    label,
-    value,
-  }: {
-    label: string;
-    value: string | number;
-  }) {
-    return (
-      <View style={styles.statItem}>
-        <Text style={styles.statValue}>{formatValue(value)}</Text>
-        <Text style={styles.statLabel}>{label}</Text>
-      </View>
-    );
-  }
-
-  const showBatting = [
-    "1B",
-    "2B",
-    "3B",
-    "SS",
-    "LF",
-    "CF",
-    "RF",
-    "DH",
-    "SS",
-  ].includes(position);
-  const showPitching = ["SP"].includes(position);
-
-  const hits = getStatDisplay(stats, ["hits"]);
-  const rbi = getStatDisplay(stats, ["RBIs"]);
-  const runs = getStatDisplay(stats, ["runs"]);
-  const avg = getStatDisplay(stats, ["avg"]);
-
-  const era = getStatDisplay(stats, ["ERA"]);
-  const strikeouts = getStatDisplay(stats, ["strikeouts"]);
-  const strikeoutToWalkRatio = getStatDisplay(stats, ["strikeoutToWalkRatio"]);
-  const winPct = getStatDisplay(stats, ["winPct"]);
-
   return (
-    <View>
-      <CenteredHeader isDark={isDark}>{displayYear} Season</CenteredHeader>
-
-      <View style={styles.card}>
-        <View style={styles.statsRow}>
-          {showPitching && (
-            <>
-              {StatItem({ label: "ERA", value: era })}
-              {StatItem({ label: "K", value: strikeouts })}
-              {StatItem({ label: "SWR", value: strikeoutToWalkRatio })}
-              {StatItem({ label: "WIN%", value: formatPercent(winPct) })}
-            </>
-          )}
-
-          {showBatting && (
-            <>
-              {StatItem({ label: "HITS", value: hits })}
-              {StatItem({ label: "RBI", value: rbi })}
-              {StatItem({ label: "RUNS", value: runs })}
-              {StatItem({ label: "AVG", value: avg })}
-            </>
-          )}
-        </View>
-      </View>
-    </View>
+    <SeasonStatCardLayout
+      isDark={isDark}
+      seasonLabel={getSeasonDisplayYear(season)}
+      stats={getDisplayStats(stats, position, rankings)}
+      teamColor={teamColor}
+      formatValue={formatValue}
+    />
   );
 }

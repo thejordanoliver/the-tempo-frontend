@@ -1,11 +1,13 @@
-import { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
-import CenteredHeader from "components/Headings/CenteredHeader";
+import SeasonStatCardLayout, {
+  type SeasonStatItem,
+} from "@/components/Player/SeasonStatCardLayout";
+import type { PlayerSeason } from "@/hooks/BasketballHooks/usePlayerSeasons";
 import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton";
-import { Colors, globalStyles } from "constants/styles";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
-import { seasonStatCardStyles } from "styles/PlayerStyles/SeasonStatCardStyles";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 type BasketballLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
 
@@ -14,6 +16,9 @@ type Props = {
   loading: boolean;
   error: string | null;
   league: BasketballLeague | string;
+  isActive: boolean;
+  rankings?: PlayerSeasonRankings;
+  teamColor?: string;
 };
 
 function normalizeLeague(league: Props["league"]) {
@@ -100,42 +105,17 @@ function getStatValue(
   return fallback;
 }
 
-function StatItem({
-  label,
-  value,
-  isDark,
-  styles,
-}: {
-  label: string;
-  value: number | string | null | undefined;
-  isDark: boolean;
-  styles: ReturnType<typeof seasonStatCardStyles>;
-}) {
-  return (
-    <View style={styles.statItem}>
-      <Text
-        style={[
-          styles.statValue,
-          { color: isDark ? Colors.white : Colors.black },
-        ]}
-      >
-        {value ?? "--"}
-      </Text>
-
-      <Text style={styles.statLabel}>{label}</Text>
-    </View>
-  );
-}
-
 export default function SeasonStatCard({
   seasons,
   loading,
   error,
+  isActive,
   league,
+  rankings = {},
+  teamColor,
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = seasonStatCardStyles(isDark);
   const global = globalStyles(isDark);
 
   const latestSeason = useMemo(() => {
@@ -144,6 +124,8 @@ export default function SeasonStatCard({
       league,
     });
   }, [seasons, league]);
+
+  if (!isActive) return null;
 
   if (loading) {
     return <SeasonStatCardSkeleton />;
@@ -167,68 +149,50 @@ export default function SeasonStatCard({
 
   const averages = latestSeason.averages ?? {};
 
-  const points = getStatValue(averages, [
-    "avgPoints",
-    "pointsPerGame",
-    "points",
-  ]);
-
-  const assists = getStatValue(averages, [
-    "avgAssists",
-    "assistsPerGame",
-    "assists",
-  ]);
-
-  const rebounds = getStatValue(averages, [
-    "avgRebounds",
-    "reboundsPerGame",
-    "rebounds",
-  ]);
-
-  const fieldGoals = getStatValue(averages, [
-    "avgFieldGoalsMade-avgFieldGoalsAttempted",
-    "fieldGoalsMade-fieldGoalsAttempted",
-    "fieldGoals",
-  ]);
+  const stats: SeasonStatItem[] = [
+    {
+      label: "PTS",
+      ranking: rankings.PTS,
+      value: getStatValue(averages, ["avgPoints", "pointsPerGame", "points"]),
+    },
+    {
+      label: "AST",
+      ranking: rankings.AST,
+      value: getStatValue(averages, [
+        "avgAssists",
+        "assistsPerGame",
+        "assists",
+      ]),
+    },
+    {
+      label: "REB",
+      ranking: rankings.REB,
+      value: getStatValue(averages, [
+        "avgRebounds",
+        "reboundsPerGame",
+        "rebounds",
+      ]),
+    },
+    {
+      label: "FG",
+      ranking: rankings.FG,
+      value: getStatValue(averages, [
+        "avgFieldGoalsMade-avgFieldGoalsAttempted",
+        "fieldGoalsMade-fieldGoalsAttempted",
+        "fieldGoals",
+      ]),
+    },
+  ];
 
   const displaySeason =
     latestSeason.display_season || latestSeason.season || "Latest";
 
   return (
-    <View>
-      <CenteredHeader isDark={isDark}>{displaySeason} Season</CenteredHeader>
-
-      <View style={styles.card}>
-        <View style={styles.statsRow}>
-          <StatItem
-            label="PTS"
-            value={points}
-            isDark={isDark}
-            styles={styles}
-          />
-
-          <StatItem
-            label="AST"
-            value={assists}
-            isDark={isDark}
-            styles={styles}
-          />
-
-          <StatItem
-            label="REB"
-            value={rebounds}
-            isDark={isDark}
-            styles={styles}
-          />
-
-          <StatItem
-            label="FG"
-            value={fieldGoals}
-            isDark={isDark}
-            styles={styles}
-          />
-        </View>
-      </View>
-    </View>
+    <SeasonStatCardLayout
+      isDark={isDark}
+      seasonLabel={String(displaySeason)}
+      stats={stats}
+      teamColor={teamColor}
+    />
   );
 }

@@ -66,6 +66,16 @@ export default function PlayerDetailScreen() {
   const playerId = Number(id);
 
   const { player, loading, error } = usePlayerById(playerId, league);
+  const position = String(
+    player?.position?.abbreviation ??
+      player?.position?.name ??
+      player?.position ??
+      "",
+  )
+    .trim()
+    .toUpperCase();
+  const isActive = player?.active === true;
+
   const currentTeamId =
     player?.team_id != null
       ? String(player.team_id)
@@ -80,6 +90,7 @@ export default function PlayerDetailScreen() {
     data: seasons,
     loading: seasonsLoading,
     error: seasonsError,
+    currentSeasonRankings,
   } = useBaseballPlayerSeasons(playerId, league);
 
   const latestSeason = useMemo(() => {
@@ -106,7 +117,6 @@ export default function PlayerDetailScreen() {
       ),
     });
   }, [navigation, teamLogo, teamColor]);
-  
 
   if (loading)
     return (
@@ -132,7 +142,10 @@ export default function PlayerDetailScreen() {
         season={latestSeason}
         loading={seasonsLoading}
         error={seasonsError}
-        player={player}
+        position={position}
+        isActive={isActive}
+        rankings={currentSeasonRankings}
+        teamColor={teamColor}
       />
 
       <LatestGame

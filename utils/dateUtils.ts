@@ -65,21 +65,6 @@ export function formatDateToUTCYYYYMMDD(
   ].join("");
 }
 
-export const isTodayOrTomorrow = (dateString: string) => {
-  const gameDate = new Date(dateString);
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const tomorrow = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1,
-  );
-  return (
-    (gameDate >= today && gameDate < new Date(today.getTime() + 86400000)) ||
-    (gameDate >= tomorrow && gameDate < new Date(tomorrow.getTime() + 86400000))
-  );
-};
-
 export function getNBASeason(): number {
   const today = dayjs();
   const year = today.year();
@@ -135,8 +120,8 @@ export function getNHLSeason(date: Date = new Date()): string {
   const month = date.getMonth(); // 0 = January, 8 = September
 
   // January–August belong to the season that started the previous year.
-  if (month < 8) {
-    return String(year - 1);
+  if (month > 7) {
+    return String(year + 1);
   }
 
   // September–December belong to the season starting this year.

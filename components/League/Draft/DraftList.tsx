@@ -207,7 +207,9 @@ export default function DraftList({
       .map((t) => ({
         label: t.name,
         value: String(t.espnId),
+        active: t.isActive,
       }))
+      .filter((t) => t.active)
       .sort((a, b) => a.label.localeCompare(b.label));
 
     return [{ label: "All Teams", value: "all" }, ...formatted];

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 export type BaseballLeague = "MLB" | "CB" | "SB";
 
@@ -33,6 +34,7 @@ export type PlayerStatsResponse = {
   playerId: string;
   player: Player;
   seasons: ApiSeason[];
+  currentSeasonRankings?: PlayerSeasonRankings;
 };
 
 export type Stat = {
@@ -278,6 +280,8 @@ export function useBaseballPlayerSeasons(
 ) {
   const [data, setData] = useState<BaseballPlayerSeason[]>([]);
   const [rawSeasons, setRawSeasons] = useState<ApiSeason[]>([]);
+  const [currentSeasonRankings, setCurrentSeasonRankings] =
+    useState<PlayerSeasonRankings>({});
   const [player, setPlayer] = useState<{
     name: string;
     position: string | null;
@@ -295,6 +299,7 @@ export function useBaseballPlayerSeasons(
         if (cancelled) return;
         setData([]);
         setRawSeasons([]);
+        setCurrentSeasonRankings({});
         setPlayer(null);
         setLoading(false);
         setError(null);
@@ -328,6 +333,7 @@ export function useBaseballPlayerSeasons(
         });
 
         setRawSeasons(seasons);
+        setCurrentSeasonRankings(json.currentSeasonRankings ?? {});
 
         const mappedSeasons = seasons.map(mapSeason).sort((a, b) => {
           if (b.season !== a.season) {
@@ -359,6 +365,7 @@ export function useBaseballPlayerSeasons(
 
         setData([]);
         setRawSeasons([]);
+        setCurrentSeasonRankings({});
         setPlayer(null);
       } finally {
         if (!cancelled) {
@@ -377,6 +384,7 @@ export function useBaseballPlayerSeasons(
   return {
     data,
     rawSeasons,
+    currentSeasonRankings,
     player,
     loading,
     error,

@@ -78,6 +78,7 @@ export default function PlayerDetailScreen() {
     canonicalProfile,
     seasonsLoading,
     seasonsError,
+    currentSeasonRankings,
   } = usePlayerSeasons(requestedPlayerId, requestedLeague);
 
   const canonicalPlayerId = useMemo(() => {
@@ -205,17 +206,16 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-      <PlayerHeader
-        player={player}
-        isDark={isDark}
-        league={canonicalLeague}
-      />
+      <PlayerHeader player={player} isDark={isDark} league={canonicalLeague} />
 
       <SeasonStatCard
         seasons={seasons}
         loading={seasonsLoading}
         error={seasonsError}
         league={canonicalLeague}
+        isActive={isActive}
+        rankings={currentSeasonRankings}
+        teamColor={teamColor}
       />
 
       {isActive && resolvedTeamId ? (

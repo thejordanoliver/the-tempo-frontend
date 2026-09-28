@@ -1,6 +1,7 @@
 import { isAxiosError, isCancel } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
+import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 export type StatValue = number | string | null | undefined;
 
@@ -112,6 +113,7 @@ interface ApiResponse {
   canonicalProfile?: BasketballCanonicalProfile | null;
   seasons?: Season[] | null;
   collegeStats?: CollegeStatsResponse | null;
+  currentSeasonRankings?: PlayerSeasonRankings;
 }
 
 const normalizeApiSeason = (season: Season): Season => ({
@@ -162,6 +164,8 @@ export function usePlayerSeasons(
   const [player, setPlayer] = useState<Player | null>(null);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [collegeSeasons, setCollegeSeasons] = useState<Season[]>([]);
+  const [currentSeasonRankings, setCurrentSeasonRankings] =
+    useState<PlayerSeasonRankings>({});
   const [resolvedLeague, setResolvedLeague] =
     useState<BasketballLeague>(league);
   const [canonicalProfile, setCanonicalProfile] =
@@ -186,6 +190,7 @@ export function usePlayerSeasons(
       setPlayer(null);
       setSeasons([]);
       setCollegeSeasons([]);
+      setCurrentSeasonRankings({});
       setCanonicalProfile(null);
       setResolvedLeague(league);
       setSeasonsError("Invalid player ID");
@@ -244,6 +249,7 @@ export function usePlayerSeasons(
           ? res.data.collegeStats.seasons.map(normalizeApiSeason)
           : [],
       );
+      setCurrentSeasonRankings(res.data.currentSeasonRankings ?? {});
       setResolvedRequestKey(requestKey);
     } catch (err: unknown) {
       if (isCancel(err)) return;
@@ -254,6 +260,7 @@ export function usePlayerSeasons(
       setPlayer(null);
       setSeasons([]);
       setCollegeSeasons([]);
+      setCurrentSeasonRankings({});
       setCanonicalProfile(null);
       setResolvedLeague(league);
       setResolvedRequestKey(requestKey);
@@ -281,6 +288,7 @@ export function usePlayerSeasons(
     player: hasCurrentResult ? player : null,
     seasons: hasCurrentResult ? seasons : [],
     collegeSeasons: currentCollegeSeasons,
+    currentSeasonRankings: hasCurrentResult ? currentSeasonRankings : {},
     resolvedLeague: hasCurrentResult ? resolvedLeague : league,
     canonicalProfile: hasCurrentResult ? canonicalProfile : null,
     hasCollegeStats: currentCollegeSeasons.length > 0,

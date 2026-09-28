@@ -31,6 +31,7 @@ export interface SeasonLeaderCategory {
   categoryName: string;
   shortName: string;
   abbreviation: string;
+  primaryStatKey?: string;
   columns?: SeasonLeaderColumn[];
   leaders: PlayerLeader[];
 }
