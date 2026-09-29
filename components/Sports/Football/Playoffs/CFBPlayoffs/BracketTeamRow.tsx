@@ -38,7 +38,9 @@ export function BracketTeamRow({
           <Text style={styles.tbdText}>TBD</Text>
         </View>
 
-        <Text style={styles.scorePlaceholder}>—</Text>
+        <View style={styles.winsBadge}>
+          <Text style={styles.scorePlaceholder}>—</Text>
+        </View>
       </View>
     );
   }
@@ -84,9 +86,21 @@ export function BracketTeamRow({
         </Text>
       </View>
 
-      <Text style={[styles.score, team.winner && styles.winnerText]}>
-        {team.score ?? "—"}
-      </Text>
+      <View
+        style={[
+          styles.winsBadge,
+          team.winner && { backgroundColor: "#E5B80B" },
+        ]}
+      >
+        <Text
+          style={[
+            styles.score,
+            team.winner && { color: "#000000" },
+          ]}
+        >
+          {team.score ?? "—"}
+        </Text>
+      </View>
     </Pressable>
   );
 }
