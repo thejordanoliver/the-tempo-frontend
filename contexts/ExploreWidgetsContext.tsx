@@ -157,6 +157,24 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
 
   useEffect(() => {
     currentIdentityRef.current = dataKey;
+
+    requestGenerationRef.current += 1;
+    pendingRequestRef.current?.controller.abort();
+    pendingRequestRef.current = null;
+
+    let cancelled = false;
+
+    void Promise.resolve().then(() => {
+      if (cancelled) return;
+
+      setLoading(false);
+      setRefreshing(false);
+      setError(null);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [dataKey]);
 
   useEffect(() => {
@@ -166,12 +184,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       if (cancelled) return;
 
       setCache(null);
-      setLoading(false);
-      setRefreshing(false);
       setError(null);
-      requestGenerationRef.current += 1;
-      pendingRequestRef.current?.controller.abort();
-      pendingRequestRef.current = null;
     });
 
     return () => {
@@ -285,17 +298,11 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
           setError(getErrorMessage(requestError));
         })
         .finally(() => {
-          if (pendingRequestRef.current?.promise === promise) {
-            pendingRequestRef.current = null;
-          }
+          if (pendingRequestRef.current?.promise !== promise) return;
 
-          if (
-            requestGeneration === requestGenerationRef.current &&
-            requestIdentity === currentIdentityRef.current
-          ) {
-            setLoading(false);
-            setRefreshing(false);
-          }
+          pendingRequestRef.current = null;
+          setLoading(false);
+          setRefreshing(false);
         });
 
       if (pendingRequestRef.current?.key !== requestIdentity) {

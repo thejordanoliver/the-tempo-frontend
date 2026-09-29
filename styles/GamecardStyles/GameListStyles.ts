@@ -5,17 +5,12 @@ export const gameListStyles = StyleSheet.create({
 
   contentContainer: {
     paddingHorizontal: 12,
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
 
   gridListContainer: {
     paddingHorizontal: 12,
-    paddingBottom: 100,
-  },
-
-  emptyWrapper: {
-    paddingHorizontal: 12,
-    paddingTop: 24,
+    paddingBottom: 20,
   },
 
   /* ---------- Skeletons ---------- */
@@ -30,6 +25,10 @@ export const gameListStyles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 
+  headerSkeleton: {
+    marginHorizontal: 12,
+  },
+
   /* ---------- Grid ---------- */
 
   gridRow: {
@@ -38,8 +37,8 @@ export const gameListStyles = StyleSheet.create({
     marginBottom: 12,
   },
 
-    gridItem: {
-      flex: 1,
-      minWidth: 0,
-    },
+  gridItem: {
+    flex: 1,
+    minWidth: 0,
+  },
 });

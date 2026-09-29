@@ -143,6 +143,60 @@ export type BaseballGame = {
   };
 };
 
+export type MLBPlayoffLeague = "american" | "national" | "world-series";
+export type MLBPlayoffRound =
+  | "wild-card"
+  | "division-series"
+  | "championship-series"
+  | "world-series";
+
+export type MLBPlayoffTeam = {
+  id: string;
+  name: string;
+  abbreviation: string;
+  logo: string | null;
+  seed: number;
+  wins: number;
+  league: Exclude<MLBPlayoffLeague, "world-series">;
+};
+
+export type MLBPlayoffSeries = {
+  id: string;
+  league: MLBPlayoffLeague;
+  round: MLBPlayoffRound;
+  label: string;
+  bestOf: number;
+  teams: MLBPlayoffTeam[];
+  games: Array<{
+    id: string;
+    date: string | null;
+    status: string | null;
+    completed: boolean;
+    homeTeamId: string | null;
+    awayTeamId: string | null;
+    homeScore: number | null;
+    awayScore: number | null;
+  }>;
+  winnerTeamId: string | null;
+};
+
+export type MLBPlayoffBracketResponse = {
+  season: number;
+  format: {
+    teams: 12;
+    teamsPerLeague: 6;
+    firstRoundByes: number[];
+    wildCardMatchups: number[][];
+    divisionSeriesPaths: Array<{
+      seed: number;
+      receivesWinnerOf: number[];
+    }>;
+  };
+  teams: MLBPlayoffTeam[];
+  series: MLBPlayoffSeries[];
+  updatedAt: string;
+};
+
 export type BaseballGameCardProps = {
   game: BaseballGame;
   isMLB?: boolean;

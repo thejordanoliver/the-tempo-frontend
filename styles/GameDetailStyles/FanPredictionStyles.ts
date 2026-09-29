@@ -92,8 +92,8 @@ export const FanPredictionStyles = (isDark: boolean) =>
       zIndex: 1,
     },
     teamLogo: {
-      width: 32,
-      height: 32,
+      width: 40,
+      height: 40,
       resizeMode: "contain",
       zIndex: 1,
     },

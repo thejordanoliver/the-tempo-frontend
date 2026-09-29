@@ -108,6 +108,26 @@ const getGameDate = (item: HomeGameItem): Date | null => {
 };
 
 const getSectionTitle = (section: HomeGameSection): string => {
+  if (section.id === "wnba") {
+    const hasPlayoffGame = section.data.some((item) => {
+      const game = item.game as BasketballGame;
+
+      return game.season?.type === 3;
+    });
+
+    if (hasPlayoffGame) return "WNBA Playoffs";
+  }
+
+  if (section.id === "mlb") {
+    const hasPlayoffGame = section.data.some((item) => {
+      const game = item.game as BaseballGame;
+
+      return game.season?.type === 3;
+    });
+
+    if (hasPlayoffGame) return "MLB Playoffs";
+  }
+
   if (section.id === "nfl") {
     const hasMondayNightGame = section.data.some((item) => {
       const date = getGameDate(item);

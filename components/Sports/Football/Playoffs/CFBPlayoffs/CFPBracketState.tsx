@@ -1,4 +1,6 @@
-import { Pressable, Text, View } from "react-native";
+import Button from "@/components/Buttons/Button";
+import { globalStyles } from "@/constants/styles";
+import { Text, View } from "react-native";
 
 import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
 
@@ -16,15 +18,23 @@ export function CFPBracketState({
   onRetry,
 }: CFPBracketStateProps) {
   const styles = CFPBracketStyles(isDark);
+  const global = globalStyles(isDark);
 
   return (
-    <View style={styles.stateContainer}>
-      <Text style={error ? styles.errorText : styles.stateText}>{message}</Text>
+    <View style={global.emptyContainer}>
+      <Text style={error ? global.errorText : global.emptyTitle}>
+        {message}
+      </Text>
 
       {error && onRetry ? (
-        <Pressable onPress={onRetry} style={styles.retryButton}>
-          <Text style={styles.retryText}>Try Again</Text>
-        </Pressable>
+        <Button
+          isDark={isDark}
+          onPress={onRetry}
+          variant="outline"
+          style={styles.retryButton}
+        >
+          Try Again
+        </Button>
       ) : null}
     </View>
   );

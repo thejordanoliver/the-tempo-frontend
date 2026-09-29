@@ -21,7 +21,7 @@ import {
   View,
 } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
-import { footballGamesListStyle } from "styles/GamecardStyles/FootballGamesListStyles";
+import { gameListStyles } from "styles/GamecardStyles/GameListStyles";
 import { chunkIntoGridRows } from "utils/gameGrid";
 import FootballStackedGameCard from "./FootballStackedGameCard";
 
@@ -71,7 +71,7 @@ export default function GamesList({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = footballGamesListStyle;
+  const styles = gameListStyles;
   const global = globalStyles(isDark);
   const { viewMode } = usePreferences();
   const [previewGame, setPreviewGame] = useState<FootballGame | null>(null);

@@ -1,4 +1,5 @@
 import { useBaseballGames } from "@/hooks/BaseballHooks/useBaseballGames";
+import { useMLBPlayoffBracket } from "@/hooks/BaseballHooks/useMLBPlayoffBracket";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import { isLeague, League, normalizeLeagueParam } from "@/utils/tabs";
 import dayjs from "dayjs";
@@ -20,6 +21,7 @@ import DateNavigator from "../../components/DateNavigator";
 import ForumFeed from "../../components/Forum/ForumFeed";
 import NewsList from "../../components/News/NewsList";
 import GamesList from "../../components/Sports/Baseball/Games/GamesList";
+import { MLBPlayoffBracket } from "../../components/Sports/Baseball/Playoffs/MLBPlayoffBracket";
 import MainScrollTabBar from "../../components/TabBars/MainTabScrollBar";
 
 import AwardSeasons from "@/components/League/Awards/AwardSeasons";
@@ -179,6 +181,15 @@ function MLBLeagueScreen() {
     error: newsError,
     refresh: refreshNews,
   } = useLeaguesNews(league, 10, { enabled: hasVisitedTab("news") });
+  const {
+    data: playoffBracket,
+    loading: playoffLoading,
+    refreshing: playoffRefreshing,
+    error: playoffError,
+    refresh: refreshPlayoffBracket,
+  } = useMLBPlayoffBracket(currentSeason, {
+    enabled: hasVisitedTab("playoffs"),
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -267,6 +278,21 @@ function MLBLeagueScreen() {
     </View>
   );
 
+  const playoffsPage = (
+    <View key="playoffs" style={styles.contentArea}>
+      {hasVisitedTab("playoffs") ? (
+        <MLBPlayoffBracket
+          bracket={playoffBracket}
+          loading={playoffLoading}
+          refreshing={playoffRefreshing}
+          error={playoffError}
+          isDark={isDark}
+          onRefresh={refreshPlayoffBracket}
+        />
+      ) : null}
+    </View>
+  );
+
   const statsPage = (
     <View key="stats" style={styles.contentArea}>
       {hasVisitedTab("stats") ? (
@@ -297,6 +323,7 @@ function MLBLeagueScreen() {
     scoresPage,
     newsPage,
     standingsPage,
+    playoffsPage,
     statsPage,
     awardsPage,
     forumPage,

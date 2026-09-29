@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const leadersListStyles = (isDark: boolean) =>
   StyleSheet.create({
     contentContainerStyle: {
-      paddingBottom: 100,
+      paddingBottom: 20,
     },
     categoryContainer: {
       paddingHorizontal: 12,

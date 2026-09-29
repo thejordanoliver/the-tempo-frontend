@@ -141,11 +141,8 @@ export const CFPBracketStyles = (isDark: boolean) =>
     },
 
     retryButton: {
-      paddingHorizontal: 18,
-      paddingVertical: 10,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
+    width: "50%",
+  
     },
 
     retryText: {

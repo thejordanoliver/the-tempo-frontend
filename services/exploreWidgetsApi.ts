@@ -10,6 +10,8 @@ type GetExploreWidgetsOptions = {
   signal?: AbortSignal;
 };
 
+const EXPLORE_WIDGET_REQUEST_TIMEOUT_MS = 20_000;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -55,6 +57,7 @@ export async function getExploreWidgets({
       refresh: forceRefresh ? 1 : undefined,
     },
     signal,
+    timeout: EXPLORE_WIDGET_REQUEST_TIMEOUT_MS,
   });
 
   if (!isExploreWidgetsResponse(response.data)) {

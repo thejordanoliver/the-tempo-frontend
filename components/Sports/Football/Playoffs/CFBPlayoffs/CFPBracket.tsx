@@ -34,7 +34,7 @@ export function CFPBracket({
     );
   }
 
-  if (error && !data) {
+  if (error && true) {
     return (
       <CFPBracketState
         isDark={isDark}
