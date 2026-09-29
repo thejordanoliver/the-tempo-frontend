@@ -1,7 +1,8 @@
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { globalStyles } from "@/constants/styles";
 import { Image } from "expo-image";
 import { useMemo } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
-import { Colors } from "constants/styles";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import {
   MLB_BRACKET_COLUMN_WIDTH,
   MLBPlayoffBracketStyles,
@@ -31,24 +32,30 @@ type Matchup = Pick<
 const ROUND_HEADER_HEIGHT = 32;
 const ROUND_HEADER_GAP = 14;
 const MATCHUP_HEIGHT = 142;
-const MATCHUP_ROW_GAP = 36;
+const MATCHUP_ROW_GAP = 200;
 const COLUMN_GAP = 18;
 const SECOND_MATCHUP_TOP = MATCHUP_HEIGHT + MATCHUP_ROW_GAP;
 const CHAMPIONSHIP_TOP = SECOND_MATCHUP_TOP / 2;
 const ROUND_BODY_HEIGHT = SECOND_MATCHUP_TOP + MATCHUP_HEIGHT;
-const TOP_TEAM_CONNECTOR_OFFSET = 34;
 const BOTTOM_TEAM_CONNECTOR_OFFSET = 82;
-const LEAGUE_BOARD_WIDTH =
-  MLB_BRACKET_COLUMN_WIDTH * 3 + COLUMN_GAP * 2;
+const LEAGUE_BOARD_WIDTH = MLB_BRACKET_COLUMN_WIDTH * 3 + COLUMN_GAP * 2;
 
-function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean }) {
+function MatchupCard({
+  matchup,
+  isDark,
+}: {
+  matchup: Matchup;
+  isDark: boolean;
+}) {
   const styles = MLBPlayoffBracketStyles(isDark);
   const rows: (MLBPlayoffTeam | null)[] = [
     matchup.teams[0] ?? null,
     matchup.teams[1] ?? null,
   ];
   const winsNeeded = Math.floor(matchup.bestOf / 2) + 1;
-  const knownTeams = rows.filter((team): team is MLBPlayoffTeam => Boolean(team));
+  const knownTeams = rows.filter((team): team is MLBPlayoffTeam =>
+    Boolean(team),
+  );
   const leadingTeam = [...knownTeams].sort((a, b) => b.wins - a.wins)[0];
   const trailingTeam = [...knownTeams].sort((a, b) => a.wins - b.wins)[0];
   const seriesTied =
@@ -69,10 +76,10 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
       {rows.map((team, index) => {
         const isKnownTeam = Boolean(
           team &&
-            team.seed > 0 &&
-            !team.id.startsWith("placeholder:") &&
-            team.abbreviation !== "TBD" &&
-            !team.abbreviation.includes("/"),
+          team.seed > 0 &&
+          !team.id.startsWith("placeholder:") &&
+          team.abbreviation !== "TBD" &&
+          !team.abbreviation.includes("/"),
         );
         const isWinner = isKnownTeam && team?.id === winner?.id;
         const isEliminated = Boolean(winner && isKnownTeam && !isWinner);
@@ -80,11 +87,17 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
           <View key={team?.id ?? `tbd-${index}`}>
             {index > 0 ? <View style={styles.divider} /> : null}
             <View style={styles.teamRow}>
-              <Text style={[styles.seed, isEliminated && styles.eliminatedText]}>
+              <Text
+                style={[styles.seed, isEliminated && styles.eliminatedText]}
+              >
                 {isKnownTeam ? team?.seed : "-"}
               </Text>
               {isKnownTeam && team?.logo ? (
-                <Image source={{ uri: team.logo }} style={styles.logo} contentFit="contain" />
+                <Image
+                  source={{ uri: team.logo }}
+                  style={styles.logo}
+                  contentFit="contain"
+                />
               ) : (
                 <View style={styles.logo} />
               )}
@@ -103,7 +116,9 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
           </View>
         );
       })}
-      <Text numberOfLines={1} style={styles.seriesLabel}>{footer}</Text>
+      <Text numberOfLines={1} style={styles.seriesLabel}>
+        {footer}
+      </Text>
     </View>
   );
 }
@@ -113,7 +128,9 @@ function findSeries(
   league: MLBPlayoffLeague,
   round: MLBPlayoffRound,
 ) {
-  return bracket.series.filter((series) => series.league === league && series.round === round);
+  return bracket.series.filter(
+    (series) => series.league === league && series.round === round,
+  );
 }
 
 function seededMatchup(
@@ -127,7 +144,13 @@ function seededMatchup(
     id: `${league}-${seeds.join("-")}`,
     label,
     bestOf,
-    teams: seeds.map((seed) => bracket.teams.find((team) => team.league === league && team.seed === seed)).filter(Boolean) as MLBPlayoffTeam[],
+    teams: seeds
+      .map((seed) =>
+        bracket.teams.find(
+          (team) => team.league === league && team.seed === seed,
+        ),
+      )
+      .filter(Boolean) as MLBPlayoffTeam[],
     winnerTeamId: null,
   };
 }
@@ -140,7 +163,12 @@ function lowestKnownSeed(matchup: Matchup) {
   return seeds.length > 0 ? Math.min(...seeds) : Number.MAX_SAFE_INTEGER;
 }
 
-function LeagueBracket({ bracket, league, title, isDark }: {
+function LeagueBracket({
+  bracket,
+  league,
+  title,
+  isDark,
+}: {
   bracket: MLBPlayoffBracketResponse;
   league: "american" | "national";
   title: string;
@@ -151,35 +179,46 @@ function LeagueBracket({ bracket, league, title, isDark }: {
   const division = findSeries(bracket, league, "division-series");
   const championship = findSeries(bracket, league, "championship-series");
   const wildCardMatchups = wildCard.length
-    ? [...wildCard].sort(
-        (a, b) => lowestKnownSeed(b) - lowestKnownSeed(a),
-      )
+    ? [...wildCard].sort((a, b) => lowestKnownSeed(b) - lowestKnownSeed(a))
     : [
         seededMatchup(bracket, league, [4, 5], "Wild Card", 3),
         seededMatchup(bracket, league, [3, 6], "Wild Card", 3),
       ];
   const divisionMatchups = division.length
-    ? [...division].sort(
-        (a, b) => lowestKnownSeed(a) - lowestKnownSeed(b),
-      )
+    ? [...division].sort((a, b) => lowestKnownSeed(a) - lowestKnownSeed(b))
     : [
         seededMatchup(bracket, league, [1], "No. 1 vs 4/5 winner", 5),
         seededMatchup(bracket, league, [2], "No. 2 vs 3/6 winner", 5),
       ];
   const championshipMatchups = championship.length
     ? championship
-    : [{ id: `${league}-cs`, label: "League Championship", bestOf: 7, teams: [], winnerTeamId: null }];
+    : [
+        {
+          id: `${league}-cs`,
+          label: "League Championship",
+          bestOf: 7,
+          teams: [],
+          winnerTeamId: null,
+        },
+      ];
 
   const columns = [
     { key: "wild-card", title: "Wild Card", matchups: wildCardMatchups },
-    { key: "division-series", title: "Division Series", matchups: divisionMatchups },
-    { key: "championship", title: "Championship", matchups: championshipMatchups },
+    {
+      key: "division-series",
+      title: "Division Series",
+      matchups: divisionMatchups,
+    },
+    {
+      key: "championship",
+      title: "Championship",
+      matchups: championshipMatchups,
+    },
   ];
-  const orderedColumns = league === "national" ? [...columns].reverse() : columns;
+  const orderedColumns =
+    league === "national" ? [...columns].reverse() : columns;
   const connectorTop =
-    ROUND_HEADER_HEIGHT +
-    ROUND_HEADER_GAP +
-    BOTTOM_TEAM_CONNECTOR_OFFSET;
+    ROUND_HEADER_HEIGHT + ROUND_HEADER_GAP + BOTTOM_TEAM_CONNECTOR_OFFSET;
   const connectorBottom = connectorTop + SECOND_MATCHUP_TOP;
   const connectorMiddle =
     ROUND_HEADER_HEIGHT +
@@ -190,28 +229,19 @@ function LeagueBracket({ bracket, league, title, isDark }: {
     ROUND_HEADER_HEIGHT +
     ROUND_HEADER_GAP +
     CHAMPIONSHIP_TOP +
-    (league === "american"
-      ? TOP_TEAM_CONNECTOR_OFFSET
-      : BOTTOM_TEAM_CONNECTOR_OFFSET);
+    MATCHUP_HEIGHT / 2;
 
   const connectorLayer = (() => {
     const firstGapLeft = MLB_BRACKET_COLUMN_WIDTH;
-    const secondGapLeft =
-      MLB_BRACKET_COLUMN_WIDTH * 2 + COLUMN_GAP;
-    const branchGapLeft =
-      league === "american" ? secondGapLeft : firstGapLeft;
-    const directGapLeft =
-      league === "american" ? firstGapLeft : secondGapLeft;
+    const secondGapLeft = MLB_BRACKET_COLUMN_WIDTH * 2 + COLUMN_GAP;
+    const branchGapLeft = league === "american" ? secondGapLeft : firstGapLeft;
+    const directGapLeft = league === "american" ? firstGapLeft : secondGapLeft;
     const halfGap = COLUMN_GAP / 2;
     const branchMidpoint = branchGapLeft + halfGap;
 
     const branchFromLeft = league === "american";
-    const branchLegLeft = branchFromLeft
-      ? branchGapLeft
-      : branchMidpoint;
-    const branchMiddleLeft = branchFromLeft
-      ? branchMidpoint
-      : branchGapLeft;
+    const branchLegLeft = branchFromLeft ? branchGapLeft : branchMidpoint;
+    const branchMiddleLeft = branchFromLeft ? branchMidpoint : branchGapLeft;
     const worldSeriesLeft =
       league === "american" ? LEAGUE_BOARD_WIDTH : -COLUMN_GAP;
 
@@ -327,18 +357,47 @@ function LeagueBracket({ bracket, league, title, isDark }: {
   );
 }
 
-export function MLBPlayoffBracket({ bracket, loading, refreshing, error, isDark, onRefresh }: Props) {
+export function MLBPlayoffBracket({
+  bracket,
+  loading,
+  refreshing,
+  error,
+  isDark,
+  onRefresh,
+}: Props) {
   const styles = useMemo(() => MLBPlayoffBracketStyles(isDark), [isDark]);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (loading && !bracket) {
-    return <View style={styles.container}><ActivityIndicator color={isDark ? Colors.white : Colors.black} /></View>;
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
   }
 
   if (!bracket) {
-    return <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}><Text style={styles.empty}>{error ?? "No MLB playoff bracket available."}</Text></ScrollView>;
+    return (
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh()}
+          />
+        }
+      >
+        <Text style={styles.empty}>
+          {error ?? "No MLB playoff bracket available."}
+        </Text>
+      </ScrollView>
+    );
   }
 
-  const worldSeries = findSeries(bracket, "world-series", "world-series")[0] ?? {
+  const worldSeries = findSeries(
+    bracket,
+    "world-series",
+    "world-series",
+  )[0] ?? {
     id: "world-series",
     label: "World Series",
     bestOf: 7,
@@ -349,10 +408,24 @@ export function MLBPlayoffBracket({ bracket, loading, refreshing, error, isDark,
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => void onRefresh()}
+        />
+      }
     >
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <LeagueBracket bracket={bracket} league="american" title="American League" isDark={isDark} />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        <LeagueBracket
+          bracket={bracket}
+          league="american"
+          title="American League"
+          isDark={isDark}
+        />
         <View style={{ gap: 12 }}>
           <Text
             accessibilityElementsHidden
@@ -379,7 +452,12 @@ export function MLBPlayoffBracket({ bracket, loading, refreshing, error, isDark,
             </View>
           </View>
         </View>
-        <LeagueBracket bracket={bracket} league="national" title="National League" isDark={isDark} />
+        <LeagueBracket
+          bracket={bracket}
+          league="national"
+          title="National League"
+          isDark={isDark}
+        />
       </ScrollView>
     </ScrollView>
   );
