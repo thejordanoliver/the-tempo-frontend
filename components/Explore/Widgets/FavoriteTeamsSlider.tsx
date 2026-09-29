@@ -63,11 +63,22 @@ export default function FavoriteTeamsSlider({
         <Pressable
           disabled={disabled}
           style={styles.slideButton}
-          onPress={() =>
+          onPress={() => {
+            const route = getFavoriteTeamRoute(item.favorite.league);
+            const teamType = route === "/team/[teamId]"
+              ? null
+              : route.split("/")[2];
+
             router.push({
-              pathname: getFavoriteTeamRoute(item.favorite.league),
-              params: { teamId: item.favorite.id },
-            })
+              pathname: teamType
+                ? "/(tabs)/(explore)/team/[teamType]/[teamId]"
+                : "/(tabs)/(explore)/team/[teamId]",
+              params: {
+                teamId: item.favorite.id,
+                league: item.favorite.league,
+                ...(teamType ? { teamType } : {}),
+              },
+            } as any);
           }
         >
           <LinearGradient

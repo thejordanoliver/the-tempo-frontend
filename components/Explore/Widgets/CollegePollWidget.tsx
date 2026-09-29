@@ -98,10 +98,13 @@ const CollegePollTable = memo(function CollegePollTable({
       if (row.teamId == null) return;
 
       router.push({
-        pathname:
-          league === "cfb" ? "/team/cfb/[teamId]" : "/team/cbb/[teamId]",
-        params: { teamId: String(row.teamId) },
-      });
+        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
+        params: {
+          teamType: league,
+          teamId: String(row.teamId),
+          league,
+        },
+      } as any);
     },
     [league, router],
   );

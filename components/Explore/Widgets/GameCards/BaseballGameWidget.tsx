@@ -36,8 +36,9 @@ export default function BaseballGameWidget({
   const league = isMLB ? "mlb" : isCB ? "cb" : "sb";
   const handlePress = () => {
     router.push({
-      pathname: "/game/baseball/[game]",
+      pathname: "/(tabs)/(explore)/game/[sport]/[game]",
       params: {
+        sport: "baseball",
         game: String(game.id),
         leagueId: String(league),
         data: encodeURIComponent(JSON.stringify(game)),

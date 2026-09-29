@@ -90,7 +90,9 @@ export default function FavoriteGamesWidget({
         emptyTitle={emptyState.title}
         emptyMessage={emptyState.message}
         emptyActionLabel={emptyState.action}
-        onEmptyAction={() => router.push("/edit-favorites")}
+        onEmptyAction={() =>
+          router.push("/(tabs)/(explore)/edit-favorites" as any)
+        }
         {...editProps}
       />
       <FavoriteGamesSettingsModal

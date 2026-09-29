@@ -50,7 +50,7 @@ export default function CreatePostWidget({
   const handleCreatePost = useCallback(() => {
     if (isEditing) return;
     router.push({
-      pathname: "/create-post",
+      pathname: "/(tabs)/(explore)/create-post",
       params: {
         currentUserId: user?.id == null ? undefined : String(user.id),
       },
