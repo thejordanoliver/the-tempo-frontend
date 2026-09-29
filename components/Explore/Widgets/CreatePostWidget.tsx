@@ -54,7 +54,7 @@ export default function CreatePostWidget({
       params: {
         currentUserId: user?.id == null ? undefined : String(user.id),
       },
-    });
+    } as any);
   }, [isEditing, router, user]);
 
   return (

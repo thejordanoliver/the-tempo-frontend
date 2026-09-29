@@ -43,7 +43,7 @@ export default function BaseballGameWidget({
         leagueId: String(league),
         data: encodeURIComponent(JSON.stringify(game)),
       },
-    });
+    } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);

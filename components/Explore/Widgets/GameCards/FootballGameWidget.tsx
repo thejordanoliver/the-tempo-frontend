@@ -49,7 +49,7 @@ export default function FootballGameWidget({
         leagueId: String(league),
         data: encodeURIComponent(JSON.stringify(game)),
       },
-    });
+    } as any);
   };
   const styles = gameWidgetStyles(isDark, height, width);
   const isSmallLayout = isSmallGameWidgetLayout(height, width);
