@@ -98,11 +98,12 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
 
     cardShell: {
       position: "absolute",
-      justifyContent: "center",
+      justifyContent: "space-around",
       paddingHorizontal: 12,
       paddingVertical: 10,
       borderWidth: 1,
       borderRadius: 16,
+      elevation: 5,
     },
 
     finalsShell: {
@@ -235,6 +236,9 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
     },
 
     score: {
+      minWidth: 22,
+      marginLeft: 4,
+
       fontFamily: Fonts.BOLD,
       fontSize: 18,
 
