@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
@@ -8,7 +9,6 @@ import {
 } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   Image,
@@ -71,7 +71,7 @@ export default function PlayersOnCourt({
   state,
 }: Props) {
   const styles = playerOnCourtStyles(isDark);
-  const router = useRouter();
+  const router = useScopedRouter();
   const leagueId = league.toUpperCase();
 
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");

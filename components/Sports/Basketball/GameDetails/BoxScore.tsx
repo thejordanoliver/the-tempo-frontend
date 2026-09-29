@@ -3,7 +3,7 @@ import {
   PlayerStats,
 } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { router } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { BoxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
@@ -267,6 +267,7 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
+  const router = useScopedRouter();
   const styles = BoxScoreStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -371,7 +372,7 @@ export default function BoxScore({
         },
       });
     },
-    [],
+    [router],
   );
 
   const renderTeamBox = ({

@@ -120,22 +120,24 @@ export function CustomHeader({
   const { resolvedColorScheme } = usePreferences();
   const navigation = useNavigation();
   const segments = useSegments();
+  const routeSegments = segments as readonly string[];
   const { width } = useWindowDimensions();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
   const styles = customHeaderStyles(isDark, width);
 
-  const isTabRoute = segments.includes("(tabs)");
+  const isTabRoute = routeSegments.includes("(tabs)");
   const navigationState = navigation.getState();
   const canPopCurrentTabStack =
     isTabRoute &&
+    navigationState != null &&
     navigationState.type === "stack" &&
     navigationState.index > 0;
 
   const handleTabStackBack = useCallback(() => {
     const state = navigation.getState();
 
-    if (!isTabRoute || state.type !== "stack" || state.index <= 0) {
+    if (!isTabRoute || !state || state.type !== "stack" || state.index <= 0) {
       return;
     }
 

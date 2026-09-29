@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
-import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   NHLProps,
@@ -25,7 +25,7 @@ export const TeamRow = ({
   timeouts,
   league,
 }: NHLProps) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
   /* -----------------------------------------------------

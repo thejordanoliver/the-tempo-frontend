@@ -1,6 +1,6 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { Colors, Fonts } from "@/constants/styles";
-import { useRouter } from "expo-router";
 import type { ReactNode } from "react";
 import {
   Image,
@@ -137,7 +137,7 @@ export default function MatchupComparison({
   isDark,
   variant = "spotlight",
 }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = matchupComparisonStyles(isDark);
 
   const leftFighter: FighterViewModel = {

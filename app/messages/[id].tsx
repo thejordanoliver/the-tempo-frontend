@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
@@ -16,8 +17,7 @@ import {
   useFocusEffect,
   useLocalSearchParams,
   useNavigation,
-  useRouter,
-} from "expo-router";
+  } from "expo-router";
 import { useDirectMessages } from "hooks/MessageHooks/useDirectMessages";
 import {
   useCallback,
@@ -191,7 +191,7 @@ const getMessageReceiptLabels = (
 };
 
 export default function ConversationScreen() {
-  const router = useRouter();
+  const router = useScopedRouter();
   const navigation = useNavigation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
 

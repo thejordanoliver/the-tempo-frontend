@@ -1,4 +1,5 @@
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
 import { CustomHeader } from "components/CustomHeader";
@@ -18,7 +19,7 @@ export default function ExplorePage() {
   const [widgetsEditing, setWidgetsEditing] = useState(false);
 
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

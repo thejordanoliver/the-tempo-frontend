@@ -11,7 +11,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import GameLeadersSkeleton from "components/Skeletons/GameDetails/GameLeadersSkeleton";
 import MainScrollTabBar from "components/TabBars/MainTabScrollBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { router } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useEffect, useMemo, useState } from "react";
 import {
   Image,
@@ -398,6 +398,7 @@ export default function GameLeaders({
   loading = false,
   error = false,
 }: Props) {
+  const router = useScopedRouter();
   const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
   const global = globalStyles(isDark);
 

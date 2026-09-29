@@ -1,7 +1,7 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
-import { useRouter } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useMemo } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -39,7 +39,7 @@ export default function CreatePostWidget({
   canMoveUp,
   canMoveDown,
 }: CreatePostWidgetProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { user } = useAuth();
   const compact = size === "small" || width < 240 || height < 260;
   const styles = useMemo(

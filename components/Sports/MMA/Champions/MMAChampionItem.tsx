@@ -1,9 +1,9 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { MMAChampionItemStyles } from "@/styles/MMAChampionsListStyles";
 import type { MMAChampionship } from "@/types/mma/mma";
 import { activeOpacity, Colors } from "constants/styles";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { memo, useCallback } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -54,7 +54,7 @@ function StatItem({ label, value, isDark }: StatItemProps) {
 /* -------------------------------------------------------------------------- */
 
 function MMAChampionItem({ division, champion, isDark }: MMAChampionItemProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = MMAChampionItemStyles(isDark);
 
   const fighter = champion.fighter;

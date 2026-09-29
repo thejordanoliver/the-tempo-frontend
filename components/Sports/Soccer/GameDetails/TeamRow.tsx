@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
-import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   SoccerProps,
@@ -23,7 +23,7 @@ export const TeamRow = ({
   gameStatusDescription,
   league,
 }: SoccerProps) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
   const isScheduled = gameStatusDescription === "Scheduled";

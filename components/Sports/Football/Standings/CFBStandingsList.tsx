@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
@@ -7,7 +8,6 @@ import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import {
   CFBTeamRank,
   useCFBRankings,
@@ -48,7 +48,7 @@ export const CFBStandingsList = () => {
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const styles = StandingsStyles(isDark);
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const [pollMode, setPollMode] = useState<PollMode>("ap");
 

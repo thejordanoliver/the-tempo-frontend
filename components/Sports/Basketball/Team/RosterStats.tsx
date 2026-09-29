@@ -27,7 +27,7 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { router } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
   Image,
@@ -49,6 +49,7 @@ export default function RosterStats({
   onRefresh,
   league = "nba",
 }: RosterStatsComponentProps) {
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);

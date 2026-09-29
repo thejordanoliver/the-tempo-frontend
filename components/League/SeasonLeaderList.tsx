@@ -3,10 +3,11 @@ import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { SeasonLeaderCategory } from "@/types/stats";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
-import { Link } from "expo-router";
+import { Link, useSegments } from "expo-router";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
+import { getTabGroup, scopeHrefToTab } from "utils/tabStackNavigation";
 
 import HeadingTwo from "../Headings/HeadingTwo";
 
@@ -43,6 +44,8 @@ export default function SeasonLeadersList({
   season,
   categories = [],
 }: SeasonLeadersListProps) {
+  const segments = useSegments();
+  const tabGroup = getTabGroup(segments as readonly string[]);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = leadersListStyles(isDark);
@@ -102,14 +105,17 @@ export default function SeasonLeadersList({
             </View>
 
             <Link
-              href={{
-                pathname: "/season-leaders/[league]",
-                params: {
-                  league,
-                  season: String(season),
-                  category: item.shortName || item.categoryName,
+              href={scopeHrefToTab(
+                {
+                  pathname: "/season-leaders/[league]",
+                  params: {
+                    league,
+                    season: String(season),
+                    category: item.shortName || item.categoryName,
+                  },
                 },
-              }}
+                tabGroup,
+              )}
               asChild
             >
               <Pressable

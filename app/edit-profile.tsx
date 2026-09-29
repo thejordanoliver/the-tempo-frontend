@@ -1,8 +1,9 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // screens/EditProfileScreen.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import {
   useCallback,
@@ -184,7 +185,7 @@ const appendLocalImageToFormData = (
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

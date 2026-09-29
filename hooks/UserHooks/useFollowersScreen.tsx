@@ -1,8 +1,9 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // hooks/UserHooks/useFollowersScreen.tsx
 
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import {
   useFollowers,
   type User as FollowersHookUser,
@@ -71,7 +72,7 @@ const getUserSignature = (user: FollowerUser) =>
   ].join("\u0001");
 
 export function useFollowersScreen() {
-  const router = useRouter();
+  const router = useScopedRouter();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";

@@ -1,8 +1,8 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "@/constants/styles";
 import { FavoriteTeamsSliderStyles } from "@/styles/ExploreStyles/FavoriteTeamsSliderStyles";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import {
   Image,
@@ -47,7 +47,7 @@ export default function FavoriteTeamsSlider({
   compact = false,
   disabled = false,
 }: FavoriteTeamsSliderProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = useMemo(
     () => FavoriteTeamsSliderStyles(isDark, compact),
     [compact, isDark],

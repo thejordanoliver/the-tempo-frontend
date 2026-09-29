@@ -94,3 +94,28 @@ test("routes G League team search results to the G League team screen", () => {
     "/(tabs)/(explore)/team/gleague/2",
   );
 });
+
+test("routes players without legacy flags through the Explore stack", () => {
+  const player: PlayerResult = {
+    ...ranking,
+    id: 23,
+    team_id: 7,
+    full_name: "Test Player",
+    headshot_url: null,
+    nickname: null,
+    association_name: null,
+    affiliation: "nba",
+    position: "G",
+    type: "player",
+  };
+
+  assert.deepEqual(getExploreRouteForResult(player), {
+    pathname: "/(tabs)/(explore)/player/[sport]/[id]",
+    params: {
+      sport: "basketball",
+      id: "23",
+      teamId: "7",
+      league: "nba",
+    },
+  });
+});

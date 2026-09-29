@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   Oswald_200ExtraLight,
   Oswald_300Light,
@@ -18,7 +19,7 @@ import {
 } from "@expo-google-fonts/barlow-condensed";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, usePathname, useRouter } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import {
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationLightTheme,
@@ -102,7 +103,7 @@ function AppLayout() {
 
   const isDark = resolvedColorScheme === "dark";
 
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const { user, token, loadingUser } = useAuth();
 

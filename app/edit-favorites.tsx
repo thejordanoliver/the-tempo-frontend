@@ -1,5 +1,6 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import SearchBar from "@/components/Explore/SearchBar";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import {
   useCallback,
   useEffect,
@@ -49,7 +50,7 @@ export default function EditFavoritesScreen() {
   } = useFavoriteTeamsContext();
 
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const { resolvedColorScheme } = usePreferences();
   const { unreadNotificationCount } = useNotifications();

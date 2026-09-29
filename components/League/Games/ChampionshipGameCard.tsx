@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   getNBATeam,
   getNBATeamLogo,
@@ -14,7 +15,6 @@ import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { champGameCardStyles } from "styles/GamecardStyles/ChampionshipGameCardStyles";
 import { formatDate, formatTime, safeDate } from "utils/dateUtils";
@@ -57,7 +57,7 @@ export default function ChampionshipGameCard({
   isMLB = false,
   isNHL = false,
 }: ChampionshipGameCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const { resolvedColorScheme } = usePreferences();
 

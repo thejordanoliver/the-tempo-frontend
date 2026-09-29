@@ -1,4 +1,5 @@
-import { useNavigation, useRouter } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Keyboard, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -24,7 +25,7 @@ const SIGNUP_TITLES = [
 
 export default function LoginScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const styles = formStyles(resolvedColorScheme === "dark");
   const {

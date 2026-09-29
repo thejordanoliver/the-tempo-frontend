@@ -1,16 +1,16 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity, Colors, Fonts } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";
 import { winnerStyle } from "@/utils/games";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
 
 type Props = { match: TennisMatch };
 
 export default function TennisSquareGameCard({ match }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = getStyles(isDark);

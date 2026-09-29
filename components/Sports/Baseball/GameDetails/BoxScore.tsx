@@ -1,7 +1,7 @@
 import { BoxScoreStyles } from "@/styles/GameDetailStyles/BoxScoreStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, globalStyles } from "constants/styles";
-import { router } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType } from "react-native";
 import {
@@ -1131,6 +1131,7 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
+  const router = useScopedRouter();
   const styles = useMemo(() => BoxScoreStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -1320,7 +1321,7 @@ export default function BoxScore({
         },
       });
     },
-    [league],
+    [league, router],
   );
 
   if (resolvedState === "pre" || resolvedState === "scheduled") {

@@ -1,7 +1,7 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors, activeOpacity } from "@/constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useRouter } from "expo-router";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
 import { useState } from "react";
 import {
@@ -19,7 +19,7 @@ type NewsCardProps = {
 };
 
 export default function NewsCard({ content, isDark }: NewsCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { width } = useWindowDimensions();
   const styles = NewsCardStyles(isDark, width);
   const [imageError] = useState(false);

@@ -1,12 +1,13 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Animated, StyleSheet } from "react-native";
 
 export default function DeleteAccountSplashScreen() {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();

@@ -1,7 +1,8 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/Forum/UserHeader.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
-import { useRouter, useSegments } from "expo-router";
+import { useSegments } from "expo-router";
 import { memo, useEffect, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import SafetyActionsModal from "components/SafetyActionsModal";
@@ -178,7 +179,7 @@ export const UserHeader = memo(function UserHeader({
 }: UserHeaderProps) {
   const [submenuVisible, setSubmenuVisible] = useState(false);
 
-  const router = useRouter();
+  const router = useScopedRouter();
   const segments = useSegments();
   const styles = PostItemStyles(isDark);
 
@@ -203,7 +204,7 @@ export const UserHeader = memo(function UserHeader({
       id: String(item.user_id),
     };
 
-    if (segments.includes("(profile)")) {
+    if ((segments as readonly string[]).includes("(profile)")) {
       router.push({
         pathname: "/(tabs)/(profile)/user/[id]",
         params,
@@ -211,7 +212,7 @@ export const UserHeader = memo(function UserHeader({
       return;
     }
 
-    if (segments.includes("(explore)")) {
+    if ((segments as readonly string[]).includes("(explore)")) {
       router.push({
         pathname: "/(tabs)/(explore)/user/[id]",
         params,

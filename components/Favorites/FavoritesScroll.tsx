@@ -1,10 +1,11 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import FavoritesScrollSkeleton from "components/Skeletons/FavoritesScrollSkeleton";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import * as Haptics from "expo-haptics";
-import { type Href, useRouter } from "expo-router";
+import { type Href } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Pressable,
@@ -169,7 +170,7 @@ export default function FavoritesScroll({
   onInteractionEnd,
   isDark,
 }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = useMemo(() => FavoritesScrollStyles(isDark), [isDark]);
 
   const latestReorderIdRef = useRef<Record<FavoriteSection, number>>({
@@ -354,24 +355,43 @@ export default function FavoritesScroll({
     (item: FavoriteItem) => {
       if (item.kind === "league") {
         const config = LEAGUE_CONFIG[item.id];
+        const sport = config.route.split("/").at(-1);
+
+        if (!sport) {
+          return;
+        }
 
         pushOnce({
-          pathname: config.route,
+          pathname: "/(tabs)/(home)/league/[sport]",
           params: {
+            sport,
             league: item.id,
             leagueLabel: config.label,
           },
-        });
+        } as Href);
+        return;
+      }
+
+      const route = getFavoriteTeamRoute(item.league);
+
+      if (route === "/team/[teamId]") {
+        pushOnce({
+          pathname: "/(tabs)/(home)/team/[teamId]",
+          params: {
+            teamId: item.id,
+            league: item.league,
+          },
+        } as Href);
         return;
       }
 
       pushOnce({
-        pathname: getFavoriteTeamRoute(item.league),
+        pathname: `/(tabs)/(home)${route}`,
         params: {
           teamId: item.id,
           league: item.league,
         },
-      });
+      } as unknown as Href);
     },
     [pushOnce],
   );
@@ -556,7 +576,7 @@ export default function FavoritesScroll({
   }, [styles]);
 
   const handleEditFavorites = useCallback(() => {
-    pushOnce("/edit-favorites");
+    pushOnce("/(tabs)/(home)/edit-favorites");
   }, [pushOnce]);
 
   const getItemLayout = useCallback(

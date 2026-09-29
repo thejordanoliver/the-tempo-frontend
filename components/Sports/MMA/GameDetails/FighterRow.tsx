@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
-import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   MMAProps,
@@ -16,7 +16,7 @@ export const FighterRow = ({
   isWinner,
   gameStatusDescription,
 }: MMAProps) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
   const inProgress = gameStatusDescription === "In Progress";

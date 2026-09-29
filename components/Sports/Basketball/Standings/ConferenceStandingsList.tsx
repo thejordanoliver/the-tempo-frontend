@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors, globalStyles } from "constants/styles";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -10,7 +11,6 @@ import {
 } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import {
   FlatList,
   Image,
@@ -69,7 +69,7 @@ export const ConferenceStandingsList = ({
   const isDark = resolvedColorScheme === "dark";
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
-  const router = useRouter();
+  const router = useScopedRouter();
   const { isFavorite } = useFavoriteTeamsContext();
 
   const renderLeftItem = ({

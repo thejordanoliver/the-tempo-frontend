@@ -1,10 +1,10 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { racingCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { getBroadcastDisplay } from "utils/games";
@@ -53,7 +53,7 @@ function getDriverGap(driver: RacingDriver): string | null {
 }
 
 export default function RacingGameCard({ game }: RacingEventCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";

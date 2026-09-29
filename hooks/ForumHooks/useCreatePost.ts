@@ -1,7 +1,7 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { isAxiosError } from "axios";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -65,7 +65,7 @@ export function useCreatePost(destination: ForumPostDestination | null) {
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [poll, setPoll] = useState<ForumPollDraft | null>(null);
 
-  const router = useRouter();
+  const router = useScopedRouter();
   const removingRef = useRef(new Set<string>());
   const { handleBadgeAwards, requestBadgeDataRefresh } =
     useBadgeNotifications();

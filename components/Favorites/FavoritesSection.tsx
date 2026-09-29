@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/Favorites/FavoritesSection.tsx
 
 import Button from "@/components/Buttons/Button";
@@ -22,7 +23,7 @@ import { getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter, useSegments } from "expo-router";
+import { useSegments } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -143,11 +144,12 @@ export default function FavoritesSection({
   isCurrentUser,
   fadeAnim,
 }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const segments = useSegments();
-  const scopedStack = segments.includes("(profile)")
+  const routeSegments = segments as readonly string[];
+  const scopedStack = routeSegments.includes("(profile)")
     ? "profile"
-    : segments.includes("(explore)")
+    : routeSegments.includes("(explore)")
       ? "explore"
       : null;
   const { resolvedColorScheme } = usePreferences();

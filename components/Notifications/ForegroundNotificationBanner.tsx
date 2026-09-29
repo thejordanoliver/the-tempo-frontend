@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
 import { Colors, Fonts, PLACEHOLDER_AVATAR } from "@/constants/styles";
 import {
@@ -21,7 +22,7 @@ import {
   isLiquidGlassAvailable,
 } from "expo-glass-effect";
 import { Image } from "expo-image";
-import { Href, useRouter } from "expo-router";
+import { Href } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,7 +34,7 @@ type Props = {
 export default function ForegroundNotificationBanner({
   preview = false,
 }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const insets = useSafeAreaInsets();
 
   const { resolvedColorScheme } = usePreferences();

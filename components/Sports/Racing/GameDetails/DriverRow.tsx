@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   DriverRowStyles,
@@ -15,7 +15,7 @@ export const DriverRow = ({
   rank,
   isDark,
 }: RacingProps) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = DriverRowStyles(isDark);
 
   const route = "/player/racing/[id]";

@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
@@ -15,7 +16,6 @@ import {
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import {
   type CBBTeamRank,
   useCBBRankings,
@@ -81,7 +81,7 @@ const CollegePollTable = memo(function CollegePollTable({
   onRetry,
   autoPlay,
 }: CollegePollTableProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const compact = size === "small";
   const pageSize = getCollegePollPageSize(size);
   const pages = useMemo(

@@ -1,6 +1,6 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // hooks/useAuth.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { disconnectNotificationSocket } from "services/notificationSocket";
 import { useBadgeNotificationStore } from "store/badgeNotificationStore";
@@ -82,7 +82,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
 };
 
 export function useAuth() {
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);

@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { wcbbTeams } from "@/constants/teamsWCBB";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { teams as nbaTeams } from "constants/teams";
@@ -11,7 +12,6 @@ import { soccerTeams } from "@/constants/teamsSOCC";
 import { sbTeams } from "constants/teamsSB";
 import { wnbaTeams } from "constants/teamsWNBA";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated } from "react-native";
 import {
@@ -53,7 +53,7 @@ export function useFavoriteTeams() {
   const loadRequestId = useRef(0);
   const currentUserIdRef = useRef<number | null>(null);
   const hasLoadedFavoritesRef = useRef(false);
-  const router = useRouter();
+  const router = useScopedRouter();
   const { refreshTeamSubscriptions } = useNotifications();
   const favoriteSportsState = useFavoriteSports(userId);
   const { clearFavoriteSports } = favoriteSportsState;

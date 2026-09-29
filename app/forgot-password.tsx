@@ -1,12 +1,13 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "components/CustomHeader";
 import ForgotPasswordForm from "components/Forms/ForgotPasswordForm";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useForgotPasswordForm } from "hooks/UserHooks/useForgotPasswordForm";
 import { useCallback, useLayoutEffect } from "react";
 
 export default function ForgotPasswordScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const returnToLogin = useCallback(() => router.replace("/login"), [router]);
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();

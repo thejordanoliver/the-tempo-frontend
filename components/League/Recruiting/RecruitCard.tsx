@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFB/RecruitCard.tsx
 import { getCBBTeamLogo } from "@/constants/teamsCBB";
 import { RecruitPredictedSchool } from "@/hooks/RecruitHooks/useAllRecruits";
@@ -8,7 +9,6 @@ import { getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -79,7 +79,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => recruitCardStyles(isDark), [isDark]);
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const sortedPredictions = useMemo(
     () => getSortedPredictions(recruit.predicted_schools),

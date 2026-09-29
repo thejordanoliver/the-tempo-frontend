@@ -1,7 +1,8 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useForum } from "@/hooks/ForumHooks/useForum";
 import ConfirmModal from "components/ConfirmModal";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useImagePreviewStore } from "store/imagePreviewStore";
 import type { ForumAlertConfig, UseForumOptions } from "types/forum";
@@ -18,7 +19,7 @@ export default function ForumFeed({
   scrollEnabled = true,
   showCreateButton = true,
 }: ForumFeedProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const setGlobalImage = useImagePreviewStore((state) => state.setImages);

@@ -1,4 +1,4 @@
-import type { ResultItem } from "types/explore";
+import type { ResultItem, SearchAffiliation } from "types/explore";
 
 export type ExploreRoute =
   | string
@@ -93,6 +93,20 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   },
 ];
 
+const PLAYER_SPORT_BY_AFFILIATION: Record<SearchAffiliation, string> = {
+  nba: "basketball",
+  gleague: "basketball",
+  wnba: "basketball",
+  cbb: "basketball",
+  wcbb: "basketball",
+  mlb: "baseball",
+  nfl: "football",
+  cfb: "football",
+  nhl: "hockey",
+  mma: "mma",
+  soccer: "soccer",
+};
+
 export function getExploreRouteForResult(
   item: ResultItem,
 ): ExploreRoute {
@@ -154,8 +168,9 @@ export function getExploreRouteForResult(
   }
 
   return {
-    pathname: "/player/[id]",
+    pathname: "/(tabs)/(explore)/player/[sport]/[id]",
     params: {
+      sport: PLAYER_SPORT_BY_AFFILIATION[item.affiliation],
       id: String(item.id),
       teamId: String(item.team_id ?? ""),
       league: item.affiliation,

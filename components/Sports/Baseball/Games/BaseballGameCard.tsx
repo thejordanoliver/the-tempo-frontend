@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -12,7 +13,6 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
@@ -20,7 +20,7 @@ import { getBroadcastDisplay, winnerStyle } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
 function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {

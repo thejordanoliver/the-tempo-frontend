@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
 import { useEffect, useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -21,7 +21,7 @@ const REDUCED_MOTION_DURATION_MS = 1400;
 const EXIT_DURATION_MS = 280;
 
 export default function SignupSuccessScreen() {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const reducedMotion = useReducedMotion();
   const isDark = resolvedColorScheme === "dark";

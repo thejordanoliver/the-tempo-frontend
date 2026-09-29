@@ -1,5 +1,6 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType, ListRenderItem } from "react-native";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
@@ -14,7 +15,7 @@ import { LeagueType } from "types/types";
 
 export default function LeagueScreen() {
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = LeagueScreenStyles(isDark);

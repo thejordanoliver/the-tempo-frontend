@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -6,7 +7,6 @@ import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import {
   type CBRankPoll,
   type CBTeamRank,
@@ -86,7 +86,7 @@ export const CBStandingsList = ({ league }: Props) => {
   const [pollMode, setPollMode] = useState("d1BaseballPoll");
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
 

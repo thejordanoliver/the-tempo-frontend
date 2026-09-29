@@ -1,9 +1,10 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useRouter, useSegments } from "expo-router";
+import { useSegments } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import {
@@ -175,7 +176,7 @@ export const CommentItem = ({
   isLast,
 }: ForumCommentItemProps) => {
   const styles = useMemo(() => CommentItemStyles(isDark), [isDark]);
-  const router = useRouter();
+  const router = useScopedRouter();
   const segments = useSegments();
 
   const commentText = comment.text ?? "";
@@ -322,7 +323,7 @@ export const CommentItem = ({
       id: String(comment.user_id),
     };
 
-    if (segments.includes("(profile)")) {
+    if ((segments as readonly string[]).includes("(profile)")) {
       router.push({
         pathname: "/(tabs)/(profile)/user/[id]",
         params,
@@ -330,7 +331,7 @@ export const CommentItem = ({
       return;
     }
 
-    if (segments.includes("(explore)")) {
+    if ((segments as readonly string[]).includes("(explore)")) {
       router.push({
         pathname: "/(tabs)/(explore)/user/[id]",
         params,

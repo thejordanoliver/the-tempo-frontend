@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
@@ -17,7 +18,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
 import { Image } from "expo-image";
-import { Href, useNavigation, useRouter } from "expo-router";
+import { Href, useNavigation } from "expo-router";
 import {
   memo,
   useCallback,
@@ -256,7 +257,7 @@ export default function NotificationsCenter() {
   const styles = NotificationsCenterStyles(isDark);
 
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const visibleNotifications = useMemo(
     () =>

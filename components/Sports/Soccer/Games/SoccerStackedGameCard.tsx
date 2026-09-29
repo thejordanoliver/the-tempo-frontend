@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import {
@@ -8,13 +9,12 @@ import {
 } from "@/utils/dateUtils";
 import { activeOpacity } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 import { SoccerGameCardProps } from "../../../../types/soccer/soccer";
 
 export default function SoccerStackedGameCard({ game }: SoccerGameCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 

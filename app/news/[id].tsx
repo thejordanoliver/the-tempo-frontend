@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import AppVideo from "@/components/AppVideo";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -5,7 +6,7 @@ import NewsArticleSkeleton from "components/Skeletons/NewsArticleSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useArticle } from "hooks/NewsHooks/useArticle";
 import type { ArticleStoryLinkTarget } from "hooks/NewsHooks/useArticle";
 import { useLayoutEffect, useState } from "react";
@@ -30,7 +31,7 @@ export default function ArticleScreen() {
   const global = globalStyles(isDark);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const newsId = Array.isArray(id) ? id[0] : id;
   const { article, loading, error } = useArticle(newsId);
 

@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { getWCBBTeam } from "@/constants/teamsWCBB";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
@@ -9,7 +10,6 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
 import { LeagueType } from "types/types";
@@ -63,7 +63,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
   statNumber,
   league = "nba",
 }) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = playerCardStyles(isDark);

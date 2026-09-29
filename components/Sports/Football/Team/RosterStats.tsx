@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   FootballLeaderConfig,
@@ -26,7 +27,6 @@ import { formatStatValue } from "@/utils/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   Image,
@@ -53,7 +53,7 @@ export default function RosterStats({
   const isDark = resolvedColorScheme === "dark";
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
-  const router = useRouter();
+  const router = useScopedRouter();
   const roster = useMemo(
     () => getPlayersFromRosterStats(rosterStats),
     [rosterStats],

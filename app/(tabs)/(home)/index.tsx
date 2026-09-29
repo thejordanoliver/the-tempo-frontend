@@ -1,4 +1,5 @@
-import { router, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback, useRef } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import PagerView from "react-native-pager-view";
@@ -18,6 +19,7 @@ import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { homeStyles } from "styles/HomeStyles/HomeStyles";
 
 export default function HomeScreen() {
+  const router = useScopedRouter();
   const { resolvedColorScheme, viewMode } = usePreferences();
   const { unreadNotificationCount } = useNotifications();
 
@@ -83,6 +85,7 @@ export default function HomeScreen() {
     handleHeaderTabPress,
     homeTabScrollProgress,
     navigation,
+    router,
     selectedTab,
     unreadNotificationCount,
   ]);

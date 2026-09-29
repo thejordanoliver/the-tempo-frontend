@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
+import {
+  getTabGroup,
+  scopeHrefToTab,
+} from "../utils/tabStackNavigation";
 
 const root = process.cwd();
 
@@ -107,3 +111,38 @@ expectRoutes("Profile exposes every reusable detail-screen family", [
   "app/(tabs)/(profile)/team/[teamType]/[teamId].tsx",
   "app/(tabs)/(profile)/user/[id].tsx",
 ]);
+
+test("unqualified detail routes stay inside their active tab stack", () => {
+  assert.equal(
+    scopeHrefToTab("/team/nfl/12", "(league)"),
+    "/(tabs)/(league)/team/nfl/12",
+  );
+
+  assert.deepEqual(
+    scopeHrefToTab(
+      {
+        pathname: "/player/football/[id]",
+        params: { id: "42", league: "nfl" },
+      },
+      "(profile)",
+    ),
+    {
+      pathname: "/(tabs)/(profile)/player/football/[id]",
+      params: { id: "42", league: "nfl" },
+    },
+  );
+});
+
+test("tab roots, auth routes, and qualified routes are not rewritten", () => {
+  assert.equal(scopeHrefToTab("/profile", "(home)"), "/profile");
+  assert.equal(scopeHrefToTab("/login", "(profile)"), "/login");
+  assert.equal(
+    scopeHrefToTab("/(tabs)/(explore)/game/football/1", "(home)"),
+    "/(tabs)/(explore)/game/football/1",
+  );
+});
+
+test("the active group is derived from route segments", () => {
+  assert.equal(getTabGroup(["(tabs)", "(explore)", "player"]), "(explore)");
+  assert.equal(getTabGroup(["login"]), null);
+});

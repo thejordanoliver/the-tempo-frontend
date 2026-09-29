@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
@@ -8,7 +9,6 @@ import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import {
@@ -27,7 +27,7 @@ export default function BasketballGameCard({
   isWNBA,
   isGLEAGUE,
 }: BasketballGameCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {

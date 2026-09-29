@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/Forum/Interactions.tsx
 import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
 import { PostItemStyles } from "@/styles/ForumStyles/PostItemStyles";
@@ -6,7 +7,6 @@ import { isAxiosError } from "axios";
 import ConfirmModal from "components/ConfirmModal";
 import { Colors } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useRouter } from "expo-router";
 import { memo, useEffect, useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useLikesStore } from "store/useLikesStore";
@@ -59,7 +59,7 @@ export const Interactions = memo(function Interactions({
   const { likes, setLike } = useLikesStore();
   const { handleBadgeAwards } = useBadgeNotifications();
 
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = PostItemStyles(isDark);
 
   /* ------------------------------------------------------------------------ */

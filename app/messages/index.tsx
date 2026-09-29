@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import MessageList from "components/Messages/MessageList";
 import NewMessageModal, {
@@ -5,7 +6,7 @@ import NewMessageModal, {
 } from "components/Messages/NewMessageModal";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useConversations } from "hooks/MessageHooks/useConversations";
 import {
   useCallback,
@@ -19,7 +20,7 @@ import type { UserSearchResult } from "services/usersApi";
 import type { MessageItem } from "types/messages";
 
 export default function MessageListScreen() {
-  const router = useRouter();
+  const router = useScopedRouter();
   const navigation = useNavigation();
 
   const { resolvedColorScheme } = usePreferences();

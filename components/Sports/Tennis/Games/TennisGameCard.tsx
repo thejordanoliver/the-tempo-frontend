@@ -1,9 +1,9 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { formatDate, formatTime, safeDate } from "@/utils/dateUtils";
 import { winnerStyle } from "@/utils/games";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import type { TennisCompetitor, TennisMatch } from "types/tennis/tennis";
@@ -42,7 +42,7 @@ function FlagStack({
 }
 
 export default function TennisGameCard({ match }: Props) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = gameCardStyles(isDark);

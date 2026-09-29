@@ -1,15 +1,15 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { RacingDriver, RacingEventCardProps } from "@/types/racing/racing";
 import { Ionicons } from "@expo/vector-icons";
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getBroadcastDisplay } from "utils/games";
 
 export default function RacingSquareGameCard({ game }: RacingEventCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 

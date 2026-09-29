@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { stackedGameCardStyles } from "@/styles/GamecardStyles/StackedGameCardStyles";
 import { HockeyGameCardProps } from "@/types/hockey/hockey";
 import {
@@ -10,13 +11,12 @@ import { activeOpacity } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 function HockeyStackedGameCard({ game, isNHL, isMCH }: HockeyGameCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {

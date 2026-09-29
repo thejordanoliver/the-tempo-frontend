@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
-import { useRouter } from "expo-router";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { EXPLORE_WIDGET_LEAGUES } from "types/widgets";
 import type { ExploreWidgetLeague, ExploreWidgetSize } from "types/widgets";
@@ -39,7 +39,7 @@ export default function FavoriteGamesWidget({
   onChangeAutoPlay,
   ...editProps
 }: FavoriteGamesWidgetProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { favorites } = useFavoriteTeamsContext();
   const [settingsVisible, setSettingsVisible] = useState(false);
   const favoriteLeagues = useMemo(

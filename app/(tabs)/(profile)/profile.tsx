@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // profile.tsx
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import BadgePreviewSection from "@/components/Profile/Badges/BadgePreviewSection";
@@ -6,7 +7,7 @@ import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
 import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation, useRouter } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import ConfirmModal from "components/ConfirmModal";
@@ -69,7 +70,7 @@ export default function ProfileScreen() {
   const itemWidth = availableWidth / numColumns;
   const { logout } = useAuth();
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const [fadeAnim] = useState(() => new Animated.Value(1));
   const hasLoadedProfileRef = useRef(false);
   const lastLoadedUserIdRef = useRef<number | null>(null);

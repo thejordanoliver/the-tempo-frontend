@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -20,7 +21,6 @@ import {
 } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   FlatList,
@@ -41,7 +41,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     useCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();

@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
@@ -5,7 +6,7 @@ import TextInputComponent from "components/TextInput";
 import { Colors } from "constants/styles";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation, useRouter } from "expo-router";
+import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
@@ -24,7 +25,7 @@ export default function SettingsScreen() {
   const isDark = resolvedColorScheme === "dark";
   const { clearFavorites } = useFavoriteTeamsContext();
   const { deleteAccount, logout } = useAuth();
-  const router = useRouter();
+  const router = useScopedRouter();
   const navigation = useNavigation();
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
   const [pendingAlertConfig, setPendingAlertConfig] =

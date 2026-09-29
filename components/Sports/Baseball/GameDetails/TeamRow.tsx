@@ -1,5 +1,5 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
-import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   BaseballProps,
@@ -20,7 +20,7 @@ export const TeamRow = ({
   gameStatusDescription,
   state,
 }: BaseballProps) => {
-  const router = useRouter();
+  const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
   const inProgress = state === "in";

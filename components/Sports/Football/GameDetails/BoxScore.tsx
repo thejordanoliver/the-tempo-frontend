@@ -5,7 +5,7 @@ import type {
 import HeadingTwo from "components/Headings/HeadingTwo";
 import BoxScoreSkeleton from "components/Skeletons/GameDetails/BoxScoreSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
-import { router } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo, useState } from "react";
 import {
   Image,
@@ -94,6 +94,7 @@ export default function BoxScore({
   isLoading = false,
   isError = false,
 }: Props) {
+  const router = useScopedRouter();
   const styles = useMemo(() => BoxScoreStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
@@ -147,7 +148,7 @@ export default function BoxScore({
         },
       });
     },
-    [league],
+    [league, router],
   );
 
   const toggleTeam = useCallback((teamKey: "away" | "home") => {

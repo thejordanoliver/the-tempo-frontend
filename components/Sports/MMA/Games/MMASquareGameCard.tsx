@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { MMAFightCardProps } from "@/types/mma/mma";
 import {
@@ -9,13 +10,12 @@ import {
 import placeholderImage from "assets/Placeholders/playerPlaceholder.png";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 
 export default function MMASquareGameCard({ game }: MMAFightCardProps) {
-  const router = useRouter();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {

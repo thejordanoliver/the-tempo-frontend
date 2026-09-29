@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import placeholder from "@/assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity, globalStyles } from "@/constants/styles";
 import { getNBATeam } from "@/constants/teams";
@@ -11,7 +12,6 @@ import { getWNBATeam } from "@/constants/teamsWNBA";
 import { SeasonLeadersTableStyles } from "@/styles/LeagueStyles/SeasonLeadersTableStyles";
 import { PlayerLeader, SeasonLeaderColumn } from "@/types/stats";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
@@ -93,7 +93,7 @@ export default function SeasonLeadersTable({
   const styles = useMemo(() => SeasonLeadersTableStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const openPlayer = useCallback(
     (item: PlayerLeader) => {

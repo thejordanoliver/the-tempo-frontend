@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import SafetyActionsModal from "@/components/SafetyActionsModal";
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
@@ -13,7 +14,7 @@ import ProfileBanner from "components/Profile/ProfileBanner";
 import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
@@ -34,7 +35,7 @@ export default function UserProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
   const { width: screenWidth } = useWindowDimensions();
   const numColumns = 3;
   const horizontalPadding = 24;

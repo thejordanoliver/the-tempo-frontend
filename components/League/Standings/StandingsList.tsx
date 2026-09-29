@@ -1,3 +1,4 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 // components/StandingsList.tsx
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { getUFLTeam } from "@/constants/teamsUFL";
@@ -14,7 +15,6 @@ import {
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
 import {
   ConferenceStandings,
   StandingsTeam,
@@ -206,7 +206,7 @@ export const StandingsList = ({
   const isDark = resolvedColorScheme === "dark";
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
-  const router = useRouter();
+  const router = useScopedRouter();
 
   const [sortMode, setSortMode] = useState<"conference" | "division">(
     "conference",

@@ -1,8 +1,9 @@
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import {
@@ -105,7 +106,7 @@ export default function CreatePostScreen() {
   const { user } = useAuth();
   const { allTeams } = useFavoriteTeamsContext();
   const navigation = useNavigation();
-  const router = useRouter();
+  const router = useScopedRouter();
 
   // ─────────────────────────────────────────────────────────────────────────
   // STATE
