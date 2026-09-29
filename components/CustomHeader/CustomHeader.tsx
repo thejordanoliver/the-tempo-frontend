@@ -17,6 +17,7 @@ import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigation, useSegments } from "expo-router";
 import { HeaderTitle } from "expo-router/react-navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -117,10 +118,40 @@ export function CustomHeader({
   editFavoritesSelectedTab = "teams",
 }: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
+  const navigation = useNavigation();
+  const segments = useSegments();
   const { width } = useWindowDimensions();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
   const styles = customHeaderStyles(isDark, width);
+
+  const isTabRoute = segments.includes("(tabs)");
+  const navigationState = navigation.getState();
+  const canPopCurrentTabStack =
+    isTabRoute &&
+    navigationState.type === "stack" &&
+    navigationState.index > 0;
+
+  const handleTabStackBack = useCallback(() => {
+    const state = navigation.getState();
+
+    if (!isTabRoute || state.type !== "stack" || state.index <= 0) {
+      return;
+    }
+
+    navigation.dispatch({
+      type: "POP",
+      payload: { count: 1 },
+      source: state.routes[state.index]?.key,
+      target: state.key,
+    });
+  }, [isTabRoute, navigation]);
+
+  const resolvedOnBack = isTabRoute
+    ? canPopCurrentTabStack
+      ? handleTabStackBack
+      : undefined
+    : onBack;
 
   const [profileMenuVisible, setProfileMenuVisible] = useState(false);
   const [notificationsMenuVisible, setNotificationsMenuVisible] =
@@ -428,7 +459,7 @@ export function CustomHeader({
         <HeaderLeftActions
           tabName={tabName}
           showBackButton={showBackButton}
-          onBack={onBack}
+          onBack={resolvedOnBack}
           onAddWidget={onAddWidget}
           onToggleWidgetEditing={onToggleWidgetEditing}
           isWidgetEditing={isWidgetEditing}
