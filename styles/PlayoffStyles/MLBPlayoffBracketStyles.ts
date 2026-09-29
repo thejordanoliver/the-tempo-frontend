@@ -47,12 +47,13 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     matchup: {
-      borderRadius: 14,
+      borderRadius: 16,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       backgroundColor: isDark
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
+      elevation: 5,
       overflow: "hidden",
     },
     seriesLabel: {
@@ -64,32 +65,51 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
     },
     teamRow: {
       minHeight: 48,
-      paddingHorizontal: 10,
+      paddingHorizontal: 12,
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: 4,
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
-    winnerRow: { backgroundColor: isDark ? "#26342b" : "#e9f6ed" },
     seed: {
-      width: 18,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      width: 20,
+      color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
-      fontSize: 13,
+      fontSize: 18,
       textAlign: "center",
     },
-    logo: { width: 26, height: 26 },
+    logo: {
+      width: 34,
+      height: 34,
+    },
+    logoPlaceholder: {
+      width: 34,
+      height: 34,
+    },
     teamName: {
       flex: 1,
-      color: isDark ? Colors.white : Colors.black,
-      fontFamily: Fonts.MEDIUM,
-      fontSize: 14,
-    },
-    wins: {
+      marginLeft: 4,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
-      fontSize: 16,
+      fontSize: 18,
+    },
+    winsBadge: {
+      minWidth: 30,
+      height: 30,
+      paddingHorizontal: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 100,
+      backgroundColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
+    },
+    winsText: {
+      color: isDark ? Colors.white : Colors.black,
+      fontFamily: Fonts.BOLD,
+      fontSize: 14,
+      textAlign: "center",
     },
     empty: {
       padding: 24,
