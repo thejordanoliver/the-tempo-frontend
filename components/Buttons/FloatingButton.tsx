@@ -59,7 +59,7 @@ const FloatingButtonStyles = (isDark: boolean) =>
     floatingButtonWrapper: {
       position: "absolute",
       right: 0,
-      bottom: 100,
+      bottom: 20,
       left: 0,
       zIndex: 999,
       alignItems: "flex-end",
