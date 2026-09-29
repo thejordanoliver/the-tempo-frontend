@@ -71,6 +71,10 @@ test("user recent-search identity remains globally keyed by user id", () => {
   };
 
   assert.equal(getExploreResultIdentity(user), "user:42");
+  assert.equal(
+    getExploreRouteForResult(user),
+    "/(tabs)/(explore)/user/42",
+  );
 });
 
 test("routes G League team search results to the G League team screen", () => {
@@ -85,5 +89,8 @@ test("routes G League team search results to the G League team screen", () => {
   };
 
   assert.equal(getExploreResultIdentity(team), "team:gleague:2");
-  assert.equal(getExploreRouteForResult(team), "/team/gleague/2");
+  assert.equal(
+    getExploreRouteForResult(team),
+    "/(tabs)/(explore)/team/gleague/2",
+  );
 });

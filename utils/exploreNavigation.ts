@@ -9,7 +9,7 @@ export type ExploreRoute =
 
 type TeamLeagueRoute = {
   flag: keyof Extract<ResultItem, { type: "team" }>;
-  routePrefix: string;
+  teamType: string;
   includeLeagueParam?: boolean;
 };
 
@@ -20,22 +20,19 @@ type PlayerLeagueRoute = {
 };
 
 const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
-  { flag: "isNFL", routePrefix: "/team/nfl" },
-  { flag: "isGLEAGUE", routePrefix: "/team/gleague" },
-  { flag: "isMLB", routePrefix: "/team/mlb" },
-  { flag: "isWNBA", routePrefix: "/team/wnba" },
-  { flag: "isNHL", routePrefix: "/team/nhl" },
-  { flag: "isCFB", routePrefix: "/team/cfb" },
-  { flag: "isCBB", routePrefix: "/team/cbb" },
+  { flag: "isNFL", teamType: "nfl" },
+  { flag: "isGLEAGUE", teamType: "gleague" },
+  { flag: "isMLB", teamType: "mlb" },
+  { flag: "isWNBA", teamType: "wnba" },
+  { flag: "isNHL", teamType: "nhl" },
+  { flag: "isCFB", teamType: "cfb" },
+  { flag: "isCBB", teamType: "cbb" },
   {
     flag: "isSOCC",
-    routePrefix: "/team/soccer",
+    teamType: "soccer",
     includeLeagueParam: true,
   },
-  {
-    flag: "isWCBB",
-    routePrefix: "/team/wcbb",
-  },
+  { flag: "isWCBB", teamType: "wcbb" },
 ];
 
 const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
@@ -100,7 +97,7 @@ export function getExploreRouteForResult(
   item: ResultItem,
 ): ExploreRoute {
   if (item.type === "user") {
-    return `/user/${item.id}`;
+    return `/(tabs)/(explore)/user/${item.id}`;
   }
 
   if (item.type === "team") {
@@ -109,22 +106,23 @@ export function getExploreRouteForResult(
     );
 
     if (!teamRoute) {
-      return `/team/${item.id}`;
+      return `/(tabs)/(explore)/team/${item.id}`;
     }
 
     const routeId = item.id;
 
     if (teamRoute.includeLeagueParam) {
       return {
-        pathname: `${teamRoute.routePrefix}/[id]`,
+        pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
         params: {
-          id: String(routeId),
+          teamType: teamRoute.teamType,
+          teamId: String(routeId),
           league: String(item.league ?? "socc"),
         },
       };
     }
 
-    return `${teamRoute.routePrefix}/${routeId}`;
+    return `/(tabs)/(explore)/team/${teamRoute.teamType}/${routeId}`;
   }
 
   if (item.isCBB || item.isWCBB) {

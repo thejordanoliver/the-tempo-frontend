@@ -3,7 +3,7 @@ import ConfirmModal from "components/ConfirmModal";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import {
@@ -176,6 +176,7 @@ export const CommentItem = ({
 }: ForumCommentItemProps) => {
   const styles = useMemo(() => CommentItemStyles(isDark), [isDark]);
   const router = useRouter();
+  const segments = useSegments();
 
   const commentText = comment.text ?? "";
   const hasText = commentText.trim().length > 0;
@@ -317,9 +318,29 @@ export const CommentItem = ({
   const handleOpenUser = () => {
     if (isEditing) return;
 
+    const params = {
+      id: String(comment.user_id),
+    };
+
+    if (segments.includes("(profile)")) {
+      router.push({
+        pathname: "/(tabs)/(profile)/user/[id]",
+        params,
+      } as any);
+      return;
+    }
+
+    if (segments.includes("(explore)")) {
+      router.push({
+        pathname: "/(tabs)/(explore)/user/[id]",
+        params,
+      } as any);
+      return;
+    }
+
     router.push({
       pathname: "/user/[id]",
-      params: { id: String(comment.user_id) },
+      params,
     });
   };
 

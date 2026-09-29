@@ -22,7 +22,7 @@ import { getSBTeamLogo } from "constants/teamsSB";
 import { getWNBATeamLogo } from "constants/teamsWNBA";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useRouter } from "expo-router";
+import { useRouter, useSegments } from "expo-router";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -144,6 +144,12 @@ export default function FavoritesSection({
   fadeAnim,
 }: Props) {
   const router = useRouter();
+  const segments = useSegments();
+  const scopedStack = segments.includes("(profile)")
+    ? "profile"
+    : segments.includes("(explore)")
+      ? "explore"
+      : null;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = FavoritesSectionStyles(isDark, itemWidth);
@@ -152,7 +158,6 @@ export default function FavoritesSection({
     previewTeam,
     setModalVisible,
     handleLongPress,
-    handleGoToTeam,
     handleRemoveFavorite,
     toggleFavoriteSport,
   } = useFavoriteTeamsContext();
@@ -223,6 +228,108 @@ export default function FavoritesSection({
     }));
   }, []);
 
+  const navigateToSport = useCallback(
+    (sport: FavoriteSportId) => {
+      const config = LEAGUE_CONFIG[sport];
+      const sportRoute = config.route.split("/").at(-1);
+
+      if (!sportRoute) {
+        return;
+      }
+
+      if (scopedStack === "profile") {
+        router.push({
+          pathname: "/(tabs)/(profile)/league/[sport]",
+          params: {
+            sport: sportRoute,
+            league: sport,
+            leagueLabel: config.label,
+          },
+        } as any);
+        return;
+      }
+
+      if (scopedStack === "explore") {
+        router.push({
+          pathname: "/(tabs)/(explore)/league/[sport]",
+          params: {
+            sport: sportRoute,
+            league: sport,
+            leagueLabel: config.label,
+          },
+        } as any);
+        return;
+      }
+
+      router.push({
+        pathname: config.route,
+        params: {
+          league: sport,
+          leagueLabel: config.label,
+        },
+      });
+    },
+    [router, scopedStack],
+  );
+
+  const navigateToTeam = useCallback(
+    (team: Team) => {
+      const id = team.id;
+      const { league } = team;
+
+      if (!isFavoriteLeague(league)) {
+        console.warn(`Unsupported favorite league: ${league}`);
+        return;
+      }
+
+      const route = getFavoriteTeamRoute(league);
+
+      if (!scopedStack) {
+        router.push({
+          pathname: route,
+          params: {
+            teamId: String(id),
+            league,
+          },
+        });
+        return;
+      }
+
+      if (route === "/team/[teamId]") {
+        router.push({
+          pathname:
+            scopedStack === "profile"
+              ? "/(tabs)/(profile)/team/[teamId]"
+              : "/(tabs)/(explore)/team/[teamId]",
+          params: {
+            teamId: String(id),
+            league,
+          },
+        } as any);
+        return;
+      }
+
+      const teamType = route.split("/")[2];
+
+      if (!teamType) {
+        return;
+      }
+
+      router.push({
+        pathname:
+          scopedStack === "profile"
+            ? "/(tabs)/(profile)/team/[teamType]/[teamId]"
+            : "/(tabs)/(explore)/team/[teamType]/[teamId]",
+        params: {
+          teamType,
+          teamId: String(id),
+          league,
+        },
+      } as any);
+    },
+    [router, scopedStack],
+  );
+
   const renderSport = (sport: FavoriteSportId) => {
     const config = LEAGUE_CONFIG[sport];
 
@@ -237,15 +344,7 @@ export default function FavoritesSection({
           setModalVisible(true);
           requestAnimationFrame(() => previewSheetRef.current?.present());
         }}
-        onPress={() => {
-          router.push({
-            pathname: config.route,
-            params: {
-              league: sport,
-              leagueLabel: config.label,
-            },
-          });
-        }}
+        onPress={() => navigateToSport(sport)}
         style={({ pressed }) => [
           pressed && styles.pressed,
           styles.gridItem,
@@ -298,20 +397,7 @@ export default function FavoritesSection({
             backgroundColor: teamBackgroundColor,
           },
         ]}
-        onPress={() => {
-          if (!isFavoriteLeague(league)) {
-            console.warn(`Unsupported favorite league: ${league}`);
-            return;
-          }
-
-          router.push({
-            pathname: getFavoriteTeamRoute(league),
-            params: {
-              teamId: String(id),
-              league,
-            },
-          });
-        }}
+        onPress={() => navigateToTeam(team)}
       >
         {showLeagueBadge && (
           <View
@@ -375,15 +461,8 @@ export default function FavoritesSection({
         }}
         onGo={() => {
           if (previewSport) {
-            const config = LEAGUE_CONFIG[previewSport];
             previewSheetRef.current?.dismiss();
-            router.push({
-              pathname: config.route,
-              params: {
-                league: previewSport,
-                leagueLabel: config.label,
-              },
-            });
+            navigateToSport(previewSport);
             setModalVisible(false);
             setPreviewSport(null);
             return;
@@ -391,7 +470,8 @@ export default function FavoritesSection({
 
           if (previewTeam) {
             previewSheetRef.current?.dismiss();
-            handleGoToTeam();
+            navigateToTeam(previewTeam);
+            setModalVisible(false);
           }
         }}
         onRemove={() => {

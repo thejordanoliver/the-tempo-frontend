@@ -77,13 +77,20 @@ export default function LeagueScreen() {
     (league: LeagueType) => {
       const config = LEAGUE_CONFIG[league];
 
+      const sport = config.route.split("/").at(-1);
+
+      if (!sport) {
+        return;
+      }
+
       router.push({
-        pathname: config.route,
+        pathname: "/(tabs)/(league)/league/[sport]",
         params: {
+          sport,
           league,
           leagueLabel: config.label,
         },
-      });
+      } as any);
     },
     [router],
   );
