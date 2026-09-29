@@ -210,7 +210,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
       width: CARD_WIDTH,
       height: CARD_HEIGHT,
       justifyContent: "space-around",
-      paddingHorizontal: 10,
+      paddingHorizontal: 12,
       paddingVertical: 10,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
@@ -351,17 +351,17 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     seedContainer: {
-      width: 22,
+      width: 20,
       alignItems: "center",
     },
 
     seedPlaceholder: {
-      width: 22,
+      width: 20,
     },
 
     seedText: {
       color: Colors.midTone,
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
@@ -373,16 +373,16 @@ export const CFPBracketStyles = (isDark: boolean) =>
     */
 
     teamLogo: {
-      width: 30,
-      height: 30,
-      marginRight: 8,
+      width: 34,
+      height: 34,
+      marginRight: 4,
     },
 
     logoPlaceholder: {
-      width: 30,
-      height: 30,
-      marginRight: 8,
-      borderRadius: 15,
+      width: 34,
+      height: 34,
+      marginRight: 4,
+      borderRadius: 17,
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
 
@@ -396,7 +396,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
       flex: 1,
       marginRight: 6,
       color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: Fonts.BOLD,
     },
 
@@ -404,7 +404,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
       flex: 1,
       marginRight: 6,
       color: Colors.midTone,
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: Fonts.BOLD,
     },
 
@@ -413,6 +413,18 @@ export const CFPBracketStyles = (isDark: boolean) =>
     | Score
     |--------------------------------------------------------------------------
     */
+
+    winsBadge: {
+      minWidth: 30,
+      height: 30,
+      paddingHorizontal: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 100,
+      backgroundColor: isDark
+        ? Colors.transparentDarkGray
+        : Colors.transparentLightGray,
+    },
 
     score: {
       minWidth: 22,
@@ -428,7 +440,7 @@ export const CFPBracketStyles = (isDark: boolean) =>
       marginLeft: 4,
       color: Colors.midTone,
       fontSize: 18,
-      fontFamily: Fonts.REGULAR,
+      fontFamily: Fonts.BOLD,
       textAlign: "center",
     },
 
