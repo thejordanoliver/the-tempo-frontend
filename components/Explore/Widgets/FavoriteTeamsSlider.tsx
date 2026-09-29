@@ -65,9 +65,8 @@ export default function FavoriteTeamsSlider({
           style={styles.slideButton}
           onPress={() => {
             const route = getFavoriteTeamRoute(item.favorite.league);
-            const teamType = route === "/team/[teamId]"
-              ? null
-              : route.split("/")[2];
+            const teamType =
+              route === "/team/[teamId]" ? null : route.split("/")[2];
 
             router.push({
               pathname: teamType
@@ -79,7 +78,7 @@ export default function FavoriteTeamsSlider({
                 ...(teamType ? { teamType } : {}),
               },
             } as any);
-          }
+          }}
         >
           <LinearGradient
             colors={[
