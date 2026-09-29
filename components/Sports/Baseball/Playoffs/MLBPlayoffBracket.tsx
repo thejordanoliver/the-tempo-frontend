@@ -60,12 +60,55 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
             !team.abbreviation.includes("/"),
         );
         const winner = isKnownTeam && team?.id === matchup.winnerTeamId;
+        const seriesComplete = Boolean(matchup.winnerTeamId);
+        const loser = isKnownTeam && seriesComplete && !winner;
+
         return (
-          <View key={team?.id ?? `tbd-${index}`} style={[styles.teamRow, winner && styles.winnerRow]}>
-            <Text style={styles.seed}>{isKnownTeam ? team?.seed : ""}</Text>
-            {isKnownTeam && team?.logo ? <Image source={{ uri: team.logo }} style={styles.logo} contentFit="contain" /> : null}
-            <Text numberOfLines={1} style={styles.teamName}>{isKnownTeam ? team?.abbreviation : "TBD"}</Text>
-            <Text style={styles.wins}>{isKnownTeam ? team?.wins : ""}</Text>
+          <View key={team?.id ?? `tbd-${index}`} style={styles.teamRow}>
+            <Text
+              style={[
+                styles.seed,
+                { color: isKnownTeam ? (isDark ? Colors.white : Colors.black) : Colors.midTone },
+              ]}
+            >
+              {isKnownTeam ? team?.seed : "-"}
+            </Text>
+
+            {isKnownTeam && team?.logo ? (
+              <Image
+                source={{ uri: team.logo }}
+                style={styles.logo}
+                contentFit="contain"
+              />
+            ) : (
+              <View style={styles.logoPlaceholder} />
+            )}
+
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.teamName,
+                loser && { color: Colors.midTone },
+              ]}
+            >
+              {isKnownTeam ? team?.abbreviation : "TBD"}
+            </Text>
+
+            <View
+              style={[
+                styles.winsBadge,
+                winner && { backgroundColor: Colors.light.gold },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.winsText,
+                  winner && { color: Colors.black },
+                ]}
+              >
+                {isKnownTeam ? team?.wins : "-"}
+              </Text>
+            </View>
           </View>
         );
       })}
@@ -148,7 +191,7 @@ function LeagueBracket({ bracket, league, title, isDark }: {
     ROUND_HEADER_HEIGHT +
     ROUND_HEADER_GAP +
     CHAMPIONSHIP_TOP +
-    BOTTOM_TEAM_CONNECTOR_OFFSET;
+    MATCHUP_HEIGHT / 2;
   const worldSeriesConnectorTop =
     ROUND_HEADER_HEIGHT +
     ROUND_HEADER_GAP +
