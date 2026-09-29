@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/styles";
 import { getCFBTeamLogo } from "@/constants/teamsCFB";
 import { Image, Pressable, Text, View } from "react-native";
 
@@ -89,13 +90,13 @@ export function BracketTeamRow({
       <View
         style={[
           styles.winsBadge,
-          team.winner && { backgroundColor: "#E5B80B" },
+          team.winner && { backgroundColor: Colors.light.gold },
         ]}
       >
         <Text
           style={[
             styles.score,
-            team.winner && { color: "#000000" },
+            team.winner && { color: Colors.black },
           ]}
         >
           {team.score ?? "—"}
