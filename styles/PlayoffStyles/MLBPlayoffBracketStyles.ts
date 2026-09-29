@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const MLB_BRACKET_COLUMN_WIDTH = 190;
+export const MLB_BRACKET_COLUMN_WIDTH = 176;
 
 export const MLBPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -47,6 +47,10 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     matchup: {
+      height: 142,
+      justifyContent: "space-around",
+      paddingHorizontal: 12,
+      paddingVertical: 10,
       borderRadius: 16,
       borderWidth: 1,
       borderColor: isDark ? Colors.darkGray : Colors.lightGray,
@@ -54,23 +58,15 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       elevation: 5,
-      overflow: "hidden",
     },
     seriesLabel: {
-      paddingHorizontal: 10,
-      paddingVertical: 6,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      fontFamily: Fonts.MEDIUM,
+      color: Colors.midTone,
+      fontFamily: Fonts.REGULAR,
       fontSize: 12,
     },
     teamRow: {
-      minHeight: 48,
-      paddingHorizontal: 12,
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
     },
     seed: {
       width: 20,
@@ -79,20 +75,16 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
       fontSize: 18,
       textAlign: "center",
     },
-    logo: {
-      width: 34,
-      height: 34,
-    },
-    logoPlaceholder: {
-      width: 34,
-      height: 34,
-    },
+    logo: { width: 34, height: 34 },
     teamName: {
       flex: 1,
       marginLeft: 4,
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
       fontSize: 18,
+    },
+    eliminatedText: {
+      color: Colors.midTone,
     },
     winsBadge: {
       minWidth: 30,
@@ -105,11 +97,21 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
         ? Colors.transparentDarkGray
         : Colors.transparentLightGray,
     },
-    winsText: {
+    winnerBadge: {
+      backgroundColor: Colors.light.gold,
+    },
+    wins: {
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      textAlign: "center",
+    },
+    winnerWins: {
+      color: Colors.black,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      marginVertical: 8,
+      backgroundColor: Colors.midTone,
     },
     empty: {
       padding: 24,

@@ -23,21 +23,21 @@ type Props = {
   onRefresh: () => Promise<void>;
 };
 
-type Matchup = Pick<MLBPlayoffSeries, "id" | "label" | "teams" | "winnerTeamId">;
+type Matchup = Pick<
+  MLBPlayoffSeries,
+  "id" | "label" | "bestOf" | "teams" | "winnerTeamId"
+>;
 
 const ROUND_HEADER_HEIGHT = 32;
 const ROUND_HEADER_GAP = 14;
-const MATCHUP_HEIGHT = 126;
+const MATCHUP_HEIGHT = 142;
 const MATCHUP_ROW_GAP = 36;
-const TEAM_ROW_HEIGHT = 48;
 const COLUMN_GAP = 18;
 const SECOND_MATCHUP_TOP = MATCHUP_HEIGHT + MATCHUP_ROW_GAP;
 const CHAMPIONSHIP_TOP = SECOND_MATCHUP_TOP / 2;
 const ROUND_BODY_HEIGHT = SECOND_MATCHUP_TOP + MATCHUP_HEIGHT;
-const TOP_TEAM_CONNECTOR_OFFSET =
-  MATCHUP_HEIGHT - TEAM_ROW_HEIGHT * 1.5;
-const BOTTOM_TEAM_CONNECTOR_OFFSET =
-  MATCHUP_HEIGHT - TEAM_ROW_HEIGHT / 2;
+const TOP_TEAM_CONNECTOR_OFFSET = 34;
+const BOTTOM_TEAM_CONNECTOR_OFFSET = 82;
 const LEAGUE_BOARD_WIDTH =
   MLB_BRACKET_COLUMN_WIDTH * 3 + COLUMN_GAP * 2;
 
@@ -47,10 +47,25 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
     matchup.teams[0] ?? null,
     matchup.teams[1] ?? null,
   ];
+  const winsNeeded = Math.floor(matchup.bestOf / 2) + 1;
+  const knownTeams = rows.filter((team): team is MLBPlayoffTeam => Boolean(team));
+  const leadingTeam = [...knownTeams].sort((a, b) => b.wins - a.wins)[0];
+  const trailingTeam = [...knownTeams].sort((a, b) => a.wins - b.wins)[0];
+  const seriesTied =
+    knownTeams.length === 2 && knownTeams[0].wins === knownTeams[1].wins;
+  const winner =
+    knownTeams.find((team) => team.id === matchup.winnerTeamId) ??
+    knownTeams.find((team) => team.wins >= winsNeeded);
+  const footer = winner
+    ? `${winner.abbreviation} won series ${winner.wins}-${trailingTeam?.wins ?? 0}`
+    : seriesTied && knownTeams[0].wins > 0
+      ? `Series tied ${knownTeams[0].wins}-${knownTeams[1].wins}`
+      : leadingTeam && trailingTeam && leadingTeam.wins > trailingTeam.wins
+        ? `${leadingTeam.abbreviation} leads ${leadingTeam.wins}-${trailingTeam.wins}`
+        : `Best of ${matchup.bestOf}`;
 
   return (
     <View style={styles.matchup}>
-      <Text style={styles.seriesLabel}>{matchup.label}</Text>
       {rows.map((team, index) => {
         const isKnownTeam = Boolean(
           team &&
@@ -59,59 +74,36 @@ function MatchupCard({ matchup, isDark }: { matchup: Matchup; isDark: boolean })
             team.abbreviation !== "TBD" &&
             !team.abbreviation.includes("/"),
         );
-        const winner = isKnownTeam && team?.id === matchup.winnerTeamId;
-        const seriesComplete = Boolean(matchup.winnerTeamId);
-        const loser = isKnownTeam && seriesComplete && !winner;
-
+        const isWinner = isKnownTeam && team?.id === winner?.id;
+        const isEliminated = Boolean(winner && isKnownTeam && !isWinner);
         return (
-          <View key={team?.id ?? `tbd-${index}`} style={styles.teamRow}>
-            <Text
-              style={[
-                styles.seed,
-                { color: isKnownTeam ? (isDark ? Colors.white : Colors.black) : Colors.midTone },
-              ]}
-            >
-              {isKnownTeam ? team?.seed : "-"}
-            </Text>
-
-            {isKnownTeam && team?.logo ? (
-              <Image
-                source={{ uri: team.logo }}
-                style={styles.logo}
-                contentFit="contain"
-              />
-            ) : (
-              <View style={styles.logoPlaceholder} />
-            )}
-
-            <Text
-              numberOfLines={1}
-              style={[
-                styles.teamName,
-                loser && { color: Colors.midTone },
-              ]}
-            >
-              {isKnownTeam ? team?.abbreviation : "TBD"}
-            </Text>
-
-            <View
-              style={[
-                styles.winsBadge,
-                winner && { backgroundColor: Colors.light.gold },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.winsText,
-                  winner && { color: Colors.black },
-                ]}
-              >
-                {isKnownTeam ? team?.wins : "-"}
+          <View key={team?.id ?? `tbd-${index}`}>
+            {index > 0 ? <View style={styles.divider} /> : null}
+            <View style={styles.teamRow}>
+              <Text style={[styles.seed, isEliminated && styles.eliminatedText]}>
+                {isKnownTeam ? team?.seed : "-"}
               </Text>
+              {isKnownTeam && team?.logo ? (
+                <Image source={{ uri: team.logo }} style={styles.logo} contentFit="contain" />
+              ) : (
+                <View style={styles.logo} />
+              )}
+              <Text
+                numberOfLines={1}
+                style={[styles.teamName, isEliminated && styles.eliminatedText]}
+              >
+                {isKnownTeam ? team?.abbreviation : "TBD"}
+              </Text>
+              <View style={[styles.winsBadge, isWinner && styles.winnerBadge]}>
+                <Text style={[styles.wins, isWinner && styles.winnerWins]}>
+                  {isKnownTeam ? team?.wins : "-"}
+                </Text>
+              </View>
             </View>
           </View>
         );
       })}
+      <Text numberOfLines={1} style={styles.seriesLabel}>{footer}</Text>
     </View>
   );
 }
@@ -129,10 +121,12 @@ function seededMatchup(
   league: Exclude<MLBPlayoffLeague, "world-series">,
   seeds: number[],
   label: string,
+  bestOf: number,
 ): Matchup {
   return {
     id: `${league}-${seeds.join("-")}`,
     label,
+    bestOf,
     teams: seeds.map((seed) => bracket.teams.find((team) => team.league === league && team.seed === seed)).filter(Boolean) as MLBPlayoffTeam[],
     winnerTeamId: null,
   };
@@ -161,20 +155,20 @@ function LeagueBracket({ bracket, league, title, isDark }: {
         (a, b) => lowestKnownSeed(b) - lowestKnownSeed(a),
       )
     : [
-        seededMatchup(bracket, league, [4, 5], "Wild Card"),
-        seededMatchup(bracket, league, [3, 6], "Wild Card"),
+        seededMatchup(bracket, league, [4, 5], "Wild Card", 3),
+        seededMatchup(bracket, league, [3, 6], "Wild Card", 3),
       ];
   const divisionMatchups = division.length
     ? [...division].sort(
         (a, b) => lowestKnownSeed(a) - lowestKnownSeed(b),
       )
     : [
-        seededMatchup(bracket, league, [1], "No. 1 vs 4/5 winner"),
-        seededMatchup(bracket, league, [2], "No. 2 vs 3/6 winner"),
+        seededMatchup(bracket, league, [1], "No. 1 vs 4/5 winner", 5),
+        seededMatchup(bracket, league, [2], "No. 2 vs 3/6 winner", 5),
       ];
   const championshipMatchups = championship.length
     ? championship
-    : [{ id: `${league}-cs`, label: "League Championship", teams: [], winnerTeamId: null }];
+    : [{ id: `${league}-cs`, label: "League Championship", bestOf: 7, teams: [], winnerTeamId: null }];
 
   const columns = [
     { key: "wild-card", title: "Wild Card", matchups: wildCardMatchups },
@@ -347,6 +341,7 @@ export function MLBPlayoffBracket({ bracket, loading, refreshing, error, isDark,
   const worldSeries = findSeries(bracket, "world-series", "world-series")[0] ?? {
     id: "world-series",
     label: "World Series",
+    bestOf: 7,
     teams: [],
     winnerTeamId: null,
   };
