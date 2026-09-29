@@ -27,11 +27,9 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { Animated } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { CustomHeader } from "../components/CustomHeader";
-import CustomTabBar from "../components/CustomTabBar";
 import ForegroundNotificationBanner from "../components/Notifications/ForegroundNotificationBanner";
 import BadgeUnlockedModal from "../components/Profile/Badges/BadgeUnlockedModal";
 import { Colors } from "../constants/styles";
@@ -76,22 +74,6 @@ const CustomLightTheme = {
   },
 };
 
-const hiddenRoutes = [
-  "/news/article",
-  "/highlights/video",
-  "/edit-profile",
-  "/edit-favorites",
-  "/signup/success",
-  "/settings/deleteaccountsplash",
-  "/player/",
-  "/season-leaders/",
-  "/settings",
-  "/settings/index",
-  "/login",
-  "/forgot-password",
-  "/comment-thread/",
-];
-
 const publicRoutes = [
   "/login",
   "/forgot-password",
@@ -124,13 +106,7 @@ function AppLayout() {
 
   const { user, token, loadingUser } = useAuth();
 
-  const [opacity] = useState(() => new Animated.Value(1));
-
-  const [visibleTabBar, setVisibleTabBar] = useState(true);
-
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
-
-  const shouldHideTabBar = hiddenRoutes.some((r) => pathname?.startsWith(r));
 
   const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
 
@@ -216,22 +192,6 @@ function AppLayout() {
   ]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    void Promise.resolve().then(() => {
-      if (cancelled) return;
-
-      if (!pathname) return;
-
-      setVisibleTabBar(!shouldHideTabBar);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pathname, shouldHideTabBar]);
-
-  useEffect(() => {
     if (pathname?.startsWith("/team/")) {
       void refreshTeamSubscriptions();
     }
@@ -315,20 +275,6 @@ function AppLayout() {
         </Stack>
 
         <StatusBar style={isDark ? "light" : "dark"} />
-
-        {!shouldHideTabBar && visibleTabBar && (
-          <Animated.View
-            style={{
-              opacity,
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-          >
-            <CustomTabBar isDark={isDark} />
-          </Animated.View>
-        )}
 
         {!isPublicRoute && (
           <>

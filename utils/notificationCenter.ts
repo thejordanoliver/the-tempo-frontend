@@ -64,11 +64,11 @@ export const getNotificationCenterHref = (
     case "new_follower": {
       const userId = dataString(notification, "userId") ??
         (notification.actorUserId ? String(notification.actorUserId) : null);
-      return userId ? `/user/${encodeURIComponent(userId)}` : "/(tabs)/profile";
+      return userId ? `/user/${encodeURIComponent(userId)}` : "/profile";
     }
 
     case "badge":
-      return "/(tabs)/profile";
+      return "/profile";
 
     case "game_starting":
     case "game_touchdown":

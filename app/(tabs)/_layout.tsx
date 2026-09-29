@@ -1,6 +1,5 @@
-import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { Image, StyleSheet, View } from "react-native";
+import NavigationBar from "../../components/NavigationBar";
 import { usePreferences } from "../../contexts/PreferencesContext";
 
 export default function TabLayout() {
@@ -8,119 +7,38 @@ export default function TabLayout() {
   const isDark = resolvedColorScheme === "dark";
 
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: isDark ? "white" : "black",
-
-          tabBarInactiveTintColor: "gray",
-          tabBarStyle: {
-            backgroundColor: "transparent",
-            borderTopWidth: 0,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 80, // Adjusted height for better visibility
-            opacity: 0,
-          },
-          tabBarLabelStyle: {
-            fontFamily: "Oswald_400Regular", // ← Set the font here
-            fontSize: 12,
-          },
-          tabBarBackground: () => (
-            <View style={styles.blurContainer}>
-              <BlurView intensity={10} style={StyleSheet.absoluteFill} />
-              <View
-                style={[
-                  StyleSheet.absoluteFill,
-                  {
-                    backgroundColor: isDark
-                      ? "rgba(0,0,0,0.3)"
-                      : "rgba(255,255,255,0.3)",
-                  },
-                ]}
-              />
-            </View>
-          ),
+    <Tabs
+      tabBar={(props) => <NavigationBar {...props} isDark={isDark} />}
+      screenOptions={{ freezeOnBlur: true }}
+    >
+      <Tabs.Screen
+        name="(home)"
+        options={{
+          title: "Home",
+          headerShown: false,
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ focused, size }) => (
-              <Image
-                source={require("../../assets/icons8/Home.png")}
-                style={{
-                  width: size,
-                  height: size,
-                  tintColor: focused ? (isDark ? "white" : "black") : "gray",
-                }}
-                resizeMode="contain"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="league"
-          options={{
-            title: "League",
-            tabBarIcon: ({ focused, size }) => (
-              <Image
-                source={require("../../assets/icons8/Scoreboard.png")}
-                style={{
-                  width: size,
-                  height: size,
-                  tintColor: focused ? (isDark ? "white" : "black") : "gray",
-                }}
-                resizeMode="contain"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="explore"
-          options={{
-            title: "Explore",
-            tabBarIcon: ({ focused, size }) => (
-              <Image
-                source={require("../../assets/icons8/Compass.png")}
-                style={{
-                  width: size,
-                  height: size,
-                  tintColor: focused ? (isDark ? "white" : "black") : "gray",
-                }}
-                resizeMode="contain"
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: "Profile",
-            tabBarIcon: ({ focused, size }) => (
-              <Image
-                source={require("../../assets/icons8/User.png")}
-                style={{
-                  width: size,
-                  height: size,
-                  tintColor: focused ? (isDark ? "white" : "black") : "gray",
-                }}
-                resizeMode="contain"
-              />
-            ),
-          }}
-        />
-      </Tabs>
-    </>
+      />
+      <Tabs.Screen
+        name="(league)"
+        options={{
+          title: "Leagues",
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="(explore)"
+        options={{
+          title: "Explore",
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="(profile)"
+        options={{
+          title: "Profile",
+          headerShown: false,
+        }}
+      />
+    </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  blurContainer: {
-    flex: 1,
-    overflow: "hidden",
-  },
-});

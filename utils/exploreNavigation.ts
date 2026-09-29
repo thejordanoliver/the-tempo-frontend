@@ -15,7 +15,7 @@ type TeamLeagueRoute = {
 
 type PlayerLeagueRoute = {
   flag: keyof Extract<ResultItem, { type: "player" }>;
-  pathname: string;
+  sport: string;
   league: string;
 };
 
@@ -41,57 +41,57 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
 const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
   {
     flag: "isNFL",
-    pathname: "/player/football/[id]",
+    sport: "football",
     league: "nfl",
   },
   {
     flag: "isCFB",
-    pathname: "/player/football/[id]",
+    sport: "football",
     league: "cfb",
   },
   {
     flag: "isMMA",
-    pathname: "/player/mma/[id]",
+    sport: "mma",
     league: "mma",
   },
   {
     flag: "isMLB",
-    pathname: "/player/baseball/[id]",
+    sport: "baseball",
     league: "mla",
   },
   {
     flag: "isNHL",
-    pathname: "/player/hockey/[id]",
+    sport: "hockey",
     league: "nhl",
   },
   {
     flag: "isNBA",
-    pathname: "/player/basketball/[id]",
+    sport: "basketball",
     league: "nba",
   },
   {
     flag: "isGLEAGUE",
-    pathname: "/player/basketball/[id]",
+    sport: "basketball",
     league: "gleague",
   },
   {
     flag: "isCBB",
-    pathname: "/player/basketball/[id]",
+    sport: "basketball",
     league: "cbb",
   },
   {
     flag: "isWCBB",
-    pathname: "/player/basketball/[id]",
+    sport: "basketball",
     league: "wcbb",
   },
   {
     flag: "isWNBA",
-    pathname: "/player/basketball/[id]",
+    sport: "basketball",
     league: "wnba",
   },
   {
     flag: "isSOCC",
-    pathname: "/player/soccer/[id]",
+    sport: "soccer",
     league: "socc",
   },
 ];
@@ -129,8 +129,9 @@ export function getExploreRouteForResult(
 
   if (item.isCBB || item.isWCBB) {
     return {
-      pathname: "/player/basketball/[id]",
+      pathname: "/(tabs)/(explore)/player/[sport]/[id]",
       params: {
+        sport: "basketball",
         id: String(item.id),
         teamId: String(item.team_id ?? ""),
         league: item.affiliation,
@@ -144,8 +145,9 @@ export function getExploreRouteForResult(
 
   if (playerRoute) {
     return {
-      pathname: playerRoute.pathname,
+      pathname: "/(tabs)/(explore)/player/[sport]/[id]",
       params: {
+        sport: playerRoute.sport,
         id: String(item.id),
         teamId: String(item.team_id ?? ""),
         league: item.affiliation,

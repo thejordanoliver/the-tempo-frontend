@@ -21,7 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafetyActions } from "hooks/useSafetyActions";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
-import type { ProfileTab } from "../(tabs)/profile";
+import type { ProfileTab } from "app/(tabs)/(profile)/profile";
 
 type RouteParam = string | string[] | undefined;
 

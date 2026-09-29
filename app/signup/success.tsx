@@ -98,7 +98,7 @@ export default function SignupSuccessScreen() {
         }, displayDuration - EXIT_DURATION_MS);
 
     const navigationTimer = setTimeout(() => {
-      router.replace("/(tabs)/profile");
+      router.replace("/profile");
     }, displayDuration);
 
     return () => {

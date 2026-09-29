@@ -189,7 +189,7 @@ export function useAuth() {
         res.data.user,
       );
 
-      router.replace("/(tabs)/profile");
+      router.replace("/profile");
     } catch (err: any) {
       const message =
         err.response?.data?.error ||

@@ -112,7 +112,7 @@ test("the central navigation mapper covers all notification types", () => {
     getNotificationCenterHref(notification("new_follower", { actorUserId: 42 })),
     "/user/42",
   );
-  assert.equal(getNotificationCenterHref(notification("badge")), "/(tabs)/profile");
+  assert.equal(getNotificationCenterHref(notification("badge")), "/profile");
 
   for (const type of [
     "game_starting",
@@ -173,7 +173,7 @@ test("the navigation mapper safely handles missing metadata", () => {
   assert.equal(getNotificationCenterHref(notification("message")), "/messages");
   assert.equal(
     getNotificationCenterHref(notification("new_follower", { actorUserId: null })),
-    "/(tabs)/profile",
+    "/profile",
   );
 });
 
