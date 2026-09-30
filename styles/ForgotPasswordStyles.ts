@@ -1,10 +1,10 @@
-import { StyleSheet } from "react-native";
 import { Colors, Fonts } from "constants/styles";
+import { StyleSheet } from "react-native";
 
-export const forgotPasswordStyles = (isDark: boolean) => {
+export const ForgotPasswordStyles = (isDark: boolean) => {
   const text = isDark ? Colors.white : Colors.black;
   const secondaryText = isDark ? Colors.lightGray : Colors.darkGray;
-  const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const border = isDark ? Colors.lightGray : Colors.darkGray;
 
   return StyleSheet.create({
     content: {

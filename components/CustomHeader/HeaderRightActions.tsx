@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import {
   getFavoriteHeaderAccessibilityLabel,
   getFavoriteHeaderIconName,
@@ -63,7 +63,7 @@ function FavoriteHeaderButton({
   onPress,
 }: FavoriteHeaderButtonProps) {
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(false, width);
+  const styles = CustomHeaderStyles(false, width);
 
   const handlePress = () => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
@@ -125,7 +125,7 @@ export function HeaderRightActions({
   isGrid,
 }: HeaderRightActionsProps) {
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   if (rightAction) return <>{rightAction}</>;
 

@@ -1,29 +1,25 @@
 import { StyleSheet } from "react-native";
 
-const SPACING = {
-  md: 12,
-};
+const SPACING = 12;
 
-export const editFavoritesStyles = StyleSheet.create({
+export const EditFavoritesStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: SPACING.md,
+    padding: SPACING,
   },
 
   tabs: {
-    marginBottom: SPACING.md,
+    marginBottom: SPACING,
   },
 
-  selectorContainer: {
- 
-  },
+  selectorContainer: {},
 
   buttonContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: SPACING.md,
-    marginVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
+    gap: SPACING,
+    marginVertical: SPACING,
+    paddingHorizontal: SPACING,
   },
 
   button: {

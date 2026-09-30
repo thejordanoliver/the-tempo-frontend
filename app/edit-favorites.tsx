@@ -1,6 +1,6 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import SearchBar from "@/components/Explore/SearchBar";
 import { useNavigation } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   useCallback,
   useEffect,
@@ -26,13 +26,13 @@ import { useFavoriteTeamsContext } from "../contexts/FavoriteTeamsContext";
 import { useNotifications } from "../contexts/NotificationContext";
 import { usePreferences } from "../contexts/PreferencesContext";
 import { usePagerTabScrollProgress } from "../hooks/usePagerTabScrollProgress";
-import { editFavoritesStyles } from "../styles/EditFavoriteStyles";
+import { EditFavoritesStyles } from "../styles/EditFavoriteStyles";
 import { buildFavoriteTeamKey, type FavoriteTeamKey } from "../types/favorites";
 
 type FavoritesTab = "teams" | "sports";
 
 export default function EditFavoritesScreen() {
-  const styles = editFavoritesStyles;
+  const styles = EditFavoritesStyles;
 
   const {
     favorites,

@@ -1,11 +1,5 @@
 import { StyleSheet } from "react-native";
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
 
-const tintColorLight = "#0a7ea4";
-const tintColorDark = "#fff";
 export const activeOpacity = 0.7;
 export const PLACEHOLDER_COLOR = "#888";
 export const PLACEHOLDER_AVATAR =
@@ -48,7 +42,6 @@ export const Colors = {
     background: "#fff",
     transparentBackground: "#ffffff50",
 
-    tint: tintColorLight,
     transparentTint: "#0a7ea450",
 
     icon: "#687076",
@@ -57,7 +50,6 @@ export const Colors = {
     tabIconDefault: "#687076",
     transparentTabIconDefault: "#68707650",
 
-    tabIconSelected: tintColorLight,
     transparentTabIconSelected: "#0a7ea450",
 
     errorBackground: "#ffdada",
@@ -101,7 +93,6 @@ export const Colors = {
     background: "#1d1d1d",
     transparentBackground: "#1d1d1d50",
 
-    tint: tintColorDark,
     transparentTint: "#ffffff50",
 
     icon: "#9BA1A6",
@@ -110,7 +101,6 @@ export const Colors = {
     tabIconDefault: "#9BA1A6",
     transparentTabIconDefault: "#9BA1A650",
 
-    tabIconSelected: tintColorDark,
     transparentTabIconSelected: "#ffffff50",
 
     errorBackground: "#5a1f1f",
@@ -163,12 +153,91 @@ export const Fonts = {
 
 export const globalStyles = (isDark: boolean) =>
   StyleSheet.create({
+    // ----------------------------------------
+    // Typography
+    // ----------------------------------------
+
+    heading: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 28,
+      lineHeight: 34,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+
+    subheading: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 22,
+      lineHeight: 28,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+
+    title: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 20,
+      lineHeight: 26,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+
+    subtitle: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      lineHeight: 22,
+      color: isDark ? Colors.dark.text : Colors.light.text,
+    },
+
+    text: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      lineHeight: 22,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    textMedium: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 16,
+      lineHeight: 22,
+      color: isDark ? Colors.white : Colors.black,
+    },
+
+    secondaryText: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 14,
+      lineHeight: 20,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    caption: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      lineHeight: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+
+    label: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 12,
+      lineHeight: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+
+    // ----------------------------------------
+    // Feedback / Error
+    // ----------------------------------------
+
     errorText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 20,
+      lineHeight: 26,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
       textAlign: "center",
     },
+
+    // ----------------------------------------
+    // Empty States
+    // ----------------------------------------
+
     emptyContainer: {
       flex: 1,
       alignItems: "center",
@@ -190,22 +259,32 @@ export const globalStyles = (isDark: boolean) =>
     emptyTitle: {
       fontFamily: Fonts.BOLD,
       fontSize: 20,
+      lineHeight: 26,
       color: isDark ? Colors.dark.text : Colors.light.text,
       textAlign: "center",
     },
+
     emptyText: {
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
+      lineHeight: 20,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
+
     emptySubText: {
       marginTop: 6,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
+      lineHeight: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
       textAlign: "center",
     },
+
+    // ----------------------------------------
+    // Interaction
+    // ----------------------------------------
+
     pressed: {
       opacity: activeOpacity,
     },

@@ -9,7 +9,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type NotificationsHeaderMenuProps = {
   visible: boolean;
@@ -34,7 +34,7 @@ export function NotificationsHeaderMenu({
   const [shouldRender, setShouldRender] = useState(visible);
 
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   useEffect(() => {
     let cancelled = false;

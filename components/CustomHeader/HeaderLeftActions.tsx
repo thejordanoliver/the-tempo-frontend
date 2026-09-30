@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, activeOpacity } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
 import { TouchableOpacity, useWindowDimensions, View } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type HeaderLeftActionsProps = {
   tabName?: string;
@@ -27,7 +27,7 @@ export function HeaderLeftActions({
   headerIconColor,
 }: HeaderLeftActionsProps) {
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   if (tabName === "Profile") {
     return onProfileMessages ? (

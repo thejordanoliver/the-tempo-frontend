@@ -4,7 +4,7 @@ import {
   BADGE_TIER_COLORS,
 } from "@/constants/badges";
 import { Colors } from "@/constants/styles";
-import { badgeCardStyles } from "@/styles/ProfileStyles/BadgeStyles";
+import { BadgeCardStyles } from "@/styles/ProfileStyles/BadgePreviewSectionStyles";
 import { BadgeProgress } from "@/types/badges";
 import { capitalizeBadgeTier, formatBadgeNumber } from "@/utils/badgeUtils";
 import { Text, View } from "react-native";
@@ -17,10 +17,8 @@ type BadgeCardProps = {
 
 export default function BadgeCard({ badge, isDark }: BadgeCardProps) {
   const categoryColor = BADGE_CATEGORY_COLORS[badge.category];
-
   const tierColor = BADGE_TIER_COLORS[badge.tier];
-
-  const styles = badgeCardStyles(isDark, badge.isEarned, tierColor);
+  const styles = BadgeCardStyles(isDark, badge.isEarned, tierColor);
 
   const cardBackground = isDark
     ? Colors.dark.itemBackground

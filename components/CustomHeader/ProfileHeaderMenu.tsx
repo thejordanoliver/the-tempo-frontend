@@ -9,7 +9,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 
 type ProfileHeaderMenuProps = {
   visible: boolean;
@@ -30,7 +30,7 @@ export function ProfileHeaderMenu({
   const [shouldRender, setShouldRender] = useState(visible);
 
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   useEffect(() => {
     let cancelled = false;

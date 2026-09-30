@@ -28,7 +28,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import { AuthHeader } from "./AuthHeader";
 import { ConferenceBackground } from "./ConferenceBackground";
 import { EditFavoritesHeader } from "./EditFavoritesHeader";
@@ -124,7 +124,7 @@ export function CustomHeader({
   const { width } = useWindowDimensions();
   const isDark = resolvedColorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   const isTabRoute = routeSegments.includes("(tabs)");
   const navigationState = navigation.getState();

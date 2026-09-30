@@ -7,7 +7,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource } from "./types";
 
 type LeagueHeaderProps = {
@@ -31,7 +31,7 @@ export function LeagueHeader({
   hasLeagueColor = false,
 }: LeagueHeaderProps) {
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   const textStyle = {
     flexShrink: 1,

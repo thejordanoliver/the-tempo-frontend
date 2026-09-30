@@ -5,12 +5,15 @@ import { usePreferences } from "contexts/PreferencesContext";
 import type { useForgotPasswordForm } from "hooks/UserHooks/useForgotPasswordForm";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { forgotPasswordStyles } from "styles/ForgotPasswordStyles";
+import { ForgotPasswordStyles } from "styles/ForgotPasswordStyles";
 import AuthFormLayout from "./AuthFormLayout";
 import FormInput from "./FormInput";
 
 const STEPS = {
-  email: { number: 1, subtitle: "Enter your email and we will send you a 6-digit code." },
+  email: {
+    number: 1,
+    subtitle: "Enter your email and we will send you a 6-digit code.",
+  },
   code: { number: 2, subtitle: "Check your email for a 6-digit code." },
   password: { number: 3, subtitle: "Enter a new password for your account." },
 };
@@ -20,10 +23,13 @@ type ForgotPasswordFormProps = {
   onBack: () => void;
 };
 
-export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormProps) {
+export default function ForgotPasswordForm({
+  form,
+  onBack,
+}: ForgotPasswordFormProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = forgotPasswordStyles(isDark);
+  const styles = ForgotPasswordStyles(isDark);
   const global = globalStyles(isDark);
   const [showPassword, setShowPassword] = useState(false);
   const { step, isBusy, isRequestBusy, requestAction, resendCooldown } = form;
@@ -53,7 +59,12 @@ export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormP
               keyboardType="email-address"
               textContentType="emailAddress"
             />
-            <Button isDark={isDark} onPress={() => form.requestCode()} disabled={isBusy} style={styles.button}>
+            <Button
+              isDark={isDark}
+              onPress={() => form.requestCode()}
+              disabled={isBusy}
+              style={styles.button}
+            >
               {requestAction === "requesting" ? "Sending..." : "Send Code"}
             </Button>
           </>
@@ -70,8 +81,15 @@ export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormP
               maxLength={6}
               style={styles.codeInputText}
             />
-            <Text style={styles.helperText}>Codes expire after 10 minutes.</Text>
-            <Button isDark={isDark} onPress={form.verifyCode} disabled={isBusy} style={styles.button}>
+            <Text style={styles.helperText}>
+              Codes expire after 10 minutes.
+            </Text>
+            <Button
+              isDark={isDark}
+              onPress={form.verifyCode}
+              disabled={isBusy}
+              style={styles.button}
+            >
               {requestAction === "verifying" ? "Verifying..." : "Verify Code"}
             </Button>
             <Pressable
@@ -80,8 +98,15 @@ export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormP
               accessibilityRole="button"
               style={styles.linkButton}
             >
-              <Text style={[styles.linkText, (isBusy || resendCooldown > 0) && styles.disabledLinkText]}>
-                {resendCooldown > 0 ? `Resend code in ${resendCooldown}s` : "Resend code"}
+              <Text
+                style={[
+                  styles.linkText,
+                  (isBusy || resendCooldown > 0) && styles.disabledLinkText,
+                ]}
+              >
+                {resendCooldown > 0
+                  ? `Resend code in ${resendCooldown}s`
+                  : "Resend code"}
               </Text>
             </Pressable>
           </>
@@ -98,10 +123,16 @@ export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormP
                 <Pressable
                   onPress={() => setShowPassword((value) => !value)}
                   accessibilityRole="button"
-                  accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                  accessibilityLabel={
+                    showPassword ? "Hide password" : "Show password"
+                  }
                   hitSlop={8}
                 >
-                  <Ionicons name={showPassword ? "eye-off" : "eye"} size={20} color={isDark ? Colors.white : Colors.black} />
+                  <Ionicons
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={20}
+                    color={isDark ? Colors.white : Colors.black}
+                  />
                 </Pressable>
               }
             />
@@ -112,18 +143,34 @@ export default function ForgotPasswordForm({ form, onBack }: ForgotPasswordFormP
               secureTextEntry={!showPassword}
               textContentType="newPassword"
             />
-            <Button isDark={isDark} onPress={form.submitPassword} disabled={isBusy || !form.isValid} style={styles.button}>
+            <Button
+              isDark={isDark}
+              onPress={form.submitPassword}
+              disabled={isBusy || !form.isValid}
+              style={styles.button}
+            >
               {form.isSubmitting ? "Updating..." : "Update Password"}
             </Button>
           </>
         )}
-        {!!form.globalError && <Text selectable style={styles.errorText}>{form.globalError}</Text>}
-        {!!form.success && <Text selectable style={styles.successText}>{form.success}</Text>}
+        {!!form.globalError && (
+          <Text selectable style={styles.errorText}>
+            {form.globalError}
+          </Text>
+        )}
+        {!!form.success && (
+          <Text selectable style={styles.successText}>
+            {form.success}
+          </Text>
+        )}
         <Pressable
           onPress={onBack}
           disabled={isRequestBusy}
           accessibilityRole="button"
-          style={({ pressed }) => [styles.linkButton, pressed && global.pressed]}
+          style={({ pressed }) => [
+            styles.linkButton,
+            pressed && global.pressed,
+          ]}
         >
           <Text style={styles.linkText}>Back to Login</Text>
         </Pressable>

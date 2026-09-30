@@ -3,7 +3,7 @@ import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import Subheading from "@/components/Headings/Subheading";
 import { globalStyles } from "@/constants/styles";
-import { BadgePreviewSectionStyles } from "@/styles/BadgePreviewSectionStyles";
+import { BadgePreviewSectionStyles } from "@/styles/ProfileStyles/BadgePreviewSectionStyles";
 import { BadgeProgress } from "@/types/badges";
 import { Text, View } from "react-native";
 import BadgePreviewCard from "./BadgePreviewCard";

@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, HeaderTeamLike } from "./types";
 import { resolveImage } from "./utils";
 type ConferenceBackgroundProps = {
@@ -24,7 +24,7 @@ export function ConferenceBackground({
 }: ConferenceBackgroundProps) {
   const defaultBackgroundColor = isDark ? Colors.black : Colors.white;
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   if (!isConferenceScreen) {
     return (

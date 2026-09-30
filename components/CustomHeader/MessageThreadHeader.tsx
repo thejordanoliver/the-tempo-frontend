@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { Image, Text, View, useWindowDimensions } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import { FALLBACK_MESSAGE_AVATAR, resolveImage } from "./utils";
 
 type MessageThreadHeaderProps = {
@@ -22,7 +22,7 @@ export function MessageThreadHeader({
   isDark,
 }: MessageThreadHeaderProps) {
   const { width } = useWindowDimensions();
-  const styles = customHeaderStyles(isDark, width);
+  const styles = CustomHeaderStyles(isDark, width);
 
   const avatarSource = resolveImage(avatar) ?? {
     uri: FALLBACK_MESSAGE_AVATAR,

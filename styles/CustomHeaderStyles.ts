@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 const TABLET_BREAKPOINT = 768;
 
-export const customHeaderStyles = (isDark: boolean, screenWidth: number) => {
+export const CustomHeaderStyles = (isDark: boolean, screenWidth: number) => {
   const isTablet = screenWidth >= TABLET_BREAKPOINT;
 
   return StyleSheet.create({

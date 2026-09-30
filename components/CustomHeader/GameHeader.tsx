@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { customHeaderStyles } from "../../styles/CustomHeaderStyles";
+import { CustomHeaderStyles } from "../../styles/CustomHeaderStyles";
 import type { HeaderImageSource, RacingLeague } from "./types";
 import { resolveImage } from "./utils";
 
@@ -55,7 +55,7 @@ export function GameHeader({
   const { width } = useWindowDimensions();
 
   const styles = useMemo(
-    () => customHeaderStyles(isDark, width),
+    () => CustomHeaderStyles(isDark, width),
     [isDark, width],
   );
 
