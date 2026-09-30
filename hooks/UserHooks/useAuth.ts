@@ -8,6 +8,8 @@ import { useLikesStore } from "store/useLikesStore";
 import {
   apiClient,
   clearAuthSession,
+  getAccessToken,
+  getRefreshToken,
   saveTokens,
   subscribeAuthSession,
 } from "utils/apiClient";
@@ -44,14 +46,16 @@ const loadStoredAuthSnapshot = async (): Promise<{
   accessToken: string;
   user: User;
 } | null> => {
-  const values = await AsyncStorage.multiGet([
-    "accessToken",
-    "userId",
-    "username",
-    "fullName",
-    "bio",
-    "profileImage",
-    "bannerImage",
+  const [accessToken, values] = await Promise.all([
+    getAccessToken(),
+    AsyncStorage.multiGet([
+      "userId",
+      "username",
+      "fullName",
+      "bio",
+      "profileImage",
+      "bannerImage",
+    ]),
   ]);
 
   const stored: Record<string, string | null> = Object.fromEntries(values);
@@ -60,7 +64,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
     : NaN;
 
   if (
-    !stored.accessToken ||
+    !accessToken ||
     !stored.userId ||
     !stored.username ||
     Number.isNaN(parsedUserId)
@@ -69,7 +73,7 @@ const loadStoredAuthSnapshot = async (): Promise<{
   }
 
   return {
-    accessToken: stored.accessToken,
+    accessToken,
     user: {
       id: parsedUserId,
       username: stored.username,
@@ -239,7 +243,7 @@ export function useAuth() {
     let refreshToken: string | null = null;
 
     try {
-      refreshToken = await AsyncStorage.getItem("refreshToken");
+      refreshToken = await getRefreshToken();
     } catch (err) {
       console.warn("Failed to read refresh token before logout:", err);
     }
