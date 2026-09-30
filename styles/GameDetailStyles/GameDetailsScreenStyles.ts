@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 export const gameDetailsScreenStyles = StyleSheet.create({
   container: {
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   innerContainer: {
     gap: 20,
