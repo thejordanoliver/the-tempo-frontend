@@ -249,24 +249,23 @@ export function useAuth() {
     }
 
     try {
-      try {
-        await AsyncStorage.removeItem("authUser");
-      } catch (err) {
-        console.warn("Failed to clear cached auth user:", err);
-      }
-
-      await clearAuthSession(currentUserId);
-      disconnectNotificationSocket();
-      useBadgeNotificationStore.getState().clearBadgeNotifications();
-      useLikesStore.getState().setUser(null);
-      setUser(null);
-      setToken(null);
-
       if (refreshToken) {
-        void apiClient.post(`/api/logout`, { refreshToken }).catch(() => {});
+        try {
+          await axios.post(
+            `${apiClient.defaults.baseURL}/api/logout`,
+            { refreshToken },
+          );
+        } catch (err) {
+          console.warn("Failed to revoke refresh token on server:", err);
+        }
       }
-    } catch (err) {
-      console.error("Logout error:", err);
+    } finally {
+      try {
+        await clearAuthSession(currentUserId);
+      } catch (err) {
+        console.warn("Failed to clear local auth session:", err);
+      }
+
       disconnectNotificationSocket();
       useBadgeNotificationStore.getState().clearBadgeNotifications();
       useLikesStore.getState().setUser(null);
