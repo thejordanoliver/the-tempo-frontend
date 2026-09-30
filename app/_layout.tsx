@@ -48,7 +48,7 @@ import {
 import { useBadgeRealtimeNotifications } from "../hooks/ForumHooks/useBadgeRealtimeNotifications";
 import { useAuth } from "../hooks/UserHooks/useAuth";
 import { useBadgeNotificationStore } from "../store/badgeNotificationStore";
-import { clearAuthSession } from "../utils/apiClient";
+import { clearAuthSession, getAccessToken } from "../utils/apiClient";
 
 SplashScreen.preventAutoHideAsync().catch(() => { });
 
@@ -128,10 +128,9 @@ function AppLayout() {
       }
 
       try {
-        const values = await AsyncStorage.multiGet([
-          "accessToken",
-          "userId",
-          "username",
+        const [accessToken, values] = await Promise.all([
+          getAccessToken(),
+          AsyncStorage.multiGet(["userId", "username"]),
         ]);
 
         const stored: Record<string, string | null> =
@@ -144,7 +143,7 @@ function AppLayout() {
         if (!isMounted) return;
 
         if (
-          stored.accessToken &&
+          accessToken &&
           stored.userId &&
           stored.username &&
           !Number.isNaN(parsedUserId)
