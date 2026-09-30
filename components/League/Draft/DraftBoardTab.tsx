@@ -1,9 +1,9 @@
-import { Colors, Fonts } from "constants/styles";
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useDraft } from "hooks/LeagueHooks/useLeagueDraft";
 import React from "react";
 import {
-  ActivityIndicator,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -20,7 +20,8 @@ type Props = {
 export default function DraftBoardTab({ safeYear, league }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = draftBoardTabStyles(isDark);
+  const styles = DraftBoardStyles(isDark);
+  const global = globalStyles(isDark);
   const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
     Number(safeYear),
@@ -33,12 +34,33 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
     current?.bestAvailablePicks?.length,
   );
 
+  if (loading)
+    return (
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
+      </View>
+    );
+
+  if (error)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.errorText}>Error: {error}</Text>
+      </View>
+    );
+
+  if (!hasBoardData)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>Draft board unavailable</Text>
+        <Text style={global.emptyText}>
+          Current draft board data is not available for this season.
+        </Text>
+      </View>
+    );
+
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={
-        hasBoardData ? styles.content : styles.centeredContent
-      }
+      contentContainerStyle={styles.container}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -47,60 +69,15 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
         />
       }
     >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={isDark ? Colors.lightGray : Colors.darkGray}
-        />
-      ) : error ? (
-        <Text style={styles.errorText}>Error: {error}</Text>
-      ) : hasBoardData ? (
-        <DraftProspectBoard current={current} league={league} />
-      ) : (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>Draft board unavailable</Text>
-          <Text style={styles.emptyText}>
-            Current draft board data is not available for this season.
-          </Text>
-        </View>
-      )}
+      <DraftProspectBoard current={current} league={league} />
     </ScrollView>
   );
 }
 
-const draftBoardTabStyles = (isDark: boolean) =>
+export const DraftBoardStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-    },
-    content: {
       paddingVertical: 8,
-    },
-    centeredContent: {
-      flexGrow: 1,
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 24,
-    },
-    emptyState: {
-      alignItems: "center",
-      gap: 6,
-    },
-    emptyTitle: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
-    emptyText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 14,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-    errorText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
     },
   });

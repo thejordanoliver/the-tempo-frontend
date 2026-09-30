@@ -348,59 +348,14 @@ export default function DraftList({
 
   if (filteredPicks.length === 0) {
     return (
-      <View style={styles.container}>
-        <View style={styles.dropdownContainer}>
-          <View style={styles.dropdownWrapper}>
-            <TouchableOpacity onPress={toggleSearch}>
-              <Ionicons
-                name={searchOpen ? "close" : "search"}
-                size={22}
-                color={isDark ? Colors.lightGray : Colors.darkGray}
-              />
-            </TouchableOpacity>
-
-            <View style={styles.dropdownRow}>
-              <Dropdown
-                options={yearOptions}
-                selectedValue={safeYear}
-                onSelect={onYearChange}
-                isDark={isDark}
-                width={100}
-              />
-
-              <Dropdown
-                options={roundOptions}
-                selectedValue={round}
-                onSelect={onRoundChange}
-                isDark={isDark}
-                width={100}
-              />
-
-              <Dropdown
-                options={teamOptions}
-                selectedValue={team}
-                onSelect={onTeamChange}
-                isDark={isDark}
-                width={100}
-              />
-            </View>
-          </View>
-
-          <SearchBar
-            value={search}
-            onChangeText={setSearch}
-            visible={searchOpen}
-            placeholder="Search players..."
-          />
-        </View>
-
-        <Text style={global.emptyText}>No results found</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>No results found</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <>
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownWrapper}>
           <TouchableOpacity onPress={toggleSearch}>
@@ -482,16 +437,12 @@ export default function DraftList({
           ) : null
         }
       />
-    </View>
+    </>
   );
 }
 
 export const draftListStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      paddingBottom: 80,
-    },
     dropdownContainer: {
       marginVertical: 12,
       paddingHorizontal: 12,

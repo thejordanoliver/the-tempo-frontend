@@ -2,6 +2,8 @@ import { Text, View } from "react-native";
 import {
   CARD_WIDTH,
   CFPBracketStyles,
+  LABEL_TOP,
+  LABEL_WIDTH,
 } from "styles/PlayoffStyles/CFPBracketStyles";
 
 /*
@@ -10,16 +12,14 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export function BracketRoundHeader({
+export function RoundLabel({
   title,
-  date,
   x,
   width = CARD_WIDTH,
   championship = false,
   isDark,
 }: {
   title: string;
-  date: string;
   x: number;
   width?: number;
   championship?: boolean;
@@ -41,14 +41,17 @@ export function BracketRoundHeader({
       <Text
         style={[
           styles.roundTitle,
-
+          {
+            top: LABEL_TOP,
+      
+            width: LABEL_WIDTH,
+            textAlign: "center",
+          },
           championship && styles.championshipRoundTitle,
         ]}
       >
         {title}
       </Text>
-
-      <Text style={styles.roundDate}>{date}</Text>
     </View>
   );
 }

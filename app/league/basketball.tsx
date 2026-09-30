@@ -45,7 +45,7 @@ import Draft, {
   getDefaultDraftYear,
 } from "../../components/League/Draft/Draft";
 import { StandingsList } from "../../components/League/Standings/StandingsList";
-import { NBAPlayoffBracket } from "../../components/Sports/Basketball/NBAPlayoffs/NBAPlayoffBracket";
+import { NBAPlayoffBracket } from "../../components/Sports/Basketball/Playoffs/NBAPlayoffs/NBAPlayoffBracket";
 
 import { useNBAPlayoffGames } from "../../hooks/NBAHooks/useNBAPlayoffGames";
 
@@ -62,7 +62,7 @@ import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceSta
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
-import TournamentTreeBracket from "../../components/Sports/Basketball/CBBTournament/TournamentTreeBracket";
+import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/CBBTournament/TournamentTreeBracket";
 import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
 import { getCBBConferenceSelectionName } from "../../constants/conferences/cbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";

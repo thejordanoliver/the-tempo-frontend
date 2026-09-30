@@ -1,3 +1,4 @@
+import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import type { FootballGame } from "@/types/football/football";
 import { ScrollView, Text, View } from "react-native";
 import {
@@ -19,10 +20,10 @@ import type {
   FootballTeam,
 } from "types/football/cfpBracketTypes";
 import { BracketConnectors } from "./BracketConnectors";
-import { BracketGameCard } from "./BracketGameCard";
-import { BracketRoundHeader } from "./BracketRoundHeader";
-import { CFPByeTeamCard } from "./CFPByeTeamCard";
+import { ByeTeamCard } from "./ByeTeamCard";
 import { CFPChampionshipCard } from "./CFPChampionshipCard";
+import { GameCard } from "./GameCard";
+import { RoundLabel } from "./RoundLabel";
 
 type CFPBracketCanvasProps = {
   data: CFPBracketData;
@@ -66,30 +67,18 @@ export function CFPBracketCanvas({
           <View style={styles.canvas}>
             <BracketConnectors />
 
-            <BracketRoundHeader
-              title="FIRST ROUND"
-              date={roundDates.firstRound}
-              x={FIRST_ROUND_X}
-              isDark={isDark}
-            />
+            <RoundLabel title="FIRST ROUND" x={FIRST_ROUND_X} isDark={isDark} />
 
-            <BracketRoundHeader
+            <RoundLabel
               title="QUARTERFINALS"
-              date={roundDates.quarterfinals}
               x={QUARTERFINAL_X}
               isDark={isDark}
             />
 
-            <BracketRoundHeader
-              title="SEMIFINALS"
-              date={roundDates.semifinals}
-              x={SEMIFINAL_X}
-              isDark={isDark}
-            />
+            <RoundLabel title="SEMIFINALS" x={SEMIFINAL_X} isDark={isDark} />
 
-            <BracketRoundHeader
+            <RoundLabel
               title="NATIONAL CHAMPIONSHIP"
-              date={roundDates.championship}
               x={CHAMPIONSHIP_X}
               width={CHAMPIONSHIP_CARD_WIDTH}
               championship
@@ -102,7 +91,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <BracketGameCard
+                <GameCard
                   key={`first-round-${game.id}`}
                   game={game}
                   x={FIRST_ROUND_X}
@@ -115,16 +104,20 @@ export function CFPBracketCanvas({
             })}
 
             {BYE_Y.map((y, index) => {
-              const team = data.byeTeams[index] ?? null;
+              const byeTeam = data.byeTeams[index] ?? null;
+              const teamRank = byeTeam?.rank;
+              const teamId = byeTeam?.id ?? 0;
+              const team = getCFBTeam(teamId);
+              const teamName = team?.code ?? "TBD";
+              const teamLogo = getCFBTeamLogo(teamId, isDark);
 
               return (
-                <CFPByeTeamCard
+                <ByeTeamCard
                   key={`bye-slot-${index}`}
-                  team={team}
+                  name={teamName}
+                  logo={teamLogo}
+                  rank={teamRank}
                   x={FIRST_ROUND_X}
-                  onPress={
-                    team && onTeamPress ? () => onTeamPress(team) : undefined
-                  }
                   y={y}
                   isDark={isDark}
                 />
@@ -137,7 +130,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <BracketGameCard
+                <GameCard
                   key={`quarterfinal-${game.id}`}
                   game={game}
                   x={QUARTERFINAL_X}
@@ -155,7 +148,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <BracketGameCard
+                <GameCard
                   key={`semifinal-${game.id}`}
                   game={game}
                   x={SEMIFINAL_X}
@@ -174,19 +167,8 @@ export function CFPBracketCanvas({
                   ? () => onGamePress(data.championship!)
                   : undefined
               }
-              onTeamPress={onTeamPress}
               isDark={isDark}
             />
-
-            <View style={styles.infoBadge}>
-              <Text style={styles.infoIcon}>ⓘ</Text>
-
-              <Text style={styles.infoText}>All times ET</Text>
-
-              <View style={styles.infoDot} />
-
-              <Text style={styles.infoText}>Higher seed hosts</Text>
-            </View>
 
             {refreshing ? (
               <View style={styles.refreshingBadge}>

@@ -23,6 +23,7 @@ export const TeamRow = ({
   const teamData = teamId != null ? getNBATeam(teamId) : undefined;
   const teamName = teamData?.code || "TBD";
   const seed = team?.playoffSeed ?? team?.seed;
+
   const getTeamCodeColor = () => {
     if (!team) return Colors.midTone;
 

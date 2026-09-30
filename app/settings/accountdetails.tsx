@@ -1,22 +1,16 @@
 import Button from "@/components/Buttons/Button";
+import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { Colors, Fonts } from "constants/styles";
+import { Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useLayoutEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import {
   changePasswordSchema,
@@ -42,6 +36,8 @@ export default function AccountDetailsScreen() {
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const styles = accountDetailsStyles(isDark);
+  const global = globalStyles(isDark);
+
   const { isLoading, userData, changePassword } = useAccountDetails();
   const {
     control,
@@ -98,36 +94,15 @@ export default function AccountDetailsScreen() {
 
   if (isLoading) {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: isDark ? Colors.black : Colors.white,
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        ]}
-      >
-        <ActivityIndicator
-          size="large"
-          color={isDark ? Colors.white : Colors.black}
-        />
+      <View style={global.emptyContainer}>
+        <CustomActivityIndicator />
       </View>
     );
   }
 
   if (!userData) {
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: isDark ? Colors.black : Colors.white,
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        ]}
-      >
+      <View style={global.emptyContainer}>
         <Text style={{ color: isDark ? Colors.white : Colors.black }}>
           Unable to load account details.
         </Text>
@@ -144,7 +119,6 @@ export default function AccountDetailsScreen() {
 
   return (
     <KeyboardAwareScrollView
-      style={styles.container}
       contentContainerStyle={styles.contentContainerStyle}
       enableOnAndroid
       extraScrollHeight={20}
@@ -160,7 +134,6 @@ export default function AccountDetailsScreen() {
       <Text style={styles.text}>{userData.email}</Text>
 
       {/* Password Section */}
-
       <HeadingTwo isDark={isDark}>Password</HeadingTwo>
       <Text style={styles.text}>••••••••</Text>
 
@@ -256,18 +229,16 @@ export default function AccountDetailsScreen() {
         Change Password
       </Button>
 
-      <Text style={styles.memberSince}>Member Since: {formattedDate}</Text>
+      <Text style={styles.metaText}>Member Since: {formattedDate}</Text>
     </KeyboardAwareScrollView>
   );
 }
 const accountDetailsStyles = (isDark: boolean) =>
   StyleSheet.create({
-    container: { flex: 1 },
     contentContainerStyle: {
-      flex: 1,
       gap: 16,
       paddingHorizontal: 12,
-      paddingTop: 20,
+      paddingBottom: 20,
     },
     field: {
       gap: 4,
@@ -287,7 +258,6 @@ const accountDetailsStyles = (isDark: boolean) =>
     inputError: {
       borderColor: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
-
     inputText: {
       flex: 1,
       fontFamily: Fonts.REGULAR,
@@ -300,19 +270,13 @@ const accountDetailsStyles = (isDark: boolean) =>
       fontSize: 13,
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
-
-    button: {
-      alignItems: "center",
-      padding: 14,
-      borderRadius: 8,
-    },
     text: {
       marginBottom: 10,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,
       color: isDark ? Colors.lightGray : Colors.darkGray,
     },
-    memberSince: {
+    metaText: {
       marginTop: 12,
       fontFamily: Fonts.REGULAR,
       fontSize: 16,

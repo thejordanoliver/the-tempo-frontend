@@ -330,33 +330,57 @@ const getWinnerTeam = (game: TournamentGame | null): TournamentTeam | null => {
   return null;
 };
 
-const getStatusLabel = (game: TournamentGame): string => {
-  if (game.statusText?.trim()) {
-    return game.statusText;
+const getGameStatus = (game: TournamentGame, isDark: boolean) => {
+  const styles = CBBTournamentBracketStyles(isDark);
+  const statusText = game.statusText?.trim() ?? "";
+  const isLive = game.status === "live" || game.status === "in";
+  const isFinal = game.status === "post" || game.status === "final";
+  const gameDate = game.date ? new Date(game.date) : null;
+  const hasValidDate = Boolean(gameDate && !Number.isNaN(gameDate.getTime()));
+  const formattedDate = hasValidDate
+    ? gameDate!.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : "TBD";
+  const formattedTime = hasValidDate
+    ? gameDate!.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+    : "TBD";
+
+  if (isLive) {
+    return statusText && statusText.toLowerCase() !== "live" ? (
+      <View style={styles.statusWrapper}>
+        <Text style={styles.date}>LIVE</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.clock}>{statusText}</Text>
+      </View>
+    ) : (
+      <Text style={styles.clock}>LIVE</Text>
+    );
   }
 
-  if (game.status === "live" || game.status === "in") {
-    return "Live";
+  if (isFinal) {
+    return (
+      <View style={styles.statusWrapper}>
+        <Text style={styles.clock}>{statusText || "Final"}</Text>
+        <View style={styles.statusDivider} />
+        <Text style={styles.date}>{formattedDate}</Text>
+      </View>
+    );
   }
 
-  if (game.status === "post" || game.status === "final") {
-    return "Final";
+  if (statusText && statusText.toLowerCase() !== "scheduled") {
+    return <Text style={styles.clock}>{statusText}</Text>;
   }
 
-  if (!game.date) {
-    return "TBD";
-  }
-
-  const date = new Date(game.date);
-
-  if (Number.isNaN(date.getTime())) {
-    return "TBD";
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+  return (
+    <View style={styles.statusWrapper}>
+      <Text style={styles.date}>{formattedDate}</Text>
+      <View style={styles.statusDivider} />
+      <Text style={styles.date}>{formattedTime}</Text>
+    </View>
+  );
 };
 
 /**
@@ -467,7 +491,6 @@ function MatchupCard({
   }
 
   const hasWinner = gameHasWinner(game);
-  const isLive = game.status === "live" || game.status === "in";
   const teams = displayTeams ?? [game.homeTeam, game.awayTeam];
 
   return (
@@ -497,19 +520,13 @@ function MatchupCard({
         league={league}
       />
 
-      <View style={styles.cardFooter}>
-        <Text
-          numberOfLines={1}
-          style={[styles.statusText, isLive ? styles.liveText : undefined]}
-        >
-          {getStatusLabel(game)}
-        </Text>
-
+      <View style={styles.statusContainer}>
         {game.broadcast ? (
-          <Text numberOfLines={1} style={styles.broadcastText}>
+          <Text numberOfLines={1} style={styles.broadcast}>
             {game.broadcast}
           </Text>
         ) : null}
+        {getGameStatus(game, isDark)}
       </View>
     </View>
   );
@@ -1290,7 +1307,6 @@ export default function TournamentTreeBracket({
   const roundHeaderScrollRef = useRef<ScrollView>(null);
 
   const {
-    tournamentName,
     regions,
     openingRoundGames,
     finalFourGames,
@@ -1335,13 +1351,11 @@ export default function TournamentTreeBracket({
     <View style={styles.root}>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        nestedScrollEnabled
+        directionalLockEnabled
         stickyHeaderIndices={regions.length > 0 ? [2] : undefined}
         contentContainerStyle={styles.verticalScrollContent}
       >
-        <View style={styles.header}>
-          <Text style={styles.tournamentName}>{tournamentName}</Text>
-        </View>
-
         <FirstFour games={openingRoundGames} isDark={isDark} league={league} />
 
         <View
@@ -1365,10 +1379,12 @@ export default function TournamentTreeBracket({
             </ScrollView>
           ) : null}
         </View>
-
         <ScrollView
           horizontal
+          nestedScrollEnabled
+          directionalLockEnabled
           showsHorizontalScrollIndicator
+          style={{ height: QUADRANT_BOARD_HEIGHT }}
           scrollEventThrottle={16}
           onScroll={(event) => {
             roundHeaderScrollRef.current?.scrollTo({

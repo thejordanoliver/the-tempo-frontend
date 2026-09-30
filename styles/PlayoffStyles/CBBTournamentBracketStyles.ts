@@ -14,9 +14,6 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
   const boardBackground = isDark
     ? Colors.dark.transparentBackground
     : Colors.light.transparentBackground;
-  const subtleBackground = isDark
-    ? Colors.dark.transparentItemBackground
-    : Colors.light.transparentItemBackground;
   const borderColor = isDark ? Colors.darkGray : Colors.lightGray;
   const separatorColor = isDark
     ? Colors.transparentLightGray
@@ -30,15 +27,13 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       flex: 1,
     },
     verticalScrollContent: {
-      gap: 14,
       paddingTop: 8,
       paddingBottom: 112,
     },
+
     horizontalScrollContent: {
-      flexGrow: 1,
-      gap: 8,
       alignItems: "center",
-      justifyContent: "center",
+      paddingVertical: 4,
     },
     header: {
       gap: 3,
@@ -51,24 +46,9 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       fontSize: 22,
       color: textColor,
     },
-    tournamentMeta: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: mutedTextColor,
-      textTransform: "uppercase",
-    },
-
     bracketBoard: {
       position: "relative",
       backgroundColor: boardBackground,
-      overflow: "visible",
-    },
-    bracketColumns: {
-      flexDirection: "row",
-      alignItems: "flex-start",
-      overflow: "visible",
-    },
-    sideRegionStack: {
       overflow: "visible",
     },
     regionContainer: {
@@ -110,7 +90,7 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       paddingVertical: 6,
       borderWidth: 1,
       borderColor,
-      borderRadius: 8,
+      borderRadius: 16,
       backgroundColor: cardBackground,
       overflow: "hidden",
     },
@@ -133,21 +113,12 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       justifyContent: "space-between",
     },
 
-    teamPressed: {
-      opacity: 0.65,
-    },
-
     teamInfo: {
       flex: 1,
       flexDirection: "row",
       alignItems: "center",
       marginRight: 8,
     },
-    /*
-    |--------------------------------------------------------------------------
-    | Seed
-    |--------------------------------------------------------------------------
-    */
 
     seedContainer: {
       width: 22,
@@ -207,41 +178,42 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       marginVertical: 2,
       backgroundColor: separatorColor,
     },
-    cardFooter: {
+    statusContainer: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
       gap: 8,
       minHeight: 15,
     },
-    statusText: {
-      flex: 1,
-      minWidth: 0,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 10,
-      color: mutedTextColor,
+    statusWrapper: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
     },
-    liveText: {
-      fontFamily: Fonts.BOLD,
-      color: liveColor,
+    statusDivider: {
+      width: 1,
+      height: 10,
+      marginHorizontal: 3,
+      backgroundColor: isDark ? Colors.white : Colors.black,
     },
-    broadcastText: {
+    broadcast: {
       maxWidth: 66,
       fontFamily: Fonts.REGULAR,
       fontSize: 10,
       color: mutedTextColor,
-      textAlign: "right",
+      textAlign: "left",
     },
-    championshipColumn: {
-      alignItems: "center",
-      width: BRACKET_LAYOUT.centerColumnWidth,
-      overflow: "visible",
+    date: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: textColor,
+      textAlign: "center",
     },
-    centerGameSlot: {
-      position: "absolute",
-      right: 0,
-      left: 0,
-      alignItems: "center",
+    clock: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 10,
+      color: liveColor,
+      textAlign: "center",
     },
     championshipLabel: {
       position: "absolute",
@@ -253,17 +225,6 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: mutedTextColor,
-      textAlign: "center",
-      textTransform: "uppercase",
-    },
-    nationalChampionshipLabel: {
-      position: "absolute",
-      right: 0,
-      left: 0,
-      height: 20,
-      fontFamily: Fonts.BOLD,
-      fontSize: 11,
-      color: accentColor,
       textAlign: "center",
       textTransform: "uppercase",
     },
@@ -365,29 +326,9 @@ export const CBBTournamentBracketStyles = (isDark: boolean) => {
       fontSize: 14,
       color: isDark ? Colors.dark.blue : Colors.light.blue,
     },
-    skeletonCanvas: {
-      position: "relative",
-      gap: 12,
-      paddingHorizontal: 16,
-      paddingTop: 12,
-    },
-    skeletonRegion: {
-      gap: 10,
-      padding: 12,
-      borderWidth: 1,
-      borderColor,
-      borderRadius: 8,
-      backgroundColor: subtleBackground,
-    },
     skeletonRow: {
       flexDirection: "row",
       gap: 10,
-    },
-    skeletonBlock: {
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.transparentDarkGray
-        : Colors.transparentLightGray,
     },
   });
 };

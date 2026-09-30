@@ -33,6 +33,7 @@ export default function Draft({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const styles = DraftStyles;
 
   const [selectedTab, setSelectedTab] = useState<DraftTab>(DRAFT_TABS[0]);
 
@@ -113,7 +114,7 @@ export default function Draft({
   );
 }
 
-const styles = StyleSheet.create({
+export const DraftStyles = StyleSheet.create({
   container: {
     flex: 1,
   },

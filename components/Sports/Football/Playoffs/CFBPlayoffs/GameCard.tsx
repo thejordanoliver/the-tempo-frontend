@@ -1,4 +1,5 @@
 import { activeOpacity, Colors } from "@/constants/styles";
+import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import type { FootballGame } from "@/types/football/football";
 import {
   formatDate,
@@ -8,10 +9,9 @@ import {
 } from "@/utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "@/utils/games";
 import { Pressable, Text, View } from "react-native";
-
 import { CFPBracketStyles } from "styles/PlayoffStyles/CFPBracketStyles";
 import type { FootballTeam } from "types/football/cfpBracketTypes";
-import { BracketTeamRow } from "./BracketTeamRow";
+import { TeamRow } from "./TeamRow";
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +25,7 @@ import { BracketTeamRow } from "./BracketTeamRow";
 |--------------------------------------------------------------------------
 */
 
-export function BracketGameCard({
+export function GameCard({
   game,
   x,
   y,
@@ -42,17 +42,24 @@ export function BracketGameCard({
 }) {
   const styles = CFPBracketStyles(isDark);
 
-  const status =
-    game.status?.shortDetail ??
-    game.status?.description ??
-    game.status?.detail ??
-    "";
+  const homeId = game?.home?.id ?? 0;
+  const awayId = game?.away?.id ?? 0;
+
+  const home = getCFBTeam(homeId);
+  const away = getCFBTeam(awayId);
+
+  const homeName = home?.code ?? game.home.name;
+  const awayName = away?.code ?? game.away.name;
+
+  const homeLogo = getCFBTeamLogo(homeId, isDark);
+  const awayLogo = getCFBTeamLogo(awayId, isDark);
 
   const gameDate = safeDate(game.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game.headline ?? holidayLabel;
+  const state = game?.status?.state;
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;
@@ -63,15 +70,27 @@ export function BracketGameCard({
   const isDelayed = gameStatusDescription === "Delayed";
   const isPostponed = gameStatusDescription === "Postponed";
   const isForfeited = gameStatusDescription === "Forfeited";
-  const isSuspended = gameStatusDescription === "Suspended";
   const endOfPeriod = gameStatusDescription === "End of Period";
   const clock = game.status?.displayClock;
+  const isSuspended = gameStatusDescription === "Suspended";
+  const isOT = gameStatusDetail.includes("OT");
   const period = formatPeriod({ period: game.status.period });
-  const redzone = game?.situation?.isRedZone;
+  const redzone = game?.situation.isRedZone;
   const isRedzone = redzone;
   const broadcasts = game?.broadcasts;
-  const broadcast = getBroadcastDisplay(broadcasts);
+  const broadcast = !isFinal && getBroadcastDisplay(broadcasts);
   const downDistanceText = game.situation.downDistanceText;
+  const possessionTeamId = game.situation.possession;
+  const homeHasPossession = inProgress && possessionTeamId === home?.espnId;
+  const awayHasPossession = inProgress && possessionTeamId === away?.espnId;
+  const homeRecord = game.home.record;
+  const awayRecord = game.away.record;
+  const homeScore = game.home.score ?? 0;
+  const awayScore = game.away.score ?? 0;
+  const homeRank = game.home.rank ?? null;
+  const awayRank = game.away.rank ?? null;
+  const homeWins = game.home.winner;
+  const awayWins = game.away.winner;
 
   const renderDownAndDistance = () => {
     if (!downDistanceText) return null;
@@ -99,19 +118,30 @@ export function BracketGameCard({
   };
 
   const renderStatus = () => {
-    if (inProgress)
+    if (inProgress) {
       return (
         <>
-          <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{period}</Text>
-            <View style={styles.statusDivider} />
-            <Text style={styles.clock}>{clock}</Text>
-          </View>
+          <>
+            {!isOT && (
+              <>
+                <View style={styles.infoWrapper}>
+                  <Text style={styles.date}>{period}</Text>
+                  <View style={styles.statusDivider} />
+                  <Text style={styles.clock}>{clock}</Text>
+                </View>
+              </>
+            )}
+
+            {isOT && <Text style={styles.clock}>{period}</Text>}
+          </>
           {renderDownAndDistance()}
         </>
       );
+    }
 
-    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+    if (endOfPeriod) {
+      return <Text style={styles.clock}>End of {period}</Text>;
+    }
 
     if (
       isHalftime ||
@@ -120,10 +150,11 @@ export function BracketGameCard({
       isPostponed ||
       isForfeited ||
       isSuspended
-    )
+    ) {
       return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+    }
 
-    if (isFinal)
+    if (isFinal) {
       return (
         <View style={styles.infoWrapper}>
           <Text style={styles.finalText}>{gameStatusDetail}</Text>
@@ -131,11 +162,14 @@ export function BracketGameCard({
           <Text style={styles.finalText}>{formattedDate}</Text>
         </View>
       );
+    }
 
     return (
       <View style={styles.infoWrapper}>
         <Text style={styles.date}>{formattedDate}</Text>
+
         <View style={styles.statusDivider} />
+
         <Text style={styles.date}>{tbd || formattedTime}</Text>
       </View>
     );
@@ -156,13 +190,16 @@ export function BracketGameCard({
         pressed && { opacity: activeOpacity },
       ]}
     >
-      {status ? (
-        <View style={styles.statusContainer}>
-          <Text style={styles.headline} numberOfLines={1}>
-            {headline}
-          </Text>
-        </View>
-      ) : null}
+      <View style={styles.headlineContainer}>
+        <Text
+          style={styles.headline}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+        >
+          {headline}
+        </Text>
+      </View>
 
       {/*
       |--------------------------------------------------------------------------
@@ -170,11 +207,16 @@ export function BracketGameCard({
       |--------------------------------------------------------------------------
       */}
 
-      <BracketTeamRow
-        team={game.away}
-        onPress={
-          game.away && onTeamPress ? () => onTeamPress(game.away) : undefined
-        }
+      <TeamRow
+        id={awayId}
+        logo={awayLogo}
+        name={awayName}
+        rank={awayRank}
+        winner={awayWins}
+        score={awayScore}
+        record={awayRecord}
+        possession={awayHasPossession}
+        state={state}
         isDark={isDark}
       />
 
@@ -186,15 +228,20 @@ export function BracketGameCard({
       |--------------------------------------------------------------------------
       */}
 
-      <BracketTeamRow
-        team={game.home}
-        onPress={
-          game.home && onTeamPress ? () => onTeamPress(game.home) : undefined
-        }
+      <TeamRow
+        id={homeId}
+        logo={homeLogo}
+        name={homeName}
+        rank={homeRank}
+        winner={homeWins}
+        score={homeScore}
+        record={homeRecord}
+        possession={homeHasPossession}
+        state={state}
         isDark={isDark}
       />
 
-      <View style={styles.footerContainer}>
+      <View style={styles.statusContainer}>
         {renderStatus()}
         <Text style={styles.broadcast}>{broadcast}</Text>
       </View>
