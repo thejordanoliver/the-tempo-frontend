@@ -215,11 +215,18 @@ export function useFavoriteTeams() {
             storageKey,
             JSON.stringify(serverFavorites),
           );
-        } catch (error) {
-          console.warn(
-            "Failed to refresh favorite teams from the server; using the local cache:",
-            error,
-          );
+        } catch (error: any) {
+          const isAuthSessionError =
+            error?.message === "No refresh token available" ||
+            error?.response?.status === 401 ||
+            error?.response?.status === 403;
+
+          if (!isAuthSessionError) {
+            console.warn(
+              "Failed to refresh favorite teams from the server; using the local cache:",
+              error,
+            );
+          }
         }
       } catch (error) {
         const isCurrentRequest =
