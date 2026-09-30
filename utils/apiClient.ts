@@ -1,5 +1,11 @@
 // utils/apiClient.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  clearSecureTokens,
+  getSecureAccessToken,
+  getSecureRefreshToken,
+  saveSecureTokens,
+} from "utils/secureAuthStorage";
 import axios, { create } from "axios";
 import { router } from "expo-router";
 import { API_BASE_URL } from "utils/apiConfig";
@@ -32,8 +38,8 @@ export const checkSignupAvailability = (
 
 // ─── Token helpers ────────────────────────────────────────────────────────────
 
-export const getAccessToken = () => AsyncStorage.getItem("accessToken");
-export const getRefreshToken = () => AsyncStorage.getItem("refreshToken");
+export const getAccessToken = getSecureAccessToken;
+export const getRefreshToken = getSecureRefreshToken;
 
 type AuthSessionListener = (session: { accessToken: string | null }) => void;
 
@@ -62,10 +68,7 @@ export const subscribeAuthSession = (listener: AuthSessionListener) => {
 };
 
 export const saveTokens = async (accessToken: string, refreshToken: string) => {
-  await AsyncStorage.multiSet([
-    ["accessToken", accessToken],
-    ["refreshToken", refreshToken],
-  ]);
+  await saveSecureTokens(accessToken, refreshToken);
 
   notifyAuthSessionListeners(accessToken);
 };
@@ -119,7 +122,12 @@ export const clearAuthSession = async (userId?: number | string | null) => {
   }
 
   try {
-    await AsyncStorage.multiRemove(Array.from(keysToRemove));
+    await AsyncStorage.multiRemove(
+      Array.from(keysToRemove).filter(
+        (key) => key !== "accessToken" && key !== "refreshToken",
+      ),
+    );
+    await clearSecureTokens();
   } finally {
     delete apiClient.defaults.headers.common.Authorization;
     delete apiClient.defaults.headers.common.authorization;
