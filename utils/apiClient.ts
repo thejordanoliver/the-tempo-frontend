@@ -292,7 +292,12 @@ apiClient.interceptors.response.use(
       const refreshToken = await getRefreshToken();
 
       if (!refreshToken) {
-        throw new Error("No refresh token available");
+        const noRefreshTokenError = new Error("No refresh token available");
+
+        await clearAuthSession();
+        router.replace("/login");
+
+        return Promise.reject(noRefreshTokenError);
       }
 
       const res = await axios.post(`${BASE_URL}/api/refresh`, {
