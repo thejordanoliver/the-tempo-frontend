@@ -272,7 +272,7 @@ export function useUserProfile(
     setIsFollowing(false);
     setIsBlockedByViewer(false);
     setHasBlockedViewer(false);
-  }, []);
+  }, [initialFollowersCount, initialFollowingCount]);
 
   const applyDisplayProfile = useCallback(
     (profile: DisplayProfile | CachedUserProfilePayload) => {
