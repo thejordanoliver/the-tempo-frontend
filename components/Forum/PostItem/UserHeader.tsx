@@ -203,6 +203,8 @@ export const UserHeader = memo(function UserHeader({
     const params = {
       id: String(item.user_id),
       username: item.username,
+      followers: String(item.followers_count ?? 0),
+      following: String(item.following_count ?? 0),
     };
 
     if ((segments as readonly string[]).includes("(profile)")) {
