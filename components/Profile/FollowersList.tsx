@@ -5,8 +5,8 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { User } from "hooks/UserHooks/useFollowers";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
+import FollowingButton from "../Buttons/ModalFollowingButton";
 import FollowerListSkeleton from "../Skeletons/Profile/FollowerListSkeleton";
-import FollowingButton from "./ModalFollowingButton";
 
 type Props = {
   users: User[];

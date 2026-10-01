@@ -93,6 +93,7 @@ export const profileStyles = (
       paddingVertical: 10,
       paddingHorizontal: 20,
       borderWidth: 1,
+      borderRadius: 10,
       borderColor: isFollowing
         ? isDark
           ? Colors.black
@@ -100,7 +101,6 @@ export const profileStyles = (
         : isDark
           ? Colors.white
           : Colors.black,
-      borderRadius: 10,
       backgroundColor: isFollowing
         ? isDark
           ? Colors.white

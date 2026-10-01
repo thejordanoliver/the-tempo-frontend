@@ -1,5 +1,5 @@
+import FollowButton from "@/components/Buttons/FollowButton";
 import { Ionicons } from "@expo/vector-icons";
-import FollowButton from "components/Profile/FollowButton";
 import { activeOpacity, Colors } from "constants/styles";
 import { Pressable, Text, View } from "react-native";
 import { profileStyles } from "../../styles/ProfileStyles/ProfileScreenStyles";
