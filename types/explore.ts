@@ -69,14 +69,15 @@ export type TeamResult = SearchRankingFields & {
   type: "team";
 };
 
-export type UserResult = SearchRankingFields & UserFollowCounts & {
-  id: number | string;
-  full_name: string | null;
-  username: string;
-  profileImageUrl: string | null;
-  followers_count?: number;
-  following_count?: number;
-  type: "user";
-};
+export type UserResult = SearchRankingFields &
+  UserFollowCounts & {
+    id: number | string;
+    full_name: string | null;
+    username: string;
+    profileImageUrl: string | null;
+    followers_count?: number;
+    following_count?: number;
+    type: "user";
+  };
 
 export type ResultItem = PlayerResult | TeamResult | UserResult;
