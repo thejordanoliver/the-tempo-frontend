@@ -358,14 +358,10 @@ export default function FavoritesSection({
         <View style={styles.teamItem}>
           <Image
             source={config.logoLight}
-            style={[styles.teamLogo, styles.logoGridMargin]}
+            style={[styles.logo, styles.logoGridMargin]}
           />
 
-          <View style={styles.gridNameContainer}>
-            <Text style={[styles.teamName, styles.gridNameText]}>
-              {config.label}
-            </Text>
-          </View>
+          <Text style={styles.name}>{config.label}</Text>
         </View>
       </Pressable>
     );
@@ -415,18 +411,8 @@ export default function FavoritesSection({
         )}
 
         <View style={styles.teamItem}>
-          {logo && (
-            <Image
-              source={logo}
-              style={[styles.teamLogo, styles.logoGridMargin]}
-            />
-          )}
-
-          <View style={styles.gridNameContainer}>
-            <Text style={[styles.teamName, styles.gridNameText]}>
-              {teamName}
-            </Text>
-          </View>
+          {logo && <Image source={logo} style={styles.logo} />}
+          <Text style={styles.name}>{teamName}</Text>
         </View>
       </Pressable>
     );

@@ -36,18 +36,7 @@ export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
         : Colors.light.itemBackground,
       overflow: "hidden",
     },
-    list: {
-      flex: 1,
-    },
 
-    listItem: {
-      flex: 1,
-      justifyContent: "center",
-      width: "100%",
-      marginBottom: 8,
-      borderRadius: 8,
-      overflow: "hidden",
-    },
     pressed: {
       opacity: 0.6,
     },
@@ -72,22 +61,7 @@ export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
     logoGridMargin: {
       marginBottom: 8,
     },
-    logoListMargin: {
-      marginRight: 10,
-    },
-    gridNameContainer: {
-      alignItems: "center",
-    },
-    gridNameText: {
-      fontSize: 12,
-      textAlign: "center",
-    },
 
-    listNameText: {
-      marginLeft: 10,
-      fontSize: 14,
-      textAlign: "left",
-    },
     buttonContainer: {
       width: "100%",
       marginVertical: 12,
@@ -100,13 +74,14 @@ export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
       flexDirection: "column",
       alignItems: "center",
     },
-    teamLogo: {
+    logo: {
       width: 50,
       height: 50,
+      marginBottom: 8,
       resizeMode: "contain",
     },
-    teamName: {
-      flex: 0,
+    name: {
+      fontSize: 12,
       fontFamily: Fonts.REGULAR,
       color: isDark ? Colors.white : Colors.white,
     },
