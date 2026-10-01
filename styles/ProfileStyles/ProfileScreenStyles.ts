@@ -10,8 +10,6 @@ export const profileStyles = (
 ) => {
   return StyleSheet.create({
     container: {
-      flex: 1,
-      paddingTop: 0,
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
     title: {

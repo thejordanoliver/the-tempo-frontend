@@ -79,7 +79,7 @@ export const followButtonStyles = (isDark: boolean, isFollowing: boolean) =>
         : "transparent",
     },
     buttonText: {
-      fontFamily: Fonts.MEDIUM,
+      fontFamily: Fonts.BOLD,
       fontSize: 12,
       color: isFollowing
         ? isDark

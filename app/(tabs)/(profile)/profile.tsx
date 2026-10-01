@@ -7,9 +7,6 @@ import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useBookmarkedPosts } from "@/hooks/ForumHooks/useBookmarkedPosts";
 import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import ConfirmModal from "components/ConfirmModal";
 import { CustomHeader } from "components/CustomHeader";
 import Forum from "components/Forum/Forum";
@@ -20,8 +17,11 @@ import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { useAuth } from "hooks/UserHooks/useAuth";
 import { useProfile } from "hooks/UserHooks/useProfile";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Animated, ScrollView, useWindowDimensions, View } from "react-native";
 import { useFollowersStore } from "store/followersStore";
 import { useProfileRefreshStore } from "store/profileRefreshStore";
 import { useSettingsModalStore } from "store/settingsModalStore";
@@ -460,23 +460,19 @@ export default function ProfileScreen() {
           isDark={isDark}
         />
 
-        <View
-          style={[
-            styles.contentContainer,
-            selectedTab !== "favorites" && { display: "none" },
-          ]}
-        >
-          <FavoritesSection
-            favoriteTeams={favoriteTeamsWithLeague}
-            favoriteSports={favoriteSports}
-            favoriteSportsLoading={favoriteSportsLoading}
-            favoriteSportsReady={favoriteSportsReady}
-            fadeAnim={fadeAnim}
-            itemWidth={itemWidth}
-            isCurrentUser={currentUserId === viewedUserId}
-          />
-        </View>
-
+        {selectedTab === "favorites" && (
+          <View style={styles.contentContainer}>
+            <FavoritesSection
+              favoriteTeams={favoriteTeamsWithLeague}
+              favoriteSports={favoriteSports}
+              favoriteSportsLoading={favoriteSportsLoading}
+              favoriteSportsReady={favoriteSportsReady}
+              fadeAnim={fadeAnim}
+              itemWidth={itemWidth}
+              isCurrentUser={currentUserId === viewedUserId}
+            />
+          </View>
+        )}
         {selectedTab === "badges" && (
           <View style={styles.contentContainer}>
             <BadgePreviewSection
