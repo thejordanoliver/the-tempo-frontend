@@ -53,11 +53,21 @@ export default function UserProfileScreen() {
   const params = useLocalSearchParams<{
     id?: RouteParam;
     username?: RouteParam;
+    followers?: RouteParam;
+    following?: RouteParam;
   }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const routeUsername = useMemo(
     () => normalizeRouteParam(params.username),
     [params.username],
+  );
+  const initialFollowersCount = useMemo(
+    () => Number(normalizeRouteParam(params.followers)) || 0,
+    [params.followers],
+  );
+  const initialFollowingCount = useMemo(
+    () => Number(normalizeRouteParam(params.following)) || 0,
+    [params.following],
   );
 
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
@@ -86,7 +96,10 @@ export default function UserProfileScreen() {
     isBlockedByViewer,
     canInteract,
     refreshProfile,
-  } = useUserProfile(userId);
+  } = useUserProfile(userId, {
+    initialFollowersCount,
+    initialFollowingCount,
+  });
 
   const {
     featuredBadges,
