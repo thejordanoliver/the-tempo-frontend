@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   GameLiveChatOverlay,
@@ -93,6 +94,7 @@ function parseGameParam(value?: string | string[]): HockeyGame | undefined {
 export default function GameDetailsScreen(
   props: Partial<HockeyGameCardProps> = {},
 ) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
@@ -267,7 +269,7 @@ export default function GameDetailsScreen(
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         stickyHeaderIndices={[0]}
         onScrollBeginDrag={handleScrollStart}
         onScrollEndDrag={handleScrollEnd}

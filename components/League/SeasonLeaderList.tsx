@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -48,12 +49,13 @@ export default function SeasonLeadersList({
   const tabGroup = getTabGroup(segments as readonly string[]);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = leadersListStyles(isDark);
   const global = globalStyles(isDark);
 
   if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.skeletonList}>
+      <ScrollView contentContainerStyle={navigationContentStyle(styles.skeletonList)}>
         <PlayerCardSkeletonList />
       </ScrollView>
     );
@@ -70,7 +72,7 @@ export default function SeasonLeadersList({
   return (
     <FlatList
       data={categories}
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
       keyExtractor={(item) => item.categoryName}
       renderItem={({ item }) => {
         if (!item.leaders || item.leaders.length === 0) {

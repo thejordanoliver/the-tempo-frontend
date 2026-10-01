@@ -146,7 +146,7 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 24,
-      paddingBottom: 80,
+      paddingBottom: 20,
     },
 
     emptyTitle: {

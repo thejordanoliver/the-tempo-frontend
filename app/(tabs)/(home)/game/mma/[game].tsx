@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   FanPrediction,
@@ -86,6 +87,7 @@ function parseGameParam(value?: string | string[]): MMAFight | undefined {
 export default function GameDetailsScreen(
   props: Partial<MMAFightCardProps> = {},
 ) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -238,7 +240,7 @@ export default function GameDetailsScreen(
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}

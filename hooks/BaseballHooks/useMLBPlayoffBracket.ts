@@ -15,7 +15,11 @@ export function useMLBPlayoffBracket(
     async (refresh = false) => {
       if (!enabled) return;
 
-      refresh ? setRefreshing(true) : setLoading(true);
+      if (refresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
 
       try {
@@ -40,7 +44,13 @@ export function useMLBPlayoffBracket(
 
   useEffect(() => {
     if (!enabled) return;
-    void fetchBracket();
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return fetchBracket();
+    });
+    return () => {
+      active = false;
+    };
   }, [enabled, fetchBracket]);
 
   const refresh = useCallback(() => fetchBracket(true), [fetchBracket]);

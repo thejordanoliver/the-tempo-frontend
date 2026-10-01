@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerStatTable from "@/components/Sports/Hockey/Player/PlayerStatTable";
@@ -15,6 +16,7 @@ import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
     teamId: string;
@@ -79,7 +81,7 @@ export default function PlayerDetailScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <PlayerHeader player={player} isDark={isDark} />
 
       <LatestGame

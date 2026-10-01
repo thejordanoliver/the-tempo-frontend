@@ -5,7 +5,7 @@ import { FootballGame } from "@/types/football/football";
 import { HockeyGame } from "@/types/hockey/hockey";
 import { Ionicons } from "@expo/vector-icons";
 import { EXPLORE_WIDGET_SIZES } from "constants/exploreWidgets";
-import { Colors, activeOpacity } from "constants/styles";
+import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { BlurView } from "expo-blur";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -861,9 +861,8 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
       paddingHorizontal: 44,
     },
     emptyTitle: {
-      fontFamily: "System",
+      fontFamily: Fonts.BOLD,
       fontSize: 16,
-      fontWeight: "600",
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },
@@ -882,7 +881,7 @@ const sliderStyles = (isDark: boolean, dashboardMode: boolean) =>
     },
     emptyActionText: {
       fontSize: 12,
-      fontWeight: "600",
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.black : Colors.white,
     },
     progressContainer: {
@@ -991,7 +990,7 @@ const editControlStyles = (isDark: boolean, compact: boolean) =>
     },
     sizeButtonText: {
       fontSize: compact ? 9 : 10,
-      fontWeight: "700",
+      fontFamily: Fonts.BOLD,
       color: isDark ? Colors.white : Colors.black,
     },
     sizeButtonTextSelected: {

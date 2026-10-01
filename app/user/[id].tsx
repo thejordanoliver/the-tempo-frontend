@@ -1,3 +1,5 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { parseProfileCountParam } from "utils/userProfileCounts";
 import { CustomHeader } from "@/components/CustomHeader";
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import Forum from "@/components/Forum/Forum";
@@ -38,6 +40,12 @@ const normalizeRouteParam = (param: RouteParam) => {
 };
 
 export default function UserProfileScreen() {
+  const { id } = useLocalSearchParams<{ id?: RouteParam }>();
+  return <UserProfileContent key={normalizeRouteParam(id)} />;
+}
+
+function UserProfileContent() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
@@ -53,12 +61,17 @@ export default function UserProfileScreen() {
   const params = useLocalSearchParams<{
     id?: RouteParam;
     username?: RouteParam;
+    followers?: RouteParam;
+    following?: RouteParam;
   }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const routeUsername = useMemo(
     () => normalizeRouteParam(params.username),
     [params.username],
   );
+
+  const initialFollowersCount = parseProfileCountParam(params.followers);
+  const initialFollowingCount = parseProfileCountParam(params.following);
 
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -86,7 +99,10 @@ export default function UserProfileScreen() {
     isBlockedByViewer,
     canInteract,
     refreshProfile,
-  } = useUserProfile(userId);
+  } = useUserProfile(userId, {
+    initialFollowersCount,
+    initialFollowingCount,
+  });
 
   const {
     featuredBadges,
@@ -244,13 +260,18 @@ export default function UserProfileScreen() {
     );
   }
 
-  if (isLoading && !hasCachedProfile) {
+  if (
+    isLoading &&
+    !hasCachedProfile &&
+    initialFollowersCount === undefined &&
+    initialFollowingCount === undefined
+  ) {
     return <SkeletonProfileScreen isDark={isDark} />;
   }
 
   return (
     <>
-      <ScrollView
+      <ScrollView contentContainerStyle={navigationContentStyle()}
         style={styles.container}
         contentInsetAdjustmentBehavior="never"
       >

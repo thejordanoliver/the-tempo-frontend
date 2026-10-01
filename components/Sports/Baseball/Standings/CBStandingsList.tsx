@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
@@ -87,6 +88,7 @@ export const CBStandingsList = ({ league }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useScopedRouter();
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -187,7 +189,7 @@ export const CBStandingsList = ({ league }: Props) => {
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -437,7 +439,7 @@ export const CBStandingsList = ({ league }: Props) => {
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -453,7 +455,7 @@ export const CBStandingsList = ({ league }: Props) => {
   return (
     <ScrollView
       alwaysBounceVertical
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }

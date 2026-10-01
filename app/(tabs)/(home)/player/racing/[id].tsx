@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
@@ -10,6 +11,7 @@ import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, league } = useLocalSearchParams<{
     id?: string;
     teamId?: string | string[];
@@ -55,7 +57,7 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
       contentInsetAdjustmentBehavior="automatic"
     >
       <PlayerHeader player={player} isDark={isDark} />

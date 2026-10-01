@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
@@ -25,6 +26,7 @@ export default function NewsList({
   error,
   isDark,
 }: NewsHighlightsListProps) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = newsListStyles(isDark);
   const global = globalStyles(isDark);
   const userHasScrolled = useRef(false);
@@ -64,7 +66,7 @@ export default function NewsList({
       }}
       onEndReachedThreshold={0.4}
       alwaysBounceVertical
-      contentContainerStyle={styles.container}
+      contentContainerStyle={navigationContentStyle(styles.container)}
       renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
       ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : null}
     />

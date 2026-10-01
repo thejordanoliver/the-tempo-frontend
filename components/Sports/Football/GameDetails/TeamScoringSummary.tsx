@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
@@ -37,6 +38,7 @@ export default function TeamScoringSummary({
   isDark,
   state,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = TeamScoringSummaryStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -101,7 +103,7 @@ export default function TeamScoringSummary({
             </Text>
           </View>
         ) : (
-          <ScrollView style={styles.listContainer}>
+          <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.listContainer}>
             {filteredPlays.map((play, index) => {
               const period = formatPeriod({
                 period: play.period?.number,

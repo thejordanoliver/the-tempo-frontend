@@ -154,12 +154,12 @@ export default function ForYouFeed({
 const forYouFeedStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      paddingBottom: 110,
+      paddingBottom: 12,
       gap: 8,
     },
     loadingContainer: {
       paddingHorizontal: 12,
-      paddingBottom: 110,
+      paddingBottom: 12,
       gap: 12,
     },
     feedItem: {

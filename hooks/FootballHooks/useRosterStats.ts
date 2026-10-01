@@ -271,6 +271,7 @@ const getErrorObject = (err: unknown) => {
 export function useRosterStats(
   teamId: TeamIdInput,
   league: FootballRosterLeague,
+  { enabled = true }: { enabled?: boolean } = {},
 ): UseRosterStatsResult {
   const [teamRoster, setTeamRoster] = useState<RosterStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -324,8 +325,13 @@ export function useRosterStats(
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchRoster());
-  }, [fetchRoster]);
+    if (!enabled) return;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchRoster();
+    });
+    return () => { cancelled = true; };
+  }, [enabled, fetchRoster]);
 
   const refresh = useCallback(() => fetchRoster(true), [fetchRoster]);
 

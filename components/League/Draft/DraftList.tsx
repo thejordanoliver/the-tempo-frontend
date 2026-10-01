@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
@@ -87,6 +88,7 @@ export default function DraftList({
   onTeamChange,
   onRoundChange,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = draftListStyles(isDark);
@@ -337,7 +339,7 @@ export default function DraftList({
           />
         </View>
 
-        <FlatList
+        <FlatList contentContainerStyle={navigationContentStyle()}
           data={Array.from({ length: 10 })}
           keyExtractor={(_, i) => `skel-${i}`}
           renderItem={() => <DraftCardSkeleton />}
@@ -401,7 +403,7 @@ export default function DraftList({
         />
       </View>
 
-      <FlatList
+      <FlatList contentContainerStyle={navigationContentStyle()}
         ref={listRef}
         data={visiblePicks}
         keyExtractor={(item) => `${item.overall}`}

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 // components/Sports/Basketball/TournamentBracket/TournamentTreeBracket.tsx
 
 import Button from "@/components/Buttons/Button";
@@ -1302,6 +1303,7 @@ export default function TournamentTreeBracket({
 }: TournamentTreeBracketProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = CBBTournamentBracketStyles(isDark);
   const global = globalStyles(isDark);
   const roundHeaderScrollRef = useRef<ScrollView>(null);
@@ -1354,7 +1356,7 @@ export default function TournamentTreeBracket({
         nestedScrollEnabled
         directionalLockEnabled
         stickyHeaderIndices={regions.length > 0 ? [2] : undefined}
-        contentContainerStyle={styles.verticalScrollContent}
+        contentContainerStyle={navigationContentStyle(styles.verticalScrollContent)}
       >
         <FirstFour games={openingRoundGames} isDark={isDark} league={league} />
 

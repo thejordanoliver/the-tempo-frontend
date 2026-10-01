@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Team } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
@@ -97,6 +98,7 @@ export default function GameSummary({
   league = "NBA",
   gameStatusDescription,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = gameSummaryStyles(isDark);
@@ -176,7 +178,7 @@ export default function GameSummary({
         <ScrollView
           style={styles.listContainer}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={navigationContentStyle({ paddingBottom: 20 })}
         >
           {teamPlays?.map((play) => {
             const playTeamId = play.team?.id;

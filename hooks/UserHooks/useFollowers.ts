@@ -1,3 +1,4 @@
+import type { UserFollowCounts } from "types/user";
 // hooks/UserHooks/useFollowers.ts
 
 import { apiClient } from "@/utils/apiClient";
@@ -7,14 +8,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * User shape returned by the followers / following endpoints.
  * Images are expected to be remote URLs, usually Cloudinary or normalized server URLs.
  */
-export type User = {
+export type User = UserFollowCounts & {
   id: number | string;
   username: string;
   profile_image: string;
   full_name: string;
   banner_image: string;
   bio?: string | null;
-  followers_count?: number;
   isFollowing: boolean;
   followsYou?: boolean;
 };

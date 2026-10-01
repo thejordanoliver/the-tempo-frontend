@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +24,7 @@ import {
 } from "services/usersApi";
 
 export default function BlockedUsersScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
@@ -35,7 +37,11 @@ export default function BlockedUsersScreen() {
   const [pendingUserId, setPendingUserId] = useState<number | null>(null);
 
   const loadUsers = useCallback(async (refresh = false) => {
-    refresh ? setRefreshing(true) : setLoading(true);
+    if (refresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     try {
       setUsers(await getBlockedUsers());
     } catch {
@@ -71,7 +77,7 @@ export default function BlockedUsersScreen() {
     } finally {
       setPendingUserId(null);
     }
-  }, [pendingUserId, selectedUser]);
+  }, [pendingUserId, selectedUser, setSelectedUser, setUsers, setPendingUserId]);
 
   if (loading) {
     return (
@@ -88,7 +94,7 @@ export default function BlockedUsersScreen() {
         keyExtractor={(item) => String(item.id)}
         refreshing={refreshing}
         onRefresh={() => void loadUsers(true)}
-        contentContainerStyle={users.length ? styles.list : styles.emptyList}
+        contentContainerStyle={navigationContentStyle(users.length ? styles.list : styles.emptyList)}
         ListEmptyComponent={(
           <View style={styles.empty}>
             <Ionicons

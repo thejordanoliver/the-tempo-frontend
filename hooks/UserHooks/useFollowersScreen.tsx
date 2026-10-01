@@ -1,3 +1,4 @@
+import { getUserProfileCountParams } from "utils/userProfileCounts";
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -66,6 +67,8 @@ const getUserSignature = (user: FollowerUser) =>
     user.fullName ?? "",
     user.profile_image,
     user.profileImage ?? "",
+    String(user.followers_count ?? ""),
+    String(user.following_count ?? ""),
     String(user.isFollowing),
     String(user.followsYou ?? false),
   ].join("\u0001");
@@ -194,6 +197,7 @@ export function useFollowersScreen() {
         params: {
           id: user.id.toString(),
           username: user.username,
+          ...getUserProfileCountParams(user),
         },
       });
     },

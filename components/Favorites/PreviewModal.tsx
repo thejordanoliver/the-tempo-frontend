@@ -22,7 +22,7 @@ import { GlassView } from "expo-glass-effect";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useMemo, type RefObject } from "react";
 import { Image, Text, View } from "react-native";
-import { teamPreviewModalStyles } from "styles/TeamStyles/TeamPreviewModalStyles";
+import { TeamPreviewModalStyles } from "styles/TeamStyles/TeamPreviewModalStyles";
 
 export type PreviewItem =
   | { type: "team"; team: Team }
@@ -76,7 +76,7 @@ export default function PreviewModal({
   const snapPoints = useMemo(() => ["42%"], []);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = teamPreviewModalStyles(isDark);
+  const styles = TeamPreviewModalStyles(isDark);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -106,7 +106,7 @@ export default function PreviewModal({
   const primaryColor = isDark
     ? (team?.secondaryColor ?? sport?.color ?? Colors.midTone)
     : (team?.color ?? sport?.color ?? Colors.midTone);
-  
+
   const destinationLabel = isTeam ? "Team" : "Sport";
 
   const innerContent = (

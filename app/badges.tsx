@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import BadgeCard from "@/components/Profile/Badges/BadgeCard";
 import PillTabs from "@/components/TabBars/PillTabs";
@@ -43,6 +44,7 @@ const normalizeRouteParam = (param: RouteParam) => {
 };
 
 export default function BadgesScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
@@ -98,7 +100,7 @@ export default function BadgesScreen() {
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -242,7 +244,7 @@ export const badgeScreenStyles = (isDark: boolean) =>
     contentContainer: {
       gap: 18,
       padding: 16,
-      paddingBottom: 80,
+      paddingBottom: 20,
     },
 
     summaryCard: {

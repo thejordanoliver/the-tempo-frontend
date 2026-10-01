@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
@@ -53,6 +54,7 @@ function normalizeBasketballLeague(league: unknown): BasketballLeague {
 }
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const {
     id,
     teamId: routeTeamId,
@@ -205,7 +207,7 @@ export default function PlayerDetailScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <PlayerHeader player={player} isDark={isDark} league={canonicalLeague} />
 
       <SeasonStatCard

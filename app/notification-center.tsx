@@ -1,8 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
-import { Colors, PLACEHOLDER_AVATAR } from "@/constants/styles";
+import { Colors, globalStyles, PLACEHOLDER_AVATAR } from "@/constants/styles";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { NotificationsCenterStyles } from "@/styles/NotificationCenterStyles";
@@ -18,7 +18,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
 import { Image } from "expo-image";
-import { Href, useNavigation } from "expo-router";
+import { Href, useNavigation, useSegments } from "expo-router";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   memo,
   useCallback,
@@ -42,8 +43,7 @@ import Animated, {
   LinearTransition,
   SlideOutLeft,
 } from "react-native-reanimated";
-
-const CUSTOM_TAB_BAR_HEIGHT = 80;
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const getNotificationIcon = (
   type: NotificationType,
@@ -198,7 +198,7 @@ const NotificationRow = memo(function NotificationRow({
         <View style={styles.titleRow}>
           {leagueLabel && <Text style={styles.leagueLabel}>{leagueLabel}</Text>}
 
-          <Text style={styles.notificationHeader} numberOfLines={1}>
+          <Text style={styles.notificationHeader} numberOfLines={2}>
             {title}
           </Text>
         </View>
@@ -229,6 +229,7 @@ const NotificationRow = memo(function NotificationRow({
 });
 
 export default function NotificationsCenter() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
 
   const {
@@ -255,7 +256,11 @@ export default function NotificationsCenter() {
   const emptyStateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const styles = NotificationsCenterStyles(isDark);
+  const global = globalStyles(isDark);
 
+  const insets = useSafeAreaInsets();
+  const segments = useSegments();
+  const bottomInset = segments[0] === "(tabs)" ? 0 : insets.bottom;
   const navigation = useNavigation();
   const router = useScopedRouter();
 
@@ -446,9 +451,19 @@ export default function NotificationsCenter() {
     ],
   );
 
+  if (loading)
+    return (
+      <View style={styles.screen}>
+        <View style={global.emptyContainer}>
+          <CustomActivityIndicator />
+        </View>
+      </View>
+    );
+
   return (
     <View style={styles.screen}>
       <FlatList
+        style={styles.list}
         data={visibleNotifications}
         extraData={{ relativeTimeNow, isSelectionMode, selectedIds }}
         keyExtractor={(item) => item.id}
@@ -484,25 +499,20 @@ export default function NotificationsCenter() {
         ListEmptyComponent={
           suppressEmptyState ? null : (
             <View style={styles.emptyState}>
-              {loading ? (
-                <CustomActivityIndicator />
-              ) : (
-                <>
-                  <Ionicons
-                    name="notifications-outline"
-                    size={34}
-                    color={isDark ? Colors.lightGray : Colors.darkGray}
-                  />
+              <>
+                <Ionicons
+                  name="notifications-outline"
+                  size={34}
+                  color={isDark ? Colors.lightGray : Colors.darkGray}
+                />
 
-                  <Text style={styles.emptyTitle}>No notifications yet</Text>
-
-                  <Text style={styles.emptyText}>
-                    {error
-                      ? "Notifications could not be loaded. Pull down to try again."
-                      : "New messages, likes, comments, and other activity will appear here."}
-                  </Text>
-                </>
-              )}
+                <Text style={styles.emptyTitle}>No notifications yet</Text>
+                <Text style={styles.emptyText}>
+                  {error
+                    ? "Notifications could not be loaded. Pull down to try again."
+                    : "New messages, likes, comments, and other activity will appear here."}
+                </Text>
+              </>
             </View>
           )
         }
@@ -519,13 +529,11 @@ export default function NotificationsCenter() {
         }}
         onEndReachedThreshold={0.35}
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={[
+        contentContainerStyle={navigationContentStyle([
           styles.container,
           visibleNotifications.length === 0 && styles.emptyContainer,
-          isSelectionMode && {
-            paddingBottom: CUSTOM_TAB_BAR_HEIGHT + 88,
-          },
-        ]}
+          { paddingBottom: 20 + (isSelectionMode ? 0 : bottomInset) },
+        ])}
         showsVerticalScrollIndicator={false}
       />
 
@@ -533,7 +541,7 @@ export default function NotificationsCenter() {
         <Animated.View
           entering={FadeInDown.duration(180)}
           exiting={FadeOutDown.duration(140)}
-          style={[styles.selectionToolbar, { bottom: CUSTOM_TAB_BAR_HEIGHT }]}
+          style={[styles.selectionToolbar, { paddingBottom: 12 + bottomInset }]}
         >
           <Pressable
             disabled={selectedCount === 0}

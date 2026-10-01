@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import {
   GameLiveChatOverlay,
   GameLocation,
@@ -66,6 +67,7 @@ function parseGameParam(value?: string | string[]): RacingEvent | undefined {
 export default function GameDetailsScreen(
   props: Partial<RacingEventCardProps> = {},
 ) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const navigation = useNavigation();
@@ -128,7 +130,7 @@ export default function GameDetailsScreen(
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}

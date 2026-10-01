@@ -1,43 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import type { RosterResponse } from "types/roster";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export interface Player {
-  id: number;
-  player_id: number;
-  team_id: number;
-  full_name: string;
-  short_name: string;
-  first_name: string;
-  last_name: string;
-  position: string | null;
-  height: string | null;
-  weight: number | null;
-  birth_date: string | null;
-  college: string | null;
-  jersey_number: string;
-  headshot_url: string;
-  created_at: string;
-  updated_at: string;
-  active: boolean;
-  affiliation: string;
-  experience?: number;
-  experience_display?: string;
-  experience_abbr?: string;
-  birth_display?: string;
-  draft_round: number | null;
-  draft_year: number | null;
-  draft_number: number | null;
-  espn_id: number | null;
-}
+export type { RosterPlayer as Player } from "types/roster";
 
-export default function useRoster(teamId: number, league: string) {
-  const [players, setPlayers] = useState<Player[]>([]);
+export default function useRoster(
+  teamId: number,
+  league: string,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
+  const requestIdRef = useRef(0);
+  const [roster, setRoster] = useState<RosterResponse>({ players: [], sections: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshPlayers = useCallback(async () => {
+  const fetchPlayers = useCallback(async (signal?: AbortSignal) => {
+    const requestId = ++requestIdRef.current;
     if (!teamId || !league) {
-      setPlayers([]);
+      setRoster({ players: [], sections: [] });
       setLoading(false);
       setError(null);
       return;
@@ -49,42 +29,54 @@ export default function useRoster(teamId: number, league: string) {
     const url = `api/roster/${league}/${teamId}`;
 
     try {
-      const res = await apiClient.get(url);
+      const res = await apiClient.get<RosterResponse>(url, { signal });
+      if (signal?.aborted || requestId !== requestIdRef.current) return;
 
-      const roster = Array.isArray(res.data?.players)
-        ? res.data.players
-        : Array.isArray(res.data)
-          ? res.data
-          : [];
-
-      setPlayers(roster);
+      setRoster({
+        players: Array.isArray(res.data.players) ? res.data.players : [],
+        sections: Array.isArray(res.data.sections) ? res.data.sections : [],
+      });
       setError(null);
     } catch (err: any) {
+      if (signal?.aborted || requestId !== requestIdRef.current) return;
       const status = err?.response?.status;
 
       // Treat "not found" roster responses as an empty roster,
       // not a real frontend error.
       if (status === 404) {
-        setPlayers([]);
+        setRoster({ players: [], sections: [] });
         setError(null);
         return;
       }
 
       console.error("Could not load team roster:", err?.message || err);
 
-      setPlayers([]);
+      setRoster({ players: [], sections: [] });
       setError("Could not load team roster.");
     } finally {
-      setLoading(false);
+      if (!signal?.aborted && requestId === requestIdRef.current) setLoading(false);
     }
   }, [teamId, league]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => refreshPlayers());
-  }, [refreshPlayers]);
+    if (!enabled) return;
+    const controller = new AbortController();
+    void Promise.resolve().then(() => {
+      if (controller.signal.aborted) return;
+      setRoster({ players: [], sections: [] });
+      void fetchPlayers(controller.signal);
+    });
+    return () => {
+      controller.abort();
+      requestIdRef.current += 1;
+    };
+  }, [enabled, fetchPlayers]);
+
+  const refreshPlayers = useCallback(() => fetchPlayers(), [fetchPlayers]);
 
   return {
-    players,
+    players: roster.players,
+    sections: roster.sections,
     loading,
     error,
     refreshPlayers,

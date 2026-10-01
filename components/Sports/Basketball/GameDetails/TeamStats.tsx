@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { TeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, Colors } from "constants/styles";
@@ -522,6 +523,7 @@ export default function TeamStats({
   isDark,
   league,
 }: TeamStatsProps) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = TeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
@@ -695,7 +697,7 @@ export default function TeamStats({
         </View>
       </View>
 
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.container}>
         <View
           style={{
             position: "absolute",

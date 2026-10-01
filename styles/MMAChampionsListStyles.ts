@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 export const MMAChampionListStyles = StyleSheet.create({
   contentContainer: {
-    paddingBottom: 80,
+    paddingBottom: 20,
   },
 
   stateContainer: {

@@ -1,6 +1,7 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 // components/Roster.tsx
 import type { Player } from "@/hooks/LeagueHooks/useRoster";
-import { rosterStyles } from "@/styles/TeamStyles/RosterStyles";
+import { RosterStyles } from "@/styles/TeamStyles/RosterStyles";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { FlatList, RefreshControl, Text, View } from "react-native";
@@ -28,7 +29,8 @@ export default function Roster({
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
   const tintColor = isDark ? Colors.white : Colors.black;
-  const styles = rosterStyles;
+  const navigationContentStyle = useNavigationBarContentStyle();
+  const styles = RosterStyles;
 
   if (loading) return <PlayerCardSkeletonList count={15} showHeader={false} />;
 
@@ -43,7 +45,7 @@ export default function Roster({
     <FlatList
       data={players}
       keyExtractor={(player) => String(player.id)}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       contentInsetAdjustmentBehavior="automatic"
       renderItem={({ item: player }) => (
         <PlayerCard

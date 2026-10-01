@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -96,6 +97,7 @@ function parseGameParam(value?: string | string[]): BaseballGame | undefined {
 export default function GameDetailsScreen(
   props: Partial<BaseballGameCardProps> = {},
 ) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
@@ -368,7 +370,7 @@ export default function GameDetailsScreen(
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         stickyHeaderIndices={[0]}
         onScrollBeginDrag={handleScrollStart}
         onScrollEndDrag={handleScrollEnd}

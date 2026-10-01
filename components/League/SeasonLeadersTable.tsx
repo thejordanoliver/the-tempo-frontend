@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import placeholder from "@/assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity, globalStyles } from "@/constants/styles";
@@ -90,6 +91,7 @@ export default function SeasonLeadersTable({
   loading,
   error,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => SeasonLeadersTableStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -143,7 +145,7 @@ export default function SeasonLeadersTable({
   return (
     <ScrollView
       contentInsetAdjustmentBehavior="automatic"
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       onScroll={handleScroll}
       scrollEventThrottle={200}
     >

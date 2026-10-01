@@ -1,11 +1,7 @@
 // components/Forum/PostItem.tsx
 import ConfirmModal from "components/ConfirmModal";
 import { memo, useEffect, useState } from "react";
-import {
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumPostItemProps } from "types/forum";
 import { Interactions } from "./Interactions";
@@ -109,22 +105,12 @@ export const PostItem = memo(function PostItem({
         <View style={styles.postFooter}>
           {isEditing && (
             <View style={styles.editActionsContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={onSaveEdit}
-              >
-                <Text style={styles.saveText}>
-                  Save
-                </Text>
+              <TouchableOpacity style={styles.button} onPress={onSaveEdit}>
+                <Text style={styles.saveText}>Save</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.button}
-                onPress={onCancelEdit}
-              >
-                <Text style={styles.cancelText}>
-                  Cancel
-                </Text>
+              <TouchableOpacity style={styles.button} onPress={onCancelEdit}>
+                <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -134,9 +120,7 @@ export const PostItem = memo(function PostItem({
             isDark={isDark}
             currentUserId={currentUserId}
             onBookmarkChange={onBookmarkChange}
-            disableCommentNavigation={
-              disableCommentNavigation
-            }
+            disableCommentNavigation={disableCommentNavigation}
           />
         </View>
       </View>

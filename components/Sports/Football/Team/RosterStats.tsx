@@ -1,4 +1,4 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   FootballLeaderConfig,
@@ -25,8 +25,9 @@ import {
 } from "@/utils/footballRosterStats";
 import { formatStatValue } from "@/utils/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
-import { Colors, activeOpacity, globalStyles } from "constants/styles";
+import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
   Image,
@@ -51,6 +52,7 @@ export default function RosterStats({
 }: FootballRosterStatsProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = rosterStatsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useScopedRouter();
@@ -462,7 +464,7 @@ export default function RosterStats({
 
   return (
     <ScrollView
-      contentContainerStyle={styles.scrollContainer}
+      contentContainerStyle={navigationContentStyle(styles.scrollContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

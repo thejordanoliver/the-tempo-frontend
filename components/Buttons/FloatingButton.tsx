@@ -1,8 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { activeOpacity, Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useContext, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, TouchableOpacity } from "react-native";
 
 type Props = {
@@ -14,7 +15,11 @@ type Props = {
 function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = useMemo(() => FloatingButtonStyles(isDark), [isDark]);
+  const navigationBarInset = useContext(NavigationBarInsetContext);
+  const styles = useMemo(
+    () => FloatingButtonStyles(isDark, navigationBarInset),
+    [isDark, navigationBarInset],
+  );
   const [opacityAnim] = useState(() => new Animated.Value(isOpen ? 0 : 1));
 
   useEffect(() => {
@@ -54,12 +59,12 @@ function FloatingButton({ isOpen, onPress, icon = "chatbubble" }: Props) {
 
 export default memo(FloatingButton);
 
-const FloatingButtonStyles = (isDark: boolean) =>
+const FloatingButtonStyles = (isDark: boolean, navigationBarInset: number) =>
   StyleSheet.create({
     floatingButtonWrapper: {
       position: "absolute",
       right: 0,
-      bottom: 20,
+      bottom: 120,
       left: 0,
       zIndex: 999,
       alignItems: "flex-end",

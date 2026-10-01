@@ -1,5 +1,10 @@
 import { GestureResponderEvent } from "react-native";
 
+export type UserFollowCounts = {
+  followers_count?: number;
+  following_count?: number;
+};
+
 export type Mode = "followers" | "following";
 
 export type User = {

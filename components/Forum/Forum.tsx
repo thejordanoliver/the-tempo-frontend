@@ -1,13 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
-import { useCallback, useMemo } from "react";
+import { Colors, activeOpacity, globalStyles } from "constants/styles";
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
+import { ForumStyles } from "styles/ForumStyles/ForumStyles";
+import { useCallback, useContext, useMemo } from "react";
 import type { ListRenderItem } from "react-native";
 import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -48,14 +49,18 @@ export default function Forum({
   loadMoreMode,
   skeletonCount = DEFAULT_SKELETON_COUNT,
 }: ForumProps) {
-  const styles = useMemo(() => forumStyles(isDark), [isDark]);
+  const bottomInset = useContext(NavigationBarInsetContext);
+  const shouldShowCreateButton = showCreateButton && !!onCreatePost;
+  const styles = useMemo(
+    () => ForumStyles(isDark, bottomInset, shouldShowCreateButton),
+    [isDark, bottomInset, shouldShowCreateButton],
+  );
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const isInitialLoading = loading || (refreshing && posts.length === 0);
   const loadMoreDisabled = loading || refreshing;
   const effectiveLoadMoreMode =
     loadMoreMode ?? (scrollEnabled ? "automatic" : "button");
-  const shouldShowCreateButton = showCreateButton && !!onCreatePost;
   const shouldRenderLoadMoreButton =
     hasMore && !!onLoadMore && effectiveLoadMoreMode === "button";
 
@@ -178,13 +183,13 @@ export default function Forum({
   if (isInitialLoading) {
     if (scrollEnabled) {
       return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+        >
           {renderSkeletons()}
         </ScrollView>
       );
     }
-
-    return <View style={styles.embeddedContainer}>{renderSkeletons()}</View>;
   }
 
   if (error) {
@@ -194,7 +199,7 @@ export default function Forum({
   if (!scrollEnabled) {
     return (
       <>
-        <View style={styles.embeddedContainer}>
+        <View style={styles.embeddedContent}>
           {posts.length === 0
             ? renderEmptyState()
             : posts.map((post) => (
@@ -247,41 +252,4 @@ export default function Forum({
       )}
     </>
   );
-}
-
-export function forumStyles(isDark: boolean) {
-  return StyleSheet.create({
-    scrollContainer: {
-      flexGrow: 1,
-      paddingBottom: 130,
-    },
-    embeddedContainer: {
-      paddingBottom: 0,
-    },
-    actionButton: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "center",
-      justifyContent: "center",
-      gap: 8,
-      minHeight: 40,
-      marginTop: 14,
-      paddingHorizontal: 18,
-      paddingVertical: 9,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
-      borderRadius: 8,
-    },
-    loadMoreButton: {
-      marginTop: 12,
-    },
-    disabledButton: {
-      opacity: 0.6,
-    },
-    actionButtonText: {
-      fontFamily: Fonts.BOLD,
-      fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
-    },
-  });
 }

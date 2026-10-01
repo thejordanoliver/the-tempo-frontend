@@ -1,4 +1,5 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
+import { NAVIGATION_BAR_ROW_HEIGHT } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
 import type { ComponentProps } from "react";
@@ -27,7 +28,12 @@ export default function NavigationBar({
 
   return (
     <View style={styles.tabBarWrapper}>
-      <BlurView intensity={100} style={StyleSheet.absoluteFill} />
+      <BlurView
+        intensity={80}
+        tint={"systemMaterial"}
+        pointerEvents="none"
+        style={styles.blurBackground}
+      />
 
       <View style={styles.tabRow}>
         {state.routes.map((route, index) => {
@@ -73,16 +79,7 @@ export default function NavigationBar({
                 weight={focused ? "Filled" : "Outline"}
               />
               <Text
-                style={[
-                  styles.tabLabel,
-                  {
-                    color: focused
-                      ? isDark
-                        ? Colors.white
-                        : Colors.black
-                      : Colors.midTone,
-                  },
-                ]}
+                style={[styles.tabLabel, focused && styles.activeTabLabel]}
               >
                 {tab.label}
               </Text>
@@ -97,12 +94,15 @@ export default function NavigationBar({
 const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
   StyleSheet.create({
     tabBarWrapper: {
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 10,
       overflow: "hidden",
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
-      backgroundColor: isDark
-        ? Colors.dark.transparentBackground
-        : Colors.light.transparentBackground,
+      backgroundColor: "transparent",
       paddingBottom: bottomInset,
       shadowColor: "rgba(0, 0, 0, 0.8)",
       shadowOffset: { width: 0, height: 5 },
@@ -110,8 +110,15 @@ const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
       shadowRadius: 12,
       elevation: 12,
     },
+    blurBackground: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
     tabRow: {
-      height: 70,
+      height: NAVIGATION_BAR_ROW_HEIGHT,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-around",
@@ -124,8 +131,12 @@ const CustomTabBarStyles = (isDark: boolean, bottomInset: number) =>
       justifyContent: "center",
     },
     tabLabel: {
+      color: Colors.midTone,
       marginTop: 4,
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
+    },
+    activeTabLabel: {
+      color: isDark ? Colors.white : Colors.black,
     },
   });

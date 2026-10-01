@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function DraftBoardTab({ safeYear, league }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = DraftBoardStyles(isDark);
@@ -60,7 +62,7 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      contentContainerStyle={navigationContentStyle(styles.container)}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}

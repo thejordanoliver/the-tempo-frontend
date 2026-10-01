@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import SeasonStatCard from "@/components/Sports/Baseball/Player/SeasonStatCard";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
@@ -53,6 +54,7 @@ function getLatestPlayerSeason(seasons: BaseballPlayerSeason[]) {
 }
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, teamId, league } = useLocalSearchParams<{
     id: string;
     teamId: string;
@@ -135,7 +137,7 @@ export default function PlayerDetailScreen() {
      Render
   ------------------------- */
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <PlayerHeader player={player} isDark={isDark} />
 
       <SeasonStatCard

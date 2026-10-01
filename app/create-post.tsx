@@ -1,10 +1,11 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -59,6 +60,7 @@ const SOCCER_FORUM_LEAGUES = new Set([
 // ═══════════════════════════════════════════════════════════════════════════
 
 export default function CreatePostScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   // ─────────────────────────────────────────────────────────────────────────
   // HOOKS & INITIALIZATION
   // ─────────────────────────────────────────────────────────────────────────
@@ -601,11 +603,7 @@ export default function CreatePostScreen() {
         disabled={loading || !destination}
         isDark={isDark}
       >
-        {loading
-          ? "Posting..."
-          : destination
-            ? "Post"
-            : "Choose where to post"}
+        {loading ? "Posting..." : destination ? "Post" : "Choose where to post"}
       </Button>
     </View>
   );
@@ -711,7 +709,7 @@ export default function CreatePostScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         onScrollBeginDrag={Keyboard.dismiss}

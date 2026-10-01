@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
@@ -15,6 +16,7 @@ import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function RecruitDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string;
     teamId: string;
@@ -111,7 +113,7 @@ export default function RecruitDetailScreen() {
     Boolean(predictionTeamId);
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <RecruitHeader player={player} isDark={isDark} />
 
       {shouldShowPrediction && predictionTeamId && (

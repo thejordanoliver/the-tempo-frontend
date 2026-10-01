@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Soccer/Player/PlayerStatTable";
@@ -22,6 +23,7 @@ const normalizeParam = (
 };
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { id, teamId, league } = useLocalSearchParams<{
     id?: string | string[];
     teamId?: string | string[];
@@ -114,7 +116,7 @@ export default function PlayerDetailScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <PlayerHeader player={player} isDark={isDark} />
 
       <PlayerStatTable

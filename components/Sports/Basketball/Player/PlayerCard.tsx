@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { activeOpacity } from "@/constants/styles";
 import { getWCBBTeam } from "@/constants/teamsWCBB";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
@@ -10,6 +9,7 @@ import { getNFLTeam } from "constants/teamsNFL";
 import { getNHLTeam } from "constants/teamsNHL";
 import { getWNBATeam } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { playerCardStyles } from "styles/PlayerStyles/PlayerCardStyles";
 import { LeagueType } from "types/types";
@@ -53,16 +53,17 @@ const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   mls: "/player/soccer/[id]",
 };
 
-export const PlayerCard: React.FC<PlayerCardProps> = ({
+export default function PlayerCard({
   id,
   name,
+  position,
   rank,
   teamId,
   headshot,
   number,
   statNumber,
   league = "nba",
-}) => {
+}: PlayerCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -155,4 +156,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({
       </View>
     </TouchableOpacity>
   );
-};
+}
+
+export { PlayerCard };

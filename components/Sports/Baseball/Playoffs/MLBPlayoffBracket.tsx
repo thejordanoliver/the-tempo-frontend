@@ -1,10 +1,11 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { globalStyles } from "@/constants/styles";
 import { Image } from "expo-image";
 import { useMemo } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import {
-  MLB_BRACKET_COLUMN_WIDTH,
+  getMLBBracketLayoutStyles,
   MLBPlayoffBracketStyles,
 } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type {
@@ -29,16 +30,36 @@ type Matchup = Pick<
   "id" | "label" | "bestOf" | "teams" | "winnerTeamId"
 >;
 
-const ROUND_HEADER_HEIGHT = 32;
-const ROUND_HEADER_GAP = 14;
-const MATCHUP_HEIGHT = 142;
-const MATCHUP_ROW_GAP = 200;
-const COLUMN_GAP = 18;
-const SECOND_MATCHUP_TOP = MATCHUP_HEIGHT + MATCHUP_ROW_GAP;
-const CHAMPIONSHIP_TOP = SECOND_MATCHUP_TOP / 2;
-const ROUND_BODY_HEIGHT = SECOND_MATCHUP_TOP + MATCHUP_HEIGHT;
-const BOTTOM_TEAM_CONNECTOR_OFFSET = 82;
-const LEAGUE_BOARD_WIDTH = MLB_BRACKET_COLUMN_WIDTH * 3 + COLUMN_GAP * 2;
+function ByeTeamCard({
+  team,
+  seed,
+  isDark,
+}: {
+  team: MLBPlayoffTeam | undefined;
+  seed: number;
+  isDark: boolean;
+}) {
+  const styles = MLBPlayoffBracketStyles(isDark);
+
+  return (
+    <View style={styles.byeCard}>
+      <Text style={styles.seed}>{seed}</Text>
+      {team?.logo ? (
+        <Image
+          source={{ uri: team.logo }}
+          style={styles.logo}
+          contentFit="contain"
+        />
+      ) : (
+        <View style={styles.logo} />
+      )}
+      <Text numberOfLines={1} style={styles.teamName}>
+        {team?.abbreviation ?? "TBD"}
+      </Text>
+      <Text style={styles.byeLabel}>BYE</Text>
+    </View>
+  );
+}
 
 function MatchupCard({
   matchup,
@@ -217,138 +238,72 @@ function LeagueBracket({
   ];
   const orderedColumns =
     league === "national" ? [...columns].reverse() : columns;
-  const connectorTop =
-    ROUND_HEADER_HEIGHT + ROUND_HEADER_GAP + BOTTOM_TEAM_CONNECTOR_OFFSET;
-  const connectorBottom = connectorTop + SECOND_MATCHUP_TOP;
-  const connectorMiddle =
-    ROUND_HEADER_HEIGHT +
-    ROUND_HEADER_GAP +
-    CHAMPIONSHIP_TOP +
-    MATCHUP_HEIGHT / 2;
-  const worldSeriesConnectorTop =
-    ROUND_HEADER_HEIGHT +
-    ROUND_HEADER_GAP +
-    CHAMPIONSHIP_TOP +
-    MATCHUP_HEIGHT / 2;
-
-  const connectorLayer = (() => {
-    const firstGapLeft = MLB_BRACKET_COLUMN_WIDTH;
-    const secondGapLeft = MLB_BRACKET_COLUMN_WIDTH * 2 + COLUMN_GAP;
-    const branchGapLeft = league === "american" ? secondGapLeft : firstGapLeft;
-    const directGapLeft = league === "american" ? firstGapLeft : secondGapLeft;
-    const halfGap = COLUMN_GAP / 2;
-    const branchMidpoint = branchGapLeft + halfGap;
-
-    const branchFromLeft = league === "american";
-    const branchLegLeft = branchFromLeft ? branchGapLeft : branchMidpoint;
-    const branchMiddleLeft = branchFromLeft ? branchMidpoint : branchGapLeft;
-    const worldSeriesLeft =
-      league === "american" ? LEAGUE_BOARD_WIDTH : -COLUMN_GAP;
-
-    return (
-      <View pointerEvents="none" style={styles.connectorLayer}>
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: directGapLeft,
-              top: connectorTop,
-              width: COLUMN_GAP,
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: directGapLeft,
-              top: connectorBottom,
-              width: COLUMN_GAP,
-            },
-          ]}
-        />
-
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: branchLegLeft,
-              top: connectorTop,
-              width: halfGap,
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: branchLegLeft,
-              top: connectorBottom,
-              width: halfGap,
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.connectorVertical,
-            {
-              left: branchMidpoint,
-              top: connectorTop,
-              height: connectorBottom - connectorTop,
-            },
-          ]}
-        />
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: branchMiddleLeft,
-              top: connectorMiddle,
-              width: halfGap,
-            },
-          ]}
-        />
-
-        <View
-          style={[
-            styles.connectorHorizontal,
-            {
-              left: worldSeriesLeft,
-              top: worldSeriesConnectorTop,
-              width: COLUMN_GAP,
-            },
-          ]}
-        />
-      </View>
-    );
-  })();
+  const layout = getMLBBracketLayoutStyles(league);
+  const connectorLayer = (
+    <View pointerEvents="none" style={styles.connectorLayer}>
+      {wildCardMatchups.map((matchup, index) => {
+        const opening = getMLBBracketLayoutStyles(league, index);
+        return (
+          <View key={`bye-connector-${matchup.id}`} style={styles.connectorLayer}>
+            <View style={[styles.connectorVertical, opening.byeBranch]} />
+            <View style={[styles.connectorVertical, opening.wildCardBranch]} />
+            <View style={[styles.connectorHorizontal, opening.byeLeg]} />
+            <View style={[styles.connectorHorizontal, opening.wildCardLeg]} />
+            <View style={[styles.connectorHorizontal, opening.openingOutput]} />
+          </View>
+        );
+      })}
+      <View style={[styles.connectorHorizontal, layout.divisionTopLeg]} />
+      <View style={[styles.connectorHorizontal, layout.divisionBottomLeg]} />
+      <View style={[styles.connectorVertical, layout.divisionBranch]} />
+      <View style={[styles.connectorHorizontal, layout.championshipLeg]} />
+      <View style={[styles.connectorHorizontal, layout.worldSeriesLeg]} />
+    </View>
+  );
 
   return (
-    <View style={{ gap: 12 }}>
-      <Text style={styles.leagueTitle}>{title}</Text>
+    <View style={styles.section}>
       <View style={styles.leagueBoard}>
         {connectorLayer}
         {orderedColumns.map((column) => (
           <View key={column.title} style={styles.column}>
-            <View style={{ height: ROUND_HEADER_HEIGHT }}>
+            <View style={styles.roundHeader}>
               <Text style={styles.roundTitle}>{column.title}</Text>
             </View>
-            <View style={[styles.matchups, { height: ROUND_BODY_HEIGHT }]}>
+            <View style={styles.matchups}>
               {column.matchups.map((matchup, index) => {
-                const top =
+                const positions = getMLBBracketLayoutStyles(league, index);
+                const position =
                   column.key === "championship"
-                    ? CHAMPIONSHIP_TOP
-                    : index * SECOND_MATCHUP_TOP;
+                    ? positions.championshipCard
+                    : column.key === "wild-card"
+                      ? positions.wildCardCard
+                      : positions.divisionCard;
 
                 return (
-                  <View
-                    key={matchup.id}
-                    style={{ position: "absolute", left: 0, right: 0, top }}
-                  >
+                  <View key={matchup.id} style={position}>
                     <MatchupCard matchup={matchup} isDark={isDark} />
                   </View>
                 );
               })}
+              {column.key === "wild-card"
+                ? wildCardMatchups.map((matchup, index) => {
+                    const seed =
+                      bracket.format.firstRoundByes[index] ?? index + 1;
+                    const team = bracket.teams.find(
+                      (item) => item.league === league && item.seed === seed,
+                    );
+
+                    return (
+                      <View
+                        key={`bye-${matchup.id}`}
+                        style={getMLBBracketLayoutStyles(league, index).byeCard}
+                      >
+                        <ByeTeamCard team={team} seed={seed} isDark={isDark} />
+                      </View>
+                    );
+                  })
+                : null}
             </View>
           </View>
         ))}
@@ -365,6 +320,7 @@ export function MLBPlayoffBracket({
   isDark,
   onRefresh,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => MLBPlayoffBracketStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -378,7 +334,7 @@ export function MLBPlayoffBracket({
 
   if (!bracket) {
     return (
-      <ScrollView
+      <ScrollView contentContainerStyle={navigationContentStyle()}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -408,6 +364,7 @@ export function MLBPlayoffBracket({
   return (
     <ScrollView
       style={styles.container}
+      contentContainerStyle={navigationContentStyle()}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -426,26 +383,14 @@ export function MLBPlayoffBracket({
           title="American League"
           isDark={isDark}
         />
-        <View style={{ gap: 12 }}>
-          <Text
-            accessibilityElementsHidden
-            importantForAccessibility="no"
-            style={[styles.leagueTitle, { opacity: 0 }]}
-          >
-            World Series
-          </Text>
+        <View style={styles.section}>
           <View style={styles.column}>
-            <View style={{ height: ROUND_HEADER_HEIGHT }}>
+            <View style={styles.roundHeader}>
               <Text style={styles.roundTitle}>World Series</Text>
             </View>
-            <View style={{ height: ROUND_BODY_HEIGHT, position: "relative" }}>
+            <View style={styles.roundBody}>
               <View
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: CHAMPIONSHIP_TOP,
-                }}
+                style={getMLBBracketLayoutStyles("american").championshipCard}
               >
                 <MatchupCard matchup={worldSeries} isDark={isDark} />
               </View>

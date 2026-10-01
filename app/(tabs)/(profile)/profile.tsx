@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // profile.tsx
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
@@ -51,6 +52,7 @@ const normalizeCachedString = (value?: string | null) => {
 export default function ProfileScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const {
     favorites,
@@ -420,7 +422,7 @@ export default function ProfileScreen() {
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}

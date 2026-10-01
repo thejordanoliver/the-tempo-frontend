@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
@@ -78,6 +79,7 @@ export default function GameSummary({
   loading = false,
   isDark,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameSummaryStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -146,7 +148,7 @@ export default function GameSummary({
         <ScrollView
           style={styles.listContainer}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={navigationContentStyle({ paddingBottom: 20 })}
         >
           {filteredPlays?.map((play) => {
             const team = getNHLTeamByEspnId(Number(play.team?.id));

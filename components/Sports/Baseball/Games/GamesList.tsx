@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CountdownClock from "@/components/CountdownClock";
 import { BaseballGame } from "@/types/baseball/baseball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
@@ -79,6 +80,7 @@ export default function GamesList({
   const { viewMode } = usePreferences();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -204,7 +206,7 @@ export default function GamesList({
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -246,7 +248,7 @@ export default function GamesList({
               />
             ) : null
           }
-          contentContainerStyle={styles.gridListContainer}
+          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
@@ -279,7 +281,7 @@ export default function GamesList({
             ) : null
           }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          contentContainerStyle={styles.contentContainer}
+          contentContainerStyle={navigationContentStyle(styles.contentContainer)}
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>

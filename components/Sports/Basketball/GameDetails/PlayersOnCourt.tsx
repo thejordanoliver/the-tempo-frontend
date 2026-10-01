@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
@@ -70,6 +71,7 @@ export default function PlayersOnCourt({
   league,
   state,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = playerOnCourtStyles(isDark);
   const router = useScopedRouter();
   const leagueId = league.toUpperCase();
@@ -177,7 +179,7 @@ export default function PlayersOnCourt({
   }
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={navigationContentStyle()}>
       <HeadingTwo isDark={isDark}>On The Court</HeadingTwo>
 
       <View style={styles.wrapper}>

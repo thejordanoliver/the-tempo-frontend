@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // screens/EditProfileScreen.tsx
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -184,6 +185,7 @@ const appendLocalImageToFormData = (
 };
 
 export default function EditProfileScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const navigation = useNavigation();
   const router = useScopedRouter();
 
@@ -547,7 +549,7 @@ export default function EditProfileScreen() {
     >
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={navigationContentStyle(styles.contentContainer)}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import type { FootballGame } from "@/types/football/football";
 import { ScrollView, Text, View } from "react-native";
@@ -42,6 +43,7 @@ export function CFPBracketCanvas({
   onTeamPress,
   isDark,
 }: CFPBracketCanvasProps) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = CFPBracketStyles(isDark);
 
   return (
@@ -52,7 +54,7 @@ export function CFPBracketCanvas({
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
       >
         <ScrollView
           horizontal

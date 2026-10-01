@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
@@ -54,6 +55,7 @@ export default function TennisGamesList({
   const isDark = resolvedColorScheme === "dark";
 
   const global = globalStyles(isDark);
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
 
   const sections = useMemo<MatchSection[]>(() => {
@@ -137,7 +139,7 @@ export default function TennisGamesList({
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -162,7 +164,7 @@ export default function TennisGamesList({
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -197,7 +199,7 @@ export default function TennisGamesList({
           </View>
         )}
         columnWrapperStyle={styles.gridRow}
-        contentContainerStyle={styles.gridListContainer}
+        contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
         refreshing={refreshing}
         onRefresh={onRefresh}
         scrollEnabled={scrollEnabled}
@@ -220,7 +222,7 @@ export default function TennisGamesList({
       onRefresh={onRefresh}
       stickySectionHeadersEnabled={false}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       scrollEnabled={scrollEnabled}
       showsVerticalScrollIndicator={false}
     />

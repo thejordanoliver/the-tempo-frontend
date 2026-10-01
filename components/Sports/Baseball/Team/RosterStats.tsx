@@ -1,5 +1,7 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
+  BaseballStatValue,
   BaseballLeaderDefinition as LeaderDefinition,
   BaseballPlayerStatRow as PlayerStatRow,
   BaseballRosterPlayer as RosterPlayer,
@@ -7,7 +9,6 @@ import type {
   BaseballStatColumn as StatColumn,
   BaseballStatLeader as StatLeader,
   BaseballStatTab as StatTab,
-  BaseballStatValue,
   BaseballTeamStatRow as TeamStatRow,
 } from "@/types/baseball/stats";
 import {
@@ -51,6 +52,7 @@ export default function RosterStats({
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -457,7 +459,7 @@ export default function RosterStats({
 
   return (
     <ScrollView
-      contentContainerStyle={styles.scrollContainer}
+      contentContainerStyle={navigationContentStyle(styles.scrollContainer)}
       refreshControl={
         onRefresh ? (
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

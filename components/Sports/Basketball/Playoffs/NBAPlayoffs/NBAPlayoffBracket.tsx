@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import NBAPlayoffsDark from "assets/NBA/Logos/NBAPlayoffs.png";
 import NBAPlayoffsLight from "assets/NBA/Logos/NBAPlayoffsLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -714,6 +715,7 @@ export function NBAPlayoffBracket({
   refreshing: boolean;
   onRefresh: () => void;
 }) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
@@ -754,7 +756,7 @@ export function NBAPlayoffBracket({
   const PlayoffsLogo = isDark ? NBAPlayoffsLight : NBAPlayoffsDark;
 
   return (
-    <ScrollView
+    <ScrollView contentContainerStyle={navigationContentStyle()}
       snapToOffsets={snapBracketOffsets}
       snapToAlignment="start"
       decelerationRate="fast"

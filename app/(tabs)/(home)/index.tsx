@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useNavigation } from "expo-router";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useCallback, useRef } from "react";
@@ -27,6 +28,7 @@ export default function HomeScreen() {
 
   const navigation = useNavigation();
 
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = homeStyles(isDark);
 
   const [favoritesInteracting, setFavoritesInteracting] = React.useState(false);
@@ -122,6 +124,7 @@ export default function HomeScreen() {
           {/* SCORES PAGE */}
           <View key="scores" style={styles.contentArea}>
             <ScrollView
+              contentContainerStyle={navigationContentStyle()}
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}
             >
@@ -143,6 +146,7 @@ export default function HomeScreen() {
           {/* FOR YOU PAGE */}
           <View key="for-you" style={styles.contentArea}>
             <ScrollView
+              contentContainerStyle={navigationContentStyle()}
               showsVerticalScrollIndicator={false}
               refreshControl={refreshControl()}
             >

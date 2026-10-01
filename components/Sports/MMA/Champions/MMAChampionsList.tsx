@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { MMAChampionListStyles } from "@/styles/MMAChampionsListStyles";
 import type {
   MMAChampionship,
@@ -81,6 +82,7 @@ function getChampionEntries(data: MMAChampionsResponse): ChampionEntry[] {
 /* -------------------------------------------------------------------------- */
 
 export default function MMAChampionsList() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
@@ -142,7 +144,7 @@ export default function MMAChampionsList() {
       renderItem={renderItem}
       keyExtractor={keyExtractor}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       refreshControl={
         <RefreshControl

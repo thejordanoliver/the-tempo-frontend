@@ -167,7 +167,7 @@ export type MLBPlayoffSeries = {
   label: string;
   bestOf: number;
   teams: MLBPlayoffTeam[];
-  games: Array<{
+  games: {
     id: string;
     date: string | null;
     status: string | null;
@@ -176,7 +176,7 @@ export type MLBPlayoffSeries = {
     awayTeamId: string | null;
     homeScore: number | null;
     awayScore: number | null;
-  }>;
+  }[];
   winnerTeamId: string | null;
 };
 
@@ -187,10 +187,10 @@ export type MLBPlayoffBracketResponse = {
     teamsPerLeague: 6;
     firstRoundByes: number[];
     wildCardMatchups: number[][];
-    divisionSeriesPaths: Array<{
+    divisionSeriesPaths: {
       seed: number;
       receivesWinnerOf: number[];
-    }>;
+    }[];
   };
   teams: MLBPlayoffTeam[];
   series: MLBPlayoffSeries[];

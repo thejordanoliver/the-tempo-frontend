@@ -1,3 +1,4 @@
+import { getUserProfileCountParams } from "utils/userProfileCounts";
 import type { ResultItem, SearchAffiliation } from "types/explore";
 
 export type ExploreRoute =
@@ -116,6 +117,7 @@ export function getExploreRouteForResult(
       params: {
         id: String(item.id),
         username: item.username,
+        ...getUserProfileCountParams(item),
       },
     };
   }

@@ -20,29 +20,24 @@ import { useRosterStats } from "hooks/NBAHooks/useRosterStats";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "cbb";
   const currentSeason = getCBBSeason();
-  const styles = teamDetailStyles;
+  const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
   const team = getCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
-  const { teamDetails } = useTeamDetails(league, teamIdNum);
-  const conferenceId = teamDetails?.conferenceId;
   const {
-    conferences,
-    conferencesLoading,
-    ConferencesRefreshing,
-    conferencesError,
-    refresh: refreshConferenceStandings,
-  } =
-    useConferenceStandings(league, conferenceId);
-
+    teamDetails,
+    loading: teamDetailsLoading,
+    error: teamDetailsError,
+  } = useTeamDetails(league, teamIdNum);
+  const conferenceId = teamDetails?.conferenceId;
   const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
   const teamLogo = getCBBTeamLogo(teamIdNum, true);
@@ -70,6 +65,16 @@ export default function TeamDetailScreen() {
   } = screen;
 
   const {
+    conferences,
+    conferencesLoading,
+    ConferencesRefreshing,
+    conferencesError,
+    refresh: refreshConferenceStandings,
+  } = useConferenceStandings(league, conferenceId, {
+    enabled: selectedTab === "standings" || hasVisitedTab("standings"),
+  });
+
+  const {
     articles,
     loading: newsLoading,
     error: newsError,
@@ -86,13 +91,14 @@ export default function TeamDetailScreen() {
     loading: rosterStatsLoading,
     error: rosterStatsError,
     refetch,
-  } = useRosterStats(teamIdNum, league);
+  } = useRosterStats(teamIdNum, league, { enabled: hasVisitedTab("stats") });
 
   const {
     teamStats,
     loading: teamStatsLoading,
     error: teamStatsError,
   } = useTeamStats({
+    enabled: hasVisitedTab("stats"),
     teamId: espnId,
     league,
   });
@@ -101,7 +107,7 @@ export default function TeamDetailScreen() {
     players,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, league);
+  } = useRoster(teamIdNum, league, { enabled: hasVisitedTab("roster") });
 
   const {
     games,
@@ -147,82 +153,86 @@ export default function TeamDetailScreen() {
         />
       }
     >
-        <View key="schedule" style={styles.contentArea}>
-          <MonthSelector
-            months={months}
-            selected={selectedMonthKey}
-            onSelect={selectMonth}
-            loading={gamesLoading}
-          />
+      <View key="schedule" style={styles.contentArea}>
+        <MonthSelector
+          months={months}
+          selected={selectedMonthKey}
+          onSelect={selectMonth}
+          loading={gamesLoading}
+        />
 
-          <GamesList
-            games={games}
-            error={gamesError}
-            loading={gamesLoading}
-            refreshing={gamesRefreshing || refreshing}
-            onRefresh={handleRefresh}
-            showCountdown={showCountdown}
-            countdownGame={firstSeasonGame}
-            scrollEnabled={true}
-            showHeaders={true}
-            teamLogo={teamLogo}
-            teamColor={teamColor}
-            teamSecondaryColor={teamSecondaryColor}
-            teamName={teamName}
-          />
-        </View>
+        <GamesList
+          games={games}
+          error={gamesError}
+          loading={gamesLoading}
+          refreshing={gamesRefreshing || refreshing}
+          onRefresh={handleRefresh}
+          showCountdown={showCountdown}
+          countdownGame={firstSeasonGame}
+          scrollEnabled={true}
+          showHeaders={true}
+          teamLogo={teamLogo}
+          teamColor={teamColor}
+          teamSecondaryColor={teamSecondaryColor}
+          teamName={teamName}
+        />
+      </View>
 
-        <View key="news" style={styles.contentArea}>
-          <NewsList
-            items={articles}
-            loading={newsLoading}
-            error={newsError}
-            refreshing={refreshingNews}
-            loadingMore={loadingMoreNews}
-            onRefresh={refreshNews}
-            isDark={isDark}
-          />
-        </View>
+      <View key="news" style={styles.contentArea}>
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={isDark}
+        />
+      </View>
 
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={playersLoading}
-            error={playersError}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            league={league}
-          />
-        </View>
+      <View key="roster" style={styles.contentArea}>
+        <Roster
+          players={players}
+          loading={playersLoading}
+          error={playersError}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          league={league}
+        />
+      </View>
 
-        <View key="stats" style={styles.contentArea}>
-          <RosterStats
-            rosterStats={teamRoster}
-            teamId={teamIdStr}
-            teamStats={teamStats}
-            loading={rosterStatsLoading || teamStatsLoading}
-            error={rosterStatsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refetch}
-            league={league}
-          />
-        </View>
+      <View key="stats" style={styles.contentArea}>
+        <RosterStats
+          rosterStats={teamRoster}
+          teamId={teamIdStr}
+          teamStats={teamStats}
+          loading={rosterStatsLoading || teamStatsLoading}
+          error={rosterStatsError || teamStatsError}
+          refreshing={refreshingStats}
+          onRefresh={refetch}
+          league={league}
+        />
+      </View>
 
-        {/* STANDINGS */}
-        <View key="standings" style={styles.contentArea}>
-          <ConferenceStandingsList
-            conferences={conferences}
-            loading={conferencesLoading}
-            refreshing={ConferencesRefreshing}
-            error={conferencesError}
-            onRefresh={refreshConferenceStandings}
-            league={league}
-          />
-        </View>
+      {/* STANDINGS */}
+      <View key="standings" style={styles.contentArea}>
+        <ConferenceStandingsList
+          conferences={conferences}
+          loading={
+            conferencesLoading ||
+            teamDetailsLoading ||
+            (!teamDetails && !teamDetailsError)
+          }
+          refreshing={ConferencesRefreshing}
+          error={conferencesError || teamDetailsError}
+          onRefresh={refreshConferenceStandings}
+          league={league}
+        />
+      </View>
 
-        <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamIdStr} league={league} />
-        </View>
+      <View key="forum" style={styles.contentArea}>
+        <ForumFeed teamId={teamIdStr} league={league} />
+      </View>
     </SharedTeamDetailScreen>
   );
 }

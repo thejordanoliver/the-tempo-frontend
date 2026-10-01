@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
@@ -10,6 +11,7 @@ import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
 export default function PlayerDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = playerScreenStyles;
@@ -61,7 +63,7 @@ export default function PlayerDetailScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
       <PlayerHeader player={player} isDark={isDark} />
     </ScrollView>
   );

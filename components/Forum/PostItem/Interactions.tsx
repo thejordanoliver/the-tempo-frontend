@@ -26,9 +26,7 @@ const isSameUser = (
   firstUserId: number | null | undefined,
   secondUserId: number | null | undefined,
 ) =>
-  firstUserId != null &&
-  secondUserId != null &&
-  firstUserId === secondUserId;
+  firstUserId != null && secondUserId != null && firstUserId === secondUserId;
 
 /* -------------------------------------------------------------------------- */
 /*                                    Types                                   */
@@ -38,10 +36,7 @@ export type InteractionsProps = {
   item: ForumPost;
   isDark: boolean;
   currentUserId: number | null;
-  onBookmarkChange?: (
-    post: ForumPost,
-    bookmarked: boolean,
-  ) => void;
+  onBookmarkChange?: (post: ForumPost, bookmarked: boolean) => void;
   disableCommentNavigation?: boolean;
 };
 
@@ -75,19 +70,12 @@ export const Interactions = memo(function Interactions({
   const [sharePending, setSharePending] = useState(false);
 
   const [bookmarked, setBookmarked] = useState(
-    Boolean(
-      item.bookmarked_by_current_user ??
-        item.bookmarked,
-    ),
+    Boolean(item.bookmarked_by_current_user ?? item.bookmarked),
   );
 
-  const [bookmarkCount, setBookmarkCount] = useState(
-    item.bookmarks ?? 0,
-  );
+  const [bookmarkCount, setBookmarkCount] = useState(item.bookmarks ?? 0);
 
-  const [shareCount, setShareCount] = useState(
-    item.shares ?? 0,
-  );
+  const [shareCount, setShareCount] = useState(item.shares ?? 0);
 
   /*
    * Tracks the newest like request.
@@ -104,31 +92,15 @@ export const Interactions = memo(function Interactions({
 
   useEffect(() => {
     if (!likes[item.id]) {
-      setLike(
-        item.id,
-        item.liked_by_current_user,
-        item.likes,
-      );
+      setLike(item.id, item.liked_by_current_user, item.likes);
     }
-  }, [
-    item.id,
-    item.liked_by_current_user,
-    item.likes,
-    likes,
-    setLike,
-  ]);
+  }, [item.id, item.liked_by_current_user, item.likes, likes, setLike]);
 
-  const likeState = useLikesStore(
-    (state) => state.likes[item.id],
-  );
+  const likeState = useLikesStore((state) => state.likes[item.id]);
 
-  const liked =
-    likeState?.liked ??
-    item.liked_by_current_user;
+  const liked = likeState?.liked ?? item.liked_by_current_user;
 
-  const likeCount =
-    likeState?.count ??
-    item.likes;
+  const likeCount = likeState?.count ?? item.likes;
 
   /* ------------------------------------------------------------------------ */
   /*                               Share State                                */
@@ -143,30 +115,18 @@ export const Interactions = memo(function Interactions({
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-    setBookmarked(
-      Boolean(
-        item.bookmarked_by_current_user ??
-          item.bookmarked,
-      ),
-    );
+    setBookmarked(Boolean(item.bookmarked_by_current_user ?? item.bookmarked));
 
     setBookmarkCount(item.bookmarks ?? 0);
-  }, [
-    item.bookmarked,
-    item.bookmarked_by_current_user,
-    item.bookmarks,
-  ]);
+  }, [item.bookmarked, item.bookmarked_by_current_user, item.bookmarks]);
 
   /* ------------------------------------------------------------------------ */
   /*                                Timestamp                                 */
   /* ------------------------------------------------------------------------ */
 
-  const timestamp = formatDistanceToNow(
-    new Date(item.created_at),
-    {
-      addSuffix: true,
-    },
-  ).replace(/^about /, "");
+  const timestamp = formatDistanceToNow(new Date(item.created_at), {
+    addSuffix: true,
+  }).replace(/^about /, "");
 
   /* ------------------------------------------------------------------------ */
   /*                              Badge Awards                                */
@@ -177,10 +137,7 @@ export const Interactions = memo(function Interactions({
       | ForumLikeMutationResponse["newlyAwardedBadges"]
       | ForumShareMutationResponse["newlyAwardedBadges"],
   ) => {
-    const awardBelongsToCurrentUser = isSameUser(
-      currentUserId,
-      item.user_id,
-    );
+    const awardBelongsToCurrentUser = isSameUser(currentUserId, item.user_id);
 
     if (awardBelongsToCurrentUser) {
       handleBadgeAwards(newlyAwardedBadges);
@@ -204,10 +161,7 @@ export const Interactions = memo(function Interactions({
 
     const nextLiked = !previousLiked;
 
-    const optimisticCount = Math.max(
-      previousCount + (nextLiked ? 1 : -1),
-      0,
-    );
+    const optimisticCount = Math.max(previousCount + (nextLiked ? 1 : -1), 0);
 
     /*
      * Increment the request ID every time the user taps.
@@ -229,11 +183,7 @@ export const Interactions = memo(function Interactions({
      * The heart and count change immediately instead
      * of waiting for the network request.
      */
-    setLike(
-      item.id,
-      nextLiked,
-      optimisticCount,
-    );
+    setLike(item.id, nextLiked, optimisticCount);
 
     try {
       const response = await apiClient.patch<
@@ -257,8 +207,7 @@ export const Interactions = memo(function Interactions({
        */
       setLike(
         item.id,
-        typeof serverPost?.liked_by_current_user ===
-          "boolean"
+        typeof serverPost?.liked_by_current_user === "boolean"
           ? serverPost.liked_by_current_user
           : nextLiked,
         typeof serverPost?.likes === "number"
@@ -266,15 +215,11 @@ export const Interactions = memo(function Interactions({
           : optimisticCount,
       );
 
-      if (
-        typeof serverPost?.shares === "number"
-      ) {
+      if (typeof serverPost?.shares === "number") {
         setShareCount(serverPost.shares);
       }
 
-      handleMutationAwards(
-        response.data.newlyAwardedBadges,
-      );
+      handleMutationAwards(response.data.newlyAwardedBadges);
     } catch (err: unknown) {
       /*
        * Ignore failures from stale requests.
@@ -286,18 +231,12 @@ export const Interactions = memo(function Interactions({
         return;
       }
 
-      setLike(
-        item.id,
-        previousLiked,
-        previousCount,
-      );
+      setLike(item.id, previousLiked, previousCount);
 
       const message = isAxiosError<{
         error?: string;
       }>(err)
-        ? err.response?.data?.error ||
-          err.message ||
-          "Failed to toggle like"
+        ? err.response?.data?.error || err.message || "Failed to toggle like"
         : err instanceof Error
           ? err.message
           : "Failed to toggle like";
@@ -324,8 +263,7 @@ export const Interactions = memo(function Interactions({
     const nextBookmarked = !previousBookmarked;
 
     const optimisticCount = Math.max(
-      previousCount +
-        (nextBookmarked ? 1 : -1),
+      previousCount + (nextBookmarked ? 1 : -1),
       0,
     );
 
@@ -335,9 +273,7 @@ export const Interactions = memo(function Interactions({
 
     try {
       const response = await apiClient.patch<
-        ForumBookmarkMutationResponse<
-          Partial<ForumPost>
-        >
+        ForumBookmarkMutationResponse<Partial<ForumPost>>
       >(`/api/forum/post/${item.id}/bookmark`, {
         bookmark: nextBookmarked,
       });
@@ -345,15 +281,12 @@ export const Interactions = memo(function Interactions({
       const serverPost = response.data.post;
 
       const serverBookmarked =
-        typeof serverPost
-          ?.bookmarked_by_current_user ===
-        "boolean"
+        typeof serverPost?.bookmarked_by_current_user === "boolean"
           ? serverPost.bookmarked_by_current_user
           : nextBookmarked;
 
       const serverBookmarkCount =
-        typeof serverPost?.bookmarks ===
-        "number"
+        typeof serverPost?.bookmarks === "number"
           ? serverPost.bookmarks
           : optimisticCount;
 
@@ -364,8 +297,7 @@ export const Interactions = memo(function Interactions({
         {
           ...item,
           ...serverPost,
-          bookmarked_by_current_user:
-            serverBookmarked,
+          bookmarked_by_current_user: serverBookmarked,
           bookmarks: serverBookmarkCount,
         },
         serverBookmarked,
@@ -377,9 +309,7 @@ export const Interactions = memo(function Interactions({
       const message = isAxiosError<{
         error?: string;
       }>(err)
-        ? err.response?.data?.error ||
-          err.message ||
-          "Failed to bookmark post"
+        ? err.response?.data?.error || err.message || "Failed to bookmark post"
         : err instanceof Error
           ? err.message
           : "Failed to bookmark post";
@@ -406,35 +336,23 @@ export const Interactions = memo(function Interactions({
 
     try {
       const response = await apiClient.post<
-        ForumShareMutationResponse<
-          Partial<ForumPost>
-        >
+        ForumShareMutationResponse<Partial<ForumPost>>
       >(`/api/forum/post/${item.id}/share`);
 
       const serverPost = response.data.post;
 
-      if (
-        typeof serverPost?.shares === "number"
-      ) {
+      if (typeof serverPost?.shares === "number") {
         setShareCount(serverPost.shares);
-      } else if (
-        response.data.didCreateShare
-      ) {
-        setShareCount(
-          (current) => current + 1,
-        );
+      } else if (response.data.didCreateShare) {
+        setShareCount((current) => current + 1);
       }
 
-      handleMutationAwards(
-        response.data.newlyAwardedBadges,
-      );
+      handleMutationAwards(response.data.newlyAwardedBadges);
     } catch (err: unknown) {
       const message = isAxiosError<{
         error?: string;
       }>(err)
-        ? err.response?.data?.error ||
-          err.message ||
-          "Failed to share post"
+        ? err.response?.data?.error || err.message || "Failed to share post"
         : err instanceof Error
           ? err.message
           : "Failed to share post";
@@ -471,12 +389,8 @@ export const Interactions = memo(function Interactions({
 
   return (
     <>
-      <View
-        style={styles.interactionContainer}
-      >
-        <View
-          style={styles.interactionWrapper}
-        >
+      <View style={styles.interactionContainer}>
+        <View style={styles.interactionWrapper}>
           {/* -------------------------------------------------------------- */}
           {/*                              Left                              */}
           {/* -------------------------------------------------------------- */}
@@ -488,30 +402,18 @@ export const Interactions = memo(function Interactions({
               style={styles.buttonContainer}
             >
               <Ionicons
-                name={
-                  liked
-                    ? "heart"
-                    : "heart-outline"
-                }
+                name={liked ? "heart" : "heart-outline"}
                 size={28}
-                color={
-                  isDark
-                    ? Colors.white
-                    : Colors.black
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
 
-              <Text style={styles.count}>
-                {likeCount}
-              </Text>
+              <Text style={styles.count}>{likeCount}</Text>
             </TouchableOpacity>
 
             {/* Comment */}
             <TouchableOpacity
               onPress={handleCommentPress}
-              disabled={
-                disableCommentNavigation
-              }
+              disabled={disableCommentNavigation}
               style={[
                 styles.buttonContainer,
                 disableCommentNavigation && {
@@ -522,16 +424,10 @@ export const Interactions = memo(function Interactions({
               <Ionicons
                 name="chatbubble-outline"
                 size={28}
-                color={
-                  isDark
-                    ? Colors.white
-                    : Colors.black
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
 
-              <Text style={styles.count}>
-                {item.comments_count}
-              </Text>
+              <Text style={styles.count}>{item.comments_count}</Text>
             </TouchableOpacity>
           </View>
 
@@ -551,22 +447,12 @@ export const Interactions = memo(function Interactions({
                 },
               ]}
             >
-              <Text style={styles.count}>
-                {bookmarkCount}
-              </Text>
+              <Text style={styles.count}>{bookmarkCount}</Text>
 
               <Ionicons
-                name={
-                  bookmarked
-                    ? "bookmark"
-                    : "bookmark-outline"
-                }
+                name={bookmarked ? "bookmark" : "bookmark-outline"}
                 size={28}
-                color={
-                  isDark
-                    ? Colors.white
-                    : Colors.black
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
             </TouchableOpacity>
 
@@ -581,28 +467,19 @@ export const Interactions = memo(function Interactions({
                 },
               ]}
             >
-              <Text style={styles.count}>
-                {shareCount}
-              </Text>
+              <Text style={styles.count}>{shareCount}</Text>
 
               <Ionicons
                 name="share-social-outline"
                 size={28}
-                color={
-                  isDark
-                    ? Colors.white
-                    : Colors.black
-                }
+                color={isDark ? Colors.white : Colors.black}
               />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Timestamp */}
-        <Text
-          style={styles.timestamp}
-          numberOfLines={1}
-        >
+        <Text style={styles.timestamp} numberOfLines={1}>
           {timestamp}
         </Text>
       </View>
@@ -615,12 +492,8 @@ export const Interactions = memo(function Interactions({
         title={feedbackModal?.title}
         message={feedbackModal?.message}
         visible={Boolean(feedbackModal)}
-        onCancel={() =>
-          setFeedbackModal(null)
-        }
-        onConfirm={() =>
-          setFeedbackModal(null)
-        }
+        onCancel={() => setFeedbackModal(null)}
+        onConfirm={() => setFeedbackModal(null)}
         confirmText="OK"
         showCancel={false}
       />

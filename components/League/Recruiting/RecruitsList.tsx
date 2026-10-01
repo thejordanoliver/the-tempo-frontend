@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useAllRecruits } from "@/hooks/RecruitHooks/useAllRecruits";
 import {
   RecruitTeamRanking,
@@ -172,6 +173,7 @@ export default function RecruitsList({
   onViewChange,
   league,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => recruitListStyles(isDark), [isDark]);
@@ -422,7 +424,7 @@ export default function RecruitsList({
           }
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={navigationContentStyle(styles.listContent)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
@@ -450,7 +452,7 @@ export default function RecruitsList({
           renderItem={() => null}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={navigationContentStyle(styles.listContent)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
@@ -476,7 +478,7 @@ export default function RecruitsList({
           renderItem={() => null}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={navigationContentStyle(styles.listContent)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
@@ -502,7 +504,7 @@ export default function RecruitsList({
           onEndReachedThreshold={0.6}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={navigationContentStyle(styles.listContent)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}
@@ -529,7 +531,7 @@ export default function RecruitsList({
           onEndReachedThreshold={0.6}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={navigationContentStyle(styles.listContent)}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}

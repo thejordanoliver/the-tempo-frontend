@@ -10,9 +10,13 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
         : Colors.light.background,
     },
 
+    list: {
+      flex: 1,
+    },
+
     container: {
       flexGrow: 1,
-      paddingHorizontal: 12,
+      paddingHorizontal: 16,
       paddingTop: 8,
       paddingBottom: 20,
     },
@@ -25,8 +29,8 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: 8,
-      paddingVertical: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 12,
     },
 
     selectionCount: {
@@ -53,15 +57,21 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
 
     notificationRow: {
       flexDirection: "row",
-      alignItems: "center",
-      gap: 12,
+      alignItems: "flex-start",
+      gap: 10,
       paddingVertical: 14,
-      paddingHorizontal: 8,
+      paddingHorizontal: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark ? Colors.darkGray : Colors.lightGray,
+      borderBottomColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
 
-    notificationRowUnread: {},
+    notificationRowUnread: {
+      backgroundColor: isDark
+        ? Colors.dark.transparentItemBackground
+        : Colors.light.transparentItemBackground,
+    },
 
     notificationRowPressed: {
       opacity: 0.55,
@@ -70,6 +80,8 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
     selectionCircle: {
       width: 23,
       height: 23,
+      flexShrink: 0,
+      marginTop: 9,
       alignItems: "center",
       justifyContent: "center",
       borderWidth: 1.5,
@@ -86,15 +98,18 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       position: "relative",
       width: 42,
       height: 42,
+      flexShrink: 0,
       alignItems: "center",
       justifyContent: "center",
       borderWidth: StyleSheet.hairlineWidth,
-      borderColor: isDark ? Colors.lightGray : Colors.darkGray,
+      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
       borderRadius: 21,
+      marginHorizontal: 5,
     },
 
     gameTeamLogoWrapper: {
       width: 52,
+      marginHorizontal: 0,
       borderWidth: 0,
       borderRadius: 0,
     },
@@ -117,13 +132,15 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
 
     textContainer: {
       flex: 1,
+      minWidth: 0,
       gap: 4,
       paddingTop: 1,
     },
 
     titleRow: {
       flexDirection: "row",
-      alignItems: "center",
+      alignItems: "flex-start",
+      flexWrap: "wrap",
       gap: 7,
     },
 
@@ -174,6 +191,7 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
 
     chevron: {
       flexShrink: 0,
+      marginTop: 12,
     },
 
     emptyState: {
@@ -188,6 +206,7 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       marginTop: 4,
       fontFamily: Fonts.BOLD,
       fontSize: 18,
+      textAlign: "center",
       color: isDark ? Colors.white : Colors.black,
     },
 
@@ -201,11 +220,6 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
     },
 
     selectionToolbar: {
-      position: "absolute",
-      right: 0,
-      bottom: 0,
-      left: 0,
-      zIndex: 10,
       paddingHorizontal: 16,
       paddingTop: 12,
       paddingBottom: 12,

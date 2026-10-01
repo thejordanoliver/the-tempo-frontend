@@ -197,7 +197,11 @@ const getStatPair = (
   return { first, second };
 };
 
-export function useTeamStats(teamId: string | number, league: string) {
+export function useTeamStats(
+  teamId: string | number,
+  league: string,
+  { enabled = true }: { enabled?: boolean } = {},
+) {
   const [teamStats, setTeamStats] = useState<TeamStats | null>(null);
   const [teamStatsLoading, setTeamStatsLoading] = useState<boolean>(true);
   const [teamStatsError, setTeamStatsError] = useState<Error | null>(null);
@@ -824,8 +828,13 @@ export function useTeamStats(teamId: string | number, league: string) {
   }, [teamId, league]);
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchTeamStats());
-  }, [fetchTeamStats]);
+    if (!enabled) return;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchTeamStats();
+    });
+    return () => { cancelled = true; };
+  }, [enabled, fetchTeamStats]);
 
   return {
     teamStats,

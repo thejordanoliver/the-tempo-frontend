@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFBStandingsList.tsx
 import Dropdown from "@/components/Dropdown";
@@ -47,6 +48,7 @@ export const CFBStandingsList = () => {
 
   const isDark = resolvedColorScheme === "dark";
   const global = globalStyles(isDark);
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const router = useScopedRouter();
 
@@ -60,7 +62,7 @@ export const CFBStandingsList = () => {
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -344,7 +346,7 @@ export const CFBStandingsList = () => {
   return (
     <ScrollView
       alwaysBounceVertical
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }

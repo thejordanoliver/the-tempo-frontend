@@ -1,6 +1,6 @@
 // hooks//useConferenceStandings.ts
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export interface StandingTeam {
@@ -55,9 +55,12 @@ export const useConferenceStandings = (
   const [conferencesLoading, setConferencesLoading] = useState(false);
   const [ConferencesRefreshing, setConferencesRefreshing] = useState(false);
   const [conferencesError, setConferencesError] = useState<string | null>(null);
+  const [completedRequestKey, setCompletedRequestKey] = useState<string | null>(null);
+  const requestVersion = useRef(0);
 
   const normalizedGroup = String(group ?? "").trim();
   const canFetch = /^\d+$/.test(normalizedGroup);
+  const requestKey = `${league}:${normalizedGroup}`;
 
   const fetchStandings = useCallback(
     async (isRefresh = false) => {
@@ -76,6 +79,8 @@ export const useConferenceStandings = (
         return;
       }
 
+      const version = ++requestVersion.current;
+
       try {
         if (isRefresh) {
           setConferencesRefreshing(true);
@@ -93,6 +98,7 @@ export const useConferenceStandings = (
             },
           },
         );
+        if (version !== requestVersion.current) return;
 
         const rawConferences = Array.isArray(data?.conferences)
           ? data.conferences
@@ -116,6 +122,7 @@ export const useConferenceStandings = (
         setConference(selectedConference);
         setConferences(validConferences);
       } catch (requestError: unknown) {
+        if (version !== requestVersion.current) return;
         console.error("🔥 CONFERENCE STANDINGS ERROR:", requestError);
 
         const message =
@@ -127,15 +134,25 @@ export const useConferenceStandings = (
         setConference(null);
         setConferences([]);
       } finally {
-        setConferencesLoading(false);
-        setConferencesRefreshing(false);
+        if (version === requestVersion.current) {
+          setCompletedRequestKey(requestKey);
+          setConferencesLoading(false);
+          setConferencesRefreshing(false);
+        }
       }
     },
-    [canFetch, enabled, league, normalizedGroup],
+    [canFetch, enabled, league, normalizedGroup, requestKey],
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchStandings(false));
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return fetchStandings(false);
+    });
+    return () => {
+      active = false;
+      requestVersion.current += 1;
+    };
   }, [fetchStandings]);
 
   const refresh = useCallback(() => {
@@ -146,7 +163,9 @@ export const useConferenceStandings = (
     conference,
     conferences,
     standings: conference?.divisions ?? [],
-    conferencesLoading,
+    conferencesLoading:
+      enabled && canFetch &&
+      (conferencesLoading || completedRequestKey !== requestKey),
     ConferencesRefreshing,
     conferencesError,
     refresh,

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import Dropdown from "components/Dropdown";
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
@@ -38,6 +39,7 @@ type Props = {
 };
 
 export default function AwardSeasons({ league }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => AwardTableStyles(isDark), [isDark]);
@@ -157,7 +159,7 @@ export default function AwardSeasons({ league }: Props) {
           tintColor={isDark ? Colors.white : Colors.black}
         />
       }
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
     >
       <View style={styles.dropdownRow}>
         {viewMode !== "champions" && awards.length > 0 && (

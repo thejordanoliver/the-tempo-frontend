@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +22,7 @@ import { settingsStyles } from "styles/SettingsStyles";
 import { AlertConfig } from "types/alert";
 
 export default function SettingsScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { clearFavorites } = useFavoriteTeamsContext();
@@ -139,7 +141,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={navigationContentStyle(styles.scrollContent)}>
         <View style={styles.optionButtonContainer}>
           <TouchableOpacity
             style={styles.optionButton}

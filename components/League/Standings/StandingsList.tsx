@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/StandingsList.tsx
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
@@ -204,6 +205,7 @@ export const StandingsList = ({
   const { isFavorite } = useFavoriteTeamsContext();
 
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useScopedRouter();
@@ -318,7 +320,7 @@ export const StandingsList = ({
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -332,7 +334,7 @@ export const StandingsList = ({
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -689,7 +691,7 @@ export const StandingsList = ({
   return (
     <ScrollView
       alwaysBounceVertical
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }

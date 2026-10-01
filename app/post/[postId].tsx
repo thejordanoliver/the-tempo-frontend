@@ -1,3 +1,5 @@
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 // post/[postId].tsx
 
 import { CustomHeader } from "@/components/CustomHeader";
@@ -16,6 +18,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useCommentThread } from "hooks/ForumHooks/useCommentThread";
 import {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -40,6 +43,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { ForumComment, ForumCommentAttachment } from "types/forum";
 
 export default function CommentThreadScreen() {
+  const navigationBarInset = useContext(NavigationBarInsetContext);
+  const navigationContentStyle = useNavigationBarContentStyle();
   const params = useLocalSearchParams();
   const postId = typeof params.postId === "string" ? params.postId : null;
 
@@ -102,8 +107,11 @@ export default function CommentThreadScreen() {
       return composerPadding + keyboardHeight;
     }
 
-    return composerPadding + Math.max(insets.bottom, 8);
+    return composerPadding + (navigationBarInset > 0
+      ? navigationBarInset + 8
+      : Math.max(insets.bottom, 8));
   }, [
+    navigationBarInset,
     insets.bottom,
     keyboardHeight,
     keyboardVisible,
@@ -473,10 +481,10 @@ export default function CommentThreadScreen() {
         keyboardDismissMode="interactive"
         showsVerticalScrollIndicator={false}
         onScrollBeginDrag={closeAttachmentMenu}
-        contentContainerStyle={[
+        contentContainerStyle={navigationContentStyle([
           styles.commentsContent,
           { paddingBottom: listBottomPadding },
-        ]}
+        ])}
         onContentSizeChange={() => {
           if (comments.length > 0 && !keyboardVisible && !replyingTo) {
             scrollToBottom(false);
@@ -488,7 +496,10 @@ export default function CommentThreadScreen() {
         style={[
           styles.composerOuter,
           {
-            paddingBottom: keyboardVisible ? 8 : Math.max(insets.bottom, 8),
+            bottom: keyboardVisible ? 0 : navigationBarInset,
+              paddingBottom: keyboardVisible || navigationBarInset > 0
+                ? 8
+                : Math.max(insets.bottom, 8),
             transform: [
               {
                 translateY: Animated.multiply(keyboardOffset, -1),

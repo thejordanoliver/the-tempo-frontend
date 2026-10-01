@@ -119,7 +119,9 @@ function parseProfileId(value: unknown, fallback: string): string {
 }
 
 function parseCount(value: number | null | undefined): number {
-  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0
+    ? value
+    : 0;
 }
 
 function parseUpdatedAt(data: UserProfileResponse): string | null {
@@ -186,7 +188,19 @@ function getProfileKey(userId: string, currentUserId: number | null) {
   return `${userId}:${currentUserId ?? "guest"}`;
 }
 
-export function useUserProfile(userId?: string) {
+export type UseUserProfileOptions = {
+  initialFollowersCount?: number;
+  initialFollowingCount?: number;
+};
+
+export function useUserProfile(
+  userId?: string,
+  options: UseUserProfileOptions = {},
+) {
+  const [initialCounts] = useState(() => ({
+    followers: parseCount(options.initialFollowersCount),
+    following: parseCount(options.initialFollowingCount),
+  }));
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasCachedProfile, setHasCachedProfile] = useState(false);
@@ -200,8 +214,8 @@ export function useUserProfile(userId?: string) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(initialCounts.followers);
+  const [followingCount, setFollowingCount] = useState(initialCounts.following);
   const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
   const [favoriteSports, setFavoriteSports] = useState<FavoriteSportId[]>([]);
 
@@ -254,14 +268,14 @@ export function useUserProfile(userId?: string) {
     setBio(null);
     setProfileImage(null);
     setBannerImage(null);
-    setFollowersCount(0);
-    setFollowingCount(0);
+    setFollowersCount(initialCounts.followers);
+    setFollowingCount(initialCounts.following);
     setFavoriteTeams([]);
     setFavoriteSports([]);
     setIsFollowing(false);
     setIsBlockedByViewer(false);
     setHasBlockedViewer(false);
-  }, []);
+  }, [initialCounts]);
 
   const applyDisplayProfile = useCallback(
     (profile: DisplayProfile | CachedUserProfilePayload) => {

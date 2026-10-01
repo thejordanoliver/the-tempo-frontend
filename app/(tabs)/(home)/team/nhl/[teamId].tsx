@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import ForumFeed from "@/components/Forum/ForumFeed";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import GamesList from "@/components/Sports/Hockey/Games/GamesList";
@@ -16,12 +17,13 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { ScrollView, View } from "react-native";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getNHLSeason } from "utils/dateUtils";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const league = "nhl";
-  const styles = teamDetailStyles;
+  const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
@@ -59,10 +61,10 @@ export default function TeamDetailScreen() {
   });
 
   const {
-    players,
+    sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, league);
+  } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
 
   const {
     games,
@@ -103,69 +105,69 @@ export default function TeamDetailScreen() {
         />
       }
     >
-        <View key="schedule" style={styles.contentArea}>
-          <View style={styles.monthSelector}>
-            <MonthSelector
-              months={months}
-              selected={selectedMonthKey}
-              onSelect={selectMonth}
-              loading={gamesLoading}
-            />
-          </View>
-
-          <GamesList
-            games={games}
-            error={gamesError}
+      <View key="schedule" style={styles.contentArea}>
+        <View style={styles.monthSelector}>
+          <MonthSelector
+            months={months}
+            selected={selectedMonthKey}
+            onSelect={selectMonth}
             loading={gamesLoading}
-            refreshing={gamesRefreshing || screen.refreshing}
-            onRefresh={handleRefresh}
-            showHeaders={true}
-            showCountdown={showCountdown}
-            countdownGame={firstSeasonGame}
-            scrollEnabled
-            teamLogo={teamLogo}
-            teamColor={teamColor}
-            teamSecondaryColor={teamSecondaryColor}
-            teamName={teamName}
           />
         </View>
 
-        <View key="news" style={styles.contentArea}>
-          <NewsList
-            items={articles}
-            loading={newsLoading}
-            error={newsError}
-            refreshing={refreshingNews}
-            loadingMore={loadingMoreNews}
-            onRefresh={refreshNews}
-            isDark={screen.isDark}
-          />
-        </View>
+        <GamesList
+          games={games}
+          error={gamesError}
+          loading={gamesLoading}
+          refreshing={gamesRefreshing || screen.refreshing}
+          onRefresh={handleRefresh}
+          showHeaders={true}
+          showCountdown={showCountdown}
+          countdownGame={firstSeasonGame}
+          scrollEnabled
+          teamLogo={teamLogo}
+          teamColor={teamColor}
+          teamSecondaryColor={teamSecondaryColor}
+          teamName={teamName}
+        />
+      </View>
 
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={playersLoading}
-            error={playersError}
-            refreshing={screen.refreshing}
-            onRefresh={handleRefresh}
-            league={league}
-          />
-        </View>
+      <View key="news" style={styles.contentArea}>
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={screen.isDark}
+        />
+      </View>
 
-        <ScrollView key="stats" style={styles.contentArea} />
+      <View key="roster" style={styles.contentArea}>
+        <Roster
+          sections={sections}
+          loading={playersLoading}
+          error={playersError}
+          refreshing={screen.refreshing}
+          onRefresh={handleRefresh}
+          league={league}
+        />
+      </View>
 
-        <View key="standings" style={styles.contentArea}>
-          <StandingsList
-            year={standingsYear}
-            onYearChange={setStandingsYear}
-            league={league}
-          />
-        </View>
+      <ScrollView contentContainerStyle={navigationContentStyle()} key="stats" style={styles.contentArea} />
 
-        <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamIdStr ?? ""} league={league} />
-        </View>
+      <View key="standings" style={styles.contentArea}>
+        <StandingsList
+          year={standingsYear}
+          onYearChange={setStandingsYear}
+          league={league}
+        />
+      </View>
+
+      <View key="forum" style={styles.contentArea}>
+        <ForumFeed teamId={teamIdStr ?? ""} league={league} />
+      </View>
     </SharedTeamDetailScreen>
   );
 }

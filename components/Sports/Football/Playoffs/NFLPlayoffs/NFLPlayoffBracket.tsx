@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { snapBracketOffsets } from "@/styles/PlayoffStyles/CFPBracketStyles";
 import { NFLPlayoffBracketStyles } from "@/styles/PlayoffStyles/NFLPlayoffBracketStyles";
 import type { BracketApiResponse } from "@/types/football/football";
@@ -540,6 +541,7 @@ export function NFLPlayoffBracket({
 
   const isDark = resolvedColorScheme === "dark";
 
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => NFLPlayoffBracketStyles(isDark), [isDark]);
 
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -822,6 +824,7 @@ export function NFLPlayoffBracket({
   return (
     <ScrollView
       snapToOffsets={snapBracketOffsets}
+      contentContainerStyle={navigationContentStyle()}
       snapToAlignment="start"
       decelerationRate="fast"
       showsVerticalScrollIndicator={false}

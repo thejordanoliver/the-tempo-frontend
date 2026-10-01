@@ -1,3 +1,5 @@
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
@@ -21,6 +23,7 @@ import {
 import { useDirectMessages } from "hooks/MessageHooks/useDirectMessages";
 import {
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -191,6 +194,8 @@ const getMessageReceiptLabels = (
 };
 
 export default function ConversationScreen() {
+  const navigationBarInset = useContext(NavigationBarInsetContext);
+  const navigationContentStyle = useNavigationBarContentStyle();
   const router = useScopedRouter();
   const navigation = useNavigation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
@@ -746,7 +751,10 @@ export default function ConversationScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
-          contentContainerStyle={styles.messagesContent}
+          contentContainerStyle={navigationContentStyle([
+            styles.messagesContent,
+            { paddingBottom: 120 + (keyboardVisible ? 0 : navigationBarInset) },
+          ])}
           maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           onContentSizeChange={handleInitialScrollToBottom}
           onScroll={handleMessagesScroll}
@@ -758,7 +766,10 @@ export default function ConversationScreen() {
           style={[
             styles.composerOuter,
             {
-              paddingBottom: keyboardVisible ? 8 : Math.max(insets.bottom, 8),
+              bottom: keyboardVisible ? 0 : navigationBarInset,
+              paddingBottom: keyboardVisible || navigationBarInset > 0
+                ? 8
+                : Math.max(insets.bottom, 8),
               transform: [
                 {
                   translateY: Animated.multiply(keyboardOffset, -1),

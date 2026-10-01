@@ -19,13 +19,13 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useState } from "react";
 import { View } from "react-native";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getMLBSeason } from "utils/dateUtils";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "mlb";
   const currentSeason = getMLBSeason();
-  const styles = teamDetailStyles;
+  const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
@@ -68,22 +68,25 @@ export default function TeamDetailScreen() {
     loading: rosterStatsLoading,
     error: rosterStatsError,
     refetch,
-  } = useRosterStats(teamIdNum, league);
+  } = useRosterStats(teamIdNum, league, {
+    enabled: screen.hasVisitedTab("stats"),
+  });
 
   const {
     teamStats,
     loading: teamStatsLoading,
     error: teamStatsError,
   } = useTeamStats({
+    enabled: screen.hasVisitedTab("stats"),
     teamId: espnId,
     league,
   });
 
   const {
-    players,
+    sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, league);
+  } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
 
   const {
     games,
@@ -124,84 +127,84 @@ export default function TeamDetailScreen() {
         />
       }
     >
-        {/* SCHEDULE */}
-        <View key="schedule" style={styles.contentArea}>
-          <MonthSelector
-            months={months}
-            selected={selectedMonthKey}
-            onSelect={selectMonth}
-            loading={gamesLoading}
-          />
+      {/* SCHEDULE */}
+      <View key="schedule" style={styles.contentArea}>
+        <MonthSelector
+          months={months}
+          selected={selectedMonthKey}
+          onSelect={selectMonth}
+          loading={gamesLoading}
+        />
 
-          <GamesList
-            games={games}
-            error={gamesError}
-            loading={gamesLoading}
-            refreshing={gamesRefreshing || screen.refreshing}
-            onRefresh={handleRefresh}
-            showHeaders={true}
-            showCountdown={showCountdown}
-            countdownGame={firstSeasonGame}
-            scrollEnabled={true}
-            teamLogo={teamLogo}
-            teamColor={teamColor}
-            teamSecondaryColor={teamSecondaryColor}
-            teamName={teamName}
-          />
-        </View>
+        <GamesList
+          games={games}
+          error={gamesError}
+          loading={gamesLoading}
+          refreshing={gamesRefreshing || screen.refreshing}
+          onRefresh={handleRefresh}
+          showHeaders={true}
+          showCountdown={showCountdown}
+          countdownGame={firstSeasonGame}
+          scrollEnabled={true}
+          teamLogo={teamLogo}
+          teamColor={teamColor}
+          teamSecondaryColor={teamSecondaryColor}
+          teamName={teamName}
+        />
+      </View>
 
-        {/* NEWS */}
-        <View key="news" style={styles.contentArea}>
-          <NewsList
-            items={articles}
-            loading={newsLoading}
-            error={newsError}
-            refreshing={refreshingNews}
-            loadingMore={loadingMoreNews}
-            onRefresh={refreshNews}
-            isDark={screen.isDark}
-          />
-        </View>
+      {/* NEWS */}
+      <View key="news" style={styles.contentArea}>
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={screen.isDark}
+        />
+      </View>
 
-        {/* ROSTER */}
-        <View key="roster" style={styles.contentArea}>
-          <Roster
-            players={players}
-            loading={playersLoading}
-            error={playersError}
-            refreshing={screen.refreshing}
-            onRefresh={handleRefresh}
-            league={league}
-          />
-        </View>
+      {/* ROSTER */}
+      <View key="roster" style={styles.contentArea}>
+        <Roster
+          sections={sections}
+          loading={playersLoading}
+          error={playersError}
+          refreshing={screen.refreshing}
+          onRefresh={handleRefresh}
+          league={league}
+        />
+      </View>
 
-        {/* STATS */}
-        <View key="stats" style={styles.contentArea}>
-          <RosterStats
-            rosterStats={teamRoster}
-            teamId={teamIdNum}
-            teamStats={teamStats}
-            loading={rosterStatsLoading || teamStatsLoading}
-            error={rosterStatsError || teamStatsError}
-            refreshing={refreshingStats}
-            onRefresh={refetch}
-            league={league}
-          />
-        </View>
+      {/* STATS */}
+      <View key="stats" style={styles.contentArea}>
+        <RosterStats
+          rosterStats={teamRoster}
+          teamId={teamIdNum}
+          teamStats={teamStats}
+          loading={rosterStatsLoading || teamStatsLoading}
+          error={rosterStatsError || teamStatsError}
+          refreshing={refreshingStats}
+          onRefresh={refetch}
+          league={league}
+        />
+      </View>
 
-        {/* STANDINGS */}
-        <View key="standings" style={styles.contentArea}>
-          <StandingsList
-            year={standingsYear}
-            onYearChange={setStandingsYear}
-            league={league}
-          />
-        </View>
+      {/* STANDINGS */}
+      <View key="standings" style={styles.contentArea}>
+        <StandingsList
+          year={standingsYear}
+          onYearChange={setStandingsYear}
+          league={league}
+        />
+      </View>
 
-        {/* FORUM */}
-        <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamIdStr} league={league} />
-        </View>
+      {/* FORUM */}
+      <View key="forum" style={styles.contentArea}>
+        <ForumFeed teamId={teamIdStr} league={league} />
+      </View>
     </SharedTeamDetailScreen>
   );
 }

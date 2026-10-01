@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 
-export const teamDetailStyles = StyleSheet.create({
+export const TeamDetailStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
-     contentArea: {
-      flex: 1,
-    },
+  contentArea: {
+    flex: 1,
+  },
   loadContainer: {
     flex: 1,
     alignItems: "center",

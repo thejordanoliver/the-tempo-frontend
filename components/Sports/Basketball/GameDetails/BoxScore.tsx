@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import {
   Athlete,
   PlayerStats,
@@ -267,6 +268,7 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const router = useScopedRouter();
   const styles = BoxScoreStyles(isDark);
   const global = globalStyles(isDark);
@@ -555,7 +557,7 @@ export default function BoxScore({
 
   if (isLoading) {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
         <BoxScoreSkeleton isDark={isDark} />
@@ -565,7 +567,7 @@ export default function BoxScore({
 
   if (isError) {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
         <Text style={global.errorText}>Failed to load box score.</Text>
@@ -574,7 +576,7 @@ export default function BoxScore({
   }
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={navigationContentStyle()}>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
       {!hasPlayerStats ? (

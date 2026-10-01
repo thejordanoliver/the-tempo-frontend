@@ -41,6 +41,7 @@ const getErrorObject = (err: unknown) => {
 export function useRosterStats(
   teamId: string | number | null | undefined,
   league: string,
+  { enabled = true }: { enabled?: boolean } = {},
 ) {
   const normalizedTeamId = useMemo(() => {
     if (teamId === null || teamId === undefined) return "";
@@ -103,6 +104,7 @@ export function useRosterStats(
   );
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     void Promise.resolve().then(() => {
       if (!cancelled) void fetchRoster();
@@ -111,7 +113,7 @@ export function useRosterStats(
       cancelled = true;
       requestIdRef.current += 1;
     };
-  }, [fetchRoster]);
+  }, [enabled, fetchRoster]);
 
   return {
     teamRoster,

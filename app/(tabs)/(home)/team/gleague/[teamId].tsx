@@ -14,7 +14,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getNBASeason } from "utils/dateUtils";
 
 export default function GLeagueTeamDetailScreen() {
@@ -39,7 +39,14 @@ export default function GLeagueTeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const { hasVisitedTab, selectedTab, refreshing, modalVisible, setModalVisible, isDark } = screen;
+  const {
+    hasVisitedTab,
+    selectedTab,
+    refreshing,
+    modalVisible,
+    setModalVisible,
+    isDark,
+  } = screen;
   const { teamDetails } = useTeamDetails(league, teamIdNum);
   const {
     articles,
@@ -49,8 +56,12 @@ export default function GLeagueTeamDetailScreen() {
     loadingMore: loadingMoreNews,
     refresh: refreshNews,
   } = useTeamNews(league, teamIdNum, 10, { enabled: hasVisitedTab("news") });
-  const { players, loading: playersLoading, error: playersError, refreshPlayers } =
-    useRoster(teamIdNum, league);
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+    refreshPlayers,
+  } = useRoster(teamIdNum, league, { enabled: screen.hasVisitedTab("roster") });
   const {
     games,
     months,
@@ -87,7 +98,7 @@ export default function GLeagueTeamDetailScreen() {
         />
       }
     >
-      <View key="schedule" style={teamDetailStyles.contentArea}>
+      <View key="schedule" style={TeamDetailStyles.contentArea}>
         <MonthSelector
           months={months}
           selected={selectedMonthKey}
@@ -107,7 +118,7 @@ export default function GLeagueTeamDetailScreen() {
         />
       </View>
 
-      <View key="news" style={teamDetailStyles.contentArea}>
+      <View key="news" style={TeamDetailStyles.contentArea}>
         <NewsList
           items={articles}
           loading={newsLoading}
@@ -119,7 +130,7 @@ export default function GLeagueTeamDetailScreen() {
         />
       </View>
 
-      <View key="roster" style={teamDetailStyles.contentArea}>
+      <View key="roster" style={TeamDetailStyles.contentArea}>
         <Roster
           players={players}
           loading={playersLoading}
@@ -130,7 +141,7 @@ export default function GLeagueTeamDetailScreen() {
         />
       </View>
 
-      <View key="forum" style={teamDetailStyles.contentArea}>
+      <View key="forum" style={TeamDetailStyles.contentArea}>
         <ForumFeed teamId={teamIdStr} league={league} />
       </View>
     </SharedTeamDetailScreen>

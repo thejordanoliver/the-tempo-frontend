@@ -1,13 +1,9 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Ionicons } from "@expo/vector-icons";
 import MessageListItem from "components/Messages/MessageListItem";
 import PinnedConversations from "components/Messages/PinnedConversations";
 import SearchBar from "components/SearchBars/SearchBar";
-import {
-  Colors,
-  Fonts,
-  activeOpacity,
-  globalStyles,
-} from "constants/styles";
+import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useCallback, useMemo } from "react";
 import {
@@ -62,15 +58,13 @@ export default function MessageList({
   hasMore,
   onRetry,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => messageListStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
-  const keyExtractor = useCallback(
-    (item: MessageItem) => String(item.id),
-    [],
-  );
+  const keyExtractor = useCallback((item: MessageItem) => String(item.id), []);
 
   const renderItem = useCallback<ListRenderItem<MessageItem>>(
     ({ item }) => (
@@ -215,10 +209,10 @@ export default function MessageList({
         onRefresh={onRefresh}
         onEndReached={hasMore ? onLoadMore : undefined}
         onEndReachedThreshold={0.45}
-        contentContainerStyle={[
+        contentContainerStyle={navigationContentStyle([
           styles.contentContainer,
           shouldShowEmptyState && styles.emptyContentContainer,
-        ]}
+        ])}
       />
     </View>
   );
@@ -251,7 +245,7 @@ const messageListStyles = (isDark: boolean) =>
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 24,
-      paddingBottom: 80,
+      paddingBottom: 20,
     },
 
     footerLoader: {
@@ -268,8 +262,6 @@ const messageListStyles = (isDark: boolean) =>
       borderColor: isDark ? Colors.white : Colors.black,
       borderRadius: 32,
     },
-
-  
 
     retryButton: {
       marginTop: 16,

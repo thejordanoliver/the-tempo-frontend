@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
@@ -74,6 +75,7 @@ export default function SearchResultsList({
   const { resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = exploreStyles(isDark);
   const global = globalStyles(isDark);
 
@@ -142,7 +144,7 @@ export default function SearchResultsList({
           showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : null
         }
         ListFooterComponent={renderFooter}
-        contentContainerStyle={styles.resultListContainer}
+        contentContainerStyle={navigationContentStyle(styles.resultListContainer)}
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
       />

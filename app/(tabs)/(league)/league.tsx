@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
@@ -18,6 +19,7 @@ export default function LeagueScreen() {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = LeagueScreenStyles(isDark);
   const global = globalStyles(isDark);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -160,7 +162,7 @@ export default function LeagueScreen() {
         keyExtractor={(league) => league}
         renderItem={renderLeague}
         ListEmptyComponent={renderEmptyResults}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={navigationContentStyle(styles.scrollContent)}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"

@@ -1,4 +1,3 @@
-import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 export const leagueGamesListStyles = (isDark: boolean) =>
@@ -20,18 +19,11 @@ export const leagueGamesListStyles = (isDark: boolean) =>
     },
     gridItem: { flex: 1, minWidth: 0 },
     listItem: { marginHorizontal: 12 },
-    gridListContainer: { paddingHorizontal: 12, paddingBottom: 20 },
+    gridListContainer: { paddingHorizontal: 12, flex: 1 },
     gridSection: { paddingBottom: 4 },
     sectionSpacing: { marginTop: 8 },
-    contentContainer: { paddingBottom: 20 },
+    contentContainer: { flex: 1 },
     headerSkeleton: { paddingHorizontal: 12 },
-    emptyText: {
-      marginTop: 20,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 20,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
     itemSeparatorComponent: {
       height: 12,
     },

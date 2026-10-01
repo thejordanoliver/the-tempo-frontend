@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { BoxScoreStyles } from "@/styles/GameDetailStyles/BoxScoreStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, globalStyles } from "constants/styles";
@@ -1131,6 +1132,7 @@ export default function BoxScore({
   isDark,
   state,
 }: Props) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const router = useScopedRouter();
   const styles = useMemo(() => BoxScoreStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -1330,7 +1332,7 @@ export default function BoxScore({
 
   if (isLoading) {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
         <Text style={global.errorText}>Loading box score...</Text>
       </ScrollView>
@@ -1339,7 +1341,7 @@ export default function BoxScore({
 
   if (isError) {
     return (
-      <ScrollView>
+      <ScrollView contentContainerStyle={navigationContentStyle()}>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
         <Text style={global.errorText}>Failed to load box score.</Text>
       </ScrollView>
@@ -1351,7 +1353,7 @@ export default function BoxScore({
   }
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={navigationContentStyle()}>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
       <TeamBox

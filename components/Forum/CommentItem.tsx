@@ -1,12 +1,12 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import ConfirmModal from "components/ConfirmModal";
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { Colors, activeOpacity } from "constants/styles";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useSegments } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Image,
   PixelRatio,
@@ -32,6 +32,7 @@ import type {
   ForumDisplayMediaItem,
   ForumPostImageItem,
 } from "types/forum";
+import { getUserProfileCountParams } from "utils/userProfileCounts";
 import PostImages from "./PostImages";
 
 const COLLAPSED_HEIGHT = Math.round(3 * 20 * PixelRatio.getFontScale());
@@ -322,6 +323,7 @@ export const CommentItem = ({
     const params = {
       id: String(comment.user_id),
       username: comment.username,
+      ...getUserProfileCountParams(comment),
     };
 
     if ((segments as readonly string[]).includes("(profile)")) {
@@ -351,10 +353,9 @@ export const CommentItem = ({
 
     setAlertConfig({
       title: isReply ? "Delete Reply" : "Delete Comment",
-      message:
-        isReply
-          ? "This action can't be undone. The reply will be permanently deleted."
-          : "This action can't be undone. The comment will be permanently deleted.",
+      message: isReply
+        ? "This action can't be undone. The reply will be permanently deleted."
+        : "This action can't be undone. The comment will be permanently deleted.",
       confirmText: "Delete",
       cancelText: "Cancel",
       variant: "danger",

@@ -1,11 +1,12 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
+import { getUserProfileCountParams } from "utils/userProfileCounts";
 // components/Forum/UserHeader.tsx
 import { Ionicons } from "@expo/vector-icons";
+import SafetyActionsModal from "components/SafetyActionsModal";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { useSegments } from "expo-router";
-import { memo, useEffect, useState } from "react";
 import { useSafetyActions } from "hooks/useSafetyActions";
-import SafetyActionsModal from "components/SafetyActionsModal";
+import { memo, useEffect, useState } from "react";
 import {
   Animated,
   Easing,
@@ -185,8 +186,7 @@ export const UserHeader = memo(function UserHeader({
 
   const profileImageUri = item.profile_image;
 
-  const isAuthor =
-    currentUserId != null && currentUserId === item.user_id;
+  const isAuthor = currentUserId != null && currentUserId === item.user_id;
   const safety = useSafetyActions({
     userId: item.user_id,
     username: item.username,
@@ -203,6 +203,7 @@ export const UserHeader = memo(function UserHeader({
     const params = {
       id: String(item.user_id),
       username: item.username,
+      ...getUserProfileCountParams(item),
     };
 
     if ((segments as readonly string[]).includes("(profile)")) {
@@ -247,80 +248,80 @@ export const UserHeader = memo(function UserHeader({
 
   return (
     <>
-    <View style={styles.userRow}>
-      {/* User */}
-      <View style={styles.leftSide}>
-        <TouchableOpacity
-          onPress={handleOpenUser}
-          activeOpacity={0.7}
-        >
-          {profileImageUri ? (
-            <Image
-              source={{
-                uri: profileImageUri,
-              }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View
-              style={[
-                styles.profileImage,
-                styles.profilePlaceholder,
-              ]}
-            >
-              <Text
-                style={{
-                  color: Colors.white,
-                  fontFamily: Fonts.BOLD,
+      <View style={styles.userRow}>
+        {/* User */}
+        <View style={styles.leftSide}>
+          <TouchableOpacity onPress={handleOpenUser} activeOpacity={0.7}>
+            {profileImageUri ? (
+              <Image
+                source={{
+                  uri: profileImageUri,
                 }}
-              >
-                {(item.username?.[0] ?? "T").toUpperCase()}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handleOpenUser}
-          activeOpacity={0.7}
-          style={styles.userRow}
-        >
-          <Text
-            style={styles.username}
-            numberOfLines={1}
-          >
-            {item.username}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Author Menu */}
-      {isAuthor ? (
-        <View style={styles.menuAnchor}>
-          <PostSubmenu
-            visible={submenuVisible}
-            isDark={isDark}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={[styles.profileImage, styles.profilePlaceholder]}>
+                <Text
+                  style={{
+                    color: Colors.white,
+                    fontFamily: Fonts.BOLD,
+                  }}
+                >
+                  {(item.username?.[0] ?? "T").toUpperCase()}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={handleOpenUser}
+            activeOpacity={0.7}
+            style={styles.userRow}
+          >
+            <Text style={styles.username} numberOfLines={1}>
+              {item.username}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Author Menu */}
+        {isAuthor ? (
+          <View style={styles.menuAnchor}>
+            <PostSubmenu
+              visible={submenuVisible}
+              isDark={isDark}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+
+            <TouchableOpacity
+              activeOpacity={activeOpacity}
+              onPress={() => setSubmenuVisible((current) => !current)}
+              style={[
+                styles.menuButton,
+                submenuVisible && {
+                  borderColor: isDark ? Colors.darkGray : Colors.lightGray,
+                  backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
+                },
+              ]}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="ellipsis-horizontal"
+                size={22}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
             activeOpacity={activeOpacity}
-            onPress={() =>
-              setSubmenuVisible((current) => !current)
-            }
-            style={[
-              styles.menuButton,
-              submenuVisible && {
-                borderColor: isDark
-                  ? Colors.darkGray
-                  : Colors.lightGray,
-                backgroundColor: isDark
-                  ? Colors.darkGray
-                  : Colors.lightGray,
-              },
-            ]}
+            onPress={safety.open}
+            disabled={safety.pending}
+            style={styles.menuButton}
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Post safety actions"
           >
             <Ionicons
               name="ellipsis-horizontal"
@@ -328,26 +329,9 @@ export const UserHeader = memo(function UserHeader({
               color={isDark ? Colors.white : Colors.black}
             />
           </TouchableOpacity>
-        </View>
-      ) : (
-        <TouchableOpacity
-          activeOpacity={activeOpacity}
-          onPress={safety.open}
-          disabled={safety.pending}
-          style={styles.menuButton}
-          hitSlop={8}
-          accessibilityRole="button"
-          accessibilityLabel="Post safety actions"
-        >
-          <Ionicons
-            name="ellipsis-horizontal"
-            size={22}
-            color={isDark ? Colors.white : Colors.black}
-          />
-        </TouchableOpacity>
-      )}
-    </View>
-    <SafetyActionsModal {...safety.modalProps} />
+        )}
+      </View>
+      <SafetyActionsModal {...safety.modalProps} />
     </>
   );
 });

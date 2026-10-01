@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 // app/followers.tsx or wherever your FollowersScreen route lives
 
 import FollowersList from "components/Profile/FollowersList";
@@ -6,6 +7,7 @@ import { useFollowersScreen } from "hooks/UserHooks/useFollowersScreen";
 import { ScrollView, View } from "react-native";
 
 export default function FollowersScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const {
     styles,
     search,
@@ -23,7 +25,7 @@ export default function FollowersScreen() {
     <View style={styles.container}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainerStyle}
+        contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
       >
         <SearchBar
           placeholder="Search"

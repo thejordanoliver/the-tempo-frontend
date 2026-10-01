@@ -4,7 +4,7 @@ import type { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { Children, isValidElement, useRef, type ReactNode } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 type Props = {
   ready: boolean;
@@ -13,7 +13,12 @@ type Props = {
   footer?: ReactNode;
 };
 
-export default function TeamDetailScreen({ ready, screen, children, footer }: Props) {
+export default function TeamDetailScreen({
+  ready,
+  screen,
+  children,
+  footer,
+}: Props) {
   const pagerRef = useRef<PagerView>(null);
   const handleTabPress = (tab: string) => {
     const index = screen.tabs.indexOf(tab);
@@ -24,7 +29,7 @@ export default function TeamDetailScreen({ ready, screen, children, footer }: Pr
 
   if (!ready) {
     return (
-      <View style={teamDetailStyles.loadContainer}>
+      <View style={TeamDetailStyles.loadContainer}>
         <CustomActivityIndicator />
       </View>
     );
@@ -40,7 +45,7 @@ export default function TeamDetailScreen({ ready, screen, children, footer }: Pr
   });
 
   return (
-    <View style={teamDetailStyles.container}>
+    <View style={TeamDetailStyles.container}>
       <MainScrollTabBar
         tabs={screen.tabs}
         selected={screen.selectedTab}
@@ -50,14 +55,30 @@ export default function TeamDetailScreen({ ready, screen, children, footer }: Pr
       />
       <PagerView
         ref={pagerRef}
-        style={teamDetailStyles.contentArea}
+        style={TeamDetailStyles.contentArea}
         initialPage={Math.max(0, screen.tabs.indexOf(screen.selectedTab))}
         onPageScroll={screen.handlePageScroll}
-        onPageSelected={(event) => screen.handlePageChange(event.nativeEvent.position)}
+        onPageSelected={(event) =>
+          screen.handlePageChange(event.nativeEvent.position)
+        }
       >
-        {screen.tabs.map((tab) => keyedChildren.get(tab) ?? (
-          <View key={tab} style={teamDetailStyles.contentArea} />
-        ))}
+        {screen.tabs.map((tab) =>
+          screen.selectedTab === tab || screen.hasVisitedTab(tab) ? (
+            (keyedChildren.get(tab) ?? (
+              <View
+                key={tab}
+                collapsable={false}
+                style={TeamDetailStyles.contentArea}
+              />
+            ))
+          ) : (
+            <View
+              key={tab}
+              collapsable={false}
+              style={TeamDetailStyles.contentArea}
+            />
+          ),
+        )}
       </PagerView>
       {footer}
     </View>

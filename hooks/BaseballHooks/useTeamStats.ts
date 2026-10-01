@@ -44,6 +44,7 @@ type TeamStatsApiResponse = {
 };
 
 type UseTeamStatsOptions = {
+  enabled?: boolean;
   teamId: number;
   season?: string | number;
   league?: "mlb";
@@ -67,6 +68,7 @@ const buildStatMap = (group?: StatGroup): Record<string, number> => {
 };
 
 export function useTeamStats({
+  enabled = true,
   teamId,
   season,
   league = "mlb",
@@ -218,8 +220,13 @@ export function useTeamStats({
   );
 
   useEffect(() => {
-    void Promise.resolve().then(() => fetchTeamStats());
-  }, [fetchTeamStats]);
+    if (!enabled) return;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchTeamStats();
+    });
+    return () => { cancelled = true; };
+  }, [enabled, fetchTeamStats]);
 
   return {
     teamStats,

@@ -14,12 +14,12 @@ import { useLocalSearchParams } from "expo-router";
 import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { View } from "react-native";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getMLBSeason } from "utils/dateUtils";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const currentSeason = getMLBSeason();
-  const styles = teamDetailStyles;
+  const styles = TeamDetailStyles;
   const { teamId, league } = useLocalSearchParams<{
     teamId: string;
     league: SupportedRosterLeague;
@@ -58,10 +58,10 @@ export default function TeamDetailScreen() {
   } = useSoccerTeamGames(teamIdNum, league, currentSeason);
 
   const {
-    players,
+    sections,
     loading: playersLoading,
     error: playersError,
-  } = useRoster(teamIdNum, "SOCC");
+  } = useRoster(teamIdNum, "SOCC", { enabled: hasVisitedTab("roster") });
 
   const handleRefresh = () =>
     screen.runRefresh(async () => {
@@ -115,7 +115,7 @@ export default function TeamDetailScreen() {
       {/* ROSTER */}
       <View key="roster" style={styles.contentArea}>
         <Roster
-          players={players}
+          sections={sections}
           loading={playersLoading}
           error={playersError}
           refreshing={refreshing}

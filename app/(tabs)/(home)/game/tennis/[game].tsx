@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
@@ -37,6 +38,7 @@ function parseMatch(value?: string | string[]): TennisMatch | null {
 }
 
 export default function TennisMatchDetailsScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const params = useLocalSearchParams<RouteParams>();
   const navigation = useNavigation();
   const { resolvedColorScheme } = usePreferences();
@@ -114,7 +116,7 @@ export default function TennisMatchDetailsScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
+      contentContainerStyle={navigationContentStyle(styles.container)}
       onScrollBeginDrag={handleScrollStart}
       onMomentumScrollEnd={handleScrollEnd}
       onScrollEndDrag={handleScrollEnd}

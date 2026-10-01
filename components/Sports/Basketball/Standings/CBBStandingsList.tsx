@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
@@ -42,6 +43,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useScopedRouter();
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const { isFavorite } = useFavoriteTeamsContext();
@@ -62,7 +64,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
@@ -326,7 +328,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
   return (
     <ScrollView
       alwaysBounceVertical
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={refresh} />
       }

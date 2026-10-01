@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors, globalStyles } from "constants/styles";
 
@@ -67,6 +68,7 @@ export const ConferenceStandingsList = ({
 }: Props) => {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const global = globalStyles(isDark);
   const router = useScopedRouter();
@@ -355,7 +357,7 @@ export const ConferenceStandingsList = ({
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -365,11 +367,11 @@ export const ConferenceStandingsList = ({
     );
   }
 
-  if (conferences.length === 0) {
+  if (conferences.length === 0 && !loading) {
     return (
       <ScrollView
         alwaysBounceVertical
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -382,7 +384,7 @@ export const ConferenceStandingsList = ({
   return (
     <ScrollView
       alwaysBounceVertical
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

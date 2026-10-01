@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { BlurView } from "expo-blur";
+import { GlassView } from "expo-glass-effect";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
@@ -30,7 +31,6 @@ import type {
 } from "types/forum";
 import { apiClient, BASE_URL } from "utils/apiClient";
 import AppVideo from "../AppVideo";
-import { GlassView } from "expo-glass-effect";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
 
@@ -222,7 +222,7 @@ export default function PostImagesModal({
   }, [activeIndex, playingIndex]);
 
   const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: any[]; }) => {
+    ({ viewableItems }: { viewableItems: any[] }) => {
       if (viewableItems.length > 0) {
         setActiveIndex(viewableItems[0].index ?? 0);
       }
@@ -491,7 +491,7 @@ function getStyles(isDark: boolean) {
       alignItems: "flex-start",
       justifyContent: "center",
       width: screenWidth,
-      paddingBottom: 80,
+      paddingBottom: 20,
     },
     imageWrapper: {
       width: screenWidth - 32,

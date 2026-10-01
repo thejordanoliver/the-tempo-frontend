@@ -13,14 +13,14 @@ import { useTeamNews } from "hooks/NewsHooks/useTeamNews";
 import { useTeamDetailScreen } from "hooks/TeamHooks/useTeamDetailScreen";
 import { useMemo, useState } from "react";
 import { View } from "react-native";
+import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 import { getFootballSeason } from "utils/dateUtils";
 import { getFirstSeasonGame } from "utils/seasonGames";
-import { teamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "ufl";
   const currentSeason = getFootballSeason();
-  const styles = teamDetailStyles;
+  const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
   const team = getUFLTeam(teamIdNum);
@@ -39,7 +39,14 @@ export default function TeamDetailScreen() {
       infoEnabled: true,
     },
   });
-  const { selectedTab, hasVisitedTab, refreshing, isDark, modalVisible, setModalVisible } = screen;
+  const {
+    selectedTab,
+    hasVisitedTab,
+    refreshing,
+    isDark,
+    modalVisible,
+    setModalVisible,
+  } = screen;
   const [standingsYear, setStandingsYear] = useState(
     getFootballSeason().toString(),
   );
@@ -96,46 +103,46 @@ export default function TeamDetailScreen() {
         />
       }
     >
-        {/* SCHEDULE */}
-        <View key="schedule" style={styles.contentArea}>
-          <GamesList
-            games={teamGames}
-            loading={gamesLoading}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            error={gamesError}
-            showHeaders={true}
-            showCountdown={true}
-            countdownGame={firstSeasonGame}
-          />
-        </View>
+      {/* SCHEDULE */}
+      <View key="schedule" style={styles.contentArea}>
+        <GamesList
+          games={teamGames}
+          loading={gamesLoading}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          error={gamesError}
+          showHeaders={true}
+          showCountdown={true}
+          countdownGame={firstSeasonGame}
+        />
+      </View>
 
-        {/* NEWS */}
-        <View key="news" style={styles.contentArea}>
-          <NewsList
-            items={articles}
-            loading={newsLoading}
-            error={newsError}
-            refreshing={refreshingNews}
-            loadingMore={loadingMoreNews}
-            onRefresh={refreshNews}
-            isDark={isDark}
-          />
-        </View>
+      {/* NEWS */}
+      <View key="news" style={styles.contentArea}>
+        <NewsList
+          items={articles}
+          loading={newsLoading}
+          error={newsError}
+          refreshing={refreshingNews}
+          loadingMore={loadingMoreNews}
+          onRefresh={refreshNews}
+          isDark={isDark}
+        />
+      </View>
 
-        {/* STANDINGS */}
-        <View key="standings" style={styles.contentArea}>
-          <StandingsList
-            year={standingsYear}
-            onYearChange={setStandingsYear}
-            league={league}
-          />
-        </View>
+      {/* STANDINGS */}
+      <View key="standings" style={styles.contentArea}>
+        <StandingsList
+          year={standingsYear}
+          onYearChange={setStandingsYear}
+          league={league}
+        />
+      </View>
 
-        {/* FORUM */}
-        <View key="forum" style={styles.contentArea}>
-          <ForumFeed teamId={teamId as string} league={league} />
-        </View>
+      {/* FORUM */}
+      <View key="forum" style={styles.contentArea}>
+        <ForumFeed teamId={teamId as string} league={league} />
+      </View>
     </SharedTeamDetailScreen>
   );
 }

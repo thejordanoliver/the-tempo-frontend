@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Ionicons } from "@expo/vector-icons";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import {
@@ -193,6 +194,7 @@ export default function ExploreWidgetDashboard({
   onBeginEditing,
 }: ExploreWidgetDashboardProps) {
   const isFocused = useIsFocused();
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = exploreStyles(isDark);
   const dashboardStyles = WidgetDashboardStyles(isDark);
   const visibleWidgets = useMemo(
@@ -461,7 +463,7 @@ export default function ExploreWidgetDashboard({
       renderWidget={renderWidget}
       header={dashboardHeader}
       style={dashboardStyles.scroll}
-      contentContainerStyle={dashboardStyles.content}
+      contentContainerStyle={navigationContentStyle(dashboardStyles.content)}
       horizontalGap={EXPLORE_WIDGET_GRID_GAP}
       verticalGap={EXPLORE_WIDGET_ROW_GAP}
     />

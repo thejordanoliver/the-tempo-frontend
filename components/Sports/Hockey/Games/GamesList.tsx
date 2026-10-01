@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CountdownClock from "@/components/CountdownClock";
 import { HockeyGame } from "@/types/hockey/hockey";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
@@ -65,6 +66,7 @@ export default function GamesList({
 }: GamesListProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { viewMode } = usePreferences();
@@ -177,7 +179,7 @@ export default function GamesList({
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -215,11 +217,9 @@ export default function GamesList({
             />
           ) : null
         }
-        contentContainerStyle={
-          viewMode === "grid"
+        contentContainerStyle={navigationContentStyle(viewMode === "grid"
             ? styles.gridListContainer
-            : styles.contentContainer
-        }
+            : styles.contentContainer)}
         refreshing={refreshing}
         onRefresh={onRefresh}
         showsVerticalScrollIndicator={false}

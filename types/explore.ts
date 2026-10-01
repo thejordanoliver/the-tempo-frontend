@@ -1,3 +1,4 @@
+import type { UserFollowCounts } from "types/user";
 export type SearchAffiliation =
   | "nba"
   | "gleague"
@@ -68,7 +69,7 @@ export type TeamResult = SearchRankingFields & {
   type: "team";
 };
 
-export type UserResult = SearchRankingFields & {
+export type UserResult = SearchRankingFields & UserFollowCounts & {
   id: number | string;
   full_name: string | null;
   username: string;

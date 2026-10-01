@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
 import { useEffect, useState } from "react";
@@ -179,6 +180,7 @@ export default function GameTeamStats({
   stats: any[] | undefined;
   isDark: boolean;
 }) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const isScheduled = state === "pre";
   const styles = TeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
@@ -242,7 +244,7 @@ export default function GameTeamStats({
           <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.container}>
         <View
           style={{
             position: "absolute",

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   BasketballRosterPlayer as RosterPlayer,
@@ -52,6 +53,7 @@ export default function RosterStats({
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => rosterStatsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
@@ -386,7 +388,7 @@ export default function RosterStats({
 
   return (
     <ScrollView
-      contentContainerStyle={styles.scrollContainer}
+      contentContainerStyle={navigationContentStyle(styles.scrollContainer)}
       refreshControl={
         onRefresh ? (
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

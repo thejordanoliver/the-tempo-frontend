@@ -1,17 +1,18 @@
+import type { UserFollowCounts } from "types/user";
 import type { AlertConfig } from "./alert";
 import type { BadgeMutationResponse } from "./badges";
 import type { LeagueType } from "./types";
 
 export type ForumMediaType = "image" | "video" | "gif";
 
-export type ForumUser = {
+export type ForumUser = UserFollowCounts & {
   id: string;
   name: string;
   avatar: string;
   username: string;
 };
 
-export type ForumPost = {
+export type ForumPost = UserFollowCounts & {
   id: string;
   username: string;
   full_name: string | null;
@@ -31,7 +32,7 @@ export type ForumPost = {
   video_thumbnails?: (string | null)[];
 };
 
-export type ForumPostAuthor = {
+export type ForumPostAuthor = UserFollowCounts & {
   id: number;
   username: string;
 };
@@ -40,7 +41,7 @@ export type ForumExtendedPost = ForumPost & {
   author?: ForumPostAuthor;
 };
 
-export type ForumComment = {
+export type ForumComment = UserFollowCounts & {
   id: number;
   post_id: string;
   user_id: number;

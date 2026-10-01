@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-export const rosterStyles = StyleSheet.create({
+export const RosterStyles = StyleSheet.create({
   contentContainer: {
-    gap: 18,
+    gap: 12,
     paddingBottom: 20,
     paddingHorizontal: 12,
   },

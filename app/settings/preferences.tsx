@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -14,6 +15,7 @@ import {
 import { settingsStyles } from "styles/SettingsStyles";
 
 const PreferencesScreen = () => {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const {
     viewMode,
     setViewMode,
@@ -75,7 +77,7 @@ const PreferencesScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={navigationContentStyle(styles.scrollContent)}>
         <HeadingTwo isDark={isDark}>Gamecard Layout</HeadingTwo>
         <View>
           <View

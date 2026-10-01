@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import AppVideo from "@/components/AppVideo";
 import { CustomHeader } from "@/components/CustomHeader";
@@ -24,6 +25,7 @@ import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
 import { getNewsPlayerTarget } from "utils/newsArticleLinks";
 
 export default function ArticleScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { width } = useWindowDimensions();
@@ -189,7 +191,7 @@ export default function ArticleScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={navigationContentStyle(styles.container)}>
       <Text style={styles.title}>{headline}</Text>
 
       {hasVideo && videoUrl ? (

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -118,6 +119,7 @@ function getRouteLeague(value?: string | string[]) {
 export default function GameDetailsScreen(
   props: Partial<FootballGameCardProps> = {},
 ) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameDetailsScreenStyles;
   const params = useLocalSearchParams<RouteParams>();
   const { resolvedColorScheme } = usePreferences();
@@ -441,7 +443,7 @@ export default function GameDetailsScreen(
   return (
     <>
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
         stickyHeaderIndices={[0]}

@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { RacingEvent } from "@/types/racing/racing";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
@@ -59,6 +60,7 @@ export default function GamesList({
   const { viewMode, resolvedColorScheme } = usePreferences();
 
   const isDark = resolvedColorScheme === "dark";
+  const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
   const global = globalStyles(isDark);
 
@@ -133,7 +135,7 @@ export default function GamesList({
           keyExtractor={(item) => item.id}
           numColumns={2}
           scrollEnabled={false}
-          contentContainerStyle={styles.skeletonGridWrapper}
+          contentContainerStyle={navigationContentStyle(styles.skeletonGridWrapper)}
           renderItem={({ item, index }) => {
             if (item.isPlaceholder) {
               return (
@@ -183,7 +185,7 @@ export default function GamesList({
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={global.emptyContainer}
+        contentContainerStyle={navigationContentStyle(global.emptyContainer)}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -226,7 +228,7 @@ export default function GamesList({
         }}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        contentContainerStyle={styles.gridListContainer}
+        contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
         showsVerticalScrollIndicator={false}
         scrollEnabled={scrollEnabled}
         ListEmptyComponent={
@@ -248,7 +250,7 @@ export default function GamesList({
       renderItem={({ item }) => renderGameCard(item)}
       refreshing={refreshing}
       onRefresh={onRefresh}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={navigationContentStyle(styles.contentContainer)}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       showsVerticalScrollIndicator={false}
       scrollEnabled={scrollEnabled}

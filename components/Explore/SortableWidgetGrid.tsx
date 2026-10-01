@@ -1,3 +1,4 @@
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import * as Haptics from "expo-haptics";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -357,6 +358,7 @@ export default function SortableWidgetGrid({
   horizontalGap,
   verticalGap,
 }: SortableWidgetGridProps) {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const [containerWidth, setContainerWidth] = useState(0);
   const [temporaryOrder, setTemporaryOrder] = useState<string[] | null>(null);
   const [activeDrag, setActiveDrag] = useState<ActiveWidgetDrag | null>(null);
@@ -628,7 +630,7 @@ export default function SortableWidgetGrid({
       <ScrollView
         ref={scrollRef}
         style={sortableStyles.scroll}
-        contentContainerStyle={contentContainerStyle}
+        contentContainerStyle={navigationContentStyle(contentContainerStyle)}
         showsVerticalScrollIndicator={false}
         scrollEnabled={!activeDrag}
         scrollEventThrottle={16}

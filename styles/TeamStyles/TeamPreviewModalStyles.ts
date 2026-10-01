@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export const teamPreviewModalStyles = (isDark: boolean) =>
+export const TeamPreviewModalStyles = (isDark: boolean) =>
   StyleSheet.create({
     sheetBackground: {
       backgroundColor: "transparent",
