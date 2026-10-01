@@ -1,6 +1,7 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
 // hooks/useAuth.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { disconnectNotificationSocket } from "services/notificationSocket";
 import { useBadgeNotificationStore } from "store/badgeNotificationStore";
