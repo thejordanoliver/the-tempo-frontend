@@ -69,7 +69,6 @@ function UserProfileContent() {
     () => normalizeRouteParam(params.username),
     [params.username],
   );
-
   const initialFollowersCount = parseProfileCountParam(params.followers);
   const initialFollowingCount = parseProfileCountParam(params.following);
 
