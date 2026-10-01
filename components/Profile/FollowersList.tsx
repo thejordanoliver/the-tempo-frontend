@@ -5,7 +5,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { User } from "hooks/UserHooks/useFollowers";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { followersListStyles } from "styles/ProfileStyles/FollowersListStyles";
-import FollowingButton from "../Buttons/ModalFollowingButton";
+import FollowButton from "../Buttons/FollowButton";
 import FollowerListSkeleton from "../Skeletons/Profile/FollowerListSkeleton";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
   loading: boolean;
   loadingIds: string[];
   currentUserId: string;
-  onUserPress: (id: string) => void;
+  onUserPress: (user: User) => void;
   onToggleFollow: (id: string) => void;
   error: string | null;
 };
@@ -50,41 +50,45 @@ export default function FollowersList({
     );
   }
 
-  const renderItem = ({ item }: { item: User }) => {
-    const profileImage = item.profile_image || PLACEHOLDER_AVATAR;
-    const isCurrentUser = item.id.toString() === currentUserId;
+ const renderItem = ({ item }: { item: User }) => {
+   const profileImage = item.profile_image || PLACEHOLDER_AVATAR;
+   const isCurrentUser = item.id.toString() === currentUserId;
 
-    return (
-      <View style={styles.itemRow}>
-        <View style={styles.itemContainer}>
-          <TouchableOpacity
-            onPress={() => onUserPress(item.id.toString())}
-            style={styles.userRow}
-          >
-            <View style={styles.avatarContainer}>
-              <Image source={{ uri: profileImage }} style={styles.avatar} />
-            </View>
-            <Text style={styles.username}>{item.username}</Text>
-          </TouchableOpacity>
-        </View>
-        {item.followsYou && (
-          <Ionicons
-            name="infinite-outline"
-            size={14}
-            color={Colors.midTone}
-            style={styles.mutalIcon}
-          />
-        )}
-        {!isCurrentUser && (
-          <FollowingButton
-            isFollowing={item.isFollowing}
-            loading={loadingIds.includes(item.id.toString())}
-            onToggle={() => onToggleFollow(item.id.toString())}
-          />
-        )}
-      </View>
-    );
-  };
+   return (
+     <View style={styles.itemRow}>
+       <View style={styles.itemContainer}>
+         <TouchableOpacity
+           onPress={() => onUserPress(item)}
+           style={styles.userRow}
+         >
+           <View style={styles.avatarContainer}>
+             <Image source={{ uri: profileImage }} style={styles.avatar} />
+           </View>
+
+           <Text style={styles.username}>{item.username}</Text>
+         </TouchableOpacity>
+       </View>
+
+       {item.followsYou && (
+         <Ionicons
+           name="infinite-outline"
+           size={14}
+           color={Colors.midTone}
+           style={styles.mutalIcon}
+         />
+       )}
+
+       {!isCurrentUser && (
+         <FollowButton
+           isFollowing={item.isFollowing}
+           loading={loadingIds.includes(item.id.toString())}
+           onToggle={() => onToggleFollow(item.id.toString())}
+           compact
+         />
+       )}
+     </View>
+   );
+ };
 
   return (
     <FlatList

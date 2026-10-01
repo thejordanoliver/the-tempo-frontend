@@ -62,6 +62,7 @@ export default function FollowButton({
         compact && {
           width: 80,
           marginVertical: 4,
+          borderRadius: 8,
         },
         { opacity: opacityAnim },
       ]}
@@ -74,7 +75,6 @@ export default function FollowButton({
           compact && {
             paddingVertical: 8,
             paddingHorizontal: 16,
-            borderRadius: 8,
           },
         ]}
       >

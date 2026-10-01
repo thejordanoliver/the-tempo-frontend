@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const rosterStyles = StyleSheet.create({
   contentContainer: {
     gap: 18,
-    paddingBottom: 100,
+    paddingBottom: 20,
     paddingHorizontal: 12,
   },
 

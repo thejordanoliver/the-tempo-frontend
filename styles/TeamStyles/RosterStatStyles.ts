@@ -17,7 +17,7 @@ export const rosterStatsStyles = (isDark: boolean) =>
     scrollContainer: {
       flexGrow: 1,
       paddingHorizontal: 12,
-      paddingBottom: 100,
+      paddingBottom: 20,
       borderRadius: 4,
       overflow: "hidden",
     },

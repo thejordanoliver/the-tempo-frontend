@@ -1,12 +1,13 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
-import SafetyActionsModal from "@/components/SafetyActionsModal";
 import FavoritesSection from "@/components/Favorites/FavoritesSection";
 import Forum from "@/components/Forum/Forum";
+import SafetyActionsModal from "@/components/SafetyActionsModal";
 import TabBar from "@/components/TabBars/TabBar";
 import { Colors, globalStyles } from "@/constants/styles";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import { useUserPosts } from "@/hooks/UserHooks/useUserPosts";
+import { Ionicons } from "@expo/vector-icons";
+import type { ProfileTab } from "app/(tabs)/(profile)/profile";
 import BadgePreviewSection from "components/Profile/Badges/BadgePreviewSection";
 import BioSection from "components/Profile/BioSection";
 import FollowStats from "components/Profile/FollowStats";
@@ -15,14 +16,19 @@ import ProfileHeader from "components/Profile/ProfileHeader";
 import { SkeletonProfileScreen } from "components/Skeletons/SkeletonProfileScreen";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useSafetyActions } from "hooks/useSafetyActions";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useUserProfile } from "hooks/useUserProfile";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useSafetyActions } from "hooks/useSafetyActions";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { profileStyles } from "styles/ProfileStyles/ProfileScreenStyles";
 import type { ForumPost } from "types/forum";
-import type { ProfileTab } from "app/(tabs)/(profile)/profile";
 
 type RouteParam = string | string[] | undefined;
 
@@ -53,6 +59,7 @@ export default function UserProfileScreen() {
     () => normalizeRouteParam(params.username),
     [params.username],
   );
+
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
@@ -61,6 +68,7 @@ export default function UserProfileScreen() {
     isLoading,
     hasCachedProfile,
     fullName,
+    username,
     bio,
     profileImage,
     bannerImage,
@@ -133,10 +141,10 @@ export default function UserProfileScreen() {
   );
 
   const headerTitle = useMemo(() => {
-    if (routeUsername) return `@${routeUsername}`;
+    if (routeUsername || username) return `@${routeUsername || username}`;
 
     return isCurrentUser ? "Profile" : "User";
-  }, [isCurrentUser, routeUsername]);
+  }, [isCurrentUser, routeUsername, username]);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -158,25 +166,35 @@ export default function UserProfileScreen() {
           title={headerTitle}
           tabName="User"
           onBack={handleBack}
-          rightAction={!isCurrentUser ? (
-            <TouchableOpacity
-              onPress={safety.open}
-              disabled={safety.pending}
-              accessibilityRole="button"
-              accessibilityLabel="User safety actions"
-              hitSlop={8}
-            >
-              <Ionicons
-                name="ellipsis-horizontal"
-                size={24}
-                color={isDark ? Colors.white : Colors.black}
-              />
-            </TouchableOpacity>
-          ) : undefined}
+          rightAction={
+            !isCurrentUser ? (
+              <TouchableOpacity
+                onPress={safety.open}
+                disabled={safety.pending}
+                accessibilityRole="button"
+                accessibilityLabel="User safety actions"
+                hitSlop={8}
+              >
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={24}
+                  color={isDark ? Colors.white : Colors.black}
+                />
+              </TouchableOpacity>
+            ) : undefined
+          }
         />
       ),
     });
-  }, [navigation, headerTitle, handleBack, safety.open, safety.pending, isCurrentUser, isDark]);
+  }, [
+    navigation,
+    headerTitle,
+    handleBack,
+    safety.open,
+    safety.pending,
+    isCurrentUser,
+    isDark,
+  ]);
 
   const onFollowersPress = useCallback(() => {
     if (!currentUserIdString || !userId) return;
@@ -232,7 +250,10 @@ export default function UserProfileScreen() {
 
   return (
     <>
-      <ScrollView style={styles.container} contentInsetAdjustmentBehavior="never">
+      <ScrollView
+        style={styles.container}
+        contentInsetAdjustmentBehavior="never"
+      >
         <ProfileBanner
           bannerImage={bannerImage}
           profileImage={profileImage}

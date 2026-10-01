@@ -14,7 +14,7 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
       flexGrow: 1,
       paddingHorizontal: 12,
       paddingTop: 8,
-      paddingBottom: 80,
+      paddingBottom: 20,
     },
 
     emptyContainer: {

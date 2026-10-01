@@ -85,15 +85,6 @@ export const profileStyles = (
       borderRadius: 10,
       opacity: opacityAnim,
       overflow: "hidden",
-    },
-    followButton: {
-      alignItems: "center",
-      justifyContent: "center",
-      width: "100%",
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderWidth: 1,
-      borderRadius: 10,
       borderColor: isFollowing
         ? isDark
           ? Colors.black
@@ -108,6 +99,15 @@ export const profileStyles = (
         : isDark
           ? Colors.black
           : Colors.white,
+    },
+    followButton: {
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderRadius: 10,
     },
     followText: {
       fontFamily: Fonts.MEDIUM,

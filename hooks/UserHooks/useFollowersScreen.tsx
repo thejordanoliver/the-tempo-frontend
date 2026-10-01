@@ -1,13 +1,12 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-// hooks/UserHooks/useFollowersScreen.tsx
-
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import {
   useFollowers,
+  User,
   type User as FollowersHookUser,
 } from "hooks/UserHooks/useFollowers";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   useCallback,
   useEffect,
@@ -189,13 +188,17 @@ export function useFollowersScreen() {
   }, []);
 
   const handleUserPress = useCallback(
-    (userId: string) => {
-      if (!userId) return;
-      router.push(`/user/${userId}`);
+    (user: User) => {
+      router.push({
+        pathname: "/user/[id]",
+        params: {
+          id: user.id.toString(),
+          username: user.username,
+        },
+      });
     },
     [router],
   );
-
   const handleToggleFollow = useCallback(
     async (targetId: string) => {
       if (
