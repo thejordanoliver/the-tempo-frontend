@@ -189,6 +189,8 @@ function getProfileKey(userId: string, currentUserId: number | null) {
 }
 
 export type UseUserProfileOptions = {
+  initialProfile?: Partial<Pick<DisplayProfile, "username" | "fullName" | "bio" | "profileImage" | "bannerImage">>;
+  initialIsFollowing?: boolean;
   initialFollowersCount?: number;
   initialFollowingCount?: number;
 };
@@ -208,18 +210,25 @@ export function useUserProfile(
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [hasLoadedCurrentUserId, setHasLoadedCurrentUserId] = useState(false);
 
-  const [username, setUsername] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string | null>(null);
-  const [bio, setBio] = useState<string | null>(null);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [bannerImage, setBannerImage] = useState<string | null>(null);
+  const [initialProfile] = useState(() => normalizeDisplayProfile(options.initialProfile ?? {}, userId ?? ""));
+  const [username, setUsername] = useState<string | null>(initialProfile.username);
+  const [fullName, setFullName] = useState<string | null>(initialProfile.fullName);
+  const [bio, setBio] = useState<string | null>(initialProfile.bio);
+  const [profileImage, setProfileImage] = useState<string | null>(initialProfile.profileImage);
+  const [bannerImage, setBannerImage] = useState<string | null>(initialProfile.bannerImage);
 
   const [followersCount, setFollowersCount] = useState(initialCounts.followers);
   const [followingCount, setFollowingCount] = useState(initialCounts.following);
   const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
   const [favoriteSports, setFavoriteSports] = useState<FavoriteSportId[]>([]);
 
-  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
+  const [initialFollowState] = useState(() => ({
+    userId,
+    isFollowing: options.initialIsFollowing ?? null,
+  }));
+  const [isFollowing, setIsFollowing] = useState<boolean | null>(
+    initialFollowState.isFollowing,
+  );
   const [isBlockedByViewer, setIsBlockedByViewer] = useState(false);
   const [hasBlockedViewer, setHasBlockedViewer] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
@@ -263,19 +272,20 @@ export function useUserProfile(
   }, [activeProfileKey]);
 
   const resetProfileState = useCallback(() => {
-    setUsername(null);
-    setFullName(null);
-    setBio(null);
-    setProfileImage(null);
-    setBannerImage(null);
+    setUsername(userId === initialFollowState.userId ? initialProfile.username : null);
+    setFullName(userId === initialFollowState.userId ? initialProfile.fullName : null);
+    setBio(userId === initialFollowState.userId ? initialProfile.bio : null);
+    setProfileImage(userId === initialFollowState.userId ? initialProfile.profileImage : null);
+    setBannerImage(userId === initialFollowState.userId ? initialProfile.bannerImage : null);
     setFollowersCount(initialCounts.followers);
     setFollowingCount(initialCounts.following);
     setFavoriteTeams([]);
     setFavoriteSports([]);
-    setIsFollowing(false);
+    setIsFollowing(userId === initialFollowState.userId
+      ? initialFollowState.isFollowing : null);
     setIsBlockedByViewer(false);
     setHasBlockedViewer(false);
-  }, [initialCounts]);
+  }, [initialCounts, initialFollowState, initialProfile, userId]);
 
   const applyDisplayProfile = useCallback(
     (profile: DisplayProfile | CachedUserProfilePayload) => {
@@ -410,7 +420,7 @@ export function useUserProfile(
         setFollowersCount(parseCount(data.followersCount));
         setFollowingCount(parseCount(data.followingCount));
         setIsFollowing(
-          typeof data.isFollowing === "boolean" ? data.isFollowing : false,
+          typeof data.isFollowing === "boolean" ? data.isFollowing : null,
         );
         setIsBlockedByViewer(Boolean(data.isBlockedByViewer));
         setHasBlockedViewer(Boolean(data.hasBlockedViewer));
@@ -518,7 +528,8 @@ export function useUserProfile(
       !userId ||
       currentUserId === null ||
       String(currentUserId) === userId ||
-      followLoadingRef.current
+      followLoadingRef.current ||
+      isFollowing === null
     ) {
       return;
     }
@@ -595,7 +606,7 @@ export function useUserProfile(
     bannerImage,
     followersCount,
     followingCount,
-    isFollowing: isFollowing ?? false,
+    isFollowing,
     isBlockedByViewer,
     hasBlockedViewer,
     canInteract: !isBlockedByViewer && !hasBlockedViewer,

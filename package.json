@@ -20,7 +20,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test:navigation": "tsx --test tests/tabStackRouteCoverage.test.ts"
+    "test:navigation": "node --import tsx --test tests/tabStackRouteCoverage.test.ts"
   },
   "dependencies": {
     "@expo-google-fonts/barlow-condensed": "^0.4.1",

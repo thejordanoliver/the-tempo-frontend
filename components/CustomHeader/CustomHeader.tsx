@@ -17,7 +17,7 @@ import { getNHLTeam, nhlTeams } from "constants/teamsNHL";
 import { sbTeams } from "constants/teamsSB";
 import { getWNBATeam, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigation, useSegments } from "expo-router";
+import { useNavigation, useRoute, useSegments } from "expo-router";
 import { HeaderTitle } from "expo-router/react-navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -119,6 +119,7 @@ export function CustomHeader({
 }: CustomHeaderProps) {
   const { resolvedColorScheme } = usePreferences();
   const navigation = useNavigation();
+  const headerRoute = useRoute();
   const segments = useSegments();
   const routeSegments = segments as readonly string[];
   const { width } = useWindowDimensions();
@@ -132,22 +133,23 @@ export function CustomHeader({
     isTabRoute &&
     navigationState != null &&
     navigationState.type === "stack" &&
-    navigationState.index > 0;
+    navigationState.routes.findIndex((route) => route.key === headerRoute.key) > 0;
 
   const handleTabStackBack = useCallback(() => {
     const state = navigation.getState();
 
-    if (!isTabRoute || !state || state.type !== "stack" || state.index <= 0) {
+    if (!isTabRoute || !state || state.type !== "stack" || state.index <= 0 ||
+        state.routes[state.index]?.key !== headerRoute.key) {
       return;
     }
 
     navigation.dispatch({
       type: "POP",
       payload: { count: 1 },
-      source: state.routes[state.index]?.key,
+      source: headerRoute.key,
       target: state.key,
     });
-  }, [isTabRoute, navigation]);
+  }, [headerRoute.key, isTabRoute, navigation]);
 
   const resolvedOnBack = isTabRoute
     ? canPopCurrentTabStack

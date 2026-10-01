@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import type { Href } from "expo-router";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
@@ -145,4 +146,29 @@ test("tab roots, auth routes, and qualified routes are not rewritten", () => {
 test("the active group is derived from route segments", () => {
   assert.equal(getTabGroup(["(tabs)", "(explore)", "player"]), "(explore)");
   assert.equal(getTabGroup(["login"]), null);
+});
+
+test("query strings, fragments, and trailing slashes preserve root routes", () => {
+  for (const route of ["/profile?tab=posts", "/login?next=%2Fteam%2F12",
+    "/explore#search", "/league/", "/settings/deleteaccountsplash"]) {
+    assert.equal(scopeHrefToTab(route as Href, "(home)"), route);
+  }
+});
+
+test("detail query strings and object params stay intact inside the active tab", () => {
+  assert.equal(scopeHrefToTab("/team/nfl/12?season=2026#games", "(league)"),
+    "/(tabs)/(league)/team/nfl/12?season=2026#games");
+  assert.deepEqual(scopeHrefToTab({
+    pathname: "/news/[id]", params: { id: "42", source: "feed" },
+  }, "(explore)"), {
+    pathname: "/(tabs)/(explore)/news/[id]", params: { id: "42", source: "feed" },
+  });
+});
+
+test("external, relative, qualified, and unsupported paths remain unchanged", () => {
+  for (const route of ["https://example.com/news", "//example.com/news",
+    "../team/12", "/unknown-screen", "/(other)/news/12"]) {
+    assert.equal(scopeHrefToTab(route as Href, "(home)"), route);
+  }
+  assert.equal(scopeHrefToTab("/team/nfl/12", null), "/team/nfl/12");
 });

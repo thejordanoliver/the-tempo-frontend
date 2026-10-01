@@ -1,3 +1,4 @@
+import { getUserProfileParams } from "../utils/userProfileNavigation";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getUserProfileCountParams, parseProfileCountParam } from "../utils/userProfileCounts";
@@ -31,4 +32,22 @@ test("Explore navigation supplies immediate username and known profile counts", 
     pathname: "/(tabs)/(explore)/user/[id]",
     params: { id: "42", username: "tempo", followers: "24", following: "8" },
   });
+});
+
+test("profile links preserve every available preview field and known false follow status", () => {
+  assert.deepEqual(getUserProfileParams(7, {
+    username: "fan", full_name: "Tempo Fan", bio: "",
+    profile_image: "https://images.test/avatar", banner_image: "https://images.test/banner",
+    followers_count: 0, following_count: 8, isFollowing: false,
+  }), {
+    id: "7", username: "fan", fullName: "Tempo Fan", bio: "",
+    profileImage: "https://images.test/avatar", bannerImage: "https://images.test/banner",
+    followers: "0", following: "8", isFollowing: "false",
+  });
+});
+
+test("unknown follow status and absent profile fields are omitted rather than guessed", () => {
+  assert.deepEqual(getUserProfileParams("7", {
+    full_name: null, profileImageUrl: null, isFollowing: null,
+  }), { id: "7" });
 });

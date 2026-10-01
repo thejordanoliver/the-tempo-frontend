@@ -4,7 +4,7 @@ import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useTeamTabs } from "hooks/LeagueHooks/useLeagueTabs";
 import { usePagerTabScrollProgress } from "hooks/usePagerTabScrollProgress";
 import { useCallback, useLayoutEffect, useState } from "react";
@@ -27,6 +27,7 @@ type TeamDetailConfig = {
 
 export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
   const navigation = useNavigation();
+  const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const { toggleFavorite, isFavorite } = useFavoriteTeamsContext();
@@ -74,7 +75,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
           logo={header.logo}
           teamName={header.teamName}
           teamColor={header.teamColor}
-          onBack={goBack}
+          onBack={router.back}
           isTeamScreen
           isFavorite={favorited}
           onToggleFavorite={favoriteToggleId === undefined ? undefined :
@@ -87,7 +88,7 @@ export function useTeamDetailScreen({ tabLeague, header }: TeamDetailConfig) {
         />
       ),
     });
-  }, [navigation, isDark, header.league, header.teamId, notificationTeamId, header.logo,
+  }, [navigation, router, isDark, header.league, header.teamId, notificationTeamId, header.logo,
     header.teamName, header.teamColor, header.infoEnabled,
     favoriteToggleId, favorited, toggleFavorite, toggleNotifications, isNotified]);
 

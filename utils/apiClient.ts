@@ -127,11 +127,14 @@ export const clearAuthSession = async (userId?: number | string | null) => {
         (key) => key !== "accessToken" && key !== "refreshToken",
       ),
     );
-    await clearSecureTokens();
   } finally {
-    delete apiClient.defaults.headers.common.Authorization;
-    delete apiClient.defaults.headers.common.authorization;
-    notifyAuthSessionListeners(null);
+    try {
+      await clearSecureTokens();
+    } finally {
+      delete apiClient.defaults.headers.common.Authorization;
+      delete apiClient.defaults.headers.common.authorization;
+      notifyAuthSessionListeners(null);
+    }
   }
 };
 
@@ -183,6 +186,9 @@ apiClient.interceptors.request.use(async (config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
+    delete config.headers.authorization;
   }
 
   return config;
@@ -217,7 +223,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const isTransientRefreshError = (error: any) => {
   const status = error?.response?.status;
 
-  return !status || status === 429 || status >= 500;
+  return axios.isAxiosError(error) && (!status || status === 429 || status >= 500);
 };
 
 const getRefreshBackoffMs = (error: any) => {
@@ -241,7 +247,9 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
     const requestUrl = originalRequest?.url;
 
-    const isAuthError = status === 401 || status === 403;
+    const isAuthError = status === 401 || (status === 403 &&
+      (error.response?.data?.code === "ACCESS_TOKEN_INVALID" ||
+        error.response?.data?.error === "Invalid or expired token"));
     const requestPath = getRequestPath(requestUrl);
     const responseError = error.response?.data?.error;
     const isInvalidCurrentPassword =
@@ -274,6 +282,8 @@ apiClient.interceptors.response.use(
       return Promise.reject(lastTransientRefreshError);
     }
 
+    originalRequest._retry = true;
+
     if (isRefreshing) {
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
@@ -285,27 +295,22 @@ apiClient.interceptors.response.use(
         .catch((err) => Promise.reject(err));
     }
 
-    originalRequest._retry = true;
     isRefreshing = true;
+    let refreshToken: string | null | undefined;
 
     try {
-      const refreshToken = await getRefreshToken();
+      refreshToken = await getRefreshToken();
 
       if (!refreshToken) {
-        const noRefreshTokenError = new Error("No refresh token available");
-
-        await clearAuthSession();
-        router.replace("/login");
-
-        return Promise.reject(noRefreshTokenError);
+        throw new Error("No refresh token available");
       }
 
       const res = await axios.post(`${BASE_URL}/api/refresh`, {
         refreshToken,
-      });
+      }, { timeout: 15_000 });
 
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-        res.data;
+        res.data ?? {};
 
       // A concurrent password change can install a replacement session while
       // this refresh request is in flight. Never let the older response put
@@ -327,6 +332,11 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       }
 
+      if (typeof newAccessToken !== "string" || !newAccessToken.trim() ||
+          typeof newRefreshToken !== "string" || !newRefreshToken.trim()) {
+        throw new Error("Invalid token refresh response");
+      }
+
       await saveTokens(newAccessToken, newRefreshToken);
 
       refreshBackoffUntil = 0;
@@ -339,6 +349,18 @@ apiClient.interceptors.response.use(
 
       return apiClient(originalRequest);
     } catch (refreshError) {
+      if (refreshToken != null &&
+          !isRefreshResponseForCurrentSession(refreshToken, await getRefreshToken())) {
+        const currentAccessToken = await getAccessToken();
+        if (currentAccessToken) {
+          processQueue(null, currentAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${currentAccessToken}`;
+          return apiClient(originalRequest);
+        }
+        processQueue(refreshError);
+        return Promise.reject(refreshError);
+      }
+
       processQueue(refreshError, null);
 
       if (isTransientRefreshError(refreshError)) {

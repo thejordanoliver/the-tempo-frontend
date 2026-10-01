@@ -1,4 +1,4 @@
-import { getUserProfileCountParams } from "utils/userProfileCounts";
+import { getUserProfileParams } from "utils/userProfileNavigation";
 import { CustomHeader } from "@/components/CustomHeader";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -194,11 +194,7 @@ export function useFollowersScreen() {
     (user: User) => {
       router.push({
         pathname: "/user/[id]",
-        params: {
-          id: user.id.toString(),
-          username: user.username,
-          ...getUserProfileCountParams(user),
-        },
+        params: getUserProfileParams(user.id, user),
       });
     },
     [router],

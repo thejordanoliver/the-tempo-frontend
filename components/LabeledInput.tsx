@@ -37,6 +37,7 @@ export default function LabeledInput({
   const styles = labeledInputStyles(isDark);
 
   const MAX_LENGTH = 150;
+  const inputValue = value ?? "";
 
   const handleChange = (text: string) => {
     if (enforceMaxLength && multiline && text.length > MAX_LENGTH) return;
@@ -48,7 +49,7 @@ export default function LabeledInput({
       <Text style={styles.label}>{label}</Text>
 
       <TextInput
-        value={value}
+        value={inputValue}
         onChangeText={handleChange}
         multiline={multiline}
         maxLength={multiline ? MAX_LENGTH : undefined}
@@ -65,7 +66,7 @@ export default function LabeledInput({
       <View style={styles.hintContainer}>
         {multiline && (
           <Text style={styles.count}>
-            {value.length}/{MAX_LENGTH}
+            {inputValue.length}/{MAX_LENGTH}
           </Text>
         )}
         {!!hint && <Text style={styles.errorText}>{hint}</Text>}

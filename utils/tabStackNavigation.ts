@@ -29,12 +29,25 @@ export function getTabGroup(segments: readonly string[]): TabGroup | null {
   return null;
 }
 
+const TAB_ROUTE_FAMILIES = new Set([
+  "badges", "create-post", "edit-favorites", "edit-profile", "followers",
+  "game", "league", "messages", "news", "notification-center", "player",
+  "post", "recruit", "season-leaders", "settings", "team", "user",
+]);
+
 function scopePathname(pathname: string, tabGroup: TabGroup | null) {
+  // Match the path separately while retaining the original query and fragment.
+  const path = pathname.split(/[?#]/, 1)[0].replace(/\/+$/, "") || "/";
+  const family = path.split("/")[1];
+
   if (
     !tabGroup ||
     !pathname.startsWith("/") ||
-    pathname.startsWith("/(tabs)/") ||
-    UNSCOPED_ROUTES.has(pathname)
+    pathname.startsWith("//") ||
+    path.startsWith("/(") ||
+    UNSCOPED_ROUTES.has(path) ||
+    path === "/settings/deleteaccountsplash" ||
+    !TAB_ROUTE_FAMILIES.has(family)
   ) {
     return pathname;
   }

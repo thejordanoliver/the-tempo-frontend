@@ -10,7 +10,7 @@ type Props = {
   isDark: boolean;
   isCurrentUser: boolean;
   onEditPress?: () => void;
-  isFollowing?: boolean;
+  isFollowing?: boolean | null;
   loading?: boolean;
   onToggleFollow?: () => void;
 };
@@ -53,7 +53,7 @@ export default function ProfileHeader({
         </Pressable>
       ) : (
         <FollowButton
-          isFollowing={!!isFollowing}
+          isFollowing={isFollowing ?? null}
           loading={!!loading}
           onToggle={onToggleFollow ?? (() => {})}
         />

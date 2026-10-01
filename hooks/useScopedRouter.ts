@@ -19,6 +19,10 @@ export function useScopedRouter(): ExpoRouter {
           scopeHrefToTab(href, tabGroup),
           options,
         )) as ExpoRouter["navigate"],
+      dismissTo: ((href, options) =>
+        router.dismissTo(scopeHrefToTab(href, tabGroup), options)) as ExpoRouter["dismissTo"],
+      prefetch: ((href) =>
+        router.prefetch(scopeHrefToTab(href, tabGroup))) as ExpoRouter["prefetch"],
       replace: ((href, options) =>
         router.replace(
           scopeHrefToTab(href, tabGroup),

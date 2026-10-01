@@ -73,7 +73,7 @@ test("user recent-search identity remains globally keyed by user id", () => {
   assert.equal(getExploreResultIdentity(user), "user:42");
   assert.deepEqual(getExploreRouteForResult(user), {
     pathname: "/(tabs)/(explore)/user/[id]",
-    params: { id: "42", username: "tempo" },
+    params: { id: "42", username: "tempo", fullName: "Tempo Fan" },
   });
 });
 

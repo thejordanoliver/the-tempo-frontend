@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
 import {
   useCallback,
   useEffect,
@@ -261,10 +260,12 @@ export default function EditProfileScreen() {
       setBannerImage(profile.bannerImage);
       setInitialProfileImage(profile.profileImage);
       setInitialBannerImage(profile.bannerImage);
-      reset({
-        fullName: profile.fullName,
-        bio: profile.bio,
-      });
+      // Keep mounted Controllers registered so their next render cannot start
+      // validation and update the parent form while rendering.
+      reset(
+        { fullName: profile.fullName, bio: profile.bio },
+        { keepFieldsRef: true },
+      );
       setHasInitializedProfile(true);
       void trigger();
     },
@@ -333,9 +334,9 @@ export default function EditProfileScreen() {
 
     initializeProfile(
       {
-        username: userData.username,
-        fullName: userData.fullName,
-        bio: userData.bio,
+        username: normalizeStoredValue(userData.username),
+        fullName: normalizeStoredValue(userData.fullName),
+        bio: normalizeStoredValue(userData.bio),
         profileImage: userData.profileImage,
         bannerImage: userData.bannerImage,
       },
@@ -351,9 +352,9 @@ export default function EditProfileScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      header: () => <CustomHeader title="Edit Profile" onBack={goBack} />,
+      header: () => <CustomHeader title="Edit Profile" onBack={router.back} />,
     });
-  }, [navigation]);
+  }, [navigation, router]);
 
   const requestImagePermission = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -488,10 +489,10 @@ export default function EditProfileScreen() {
         setBannerImage(updatedUser.bannerImage);
         setInitialProfileImage(updatedUser.profileImage);
         setInitialBannerImage(updatedUser.bannerImage);
-        reset({
-          fullName: updatedUser.fullName,
-          bio: updatedUser.bio,
-        });
+        reset(
+          { fullName: updatedUser.fullName, bio: updatedUser.bio },
+          { keepFieldsRef: true },
+        );
         requestProfileRefresh();
 
         showAlert({

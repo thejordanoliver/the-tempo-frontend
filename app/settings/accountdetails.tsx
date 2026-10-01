@@ -8,6 +8,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLayoutEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
@@ -32,6 +33,7 @@ function getErrorMessage(error: unknown): string {
 }
 
 export default function AccountDetailsScreen() {
+  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
@@ -119,7 +121,7 @@ export default function AccountDetailsScreen() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={styles.contentContainerStyle}
+      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
       enableOnAndroid
       extraScrollHeight={20}
       keyboardShouldPersistTaps="handled"

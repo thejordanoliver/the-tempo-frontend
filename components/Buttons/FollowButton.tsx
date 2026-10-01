@@ -1,15 +1,17 @@
 import { Colors, Fonts } from "@/constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import {
-  Animated,
+  ActivityIndicator,
+  Text,
+  View,
   GestureResponderEvent,
   Pressable,
   StyleSheet,
 } from "react-native";
 
 type FollowButtonProps = {
-  isFollowing: boolean;
+  isFollowing: boolean | null;
   loading?: boolean;
   onToggle: () => void;
   compact?: boolean;
@@ -24,14 +26,9 @@ export default function FollowButton({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const [displayedFollowing, setDisplayedFollowing] = useState(isFollowing);
-
-  const previousFollowing = useRef(isFollowing);
-  const animation = useMemo(() => new Animated.Value(1), []);
-
   const styles = useMemo(
-    () => FollowButtonStyles(isDark, displayedFollowing),
-    [isDark, displayedFollowing],
+    () => FollowButtonStyles(isDark, isFollowing ?? false),
+    [isDark, isFollowing],
   );
 
   const compactContainerStyle = useMemo(
@@ -58,47 +55,11 @@ export default function FollowButton({
     [compact],
   );
 
-  useEffect(() => {
-    if (previousFollowing.current === isFollowing) {
-      return;
-    }
-
-    previousFollowing.current = isFollowing;
-
-    animation.setValue(1);
-
-    const fadeOut = Animated.timing(animation, {
-      toValue: 0,
-      duration: 150,
-      useNativeDriver: true,
-    });
-
-    fadeOut.start(({ finished }) => {
-      if (!finished) {
-        return;
-      }
-
-      setDisplayedFollowing(isFollowing);
-      animation.setValue(0);
-
-      Animated.timing(animation, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }).start();
-    });
-
-    return () => {
-      fadeOut.stop();
-      animation.stopAnimation();
-    };
-  }, [isFollowing, animation]);
-
   const handlePress = (e: GestureResponderEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!loading) {
+    if (!loading && isFollowing !== null) {
       onToggle();
     }
   };
@@ -106,30 +67,26 @@ export default function FollowButton({
   return (
     <Pressable
       onPress={handlePress}
-      disabled={loading}
+      disabled={loading || isFollowing === null}
       style={[styles.followButtonContainer, compactContainerStyle]}
     >
-      <Animated.View
+      <View
         pointerEvents="none"
-        style={[
-          styles.followButtonBackground,
-          {
-            opacity: animation,
-          },
-        ]}
+        style={styles.followButtonBackground}
       />
 
-      <Animated.Text
-        style={[
-          styles.followText,
-          compactTextStyle,
-          {
-            opacity: animation,
-          },
-        ]}
-      >
-        {displayedFollowing ? "Following" : "Follow"}
-      </Animated.Text>
+      {isFollowing === null ? (
+        <View style={[styles.loadingContainer, compact && styles.compactLoadingContainer]}>
+          <ActivityIndicator
+            size="small"
+            color={isDark ? Colors.white : Colors.black}
+          />
+        </View>
+      ) : (
+        <Text style={[styles.followText, compactTextStyle]}>
+          {isFollowing ? "Following" : "Follow"}
+        </Text>
+      )}
     </Pressable>
   );
 }
@@ -170,6 +127,14 @@ export const FollowButtonStyles = (isDark: boolean, isFollowing?: boolean) => {
     followButtonBackground: {
       ...StyleSheet.absoluteFill,
       backgroundColor,
+    },
+
+    loadingContainer: {
+      paddingVertical: 10,
+      alignItems: "center",
+    },
+    compactLoadingContainer: {
+      paddingVertical: 8,
     },
 
     followText: {

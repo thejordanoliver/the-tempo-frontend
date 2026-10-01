@@ -75,6 +75,9 @@ export type UserResult = SearchRankingFields &
     full_name: string | null;
     username: string;
     profileImageUrl: string | null;
+    bannerImage?: string | null;
+    bio?: string | null;
+    isFollowing?: boolean;
     followers_count?: number;
     following_count?: number;
     type: "user";

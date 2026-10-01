@@ -1,64 +1,41 @@
 import { SkeletonBlock } from "components/Skeletons/primitives";
-import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { StyleSheet, View } from "react-native";
+import { View, useWindowDimensions } from "react-native";
+import {
+  NewsCardSkeletonStyles,
+  NewsCardStyles,
+} from "styles/NewsStyles/NewsCardStyles";
 
 export default function NewsCardSkeleton() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const styles = newsCardSkeletonStyles(isDark);
+  const { width } = useWindowDimensions();
+  const cardStyles = NewsCardStyles(isDark, width);
+  const styles = NewsCardSkeletonStyles(isDark, width);
 
   return (
-    <View style={styles.card}>
-      {/* Thumbnail */}
-      <SkeletonBlock style={styles.thumbnail} />
+    <View style={cardStyles.card}>
+      <SkeletonBlock style={[cardStyles.thumbnail, styles.thumbnail]} />
 
-      <View style={styles.content}>
-        {/* Title */}
-        <SkeletonBlock style={styles.title} />
+      <View style={cardStyles.details}>
+        <View style={styles.headline}>
+          <View style={styles.headlineRow}>
+            <SkeletonBlock style={styles.title} />
+          </View>
+          <View style={styles.headlineRow}>
+            <SkeletonBlock style={[styles.title, styles.titleSecondLine]} />
+          </View>
+        </View>
 
-        {/* Source */}
-        <SkeletonBlock style={styles.source} />
+        <View style={styles.metadataRow}>
+          <SkeletonBlock style={styles.source} />
+        </View>
+
+        <View style={[cardStyles.timeContainer, styles.metadataRow]}>
+          <SkeletonBlock style={styles.date} />
+          <SkeletonBlock style={styles.timeAgo} />
+        </View>
       </View>
     </View>
   );
 }
-
-const newsCardSkeletonStyles = (isDark: boolean) =>
-  StyleSheet.create({
-    card: {
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      borderRadius: 8,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      overflow: "hidden",
-    },
-
-    content: {
-      padding: 12,
-    },
-
-    thumbnail: {
-      width: "100%",
-      height: 300,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    title: {
-      width: "60%",
-      height: 16,
-      marginTop: 12,
-      borderRadius: 8,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-
-    source: {
-      width: "20%",
-      height: 12,
-      marginTop: 10,
-      borderRadius: 8,
-      backgroundColor: isDark ? Colors.darkGray : Colors.lightGray,
-    },
-  });

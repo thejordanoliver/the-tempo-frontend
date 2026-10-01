@@ -50,6 +50,6 @@ test("authenticated requests read the newly stored access token on every call", 
     clientSource,
     /interceptors\.request\.use\(async \(config\) => \{\s*const token = await getAccessToken\(\)/s,
   );
-  assert.match(clientSource, /AsyncStorage\.multiSet\(\[/);
+  assert.match(clientSource, /await saveSecureTokens\(accessToken, refreshToken\)/);
   assert.match(clientSource, /notifyAuthSessionListeners\(accessToken\)/);
 });

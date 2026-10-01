@@ -1,3 +1,4 @@
+import { getUserProfileParams } from "./userProfileNavigation";
 import type { AppNotification } from "@/types/notifications";
 
 const dataString = (notification: AppNotification, key: string) => {
@@ -64,7 +65,18 @@ export const getNotificationCenterHref = (
     case "new_follower": {
       const userId = dataString(notification, "userId") ??
         (notification.actorUserId ? String(notification.actorUserId) : null);
-      return userId ? `/user/${encodeURIComponent(userId)}` : "/profile";
+      if (!userId) return "/profile";
+      const params = getUserProfileParams(userId, {
+        ...notification.data,
+        followers_count: typeof notification.data.followers_count === "number"
+          ? notification.data.followers_count : undefined,
+        following_count: typeof notification.data.following_count === "number"
+          ? notification.data.following_count : undefined,
+      });
+      const query = new URLSearchParams(
+        Object.entries(params).filter(([key]) => key !== "id"),
+      ).toString();
+      return `/user/${encodeURIComponent(userId)}${query ? `?${query}` : ""}`;
     }
 
     case "badge":

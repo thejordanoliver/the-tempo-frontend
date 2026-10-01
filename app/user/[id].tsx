@@ -63,6 +63,11 @@ function UserProfileContent() {
     username?: RouteParam;
     followers?: RouteParam;
     following?: RouteParam;
+    isFollowing?: RouteParam;
+    fullName?: RouteParam;
+    bio?: RouteParam;
+    profileImage?: RouteParam;
+    bannerImage?: RouteParam;
   }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
   const routeUsername = useMemo(
@@ -101,6 +106,15 @@ function UserProfileContent() {
   } = useUserProfile(userId, {
     initialFollowersCount,
     initialFollowingCount,
+    initialProfile: {
+      username: routeUsername,
+      fullName: normalizeRouteParam(params.fullName),
+      bio: normalizeRouteParam(params.bio),
+      profileImage: normalizeRouteParam(params.profileImage),
+      bannerImage: normalizeRouteParam(params.bannerImage),
+    },
+    initialIsFollowing: normalizeRouteParam(params.isFollowing) === "true" ? true
+      : normalizeRouteParam(params.isFollowing) === "false" ? false : undefined,
   });
 
   const {
@@ -263,7 +277,8 @@ function UserProfileContent() {
     isLoading &&
     !hasCachedProfile &&
     initialFollowersCount === undefined &&
-    initialFollowingCount === undefined
+    initialFollowingCount === undefined &&
+    !routeUsername
   ) {
     return <SkeletonProfileScreen isDark={isDark} />;
   }
@@ -292,7 +307,7 @@ function UserProfileContent() {
 
         <ProfileHeader
           fullName={fullName}
-          username={routeUsername}
+          username={username ?? routeUsername}
           isDark={isDark}
           isCurrentUser={isCurrentUser}
           isFollowing={isFollowing}

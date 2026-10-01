@@ -1,4 +1,4 @@
-import { getUserProfileCountParams } from "utils/userProfileCounts";
+import { getUserProfileParams } from "utils/userProfileNavigation";
 import type { ResultItem, SearchAffiliation } from "types/explore";
 
 export type ExploreRoute =
@@ -114,11 +114,7 @@ export function getExploreRouteForResult(
   if (item.type === "user") {
     return {
       pathname: "/(tabs)/(explore)/user/[id]",
-      params: {
-        id: String(item.id),
-        username: item.username,
-        ...getUserProfileCountParams(item),
-      },
+      params: getUserProfileParams(item.id, item),
     };
   }
 

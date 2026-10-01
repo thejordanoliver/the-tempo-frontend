@@ -109,7 +109,7 @@ function AppLayout() {
 
   const [checkingStoredSession, setCheckingStoredSession] = useState(true);
 
-  const isPublicRoute = publicRoutes.some((r) => pathname?.startsWith(r));
+  const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname === `${route}/`);
 
   useEffect(() => {
     let isMounted = true;

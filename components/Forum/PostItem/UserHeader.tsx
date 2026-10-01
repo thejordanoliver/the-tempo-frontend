@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getUserProfileCountParams } from "utils/userProfileCounts";
+import { getUserProfileParams } from "utils/userProfileNavigation";
 // components/Forum/UserHeader.tsx
 import { Ionicons } from "@expo/vector-icons";
 import SafetyActionsModal from "components/SafetyActionsModal";
@@ -200,11 +200,7 @@ export const UserHeader = memo(function UserHeader({
   /* -------------------------------------------------------------------------- */
 
   const handleOpenUser = () => {
-    const params = {
-      id: String(item.user_id),
-      username: item.username,
-      ...getUserProfileCountParams(item),
-    };
+    const params = getUserProfileParams(item.user_id, item);
 
     if ((segments as readonly string[]).includes("(profile)")) {
       router.push({

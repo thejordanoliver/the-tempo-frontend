@@ -75,3 +75,54 @@ export const NewsCardStyles = (isDark: boolean, screenWidth: number) => {
     },
   });
 };
+
+export const NewsCardSkeletonStyles = (isDark: boolean, screenWidth: number) => {
+  const cardStyles = NewsCardStyles(isDark, screenWidth);
+  const backgroundColor = isDark ? Colors.darkGray : Colors.lightGray;
+  const titleHeight = cardStyles.title.fontSize;
+  const metadataHeight = cardStyles.source.fontSize;
+
+  return StyleSheet.create({
+    thumbnail: {
+      borderRadius: 0,
+      backgroundColor,
+    },
+    headline: {
+      marginBottom: cardStyles.title.marginBottom,
+    },
+    headlineRow: {
+      height: cardStyles.title.lineHeight,
+      justifyContent: "center",
+    },
+    title: {
+      width: "95%",
+      height: titleHeight,
+      borderRadius: 4,
+      backgroundColor,
+    },
+    titleSecondLine: {
+      width: "70%",
+    },
+    metadataRow: {
+      minHeight: metadataHeight * 1.25,
+    },
+    source: {
+      width: "30%",
+      height: metadataHeight,
+      borderRadius: 4,
+      backgroundColor,
+    },
+    date: {
+      width: "25%",
+      height: metadataHeight,
+      borderRadius: 4,
+      backgroundColor,
+    },
+    timeAgo: {
+      width: "30%",
+      height: metadataHeight,
+      borderRadius: 4,
+      backgroundColor,
+    },
+  });
+};

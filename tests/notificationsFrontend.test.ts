@@ -259,3 +259,17 @@ test("an all-off game override remains distinguishable from no settings", () => 
   assert.equal(hasEnabledNotificationSetting(allOff), false);
   assert.equal(mergeNotificationSettings([]), null);
 });
+
+test("follower notification profile links carry available actor preview data", () => {
+  const href = getNotificationCenterHref(notification("new_follower", {
+    actorUserId: 42,
+    data: { username: "tempo", full_name: "Tempo Fan",
+      profileImage: "https://images.example.com/actor.jpg", isFollowing: false },
+  }));
+  const url = new URL(href!, "https://tempo.test");
+  assert.equal(url.pathname, "/user/42");
+  assert.equal(url.searchParams.get("username"), "tempo");
+  assert.equal(url.searchParams.get("fullName"), "Tempo Fan");
+  assert.equal(url.searchParams.get("profileImage"), "https://images.example.com/actor.jpg");
+  assert.equal(url.searchParams.get("isFollowing"), "false");
+});

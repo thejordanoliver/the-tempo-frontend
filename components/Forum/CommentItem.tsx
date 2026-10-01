@@ -32,7 +32,7 @@ import type {
   ForumDisplayMediaItem,
   ForumPostImageItem,
 } from "types/forum";
-import { getUserProfileCountParams } from "utils/userProfileCounts";
+import { getUserProfileParams } from "utils/userProfileNavigation";
 import PostImages from "./PostImages";
 
 const COLLAPSED_HEIGHT = Math.round(3 * 20 * PixelRatio.getFontScale());
@@ -320,11 +320,7 @@ export const CommentItem = ({
   const handleOpenUser = () => {
     if (isEditing) return;
 
-    const params = {
-      id: String(comment.user_id),
-      username: comment.username,
-      ...getUserProfileCountParams(comment),
-    };
+    const params = getUserProfileParams(comment.user_id, comment);
 
     if ((segments as readonly string[]).includes("(profile)")) {
       router.push({
