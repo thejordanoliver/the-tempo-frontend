@@ -1,11 +1,11 @@
 import { BADGE_TIER_COLORS } from "@/constants/badges";
 import { Colors, Fonts } from "@/constants/styles";
-import { FavoritesSectionStyles } from "@/styles/FavoritesSectionStyles";
 import { BadgeProgress } from "@/types/badges";
 import { StyleSheet, Text, View } from "react-native";
 import BadgeEmblem from "./BadgeEmblem";
 
 const BADGE_PREVIEW_EMBLEM_SIZE = 50;
+const CARD_HEIGHT = 130;
 
 type BadgePreviewCardProps = {
   badge: BadgeProgress;
@@ -24,15 +24,14 @@ export default function BadgePreviewCard({
     ? "Earned"
     : `${Math.round(badge.progressPercent)}%`;
   const statusColor = badge.isEarned ? tierColor : secondaryText;
-  const styles = BadgePreviewCardStyles(isDark);
-  const cardGridStyles = FavoritesSectionStyles(isDark, itemWidth);
+  const styles = BadgePreviewCardStyles(isDark, itemWidth);
 
   return (
     <View
       accessible
       accessibilityRole="text"
       accessibilityLabel={`${badge.name}, ${statusText}`}
-      style={cardGridStyles.gridItem}
+      style={styles.gridItem}
     >
       <BadgeEmblem badge={badge} size={BADGE_PREVIEW_EMBLEM_SIZE} />
       <View style={styles.cardText}>
@@ -58,8 +57,25 @@ export default function BadgePreviewCard({
   );
 }
 
-const BadgePreviewCardStyles = (isDark: boolean) =>
+const BadgePreviewCardStyles = (isDark: boolean, itemWidth: number) =>
   StyleSheet.create({
+    gridItem: {
+      position: "relative",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+      padding: 20,
+      width: itemWidth,
+      height: CARD_HEIGHT,
+      paddingHorizontal: 8,
+      paddingVertical: 12,
+      borderRadius: 8,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
+      overflow: "hidden",
+    },
+
     cardText: {
       alignItems: "center",
       width: "100%",

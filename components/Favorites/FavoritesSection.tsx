@@ -356,10 +356,7 @@ export default function FavoritesSection({
         ]}
       >
         <View style={styles.teamItem}>
-          <Image
-            source={config.logoLight}
-            style={[styles.logo, styles.logoGridMargin]}
-          />
+          <Image source={config.logoLight} style={styles.logo} />
 
           <Text style={styles.name}>{config.label}</Text>
         </View>

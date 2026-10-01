@@ -18,7 +18,7 @@ export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
       justifyContent: "flex-start",
       rowGap: GRID_GAP,
       columnGap: GRID_GAP,
-      marginBottom: 12,
+      marginBottom: GRID_GAP,
     },
     gridItem: {
       position: "relative",
@@ -57,9 +57,6 @@ export const FavoritesSectionStyles = (isDark: boolean, itemWidth: number) =>
       fontFamily: Fonts.BOLD,
       fontSize: 10,
       color: Colors.white,
-    },
-    logoGridMargin: {
-      marginBottom: 8,
     },
 
     buttonContainer: {
