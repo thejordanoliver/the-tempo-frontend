@@ -111,7 +111,13 @@ export function getExploreRouteForResult(
   item: ResultItem,
 ): ExploreRoute {
   if (item.type === "user") {
-    return `/(tabs)/(explore)/user/${item.id}`;
+    return {
+      pathname: "/(tabs)/(explore)/user/[id]",
+      params: {
+        id: String(item.id),
+        username: item.username,
+      },
+    };
   }
 
   if (item.type === "team") {
