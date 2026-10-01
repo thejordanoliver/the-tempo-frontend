@@ -30,6 +30,7 @@ import {
   Image,
   LayoutAnimation,
   Pressable,
+  SectionList,
   Text,
   View,
 } from "react-native";
@@ -481,42 +482,68 @@ export default function FavoritesSection({
       <HeadingTwo isDark={isDark}>Favorites</HeadingTwo>
 
       <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-        {visibleSections.map((section) => (
-          <View key={section.key}>
-            {section.title ? (
+        <SectionList
+          sections={visibleSections}
+          scrollEnabled={false}
+          keyExtractor={(row, index) => {
+            const rowKey = row
+              .map((item) => {
+                if (item.type === "sport") {
+                  return `sport:${item.sport}`;
+                }
+
+                return `${item.team.league}:${item.team.id}`;
+              })
+              .join("|");
+
+            return `${rowKey}:${index}`;
+          }}
+          renderItem={renderRow}
+          renderSectionHeader={({ section }) => {
+            if (!section.title) {
+              return null;
+            }
+
+            const isCollapsed = collapsedSections[section.key];
+
+            return (
               <Subheading
                 collapsible
-                collapsed={collapsedSections[section.key]}
+                collapsed={isCollapsed}
                 onToggle={() => toggleSection(section.key)}
               >
                 {section.title}
               </Subheading>
-            ) : null}
+            );
+          }}
+          renderSectionFooter={({ section }) => {
+            if (section.key !== "sports") {
+              return null;
+            }
 
-            {section.data.map((row, index) => (
-              <View key={`${section.key}:${index}`}>
-                {renderRow({ item: row })}
+            return null;
+          }}
+          ListFooterComponent={
+            isCurrentUser ? (
+              <View style={styles.buttonContainer}>
+                <Button
+                  onPress={() => router.push("/edit-favorites")}
+                  isDark={isDark}
+                >
+                  Edit Favorites
+                  <Ionicons
+                    style={styles.editIcon}
+                    name="create"
+                    size={20}
+                    color={isDark ? Colors.black : Colors.white}
+                  />
+                </Button>
               </View>
-            ))}
-          </View>
-        ))}
-
-        {isCurrentUser ? (
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={() => router.push("/edit-favorites")}
-              isDark={isDark}
-            >
-              Edit Favorites
-              <Ionicons
-                style={styles.editIcon}
-                name="create"
-                size={20}
-                color={isDark ? Colors.black : Colors.white}
-              />
-            </Button>
-          </View>
-        ) : null}
+            ) : null
+          }
+          stickySectionHeadersEnabled={false}
+          showsVerticalScrollIndicator={false}
+        />
       </Animated.View>
     </>
   );
