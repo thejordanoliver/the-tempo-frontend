@@ -186,7 +186,18 @@ function getProfileKey(userId: string, currentUserId: number | null) {
   return `${userId}:${currentUserId ?? "guest"}`;
 }
 
-export function useUserProfile(userId?: string) {
+type UseUserProfileOptions = {
+  initialFollowersCount?: number;
+  initialFollowingCount?: number;
+};
+
+export function useUserProfile(
+  userId?: string,
+  options: UseUserProfileOptions = {},
+) {
+  const initialFollowersCount = parseCount(options.initialFollowersCount);
+  const initialFollowingCount = parseCount(options.initialFollowingCount);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasCachedProfile, setHasCachedProfile] = useState(false);
@@ -200,8 +211,8 @@ export function useUserProfile(userId?: string) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bannerImage, setBannerImage] = useState<string | null>(null);
 
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(initialFollowersCount);
+  const [followingCount, setFollowingCount] = useState(initialFollowingCount);
   const [favoriteTeams, setFavoriteTeams] = useState<FavoriteTeamKey[]>([]);
   const [favoriteSports, setFavoriteSports] = useState<FavoriteSportId[]>([]);
 
@@ -254,8 +265,8 @@ export function useUserProfile(userId?: string) {
     setBio(null);
     setProfileImage(null);
     setBannerImage(null);
-    setFollowersCount(0);
-    setFollowingCount(0);
+    setFollowersCount(initialFollowersCount);
+    setFollowingCount(initialFollowingCount);
     setFavoriteTeams([]);
     setFavoriteSports([]);
     setIsFollowing(false);
@@ -442,6 +453,8 @@ export function useUserProfile(userId?: string) {
       applyDisplayProfile,
       currentUserId,
       hasLoadedCurrentUserId,
+      initialFollowersCount,
+      initialFollowingCount,
       resetProfileState,
       userId,
     ],
@@ -479,6 +492,8 @@ export function useUserProfile(userId?: string) {
     currentUserId,
     fetchUserData,
     hasLoadedCurrentUserId,
+    initialFollowersCount,
+    initialFollowingCount,
     resetProfileState,
     userId,
   ]);
