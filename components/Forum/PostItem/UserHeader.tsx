@@ -202,6 +202,7 @@ export const UserHeader = memo(function UserHeader({
   const handleOpenUser = () => {
     const params = {
       id: String(item.user_id),
+      username: item.username,
     };
 
     if ((segments as readonly string[]).includes("(profile)")) {
