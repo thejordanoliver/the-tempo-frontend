@@ -194,6 +194,8 @@ export function useFollowersScreen() {
         params: {
           id: user.id.toString(),
           username: user.username,
+          followers: String(user.followers_count ?? 0),
+          following: String(user.following_count ?? 0),
         },
       });
     },
