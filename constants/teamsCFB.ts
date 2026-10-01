@@ -12776,7 +12776,7 @@ export function getCFBRivalry(
   homeTeamId: number | string | null | undefined,
   awayTeamId: number | string | null | undefined,
 ): CFBRivalry | undefined {
-  if (homeEspnId == null || awayEspnId == null) {
+  if (homeTeamId == null || awayTeamId == null) {
     return undefined;
   }
 
@@ -12794,5 +12794,5 @@ export function isCFBRivalry(
   homeTeamId: number | string | null | undefined,
   awayTeamId: number | string | null | undefined,
 ): boolean {
-  return getCFBRivalry(homeEspnId, awayEspnId) !== undefined;
+  return getCFBRivalry(homeTeamId, awayTeamId) !== undefined;
 }
