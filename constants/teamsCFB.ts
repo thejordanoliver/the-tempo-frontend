@@ -1175,7 +1175,7 @@ export type CFBRivalryGroup =
 export type CFBRivalry = {
   id: string;
   name: string;
-  espnTeamIds: readonly [number, number];
+  teamIds: readonly [number, number];
   group: CFBRivalryGroup;
 };
 
