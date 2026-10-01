@@ -15,6 +15,7 @@ export type User = {
   banner_image: string;
   bio?: string | null;
   followers_count?: number;
+  following_count?: number;
   isFollowing: boolean;
   followsYou?: boolean;
 };
