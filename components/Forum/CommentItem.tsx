@@ -321,6 +321,7 @@ export const CommentItem = ({
 
     const params = {
       id: String(comment.user_id),
+      username: comment.username,
     };
 
     if ((segments as readonly string[]).includes("(profile)")) {
