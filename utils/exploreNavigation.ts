@@ -116,6 +116,8 @@ export function getExploreRouteForResult(
       params: {
         id: String(item.id),
         username: item.username,
+        followers: String(item.followers_count ?? 0),
+        following: String(item.following_count ?? 0),
       },
     };
   }
