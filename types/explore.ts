@@ -73,6 +73,8 @@ export type UserResult = SearchRankingFields & {
   full_name: string | null;
   username: string;
   profileImageUrl: string | null;
+  followers_count?: number;
+  following_count?: number;
   type: "user";
 };
 
