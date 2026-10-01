@@ -44,8 +44,15 @@ export default function UserProfileScreen() {
   const availableWidth = screenWidth - horizontalPadding - totalGap;
   const itemWidth = availableWidth / numColumns;
 
-  const params = useLocalSearchParams<{ id?: RouteParam }>();
+  const params = useLocalSearchParams<{
+    id?: RouteParam;
+    username?: RouteParam;
+  }>();
   const userId = useMemo(() => normalizeRouteParam(params.id), [params.id]);
+  const routeUsername = useMemo(
+    () => normalizeRouteParam(params.username),
+    [params.username],
+  );
   const styles = useMemo(() => profileStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [selectedTab, setSelectedTab] = useState<ProfileTab>("favorites");
@@ -53,7 +60,6 @@ export default function UserProfileScreen() {
   const {
     isLoading,
     hasCachedProfile,
-    username,
     fullName,
     bio,
     profileImage,
@@ -127,10 +133,10 @@ export default function UserProfileScreen() {
   );
 
   const headerTitle = useMemo(() => {
-    if (username) return `@${username}`;
+    if (routeUsername) return `@${routeUsername}`;
 
     return isCurrentUser ? "Profile" : "User";
-  }, [isCurrentUser, username]);
+  }, [isCurrentUser, routeUsername]);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -138,7 +144,7 @@ export default function UserProfileScreen() {
 
   const safety = useSafetyActions({
     userId,
-    username,
+    username: routeUsername,
     targetType: "user",
     targetId: userId,
     isBlocked: isBlockedByViewer,
@@ -181,9 +187,10 @@ export default function UserProfileScreen() {
         type: "followers",
         currentUserId: currentUserIdString,
         targetUserId: userId,
+        username: routeUsername,
       },
     });
-  }, [currentUserIdString, router, userId]);
+  }, [currentUserIdString, routeUsername, router, userId]);
 
   const onFollowingPress = useCallback(() => {
     if (!currentUserIdString || !userId) return;
@@ -194,9 +201,10 @@ export default function UserProfileScreen() {
         type: "following",
         currentUserId: currentUserIdString,
         targetUserId: userId,
+        username: routeUsername,
       },
     });
-  }, [currentUserIdString, router, userId]);
+  }, [currentUserIdString, routeUsername, router, userId]);
 
   const handleToggleFollow = useCallback(() => {
     if (isCurrentUser || !userId || !currentUserIdString || followLoading) {
@@ -224,102 +232,102 @@ export default function UserProfileScreen() {
 
   return (
     <>
-    <ScrollView style={styles.container} contentInsetAdjustmentBehavior="never">
-      <ProfileBanner
-        bannerImage={bannerImage}
-        profileImage={profileImage}
-        isDark={isDark}
-      />
-
-      <FollowStats
-        followersCount={followersCount}
-        followingCount={followingCount}
-        isDark={isDark}
-        currentUserId={currentUserIdString}
-        targetUserId={userId}
-        onFollowersPress={onFollowersPress}
-        onFollowingPress={onFollowingPress}
-      />
-
-      <ProfileHeader
-        fullName={fullName}
-        username={username}
-        isDark={isDark}
-        isCurrentUser={isCurrentUser}
-        isFollowing={isFollowing}
-        loading={followLoading}
-        onToggleFollow={canInteract ? handleToggleFollow : undefined}
-        onEditPress={isCurrentUser ? handleEditPress : undefined}
-      />
-
-      <BioSection bio={bio} isDark={isDark} />
-
-      <TabBar
-        tabs={["favorites", "badges", "posts"]}
-        selected={selectedTab}
-        onTabPress={handleTabPress}
-        isDark={isDark}
-      />
-
-      <View
-        style={[
-          styles.contentContainer,
-          selectedTab !== "favorites" && { display: "none" },
-        ]}
-      >
-        <FavoritesSection
-          favoriteTeams={favoriteTeamsWithLeague}
-          favoriteSports={favoriteSports}
-          favoriteSportsLoading={favoriteSportsLoading}
-          favoriteSportsReady={favoriteSportsReady}
-          fadeAnim={fadeAnim}
-          itemWidth={itemWidth}
-          isCurrentUser={isCurrentUser}
+      <ScrollView style={styles.container} contentInsetAdjustmentBehavior="never">
+        <ProfileBanner
+          bannerImage={bannerImage}
+          profileImage={profileImage}
+          isDark={isDark}
         />
-      </View>
 
-      {selectedTab === "badges" && (
-        <View style={styles.contentContainer}>
-          <BadgePreviewSection
-            badges={featuredBadges}
-            earnedCount={summary.earnedCount}
-            totalCount={summary.totalCount}
-            isDark={isDark}
+        <FollowStats
+          followersCount={followersCount}
+          followingCount={followingCount}
+          isDark={isDark}
+          currentUserId={currentUserIdString}
+          targetUserId={userId}
+          onFollowersPress={onFollowersPress}
+          onFollowingPress={onFollowingPress}
+        />
+
+        <ProfileHeader
+          fullName={fullName}
+          username={routeUsername}
+          isDark={isDark}
+          isCurrentUser={isCurrentUser}
+          isFollowing={isFollowing}
+          loading={followLoading}
+          onToggleFollow={canInteract ? handleToggleFollow : undefined}
+          onEditPress={isCurrentUser ? handleEditPress : undefined}
+        />
+
+        <BioSection bio={bio} isDark={isDark} />
+
+        <TabBar
+          tabs={["favorites", "badges", "posts"]}
+          selected={selectedTab}
+          onTabPress={handleTabPress}
+          isDark={isDark}
+        />
+
+        <View
+          style={[
+            styles.contentContainer,
+            selectedTab !== "favorites" && { display: "none" },
+          ]}
+        >
+          <FavoritesSection
+            favoriteTeams={favoriteTeamsWithLeague}
+            favoriteSports={favoriteSports}
+            favoriteSportsLoading={favoriteSportsLoading}
+            favoriteSportsReady={favoriteSportsReady}
+            fadeAnim={fadeAnim}
             itemWidth={itemWidth}
-            loading={badgesLoading}
-            error={badgesError}
-            onRetry={refreshBadges}
+            isCurrentUser={isCurrentUser}
           />
         </View>
-      )}
 
-      {selectedTab === "posts" && (
-        <View style={styles.bookmarkContainer}>
-          <Forum
-            posts={posts}
-            currentUserId={currentUserId}
-            isDark={isDark}
-            loading={postsLoading}
-            refreshing={postsRefreshing}
-            error={postsError}
-            hasMore={hasMorePosts}
-            onRetry={refreshPosts}
-            onLoadMore={loadMorePosts}
-            onBookmarkChange={handlePostBookmarkChange}
-            onDeletePost={deletePost}
-            onEditPost={editPost}
-            showCreateButton={false}
-            emptyTitle="No posts yet"
-            emptyMessage="Posts from this user will appear here."
-            emptyIcon="chatbubble-outline"
-            scrollEnabled={false}
-            loadMoreMode="button"
-            skeletonCount={3}
-          />
-        </View>
-      )}
-    </ScrollView>
-    <SafetyActionsModal {...safety.modalProps} />
+        {selectedTab === "badges" && (
+          <View style={styles.contentContainer}>
+            <BadgePreviewSection
+              badges={featuredBadges}
+              earnedCount={summary.earnedCount}
+              totalCount={summary.totalCount}
+              isDark={isDark}
+              itemWidth={itemWidth}
+              loading={badgesLoading}
+              error={badgesError}
+              onRetry={refreshBadges}
+            />
+          </View>
+        )}
+
+        {selectedTab === "posts" && (
+          <View style={styles.bookmarkContainer}>
+            <Forum
+              posts={posts}
+              currentUserId={currentUserId}
+              isDark={isDark}
+              loading={postsLoading}
+              refreshing={postsRefreshing}
+              error={postsError}
+              hasMore={hasMorePosts}
+              onRetry={refreshPosts}
+              onLoadMore={loadMorePosts}
+              onBookmarkChange={handlePostBookmarkChange}
+              onDeletePost={deletePost}
+              onEditPost={editPost}
+              showCreateButton={false}
+              emptyTitle="No posts yet"
+              emptyMessage="Posts from this user will appear here."
+              emptyIcon="chatbubble-outline"
+              scrollEnabled={false}
+              loadMoreMode="button"
+              skeletonCount={3}
+            />
+          </View>
+        )}
+      </ScrollView>
+      <SafetyActionsModal {...safety.modalProps} />
     </>
   );
 }
