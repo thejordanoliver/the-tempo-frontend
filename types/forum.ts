@@ -16,6 +16,8 @@ export type ForumPost = {
   username: string;
   full_name: string | null;
   profile_image: string | null;
+  followers_count?: number;
+  following_count?: number;
   text: string;
   likes: number;
   bookmarks?: number;
@@ -48,6 +50,8 @@ export type ForumComment = {
   username: string;
   full_name?: string | null;
   profile_image?: string | null;
+  followers_count?: number;
+  following_count?: number;
   text: string | null;
   images?: string[];
   videos?: string[];
