@@ -4,7 +4,11 @@ import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  getCFBRivalry,
+  getCFBTeam,
+  getCFBTeamLogo,
+} from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -20,6 +24,19 @@ import {
 } from "@/utils/games";
 import { isGameFinalStatus } from "@/utils/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
+import {
+  FanPrediction,
+  GameLiveChatOverlay,
+  GameLocation,
+  GameTeamStats,
+  HeadCoaches,
+  Highlights,
+  LastFiveGames,
+  LineScore,
+  MatchupPredictor,
+  Officials,
+  TeamInjuries,
+} from "components/Sports/Basketball/GameDetails";
 import GameHeader from "components/Sports/Football/GameDetails/GameHeader";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -37,19 +54,6 @@ import {
   safeDate,
   shouldShowGameChat,
 } from "utils/dateUtils";
-import {
-  FanPrediction,
-  GameLiveChatOverlay,
-  GameLocation,
-  GameTeamStats,
-  HeadCoaches,
-  Highlights,
-  LastFiveGames,
-  LineScore,
-  MatchupPredictor,
-  Officials,
-  TeamInjuries,
-} from "components/Sports/Basketball/GameDetails";
 
 type RouteParams = {
   game?: string | string[];
@@ -174,6 +178,7 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const showGameChat = shouldShowGameChat(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
+
   const home = game?.home;
   const away = game?.away;
 
@@ -266,7 +271,8 @@ export default function GameDetailsScreen(
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
   const redzone = game?.situation?.isRedZone ?? false;
-  const headline = details?.headline ?? holidayLabel;
+  const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
+  const headline = details?.headline ?? rivalry ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
   const scoringPlays = score?.scoringPlays;
   const lastPlay = score?.lastPlay ?? null;

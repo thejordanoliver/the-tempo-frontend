@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import { getCFBRivalry, getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
@@ -61,7 +61,8 @@ function FootballSquareGameCard({
     ? getNFLTeamLogo(awayId, isDark)
     : getCFBTeamLogo(awayId, isDark);
 
-  const headline = game.headline ?? holidayLabel;
+  const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
+  const headline = game.headline ?? rivalry ?? holidayLabel;
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;

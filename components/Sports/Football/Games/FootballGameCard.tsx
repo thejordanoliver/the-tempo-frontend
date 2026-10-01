@@ -1,5 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  getCFBRivalry,
+  getCFBTeam,
+  getCFBTeamLogo,
+} from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
@@ -7,6 +10,7 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
@@ -74,7 +78,8 @@ function FootballGameCard({
       ? getCFBTeamLogo(awayId, isDark)
       : getUFLTeamLogo(awayId, isDark);
 
-  const headline = game.headline ?? holidayLabel;
+  const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
+  const headline = game.headline ?? rivalry ?? holidayLabel;
   const gameStatusDescription = game?.status.description ?? "";
   const gameStatusDetail = game?.status.shortDetail ?? "";
   const tbd = gameStatusDetail.includes("TBD") ? "TBD" : null;

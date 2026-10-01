@@ -156,11 +156,11 @@ export const profileStyles = (
     contentContainer: {
       marginTop: 20,
       paddingHorizontal: 12,
-      paddingBottom: 100,
+      paddingBottom: 20,
     },
     bookmarkContainer: {
       marginTop: 20,
-      paddingBottom: 100,
+      paddingBottom: 20,
     },
     favoritesHeader: {
       flexDirection: "row",
