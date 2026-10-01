@@ -12456,37 +12456,37 @@ export const CFB_RIVALRIES = [
   {
     id: "clean-old-fashioned-hate",
     name: "Clean, Old-Fashioned Hate",
-    espnTeamIds: [59, 61],
+    teamIds: [208, 109],
     group: "acc",
   },
   {
     id: "sunshine-showdown",
     name: "Sunshine Showdown",
-    espnTeamIds: [52, 57],
+    teamIds: [49, 113],
     group: "acc",
   },
   {
     id: "souths-oldest-rivalry",
     name: "South's Oldest Rivalry",
-    espnTeamIds: [153, 258],
+    teamIds: [53, 147],
     group: "acc",
   },
   {
     id: "commonwealth-cup",
     name: "Commonwealth Cup",
-    espnTeamIds: [258, 259],
+    teamIds: [147, 97],
     group: "acc",
   },
   {
     id: "textile-bowl",
     name: "Textile Bowl",
-    espnTeamIds: [228, 152],
+    teamIds: [209, 121],
     group: "acc",
   },
   {
     id: "battle-for-the-victory-bell",
     name: "Battle for the Victory Bell",
-    espnTeamIds: [150, 153],
+    teamIds: [99, 53],
     group: "acc",
   },
 
@@ -12497,61 +12497,61 @@ export const CFB_RIVALRIES = [
   {
     id: "iron-bowl",
     name: "Iron Bowl",
-    espnTeamIds: [2, 333],
+    teamIds: [171, 106],
     group: "sec",
   },
   {
     id: "deep-souths-oldest-rivalry",
     name: "Deep South's Oldest Rivalry",
-    espnTeamIds: [2, 61],
+    teamIds: [171, 109],
     group: "sec",
   },
   {
     id: "egg-bowl",
     name: "Egg Bowl",
-    espnTeamIds: [145, 344],
+    teamIds: [131, 186],
     group: "sec",
   },
   {
     id: "third-saturday-in-october",
     name: "Third Saturday in October",
-    espnTeamIds: [333, 2633],
+    teamIds: [106, 69],
     group: "sec",
   },
   {
     id: "worlds-largest-outdoor-cocktail-party",
     name: "World's Largest Outdoor Cocktail Party",
-    espnTeamIds: [61, 57],
+    teamIds: [109, 113],
     group: "sec",
   },
   {
     id: "red-river-rivalry",
     name: "Red River Rivalry",
-    espnTeamIds: [201, 251],
+    teamIds: [117, 195],
     group: "sec",
   },
   {
     id: "battle-for-the-golden-boot",
     name: "Battle for the Golden Boot",
-    espnTeamIds: [99, 8],
+    teamIds: [207, 127],
     group: "sec",
   },
   {
     id: "battle-line-rivalry",
     name: "Battle Line Rivalry",
-    espnTeamIds: [8, 142],
+    teamIds: [127, 83],
     group: "sec",
   },
   {
     id: "magnolia-bowl",
     name: "Magnolia Bowl",
-    espnTeamIds: [99, 145],
+    teamIds: [207, 131],
     group: "sec",
   },
   {
     id: "lone-star-showdown",
     name: "Lone Star Showdown",
-    espnTeamIds: [245, 251],
+    teamIds: [111, 195],
     group: "sec",
   },
 
@@ -12562,49 +12562,49 @@ export const CFB_RIVALRIES = [
   {
     id: "the-game",
     name: "The Game",
-    espnTeamIds: [130, 194],
+    teamIds: [115, 107],
     group: "big-ten",
   },
   {
     id: "paul-bunyan-trophy",
     name: "Paul Bunyan Trophy",
-    espnTeamIds: [130, 127],
+    teamIds: [115, 92],
     group: "big-ten",
   },
   {
     id: "paul-bunyans-axe",
     name: "Paul Bunyan's Axe",
-    espnTeamIds: [275, 135],
+    teamIds: [125, 85],
     group: "big-ten",
   },
   {
     id: "heroes-trophy",
     name: "Heroes Trophy",
-    espnTeamIds: [158, 2294],
+    teamIds: [42, 138],
     group: "big-ten",
   },
   {
     id: "old-oaken-bucket",
     name: "Old Oaken Bucket",
-    espnTeamIds: [2509, 84],
+    teamIds: [77, 103],
     group: "big-ten",
   },
   {
     id: "floyd-of-rosedale",
     name: "Floyd of Rosedale",
-    espnTeamIds: [2294, 135],
+    teamIds: [138, 85],
     group: "big-ten",
   },
   {
     id: "illibuck",
     name: "Illibuck",
-    espnTeamIds: [194, 356],
+    teamIds: [107, 47],
     group: "big-ten",
   },
   {
     id: "land-of-lincoln-trophy",
     name: "Land of Lincoln Trophy",
-    espnTeamIds: [356, 77],
+    teamIds: [47, 41],
     group: "big-ten",
   },
 
@@ -12615,19 +12615,19 @@ export const CFB_RIVALRIES = [
   {
     id: "bedlam",
     name: "Bedlam",
-    espnTeamIds: [201, 197],
+    teamIds: [117, 61],
     group: "big-12",
   },
   {
     id: "sunflower-showdown",
     name: "Sunflower Showdown",
-    espnTeamIds: [2305, 2306],
+    teamIds: [101, 174],
     group: "big-12",
   },
   {
     id: "farmageddon",
     name: "Farmageddon",
-    espnTeamIds: [66, 2306],
+    teamIds: [151, 174],
     group: "big-12",
   },
 
@@ -12638,31 +12638,31 @@ export const CFB_RIVALRIES = [
   {
     id: "civil-war",
     name: "Civil War",
-    espnTeamIds: [2483, 204],
+    teamIds: [110, 203],
     group: "pac-12",
   },
   {
     id: "apple-cup",
     name: "Apple Cup",
-    espnTeamIds: [264, 265],
+    teamIds: [205, 201],
     group: "pac-12",
   },
   {
     id: "victory-bell",
     name: "Victory Bell",
-    espnTeamIds: [26, 30],
+    teamIds: [153, 122],
     group: "pac-12",
   },
   {
     id: "territorial-cup",
     name: "Territorial Cup",
-    espnTeamIds: [12, 9],
+    teamIds: [156, 86],
     group: "pac-12",
   },
   {
     id: "big-game",
     name: "Big Game",
-    espnTeamIds: [25, 24],
+    teamIds: [161, 191],
     group: "pac-12",
   },
 
@@ -12673,43 +12673,43 @@ export const CFB_RIVALRIES = [
   {
     id: "fremont-cannon",
     name: "Battle for the Fremont Cannon",
-    espnTeamIds: [2439, 2440],
+    teamIds: [43, 56],
     group: "mountain-west",
   },
   {
     id: "battle-of-i-25",
     name: "Battle of I-25",
-    espnTeamIds: [167, 166],
+    teamIds: [199, 55],
     group: "other",
   },
   {
     id: "commander-in-chief-army-navy",
     name: "Commander-in-Chief's Trophy",
-    espnTeamIds: [349, 2426],
+    teamIds: [177, 145],
     group: "independent",
   },
   {
     id: "commander-in-chief-army-air-force",
     name: "Commander-in-Chief's Trophy",
-    espnTeamIds: [349, 2005],
+    teamIds: [177, 149],
     group: "independent",
   },
   {
     id: "commander-in-chief-air-force-navy",
     name: "Commander-in-Chief's Trophy",
-    espnTeamIds: [2005, 2426],
+    teamIds: [149, 145],
     group: "independent",
   },
   {
     id: "hawaii-unlv",
     name: "Battle for the Golden Pineapple",
-    espnTeamIds: [62, 2439],
+    teamIds: [59, 43],
     group: "mountain-west",
   },
   {
     id: "hawaii-fresno-state",
     name: "Hawai'i–Fresno State",
-    espnTeamIds: [62, 278],
+    teamIds: [59, 88],
     group: "mountain-west",
   },
 
@@ -12720,25 +12720,25 @@ export const CFB_RIVALRIES = [
   {
     id: "holy-war",
     name: "Holy War",
-    espnTeamIds: [252, 254],
+    teamIds: [136, 114],
     group: "other",
   },
   {
     id: "notre-dame-usc",
     name: "Notre Dame–USC",
-    espnTeamIds: [87, 30],
+    teamIds: [108, 122],
     group: "independent",
   },
   {
     id: "notre-dame-stanford",
     name: "Notre Dame–Stanford",
-    espnTeamIds: [87, 24],
+    teamIds: [108, 191],
     group: "independent",
   },
   {
     id: "catholics-vs-convicts",
     name: "Catholics vs. Convicts",
-    espnTeamIds: [87, 2390],
+    teamIds: [108, 123],
     group: "independent",
   },
 ] as const satisfies readonly CFBRivalry[];
@@ -12767,21 +12767,21 @@ function createRivalryKey(teamA: number, teamB: number): string {
 
 const CFB_RIVALRY_MAP = new Map<string, CFBRivalry>(
   CFB_RIVALRIES.map((rivalry) => [
-    createRivalryKey(rivalry.espnTeamIds[0], rivalry.espnTeamIds[1]),
+    createRivalryKey(rivalry.teamIds[0], rivalry.teamIds[1]),
     rivalry,
   ]),
 );
 
 export function getCFBRivalry(
-  homeEspnId: number | string | null | undefined,
-  awayEspnId: number | string | null | undefined,
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
 ): CFBRivalry | undefined {
   if (homeEspnId == null || awayEspnId == null) {
     return undefined;
   }
 
-  const homeId = Number(homeEspnId);
-  const awayId = Number(awayEspnId);
+  const homeId = Number(homeTeamId);
+  const awayId = Number(awayTeamId);
 
   if (!Number.isFinite(homeId) || !Number.isFinite(awayId)) {
     return undefined;
@@ -12791,8 +12791,8 @@ export function getCFBRivalry(
 }
 
 export function isCFBRivalry(
-  homeEspnId: number | string | null | undefined,
-  awayEspnId: number | string | null | undefined,
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
 ): boolean {
   return getCFBRivalry(homeEspnId, awayEspnId) !== undefined;
 }
