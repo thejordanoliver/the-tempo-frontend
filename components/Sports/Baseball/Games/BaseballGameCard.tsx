@@ -19,11 +19,12 @@ import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import { getBroadcastDisplay, winnerStyle } from "utils/games";
 import { BasesIndicator } from "../GameDetails/BasesIndicator";
 
-function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
+function BaseballGameCard({ game, isCB, isSB, onNavigate }: BaseballGameCardProps) {
   const router = useScopedRouter();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const handlePress = () => {
+    onNavigate?.();
     router.push({
       pathname: "/game/baseball/[game]",
       params: {
@@ -55,8 +56,8 @@ function BaseballGameCard({ game, isCB, isSB }: BaseballGameCardProps) {
       ? getCBTeam(awayId)
       : getMLBTeam(awayId);
 
-  const homeName = homeTeam?.shortName ?? homeTeam?.name;
-  const awayName = awayTeam?.shortName ?? awayTeam?.name;
+  const homeName = homeTeam?.shortName ?? homeTeam?.name ?? "TBD";
+  const awayName = awayTeam?.shortName ?? awayTeam?.name ?? "TBD";
 
   const homeLogo = isSB
     ? getSBTeamLogo(homeId, isDark)

@@ -45,17 +45,18 @@ export const TeamPreviewModalStyles = (isDark: boolean) =>
       backgroundColor: "rgba(255,255,255,0.05)",
     },
 
-    teamLogo: {
+    logo: {
       width: 60,
       height: 60,
       marginBottom: 10,
     },
 
-    teamName: {
+    name: {
       fontFamily: Fonts.SEMIBOLD,
       fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
+      marginBottom: 10,
     },
 
     establishedText: {

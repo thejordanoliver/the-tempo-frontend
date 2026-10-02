@@ -21,6 +21,7 @@ import type { ImageSource } from "expo-image";
 export type NotificationTeamPresentation = {
   id: string;
   name: string;
+  code: string;
   logo: ImageSource;
 };
 
@@ -93,6 +94,7 @@ const presentTeam = (
   return {
     id: String(team.id),
     name: team.fullName || team.shortName || team.name,
+    code: team.code || team.shortName || team.name,
     logo: (isDark ? team.logoLight ?? team.logo : team.logo) as ImageSource,
   };
 };
@@ -118,8 +120,8 @@ export const getNotificationGameTeams = (
   if (!away && !home) return null;
 
   const matchup = away && home
-    ? `${away.name} at ${home.name}`
-    : (away?.name ?? home?.name ?? "");
+    ? `${away.code} at ${home.code}`
+    : (away?.code ?? home?.code ?? "");
 
   return { away, home, matchup };
 };

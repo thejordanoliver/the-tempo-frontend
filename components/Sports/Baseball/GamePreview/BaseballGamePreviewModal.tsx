@@ -86,10 +86,10 @@ export default function BaseballGamePreviewModal({
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
 
-  const homeCode = homeTeam?.code ?? homeTeam?.shortName ?? "";
-  const awayCode = awayTeam?.code ?? awayTeam?.shortName ?? "";
-  const homeName = homeTeam?.fullName ?? homeTeam?.shortName ?? "";
-  const awayName = awayTeam?.fullName ?? awayTeam?.shortName ?? "";
+  const awayCode = awayTeam?.code ?? "TBD";
+  const homeCode = homeTeam?.code ?? "TBD";
+  const awayName = awayTeam?.name ?? "TBD";
+  const homeName = homeTeam?.name ?? "TBD";
 
   const homeLogo = isSB
     ? getSBTeamLogo(homeId, isDark)
@@ -185,7 +185,7 @@ export default function BaseballGamePreviewModal({
   const awayRecord = away?.record ?? "0—0";
   const homeRank = home?.homeRank;
   const awayRank = away?.awayRank;
-  const teamStats = score?.teamStats ?? [];
+  const teamStats = score?.GameTeamStats ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];
   const highlights = details?.highlights ?? [];

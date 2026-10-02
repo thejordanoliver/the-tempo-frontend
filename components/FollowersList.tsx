@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 // components/FollowersList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles, PLACEHOLDER_AVATAR } from "constants/styles";
@@ -30,7 +31,7 @@ export default function FollowersList({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = followersListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (loading) return <FollowerListSkeleton />;
 

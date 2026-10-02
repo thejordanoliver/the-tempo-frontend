@@ -59,7 +59,7 @@ export function useBasketballGames(
     return date ? dayjs(date).format("YYYYMMDD") : "today";
   }, [date]);
 
-  const endpoint = useMemo(() => getBasketballEndpoint(league), [league]);
+  const endpoint = getBasketballEndpoint(league);
 
   const isCollegeBasketball = league === "cbb" || league === "wcbb";
 

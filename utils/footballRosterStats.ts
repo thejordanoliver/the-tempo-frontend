@@ -9,10 +9,10 @@ import type {
   FootballStatPath,
   FootballStatValue,
   FootballTableColumn,
+  GameTeamStats,
   StatDisplayCategory,
   StatRow,
   StatTab,
-  TeamStats,
 } from "@/types/football/stats";
 
 export const STAT_TABS = [
@@ -120,8 +120,10 @@ export const getPlayerName = (player: FootballRosterStatsPlayer) =>
   [player.first_name, player.last_name].filter(Boolean).join(" ") ||
   "Unknown Player";
 
-export const getPlayerKey = (player: FootballRosterStatsPlayer, index: number) =>
-  String(player.playerId || player.player_id || player.id || index);
+export const getPlayerKey = (
+  player: FootballRosterStatsPlayer,
+  index: number,
+) => String(player.playerId || player.player_id || player.id || index);
 
 export const getPlayerInitials = (player: FootballRosterStatsPlayer) => {
   const nameParts = getPlayerName(player).split(/\s+/).filter(Boolean);
@@ -237,7 +239,7 @@ export const PLAYER_STAT_TABLES: FootballPlayerStatTable[] = [
 ];
 
 export const buildFootballStatCategories = (
-  stats: TeamStats,
+  stats: GameTeamStats,
 ): StatDisplayCategory[] => [
   {
     key: "passing",
@@ -594,5 +596,3 @@ export const buildFootballStatCategories = (
     ],
   },
 ];
-
-

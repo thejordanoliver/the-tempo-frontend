@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { MMAEvent } from "@/hooks/MMAHooks/useMMAEvents";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
@@ -6,7 +5,8 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
-import React, { useState } from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import React, { useMemo, useState } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -52,7 +52,7 @@ export default function GamesList({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [previewGame, setPreviewGame] = useState<MMAGameListItem | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -152,7 +152,9 @@ export default function GamesList({
             return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={false}
-          contentContainerStyle={navigationContentStyle(styles.skeletonGridWrapper)}
+          contentContainerStyle={navigationContentStyle(
+            styles.skeletonGridWrapper,
+          )}
         />
       );
     }
@@ -210,7 +212,9 @@ export default function GamesList({
           renderItem={({ item }) => renderGameCard(item)}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.gridListContainer,
+          )}
           showsVerticalScrollIndicator={false}
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={

@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import SearchBar from "components/SearchBars/AnimatedSearchBar";
@@ -9,6 +8,7 @@ import { wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
 import dayjs from "dayjs";
 import { useDraft } from "hooks/LeagueHooks/useLeagueDraft";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -92,7 +92,7 @@ export default function DraftList({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = draftListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const listRef = useRef<FlatList<DraftPick>>(null);
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -339,7 +339,8 @@ export default function DraftList({
           />
         </View>
 
-        <FlatList contentContainerStyle={navigationContentStyle()}
+        <FlatList
+          contentContainerStyle={navigationContentStyle()}
           data={Array.from({ length: 10 })}
           keyExtractor={(_, i) => `skel-${i}`}
           renderItem={() => <DraftCardSkeleton />}
@@ -403,7 +404,8 @@ export default function DraftList({
         />
       </View>
 
-      <FlatList contentContainerStyle={navigationContentStyle()}
+      <FlatList
+        contentContainerStyle={navigationContentStyle()}
         ref={listRef}
         data={visiblePicks}
         keyExtractor={(item) => `${item.overall}`}

@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import BadgeCard from "@/components/Profile/Badges/BadgeCard";
 import PillTabs from "@/components/TabBars/PillTabs";
@@ -7,6 +6,7 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useBadges } from "@/hooks/ForumHooks/useBadges";
 import type { BadgeFilter } from "@/types/badges";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -49,7 +49,7 @@ export default function BadgesScreen() {
   const isDark = resolvedColorScheme === "dark";
 
   const styles = badgeScreenStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const params = useLocalSearchParams<{ userId?: RouteParam }>();
   const userId = useMemo(

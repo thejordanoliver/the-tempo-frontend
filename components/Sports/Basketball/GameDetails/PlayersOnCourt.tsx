@@ -1,5 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
@@ -10,6 +8,8 @@ import {
 } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
 import {
   Image,
@@ -38,7 +38,7 @@ type Props = {
   awayCode: string;
   homeCode: string;
   playerStats: PlayerStats;
-  teamStats?: unknown[];
+  GameTeamStats?: unknown[];
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;

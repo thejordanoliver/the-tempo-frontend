@@ -1,6 +1,7 @@
+import { useMemo } from "react";
+import { Colors, globalStyles } from "constants/styles";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { Colors, globalStyles } from "constants/styles";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import { getCBBTeamByESPNId, getCBBTeamLogo } from "@/constants/teamsCBB";
@@ -70,7 +71,7 @@ export const ConferenceStandingsList = ({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const router = useScopedRouter();
   const { isFavorite } = useFavoriteTeamsContext();
 

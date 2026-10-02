@@ -1,3 +1,4 @@
+import { passwordSchema } from "./credentialRules";
 import { z } from "zod";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,11 +18,7 @@ export const forgotPasswordSchema = z
       .trim()
       .min(1, "Code is required.")
       .regex(CODE_PATTERN, "Enter the 6-digit code from your email."),
-    password: z
-      .string()
-      .min(1, "Password is required.")
-      .min(8, "Password must be at least 8 characters.")
-      .max(128, "Password must be 128 characters or fewer."),
+    password: passwordSchema,
     confirmPassword: z
       .string()
       .min(1, "Confirm password is required.")

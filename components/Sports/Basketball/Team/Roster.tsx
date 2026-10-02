@@ -7,6 +7,7 @@ import { usePreferences } from "contexts/PreferencesContext";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import PlayerCardSkeletonList from "../../../Skeletons/PlayerCardListSkeleton";
 import { PlayerCard } from "../Player/PlayerCard";
+import { useMemo } from "react";
 
 interface RosterProps {
   players: Player[];
@@ -27,7 +28,7 @@ export default function Roster({
 }: RosterProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const tintColor = isDark ? Colors.white : Colors.black;
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = RosterStyles;

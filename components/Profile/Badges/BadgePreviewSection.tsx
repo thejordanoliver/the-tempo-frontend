@@ -7,6 +7,7 @@ import { BadgePreviewSectionStyles } from "@/styles/ProfileStyles/BadgePreviewSe
 import { BadgeProgress } from "@/types/badges";
 import { Text, View } from "react-native";
 import BadgePreviewCard from "./BadgePreviewCard";
+import { useMemo } from "react";
 
 const BADGE_GRID_COLUMNS = 3;
 
@@ -44,7 +45,7 @@ export default function BadgePreviewSection({
   onRetry,
 }: BadgePreviewSectionProps) {
   const styles = BadgePreviewSectionStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const earnedSummary = `${earnedCount} of ${totalCount} earned`;
   const badgeRows = chunkBadges(badges);
 

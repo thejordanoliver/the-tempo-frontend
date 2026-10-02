@@ -3,8 +3,9 @@ import Button from "components/Buttons/Button";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import type { useForgotPasswordForm } from "hooks/UserHooks/useForgotPasswordForm";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { PASSWORD_REQUIREMENTS } from "schemas/auth/credentialRules";
 import { ForgotPasswordStyles } from "styles/ForgotPasswordStyles";
 import AuthFormLayout from "./AuthFormLayout";
 import FormInput from "./FormInput";
@@ -30,7 +31,7 @@ export default function ForgotPasswordForm({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = ForgotPasswordStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [showPassword, setShowPassword] = useState(false);
   const { step, isBusy, isRequestBusy, requestAction, resendCooldown } = form;
   const inputProps = {
@@ -116,6 +117,7 @@ export default function ForgotPasswordForm({
             <FormInput
               {...inputProps}
               name="password"
+              helperText={PASSWORD_REQUIREMENTS}
               placeholder="New password"
               secureTextEntry={!showPassword}
               textContentType="newPassword"

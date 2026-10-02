@@ -1,9 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useDraft } from "hooks/LeagueHooks/useLeagueDraft";
-import React from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import React, { useMemo } from "react";
 import {
   RefreshControl,
   ScrollView,
@@ -23,7 +23,7 @@ export default function DraftBoardTab({ safeYear, league }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = DraftBoardStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { draft, loading, error, refreshing, onRefresh } = useDraft(
     league,
     Number(safeYear),

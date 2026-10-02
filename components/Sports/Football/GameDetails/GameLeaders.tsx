@@ -400,7 +400,7 @@ export default function GameLeaders({
 }: Props) {
   const router = useScopedRouter();
   const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedCategory, setSelectedCategory] = useState<Category>("Passing");
 

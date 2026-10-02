@@ -116,7 +116,7 @@ export default function SeasonStatCard({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const latestSeason = useMemo(() => {
     return getDisplaySeason({

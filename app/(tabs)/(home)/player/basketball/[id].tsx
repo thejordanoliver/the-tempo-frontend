@@ -1,15 +1,10 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
 import PlayerHeader from "@/components/Sports/Basketball/Player/PlayerHeader";
 import PlayerStatTable from "@/components/Sports/Basketball/Player/PlayerStatTable";
 import SeasonStatCard from "@/components/Sports/Basketball/Player/SeasonStatCard";
-import {
-  getNBATeam,
-  getNBATeamLogo,
-  getTeamByESPNId,
-} from "@/constants/teams";
+import { getNBATeam, getNBATeamLogo, getTeamByESPNId } from "@/constants/teams";
 import {
   getWCBBTeam,
   getWCBBTeamByESPNId,
@@ -35,6 +30,7 @@ import {
 } from "constants/teamsCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
@@ -47,7 +43,9 @@ const BASKETBALL_LEAGUES = new Set<BasketballLeague>([
 ]);
 
 function normalizeBasketballLeague(league: unknown): BasketballLeague {
-  const normalized = String(league ?? "").trim().toLowerCase();
+  const normalized = String(league ?? "")
+    .trim()
+    .toLowerCase();
   return BASKETBALL_LEAGUES.has(normalized as BasketballLeague)
     ? (normalized as BasketballLeague)
     : "nba";
@@ -67,7 +65,7 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const requestedPlayerId = Number(id);
   const requestedLeague = normalizeBasketballLeague(league);
@@ -133,15 +131,11 @@ export default function PlayerDetailScreen() {
     }
 
     if (isWNBA) {
-      return (
-        getWNBATeam(currentTeamId) ?? getWNBATeamByESPNId(currentTeamId)
-      );
+      return getWNBATeam(currentTeamId) ?? getWNBATeamByESPNId(currentTeamId);
     }
 
     if (isWCBB) {
-      return (
-        getWCBBTeam(currentTeamId) ?? getWCBBTeamByESPNId(currentTeamId)
-      );
+      return getWCBBTeam(currentTeamId) ?? getWCBBTeamByESPNId(currentTeamId);
     }
 
     return getCBBTeam(currentTeamId) ?? getCBBTeamByESPNId(currentTeamId);
@@ -207,7 +201,11 @@ export default function PlayerDetailScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
+    <ScrollView
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
+    >
       <PlayerHeader player={player} isDark={isDark} league={canonicalLeague} />
 
       <SeasonStatCard

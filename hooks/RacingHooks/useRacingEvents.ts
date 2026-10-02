@@ -347,17 +347,13 @@ export function useRacingEvents({
    */
   const latestRequestIdRef = useRef(0);
 
-  const normalizedLeague = useMemo(() => {
-    return normalizeLeague(league);
-  }, [league]);
+  const normalizedLeague = normalizeLeague(league);
 
   const formattedDate = useMemo(() => {
     return formatDateToUTCYYYYMMDD(date);
   }, [date]);
 
-  const endpoint = useMemo(() => {
-    return getEndpoint(normalizedLeague);
-  }, [normalizedLeague]);
+  const endpoint = getEndpoint(normalizedLeague);
 
   const canFetch =
     enabled && Boolean(formattedDate);

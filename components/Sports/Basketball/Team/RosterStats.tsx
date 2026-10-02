@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   BasketballRosterPlayer as RosterPlayer,
@@ -28,6 +27,7 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
@@ -43,7 +43,7 @@ import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 export default function RosterStats({
   rosterStats,
   teamId,
-  teamStats,
+  GameTeamStats,
   loading,
   error,
   refreshing = false,
@@ -316,12 +316,12 @@ export default function RosterStats({
     );
   };
 
-  const renderTeamStats = () => {
-    if (!teamStats) return null;
+  const renderGameTeamStats = () => {
+    if (!GameTeamStats) return null;
 
-    const summaryRows = getTeamSummaryRows(teamStats);
-    const displayAverages = getTeamDisplayAverages(teamStats);
-    const displayTotals = getTeamDisplayTotals(teamStats);
+    const summaryRows = getTeamSummaryRows(GameTeamStats);
+    const displayAverages = getTeamDisplayAverages(GameTeamStats);
+    const displayTotals = getTeamDisplayTotals(GameTeamStats);
 
     const renderTable = (rows: TeamStatRow[]) => (
       <View style={styles.table}>
@@ -382,7 +382,7 @@ export default function RosterStats({
     return <Text style={global.errorText}>{error.message}</Text>;
   }
 
-  if (!activeRoster.length && !teamStats) {
+  if (!activeRoster.length && !GameTeamStats) {
     return <Text style={global.emptyText}>No player stats available.</Text>;
   }
 
@@ -422,7 +422,7 @@ export default function RosterStats({
           ]}
           pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
         >
-          {renderTeamStats()}
+          {renderGameTeamStats()}
         </View>
       )}
     </ScrollView>

@@ -1,3 +1,4 @@
+import { passwordRules, usernameRules } from "../schemas/auth/credentialRules";
 import assert from "node:assert/strict";
 import test from "node:test";
 
@@ -91,8 +92,8 @@ test("forgot-password schema validates and normalizes the recovery payload", () 
   const result = forgotPasswordSchema.parse({
     email: "  FAN@EXAMPLE.COM ",
     code: " 123456 ",
-    password: "new-password",
-    confirmPassword: "new-password",
+    password: "NewPassword123!",
+    confirmPassword: "NewPassword123!",
   });
 
   assert.equal(result.email, "fan@example.com");
@@ -103,7 +104,7 @@ test("forgot-password schema rejects malformed codes and password mismatch", () 
   const result = forgotPasswordSchema.safeParse({
     email: "fan@example.com",
     code: "12345",
-    password: "new-password",
+    password: "NewPassword123!",
     confirmPassword: "different-password",
   });
 
@@ -119,15 +120,15 @@ test("forgot-password schema rejects malformed codes and password mismatch", () 
 
 const validPasswordChange = {
   currentPassword: "current-password",
-  newPassword: "new-password",
-  confirmPassword: "new-password",
+  newPassword: "NewPassword123!",
+  confirmPassword: "NewPassword123!",
 };
 
 test("change-password schema accepts backend-compatible values", () => {
   assert.deepEqual(changePasswordSchema.parse(validPasswordChange), {
     currentPassword: "current-password",
-    newPassword: "new-password",
-    confirmPassword: "new-password",
+    newPassword: "NewPassword123!",
+    confirmPassword: "NewPassword123!",
   });
 });
 
@@ -194,5 +195,35 @@ test("change-password schema requires a different new password", () => {
     assert.ok(
       result.error.issues.some((issue) => issue.path[0] === "newPassword"),
     );
+  }
+});
+
+test("visible signup requirements agree with schema validation", () => {
+  for (const password of ["", "short", "lowercase123!", "UPPERCASE123!",
+    "NoNumbersHere!", "NoSymbols1234", "ValidPassword123!", "A".repeat(129)]) {
+    const meetsRules = passwordRules.every((rule) => rule.test(password));
+    assert.equal(signupSchema.safeParse({
+      ...validSignup, password, confirmPassword: password,
+    }).success, meetsRules);
+  }
+});
+
+test("username requirements accept the same normalized usernames as signup", () => {
+  for (const username of ["ab", "tempo_fan", "TEMPO.FAN", "has space",
+    "a".repeat(30), "a".repeat(31)]) {
+    assert.equal(signupSchema.safeParse({ ...validSignup, username }).success,
+      usernameRules.every((rule) => rule.test(username)));
+  }
+});
+
+test("reset and password change reject passwords that fail signup requirements", () => {
+  for (const password of ["short", "lowercase123!", "UPPERCASE123!",
+    "NoNumbersHere!", "NoSymbols1234"]) {
+    assert.equal(forgotPasswordSchema.safeParse({
+      email: "fan@example.com", code: "123456", password, confirmPassword: password,
+    }).success, false);
+    assert.equal(changePasswordSchema.safeParse({
+      currentPassword: "legacy-password", newPassword: password, confirmPassword: password,
+    }).success, false);
   }
 });

@@ -1,11 +1,11 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { RacingEvent } from "@/types/racing/racing";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import React, { useMemo } from "react";
 import {
   FlatList,
   RefreshControl,
@@ -62,7 +62,7 @@ export default function GamesList({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   /*
    * The hook or API can temporarily return null even though the prop is
@@ -135,7 +135,9 @@ export default function GamesList({
           keyExtractor={(item) => item.id}
           numColumns={2}
           scrollEnabled={false}
-          contentContainerStyle={navigationContentStyle(styles.skeletonGridWrapper)}
+          contentContainerStyle={navigationContentStyle(
+            styles.skeletonGridWrapper,
+          )}
           renderItem={({ item, index }) => {
             if (item.isPlaceholder) {
               return (
@@ -257,7 +259,9 @@ export default function GamesList({
       ListEmptyComponent={
         <View style={global.emptyContainer}>
           <Text style={global.emptyTitle}>No engines firing up today...</Text>
-          <Text style={global.emptyText}>The next green flag is coming up.</Text>
+          <Text style={global.emptyText}>
+            The next green flag is coming up.
+          </Text>
         </View>
       }
     />

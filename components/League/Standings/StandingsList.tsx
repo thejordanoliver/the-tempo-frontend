@@ -207,7 +207,7 @@ export const StandingsList = ({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const router = useScopedRouter();
 
   const [sortMode, setSortMode] = useState<"conference" | "division">(
@@ -342,7 +342,7 @@ export const StandingsList = ({
         <Text style={global.emptyText}>No standings found.</Text>
       </ScrollView>
     );
-    }
+  }
 
   const getTeam = (item: StandingsTeam) => {
     if (league === "nba") {

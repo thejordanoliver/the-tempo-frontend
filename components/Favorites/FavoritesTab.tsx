@@ -1,6 +1,6 @@
 import { Colors } from "constants/styles";
 import { Image } from "expo-image";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import {
   ScaleDecorator,
@@ -18,7 +18,8 @@ type Props = RenderItemParams<FavoriteItem> & {
   styles: ReturnType<typeof FavoritesScrollStyles>;
 };
 
-const FAVORITE_DRAG_HOLD_DELAY_MS = 400;
+const FAVORITE_DRAG_HOLD_DELAY_MS = 650;
+const FAVORITE_HOLD_MOVEMENT_TOLERANCE = 10;
 
 function FavoritesTabComponent({
   item,
@@ -27,13 +28,15 @@ function FavoritesTabComponent({
   onPressItem,
   styles,
 }: Props) {
+  const touchOriginRef = useRef<{ x: number; y: number } | null>(null);
+  const touchMovedRef = useRef(false);
   const isTeam = item.kind === "team";
   const logo = isTeam ? getFavoriteTeamLogo(item) : item.logo;
   const collegeLeague =
     isTeam && isCollegeFavoriteLeague(item.league) ? item.league : null;
 
   const handlePress = useCallback(() => {
-    onPressItem(item);
+    if (!touchMovedRef.current) onPressItem(item);
   }, [item, onPressItem]);
 
   return (
@@ -47,7 +50,32 @@ function FavoritesTabComponent({
           disabled={isActive}
           delayLongPress={FAVORITE_DRAG_HOLD_DELAY_MS}
           onPress={handlePress}
-          onLongPress={drag}
+          onTouchStart={(event) => {
+            touchOriginRef.current = {
+              x: event.nativeEvent.pageX,
+              y: event.nativeEvent.pageY,
+            };
+            touchMovedRef.current = false;
+          }}
+          onTouchMove={(event) => {
+            const origin = touchOriginRef.current;
+            if (!origin) return;
+
+            if (
+              Math.hypot(
+                event.nativeEvent.pageX - origin.x,
+                event.nativeEvent.pageY - origin.y,
+              ) > FAVORITE_HOLD_MOVEMENT_TOLERANCE
+            ) {
+              touchMovedRef.current = true;
+            }
+          }}
+          onTouchCancel={() => {
+            touchMovedRef.current = true;
+          }}
+          onLongPress={() => {
+            if (!touchMovedRef.current) drag();
+          }}
           style={({ pressed }) => [
             styles.tabContainer,
             pressed && styles.pressed,

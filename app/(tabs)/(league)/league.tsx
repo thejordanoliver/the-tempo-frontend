@@ -1,7 +1,7 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType, ListRenderItem } from "react-native";
 import { FlatList, Image, Pressable, Text, View } from "react-native";
@@ -21,7 +21,7 @@ export default function LeagueScreen() {
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = LeagueScreenStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 

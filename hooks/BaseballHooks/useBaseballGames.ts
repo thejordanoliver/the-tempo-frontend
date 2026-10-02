@@ -38,7 +38,7 @@ export function useBaseballGames(date?: Date, league: League = "mlb") {
     return date ? dayjs(date).format("YYYYMMDD") : "today";
   }, [date]);
 
-  const endpoint = useMemo(() => getBaseballEndpoint(league), [league]);
+  const endpoint = getBaseballEndpoint(league);
 
   const fetchGames = useCallback(
     async ({

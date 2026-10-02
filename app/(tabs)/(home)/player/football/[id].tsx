@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import LatestGame from "@/components/Sports/Basketball/Player/LatestGame";
 import PlayerAwardList from "@/components/Sports/Basketball/Player/PlayerAwardList";
@@ -17,6 +16,7 @@ import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
@@ -79,7 +79,7 @@ export default function PlayerDetailScreen() {
 
   const isDark = resolvedColorScheme === "dark";
 
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const navigation = useNavigation();
 
@@ -359,7 +359,11 @@ export default function PlayerDetailScreen() {
    */
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
+    <ScrollView
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
+    >
       {/* =====================================
           CANONICAL PLAYER PROFILE
          ===================================== */}

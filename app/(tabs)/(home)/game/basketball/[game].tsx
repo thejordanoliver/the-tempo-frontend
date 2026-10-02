@@ -1,25 +1,24 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BoxScore,
+  FanPrediction,
   GameHeader,
   GameLeaders,
   GameLiveChatOverlay,
   GameLocation,
   GameTeamStats,
   HeadCoaches,
+  Highlights,
+  LastFiveGames,
   LastPlay,
   LineScore,
+  MatchupPredictor,
+  Officials,
+  PlayersInFoulTrouble,
+  PlayersOnCourt,
+  ShotChart,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
-import { Highlights } from "@/components/Sports/Basketball/GameDetails/Highlights/Highlights";
-import LastFiveGames from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
-import MatchupPredictor from "@/components/Sports/Basketball/GameDetails/MatchupPredictor";
-import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
-import PlayersInFoulTrouble from "@/components/Sports/Basketball/GameDetails/PlayersInFoulTrouble";
-import PlayersOnCourt from "@/components/Sports/Basketball/GameDetails/PlayersOnCourt";
-import ShotChart from "@/components/Sports/Basketball/GameDetails/ShotChart";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
 import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
@@ -38,6 +37,7 @@ import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import React, { useLayoutEffect, useMemo } from "react";
 import { ScrollView, View } from "react-native";

@@ -1,5 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import AppVideo from "@/components/AppVideo";
 import { CustomHeader } from "@/components/CustomHeader";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,9 +6,11 @@ import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useArticle } from "hooks/NewsHooks/useArticle";
 import type { ArticleStoryLinkTarget } from "hooks/NewsHooks/useArticle";
-import { useLayoutEffect, useState } from "react";
+import { useArticle } from "hooks/NewsHooks/useArticle";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { useLayoutEffect, useMemo, useState } from "react";
 import {
   Image,
   Linking,
@@ -30,7 +30,7 @@ export default function ArticleScreen() {
   const isDark = resolvedColorScheme === "dark";
   const { width } = useWindowDimensions();
   const styles = newsArticleStyles(isDark, width);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
   const router = useScopedRouter();
@@ -191,7 +191,9 @@ export default function ArticleScreen() {
     );
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle(styles.container)}>
+    <ScrollView
+      contentContainerStyle={navigationContentStyle(styles.container)}
+    >
       <Text style={styles.title}>{headline}</Text>
 
       {hasVideo && videoUrl ? (

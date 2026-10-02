@@ -1,10 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
-import { useCallback, useEffect, useState } from "react";
+import { useForumPoll } from "hooks/ForumHooks/useForumPoll";
 import { Text, TouchableOpacity, View } from "react-native";
 import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
-import type { ForumPollResponse, ForumPollState } from "types/forum";
-import { apiClient } from "utils/apiClient";
 
 export default function PollBlock({
   postId,
@@ -14,99 +12,10 @@ export default function PollBlock({
   isDark: boolean;
 }) {
   const styles = PostItemStyles(isDark);
-  const [poll, setPoll] = useState<ForumPollState | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [voting, setVoting] = useState(false);
-
-  // Fetch poll on mount
-  useEffect(() => {
-    let cancelled = false;
-    apiClient
-      .get<ForumPollResponse>(`/api/forum/post/${postId}/poll`)
-      .then((res) => {
-        if (!cancelled) setPoll(res.data.poll ?? null);
-      })
-      .catch(() => {
-        // No poll for this post — silently ignore 404
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [postId]);
-
-  const hasVoted = poll?.options.some((o) => o.voted_by_current_user) ?? false;
-  const totalVotes = poll?.options.reduce((s, o) => s + o.vote_count, 0) ?? 0;
-
-  const handleVote = useCallback(
-    async (optionId: number) => {
-      if (voting) return;
-      if (!poll) return;
-
-      const alreadyVoted = poll.options.some((o) => o.voted_by_current_user);
-      if (alreadyVoted) return;
-
-      setVoting(true);
-
-      // Optimistic update
-      setPoll((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          options: prev.options.map((o) =>
-            o.id === optionId
-              ? {
-                  ...o,
-                  vote_count: o.vote_count + 1,
-                  voted_by_current_user: true,
-                }
-              : o,
-          ),
-        };
-      });
-
-      try {
-        await apiClient.post(`/api/forum/post/${postId}/poll/vote`, {
-          optionId,
-        });
-
-        // Optionally, fetch latest poll from server to sync state
-        const res = await apiClient.get<ForumPollResponse>(
-          `/api/forum/post/${postId}/poll`,
-        );
-        setPoll(res.data.poll ?? null);
-      } catch (err: any) {
-        console.error("Vote failed:", err.response?.data ?? err.message);
-
-        // rollback
-        setPoll((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            options: prev.options.map((o) =>
-              o.id === optionId
-                ? {
-                    ...o,
-                    vote_count: o.vote_count - 1,
-                    voted_by_current_user: false,
-                  }
-                : o,
-            ),
-          };
-        });
-      } finally {
-        setVoting(false);
-      }
-    },
-    [poll, voting, postId],
-  );
+  const { poll, loading, voting, hasVoted, totalVotes, isExpired, handleVote } =
+    useForumPoll(postId);
 
   if (loading || !poll) return null;
-
-  const isExpired =
-    poll.expires_at != null && new Date(poll.expires_at) < new Date();
 
   return (
     <View style={styles.pollContainer}>

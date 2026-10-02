@@ -424,8 +424,8 @@ export const useSoccerGameDetails = (
 
         setWarning(
           error?.response?.data?.error ||
-          error?.message ||
-          "Unable to refresh soccer game data",
+            error?.message ||
+            "Unable to refresh soccer game data",
         );
       } finally {
         if (!silent) {

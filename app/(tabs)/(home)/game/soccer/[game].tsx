@@ -1,11 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
-import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
-import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useSoccerGameDetails } from "@/hooks/SoccerHooks/useSoccerGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import { useVenue } from "@/hooks/useVenue";
 import { SoccerGameCardProps } from "@/types/soccer/soccer";
@@ -16,10 +14,6 @@ import {
   safeDate,
   shouldShowGameChat,
 } from "@/utils/dateUtils";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, View } from "react-native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import LastPlay from "components/Sports/Baseball/GameDetails/LastPlay";
@@ -35,8 +29,13 @@ import {
 } from "components/Sports/Basketball/GameDetails";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
+import { useLayoutEffect, useMemo } from "react";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import {
   formatPeriod,
@@ -186,7 +185,7 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
-  const teamStats = score?.teamStats;
+  const GameTeamStats = score?.GameTeamStats;
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
@@ -379,7 +378,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={teamStats}
+              stats={GameTeamStats}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
               homeCode={homeCode}

@@ -1,10 +1,10 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useMemo } from "react";
 import {
   FlatList,
@@ -54,7 +54,7 @@ export default function TennisGamesList({
 
   const isDark = resolvedColorScheme === "dark";
 
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
 

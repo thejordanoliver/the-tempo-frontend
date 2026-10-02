@@ -1,3 +1,4 @@
+import AuthFormLayout from "./AuthFormLayout";
 import { LEAGUE_CONFIG, type FavoriteSportId } from "@/constants/leagues";
 import { useFavoriteTeamsContext } from "@/contexts/FavoriteTeamsContext";
 import FavoriteSportsSelector from "components/Favorites/FavoriteSportsSelector";
@@ -17,12 +18,11 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import {
-  SIGNUP_PASSWORD_REQUIREMENTS,
-  type SignupFormValues,
-} from "schemas/auth/signupSchema";
+import { passwordRules, usernameRules } from "schemas/auth/credentialRules";
+import { type SignupFormValues } from "schemas/auth/signupSchema";
 import { formStyles } from "styles/FormStyles";
 import type { LeagueType } from "types/types";
+import CredentialRequirements from "./CredentialRequirements";
 
 import { getNBATeamLogo } from "@/constants/teams";
 import { getCBTeamLogo } from "@/constants/teamsCB";
@@ -122,7 +122,7 @@ export default function SignUpForm({
   const isDark = resolvedColorScheme === "dark";
 
   const styles = formStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [progress] = useState(() => new Animated.Value(0));
 
@@ -209,7 +209,7 @@ export default function SignUpForm({
     switch (signupStep) {
       case 0:
         return (
-          <View style={styles.formWrapper}>
+          <View style={[styles.formWrapper, styles.credentialsForm]}>
             <FormInput
               control={control}
               name="fullName"
@@ -229,11 +229,16 @@ export default function SignUpForm({
               textContentType="username"
               returnKeyType="next"
             />
+            <CredentialRequirements
+              title="Username requirements"
+              value={username ?? ""}
+              rules={usernameRules}
+            />
           </View>
         );
       case 1:
         return (
-          <View style={styles.formWrapper}>
+          <View style={[styles.formWrapper, styles.credentialsForm]}>
             <FormInput
               control={control}
               name="email"
@@ -255,8 +260,13 @@ export default function SignUpForm({
               autoComplete="new-password"
               textContentType="newPassword"
               returnKeyType="next"
-              helperText={SIGNUP_PASSWORD_REQUIREMENTS}
             />
+            <CredentialRequirements
+              title="Password requirements"
+              value={password ?? ""}
+              rules={passwordRules}
+            />
+
             <FormInput
               control={control}
               name="confirmPassword"
@@ -489,8 +499,8 @@ export default function SignUpForm({
     }
   };
 
-  return (
-    <View style={styles.sectionContainer}>
+  const content = (
+    <View style={signupStep <= 1 ? styles.credentialsSection : styles.sectionContainer}>
       {renderStep()}
 
       {showProgress && (
@@ -538,4 +548,7 @@ export default function SignUpForm({
       </Button>
     </View>
   );
+  return signupStep <= 1 ? (
+    <AuthFormLayout keyboardAware>{content}</AuthFormLayout>
+  ) : content;
 }

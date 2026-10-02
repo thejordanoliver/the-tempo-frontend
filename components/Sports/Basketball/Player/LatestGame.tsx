@@ -9,7 +9,7 @@ import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import BaseballGamePreviewModal from "components/Sports/Baseball/GamePreview/BaseballGamePreviewModal";
 import BaseballGameCard from "components/Sports/Baseball/Games/BaseballGameCard";
 import * as Haptics from "expo-haptics";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { LongPressGestureHandler, State } from "react-native-gesture-handler";
 import FootballGamePreviewModal from "../../Football/GamePreview/FootballGamePreviewModal";
@@ -76,7 +76,7 @@ export default function LatestGame(props: Props) {
     isCFB = false,
   } = props;
 
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [modalVisible, setModalVisible] = useState(false);
 

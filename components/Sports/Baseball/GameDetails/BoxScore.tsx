@@ -1,7 +1,7 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { BoxScoreStyles } from "@/styles/GameDetailStyles/BoxScoreStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, globalStyles } from "constants/styles";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import type { ImageSourcePropType } from "react-native";
@@ -146,7 +146,7 @@ type BoxscoreShape = {
 
 type ScoreShape = {
   playerStats?: TeamBlock[];
-  teamStats?: TeamBlock[];
+  GameTeamStats?: TeamBlock[];
   boxscore?: BoxscoreShape;
   boxScore?: BoxscoreShape;
 
@@ -244,7 +244,7 @@ const isScoreShape = (value: unknown): value is ScoreShape => {
 
   return (
     Array.isArray(value.playerStats) ||
-    Array.isArray(value.teamStats) ||
+    Array.isArray(value.GameTeamStats) ||
     Array.isArray(value.boxscore?.players) ||
     Array.isArray(value.boxScore?.players) ||
     Boolean(value.status) ||
@@ -314,12 +314,12 @@ const getPlayerStatsArray = (input: unknown): TeamBlock[] => {
     return input.score.playerStats.filter(Boolean);
   }
 
-  if (Array.isArray(input.teamStats)) {
-    return input.teamStats.filter(Boolean);
+  if (Array.isArray(input.GameTeamStats)) {
+    return input.GameTeamStats.filter(Boolean);
   }
 
-  if (Array.isArray(input.score?.teamStats)) {
-    return input.score.teamStats.filter(Boolean);
+  if (Array.isArray(input.score?.GameTeamStats)) {
+    return input.score.GameTeamStats.filter(Boolean);
   }
 
   if (Array.isArray(input.boxscore?.teams)) {

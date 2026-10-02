@@ -1,9 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Play } from "@/hooks/HockeyHooks/useHockeyGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNHLTeamByEspnId, getNHLTeamLogo } from "constants/teamsNHL";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -81,7 +81,7 @@ export default function GameSummary({
 }: Props) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameSummaryStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedPeriod, setSelectedPeriod] =
     useState<(typeof periodTabs)[number]>("All");

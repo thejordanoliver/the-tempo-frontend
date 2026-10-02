@@ -63,7 +63,7 @@ export default function AwardSchoolsTable({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const useLightLogo = isDark;
 
   const styles = useMemo(() => tableStyles(isDark), [isDark]);

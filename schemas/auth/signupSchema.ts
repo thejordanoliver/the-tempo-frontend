@@ -1,3 +1,4 @@
+import { passwordSchema, PASSWORD_REQUIREMENTS, USERNAME_PATTERN, USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "./credentialRules";
 import { BROWSEABLE_LEAGUES } from "constants/leagueIds";
 import type { FavoriteSportId } from "constants/leagues";
 import {
@@ -7,17 +8,9 @@ import {
 import { z } from "zod";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const USERNAME_PATTERN = /^[a-z0-9._-]+$/;
-const SIGNUP_PASSWORD_MIN_LENGTH = 12;
-const SIGNUP_PASSWORD_MAX_LENGTH = 128;
-const LOWERCASE_PATTERN = /[a-z]/;
-const UPPERCASE_PATTERN = /[A-Z]/;
-const NUMBER_PATTERN = /\d/;
-const SYMBOL_PATTERN = /[^A-Za-z0-9\s]/;
 const FAVORITE_SPORT_IDS = new Set<string>(BROWSEABLE_LEAGUES);
 
-export const SIGNUP_PASSWORD_REQUIREMENTS =
-  "Use 12–128 characters with uppercase, lowercase, a number, and a symbol.";
+export const SIGNUP_PASSWORD_REQUIREMENTS = PASSWORD_REQUIREMENTS;
 
 const favoriteTeamSchema = z.custom<FavoriteTeamKey>(
   (value) => normalizeFavoriteTeamKey(value) !== null,
@@ -40,8 +33,8 @@ export const signupSchema = z
       .trim()
       .toLowerCase()
       .min(1, "Username is required.")
-      .min(3, "Username must be at least 3 characters.")
-      .max(30, "Username must be 30 characters or fewer.")
+      .min(USERNAME_MIN_LENGTH, "Username must be at least 3 characters.")
+      .max(USERNAME_MAX_LENGTH, "Username must be 30 characters or fewer.")
       .regex(
         USERNAME_PATTERN,
         "Use only letters, numbers, dots, underscores, and hyphens.",
@@ -53,21 +46,7 @@ export const signupSchema = z
       .min(1, "Email is required.")
       .max(254, "Email must be 254 characters or fewer.")
       .regex(EMAIL_PATTERN, "Enter a valid email address."),
-    password: z
-      .string()
-      .min(1, "Password is required.")
-      .min(
-        SIGNUP_PASSWORD_MIN_LENGTH,
-        `Password must be at least ${SIGNUP_PASSWORD_MIN_LENGTH} characters.`,
-      )
-      .max(
-        SIGNUP_PASSWORD_MAX_LENGTH,
-        `Password must be ${SIGNUP_PASSWORD_MAX_LENGTH} characters or fewer.`,
-      )
-      .regex(LOWERCASE_PATTERN, "Password must include a lowercase letter.")
-      .regex(UPPERCASE_PATTERN, "Password must include an uppercase letter.")
-      .regex(NUMBER_PATTERN, "Password must include a number.")
-      .regex(SYMBOL_PATTERN, "Password must include a symbol."),
+    password: passwordSchema,
     confirmPassword: z
       .string()
       .min(1, "Confirm your password.")

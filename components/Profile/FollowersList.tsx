@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 // components/FollowersList.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, globalStyles, PLACEHOLDER_AVATAR } from "constants/styles";
@@ -30,7 +31,7 @@ export default function FollowersList({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = followersListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (loading) return <FollowerListSkeleton />;
 
@@ -50,45 +51,45 @@ export default function FollowersList({
     );
   }
 
- const renderItem = ({ item }: { item: User }) => {
-   const profileImage = item.profile_image || PLACEHOLDER_AVATAR;
-   const isCurrentUser = item.id.toString() === currentUserId;
+  const renderItem = ({ item }: { item: User }) => {
+    const profileImage = item.profile_image || PLACEHOLDER_AVATAR;
+    const isCurrentUser = item.id.toString() === currentUserId;
 
-   return (
-     <View style={styles.itemRow}>
-       <View style={styles.itemContainer}>
-         <TouchableOpacity
-           onPress={() => onUserPress(item)}
-           style={styles.userRow}
-         >
-           <View style={styles.avatarContainer}>
-             <Image source={{ uri: profileImage }} style={styles.avatar} />
-           </View>
+    return (
+      <View style={styles.itemRow}>
+        <View style={styles.itemContainer}>
+          <TouchableOpacity
+            onPress={() => onUserPress(item)}
+            style={styles.userRow}
+          >
+            <View style={styles.avatarContainer}>
+              <Image source={{ uri: profileImage }} style={styles.avatar} />
+            </View>
 
-           <Text style={styles.username}>{item.username}</Text>
-         </TouchableOpacity>
-       </View>
+            <Text style={styles.username}>{item.username}</Text>
+          </TouchableOpacity>
+        </View>
 
-       {item.followsYou && (
-         <Ionicons
-           name="infinite-outline"
-           size={14}
-           color={Colors.midTone}
-           style={styles.mutalIcon}
-         />
-       )}
+        {item.followsYou && (
+          <Ionicons
+            name="infinite-outline"
+            size={14}
+            color={Colors.midTone}
+            style={styles.mutalIcon}
+          />
+        )}
 
-       {!isCurrentUser && (
-         <FollowButton
-           isFollowing={item.isFollowing}
-           loading={loadingIds.includes(item.id.toString())}
-           onToggle={() => onToggleFollow(item.id.toString())}
-           compact
-         />
-       )}
-     </View>
-   );
- };
+        {!isCurrentUser && (
+          <FollowButton
+            isFollowing={item.isFollowing}
+            loading={loadingIds.includes(item.id.toString())}
+            onToggle={() => onToggleFollow(item.id.toString())}
+            compact
+          />
+        )}
+      </View>
+    );
+  };
 
   return (
     <FlatList

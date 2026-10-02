@@ -1,6 +1,3 @@
-import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage";
@@ -12,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import MessageAttachmentMenu from "components/Messages/MessageAttachmentMenu";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -19,8 +17,9 @@ import {
   useFocusEffect,
   useLocalSearchParams,
   useNavigation,
-  } from "expo-router";
+} from "expo-router";
 import { useDirectMessages } from "hooks/MessageHooks/useDirectMessages";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   useCallback,
   useContext,
@@ -195,7 +194,6 @@ const getMessageReceiptLabels = (
 
 export default function ConversationScreen() {
   const navigationBarInset = useContext(NavigationBarInsetContext);
-  const navigationContentStyle = useNavigationBarContentStyle();
   const router = useScopedRouter();
   const navigation = useNavigation();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
@@ -207,19 +205,15 @@ export default function ConversationScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = useMemo(() => ConversationScreenStyles(isDark), [isDark]);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const insets = useSafeAreaInsets();
   const themeSheetRef = useRef<BottomSheetModal>(null);
   const { height: windowHeight } = useWindowDimensions();
 
   const listRef = useRef<FlatList<DirectMessageItem>>(null);
   const inputRef = useRef<TextInput>(null);
-  const didInitialScrollRef = useRef(false);
-  const pendingInitialScrollRef = useRef(true);
   const [keyboardOffset] = useState(() => new Animated.Value(0));
   const [isScreenFocused, setIsScreenFocused] = useState(false);
-  const [isInitialPositionPending, setIsInitialPositionPending] =
-    useState(true);
   const [appState, setAppState] = useState<AppStateStatus>(
     AppState.currentState,
   );
@@ -227,12 +221,14 @@ export default function ConversationScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      didInitialScrollRef.current = false;
-      pendingInitialScrollRef.current = Boolean(conversationId);
-      setIsInitialPositionPending(true);
+      if (!conversationId) return;
+      const frame = requestAnimationFrame(() => {
+        listRef.current?.scrollToOffset({ offset: 0, animated: false });
+      });
       setIsScreenFocused(true);
 
       return () => {
+        cancelAnimationFrame(frame);
         setIsScreenFocused(false);
       };
     }, [conversationId]),
@@ -267,6 +263,8 @@ export default function ConversationScreen() {
     isVisible: isConversationVisible,
   });
 
+  const newestFirstMessages = useMemo(() => [...messages].reverse(), [messages]);
+
   const [draftMessage, setDraftMessage] = useState("");
   const [selectedAttachment, setSelectedAttachment] =
     useState<MessageAttachment | null>(null);
@@ -286,7 +284,8 @@ export default function ConversationScreen() {
   const displayAvatar = conversation?.profileImageUrl || FALLBACK_AVATAR;
   const usesCustomMessageAccent = messageThemePreference.mode !== "default";
   const usesGradient =
-    usesCustomMessageAccent && messageThemePreference.bubbleStyle === "gradient";
+    usesCustomMessageAccent &&
+    messageThemePreference.bubbleStyle === "gradient";
   const otherParticipantReadPosition = useMemo(
     () => getParticipantReadPosition(conversation),
     [conversation],
@@ -302,54 +301,9 @@ export default function ConversationScreen() {
 
   const scrollToBottom = useCallback((animated = true) => {
     requestAnimationFrame(() => {
-      listRef.current?.scrollToEnd({ animated });
+      listRef.current?.scrollToOffset({ offset: 0, animated });
     });
   }, []);
-
-  const handleInitialScrollToBottom = useCallback(() => {
-    if (
-      didInitialScrollRef.current ||
-      !pendingInitialScrollRef.current ||
-      messages.length === 0
-    ) {
-      return;
-    }
-
-    const list = listRef.current;
-
-    if (!list) return;
-
-    pendingInitialScrollRef.current = false;
-    didInitialScrollRef.current = true;
-    list.scrollToEnd({ animated: false });
-
-    // Reveal the list only after it has been positioned at the latest message.
-    requestAnimationFrame(() => {
-      setIsInitialPositionPending(false);
-    });
-  }, [messages.length]);
-
-  useEffect(() => {
-    if (isLoading || messages.length === 0 || didInitialScrollRef.current) {
-      return;
-    }
-
-    pendingInitialScrollRef.current = true;
-
-    // Fallback in case FlatList already reported its content size.
-    const timeout = setTimeout(() => {
-      handleInitialScrollToBottom();
-    }, 100);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [
-    handleInitialScrollToBottom,
-    isInitialPositionPending,
-    isLoading,
-    messages.length,
-  ]);
 
   const closeAttachmentMenu = useCallback(() => {
     setAttachmentMenuVisible(false);
@@ -515,9 +469,10 @@ export default function ConversationScreen() {
     (event: any) => {
       if (!hasMore || isLoadingMore || messages.length === 0) return;
 
-      const offsetY = event.nativeEvent.contentOffset.y;
+      const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+      const distanceFromHistory = contentSize.height - layoutMeasurement.height - contentOffset.y;
 
-      if (offsetY <= 48) {
+      if (distanceFromHistory <= 48) {
         void loadOlder();
       }
     },
@@ -736,27 +691,24 @@ export default function ConversationScreen() {
       <View style={styles.container}>
         <FlatList
           ref={listRef}
-          style={
-            isInitialPositionPending && messages.length > 0
-              ? styles.initialMessageList
-              : undefined
-          }
-          data={messages}
+          key={conversationId}
+          inverted
+          data={newestFirstMessages}
           extraData={messageReceiptLabels}
           keyExtractor={keyExtractor}
           renderItem={renderMessage}
-          ListHeaderComponent={renderOlderMessagesLoader}
+          ListHeaderComponent={renderTypingIndicator}
           ListEmptyComponent={renderEmptyState}
-          ListFooterComponent={renderTypingIndicator}
+          ListFooterComponent={renderOlderMessagesLoader}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
-          contentContainerStyle={navigationContentStyle([
+          contentContainerStyle={[
             styles.messagesContent,
-            { paddingBottom: 120 + (keyboardVisible ? 0 : navigationBarInset) },
-          ])}
+            // Inversion puts top padding beside the composer.
+            { paddingTop: 120 + (keyboardVisible ? 0 : navigationBarInset) },
+          ]}
           maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
-          onContentSizeChange={handleInitialScrollToBottom}
           onScroll={handleMessagesScroll}
           scrollEventThrottle={16}
           onScrollBeginDrag={closeAttachmentMenu}
@@ -767,9 +719,10 @@ export default function ConversationScreen() {
             styles.composerOuter,
             {
               bottom: keyboardVisible ? 0 : navigationBarInset,
-              paddingBottom: keyboardVisible || navigationBarInset > 0
-                ? 8
-                : Math.max(insets.bottom, 8),
+              paddingBottom:
+                keyboardVisible || navigationBarInset > 0
+                  ? 8
+                  : Math.max(insets.bottom, 8),
               transform: [
                 {
                   translateY: Animated.multiply(keyboardOffset, -1),

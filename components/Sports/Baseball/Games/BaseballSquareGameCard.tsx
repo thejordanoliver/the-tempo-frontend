@@ -1,4 +1,3 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { BaseballGameCardProps } from "@/types/baseball/baseball";
 import {
   formatDate,
@@ -13,6 +12,7 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { squareGameCardStyles } from "styles/GamecardStyles/SquareGameCardStyles";
@@ -60,8 +60,8 @@ function BaseballSquareGamecard({ game, isSB, isCB }: BaseballGameCardProps) {
   const homeTeamId = homeTeam?.id ?? 0;
   const awayTeamId = awayTeam?.id ?? 0;
 
-  const homeName = homeTeam?.code || game.home?.code;
-  const awayName = awayTeam?.code || game.away?.code;
+  const homeName = (homeTeam?.code || game.home?.code) ?? "TBD";
+  const awayName = (awayTeam?.code || game.away?.code) ?? "TBD";
 
   const homeLogo = isSB
     ? getSBTeamLogo(homeId, isDark)

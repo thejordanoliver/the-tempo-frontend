@@ -2,7 +2,7 @@ import { activeOpacity, Colors, Fonts } from "constants/styles";
 import { NAVIGATION_BAR_ROW_HEIGHT } from "contexts/NavigationBarInsetContext";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import type { ComponentProps } from "react";
+import { useMemo, type ComponentProps } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Balls, Compass, Home, User } from "reicon-react-native";
 
@@ -24,13 +24,15 @@ export default function NavigationBar({
   isDark,
 }: NavigationBarProps) {
   const iconColor = isDark ? Colors.white : Colors.black;
-  const styles = CustomTabBarStyles(isDark, insets.bottom);
+  const styles = useMemo(
+    () => CustomTabBarStyles(isDark, insets.bottom),
+    [isDark, insets.bottom],
+  );
 
   return (
     <View style={styles.tabBarWrapper}>
       <BlurView
-        intensity={80}
-        tint={"systemMaterial"}
+        intensity={100}
         pointerEvents="none"
         style={styles.blurBackground}
       />
@@ -78,9 +80,7 @@ export default function NavigationBar({
                 color={iconColor}
                 weight={focused ? "Filled" : "Outline"}
               />
-              <Text
-                style={[styles.tabLabel, focused && styles.activeTabLabel]}
-              >
+              <Text style={[styles.tabLabel, focused && styles.activeTabLabel]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>

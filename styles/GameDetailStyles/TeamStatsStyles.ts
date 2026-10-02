@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 const ROW_HEIGHT = 80;
 
-export const TeamStatsStyles = (isDark: boolean) =>
+export const GameTeamStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
       borderLeftWidth: 1,
@@ -42,7 +42,7 @@ export const TeamStatsStyles = (isDark: boolean) =>
     },
     statSection: {
       height: ROW_HEIGHT,
-      paddingVertical: 8, // space between label and bars
+      paddingVertical: 8,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderColor: Colors.midTone,
     },
@@ -55,9 +55,9 @@ export const TeamStatsStyles = (isDark: boolean) =>
     },
     row: {
       flexDirection: "row",
-      alignItems: "center", // center bars & values vertically
-      justifyContent: "space-between", // optional: distribute left and right
-      flex: 1, // take remaining vertical space
+      alignItems: "center",
+      justifyContent: "space-between",
+      flex: 1,
       paddingHorizontal: 12,
     },
 

@@ -26,7 +26,7 @@ if (Platform.OS === "android") {
 
 export default function OfferList({ recruit, isDark }: Props) {
   const styles = offerListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const offer = useMemo(() => recruit.offers ?? [], [recruit.offers]);
 
   const [expanded, setExpanded] = useState(false);

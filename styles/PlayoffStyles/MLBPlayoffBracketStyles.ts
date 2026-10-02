@@ -88,6 +88,11 @@ export function getMLBBracketLayoutStyles(
 export const MLBPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1 },
+    sheetBackground: {
+      backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+    },
+    seriesGames: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },
+    seriesGame: { gap: 6 },
     section: { gap: 12 },
     roundHeader: { height: ROUND_HEADER_HEIGHT },
     roundBody: { height: ROUND_BODY_HEIGHT, position: "relative" },

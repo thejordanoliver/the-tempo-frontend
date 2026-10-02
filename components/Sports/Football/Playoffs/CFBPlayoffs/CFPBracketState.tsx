@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import Button from "@/components/Buttons/Button";
 import { globalStyles } from "@/constants/styles";
 import { Text, View } from "react-native";
@@ -18,7 +19,7 @@ export function CFPBracketState({
   onRetry,
 }: CFPBracketStateProps) {
   const styles = CFPBracketStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   return (
     <View style={global.emptyContainer}>

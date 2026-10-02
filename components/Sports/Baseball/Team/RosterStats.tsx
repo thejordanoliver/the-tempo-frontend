@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   BaseballStatValue,
@@ -27,6 +26,7 @@ import {
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
@@ -42,7 +42,7 @@ import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 export default function RosterStats({
   rosterStats,
   teamId,
-  teamStats,
+  GameTeamStats,
   loading,
   error,
   refreshing = false,
@@ -357,7 +357,7 @@ export default function RosterStats({
     </View>
   );
 
-  const renderTeamStatsSection = (
+  const renderGameTeamStatsSection = (
     title: string,
     rows: readonly TeamStatRow[],
   ) => (
@@ -367,8 +367,8 @@ export default function RosterStats({
     </View>
   );
 
-  const renderTeamStats = () => {
-    if (!teamStats) {
+  const renderGameTeamStats = () => {
+    if (!GameTeamStats) {
       return (
         <View style={styles.center}>
           <Text style={global.emptyText}>No team stats available.</Text>
@@ -377,66 +377,66 @@ export default function RosterStats({
     }
 
     const summaryRows: readonly TeamStatRow[] = [
-      { label: "Record", value: teamStats.team.recordSummary },
-      { label: "Standing", value: teamStats.team.standingSummary },
-      { label: "Season", value: teamStats.season.displayName },
+      { label: "Record", value: GameTeamStats.team.recordSummary },
+      { label: "Standing", value: GameTeamStats.team.standingSummary },
+      { label: "Season", value: GameTeamStats.season.displayName },
     ];
 
     const battingRowsForTeam: readonly TeamStatRow[] = [
-      { label: "Games Played", value: teamStats.batting.gamesPlayed },
-      { label: "Batting Average", value: teamStats.batting.battingAverage },
-      { label: "On-base %", value: teamStats.batting.onBasePct },
-      { label: "Slugging %", value: teamStats.batting.sluggingPct },
-      { label: "OPS", value: teamStats.batting.ops },
-      { label: "Runs", value: teamStats.batting.runs },
-      { label: "Hits", value: teamStats.batting.hits },
-      { label: "Doubles", value: teamStats.batting.doubles },
-      { label: "Triples", value: teamStats.batting.triples },
-      { label: "Home Runs", value: teamStats.batting.homeRuns },
-      { label: "RBIs", value: teamStats.batting.rbis },
-      { label: "Stolen Bases", value: teamStats.batting.stolenBases },
-      { label: "Walks", value: teamStats.batting.walks },
-      { label: "Strikeouts", value: teamStats.batting.strikeouts },
+      { label: "Games Played", value: GameTeamStats.batting.gamesPlayed },
+      { label: "Batting Average", value: GameTeamStats.batting.battingAverage },
+      { label: "On-base %", value: GameTeamStats.batting.onBasePct },
+      { label: "Slugging %", value: GameTeamStats.batting.sluggingPct },
+      { label: "OPS", value: GameTeamStats.batting.ops },
+      { label: "Runs", value: GameTeamStats.batting.runs },
+      { label: "Hits", value: GameTeamStats.batting.hits },
+      { label: "Doubles", value: GameTeamStats.batting.doubles },
+      { label: "Triples", value: GameTeamStats.batting.triples },
+      { label: "Home Runs", value: GameTeamStats.batting.homeRuns },
+      { label: "RBIs", value: GameTeamStats.batting.rbis },
+      { label: "Stolen Bases", value: GameTeamStats.batting.stolenBases },
+      { label: "Walks", value: GameTeamStats.batting.walks },
+      { label: "Strikeouts", value: GameTeamStats.batting.strikeouts },
     ];
 
     const pitchingRowsForTeam: readonly TeamStatRow[] = [
-      { label: "Games Played", value: teamStats.pitching.gamesPlayed },
-      { label: "Wins", value: teamStats.pitching.wins },
-      { label: "Losses", value: teamStats.pitching.losses },
-      { label: "Win %", value: teamStats.pitching.winPct },
-      { label: "ERA", value: teamStats.pitching.era },
-      { label: "WHIP", value: teamStats.pitching.whip },
-      { label: "Saves", value: teamStats.pitching.saves },
-      { label: "Holds", value: teamStats.pitching.holds },
-      { label: "Quality Starts", value: teamStats.pitching.qualityStarts },
-      { label: "Innings", value: teamStats.pitching.innings },
-      { label: "Hits Allowed", value: teamStats.pitching.hitsAllowed },
-      { label: "Runs Allowed", value: teamStats.pitching.runsAllowed },
-      { label: "Earned Runs", value: teamStats.pitching.earnedRuns },
-      { label: "Walks Allowed", value: teamStats.pitching.walksAllowed },
-      { label: "Strikeouts", value: teamStats.pitching.strikeouts },
-      { label: "K/9", value: teamStats.pitching.strikeoutsPerNine },
-      { label: "Opponent AVG", value: teamStats.pitching.opponentAvg },
+      { label: "Games Played", value: GameTeamStats.pitching.gamesPlayed },
+      { label: "Wins", value: GameTeamStats.pitching.wins },
+      { label: "Losses", value: GameTeamStats.pitching.losses },
+      { label: "Win %", value: GameTeamStats.pitching.winPct },
+      { label: "ERA", value: GameTeamStats.pitching.era },
+      { label: "WHIP", value: GameTeamStats.pitching.whip },
+      { label: "Saves", value: GameTeamStats.pitching.saves },
+      { label: "Holds", value: GameTeamStats.pitching.holds },
+      { label: "Quality Starts", value: GameTeamStats.pitching.qualityStarts },
+      { label: "Innings", value: GameTeamStats.pitching.innings },
+      { label: "Hits Allowed", value: GameTeamStats.pitching.hitsAllowed },
+      { label: "Runs Allowed", value: GameTeamStats.pitching.runsAllowed },
+      { label: "Earned Runs", value: GameTeamStats.pitching.earnedRuns },
+      { label: "Walks Allowed", value: GameTeamStats.pitching.walksAllowed },
+      { label: "Strikeouts", value: GameTeamStats.pitching.strikeouts },
+      { label: "K/9", value: GameTeamStats.pitching.strikeoutsPerNine },
+      { label: "Opponent AVG", value: GameTeamStats.pitching.opponentAvg },
     ];
 
     const fieldingRowsForTeam: readonly TeamStatRow[] = [
-      { label: "Games Played", value: teamStats.fielding.gamesPlayed },
-      { label: "Innings Played", value: teamStats.fielding.inningsPlayed },
-      { label: "Total Chances", value: teamStats.fielding.totalChances },
-      { label: "Putouts", value: teamStats.fielding.putouts },
-      { label: "Assists", value: teamStats.fielding.assists },
-      { label: "Errors", value: teamStats.fielding.errors },
-      { label: "Double Plays", value: teamStats.fielding.doublePlays },
-      { label: "Fielding %", value: teamStats.fielding.fieldingPct },
-      { label: "Range Factor", value: teamStats.fielding.rangeFactor },
+      { label: "Games Played", value: GameTeamStats.fielding.gamesPlayed },
+      { label: "Innings Played", value: GameTeamStats.fielding.inningsPlayed },
+      { label: "Total Chances", value: GameTeamStats.fielding.totalChances },
+      { label: "Putouts", value: GameTeamStats.fielding.putouts },
+      { label: "Assists", value: GameTeamStats.fielding.assists },
+      { label: "Errors", value: GameTeamStats.fielding.errors },
+      { label: "Double Plays", value: GameTeamStats.fielding.doublePlays },
+      { label: "Fielding %", value: GameTeamStats.fielding.fieldingPct },
+      { label: "Range Factor", value: GameTeamStats.fielding.rangeFactor },
     ];
 
     return (
       <View style={styles.teamTableContainer}>
-        {renderTeamStatsSection("Team Summary", summaryRows)}
-        {renderTeamStatsSection("Batting", battingRowsForTeam)}
-        {renderTeamStatsSection("Pitching", pitchingRowsForTeam)}
-        {renderTeamStatsSection("Fielding", fieldingRowsForTeam)}
+        {renderGameTeamStatsSection("Team Summary", summaryRows)}
+        {renderGameTeamStatsSection("Batting", battingRowsForTeam)}
+        {renderGameTeamStatsSection("Pitching", pitchingRowsForTeam)}
+        {renderGameTeamStatsSection("Fielding", fieldingRowsForTeam)}
       </View>
     );
   };
@@ -453,7 +453,7 @@ export default function RosterStats({
     return <Text style={global.errorText}>{error.message}</Text>;
   }
 
-  if (!playerRows.length && !teamStats) {
+  if (!playerRows.length && !GameTeamStats) {
     return <Text style={global.emptyText}>No player stats available.</Text>;
   }
 
@@ -493,7 +493,7 @@ export default function RosterStats({
           ]}
           pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
         >
-          {renderTeamStats()}
+          {renderGameTeamStats()}
         </View>
       )}
     </ScrollView>

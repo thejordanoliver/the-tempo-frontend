@@ -19,7 +19,7 @@ import {
 import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { BlurView } from "expo-blur";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatDate,
@@ -86,8 +86,10 @@ export default function FootballGamePreviewModal({
       ? getCFBTeam(awayId)
       : getUFLTeam(awayId);
 
-  const homeCode = homeTeam?.code ?? game.home.code ?? "";
-  const awayCode = awayTeam?.code ?? game.away.code ?? "";
+  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
+  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
+  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
 
   const homeLogo = isNFL
     ? getNFLTeamLogo(homeId, isDark)
@@ -121,9 +123,6 @@ export default function FootballGamePreviewModal({
     homeColor: homeColor,
     awayColor: awayColor,
   });
-
-  const homeName = homeTeam?.fullName ?? "";
-  const awayName = awayTeam?.fullName ?? "";
 
   const { score, details } = useFootballGameDetails(LEAGUE, gameId);
   const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;

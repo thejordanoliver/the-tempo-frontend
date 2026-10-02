@@ -1011,7 +1011,7 @@ export default function PlayerStatTable({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [statView, setStatView] = useState<StatView>("totals");
   const [selectedSeasonType, setSelectedSeasonType] =
@@ -1039,8 +1039,7 @@ export default function PlayerStatTable({
     ],
     [league],
   );
-  const showSeasonTypeTabs =
-    PRO_LEAGUES_WITH_POSTSEASON_TABS.has(activeLeague);
+  const showSeasonTypeTabs = PRO_LEAGUES_WITH_POSTSEASON_TABS.has(activeLeague);
 
   const normalizedRows = useMemo(
     () => normalizeStatsData(activeSeasons, activeLeague),
@@ -1109,33 +1108,29 @@ export default function PlayerStatTable({
   const renderHeader = () => (
     <>
       <View style={styles.statsHeader}>
-  
-          <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
+        <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
 
-          <View style={styles.filtersRow}>
-            {showCareerViewTabs ? (
-              <Dropdown
-                isDark={isDark}
-                options={careerViewOptions}
-                selectedValue={activeCareerView}
-                onSelect={(value) =>
-                  setSelectedCareerView(value as CareerView)
-                }
-                style={[styles.filterDropdown, styles.careerDropdown]}
-              />
-            ) : null}
+        <View style={styles.filtersRow}>
+          {showCareerViewTabs ? (
+            <Dropdown
+              isDark={isDark}
+              options={careerViewOptions}
+              selectedValue={activeCareerView}
+              onSelect={(value) => setSelectedCareerView(value as CareerView)}
+              style={[styles.filterDropdown, styles.careerDropdown]}
+            />
+          ) : null}
 
-            {filteredRows.length > 0 ? (
-              <Dropdown
-                isDark={isDark}
-                options={STAT_OPTIONS}
-                selectedValue={statView}
-                onSelect={(value) => setStatView(value as StatView)}
-                style={styles.filterDropdown}
-                width={160}
-              />
-            ) : null}
- 
+          {filteredRows.length > 0 ? (
+            <Dropdown
+              isDark={isDark}
+              options={STAT_OPTIONS}
+              selectedValue={statView}
+              onSelect={(value) => setStatView(value as StatView)}
+              style={styles.filterDropdown}
+              width={160}
+            />
+          ) : null}
         </View>
       </View>
 

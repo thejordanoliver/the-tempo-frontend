@@ -1,6 +1,5 @@
 import {
   GameLocation,
-  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -22,8 +21,10 @@ import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
 import TeamInjuries from "../../Baseball/GameDetails/InjuryReport/TeamInjuries";
+import GameTeamStats, {
+  GameTeamStatsEntry,
+} from "../../Basketball/GameDetails/GameTeamStats";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
-import { TeamStatsEntry } from "../../Basketball/GameDetails/TeamStats";
 import BoxScore from "../GameDetails/BoxScore";
 import GameLeaders from "../GameDetails/GameLeaders";
 import PlayByPlay from "../GameDetails/PlayByPlay/PlayByPlay";
@@ -53,7 +54,7 @@ type GamePreviewContentProps = {
     previous: FootballDrive[];
     current: FootballDrive[];
   };
-  teamStats?: TeamStatsEntry[];
+  teamStats?: GameTeamStatsEntry[];
   playerStats?: BoxScorePlayerTeam[];
   leaders: TeamLeaders[];
   injuries: TeamInjury[];

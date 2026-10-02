@@ -1305,7 +1305,7 @@ export default function TournamentTreeBracket({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = CBBTournamentBracketStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const roundHeaderScrollRef = useRef<ScrollView>(null);
 
   const {
@@ -1356,7 +1356,9 @@ export default function TournamentTreeBracket({
         nestedScrollEnabled
         directionalLockEnabled
         stickyHeaderIndices={regions.length > 0 ? [2] : undefined}
-        contentContainerStyle={navigationContentStyle(styles.verticalScrollContent)}
+        contentContainerStyle={navigationContentStyle(
+          styles.verticalScrollContent,
+        )}
       >
         <FirstFour games={openingRoundGames} isDark={isDark} league={league} />
 

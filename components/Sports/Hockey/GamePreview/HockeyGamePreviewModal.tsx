@@ -17,7 +17,7 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { BlurView } from "expo-blur";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatPeriod,
@@ -73,10 +73,11 @@ export default function HockeyGamePreviewModal({
     else sheetRef.current?.dismiss();
   }, [visible]);
 
-  const homeCode = homeTeam?.code ?? "";
-  const awayCode = awayTeam?.code ?? "";
-  const homeName = homeTeam?.fullName ?? "";
-  const awayName = awayTeam?.fullName ?? "";
+  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
+  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
+  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
+
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 

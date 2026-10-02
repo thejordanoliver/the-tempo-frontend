@@ -417,7 +417,7 @@ export type Score = {
 
   lastPlay: BaseballPlay | null;
 
-  teamStats: {
+  GameTeamStats: {
     team: any;
     stats: TeamStat[];
   }[];
@@ -528,8 +528,8 @@ export const useBaseballGameDetails = (
 
         setWarning(
           err?.response?.data?.message ??
-          err?.message ??
-          "Unable to refresh game data",
+            err?.message ??
+            "Unable to refresh game data",
         );
       } finally {
         if (!silent) {

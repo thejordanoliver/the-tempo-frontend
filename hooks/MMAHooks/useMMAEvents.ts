@@ -332,7 +332,7 @@ export function useMMAEvents({
     return dayjs(date).format("YYYYMMDD");
   }, [date]);
 
-  const endpoint = useMemo(() => getEndpoint(league), [league]);
+  const endpoint = getEndpoint(league);
 
   const rawEvents = useMemo(() => getRawMMAEvents(data), [data]);
 

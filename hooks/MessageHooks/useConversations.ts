@@ -1,5 +1,5 @@
 import { useMessagesContext } from "contexts/MessagesContext";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import type { MessageItem } from "types/messages";
 
 export const useConversations = (search: string) => {
@@ -12,7 +12,7 @@ export const useConversations = (search: string) => {
     createOrGetConversation,
   } = useMessagesContext();
 
-  const normalizedSearch = useMemo(() => search.trim(), [search]);
+  const normalizedSearch = search.trim();
   const state = getConversationList(normalizedSearch);
 
   useEffect(() => {

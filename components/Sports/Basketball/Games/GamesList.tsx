@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CountdownClock from "@/components/CountdownClock";
 import { BasketballGame } from "@/types/basketball/basketball";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
@@ -7,6 +6,7 @@ import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameC
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
@@ -78,7 +78,7 @@ export default function GamesList({
   const { viewMode } = usePreferences();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [previewGame, setPreviewGame] = useState<BasketballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -286,7 +286,9 @@ export default function GamesList({
               />
             ) : null
           }
-          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.gridListContainer,
+          )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
@@ -319,7 +321,9 @@ export default function GamesList({
             ) : null
           }
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          contentContainerStyle={navigationContentStyle(styles.contentContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.contentContainer,
+          )}
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>

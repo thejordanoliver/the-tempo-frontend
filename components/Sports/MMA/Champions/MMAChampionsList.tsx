@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { MMAChampionListStyles } from "@/styles/MMAChampionsListStyles";
 import type {
   MMAChampionship,
@@ -9,6 +8,7 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import useMMAChampions from "hooks/MMAHooks/useMMAChampions";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useMemo } from "react";
 import {
   FlatList,
@@ -86,7 +86,7 @@ export default function MMAChampionsList() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const styles = MMAChampionListStyles;
 
   const { data, loading, refreshing, error, refreshChampions } =

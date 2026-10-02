@@ -71,11 +71,10 @@ export default function SoccerGamePreviewModal({
   const homeTeam = getSOCCTeam(homeId);
   const awayTeam = getSOCCTeam(awayId);
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
-
-  const awayName = useMemo(() => awayTeam?.name ?? "", [awayTeam?.name]);
-  const homeName = useMemo(() => homeTeam?.name ?? "", [homeTeam?.name]);
+  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
+  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
+  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
 
   const isHomeNational = useMemo(
     () => homeTeam?.isNational,

@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import PillTabs from "@/components/TabBars/PillTabs";
 import type {
   FootballLeaderConfig,
@@ -27,6 +26,7 @@ import { formatStatValue } from "@/utils/stats";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { activeOpacity, Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import React, { useMemo, useState } from "react";
 import {
@@ -41,7 +41,7 @@ import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 export default function RosterStats({
   rosterStats,
-  teamStats,
+  GameTeamStats,
   league,
   loading = false,
   error = null,
@@ -54,7 +54,7 @@ export default function RosterStats({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = rosterStatsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const router = useScopedRouter();
   const roster = useMemo(
     () => getPlayersFromRosterStats(rosterStats),
@@ -362,7 +362,7 @@ export default function RosterStats({
     );
   };
 
-  const renderTeamStatsSection = (
+  const renderGameTeamStatsSection = (
     title: string,
     rows: readonly { label: string; value: string | number }[],
   ) => (
@@ -396,8 +396,8 @@ export default function RosterStats({
     </View>
   );
 
-  const renderTeamStats = () => {
-    if (!teamStats) {
+  const renderGameTeamStats = () => {
+    if (!GameTeamStats) {
       return (
         <View style={styles.center}>
           <Text style={global.emptyText}>No team stats available.</Text>
@@ -405,25 +405,25 @@ export default function RosterStats({
       );
     }
 
-    const categories = buildFootballStatCategories(teamStats);
+    const categories = buildFootballStatCategories(GameTeamStats);
 
     const statsToDisplay = category
       ? categories.filter((statCategory) => statCategory.key === category)
       : categories;
 
     const summaryRows = [
-      { label: "Record", value: teamStats.team.recordSummary },
-      { label: "Standing", value: teamStats.team.standingSummary },
-      { label: "Season", value: teamStats.season.displayName },
+      { label: "Record", value: GameTeamStats.team.recordSummary },
+      { label: "Standing", value: GameTeamStats.team.standingSummary },
+      { label: "Season", value: GameTeamStats.season.displayName },
     ];
 
     return (
       <View style={styles.teamTableContainer}>
-        {!category && renderTeamStatsSection("Team Summary", summaryRows)}
+        {!category && renderGameTeamStatsSection("Team Summary", summaryRows)}
 
         {statsToDisplay.map((cat) => (
           <React.Fragment key={cat.key}>
-            {renderTeamStatsSection(
+            {renderGameTeamStatsSection(
               cat.name,
               cat.stats.map((stat: StatRow) => ({
                 label: stat.displayName,
@@ -444,7 +444,7 @@ export default function RosterStats({
     );
   }
 
-  if (error && !roster.length && !teamStats) {
+  if (error && !roster.length && !GameTeamStats) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
     return (
@@ -454,7 +454,7 @@ export default function RosterStats({
     );
   }
 
-  if (!roster.length && !teamStats) {
+  if (!roster.length && !GameTeamStats) {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.emptyText}>No stats available</Text>
@@ -496,7 +496,7 @@ export default function RosterStats({
           ]}
           pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
         >
-          {renderTeamStats()}
+          {renderGameTeamStats()}
         </View>
       )}
     </ScrollView>

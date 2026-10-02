@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CountdownClock from "@/components/CountdownClock";
 import FootballGamePreviewModal from "@/components/Sports/Football/GamePreview/FootballGamePreviewModal";
 import FootballGameCard from "@/components/Sports/Football/Games/FootballGameCard";
@@ -12,6 +11,7 @@ import HeaderSkeleton from "components/Skeletons/HeaderSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, { useCallback, useMemo, useState } from "react";
 import {
   RefreshControl,
@@ -74,7 +74,7 @@ export default function GamesList({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { viewMode } = usePreferences();
   const [previewGame, setPreviewGame] = useState<FootballGame | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -144,9 +144,17 @@ export default function GamesList({
           }
 
           return (
-            <View key={game.id} style={styles.gridItem}>
-              <FootballSquareGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
-            </View>
+            <LongPressGestureHandler
+              key={game.id}
+              minDurationMs={300}
+              onHandlerStateChange={({ nativeEvent }) => {
+                if (nativeEvent.state === State.ACTIVE) handleLongPress(game);
+              }}
+            >
+              <View style={styles.gridItem}>
+                <FootballSquareGameCard game={game} isNFL={isNFL} isCFB={isCFB} />
+              </View>
+            </LongPressGestureHandler>
           );
         })}
       </View>
@@ -339,7 +347,9 @@ export default function GamesList({
           scrollEnabled={scrollEnabled ?? true}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
-          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.gridListContainer,
+          )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
@@ -385,7 +395,9 @@ export default function GamesList({
           }}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          contentContainerStyle={navigationContentStyle(styles.contentContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.contentContainer,
+          )}
           stickySectionHeadersEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           scrollEnabled={scrollEnabled ?? true}

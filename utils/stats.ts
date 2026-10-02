@@ -1,12 +1,13 @@
 import type {
+  BasketballGameTeamStats as GameTeamStats,
   BasketballTeamStatRow as TeamStatRow,
-  BasketballTeamStats as TeamStats,
 } from "@/types/basketball/stats";
 
-export type { TeamStatRow, TeamStats } from "@/types/basketball/stats";
 export type {
-  BasketballLegacyRosterStatsProps as RosterStatsProps,
+  GameTeamStats,
   BasketballPlayerStats as PlayerStats,
+  BasketballLegacyRosterStatsProps as RosterStatsProps,
+  TeamStatRow,
 } from "@/types/basketball/stats";
 
 // Team Stats
@@ -47,103 +48,109 @@ const formatPercentStat = (value: number | null | undefined): string => {
   return `${value.toFixed(1)}%`;
 };
 
-export const getTeamSummaryRows = (teamStats: TeamStats): TeamStatRow[] => [
+export const getTeamSummaryRows = (
+  GameTeamStats: GameTeamStats,
+): TeamStatRow[] => [
   {
     label: "Team",
-    value: teamStats?.team?.fullName || teamStats?.team?.name || "—",
+    value: GameTeamStats?.team?.fullName || GameTeamStats?.team?.name || "—",
   },
   {
     label: "Record",
-    value: teamStats?.team?.recordSummary || "—",
+    value: GameTeamStats?.team?.recordSummary || "—",
   },
   {
     label: "Standing",
-    value: teamStats?.team?.standingSummary || "—",
+    value: GameTeamStats?.team?.standingSummary || "—",
   },
   {
     label: "Season",
-    value: teamStats?.season?.displayName || "—",
+    value: GameTeamStats?.season?.displayName || "—",
   },
 ];
 
-export const getTeamDisplayAverages = (teamStats: TeamStats): TeamStatRow[] => [
+export const getTeamDisplayAverages = (
+  GameTeamStats: GameTeamStats,
+): TeamStatRow[] => [
   {
     label: "Points Per Game",
-    value: formatFixedStat(teamStats.pointsPerGame),
+    value: formatFixedStat(GameTeamStats.pointsPerGame),
   },
   {
     label: "Rebounds Per Game",
-    value: formatFixedStat(teamStats.reboundsPerGame),
+    value: formatFixedStat(GameTeamStats.reboundsPerGame),
   },
   {
     label: "Assists Per Game",
-    value: formatFixedStat(teamStats.assistsPerGame),
+    value: formatFixedStat(GameTeamStats.assistsPerGame),
   },
   {
     label: "Steals Per Game",
-    value: formatFixedStat(teamStats.stealsPerGame),
+    value: formatFixedStat(GameTeamStats.stealsPerGame),
   },
   {
     label: "Blocks Per Game",
-    value: formatFixedStat(teamStats.blocksPerGame),
+    value: formatFixedStat(GameTeamStats.blocksPerGame),
   },
   {
     label: "Turnovers Per Game",
-    value: formatFixedStat(teamStats.turnoversPerGame),
+    value: formatFixedStat(GameTeamStats.turnoversPerGame),
   },
   {
     label: "Personal Fouls Per Game",
-    value: formatFixedStat(teamStats.foulsPerGame),
+    value: formatFixedStat(GameTeamStats.foulsPerGame),
   },
   {
     label: "Field Goal %",
-    value: formatPercentStat(teamStats.fgPercent),
+    value: formatPercentStat(GameTeamStats.fgPercent),
   },
   {
     label: "3 Point %",
-    value: formatPercentStat(teamStats.tpPercent),
+    value: formatPercentStat(GameTeamStats.tpPercent),
   },
   {
     label: "Free Throw %",
-    value: formatPercentStat(teamStats.ftPercent),
+    value: formatPercentStat(GameTeamStats.ftPercent),
   },
 ];
 
-export const getTeamDisplayTotals = (teamStats: TeamStats): TeamStatRow[] => [
+export const getTeamDisplayTotals = (
+  GameTeamStats: GameTeamStats,
+): TeamStatRow[] => [
   {
     label: "Total Points",
-    value: formatStatValue(teamStats.totalPoints),
+    value: formatStatValue(GameTeamStats.totalPoints),
   },
   {
     label: "Total Rebounds",
-    value: formatStatValue(teamStats.totalRebounds),
+    value: formatStatValue(GameTeamStats.totalRebounds),
   },
   {
     label: "Total Assists",
-    value: formatStatValue(teamStats.totalAssists),
+    value: formatStatValue(GameTeamStats.totalAssists),
   },
   {
     label: "Total Steals",
     value: formatStatValue(
-      Math.round(teamStats.stealsPerGame * teamStats.gamesPlayed),
+      Math.round(GameTeamStats.stealsPerGame * GameTeamStats.gamesPlayed),
     ),
   },
   {
     label: "Total Blocks",
     value: formatStatValue(
-      Math.round(teamStats.blocksPerGame * teamStats.gamesPlayed),
+      Math.round(GameTeamStats.blocksPerGame * GameTeamStats.gamesPlayed),
     ),
   },
   {
     label: "Total Turnovers",
     value: formatStatValue(
-      Math.round(teamStats.turnoversPerGame * teamStats.gamesPlayed),
+      Math.round(GameTeamStats.turnoversPerGame * GameTeamStats.gamesPlayed),
     ),
   },
   {
     label: "Total Fouls",
     value: formatStatValue(
-      Math.round(teamStats.foulsPerGame * teamStats.gamesPlayed),
+      Math.round(GameTeamStats.foulsPerGame * GameTeamStats.gamesPlayed),
     ),
   },
 ];

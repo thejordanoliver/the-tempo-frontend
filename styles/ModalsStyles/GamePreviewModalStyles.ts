@@ -49,7 +49,7 @@ export const GamePreviewModalStyles = ({
       borderTopRightRadius: 20,
     },
     contentContainerStyle: {
-      paddingBottom: 100,
+      paddingBottom: 40,
     },
     headlineText: {
       fontFamily: Fonts.LIGHT,

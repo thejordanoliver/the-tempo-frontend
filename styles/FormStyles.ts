@@ -54,6 +54,17 @@ export const formStyles = (isDark: boolean) => {
       flex: 1,
     },
 
+    credentialsSection: {
+      flexGrow: 1,
+      paddingBottom: SPACING.lg,
+    },
+    credentialsForm: {
+      flexGrow: 1,
+      flexShrink: 0,
+      flexBasis: "auto",
+      paddingVertical: SPACING.md,
+    },
+
     formWrapper: {
       flex: 1,
       justifyContent: "center",

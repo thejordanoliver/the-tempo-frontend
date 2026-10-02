@@ -1,6 +1,6 @@
 import { Venue } from "@/types/types";
-import { useCallback, useEffect, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
 export type StatsByKey = {
@@ -145,12 +145,12 @@ export type TeamStat = {
   displayValue: string;
 };
 
-export type TeamStatsGroup = {
+export type GameTeamStatsGroup = {
   team: StatsTeam;
   stats: TeamStat[];
 };
 
-export type TeamStats = TeamStatsGroup[];
+export type GameTeamStats = GameTeamStatsGroup[];
 
 /* ---------------------------------- */
 /* Play participant types             */
@@ -293,7 +293,7 @@ export type Score = {
   away: Team;
   plays: Play[];
   lastPlay: Play;
-  teamStats: TeamStats;
+  GameTeamStats: GameTeamStats;
   playerStats: PlayerStats;
   leaders: Leaders[];
 };

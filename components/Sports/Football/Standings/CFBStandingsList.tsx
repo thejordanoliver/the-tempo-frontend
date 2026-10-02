@@ -13,7 +13,7 @@ import {
   CFBTeamRank,
   useCFBRankings,
 } from "hooks/FootballHooks/useCFBRankings";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -47,7 +47,7 @@ export const CFBStandingsList = () => {
   const { isFavorite } = useFavoriteTeamsContext();
 
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
   const router = useScopedRouter();

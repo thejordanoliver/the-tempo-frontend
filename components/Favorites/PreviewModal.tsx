@@ -115,9 +115,9 @@ export default function PreviewModal({
         <View style={styles.handleIndicator} />
       </View>
       {logo ? (
-        <Image source={logo} style={styles.teamLogo} resizeMode="contain" />
+        <Image source={logo} style={styles.logo} resizeMode="contain" />
       ) : null}
-      <Text style={styles.teamName}>{name}</Text>
+      <Text style={styles.name}>{name}</Text>
       {established ? (
         <Text style={styles.establishedText}>{established}</Text>
       ) : null}
@@ -151,7 +151,7 @@ export default function PreviewModal({
         style={styles.linearGradient}
       >
         {liquid ? (
-          <GlassView style={styles.blurViewWrapper} glassEffectStyle="clear">
+          <GlassView style={styles.blurViewWrapper} glassEffectStyle="regular">
             {innerContent}
           </GlassView>
         ) : (

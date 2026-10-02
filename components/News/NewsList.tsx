@@ -1,8 +1,8 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { newsListStyles } from "@/styles/NewsStyles/newsListStyles";
 import { globalStyles } from "constants/styles";
 import { NewsArticle } from "hooks/NewsHooks/useLeaguesNews";
-import React, { useRef } from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import React, { useMemo, useRef } from "react";
 import { FlatList, Text, View } from "react-native";
 import NewsCardSkeleton from "../Skeletons/NewsCardSkeleton";
 import NewsCard from "./NewsCard";
@@ -28,7 +28,7 @@ export default function NewsList({
 }: NewsHighlightsListProps) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = newsListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const userHasScrolled = useRef(false);
 
   if (loading) {

@@ -1,6 +1,7 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { GameTeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors } from "constants/styles";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useEffect, useState } from "react";
 import {
   Animated,
@@ -11,7 +12,6 @@ import {
   View,
 } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
-import { TeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 
 const COLLAPSED_ROWS = 5;
 const ROW_HEIGHT = 64;
@@ -182,10 +182,12 @@ export default function GameTeamStats({
 }) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const isScheduled = state === "pre";
-  const styles = TeamStatsStyles(isDark);
+  const styles = GameTeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
-  const [heightAnim] = useState(() => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT));
+  const [heightAnim] = useState(
+    () => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
+  );
 
   useEffect(() => {
     const toValue = expanded ? fullHeight : COLLAPSED_ROWS * ROW_HEIGHT;
@@ -244,7 +246,10 @@ export default function GameTeamStats({
           <Text style={styles.teamLabel}>{homeCode}</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.container}>
+      <ScrollView
+        contentContainerStyle={navigationContentStyle()}
+        style={styles.container}
+      >
         <View
           style={{
             position: "absolute",

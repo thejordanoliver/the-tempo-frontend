@@ -292,7 +292,7 @@ export default function GameLeaders({
   );
 
   const styles = useMemo(() => GameLeadersStyles(isDark), [isDark]);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const tabs = isScheduled ? SEASON_CATEGORIES : GAME_CATEGORIES;
 

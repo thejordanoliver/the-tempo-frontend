@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
@@ -27,7 +28,7 @@ export default function ChampionsTable({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = AwardTableStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const { data, loading, error } = useChampions({
     league,

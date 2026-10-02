@@ -26,11 +26,14 @@ export type LastFiveGameResult = {
 };
 
 export function useLastFiveGames(
-  teamId: number,
+  teamId: number | null | undefined,
   sport: LastFiveGamesSport,
   league: string,
 ) {
-  const requestKey = teamId ? `${sport}:${league}:${teamId}` : null;
+  // Unresolved matchups can contain missing or placeholder (non-positive) IDs.
+  const hasTeam =
+    typeof teamId === "number" && Number.isInteger(teamId) && teamId > 0;
+  const requestKey = hasTeam && league ? `${sport}:${league}:${teamId}` : null;
   const [result, setResult] = useState<{
     requestKey: string;
     games: LastFiveGameResult[];

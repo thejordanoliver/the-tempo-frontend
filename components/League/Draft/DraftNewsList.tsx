@@ -3,7 +3,7 @@ import HeadingThree from "components/Headings/HeadingThree";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useDraft } from "hooks/LeagueHooks/useLeagueDraft";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
@@ -29,7 +29,7 @@ export default function DraftNewsList({ year, league }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = draftNewsList(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const [tickerX] = useState(() => new Animated.Value(0));
   const { draft, loading, error } = useDraft(league, Number(year));
 

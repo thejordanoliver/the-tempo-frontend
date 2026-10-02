@@ -1,10 +1,10 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import HomeAwayTabBar, {
   HomeAwayTabValue,
 } from "@/components/TabBars/HomeAwayTabBar";
 import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { formatPeriod } from "@/utils/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -40,7 +40,7 @@ export default function TeamScoringSummary({
 }: Props) {
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = TeamScoringSummaryStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
 
@@ -103,7 +103,10 @@ export default function TeamScoringSummary({
             </Text>
           </View>
         ) : (
-          <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.listContainer}>
+          <ScrollView
+            contentContainerStyle={navigationContentStyle()}
+            style={styles.listContainer}
+          >
             {filteredPlays.map((play, index) => {
               const period = formatPeriod({
                 period: play.period?.number,

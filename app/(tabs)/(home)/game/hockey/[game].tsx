@@ -1,9 +1,7 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   GameLiveChatOverlay,
   GameLocation,
-  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -18,8 +16,8 @@ import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
 import ShotChart from "@/components/Sports/Hockey/GameDetails/ShotChart";
 import { Colors } from "@/constants/styles";
-import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useHockeyGameDetails } from "@/hooks/HockeyHooks/useHockeyGameDetails";
+import { useLastFiveGames } from "@/hooks/useLastFiveGames";
 import { useLiveVotes } from "@/hooks/useLiveVotes";
 import useTeamDetails from "@/hooks/useTeams";
 import { useVenue } from "@/hooks/useVenue";
@@ -36,6 +34,7 @@ import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";
@@ -160,7 +159,7 @@ export default function GameDetailsScreen(
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
   // const playerStats = score?.playerStats ?? [];
-  const teamStats = score?.teamStats ?? [];
+  const GameTeamStats = score?.GameTeamStats ?? [];
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
@@ -374,7 +373,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={teamStats}
+              stats={GameTeamStats}
               awayName={awayCode}
               awayLogo={awayLogo}
               awayColor={awayColor}

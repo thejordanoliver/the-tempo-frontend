@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "hooks/UserHooks/useAuth";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import type {
   ChatMessageItem,
@@ -72,8 +72,8 @@ export function useLiveGameChat(gameId: string | number) {
   const [isReady, setIsReady] = useState(false);
   const [cacheLoaded, setCacheLoaded] = useState(false);
 
-  const roomId = useMemo(() => String(gameId), [gameId]);
-  const storageKey = useMemo(() => `chat_${roomId}`, [roomId]);
+  const roomId = String(gameId);
+  const storageKey = `chat_${roomId}`;
 
   const currentUserName = user?.username?.trim() || "Anonymous";
   const currentUserProfileImage = normalizeProfileImage(user?.profile_image);

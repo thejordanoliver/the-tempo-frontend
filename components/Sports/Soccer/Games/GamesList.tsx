@@ -1,10 +1,10 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import GameCardSkeleton from "components/Skeletons/GameCards/GameCardSkeleton";
 import SquareGameCardSkeleton from "components/Skeletons/GameCards/SquareGameCardSkeleton";
 import StackedGameCardSkeleton from "components/Skeletons/GameCards/StackedGameCardSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import * as Haptics from "expo-haptics";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
@@ -57,7 +57,7 @@ export default function GamesList({
   const { viewMode } = usePreferences();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = gameListStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [previewGame, setPreviewGame] = useState<any | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -170,7 +170,9 @@ export default function GamesList({
             return <SquareGameCardSkeleton key={item._id} style={itemStyle} />;
           }}
           scrollEnabled={scrollEnabled}
-          contentContainerStyle={navigationContentStyle(styles.skeletonGridWrapper)}
+          contentContainerStyle={navigationContentStyle(
+            styles.skeletonGridWrapper,
+          )}
         />
       );
     }
@@ -234,7 +236,9 @@ export default function GamesList({
           refreshing={refreshing}
           onRefresh={onRefresh}
           scrollEnabled={scrollEnabled}
-          contentContainerStyle={navigationContentStyle(styles.gridListContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.gridListContainer,
+          )}
           ListEmptyComponent={
             <View style={global.emptyContainer}>
               <Text style={global.emptyTitle}>
@@ -255,7 +259,9 @@ export default function GamesList({
           onRefresh={onRefresh}
           stickySectionHeadersEnabled={false}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-          contentContainerStyle={navigationContentStyle(styles.contentContainer)}
+          contentContainerStyle={navigationContentStyle(
+            styles.contentContainer,
+          )}
           scrollEnabled={scrollEnabled}
           ListEmptyComponent={
             <View style={global.emptyContainer}>

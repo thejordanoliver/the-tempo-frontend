@@ -167,21 +167,20 @@ export type MLBPlayoffSeries = {
   label: string;
   bestOf: number;
   teams: MLBPlayoffTeam[];
-  games: {
-    id: string;
-    date: string | null;
-    status: string | null;
-    completed: boolean;
-    homeTeamId: string | null;
-    awayTeamId: string | null;
-    homeScore: number | null;
-    awayScore: number | null;
-  }[];
+  games: MLBPlayoffGame[];
   winnerTeamId: string | null;
+};
+
+export type MLBPlayoffGame = BaseballGame & {
+  series: Omit<MLBPlayoffSeries, "games"> & {
+    gameNumber: number | null;
+  };
 };
 
 export type MLBPlayoffBracketResponse = {
   season: number;
+  count: number;
+  games: MLBPlayoffGame[];
   format: {
     teams: 12;
     teamsPerLeague: 6;
@@ -199,6 +198,7 @@ export type MLBPlayoffBracketResponse = {
 
 export type BaseballGameCardProps = {
   game: BaseballGame;
+  onNavigate?: () => void;
   isMLB?: boolean;
   isSB?: boolean;
   isCB?: boolean;

@@ -163,10 +163,7 @@ export default function EditFavoritesScreen() {
   /**
    * Each tab maintains its own independent search query.
    */
-  const activeSearch = useMemo(
-    () => (selectedTab === "teams" ? teamSearch : sportSearch),
-    [selectedTab, sportSearch, teamSearch],
-  );
+  const activeSearch = selectedTab === "teams" ? teamSearch : sportSearch;
 
   const filteredTeams = useMemo(() => {
     const query = teamSearch.trim().toLowerCase();
@@ -231,15 +228,7 @@ export default function EditFavoritesScreen() {
   /**
    * 3-column phone layout.
    */
-  const itemWidth = useMemo(() => {
-    const numColumns = 3;
-    const containerPadding = 40;
-    const columnGap = 12;
-
-    const totalSpacing = columnGap * (numColumns - 1);
-
-    return (screenWidth - containerPadding - totalSpacing) / numColumns;
-  }, [screenWidth]);
+  const itemWidth = (screenWidth - 40 - 12 * (3 - 1)) / 3;
 
   useLayoutEffect(() => {
     navigation.setOptions({

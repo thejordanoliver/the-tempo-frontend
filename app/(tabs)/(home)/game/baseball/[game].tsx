@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -12,10 +11,6 @@ import {
   safeDate,
   shouldShowGameChat,
 } from "@/utils/dateUtils";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { goBack } from "expo-router/build/global-state/routing";
-import { useLayoutEffect, useMemo } from "react";
-import { ScrollView, View } from "react-native";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
 import GameHeader from "components/Sports/Baseball/GameDetails/GameHeader";
@@ -23,7 +18,6 @@ import {
   FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
-  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -38,13 +32,18 @@ import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getSBTeam, getSBTeamLogo } from "constants/teamsSB";
 import { useNotifications } from "contexts/NotificationContext";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import { goBack } from "expo-router/build/global-state/routing";
 import {
   type BaseballPlay,
   useBaseballGameDetails,
 } from "hooks/BaseballHooks/useBaseballGameDetails";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
+import { useLayoutEffect, useMemo } from "react";
+import { ScrollView, View } from "react-native";
 import { gameDetailsScreenStyles } from "styles/GameDetailStyles/GameDetailsScreenStyles";
 import { BaseballGameCardProps } from "types/baseball/baseball";
 import { formatVenueAddress, getBroadcastDisplay } from "utils/games";
@@ -266,7 +265,7 @@ export default function GameDetailsScreen(
     );
   }, [score?.lastPlay, score?.plays]);
 
-  const teamStats = score?.teamStats ?? [];
+  const GameTeamStats = score?.GameTeamStats ?? [];
   const leaders = score?.leaders ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];
@@ -477,7 +476,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={teamStats}
+              stats={GameTeamStats}
               awayName={awayCode}
               awayLogo={awayLogo}
               awayColor={awayColor}

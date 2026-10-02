@@ -2,6 +2,7 @@ import Button from "@/components/Buttons/Button";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { zodResolver } from "@hookform/resolvers/zod";
+import CredentialRequirements from "components/Forms/CredentialRequirements";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -9,7 +10,7 @@ import { useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useAccountDetails } from "hooks/UserHooks/useAccountDetails";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -17,6 +18,7 @@ import {
   changePasswordSchema,
   type ChangePasswordFormValues,
 } from "schemas/auth/changePasswordSchema";
+import { passwordRules } from "schemas/auth/credentialRules";
 
 const INITIAL_VALUES: ChangePasswordFormValues = {
   currentPassword: "",
@@ -38,7 +40,7 @@ export default function AccountDetailsScreen() {
   const isDark = resolvedColorScheme === "dark";
   const navigation = useNavigation();
   const styles = accountDetailsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const { isLoading, userData, changePassword } = useAccountDetails();
   const {
@@ -84,7 +86,7 @@ export default function AccountDetailsScreen() {
 
       if (
         message === "New password must be different" ||
-        message === "Password must be between 8 and 128 characters"
+        message.startsWith("Password must")
       ) {
         setError("newPassword", { type: "server", message });
         return;
@@ -121,7 +123,9 @@ export default function AccountDetailsScreen() {
 
   return (
     <KeyboardAwareScrollView
-      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
       enableOnAndroid
       extraScrollHeight={20}
       keyboardShouldPersistTaps="handled"
@@ -187,6 +191,11 @@ export default function AccountDetailsScreen() {
               />
             </View>
 
+            <CredentialRequirements
+              title="Password requirements"
+              value={field.value}
+              rules={passwordRules}
+            />
             {fieldState.error?.message && (
               <Text style={styles.fieldErrorText}>
                 {fieldState.error.message}

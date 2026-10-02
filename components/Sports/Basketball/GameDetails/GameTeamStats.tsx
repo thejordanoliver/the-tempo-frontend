@@ -1,17 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { TeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
+import { GameTeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { activeOpacity, Colors } from "constants/styles";
 import { useEffect, useMemo, useState } from "react";
 import type { DimensionValue } from "react-native";
-import {
-  Animated,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
 
 type StatType = "text" | "percent" | "number" | "time";
@@ -41,7 +33,7 @@ type StatGroup = {
   stats?: StatItem[];
 };
 
-export type TeamStatsEntry = {
+export type GameTeamStatsEntry = {
   homeAway?: "home" | "away" | string;
   displayOrder?: number;
   team?: any;
@@ -49,7 +41,7 @@ export type TeamStatsEntry = {
   statistics?: StatItem[] | StatGroup[];
 };
 
-type TeamStatsProps = {
+type GameTeamStatsProps = {
   awayLogo?: any;
   homeLogo?: any;
   awayColor?: string;
@@ -59,8 +51,8 @@ type TeamStatsProps = {
   awayCode?: string;
   homeCode?: string;
   state?: string | null;
-  stats?: TeamStatsEntry[];
-  teamStats?: TeamStatsEntry[];
+  stats?: GameTeamStatsEntry[];
+  GameTeamStats?: GameTeamStatsEntry[];
   isDark: boolean;
   league?: string;
 };
@@ -272,15 +264,18 @@ function getStatConfig(league?: string) {
   return BASKETBALL_STAT_KEYS;
 }
 
-function getTeams(stats?: TeamStatsEntry[], teamStats?: TeamStatsEntry[]) {
+function getTeams(
+  stats?: GameTeamStatsEntry[],
+  GameTeamStats?: GameTeamStatsEntry[],
+) {
   return Array.isArray(stats)
     ? stats
-    : Array.isArray(teamStats)
-      ? teamStats
+    : Array.isArray(GameTeamStats)
+      ? GameTeamStats
       : [];
 }
 
-function getSideTeam(teams: TeamStatsEntry[], side: "away" | "home") {
+function getSideTeam(teams: GameTeamStatsEntry[], side: "away" | "home") {
   return (
     teams.find((team) => team.homeAway === side) ??
     teams.find((team) => {
@@ -301,7 +296,7 @@ function isGroupedStats(
   );
 }
 
-function getFlatStats(team?: TeamStatsEntry) {
+function getFlatStats(team?: GameTeamStatsEntry) {
   if (!team) return [];
   if (Array.isArray(team.stats) && !isGroupedStats(team.stats)) {
     return team.stats;
@@ -312,14 +307,17 @@ function getFlatStats(team?: TeamStatsEntry) {
   return [];
 }
 
-function getGroupedStats(team?: TeamStatsEntry) {
+function getGroupedStats(team?: GameTeamStatsEntry) {
   if (!team) return [];
   if (isGroupedStats(team.stats)) return team.stats;
   if (isGroupedStats(team.statistics)) return team.statistics;
   return [];
 }
 
-function findFlatStat(team: TeamStatsEntry | undefined, config: StatConfig) {
+function findFlatStat(
+  team: GameTeamStatsEntry | undefined,
+  config: StatConfig,
+) {
   const names = [config.key, ...(config.aliases ?? [])];
   return getFlatStats(team).find((stat) => {
     const statNames = [
@@ -333,7 +331,10 @@ function findFlatStat(team: TeamStatsEntry | undefined, config: StatConfig) {
   });
 }
 
-function findGroupedStat(team: TeamStatsEntry | undefined, config: StatConfig) {
+function findGroupedStat(
+  team: GameTeamStatsEntry | undefined,
+  config: StatConfig,
+) {
   if (!config.category) return undefined;
 
   const group = getGroupedStats(team).find((item) => {
@@ -451,8 +452,8 @@ function getBarWidth(value: number, max: number): DimensionValue {
 }
 
 function buildRows(
-  away: TeamStatsEntry | undefined,
-  home: TeamStatsEntry | undefined,
+  away: GameTeamStatsEntry | undefined,
+  home: GameTeamStatsEntry | undefined,
   configs: StatConfig[],
   grouped: boolean,
 ) {
@@ -508,9 +509,9 @@ function buildRows(
     .filter(Boolean) as StatRow[];
 }
 
-export default function TeamStats({
+export default function GameTeamStats({
   stats,
-  teamStats,
+  GameTeamStats,
   state,
   awayLogo,
   homeLogo,
@@ -522,16 +523,18 @@ export default function TeamStats({
   homeCode,
   isDark,
   league,
-}: TeamStatsProps) {
-  const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = TeamStatsStyles(isDark);
+}: GameTeamStatsProps) {
+  const styles = GameTeamStatsStyles(isDark);
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(0);
   const [heightAnim] = useState(
     () => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
   );
 
-  const teams = useMemo(() => getTeams(stats, teamStats), [stats, teamStats]);
+  const teams = useMemo(
+    () => getTeams(stats, GameTeamStats),
+    [stats, GameTeamStats],
+  );
   const away = getSideTeam(teams, "away") ?? teams[0];
   const home = getSideTeam(teams, "home") ?? teams[1];
   const isBaseball = isBaseballLeague(league);
@@ -608,7 +611,7 @@ export default function TeamStats({
   ) => {
     const awayOpacity = row.isTie || row.awayWins ? 1 : 0.4;
     const homeOpacity = row.isTie || row.homeWins ? 1 : 0.4;
-    const patternId = `teamStatsHatch-${renderKey}-${row.id}-${index}`;
+    const patternId = `GameTeamStatsHatch-${renderKey}-${row.id}-${index}`;
 
     return (
       <View key={`${renderKey}-${row.id}`} style={styles.statSection}>
@@ -697,7 +700,7 @@ export default function TeamStats({
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={navigationContentStyle()} style={styles.container}>
+      <View style={styles.container}>
         <View
           style={{
             position: "absolute",
@@ -727,7 +730,7 @@ export default function TeamStats({
             </TouchableOpacity>
           </View>
         ) : null}
-      </ScrollView>
+      </View>
     </View>
   );
 }

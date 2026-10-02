@@ -2,6 +2,7 @@ import { globalStyles } from "@/constants/styles";
 import { Injury } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { FlatList, Text, View } from "react-native";
 import InjuryRow from "./InjuryRow";
+import { useMemo } from "react";
 
 type Props = {
   injuries: Injury[];
@@ -9,7 +10,7 @@ type Props = {
 };
 
 export default function TeamInjuriesList({ injuries, isDark }: Props) {
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   return (
     <FlatList

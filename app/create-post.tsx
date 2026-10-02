@@ -130,7 +130,7 @@ export default function CreatePostScreen() {
 
   const isDark = resolvedColorScheme === "dark";
   const styles = createPostStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const toolbarIconColor = isDark ? Colors.lightGray : Colors.darkGray;
   const toolbarIconActiveColor = isDark ? Colors.dark.blue : Colors.light.blue;

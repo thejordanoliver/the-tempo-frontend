@@ -153,7 +153,7 @@ export default function KeyEvents({
   gameStatusDescription,
 }: Props) {
   const styles = KeyEventsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<SelectedTab>("all");
 

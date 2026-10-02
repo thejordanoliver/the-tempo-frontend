@@ -1,15 +1,15 @@
 // utils/apiClient.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios, { create, isAxiosError } from "axios";
+import { router } from "expo-router";
+import { API_BASE_URL } from "utils/apiConfig";
+import { isRefreshResponseForCurrentSession } from "utils/authSessionRace";
 import {
   clearSecureTokens,
   getSecureAccessToken,
   getSecureRefreshToken,
   saveSecureTokens,
 } from "utils/secureAuthStorage";
-import axios, { create } from "axios";
-import { router } from "expo-router";
-import { API_BASE_URL } from "utils/apiConfig";
-import { isRefreshResponseForCurrentSession } from "utils/authSessionRace";
 import { USER_PROFILE_CACHE_KEY_PREFIX } from "utils/userProfileCache";
 
 export const BASE_URL = API_BASE_URL;
@@ -223,7 +223,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const isTransientRefreshError = (error: any) => {
   const status = error?.response?.status;
 
-  return axios.isAxiosError(error) && (!status || status === 429 || status >= 500);
+  return isAxiosError(error) && (!status || status === 429 || status >= 500);
 };
 
 const getRefreshBackoffMs = (error: any) => {
@@ -247,9 +247,11 @@ apiClient.interceptors.response.use(
     const status = error.response?.status;
     const requestUrl = originalRequest?.url;
 
-    const isAuthError = status === 401 || (status === 403 &&
-      (error.response?.data?.code === "ACCESS_TOKEN_INVALID" ||
-        error.response?.data?.error === "Invalid or expired token"));
+    const isAuthError =
+      status === 401 ||
+      (status === 403 &&
+        (error.response?.data?.code === "ACCESS_TOKEN_INVALID" ||
+          error.response?.data?.error === "Invalid or expired token"));
     const requestPath = getRequestPath(requestUrl);
     const responseError = error.response?.data?.error;
     const isInvalidCurrentPassword =
@@ -275,10 +277,7 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (
-      lastTransientRefreshError &&
-      Date.now() < refreshBackoffUntil
-    ) {
+    if (lastTransientRefreshError && Date.now() < refreshBackoffUntil) {
       return Promise.reject(lastTransientRefreshError);
     }
 
@@ -305,9 +304,13 @@ apiClient.interceptors.response.use(
         throw new Error("No refresh token available");
       }
 
-      const res = await axios.post(`${BASE_URL}/api/refresh`, {
-        refreshToken,
-      }, { timeout: 15_000 });
+      const res = await axios.post(
+        `${BASE_URL}/api/refresh`,
+        {
+          refreshToken,
+        },
+        { timeout: 15_000 },
+      );
 
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         res.data ?? {};
@@ -332,8 +335,12 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       }
 
-      if (typeof newAccessToken !== "string" || !newAccessToken.trim() ||
-          typeof newRefreshToken !== "string" || !newRefreshToken.trim()) {
+      if (
+        typeof newAccessToken !== "string" ||
+        !newAccessToken.trim() ||
+        typeof newRefreshToken !== "string" ||
+        !newRefreshToken.trim()
+      ) {
         throw new Error("Invalid token refresh response");
       }
 
@@ -349,8 +356,13 @@ apiClient.interceptors.response.use(
 
       return apiClient(originalRequest);
     } catch (refreshError) {
-      if (refreshToken != null &&
-          !isRefreshResponseForCurrentSession(refreshToken, await getRefreshToken())) {
+      if (
+        refreshToken != null &&
+        !isRefreshResponseForCurrentSession(
+          refreshToken,
+          await getRefreshToken(),
+        )
+      ) {
         const currentAccessToken = await getAccessToken();
         if (currentAccessToken) {
           processQueue(null, currentAccessToken);

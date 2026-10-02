@@ -47,12 +47,11 @@ export default function CommentThreadScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
   const params = useLocalSearchParams();
   const postId = typeof params.postId === "string" ? params.postId : null;
-
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
   const styles = useMemo(() => commentThreadStyles(isDark), [isDark]);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -107,9 +106,12 @@ export default function CommentThreadScreen() {
       return composerPadding + keyboardHeight;
     }
 
-    return composerPadding + (navigationBarInset > 0
-      ? navigationBarInset + 8
-      : Math.max(insets.bottom, 8));
+    return (
+      composerPadding +
+      (navigationBarInset > 0
+        ? navigationBarInset + 8
+        : Math.max(insets.bottom, 8))
+    );
   }, [
     navigationBarInset,
     insets.bottom,
@@ -370,26 +372,26 @@ export default function CommentThreadScreen() {
     if (comments.length > 0) return null;
 
     return (
-      <View style={styles.emptyCommentsContainer}>
+      <View style={global.emptyContainer}>
         <Ionicons
           name="chatbubble-ellipses-outline"
           size={34}
           color={isDark ? Colors.white : Colors.black}
         />
 
-        <Text style={styles.emptyTitle}>No comments yet</Text>
+        <Text style={global.emptyTitle}>No comments yet</Text>
 
-        <Text style={styles.emptyText}>
+        <Text style={global.emptyText}>
           Start the conversation by writing the first comment.
         </Text>
       </View>
     );
   }, [
-    comments.length,
     isDark,
-    styles.emptyCommentsContainer,
-    styles.emptyText,
-    styles.emptyTitle,
+    comments.length,
+    global.emptyContainer,
+    global.emptyText,
+    global.emptyTitle,
   ]);
 
   useEffect(() => {
@@ -469,9 +471,9 @@ export default function CommentThreadScreen() {
               isDark={isDark}
               currentUserId={currentUserId}
               deletePost={handleDeletePostFromThread}
-              editPost={() => { }}
+              editPost={() => {}}
               onBookmarkChange={updatePost}
-              onImagePress={() => { }}
+              onImagePress={() => {}}
               disableCommentNavigation
             />
           ) : null
@@ -497,7 +499,8 @@ export default function CommentThreadScreen() {
           styles.composerOuter,
           {
             bottom: keyboardVisible ? 0 : navigationBarInset,
-              paddingBottom: keyboardVisible || navigationBarInset > 0
+            paddingBottom:
+              keyboardVisible || navigationBarInset > 0
                 ? 8
                 : Math.max(insets.bottom, 8),
             transform: [
@@ -684,9 +687,6 @@ const commentThreadStyles = (isDark: boolean) =>
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      paddingHorizontal: 24,
-      paddingTop: 64,
-      paddingBottom: 120,
     },
 
     emptyTitle: {

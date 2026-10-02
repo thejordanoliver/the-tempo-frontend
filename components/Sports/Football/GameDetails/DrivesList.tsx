@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { FootballDrive } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
@@ -31,7 +32,7 @@ export default function DrivesList({
   league = "nfl",
 }: Props) {
   const styles = DriveListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   // Normalize
   const safePrevious = Array.isArray(previousDrives) ? previousDrives : [];

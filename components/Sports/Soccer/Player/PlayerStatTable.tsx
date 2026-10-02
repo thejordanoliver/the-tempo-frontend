@@ -419,10 +419,10 @@ const getSelectedTeamOption = (
 
   const selectedTeam = selectedTeamId
     ? teamOptions.find(
-      (team) =>
-        String(team.teamId) === String(selectedTeamId) ||
-        String(team.value) === String(selectedTeamId),
-    )
+        (team) =>
+          String(team.teamId) === String(selectedTeamId) ||
+          String(team.value) === String(selectedTeamId),
+      )
     : null;
 
   return selectedTeam ?? teamOptions[0];
@@ -474,7 +474,7 @@ export default function PlayerStatTable({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -483,7 +483,7 @@ export default function PlayerStatTable({
   const defaultCategory = categoryOptions[0]?.value ?? null;
   const activeCategory =
     selectedCategory &&
-      categoryOptions.some((category) => category.value === selectedCategory)
+    categoryOptions.some((category) => category.value === selectedCategory)
       ? selectedCategory
       : defaultCategory;
 

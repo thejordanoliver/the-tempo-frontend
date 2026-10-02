@@ -1,8 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useMemo } from "react";
 import HeadingThree from "components/Headings/HeadingThree";
 import ResultItemSkeleton from "components/Skeletons/ResultItemSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { FlatList, Keyboard, Text, TouchableOpacity, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem, TeamResult } from "types/explore";
@@ -77,7 +78,7 @@ export default function SearchResultsList({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = exploreStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const trimmedQuery = query.trim();
   const visibleData = showAll ? data : data.slice(0, 5);
@@ -144,7 +145,9 @@ export default function SearchResultsList({
           showRecentsTitle ? <HeadingThree>Recents</HeadingThree> : null
         }
         ListFooterComponent={renderFooter}
-        contentContainerStyle={navigationContentStyle(styles.resultListContainer)}
+        contentContainerStyle={navigationContentStyle(
+          styles.resultListContainer,
+        )}
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
       />

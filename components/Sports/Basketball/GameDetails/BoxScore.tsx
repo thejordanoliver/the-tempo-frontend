@@ -1,9 +1,9 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import {
   Athlete,
   PlayerStats,
 } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import HeadingTwo from "components/Headings/HeadingTwo";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useCallback, useMemo, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -271,7 +271,7 @@ export default function BoxScore({
   const navigationContentStyle = useNavigationBarContentStyle();
   const router = useScopedRouter();
   const styles = BoxScoreStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {},
@@ -448,11 +448,7 @@ export default function BoxScore({
                   <TouchableOpacity
                     activeOpacity={activeOpacity}
                     onPress={() =>
-                      handlePlayerPress(
-                        playerId,
-                        playerTeamId,
-                        league,
-                      )
+                      handlePlayerPress(playerId, playerTeamId, league)
                     }
                   >
                     <Text style={styles.cellName} numberOfLines={1}>

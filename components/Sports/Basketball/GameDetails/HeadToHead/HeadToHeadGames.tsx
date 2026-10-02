@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import HeadToHeadSkeleton from "components/Skeletons/GameDetails/HeadToHeadSkeleton";
 import { globalStyles } from "constants/styles";
@@ -25,7 +26,7 @@ export default function HeadToHeadGames({
   isDark,
 }: Props) {
   const styles = headToHeadStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const homeTeam = getNBATeam(homeTeamId);
   const awayTeam = getNBATeam(awayTeamId);

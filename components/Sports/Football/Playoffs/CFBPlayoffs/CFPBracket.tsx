@@ -4,10 +4,7 @@ import { usePreferences } from "@/contexts/PreferencesContext";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 import type { CFPBracketProps } from "types/football/cfpBracketTypes";
-import {
-  buildCFPBracketData,
-  buildRoundDates,
-} from "utils/cfpBracketUtils";
+import { buildCFPBracketData, buildRoundDates } from "utils/cfpBracketUtils";
 import { CFPBracketCanvas } from "./CFPBracketCanvas";
 import { CFPBracketState } from "./CFPBracketState";
 
@@ -22,7 +19,7 @@ export function CFPBracket({
 }: CFPBracketProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const data = useMemo(() => buildCFPBracketData(games), [games]);
   const roundDates = useMemo(() => buildRoundDates(games), [games]);
 

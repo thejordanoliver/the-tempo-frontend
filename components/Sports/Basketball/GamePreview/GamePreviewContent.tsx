@@ -1,17 +1,15 @@
 import {
+  BoxScore,
+  GameLeaders,
   GameLocation,
   GameTeamStats,
   HeadCoaches,
   Highlights,
+  LastFiveGames,
   LineScore,
   MatchupPredictor,
+  Officials,
 } from "@/components/Sports/Basketball/GameDetails";
-import BoxScore from "@/components/Sports/Basketball/GameDetails/BoxScore";
-import GameLeaders from "@/components/Sports/Basketball/GameDetails/GameLeaders";
-import LastFiveGames, {
-  LastFiveGame,
-} from "@/components/Sports/Basketball/GameDetails/LastFiveGames";
-import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import { Official } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { Coach } from "@/hooks/useTeams";
 import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
@@ -19,6 +17,7 @@ import { Highlight } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React from "react";
 import { View } from "react-native";
+import { LastFiveGame } from "../GameDetails/LastFiveGames";
 
 type GamePreviewContentProps = {
   homeId: any;
@@ -47,7 +46,6 @@ type GamePreviewContentProps = {
   highlights: Highlight[];
   homeCoach: Coach | undefined | null;
   awayCoach: Coach | undefined | null;
-  error?: string | null;
   leaders: any;
   venueImage?: any;
   venueName?: string;

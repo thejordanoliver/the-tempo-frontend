@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -27,9 +26,9 @@ import { isGameFinalStatus } from "@/utils/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import {
   FanPrediction,
+  GameTeamStats,
   GameLiveChatOverlay,
   GameLocation,
-  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -43,6 +42,7 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
 import { useLayoutEffect, useMemo } from "react";

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import SeasonStatCardLayout, {
   type SeasonStatItem,
 } from "@/components/Player/SeasonStatCardLayout";
@@ -8,8 +9,8 @@ import SeasonStatCardSkeleton from "components/Skeletons/SeasonStatCardSkeleton"
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Text, View } from "react-native";
-import { getFootballSeason } from "utils/dateUtils";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
+import { getFootballSeason } from "utils/dateUtils";
 
 type Props = {
   position: string;
@@ -207,7 +208,7 @@ export default function SeasonStatCard({
 }: Props) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (!isActive) return null;
 

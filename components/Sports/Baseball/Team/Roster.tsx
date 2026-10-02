@@ -8,6 +8,7 @@ import { RefreshControl, SectionList, Text, View } from "react-native";
 import { RosterStyles } from "styles/TeamStyles/RosterStyles";
 import type { RosterSection, SupportedRosterLeague } from "types/roster";
 import { PlayerCard } from "../../Basketball/Player/PlayerCard";
+import { useMemo } from "react";
 export type { SupportedRosterLeague } from "types/roster";
 
 interface RosterProps {
@@ -29,7 +30,7 @@ export default function Roster({
 }: RosterProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = RosterStyles;
   const tintColor = isDark ? Colors.white : Colors.black;
@@ -62,7 +63,10 @@ export default function Roster({
       initialNumToRender={12}
       maxToRenderPerBatch={10}
       windowSize={7}
-      contentContainerStyle={navigationContentStyle([styles.contentContainer, { gap: 0 }])}
+      contentContainerStyle={navigationContentStyle([
+        styles.contentContainer,
+        { gap: 0 },
+      ])}
       renderSectionHeader={({ section }) => (
         <HeadingTwo isDark={isDark}>{section.title}</HeadingTwo>
       )}

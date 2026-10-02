@@ -90,7 +90,7 @@ export const CBStandingsList = ({ league }: Props) => {
   const router = useScopedRouter();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const primaryPollKey = useMemo(() => {
     if (league === "sb" && isRankPoll(rankingsByKey.d1SoftballPoll)) {

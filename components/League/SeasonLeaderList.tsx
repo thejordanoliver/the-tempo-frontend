@@ -1,10 +1,11 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useMemo } from "react";
 import { PlayerCard } from "@/components/Sports/Basketball/Player/PlayerCard";
 import { globalStyles } from "@/constants/styles";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { SeasonLeaderCategory } from "@/types/stats";
 import PlayerCardSkeletonList from "components/Skeletons/PlayerCardListSkeleton";
 import { Link, useSegments } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { leadersListStyles } from "styles/LeagueStyles/LeadersListStyles";
@@ -51,11 +52,13 @@ export default function SeasonLeadersList({
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = leadersListStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   if (loading) {
     return (
-      <ScrollView contentContainerStyle={navigationContentStyle(styles.skeletonList)}>
+      <ScrollView
+        contentContainerStyle={navigationContentStyle(styles.skeletonList)}
+      >
         <PlayerCardSkeletonList />
       </ScrollView>
     );
@@ -72,7 +75,9 @@ export default function SeasonLeadersList({
   return (
     <FlatList
       data={categories}
-      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
       keyExtractor={(item) => item.categoryName}
       renderItem={({ item }) => {
         if (!item.leaders || item.leaders.length === 0) {

@@ -1,4 +1,4 @@
-import { useBadgeNotifications } from "@/hooks/ForumHooks/useBadgeNotifications";
+import { useForumMediaLike } from "hooks/ForumHooks/useForumMediaLike";
 import { supportsLiquidGlass } from "@/utils/glass";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
@@ -22,14 +22,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLikesStore } from "store/useLikesStore";
 import type {
   ForumDisplayMediaItem,
-  ForumLikeMutationResponse,
-  ForumPost,
   ForumPostImagesModalProps,
 } from "types/forum";
-import { apiClient, BASE_URL } from "utils/apiClient";
+import { BASE_URL } from "utils/apiClient";
 import AppVideo from "../AppVideo";
 const screenWidth = Dimensions.get("window").width;
 const COLLAPSED_LINES = 3;
@@ -72,69 +69,15 @@ export default function PostImagesModal({
   const [captionVisible, setCaptionVisible] = useState(true);
   const [captionOpacity] = useState(() => new Animated.Value(1));
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
-  const [likePending, setLikePending] = useState(false);
-  const { likes, setLike } = useLikesStore();
-  const likeState = likes[postId];
-  const { handleBadgeAwards } = useBadgeNotifications();
+  const { liked, likeCount, likePending, toggleLikePress } = useForumMediaLike({
+    postId, likedByCurrentUser, likesCount, postAuthorUserId, currentUserId,
+  });
   const liquid = supportsLiquidGlass();
 
   const fullProfileImageUri =
     profileImage && !profileImage.startsWith("http")
       ? `${BASE_URL}${profileImage}`
       : profileImage;
-
-  /* -------------------- Likes -------------------- */
-
-  useEffect(() => {
-    if (!likeState && postId) {
-      setLike(postId, likedByCurrentUser, likesCount);
-    }
-  }, [likeState, likedByCurrentUser, likesCount, postId, setLike]);
-
-  const liked = likeState?.liked ?? likedByCurrentUser;
-  const likeCount = likeState?.count ?? likesCount;
-
-  const toggleLikePress = async () => {
-    if (!postId || likePending) return;
-
-    const nextLiked = !liked;
-    const optimisticCount = Math.max(likeCount + (liked ? -1 : 1), 0);
-
-    setLike(postId, nextLiked, optimisticCount);
-    setLikePending(true);
-
-    try {
-      const response = await apiClient.patch<
-        ForumLikeMutationResponse<Partial<ForumPost>>
-      >(`/api/forum/post/${postId}/like`, {
-        like: nextLiked,
-      });
-
-      const serverPost = response.data.post;
-
-      setLike(
-        postId,
-        typeof serverPost?.liked_by_current_user === "boolean"
-          ? serverPost.liked_by_current_user
-          : nextLiked,
-        typeof serverPost?.likes === "number"
-          ? serverPost.likes
-          : optimisticCount,
-      );
-
-      if (currentUserId != null && currentUserId === postAuthorUserId) {
-        handleBadgeAwards(response.data.newlyAwardedBadges);
-      } else if (__DEV__ && response.data.newlyAwardedBadges?.length) {
-        console.warn(
-          "Ignoring badge awards returned for a post author on another user's device.",
-        );
-      }
-    } catch {
-      setLike(postId, liked, likeCount);
-    } finally {
-      setLikePending(false);
-    }
-  };
 
   /* -------------------- Open / Close Animation -------------------- */
 

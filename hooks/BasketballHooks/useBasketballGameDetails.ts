@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
+import { useCallback, useEffect, useState } from "react";
 import { Highlight, Venue } from "types/types";
 import { apiClient } from "utils/apiClient";
 import { Official, TeamInjury } from "../FootballHooks/useFootballGameDetails";
@@ -108,12 +108,12 @@ export type TeamStat = {
   displayValue: string;
 };
 
-export type TeamStatsGroup = {
+export type teamStatsGroup = {
   team: StatsTeam;
   stats: TeamStat[];
 };
 
-export type TeamStats = TeamStatsGroup[];
+export type teamStats = teamStatsGroup[];
 
 export type FoulTroubleTeam = {
   id: number;
@@ -277,10 +277,10 @@ export type LeadersType = {
 export type GameStatus = {
   id: string;
   name:
-  | "STATUS_SCHEDULED"
-  | "STATUS_IN_PROGRESS"
-  | "STATUS_HALFTIME"
-  | "STATUS_FINAL";
+    | "STATUS_SCHEDULED"
+    | "STATUS_IN_PROGRESS"
+    | "STATUS_HALFTIME"
+    | "STATUS_FINAL";
   state: "pre" | "in" | "post";
   completed: boolean;
   gameStatusDescription: string;
@@ -306,7 +306,7 @@ export type Score = {
   away: Team;
   plays: Play[];
   lastPlay: Play;
-  teamStats: TeamStats;
+  teamStats: teamStats;
   playerStats: PlayerStats;
   leaders: LeadersType[];
   foulTrouble?: FoulTrouble[];
@@ -335,10 +335,10 @@ export type BasketballGameDetailsResponse = {
 export type DateParam =
   | string
   | {
-    date?: string;
-    utc?: string;
-    timestamp?: number;
-  };
+      date?: string;
+      utc?: string;
+      timestamp?: number;
+    };
 
 /* ---------------------------------- */
 /* Hook                               */

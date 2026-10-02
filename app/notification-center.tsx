@@ -1,4 +1,4 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { CustomHeader } from "@/components/CustomHeader";
 import { GameNotificationTeamLogos } from "@/components/Notifications/GameNotificationTeamLogos";
@@ -18,11 +18,13 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistance } from "date-fns/formatDistance";
 import { Image } from "expo-image";
-import { Href, useNavigation, useSegments } from "expo-router";
+import { Href, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import {
   memo,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -256,11 +258,11 @@ export default function NotificationsCenter() {
   const emptyStateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const styles = NotificationsCenterStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const insets = useSafeAreaInsets();
-  const segments = useSegments();
-  const bottomInset = segments[0] === "(tabs)" ? 0 : insets.bottom;
+  const navigationBarInset = useContext(NavigationBarInsetContext);
+  const bottomInset = navigationBarInset > 0 ? 0 : insets.bottom;
   const navigation = useNavigation();
   const router = useScopedRouter();
 
@@ -529,10 +531,13 @@ export default function NotificationsCenter() {
         }}
         onEndReachedThreshold={0.35}
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={navigationContentStyle([
+        contentContainerStyle={isSelectionMode ? [
           styles.container,
           visibleNotifications.length === 0 && styles.emptyContainer,
-          { paddingBottom: 20 + (isSelectionMode ? 0 : bottomInset) },
+        ] : navigationContentStyle([
+          styles.container,
+          visibleNotifications.length === 0 && styles.emptyContainer,
+          { paddingBottom: 20 + bottomInset },
         ])}
         showsVerticalScrollIndicator={false}
       />
@@ -541,7 +546,10 @@ export default function NotificationsCenter() {
         <Animated.View
           entering={FadeInDown.duration(180)}
           exiting={FadeOutDown.duration(140)}
-          style={[styles.selectionToolbar, { paddingBottom: 12 + bottomInset }]}
+          style={[styles.selectionToolbar, {
+            paddingBottom: 12 + bottomInset,
+            marginBottom: navigationBarInset,
+          }]}
         >
           <Pressable
             disabled={selectedCount === 0}

@@ -22,7 +22,7 @@ import {
 } from "constants/teamsWCBB";
 import { useFavoriteTeamsContext } from "contexts/FavoriteTeamsContext";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   FlatList,
   Image,
@@ -45,7 +45,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
   const router = useScopedRouter();
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = StandingsStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const { isFavorite } = useFavoriteTeamsContext();
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "wcbb";

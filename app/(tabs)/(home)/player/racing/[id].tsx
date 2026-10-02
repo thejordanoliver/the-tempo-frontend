@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import PlayerHeader from "@/components/Sports/Soccer/Player/PlayerHeader";
 import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
@@ -6,7 +5,8 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useLayoutEffect } from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useMemo, useLayoutEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 
@@ -20,7 +20,7 @@ export default function PlayerDetailScreen() {
   const styles = playerScreenStyles;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const playerId = Number(id);
   const { player, loading, error } = usePlayerById(playerId, league);
@@ -57,7 +57,9 @@ export default function PlayerDetailScreen() {
 
   return (
     <ScrollView
-      contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
       contentInsetAdjustmentBehavior="automatic"
     >
       <PlayerHeader player={player} isDark={isDark} />

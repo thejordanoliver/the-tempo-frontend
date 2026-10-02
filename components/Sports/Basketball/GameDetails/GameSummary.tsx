@@ -1,4 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { Team } from "@/types/football/football";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
@@ -8,6 +7,7 @@ import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getWCBBTeamLogo, wcbbTeams } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
@@ -102,7 +102,7 @@ export default function GameSummary({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = gameSummaryStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const periodMap: Record<string, string> = {
     1: "1st",

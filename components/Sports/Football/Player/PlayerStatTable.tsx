@@ -660,7 +660,7 @@ export default function PlayerStatTable({
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = statsTableStyles(isDark);
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const hasCollegeStats = league === "nfl" && collegeData.length > 0;
 
@@ -822,50 +822,49 @@ export default function PlayerStatTable({
   const shouldShowCategoryDropdown =
     visibleData.length > 0 && availableGroups.length > 0 && statKeys.length > 0;
 
-const renderHeader = () => (
-  <>
-    <View style={styles.statsHeader}>
+  const renderHeader = () => (
+    <>
+      <View style={styles.statsHeader}>
         <HeadingTwo isDark={isDark}>Career Stats</HeadingTwo>
-      <View style={styles.statsHeaderTopRow}>
+        <View style={styles.statsHeaderTopRow}>
+          <View style={styles.filtersRow}>
+            {showCareerViewTabs ? (
+              <Dropdown
+                options={CAREER_VIEW_OPTIONS}
+                selectedValue={activeCareerView}
+                onSelect={(value) =>
+                  setSelectedCareerView(value as CareerViewTab)
+                }
+                isDark={isDark}
+                style={[styles.filterDropdown, styles.careerDropdown]}
+              />
+            ) : null}
 
-        <View style={styles.filtersRow}>
-          {showCareerViewTabs ? (
-            <Dropdown
-              options={CAREER_VIEW_OPTIONS}
-              selectedValue={activeCareerView}
-              onSelect={(value) =>
-                setSelectedCareerView(value as CareerViewTab)
-              }
-              isDark={isDark}
-              style={[styles.filterDropdown, styles.careerDropdown]}
-            />
-          ) : null}
-
-          {shouldShowCategoryDropdown ? (
-            <Dropdown
-              options={availableGroups.map((group) => ({
-                label: group,
-                value: group,
-              }))}
-              selectedValue={activeGroup}
-              onSelect={setSelectedGroup}
-              isDark={isDark}
-              style={[styles.filterDropdown, styles.categoryDropdown]}
-            />
-          ) : null}
+            {shouldShowCategoryDropdown ? (
+              <Dropdown
+                options={availableGroups.map((group) => ({
+                  label: group,
+                  value: group,
+                }))}
+                selectedValue={activeGroup}
+                onSelect={setSelectedGroup}
+                isDark={isDark}
+                style={[styles.filterDropdown, styles.categoryDropdown]}
+              />
+            ) : null}
+          </View>
         </View>
       </View>
-    </View>
 
-    {showSeasonTypeTabs ? (
-      <PillTabs
-        tabs={SEASON_TYPE_TABS}
-        selectedValue={selectedSeasonType}
-        onChange={setSelectedSeasonType}
-      />
-    ) : null}
-  </>
-);
+      {showSeasonTypeTabs ? (
+        <PillTabs
+          tabs={SEASON_TYPE_TABS}
+          selectedValue={selectedSeasonType}
+          onChange={setSelectedSeasonType}
+        />
+      ) : null}
+    </>
+  );
   if (loading) {
     return (
       <View style={styles.container}>

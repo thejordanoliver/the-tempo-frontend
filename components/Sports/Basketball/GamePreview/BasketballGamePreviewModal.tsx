@@ -15,7 +15,7 @@ import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 import {
   formatDate,
@@ -107,13 +107,10 @@ export default function GamePreviewModal({
             ? getGLeagueTeam(awayId)
             : getNBATeam(awayId);
 
-  const homeCode = homeTeam?.code ?? home?.code ?? "";
-  const awayCode = awayTeam?.code ?? away?.code ?? "";
-
-  const awayName =
-    awayTeam?.fullName ?? awayTeam?.name ?? away?.name ?? "Away Team";
-  const homeName =
-    homeTeam?.fullName ?? homeTeam?.name ?? home?.name ?? "Home Team";
+  const awayCode = useMemo(() => awayTeam?.code ?? "TBD", [awayTeam?.code]);
+  const homeCode = useMemo(() => homeTeam?.code ?? "TBD", [homeTeam?.code]);
+  const awayName = useMemo(() => awayTeam?.name ?? "TBD", [awayTeam?.name]);
+  const homeName = useMemo(() => homeTeam?.name ?? "TBD", [homeTeam?.name]);
 
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;

@@ -75,7 +75,7 @@ const FAVORITES_SNAP_ANIMATION = {
 };
 
 const FAVORITE_NAVIGATION_LOCK_MS = 750;
-const FAVORITE_DRAG_ACTIVATION_DISTANCE = 16;
+const FAVORITE_DRAG_ACTIVATION_DISTANCE = 24;
 
 type FavoriteDragAnimationValues = Parameters<
   NonNullable<DraggableFlatListProps<FavoriteItem>["onAnimValInit"]>
@@ -661,6 +661,10 @@ export default function FavoritesScroll({
         onTouchStart={handleInteractionStart}
         onTouchEnd={handleInteractionEnd}
         onTouchCancel={handleInteractionEnd}
+        onScrollBeginDrag={handleInteractionStart}
+        onScrollEndDrag={handleInteractionEnd}
+        onMomentumScrollBegin={handleInteractionStart}
+        onMomentumScrollEnd={handleInteractionEnd}
         onDragBegin={handleDragBegin}
         onDragEnd={handleDragEnd}
         onAnimValInit={handleAnimationValuesInit}

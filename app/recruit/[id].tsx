@@ -1,5 +1,3 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import PredictionRing from "@/components/League/Recruiting/PredictionRing";
@@ -11,6 +9,8 @@ import { Colors, globalStyles } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { useLayoutEffect, useMemo } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
@@ -27,7 +27,7 @@ export default function RecruitDetailScreen() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = playerScreenStyles;
-  const global = globalStyles(isDark);
+  const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { data: player, loading, error } = useRecruit(recruitId, league);
   const team = league === "cfb" ? getCFBTeam(teamId) : getCBBTeam(teamId);
@@ -113,7 +113,11 @@ export default function RecruitDetailScreen() {
     Boolean(predictionTeamId);
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle(styles.contentContainerStyle)}>
+    <ScrollView
+      contentContainerStyle={navigationContentStyle(
+        styles.contentContainerStyle,
+      )}
+    >
       <RecruitHeader player={player} isDark={isDark} />
 
       {shouldShowPrediction && predictionTeamId && (
