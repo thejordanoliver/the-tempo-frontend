@@ -1,15 +1,17 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { useFocusEffect, useNavigation } from "expo-router";
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { View } from "react-native";
+import Button from "@/components/Buttons/Button";
 import { CustomHeader } from "components/CustomHeader";
 import AddWidgetModal from "components/Explore/AddWidgetModal";
 import ExploreWidgetDashboard from "components/Explore/ExploreWidgetDashboard";
 import SearchResultsList from "components/Explore/SearchResultsList";
+import { globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { useExplore } from "hooks/ExploreHooks/useExplore";
 import { useExploreSearchState } from "hooks/ExploreHooks/useExploreSearchState";
 import { useExploreWidgets } from "hooks/ExploreHooks/useExploreWidgets";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Text, View } from "react-native";
 import { exploreStyles } from "styles/ExploreStyles/ExploreStyles";
 import type { ResultItem } from "types/explore";
 import { getExploreRouteForResult } from "utils/exploreNavigation";
@@ -24,6 +26,7 @@ export default function ExplorePage() {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = exploreStyles(isDark);
+  const global = globalStyles(isDark);
 
   const {
     query,
@@ -46,6 +49,11 @@ export default function ExplorePage() {
   const {
     widgets,
     widgetsReady,
+    settingsError,
+    settingsPending,
+    settingsConflict,
+    refreshSettings,
+    reloadAccountSettings,
     games: widgetGames,
     loading: widgetsLoading,
     refreshing: widgetsRefreshing,
@@ -67,7 +75,8 @@ export default function ExplorePage() {
   useFocusEffect(
     useCallback(() => {
       void ensureWidgetData();
-    }, [ensureWidgetData]),
+      void refreshSettings();
+    }, [ensureWidgetData, refreshSettings]),
   );
 
   useFocusEffect(
@@ -162,6 +171,30 @@ export default function ExplorePage() {
 
   return (
     <View style={styles.container}>
+      {!searchVisible && (settingsError || settingsPending) && (
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <Text accessibilityLiveRegion="polite" style={global.emptyText}>
+            {settingsError ?? "Saving widget settings…"}
+          </Text>
+          {settingsError && (
+            <Button
+              isDark={isDark}
+              onPress={() => {
+                if (settingsConflict) {
+                  void reloadAccountSettings();
+                } else {
+                  void refreshSettings();
+                }
+              }}
+              variant={"outline"}
+            >
+              {settingsConflict
+                ? "Discard local edits and reload account settings"
+                : "Retry sync"}
+            </Button>
+          )}
+        </View>
+      )}
       {!searchVisible ? (
         <ExploreWidgetDashboard
           isDark={isDark}

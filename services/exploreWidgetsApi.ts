@@ -1,3 +1,7 @@
+import { isExploreWidgetType } from "constants/exploreWidgets";
+import { normalizeStoredWidgets } from "utils/exploreWidgetStorage";
+import type { WidgetSettings } from "utils/exploreWidgetSync";
+import type { ExploreWidgetConfig } from "types/widgets";
 import type {
   ExploreWidgetLeague,
   ExploreWidgetsResponse,
@@ -65,4 +69,33 @@ export async function getExploreWidgets({
   }
 
   return response.data;
+}
+
+
+const WIDGET_SETTINGS_ENDPOINT = "/api/widgets/explore/settings";
+
+function parseWidgetSettingsResponse(value: unknown): WidgetSettings | null {
+  if (!isRecord(value) || !("settings" in value)) throw new Error("Invalid widget settings response");
+  if (value.settings === null) return null;
+  const settings = value.settings;
+  if (!isRecord(settings) || settings.schemaVersion !== 2 ||
+    !Number.isSafeInteger(settings.revision) || Number(settings.revision) <= 0 ||
+    typeof settings.updatedAt !== "string" || !Array.isArray(settings.widgets) ||
+    settings.widgets.some((widget) => !isRecord(widget) || !isExploreWidgetType(widget.type))) {
+    throw new Error("Unsupported widget settings response. Update the app and try again.");
+  }
+  return { schemaVersion: 2, revision: Number(settings.revision), updatedAt: settings.updatedAt,
+    widgets: normalizeStoredWidgets({ version: 2, widgets: settings.widgets }) };
+}
+
+export async function getExploreWidgetSettings(signal?: AbortSignal): Promise<WidgetSettings | null> {
+  const response = await apiClient.get<unknown>(WIDGET_SETTINGS_ENDPOINT, { signal, timeout: 15000 });
+  return parseWidgetSettingsResponse(response.data);
+}
+
+export async function saveExploreWidgetSettings(widgets: ExploreWidgetConfig[], revision: number, signal?: AbortSignal): Promise<WidgetSettings> {
+  const response = await apiClient.put<unknown>(WIDGET_SETTINGS_ENDPOINT, { schemaVersion: 2, widgets, revision }, { signal, timeout: 15000 });
+  const settings = parseWidgetSettingsResponse(response.data);
+  if (!settings) throw new Error("Missing saved widget settings");
+  return settings;
 }

@@ -31,6 +31,11 @@ import { useFavoriteTeamsContext } from "./FavoriteTeamsContext";
 type ExploreWidgetsContextValue = {
   widgets: ExploreWidgetConfig[];
   widgetsReady: boolean;
+  settingsError: string | null;
+  settingsPending: boolean;
+  settingsConflict: boolean;
+  refreshSettings: () => Promise<void>;
+  reloadAccountSettings: () => Promise<void>;
   games: ExploreWidgetGame[];
   loading: boolean;
   refreshing: boolean;
@@ -107,6 +112,11 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
   const {
     widgets,
     ready: widgetsReady,
+    settingsError,
+    settingsPending,
+    settingsConflict,
+    refreshSettings,
+    reloadAccountSettings,
     addWidget,
     removeWidget,
     resizeWidget,
@@ -372,6 +382,11 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
     () => ({
       widgets,
       widgetsReady,
+      settingsError,
+      settingsPending,
+      settingsConflict,
+      refreshSettings,
+      reloadAccountSettings,
       games,
       loading,
       refreshing,
@@ -408,6 +423,11 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       setStandingsLeague,
       widgets,
       widgetsReady,
+      settingsError,
+      settingsPending,
+      settingsConflict,
+      refreshSettings,
+      reloadAccountSettings,
     ],
   );
 

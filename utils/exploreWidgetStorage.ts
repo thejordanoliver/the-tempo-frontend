@@ -1,3 +1,4 @@
+import type { WidgetSettingsCache } from "./exploreWidgetSync";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getDefaultWidgetSize,
@@ -71,6 +72,12 @@ export function createExploreWidgetId(type: ExploreWidgetConfig["type"]) {
 }
 
 export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const version = (value as StoredExploreWidgetsPayload).version;
+    if (version !== undefined && version !== 1 && version !== EXPLORE_WIDGETS_SCHEMA_VERSION) {
+      throw new Error("Unsupported widget settings version");
+    }
+  }
   let rawWidgets: unknown[] = [];
 
   if (Array.isArray(value)) {
@@ -186,7 +193,7 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
             ? widget.title
             : getWidgetTitle(type),
         createdAt,
-        size: isExploreWidgetSize(widget.size)
+        size: type === "create_post" ? "small" : isExploreWidgetSize(widget.size)
           ? widget.size
           : getDefaultWidgetSize(type),
         order:
@@ -258,4 +265,21 @@ export async function saveExploreWidgetsForUser(
 
 export async function cleanupLegacyExploreWidgetsKey() {
   await AsyncStorage.removeItem(EXPLORE_WIDGETS_LEGACY_KEY);
+}
+
+export async function loadExploreWidgetSettingsCache(userId: string): Promise<WidgetSettingsCache | null> {
+  const stored = await AsyncStorage.getItem(getExploreWidgetsKey(userId));
+  if (stored === null) return null;
+  const value: unknown = JSON.parse(stored);
+  if (!value || typeof value !== "object" || (!Array.isArray(value) && !Array.isArray((value as { widgets?: unknown }).widgets))) {
+    throw new Error("Invalid saved widget settings");
+  }
+  const metadata = value as Partial<WidgetSettingsCache>;
+  if (metadata.revision !== undefined && metadata.revision !== null &&
+    (!Number.isSafeInteger(metadata.revision) || metadata.revision < 0)) throw new Error("Invalid saved revision");
+  return { version: 2, widgets: normalizeStoredWidgets(value), revision: metadata.revision ?? null, pending: metadata.pending === true };
+}
+
+export async function saveExploreWidgetSettingsCache(userId: string, cache: WidgetSettingsCache) {
+  await AsyncStorage.setItem(getExploreWidgetsKey(userId), JSON.stringify(cache));
 }

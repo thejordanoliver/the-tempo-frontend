@@ -96,3 +96,8 @@ test("accepts UFL and college baseball Favorite Games selections", () => {
 
   assert.deepEqual(widgets[0].favoriteGameLeagues, ["cb", "ufl"]);
 });
+
+
+test("rejects future schema versions instead of dropping settings", () => {
+  assert.throws(() => normalizeStoredWidgets({ version: EXPLORE_WIDGETS_SCHEMA_VERSION + 1, widgets: [] }), /Unsupported/);
+});
