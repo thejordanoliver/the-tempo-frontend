@@ -149,7 +149,7 @@ const NotificationBannerContext = createContext<{
 
 const inferSport = (leagueInput: string): NotificationTeamSport => {
   const league = leagueInput.toLowerCase();
-  if (["nba", "wnba", "cbb", "wcbb", "gleague"].includes(league))
+  if (["nba", "wnba", "mcbb", "wcbb", "gleague"].includes(league))
     return "basketball";
   if (["nfl", "cfb", "ufl"].includes(league)) return "football";
   if (

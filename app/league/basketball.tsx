@@ -50,7 +50,7 @@ import { NBAPlayoffBracket } from "../../components/Sports/Basketball/Playoffs/N
 import { useNBAPlayoffGames } from "../../hooks/NBAHooks/useNBAPlayoffGames";
 
 /* -------------------------------------------------------------------------- */
-/*                                     CBB/WCBB                                    */
+/*                                     MCBB/WCBB                                    */
 /* -------------------------------------------------------------------------- */
 
 import ConferenceListModal, {
@@ -62,12 +62,12 @@ import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceSta
 import { usePagerTabScrollProgress } from "@/hooks/usePagerTabScrollProgress";
 import { useLeagueFavoriteHeader } from "@/hooks/UserHooks/useLeagueFavoriteHeader";
 import SeasonLeadersList from "../../components/League/SeasonLeaderList";
-import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/CBBTournament/TournamentTreeBracket";
-import { CBBStandingsList } from "../../components/Sports/Basketball/Standings/CBBStandingsList";
-import { getCBBConferenceSelectionName } from "../../constants/conferences/cbbConferences";
+import TournamentTreeBracket from "../../components/Sports/Basketball/Playoffs/MCBBTournament/TournamentTreeBracket";
+import { MCBBStandingsList } from "../../components/Sports/Basketball/Standings/MCBBStandingsList";
+import { getMCBBConferenceSelectionName } from "../../constants/conferences/mcbbConferences";
 import { useSeasonLeaders } from "../../hooks/LeagueHooks/useSeasonLeaders";
 import {
-  getCBBSeason,
+  getMCBBSeason,
   getNBACalendarSeason,
   getNBASeason,
   getRecruitYear,
@@ -105,12 +105,12 @@ export default function BasketballLeagueScreen() {
   const league = params.league;
 
   const isWNBA = league === "wnba";
-  const isCBB = league === "cbb";
+  const isMCBB = league === "mcbb";
   const isWCBB = league === "wcbb";
   const isGLEAGUE = league === "gleague";
 
-  if (isCBB) {
-    return <CBBLeagueScreen />;
+  if (isMCBB) {
+    return <MCBBLeagueScreen />;
   }
   if (isWCBB) {
     return <WCBBLeagueScreen />;
@@ -1116,12 +1116,12 @@ function GLeagueScreen() {
 }
 
 /* ========================================================================== */
-/*                                    CBB                                     */
+/*                                    MCBB                                     */
 /* ========================================================================== */
-function CBBLeagueScreen() {
-  const league = "cbb";
+function MCBBLeagueScreen() {
+  const league = "mcbb";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-  const currentSeason = getCBBSeason();
+  const currentSeason = getMCBBSeason();
 
   const navigation = useNavigation();
 
@@ -1172,7 +1172,7 @@ function CBBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   const selectedConferenceName = useMemo(() => {
-    return getCBBConferenceSelectionName(selectedConference);
+    return getMCBBConferenceSelectionName(selectedConference);
   }, [selectedConference]);
 
   const selectedConferenceGroupId = useMemo(() => {
@@ -1242,25 +1242,25 @@ function CBBLeagueScreen() {
   /* ------------------------------------------------------------------------ */
 
   const {
-    games: cbbGames,
-    error: cbbGamesError,
-    refreshGames: refreshCBBGames,
-    loading: cbbGamesLoading,
+    games: mcbbGames,
+    error: mcbbGamesError,
+    refreshGames: refreshMCBBGames,
+    loading: mcbbGamesLoading,
   } = useBasketballGames(selectedDate, league, selectedConferenceGroupId);
 
   const displayedGames = useMemo(() => {
     if (!selectedConference) {
-      return cbbGames ?? [];
+      return mcbbGames ?? [];
     }
 
     if (selectedConference === "top25") {
-      return (cbbGames ?? []).filter(
+      return (mcbbGames ?? []).filter(
         (game) => isTop25Rank(game.home?.rank) || isTop25Rank(game.away?.rank),
       );
     }
 
-    return cbbGames ?? [];
-  }, [cbbGames, selectedConference]);
+    return mcbbGames ?? [];
+  }, [mcbbGames, selectedConference]);
 
   /* ------------------------------------------------------------------------ */
   /*                                   News                                   */
@@ -1321,13 +1321,13 @@ function CBBLeagueScreen() {
     setGamesRefreshing(true);
 
     try {
-      await refreshCBBGames();
+      await refreshMCBBGames();
     } catch (error) {
-      console.warn("Failed to refresh CBB games:", error);
+      console.warn("Failed to refresh MCBB games:", error);
     } finally {
       setGamesRefreshing(false);
     }
-  }, [refreshCBBGames]);
+  }, [refreshMCBBGames]);
 
   const changeDateByDays = useCallback((days: number) => {
     setSelectedDate((previousDate) =>
@@ -1350,12 +1350,12 @@ function CBBLeagueScreen() {
 
       <GamesList
         games={displayedGames}
-        error={cbbGamesError}
-        loading={cbbGamesLoading}
+        error={mcbbGamesError}
+        loading={mcbbGamesLoading}
         refreshing={gamesRefreshing}
         onRefresh={handleScoresRefresh}
         showHeaders={false}
-        isCBB
+        isMCBB
       />
     </View>
   );
@@ -1380,7 +1380,7 @@ function CBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CBBStandingsList league={league} />
+          <MCBBStandingsList league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}
@@ -1519,7 +1519,7 @@ function CBBLeagueScreen() {
 function WCBBLeagueScreen() {
   const league = "wcbb";
   const favoriteHeaderProps = useLeagueFavoriteHeader(league);
-  const currentSeason = getCBBSeason();
+  const currentSeason = getMCBBSeason();
 
   const navigation = useNavigation();
 
@@ -1746,7 +1746,7 @@ function WCBBLeagueScreen() {
         refreshing={gamesRefreshing}
         onRefresh={handleScoresRefresh}
         showHeaders={false}
-        isCBB
+        isMCBB
       />
     </View>
   );
@@ -1771,7 +1771,7 @@ function WCBBLeagueScreen() {
     <View key="standings" style={styles.contentArea}>
       {hasVisitedTab("standings") ? (
         !selectedConferenceGroupId ? (
-          <CBBStandingsList league={league} />
+          <MCBBStandingsList league={league} />
         ) : (
           <ConferenceStandingsList
             conferences={conferences}

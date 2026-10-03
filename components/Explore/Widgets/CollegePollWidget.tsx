@@ -4,10 +4,10 @@ import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors } from "constants/styles";
 import {
-  getCBBTeam,
-  getCBBTeamByESPNId,
-  getCBBTeamLogo,
-} from "constants/teamsCBB";
+  getMCBBTeam,
+  getMCBBTeamByESPNId,
+  getMCBBTeamLogo,
+} from "constants/teamsMCBB";
 import {
   getCFBTeam,
   getCFBTeamByESPNId,
@@ -17,9 +17,9 @@ import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  type CBBTeamRank,
-  useCBBRankings,
-} from "hooks/BasketballHooks/useCBBRankings";
+  type MCBBTeamRank,
+  useMCBBRankings,
+} from "hooks/BasketballHooks/useMCBBRankings";
 import {
   type CFBTeamRank,
   useCFBRankings,
@@ -352,7 +352,7 @@ const CFBPollTable = memo(function CFBPollTable({
   );
 });
 
-const CBBPollTable = memo(function CBBPollTable({
+const MCBBPollTable = memo(function MCBBPollTable({
   size,
   width,
   isDark,
@@ -360,7 +360,7 @@ const CBBPollTable = memo(function CBBPollTable({
   pollType,
   autoPlay,
 }: CollegePollSourceProps) {
-  const { rankings, loading, error, refresh } = useCBBRankings("cbb");
+  const { rankings, loading, error, refresh } = useMCBBRankings("mcbb");
   const selectedPoll =
     rankings.find((poll) => poll.type === pollType) ??
     rankings.find((poll) =>
@@ -372,7 +372,7 @@ const CBBPollTable = memo(function CBBPollTable({
     () =>
       (selectedPoll?.ranks ?? [])
         .slice(0, MAX_RANKED_TEAMS)
-        .map((rank, index) => createCBBRow(rank, index, isDark)),
+        .map((rank, index) => createMCBBRow(rank, index, isDark)),
     [isDark, selectedPoll?.ranks],
   );
 
@@ -382,7 +382,7 @@ const CBBPollTable = memo(function CBBPollTable({
       width={width}
       isDark={isDark}
       isEditing={isEditing}
-      league="cbb"
+      league="mcbb"
       loading={loading}
       error={error}
       rows={rows}
@@ -421,24 +421,24 @@ function createCFBRow(
   };
 }
 
-function createCBBRow(
-  rank: CBBTeamRank,
+function createMCBBRow(
+  rank: MCBBTeamRank,
   index: number,
   isDark: boolean,
 ): CollegePollRow {
   const apiTeam = rank.team;
   const team = apiTeam
-    ? (getCBBTeam(apiTeam.id ?? undefined) ??
-      (apiTeam.espnId != null ? getCBBTeamByESPNId(apiTeam.espnId) : undefined))
+    ? (getMCBBTeam(apiTeam.id ?? undefined) ??
+      (apiTeam.espnId != null ? getMCBBTeamByESPNId(apiTeam.espnId) : undefined))
     : undefined;
   const teamId = team?.id;
   const teamCode = team?.code || "N/A";
   const teamName = team?.fullName || "N/A";
   const teamColor = team?.color || apiTeam?.color || Colors.midTone;
-  const teamLogo = getCBBTeamLogo(teamId, isDark);
+  const teamLogo = getMCBBTeamLogo(teamId, isDark);
 
   return {
-    key: `cbb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
+    key: `mcbb:${teamId ?? apiTeam?.id ?? index}:${rank.current}`,
     rank: rank.current,
     trend: Number(rank.trend) || 0,
     points: rank.points ?? 0,
@@ -529,8 +529,8 @@ const CollegePollWidget = memo(function CollegePollWidget({
             autoPlay={autoPlay}
           />
         ) : (
-          <CBBPollTable
-            key={`cbb:${normalizedPollType}`}
+          <MCBBPollTable
+            key={`mcbb:${normalizedPollType}`}
             size={size}
             width={width}
             isDark={isDark}

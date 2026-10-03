@@ -41,7 +41,7 @@ export default function LineScoreSkeleton({ league }: Props) {
     NBA: 4,
     WNBA: 4,
     WCBB: 4,
-    CBB: 2,
+    MCBB: 2,
     CFB: 4,
     NFL: 4,
     NHL: 3,

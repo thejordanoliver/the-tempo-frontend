@@ -51,13 +51,15 @@ import ChampionshipGameCard from "./ChampionshipGameCard";
 
 const BASKETBALL_LEAGUES = new Set<HomeLeagueId>([
   "nba",
-  "cbb",
+  "mcbb",
   "wcbb",
   "wnba",
 ]);
 const FOOTBALL_LEAGUES = new Set<HomeLeagueId>(["nfl", "cfb", "ufl"]);
 const SOCCER_LEAGUES = new Set<HomeLeagueId>([
   "mls",
+  "msoc",
+  "wsoc",
   "fifa",
   "bundesliga",
   "ligue1",
@@ -232,13 +234,13 @@ export default function LeagueGamesList({
         return wrapper(<BasketballStackedGameCard game={game} />);
       }
 
-      case "cbb": {
+      case "mcbb": {
         const game = item.game as BasketballGame;
         if (viewMode === "list")
-          return wrapper(<BasketballGameCard game={game} isCBB />);
+          return wrapper(<BasketballGameCard game={game} isMCBB />);
         if (viewMode === "grid")
-          return wrapper(<BasketballSquareGameCard game={game} isCBB />);
-        return wrapper(<BasketballStackedGameCard game={game} isCBB />);
+          return wrapper(<BasketballSquareGameCard game={game} isMCBB />);
+        return wrapper(<BasketballStackedGameCard game={game} isMCBB />);
       }
 
       case "wcbb": {
@@ -310,6 +312,8 @@ export default function LeagueGamesList({
         return wrapper(<NHLStackedGameCard game={game} isNHL isMCH={false} />);
       }
 
+      case "msoc":
+      case "wsoc":
       case "mls":
       case "fifa":
       case "bundesliga":
@@ -425,7 +429,7 @@ export default function LeagueGamesList({
                 {game.league && BASKETBALL_LEAGUES.has(game.league) && (
                   <ChampionshipGameCard
                     game={game.game as BasketballGame}
-                    isCBB={game.league === "cbb"}
+                    isMCBB={game.league === "mcbb"}
                     isWCBB={game.league === "wcbb"}
                     isWNBA={game.league === "wnba"}
                     isSL={false}
@@ -436,7 +440,7 @@ export default function LeagueGamesList({
                   (game.league === "cfb" && (
                     <ChampionshipGameCard
                       game={game.game}
-                      isCBB={false}
+                      isMCBB={false}
                       isWCBB={false}
                       isWNBA={false}
                       isSL={false}
@@ -446,7 +450,7 @@ export default function LeagueGamesList({
                 {game.league === "mlb" && (
                   <ChampionshipGameCard
                     game={game.game}
-                    isCBB={false}
+                    isMCBB={false}
                     isWCBB={false}
                     isWNBA={false}
                     isSL={false}
@@ -573,7 +577,7 @@ export default function LeagueGamesList({
           <BasketballGamePreviewModal
             visible={modalVisible}
             game={previewGame as BasketballGame}
-            isCBB={previewLeague === "cbb"}
+            isMCBB={previewLeague === "mcbb"}
             isWCBB={previewLeague === "wcbb"}
             isWNBA={previewLeague === "wnba"}
             isSL={false}

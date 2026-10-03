@@ -11,7 +11,7 @@ import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceSta
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
-import { getCBBSeason } from "@/utils/dateUtils";
+import { getMCBBSeason } from "@/utils/dateUtils";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -24,7 +24,7 @@ import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
   const league = "wcbb";
-  const currentSeason = getCBBSeason();
+  const currentSeason = getMCBBSeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;

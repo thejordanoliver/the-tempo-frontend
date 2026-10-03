@@ -1,20 +1,20 @@
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
-// components/CBBStandingsList.tsx
+// components/MCBBStandingsList.tsx
 import HeadingTwo from "@/components/Headings/HeadingTwo";
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
 import {
-  CBBTeamRank,
-  useCBBRankings,
-} from "@/hooks/BasketballHooks/useCBBRankings";
+  MCBBTeamRank,
+  useMCBBRankings,
+} from "@/hooks/BasketballHooks/useMCBBRankings";
 import { Ionicons } from "@expo/vector-icons";
 import Dropdown from "components/Dropdown";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import {
-  getCBBTeam,
-  getCBBTeamByESPNId,
-  getCBBTeamLogo,
-} from "constants/teamsCBB";
+  getMCBBTeam,
+  getMCBBTeamByESPNId,
+  getMCBBTeamLogo,
+} from "constants/teamsMCBB";
 import {
   getWCBBTeam,
   getWCBBTeamByESPNId,
@@ -34,12 +34,12 @@ import {
 } from "react-native";
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 type Props = {
-  league: "cbb" | "wcbb";
+  league: "mcbb" | "wcbb";
 };
 
-export const CBBStandingsList = ({ league = "cbb" }: Props) => {
+export const MCBBStandingsList = ({ league = "mcbb" }: Props) => {
   const { rankings, loading, refreshing, error, refresh } =
-    useCBBRankings(league);
+    useMCBBRankings(league);
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const router = useScopedRouter();
@@ -50,11 +50,11 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
   const [pollMode, setPollMode] = useState<"ap" | "coaches">("ap");
   const isWCBB = league === "wcbb";
   const getRankedTeam = (espnId: string | number) =>
-    isWCBB ? getWCBBTeamByESPNId(espnId) : getCBBTeamByESPNId(espnId ?? "");
+    isWCBB ? getWCBBTeamByESPNId(espnId) : getMCBBTeamByESPNId(espnId ?? "");
   const getRankedTeamLogo = (teamId?: string | number) =>
     isWCBB
       ? getWCBBTeamLogo(teamId, isDark)
-      : getCBBTeamLogo(teamId ?? undefined, isDark);
+      : getMCBBTeamLogo(teamId ?? undefined, isDark);
 
   if (loading) {
     return <StandingsSkeleton variant="rankings" />;
@@ -87,7 +87,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     item,
     index,
   }: {
-    item: CBBTeamRank;
+    item: MCBBTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -123,7 +123,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
             onPress={() => {
               if (!teamId) return;
               router.push({
-                pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/cbb/[teamId]",
+                pathname: isWCBB ? "/team/wcbb/[teamId]" : "/team/mcbb/[teamId]",
                 params: { teamId },
               });
             }}
@@ -182,7 +182,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     item,
     index,
   }: {
-    item: CBBTeamRank;
+    item: MCBBTeamRank;
     index: number;
   }) => {
     const isLastRow = index === filteredRankings.length - 1;
@@ -259,11 +259,11 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
         <View style={styles.droppedoutWrapper}>
           {droppedOutTeams.map((item, index) => {
             const teamId = item.team?.id ?? 0;
-            const team = isWCBB ? getWCBBTeam(teamId) : getCBBTeam(teamId);
+            const team = isWCBB ? getWCBBTeam(teamId) : getMCBBTeam(teamId);
             const teamName = team?.shortName || team?.name || "N/A";
             const teamLogo = isWCBB
               ? getWCBBTeamLogo(teamId, isDark)
-              : getCBBTeamLogo(teamId, isDark);
+              : getMCBBTeamLogo(teamId, isDark);
             return (
               <View key={item.team?.id} style={styles.droppedoutRow}>
                 {teamLogo && (
@@ -280,7 +280,7 @@ export const CBBStandingsList = ({ league = "cbb" }: Props) => {
     );
   };
 
-  function Section({ title, data }: { title: string; data: CBBTeamRank[] }) {
+  function Section({ title, data }: { title: string; data: MCBBTeamRank[] }) {
     return (
       <>
         <View style={styles.wrapper}>

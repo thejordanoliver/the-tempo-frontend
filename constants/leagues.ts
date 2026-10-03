@@ -4,10 +4,12 @@ import { BROWSEABLE_LEAGUES, type BrowseableLeague } from "constants/leagueIds";
 
 import MLBLogo from "assets/Baseball/MLB_Logos/MLB.png";
 import CBLogo from "assets/College_Logos/Conference_Logos/CB.png";
-import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
+import MCBBLogo from "assets/College_Logos/Conference_Logos/MCBB.png";
+import MCSLogo from "assets/College_Logos/Conference_Logos/MCS.png";
 import SBLogo from "assets/College_Logos/Conference_Logos/SB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
+import WCSLogo from "assets/College_Logos/Conference_Logos/WCS.png";
 import NFLLogo from "assets/Football/NFL_Logos/NFL.png";
 import UFLLogo from "assets/Football/UFL_Logos/UFL.png";
 import UFLLightLogo from "assets/Football/UFL_Logos/UFLLight.png";
@@ -101,13 +103,13 @@ export const LEAGUE_CONFIG = {
     route: "/league/baseball",
   },
 
-  cbb: {
-    id: "cbb",
+  mcbb: {
+    id: "mcbb",
     label: "M. College Basketball",
     color: "#009CDE",
     secondaryColor: "#000000",
-    logo: CBBLogo,
-    logoLight: CBBLogo,
+    logo: MCBBLogo,
+    logoLight: MCBBLogo,
     route: "/league/basketball",
   },
 
@@ -251,6 +253,26 @@ export const LEAGUE_CONFIG = {
     route: "/league/soccer",
   },
 
+  msoc: {
+    id: "msoc",
+    label: "Men's College Soccer",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: MCSLogo,
+    logoLight: MCSLogo,
+    route: "/league/soccer",
+  },
+
+  wsoc: {
+    id: "wsoc",
+    label: "Women's College Soccer",
+    color: "#009CDE",
+    secondaryColor: "#000000",
+    logo: WCSLogo,
+    logoLight: WCSLogo,
+    route: "/league/soccer",
+  },
+
   nascarpremier: {
     id: "nascarpremier",
     label: "NASCAR Premier",
@@ -379,6 +401,8 @@ export const HOME_SCORE_LEAGUES = [
   "nhl",
   "cfb",
   "mls",
+  "msoc",
+  "wsoc",
   "leaguescup",
   "fifa",
   "europa",
@@ -388,7 +412,7 @@ export const HOME_SCORE_LEAGUES = [
   "laliga",
   "ligue1",
   "ligue2",
-  "cbb",
+  "mcbb",
   "wcbb",
   "wnba",
   "ufc",

@@ -3,7 +3,7 @@ import { wcbbTeams } from "@/constants/teamsWCBB";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { teams as nbaTeams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
-import { cbbTeams } from "constants/teamsCBB";
+import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
@@ -72,7 +72,7 @@ export function useFavoriteTeams() {
       ...wnbaTeams,
       ...nflTeams,
       ...cfbTeams,
-      ...cbbTeams,
+      ...mcbbTeams,
       ...wcbbTeams,
       ...cbTeams,
       ...sbTeams,
@@ -474,8 +474,8 @@ export function useFavoriteTeams() {
             ? "/team/wnba/[teamId]"
             : league === "cfb"
               ? "/team/cfb/[teamId]"
-              : league === "cbb"
-                ? "/team/cbb/[teamId]"
+              : league === "mcbb"
+                ? "/team/mcbb/[teamId]"
                 : league === "wcbb"
                   ? "/team/wcbb/[teamId]"
                   : league === "mlb"

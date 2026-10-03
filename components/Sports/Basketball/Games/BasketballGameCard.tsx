@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
@@ -22,7 +22,7 @@ import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 export default function BasketballGameCard({
   game,
   isSL,
-  isCBB,
+  isMCBB,
   isWCBB,
   isWNBA,
   isGLEAGUE,
@@ -53,8 +53,8 @@ export default function BasketballGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isCBB
-    ? getCBBTeam(homeId)
+  const homeTeam = isMCBB
+    ? getMCBBTeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
       : isWNBA
@@ -65,8 +65,8 @@ export default function BasketballGameCard({
             ? getGLeagueTeam(homeId)
             : getNBATeam(homeId);
 
-  const awayTeam = isCBB
-    ? getCBBTeam(awayId)
+  const awayTeam = isMCBB
+    ? getMCBBTeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
       : isWNBA
@@ -80,8 +80,8 @@ export default function BasketballGameCard({
   const homeName = homeTeam?.shortName || homeTeam?.name || game.home?.name;
   const awayName = awayTeam?.shortName || awayTeam?.name || game.away?.name;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
@@ -92,8 +92,8 @@ export default function BasketballGameCard({
             ? getGLeagueTeamLogo(homeId, isDark)
             : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -120,7 +120,7 @@ export default function BasketballGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
 
   const clock = game.status.displayClock;

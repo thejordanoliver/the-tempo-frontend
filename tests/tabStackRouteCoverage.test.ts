@@ -27,6 +27,7 @@ const expectRoutes = (label: string, routePaths: string[]) => {
 
 const sharedAuthenticatedRoutes = [
   "badges.tsx",
+  "fan-prediction-rankings.tsx",
   "create-post.tsx",
   "edit-favorites.tsx",
   "edit-profile.tsx",
@@ -72,7 +73,7 @@ expectRoutes("Home exposes every reusable detail-screen family", [
   "app/(tabs)/(home)/player/soccer/[id].tsx",
   "app/(tabs)/(home)/team/[teamId].tsx",
   "app/(tabs)/(home)/team/cb/[teamId].tsx",
-  "app/(tabs)/(home)/team/cbb/[teamId].tsx",
+  "app/(tabs)/(home)/team/mcbb/[teamId].tsx",
   "app/(tabs)/(home)/team/cfb/[teamId].tsx",
   "app/(tabs)/(home)/team/gleague/[teamId].tsx",
   "app/(tabs)/(home)/team/mlb/[teamId].tsx",

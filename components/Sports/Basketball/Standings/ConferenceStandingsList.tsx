@@ -4,7 +4,7 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import { useScopedRouter } from "hooks/useScopedRouter";
 
 import { StandingsSkeleton } from "@/components/Skeletons/StandingsSkeleton";
-import { getCBBTeamByESPNId, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeamByESPNId, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getCFBTeamByESPNId, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getWCBBTeamByESPNId, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import {
@@ -25,7 +25,7 @@ import {
 import { StandingsStyles } from "styles/LeagueStyles/StandingsStyles";
 
 type Props = {
-  league: "cfb" | "cbb" | "wcbb";
+  league: "cfb" | "mcbb" | "wcbb";
   selectedConference?: string | number;
   conferences: StandingConference[];
   loading: boolean;
@@ -87,8 +87,8 @@ export const ConferenceStandingsList = ({
     const team =
       league === "cfb"
         ? getCFBTeamByESPNId(espnId ?? 0)
-        : league === "cbb"
-          ? getCBBTeamByESPNId(espnId ?? 0)
+        : league === "mcbb"
+          ? getMCBBTeamByESPNId(espnId ?? 0)
           : getWCBBTeamByESPNId(espnId ?? 0);
 
     const teamId = team?.id;
@@ -96,8 +96,8 @@ export const ConferenceStandingsList = ({
     const teamLogo =
       teamId && league === "cfb"
         ? getCFBTeamLogo(teamId ?? 0, isDark)
-        : teamId && league === "cbb"
-          ? getCBBTeamLogo(teamId ?? 0, isDark)
+        : teamId && league === "mcbb"
+          ? getMCBBTeamLogo(teamId ?? 0, isDark)
           : getWCBBTeamLogo(teamId ?? 0, isDark);
 
     const teamCode = item.code || "-";
@@ -106,7 +106,7 @@ export const ConferenceStandingsList = ({
     const handleTeamPress = () => {
       if (!teamId) return;
       if (league === "cfb") return router.push(`/team/cfb/${teamId}`);
-      if (league === "cbb") return router.push(`/team/cbb/${teamId}`);
+      if (league === "mcbb") return router.push(`/team/mcbb/${teamId}`);
       if (league === "wcbb") return router.push(`/team/wcbb/${teamId}`);
     };
 
@@ -151,8 +151,8 @@ export const ConferenceStandingsList = ({
     const team =
       league === "cfb"
         ? getCFBTeamByESPNId(espnId ?? 0)
-        : league === "cbb"
-          ? getCBBTeamByESPNId(espnId ?? 0)
+        : league === "mcbb"
+          ? getMCBBTeamByESPNId(espnId ?? 0)
           : getWCBBTeamByESPNId(espnId ?? 0);
 
     const teamId = team?.id;

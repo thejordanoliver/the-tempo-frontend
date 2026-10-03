@@ -49,8 +49,8 @@ export default function Roster({
 
   if (sections.length === 0) {
     return (
-      <View style={styles.contentContainer}>
-        <Text style={global.emptyText}>No players found.</Text>
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyTitle}>No players found.</Text>
       </View>
     );
   }

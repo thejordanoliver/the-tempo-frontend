@@ -1,4 +1,4 @@
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePreferences } from "@/contexts/PreferencesContext";
@@ -37,7 +37,7 @@ type Props = {
   game: BasketballGame;
   onClose: () => void;
   isSL: boolean;
-  isCBB: boolean;
+  isMCBB: boolean;
   isWCBB: boolean;
   isWNBA: boolean;
   isGLEAGUE?: boolean;
@@ -48,7 +48,7 @@ export default function GamePreviewModal({
   game,
   onClose,
   isSL,
-  isCBB,
+  isMCBB,
   isWCBB,
   isWNBA,
   isGLEAGUE,
@@ -74,7 +74,7 @@ export default function GamePreviewModal({
   const headline = game.headline || holidayLabel;
 
   const gameId = game.id;
-  const LEAGUE = game?.league?.code ?? "cbb";
+  const LEAGUE = game?.league?.code ?? "mcbb";
 
   const { details, score } = useBasketballGameDetails(LEAGUE, gameId);
 
@@ -87,8 +87,8 @@ export default function GamePreviewModal({
     ? getWNBATeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
-      : isCBB
-        ? getCBBTeam(homeId)
+      : isMCBB
+        ? getMCBBTeam(homeId)
         : isSL
           ? getTeamBySummerId(homeId)
           : isGLEAGUE
@@ -99,8 +99,8 @@ export default function GamePreviewModal({
     ? getWNBATeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
-      : isCBB
-        ? getCBBTeam(awayId)
+      : isMCBB
+        ? getMCBBTeam(awayId)
         : isSL
           ? getTeamBySummerId(awayId)
           : isGLEAGUE
@@ -115,8 +115,8 @@ export default function GamePreviewModal({
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
@@ -125,8 +125,8 @@ export default function GamePreviewModal({
           ? getGLeagueTeamLogo(homeId, isDark)
           : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -135,16 +135,16 @@ export default function GamePreviewModal({
           ? getGLeagueTeamLogo(awayId, isDark)
           : getNBATeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = isCBB
-    ? getCBBTeamLogo(homeId, true)
+  const homeHeaderLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, true)
     : isWCBB
       ? getWCBBTeamLogo(homeId, true)
       : isWNBA
         ? getWNBATeamLogo(homeId, true)
         : getNBATeamLogo(homeId, true);
 
-  const awayHeaderLogo = isCBB
-    ? getCBBTeamLogo(awayId, true)
+  const awayHeaderLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, true)
     : isWCBB
       ? getWCBBTeamLogo(awayId, true)
       : isWNBA
@@ -171,7 +171,7 @@ export default function GamePreviewModal({
   const broadcast = getBroadcastDisplay(game?.broadcasts);
   const period = formatPeriod({
     period: game.status.period,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
   const clock = score?.status?.displayClock ?? "0:00";
   const gameStatusDescription = score?.status.gameStatusDescription ?? "";

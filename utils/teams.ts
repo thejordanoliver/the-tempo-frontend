@@ -1,7 +1,7 @@
 import { wcbbTeams } from "@/constants/teamsWCBB";
 import { teams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
-import { cbbTeams } from "constants/teamsCBB";
+import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
@@ -52,8 +52,8 @@ export function getTeamRoute(league: LeagueType): string {
       return "/team/nfl/[teamId]";
     case "cfb":
       return "/team/cfb/[teamId]";
-    case "cbb":
-      return "/team/cbb/[teamId]";
+    case "mcbb":
+      return "/team/mcbb/[teamId]";
     case "wcbb":
       return "/team/wcbb/[teamId]";
     case "mlb":
@@ -121,9 +121,9 @@ const staticFavoriteTeamsList = [
   }),
 
   ...buildLeagueTeams({
-    teams: cbbTeams,
-    league: "cbb",
-    sportTerms: "CBB college basketball NCAA",
+    teams: mcbbTeams,
+    league: "mcbb",
+    sportTerms: "MCBB college basketball NCAA",
   }),
   ...buildLeagueTeams({
     teams: wcbbTeams,

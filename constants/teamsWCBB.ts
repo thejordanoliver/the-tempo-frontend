@@ -1,4 +1,4 @@
-// constants/teamsCBB.ts
+// constants/teamsMCBB.ts
 import { Team } from "@/types/team";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 

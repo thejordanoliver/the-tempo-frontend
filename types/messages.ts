@@ -83,6 +83,7 @@ export type SendDirectMessagePayload = {
 };
 
 export type ComposeDirectMessagePayload = {
+  clientId?: string;
   text?: string;
   attachment?: MessageAttachment | null;
 };

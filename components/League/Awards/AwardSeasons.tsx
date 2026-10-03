@@ -2,7 +2,7 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import Dropdown from "components/Dropdown";
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
@@ -26,7 +26,7 @@ type ViewMode = "players" | "champions" | "teams";
 const LEAGUE_CHAMPIONS_TITLE: Partial<Record<string, string>> = {
   cfb: "College Football Champions",
   wnba: "WNBA Champions",
-  cbb: "Men's College Basketball Champions",
+  mcbb: "Men's College Basketball Champions",
   wcbb: "Women's College Basketball Champions",
   nba: "NBA Champions",
   nfl: "Super Bowl Champions",
@@ -52,8 +52,8 @@ export default function AwardSeasons({ league }: Props) {
     { label: "Players", value: "players" },
     { label: "Championships", value: "champions" },
 
-    // Only show "Teams" for CFB, CBB, WCBB
-    ...(league === "cfb" || league === "cbb" || league === "wcbb"
+    // Only show "Teams" for CFB, MCBB, WCBB
+    ...(league === "cfb" || league === "mcbb" || league === "wcbb"
       ? [{ label: "Teams", value: "teams" }]
       : []),
   ];
@@ -62,8 +62,8 @@ export default function AwardSeasons({ league }: Props) {
     switch (league) {
       case "cfb":
         return "cfb";
-      case "cbb":
-        return "cbb";
+      case "mcbb":
+        return "mcbb";
       case "wcbb":
         return "wcbb";
 
@@ -76,7 +76,7 @@ export default function AwardSeasons({ league }: Props) {
     league,
   });
   const showAwardTopThree =
-    (league === "cfb" || league === "cbb" || league === "wcbb") &&
+    (league === "cfb" || league === "mcbb" || league === "wcbb") &&
     viewMode === "teams";
   const {
     data: awardSchools,
@@ -116,7 +116,7 @@ export default function AwardSeasons({ league }: Props) {
     league === "nhl" ||
     league === "mlb" ||
     league === "cfb" ||
-    league === "cbb" ||
+    league === "mcbb" ||
     league === "wcbb" ||
     league === "wnba" ||
     league === "nba" ||
@@ -197,8 +197,8 @@ export default function AwardSeasons({ league }: Props) {
                   ? getWNBATeamLogo(t.team.id, isDark)
                   : league === "cfb"
                     ? getCFBTeamLogo(t.team.id, isDark)
-                    : league === "cbb"
-                      ? getCBBTeamLogo(t.team.id, isDark)
+                    : league === "mcbb"
+                      ? getMCBBTeamLogo(t.team.id, isDark)
                       : league === "wcbb"
                         ? getWCBBTeamLogo(t.team.id, isDark)
                         : league === "mlb"
@@ -211,7 +211,7 @@ export default function AwardSeasons({ league }: Props) {
       )}
 
       {/* ------------------------------------------------ */}
-      {/* Award Top 3 (CFB / CBB / WCBB)                  */}
+      {/* Award Top 3 (CFB / MCBB / WCBB)                  */}
       {/* ------------------------------------------------ */}
 
       {showAwardTopThree && awardSchools.length > 0 && league && (
@@ -225,7 +225,7 @@ export default function AwardSeasons({ league }: Props) {
                 ? getCFBTeamLogo(t.team.id, isDark)
                 : league === "wcbb"
                   ? getWCBBTeamLogo(t.team.id, isDark)
-                  : getCBBTeamLogo(t.team.id, isDark),
+                  : getMCBBTeamLogo(t.team.id, isDark),
           }))}
         />
       )}
@@ -247,7 +247,7 @@ export default function AwardSeasons({ league }: Props) {
       {/* Teams Table (Unified)                            */}
       {/* ------------------------------------------------ */}
 
-      {(league === "cfb" || league === "cbb" || league === "wcbb") &&
+      {(league === "cfb" || league === "mcbb" || league === "wcbb") &&
         viewMode === "teams" &&
         awards.map(({ value, title }) => {
           if (value === "all") return null;
@@ -276,7 +276,7 @@ export default function AwardSeasons({ league }: Props) {
           league === "wnba" ||
           league === "nfl" ||
           league === "cfb" ||
-          league === "cbb" ||
+          league === "mcbb" ||
           league === "nhl" ||
           league === "mlb" ||
           league === "wcbb") &&

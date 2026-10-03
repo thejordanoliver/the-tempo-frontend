@@ -28,7 +28,7 @@ export function isGameLive(
 
 type FormatPeriodArgs = {
   period?: number | string | null;
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isNHL?: boolean;
   isMMA?: boolean;
   isSOCC?: boolean;
@@ -37,7 +37,7 @@ type FormatPeriodArgs = {
 
 export const formatPeriod = ({
   period,
-  isCBB = false,
+  isMCBB = false,
   isNHL = false,
   isMMA = false,
   isSOCC = false,
@@ -69,7 +69,7 @@ export const formatPeriod = ({
   }
 
   // College basketball: 2 halves
-  if (isCBB) {
+  if (isMCBB) {
     if (p === 1) return "1st";
     if (p === 2) return "2nd";
 

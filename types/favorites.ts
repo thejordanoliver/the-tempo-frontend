@@ -6,7 +6,7 @@ export const FAVORITE_LEAGUES = [
   "wnba",
   "nfl",
   "cfb",
-  "cbb",
+  "mcbb",
   "wcbb",
   "mlb",
   "cb",
@@ -58,7 +58,9 @@ export function normalizeFavoriteTeamKey(
   const match = value.trim().match(/^([A-Za-z0-9_-]+):([0-9]+)$/);
   if (!match) return null;
 
-  const league = match[1].toLowerCase();
+  // Upgrade persisted favorites from the former men's basketball league key.
+  const storedLeague = match[1].toLowerCase();
+  const league = storedLeague === "cbb" ? "mcbb" : storedLeague;
   const teamId = Number(match[2]);
 
   if (!isFavoriteLeague(league)) return null;

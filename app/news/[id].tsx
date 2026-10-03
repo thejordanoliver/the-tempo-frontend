@@ -146,8 +146,8 @@ export default function ArticleScreen() {
       case "cfb":
         router.push({ pathname: "/team/cfb/[teamId]", params });
         return;
-      case "cbb":
-        router.push({ pathname: "/team/cbb/[teamId]", params });
+      case "mcbb":
+        router.push({ pathname: "/team/mcbb/[teamId]", params });
         return;
       case "wcbb":
         router.push({ pathname: "/team/wcbb/[teamId]", params });
@@ -187,6 +187,13 @@ export default function ArticleScreen() {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.errorText}>Failed to load article</Text>
+      </View>
+    );
+
+  if (!article)
+    return (
+      <View style={global.emptyContainer}>
+        <Text style={global.emptyText}>Article unavailable</Text>
       </View>
     );
 

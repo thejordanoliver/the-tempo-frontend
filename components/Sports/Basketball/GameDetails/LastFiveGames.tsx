@@ -9,7 +9,7 @@ import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import HeadingTwo from "components/Headings/HeadingTwo";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -121,8 +121,8 @@ export default function LastFiveGames({
       case "sb":
         return getSBTeam(teamId);
 
-      case "cbb":
-        return getCBBTeam(teamId);
+      case "mcbb":
+        return getMCBBTeam(teamId);
 
       case "wcbb":
         return getWCBBTeam(teamId);
@@ -172,8 +172,8 @@ export default function LastFiveGames({
       case "sb":
         return getSBTeamLogo(teamId, isDark);
 
-      case "cbb":
-        return getCBBTeamLogo(teamId, isDark);
+      case "mcbb":
+        return getMCBBTeamLogo(teamId, isDark);
 
       case "wcbb":
         return getWCBBTeamLogo(teamId, isDark);

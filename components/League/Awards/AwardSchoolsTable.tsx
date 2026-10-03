@@ -1,6 +1,6 @@
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, Fonts, activeOpacity, globalStyles } from "constants/styles";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -26,7 +26,7 @@ if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
 }
 
-type LeagueType = "cfb" | "cbb" | "wcbb";
+type LeagueType = "cfb" | "mcbb" | "wcbb";
 
 type AwardSchoolRow = {
   team: {
@@ -138,7 +138,7 @@ export default function AwardSchoolsTable({
           ? getCFBTeamLogo(item.team.id, useLightLogo)
           : league === "wcbb"
             ? (wcbbLogo ?? getWCBBTeamLogo(item.team.id, useLightLogo))
-            : getCBBTeamLogo(item.team.id, useLightLogo);
+            : getMCBBTeamLogo(item.team.id, useLightLogo);
 
       const teamName = item.team.name ?? item.team.short_name ?? "Unknown Team";
 

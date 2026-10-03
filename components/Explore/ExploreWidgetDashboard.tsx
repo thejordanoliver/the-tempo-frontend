@@ -118,8 +118,8 @@ function toWidgetSlide(envelope: ExploreWidgetGame): WidgetSlide {
       return { type: "nba", data: envelope.game };
     case "wnba":
       return { type: "wnba", data: envelope.game };
-    case "cbb":
-      return { type: "cbb", data: envelope.game };
+    case "mcbb":
+      return { type: "mcbb", data: envelope.game };
     case "wcbb":
       return { type: "wcbb", data: envelope.game };
     case "mlb":

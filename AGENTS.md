@@ -49,6 +49,7 @@ The backend is separate. Frontend code must consume the backend API and must not
 ## Styling and UX Rules
 
 - Use `constants/styles.ts` for shared colors, fonts, and global styles.
+- Before designing new UI or changing styles, review `constants/styles.ts` and reuse its global styles and tokens so the result aligns with the app's design.
 - Respect the app's light/dark preference flow from `contexts/PreferencesContext`.
 - Keep sports views dense, scannable, and optimized for repeat use.
 - Reuse existing skeleton components from `components/Skeletons/` for loading states.

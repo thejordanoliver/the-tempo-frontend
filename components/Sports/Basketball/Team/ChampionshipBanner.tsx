@@ -7,7 +7,7 @@ import OutlineLight from "assets/banners/OutlineLight.png";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 import { Colors, Fonts } from "constants/styles";
 import { getNBATeam } from "constants/teams";
-import { getCBBTeam } from "constants/teamsCBB";
+import { getMCBBTeam } from "constants/teamsMCBB";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
@@ -47,8 +47,8 @@ function getTeamByLeague(league: string, teamId?: string | number) {
     case "cfb":
       return getCFBTeam(teamId);
 
-    case "cbb":
-      return getCBBTeam(teamId);
+    case "mcbb":
+      return getMCBBTeam(teamId);
     case "wcbb":
       return getWCBBTeam(teamId);
 

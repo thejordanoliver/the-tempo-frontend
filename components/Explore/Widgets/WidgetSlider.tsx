@@ -44,7 +44,7 @@ export type WidgetSlide =
   | { type: "ufl"; data: FootballGame }
   | { type: "mlb"; data: BaseballGame }
   | { type: "cb"; data: BaseballGame }
-  | { type: "cbb"; data: BasketballGame }
+  | { type: "mcbb"; data: BasketballGame }
   | { type: "wcbb"; data: BasketballGame }
   | { type: "wnba"; data: BasketballGame }
   | { type: "nhl"; data: HockeyGame };
@@ -624,7 +624,7 @@ export default function WidgetSlider({
             </View>
           );
 
-        case "cbb":
+        case "mcbb":
           return (
             <View style={{ height: slideHeight, width: slideWidth }}>
               <BasketballGameWidget
@@ -632,7 +632,7 @@ export default function WidgetSlider({
                 height={slideHeight}
                 width={slideWidth}
                 isDark={isDark}
-                isCBB={true}
+                isMCBB={true}
               />
             </View>
           );

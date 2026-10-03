@@ -12,7 +12,7 @@ export type AwardSchool = {
   total_awards: number;
   unique_players: number;
 };
-type AwardSchoolsLeague = "cfb" | "cbb" | "wcbb";
+type AwardSchoolsLeague = "cfb" | "mcbb" | "wcbb";
 
 type Options = {
   league?: AwardSchoolsLeague;

@@ -14,20 +14,20 @@ test("offers football-specific polls only for college football", () => {
     ["ap", "coaches", "cfp", "fcs"],
   );
   assert.deepEqual(
-    getCollegePollOptions("cbb").map((option) => option.value),
+    getCollegePollOptions("mcbb").map((option) => option.value),
     ["ap", "coaches"],
   );
 });
 
 test("normalizes unsupported basketball poll selections to AP", () => {
-  assert.equal(isCollegePollTypeAvailable("cbb", "cfp"), false);
-  assert.equal(normalizeCollegePollType("cbb", "cfp"), "ap");
+  assert.equal(isCollegePollTypeAvailable("mcbb", "cfp"), false);
+  assert.equal(normalizeCollegePollType("mcbb", "cfp"), "ap");
   assert.equal(normalizeCollegePollType("cfb", "cfp"), "cfp");
 });
 
 test("provides stable poll labels", () => {
   assert.equal(getCollegePollLabel("cfb", "fcs"), "FCS Coaches Poll");
-  assert.equal(getCollegePollLabel("cbb", "coaches"), "Coaches Poll");
+  assert.equal(getCollegePollLabel("mcbb", "coaches"), "Coaches Poll");
 });
 
 test("college poll page sizes match each widget mode", () => {

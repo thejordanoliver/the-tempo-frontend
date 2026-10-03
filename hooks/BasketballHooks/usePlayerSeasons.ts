@@ -5,7 +5,7 @@ import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
 export type StatValue = number | string | null | undefined;
 
-export type BasketballLeague = "nba" | "wnba" | "cbb" | "wcbb";
+export type BasketballLeague = "nba" | "wnba" | "mcbb" | "wcbb";
 
 export interface Player {
   id?: StatValue;
@@ -99,7 +99,7 @@ export interface BasketballCanonicalProfile {
 }
 
 interface CollegeStatsResponse {
-  league: "cbb" | "wcbb";
+  league: "mcbb" | "wcbb";
   playerId: string;
   seasons?: Season[] | null;
 }
@@ -126,7 +126,7 @@ const normalizeApiSeason = (season: Season): Season => ({
 const isBasketballLeague = (value: unknown): value is BasketballLeague =>
   value === "nba" ||
   value === "wnba" ||
-  value === "cbb" ||
+  value === "mcbb" ||
   value === "wcbb";
 
 const normalizeLeague = (
@@ -243,7 +243,7 @@ export function usePlayerSeasons(
           : [],
       );
       setCollegeSeasons(
-        (res.data.collegeStats?.league === "cbb" ||
+        (res.data.collegeStats?.league === "mcbb" ||
           res.data.collegeStats?.league === "wcbb") &&
           Array.isArray(res.data.collegeStats.seasons)
           ? res.data.collegeStats.seasons.map(normalizeApiSeason)

@@ -10,7 +10,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
@@ -43,8 +43,8 @@ const getTeamLogo = (team: Team, isDark: boolean) => {
   }
 
   switch (team.league) {
-    case "cbb":
-      return getCBBTeamLogo(team.id, isDark);
+    case "mcbb":
+      return getMCBBTeamLogo(team.id, isDark);
     case "wcbb":
       return getWCBBTeamLogo(team.id, isDark);
     case "nba":

@@ -27,7 +27,7 @@ const LEGACY_GAME_WIDGET_LEAGUES = {
   mlb_games: "mlb",
   nhl_games: "nhl",
   wnba_games: "wnba",
-  cbb_games: "cbb",
+  mcbb_games: "mcbb",
   wcbb_games: "wcbb",
   cfb_games: "cfb",
 } as const satisfies Record<string, ExploreWidgetLeague>;
@@ -89,6 +89,22 @@ export function normalizeStoredWidgets(value: unknown): ExploreWidgetConfig[] {
   ) {
     rawWidgets = (value as { widgets: unknown[] }).widgets;
   }
+
+  // Preserve selections saved before men's basketball was renamed to MCBB.
+  rawWidgets = rawWidgets.map((widget) => {
+    if (!widget || typeof widget !== "object") return widget;
+    const stored = widget as Record<string, unknown>;
+    const league = (value: unknown) => value === "cbb" ? "mcbb" : value;
+    return {
+      ...stored,
+      type: stored.type === "cbb_games" ? "mcbb_games" : stored.type,
+      standingsLeague: league(stored.standingsLeague),
+      collegePollLeague: league(stored.collegePollLeague),
+      favoriteGameLeagues: Array.isArray(stored.favoriteGameLeagues)
+        ? stored.favoriteGameLeagues.map(league)
+        : stored.favoriteGameLeagues,
+    };
+  });
 
   const favoriteGamesIndexes = rawWidgets.flatMap((widget, index) => {
     if (!widget || typeof widget !== "object") return [];

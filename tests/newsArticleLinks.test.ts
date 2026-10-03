@@ -22,7 +22,7 @@ test("maps supported ESPN player links to the matching Tempo sport", () => {
     [
       "https://www.espn.com/mens-college-basketball/player/_/id/2/name",
       "basketball",
-      "cbb",
+      "mcbb",
     ],
     ["https://www.espn.com/mlb/player/_/id/3/name", "baseball", "mlb"],
     ["https://www.espn.com/nhl/player/_/id/4/name", "hockey", "nhl"],

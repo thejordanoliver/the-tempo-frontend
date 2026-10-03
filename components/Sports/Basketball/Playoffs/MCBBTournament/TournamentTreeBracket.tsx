@@ -4,7 +4,7 @@ import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle
 import Button from "@/components/Buttons/Button";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors, globalStyles } from "@/constants/styles";
-import { getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import {
@@ -16,8 +16,8 @@ import {
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
-  CBBTournamentBracketStyles,
-} from "@/styles/PlayoffStyles/CBBTournamentBracketStyles";
+  MCBBTournamentBracketStyles,
+} from "@/styles/PlayoffStyles/MCBBTournamentBracketStyles";
 import React, { useMemo, useRef } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -332,7 +332,7 @@ const getWinnerTeam = (game: TournamentGame | null): TournamentTeam | null => {
 };
 
 const getGameStatus = (game: TournamentGame, isDark: boolean) => {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const statusText = game.statusText?.trim() ?? "";
   const isLive = game.status === "live" || game.status === "in";
   const isFinal = game.status === "post" || game.status === "final";
@@ -385,7 +385,7 @@ const getGameStatus = (game: TournamentGame, isDark: boolean) => {
 };
 
 /**
- * Get the appropriate team logo based on league (Men's or Women's CBB)
+ * Get the appropriate team logo based on league (Men's or Women's MCBB)
  */
 const getTeamLogo = (
   teamId: string | undefined,
@@ -396,7 +396,7 @@ const getTeamLogo = (
     return getWCBBTeamLogo(teamId, isDark);
   }
 
-  return getCBBTeamLogo(teamId, isDark);
+  return getMCBBTeamLogo(teamId, isDark);
 };
 
 function TeamRow({
@@ -406,7 +406,7 @@ function TeamRow({
   isDark,
   league,
 }: TeamRowProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const isPlaceholder = team === null;
 
   const teamLogo = getTeamLogo(team?.id, league, isDark);
@@ -457,7 +457,7 @@ function MatchupCard({
   championship = false,
   league,
 }: MatchupCardProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
 
   if (!game) {
     return (
@@ -596,7 +596,7 @@ function RegionBracket({
   league,
   direction,
 }: RegionBracketProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const connectorColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   const roundGames = useMemo(() => buildRegionRoundSlots(region), [region]);
@@ -723,7 +723,7 @@ function RegionBracket({
 }
 
 function BracketRoundHeader({ isDark }: { isDark: boolean }) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const centerStageX = REGION_ROUNDS_WIDTH + CENTER_STAGE_GAP;
   const rightRegionX = centerStageX + FINAL_STAGE_WIDTH + CENTER_STAGE_GAP;
   const championshipX = centerStageX + (FINAL_STAGE_WIDTH - CARD_WIDTH) / 2;
@@ -801,7 +801,7 @@ function BracketRoundHeader({ isDark }: { isDark: boolean }) {
 }
 
 function FirstFour({ games, isDark, league }: FirstFourProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
 
   const orderedGames = useMemo(
     () =>
@@ -985,7 +985,7 @@ function NationalStage({
   isDark,
   league,
 }: NationalStageProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const connectorColor = isDark ? Colors.darkGray : Colors.lightGray;
 
   const regionalChampionOrderByTeamId = useMemo(
@@ -1161,7 +1161,7 @@ function TournamentQuadrant({
   isDark,
   league,
 }: NationalStageProps) {
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const connectorColor = isDark ? Colors.darkGray : Colors.lightGray;
   const regionalChampionOrderByTeamId = useMemo(
     () => getRegionalChampionOrder(regions),
@@ -1299,12 +1299,12 @@ function TournamentQuadrant({
 
 export default function TournamentTreeBracket({
   season,
-  league = "cbb",
+  league = "mcbb",
 }: TournamentTreeBracketProps) {
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = CBBTournamentBracketStyles(isDark);
+  const styles = MCBBTournamentBracketStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const roundHeaderScrollRef = useRef<ScrollView>(null);
 

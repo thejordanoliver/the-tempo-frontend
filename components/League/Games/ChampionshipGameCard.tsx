@@ -4,7 +4,7 @@ import {
   getNBATeamLogo,
   getTeamBySummerId,
 } from "@/constants/teams";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getMLBTeam, getMLBTeamLogo } from "@/constants/teamsMLB";
@@ -23,7 +23,7 @@ import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 interface ChampionshipGameCardProps {
   game: any;
 
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
   isSL?: boolean;
@@ -47,7 +47,7 @@ type TeamSide = {
 
 export default function ChampionshipGameCard({
   game,
-  isCBB = false,
+  isMCBB = false,
   isWCBB = false,
   isWNBA = false,
   isSL = false,
@@ -73,8 +73,8 @@ export default function ChampionshipGameCard({
   const awayId = away.id ?? 0;
 
   const getTeam = (teamId: string | number) => {
-    if (isCBB) {
-      return getCBBTeam(teamId);
+    if (isMCBB) {
+      return getMCBBTeam(teamId);
     }
 
     if (isWCBB) {
@@ -109,8 +109,8 @@ export default function ChampionshipGameCard({
   };
 
   const getTeamLogo = (teamId?: string | number) => {
-    if (isCBB) {
-      return getCBBTeamLogo(teamId, isDark);
+    if (isMCBB) {
+      return getMCBBTeamLogo(teamId, isDark);
     }
 
     if (isWCBB) {
@@ -191,7 +191,7 @@ export default function ChampionshipGameCard({
 
   const period = formatPeriod({
     period: status.period,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
 
   const clock = status.displayClock;

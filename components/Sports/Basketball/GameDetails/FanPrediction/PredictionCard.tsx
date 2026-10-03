@@ -1,19 +1,20 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/styles";
 import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
-import { Image } from "expo-image";
-import { memo, useEffect, useMemo } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Animated, {
-  cancelAnimation,
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { Image, type ImageProps } from "expo-image";
+import { memo, useMemo } from "react";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
+import PredictionGradient from "./PredictionGradient";
 
 type PredictionCardProps = {
   code: string;
-  logo: any;
+  logo: ImageProps["source"];
   color: string;
   fillPercentage: number;
   onPress: () => void;
@@ -22,18 +23,8 @@ type PredictionCardProps = {
   showPercent: boolean;
   percentText: string;
   isDark: boolean;
-  style?: object;
+  style?: StyleProp<ViewStyle>;
 };
-
-const FILL_ANIMATION_DURATION_MS = 250;
-
-function clampPercentage(value: number): number {
-  if (!Number.isFinite(value)) {
-    return 0;
-  }
-
-  return Math.max(0, Math.min(value, 1));
-}
 
 function PredictionCard({
   code,
@@ -50,24 +41,6 @@ function PredictionCard({
 }: PredictionCardProps) {
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
   const teamLabel = code || "team";
-  const fillProgress = useSharedValue(clampPercentage(fillPercentage));
-
-  const selectedTeamColor = isDark ? Colors.dark.green : Colors.light.green;
-
-  const fillColor = isSelected ? selectedTeamColor : color;
-
-  useEffect(() => {
-    fillProgress.value = withTiming(clampPercentage(fillPercentage), {
-      duration: FILL_ANIMATION_DURATION_MS,
-      easing: Easing.out(Easing.cubic),
-    });
-
-    return () => cancelAnimation(fillProgress);
-  }, [fillPercentage, fillProgress]);
-
-  const animatedVoteFillStyle = useAnimatedStyle(() => ({
-    transform: [{ scaleY: fillProgress.value }],
-  }));
 
   return (
     <TouchableOpacity
@@ -80,26 +53,32 @@ function PredictionCard({
         style,
       ]}
       accessibilityRole="button"
-      accessibilityLabel={
+      accessibilityLabel={`${isSelected ? "Your pick: " : ""}${
         showPercent
           ? `${teamLabel}, ${percentText} of the vote`
           : `Vote for ${teamLabel}`
-      }
+      }`}
       accessibilityState={{
         disabled,
         selected: isSelected,
       }}
     >
-      <Animated.View
-        pointerEvents="none"
-        style={[
-          styles.voteFill,
-          {
-            backgroundColor: fillColor,
-          },
-          animatedVoteFillStyle,
-        ]}
+      <PredictionGradient
+        color={color}
+        fillPercentage={fillPercentage}
+        isSelected={isSelected}
+        isDark={isDark}
       />
+
+      {isSelected ? (
+        <View style={styles.selectedBadge} pointerEvents="none" accessible={false}>
+          <Ionicons
+            name="checkmark"
+            size={14}
+            color={isDark ? Colors.black : Colors.white}
+          />
+        </View>
+      ) : null}
 
       <View style={styles.cardContent}>
         <Image

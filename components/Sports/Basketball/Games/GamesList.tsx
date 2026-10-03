@@ -33,7 +33,7 @@ type Props = {
   expectedCount?: number;
   showHeaders?: boolean;
   scrollEnabled?: boolean;
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
   isGLEAGUE?: boolean;
@@ -87,7 +87,7 @@ export default function GamesList({
     String(game?.league?.id) === "23170" ||
     String(game?.league?.id) === "64" ||
     String(game?.league?.id) === "63";
-  const isCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
+  const isMCBBGame = (game: BasketballGame) => String(game?.league?.id) === "10";
   const isWCBBGame = (game: BasketballGame) =>
     String(game?.league?.id) === "54";
   const isGLEAGUEGame = (game: BasketballGame) =>
@@ -146,7 +146,7 @@ export default function GamesList({
           <BasketballGameCard
             game={game}
             isSL={isSLGame(game)}
-            isCBB={isCBBGame(game)}
+            isMCBB={isMCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
             isGLEAGUE={isGLEAGUEGame(game)}
@@ -161,7 +161,7 @@ export default function GamesList({
           <BasketballSquareGameCard
             game={game}
             isSL={isSLGame(game)}
-            isCBB={isCBBGame(game)}
+            isMCBB={isMCBBGame(game)}
             isWNBA={isWNBAGame(game)}
             isWCBB={isWCBBGame(game)}
             isGLEAGUE={isGLEAGUEGame(game)}
@@ -175,7 +175,7 @@ export default function GamesList({
         <BasketballStackedGameCard
           game={game}
           isSL={isSLGame(game)}
-          isCBB={isCBBGame(game)}
+          isMCBB={isMCBBGame(game)}
           isWNBA={isWNBAGame(game)}
           isWCBB={isWCBBGame(game)}
           isGLEAGUE={isGLEAGUEGame(game)}
@@ -342,7 +342,7 @@ export default function GamesList({
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           isSL={isSLGame(previewGame)}
-          isCBB={isCBBGame(previewGame)}
+          isMCBB={isMCBBGame(previewGame)}
           isWCBB={isWCBBGame(previewGame)}
           isWNBA={isWNBAGame(previewGame)}
           isGLEAGUE={isGLEAGUEGame(previewGame)}

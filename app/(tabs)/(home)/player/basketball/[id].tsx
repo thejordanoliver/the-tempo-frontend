@@ -24,10 +24,10 @@ import { usePlayerById } from "@/hooks/LeagueHooks/usePlayerById";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import {
-  getCBBTeam,
-  getCBBTeamByESPNId,
-  getCBBTeamLogo,
-} from "constants/teamsCBB";
+  getMCBBTeam,
+  getMCBBTeamByESPNId,
+  getMCBBTeamLogo,
+} from "constants/teamsMCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
@@ -38,7 +38,7 @@ import { playerScreenStyles } from "styles/PlayerStyles/PlayerScreenStyles";
 const BASKETBALL_LEAGUES = new Set<BasketballLeague>([
   "nba",
   "wnba",
-  "cbb",
+  "mcbb",
   "wcbb",
 ]);
 
@@ -83,7 +83,7 @@ export default function PlayerDetailScreen() {
 
   const canonicalPlayerId = useMemo(() => {
     const isCollegeRequest =
-      requestedLeague === "cbb" || requestedLeague === "wcbb";
+      requestedLeague === "mcbb" || requestedLeague === "wcbb";
     const resolvedId =
       canonicalProfile?.playerId ??
       (!isCollegeRequest ? requestedPlayerId : undefined);
@@ -97,13 +97,13 @@ export default function PlayerDetailScreen() {
   const canonicalLeague = canonicalProfile?.league ?? resolvedLeague;
   const isNBA = canonicalLeague === "nba";
   const isWNBA = canonicalLeague === "wnba";
-  const isCBB = canonicalLeague === "cbb";
+  const isMCBB = canonicalLeague === "mcbb";
   const isWCBB = canonicalLeague === "wcbb";
 
   const { player, loading, error } = usePlayerById(
     canonicalPlayerId,
     canonicalLeague,
-    (requestedLeague !== "cbb" && requestedLeague !== "wcbb") ||
+    (requestedLeague !== "mcbb" && requestedLeague !== "wcbb") ||
       Boolean(canonicalProfile),
   );
 
@@ -138,7 +138,7 @@ export default function PlayerDetailScreen() {
       return getWCBBTeam(currentTeamId) ?? getWCBBTeamByESPNId(currentTeamId);
     }
 
-    return getCBBTeam(currentTeamId) ?? getCBBTeamByESPNId(currentTeamId);
+    return getMCBBTeam(currentTeamId) ?? getMCBBTeamByESPNId(currentTeamId);
   }, [currentTeamId, isNBA, isWCBB, isWNBA]);
 
   const teamLogo = useMemo(() => {
@@ -149,7 +149,7 @@ export default function PlayerDetailScreen() {
     if (isNBA) return getNBATeamLogo(logoTeamId, isDark);
     if (isWNBA) return getWNBATeamLogo(logoTeamId, isDark);
     if (isWCBB) return getWCBBTeamLogo(logoTeamId, isDark);
-    return getCBBTeamLogo(logoTeamId, isDark);
+    return getMCBBTeamLogo(logoTeamId, isDark);
   }, [currentTeamId, isDark, isNBA, isWCBB, isWNBA, team?.id]);
 
   const teamColor = team?.color ?? Colors.midTone;
@@ -225,7 +225,7 @@ export default function PlayerDetailScreen() {
           error={gameError}
           isDark={isDark}
           league={canonicalLeague}
-          isCBB={isCBB}
+          isMCBB={isMCBB}
           isWCBB={isWCBB}
           isWNBA={isWNBA}
         />

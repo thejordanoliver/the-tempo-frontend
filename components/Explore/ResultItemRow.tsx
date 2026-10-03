@@ -2,9 +2,9 @@ import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
+import { getGLeagueTeam, getGLeagueTeamLogo } from "constants/teamsGLeague";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -58,13 +58,15 @@ export default function ResultItemRow({
     else if (team.isMLB && team.id != null)
       teamLogo = getMLBTeamLogo(team.id, isDark);
     else if (team.isSOCC && team.id != null)
-      teamLogo = getSOCCTeamLogo(team.id, isDark);
+      teamLogo =
+        (isDark ? team.logoLight || team.logo : team.logo) ||
+        getSOCCTeamLogo(team.id, isDark);
     else if (team.isNHL && team.id != null)
       teamLogo = getNHLTeamLogo(team.id, isDark);
     else if (team.isCFB && team.id != null)
       teamLogo = getCFBTeamLogo(team.id, isDark);
-    else if (team.isCBB && team.id != null)
-      teamLogo = getCBBTeamLogo(team.id, isDark);
+    else if (team.isMCBB && team.id != null)
+      teamLogo = getMCBBTeamLogo(team.id, isDark);
     else if (team.isWCBB && team.id != null)
       teamLogo = getWCBBTeamLogo(team.id, isDark);
     else if (team.id != null) teamLogo = getNBATeamLogo(team.id, isDark);
@@ -81,10 +83,23 @@ export default function ResultItemRow({
             {teamLogo && <Image source={teamLogo} style={styles.teamLogo} />}
             <View>
               <Text style={styles.name}>{team.full_name || team.name}</Text>
-              {team.isGLEAGUE && <Text style={styles.tag}>G LEAGUE</Text>}
-              {team.isWCBB && <Text style={styles.tag}>WCBB</Text>}
-              {team.isCBB && <Text style={styles.tag}>CBB</Text>}
-              {team.isCFB && <Text style={styles.tag}>CFB</Text>}
+              {team.isWCBB && (
+                <Text style={styles.subtext}>
+                  {"Women's College Basketball"}
+                </Text>
+              )}
+              {team.isMCBB && (
+                <Text style={styles.subtext}>{"Men's College Basketball"}</Text>
+              )}
+              {team.isCFB && (
+                <Text style={styles.subtext}>College Football</Text>
+              )}
+              {team.isSOCC && team.league === "msoc" && (
+                <Text style={styles.subtext}>{"Men's College Soccer"}</Text>
+              )}
+              {team.isSOCC && team.league === "wsoc" && (
+                <Text style={styles.subtext}>{"Women's College Soccer"}</Text>
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -118,23 +133,23 @@ export default function ResultItemRow({
         ? getNBATeam(teamId)
         : teamId && player.isGLEAGUE
           ? getGLeagueTeam(teamId)
-        : teamId && player.isWNBA
-          ? getWNBATeam(teamId)
-          : teamId && player.isCBB
-            ? getCBBTeam(teamId)
-            : teamId && player.isWCBB
-              ? getWCBBTeam(teamId)
-              : teamId && player.isNFL
-                ? getNFLTeam(teamId)
-                : teamId && player.isCFB
-                  ? getCFBTeam(teamId)
-                  : teamId && player.isMLB
-                    ? getMLBTeam(teamId)
-                    : teamId && player.isNHL
-                      ? getNHLTeam(teamId)
-                      : teamId && player.isSOCC
-                        ? getSOCCTeam(teamId)
-                        : null;
+          : teamId && player.isWNBA
+            ? getWNBATeam(teamId)
+            : teamId && player.isMCBB
+              ? getMCBBTeam(teamId)
+              : teamId && player.isWCBB
+                ? getWCBBTeam(teamId)
+                : teamId && player.isNFL
+                  ? getNFLTeam(teamId)
+                  : teamId && player.isCFB
+                    ? getCFBTeam(teamId)
+                    : teamId && player.isMLB
+                      ? getMLBTeam(teamId)
+                      : teamId && player.isNHL
+                        ? getNHLTeam(teamId)
+                        : teamId && player.isSOCC
+                          ? getSOCCTeam(teamId)
+                          : null;
 
     return (
       <View style={styles.itemRow}>
@@ -146,12 +161,12 @@ export default function ResultItemRow({
         >
           <View style={styles.playerRow}>
             <View style={styles.playerAvatarContainer}>
-              <Image source={{ uri: headshot }} style={styles.playerAvatar} />
+              <Image source={{ uri: headshot }} style={styles.avatar} />
             </View>
             <View>
               <Text style={styles.name}>{playerName}</Text>
               {(team?.fullName || player.association_name) && (
-                <Text style={styles.playerTeam}>
+                <Text style={styles.subtext}>
                   {team?.fullName || player.association_name || "Free Agent"}
                 </Text>
               )}

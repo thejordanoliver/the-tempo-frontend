@@ -1,4 +1,4 @@
-// constants/teamsCBB.ts
+// constants/teamsMCBB.ts
 import { Team } from "@/types/team";
 import PlaceholderLogo from "assets/Placeholders/teamPlaceholder.png";
 
@@ -925,7 +925,7 @@ import YoungstownStateLogoLight from "assets/College_Logos/YoungstownStateLogoLi
 
 //Logos
 
-export const cbbTeams: Team[] = [
+export const mcbbTeams: Team[] = [
   {
     id: 1504,
     espnId: 242,
@@ -942,7 +942,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
 
   {
@@ -961,7 +961,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WesternKentuckyLogoLight,
   },
   {
@@ -979,7 +979,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AustinPeayLogoLight,
   },
   {
@@ -998,7 +998,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VCULogoLight,
   },
   {
@@ -1016,7 +1016,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthwesternLogoLight,
   },
   {
@@ -1035,7 +1035,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NortheasternLogoLight,
   },
   {
@@ -1054,7 +1054,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EvansvilleLogoLight,
   },
   {
@@ -1073,7 +1073,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2171,
@@ -1091,7 +1091,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1943,
@@ -1108,7 +1108,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IdahoStateLogoLight,
   },
   {
@@ -1127,7 +1127,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PepperdineLogoLight,
   },
   {
@@ -1146,7 +1146,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2179,
@@ -1163,7 +1163,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UConnLogoLight,
   },
   {
@@ -1181,7 +1181,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IllinoisLogoLight,
   },
   {
@@ -1200,7 +1200,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1914,
@@ -1217,7 +1217,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FloridaStateLogoLight,
   },
   {
@@ -1236,7 +1236,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 230,
@@ -1254,7 +1254,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FAULogoLight,
   },
   {
@@ -1273,7 +1273,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 190,
@@ -1291,7 +1291,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LipscombLogoLight,
   },
   {
@@ -1310,7 +1310,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BinghamtonLogoLight,
   },
   {
@@ -1329,7 +1329,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RITLogoLight,
   },
   {
@@ -1348,7 +1348,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SpringHillLogoLight,
   },
   {
@@ -1367,7 +1367,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BryanTNLogoLight,
   },
   {
@@ -1386,7 +1386,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RiderLogoLight,
   },
   {
@@ -1405,7 +1405,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CarolinaUniversityLogoLight,
   },
   {
@@ -1424,7 +1424,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BiblicalStudLogoLight,
   },
   {
@@ -1443,7 +1443,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CoppinStateLogoLight,
   },
   {
@@ -1461,7 +1461,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthCarolinaLogoLight,
   },
   {
@@ -1481,7 +1481,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1910,
@@ -1498,7 +1498,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FloridaAAndMLogoLight,
   },
   {
@@ -1517,7 +1517,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NewMexicoStateLogoLight,
   },
   {
@@ -1536,7 +1536,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2177,
@@ -1554,7 +1554,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1496,
@@ -1571,7 +1571,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthTexasLogoLight,
   },
   {
@@ -1589,7 +1589,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HawaiiLogoLight,
   },
   {
@@ -1607,7 +1607,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VanderbiltLogoLight,
   },
   {
@@ -1625,7 +1625,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OklahomaStateLogoLight,
   },
   {
@@ -1644,7 +1644,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2079,
@@ -1662,7 +1662,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 223,
@@ -1680,7 +1680,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2036,
@@ -1698,7 +1698,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NiagaraLogoLight,
   },
   {
@@ -1717,7 +1717,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
 
   {
@@ -1735,7 +1735,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VMILogoLight,
   },
   {
@@ -1753,7 +1753,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AkronLogoLight,
   },
   {
@@ -1772,7 +1772,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SaintFrancisLogoLight,
   },
   {
@@ -1791,7 +1791,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FranciscanUniversityLogoLight,
   },
   {
@@ -1810,7 +1810,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1824,
@@ -1828,7 +1828,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2165,
@@ -1845,7 +1845,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UCFLogoLight,
   },
   {
@@ -1863,7 +1863,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthCarolinaStLogoLight,
   },
   {
@@ -1882,7 +1882,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LouisianaChristianLogoLight,
   },
   {
@@ -1901,7 +1901,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthCarolinaAAndTLogoLight,
   },
   {
@@ -1920,7 +1920,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NewHavenLogoLight,
   },
   {
@@ -1939,7 +1939,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VermontLogoLight,
   },
   {
@@ -1958,7 +1958,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VermontStateLyndonLogoLight,
   },
   {
@@ -1977,7 +1977,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VermontStateJohnsonLogoLight,
   },
   {
@@ -1996,7 +1996,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PacificLogoLight,
   },
   {
@@ -2015,7 +2015,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1860,
@@ -2033,7 +2033,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ChampionChristianLogoLight,
   },
   {
@@ -2052,7 +2052,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KansasChristianLogoLight,
   },
   {
@@ -2072,7 +2072,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2374,
@@ -2090,7 +2090,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BrewtonParkerLogoLight,
   },
   {
@@ -2108,7 +2108,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ChaminadeLogoLight,
   },
   {
@@ -2126,7 +2126,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BryantLogoLight,
   },
   {
@@ -2145,7 +2145,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1966,
@@ -2163,7 +2163,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LongIslandLogoLight,
   },
   {
@@ -2183,7 +2183,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2358,
@@ -2201,7 +2201,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BellarmineLogoLight,
   },
   {
@@ -2220,7 +2220,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthwesternChristianLogoLight,
   },
   {
@@ -2239,7 +2239,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CoastalGeorgiaLogoLight,
   },
   {
@@ -2257,7 +2257,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PurdueLogoLight,
   },
   {
@@ -2275,7 +2275,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PennStateLogoLight,
   },
   {
@@ -2293,7 +2293,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthernIllinoisLogoLight,
   },
   {
@@ -2311,7 +2311,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EasternIllinoisLogoLight,
   },
   {
@@ -2329,7 +2329,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UABLogoLight,
   },
   {
@@ -2349,7 +2349,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
 
   {
@@ -2368,7 +2368,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2006,
@@ -2385,7 +2385,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MissouriLogoLight,
   },
   {
@@ -2404,7 +2404,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LouisianaTechLogoLight,
   },
   {
@@ -2423,7 +2423,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1816,
@@ -2440,7 +2440,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArizonaStateLogoLight,
   },
   {
@@ -2459,7 +2459,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1919,
@@ -2476,7 +2476,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FresnoStateLogoLight,
   },
   {
@@ -2494,7 +2494,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CalPolyLogoLight,
   },
   {
@@ -2512,7 +2512,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SanJoseStateLogoLight,
   },
   {
@@ -2532,7 +2532,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2202,
@@ -2549,7 +2549,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WesternMichiganLogoLight,
   },
   {
@@ -2568,7 +2568,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1895,
@@ -2586,7 +2586,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2061,
@@ -2603,7 +2603,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OldDominionLogoLight,
   },
   {
@@ -2622,7 +2622,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1983,
@@ -2640,7 +2640,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MarquetteLogoLight,
   },
   {
@@ -2659,7 +2659,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MilwaukeeLogoLight,
   },
   {
@@ -2679,7 +2679,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 191,
@@ -2697,7 +2697,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LoyolaChicagoLogoLight,
   },
   {
@@ -2716,7 +2716,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MilliganLogoLight,
   },
   {
@@ -2735,7 +2735,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LoyolaMarylandLogoLight,
   },
   {
@@ -2754,7 +2754,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LoyolaMarymountLogoLight,
   },
   {
@@ -2773,7 +2773,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CanisiusLogoLight,
   },
   {
@@ -2792,7 +2792,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgeMasonLogoLight,
   },
   {
@@ -2811,7 +2811,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
 
   {
@@ -2831,7 +2831,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2140,
@@ -2849,7 +2849,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1959,
@@ -2866,7 +2866,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KansasLogoLight,
   },
   {
@@ -2884,7 +2884,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TennesseeTechLogoLight,
   },
   {
@@ -2903,7 +2903,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 5566,
@@ -2921,7 +2921,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthernIndianaLogoLight,
   },
   {
@@ -2940,7 +2940,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SienaLogoLight,
   },
   {
@@ -2959,7 +2959,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HamptonLogoLight,
   },
   {
@@ -2977,7 +2977,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ColoradoLogoLight,
   },
   {
@@ -2996,7 +2996,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 176,
@@ -3014,7 +3014,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2058,
@@ -3032,7 +3032,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2055,
@@ -3050,7 +3050,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1924,
@@ -3067,7 +3067,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgiaLogoLight,
   },
   {
@@ -3086,7 +3086,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2144,
@@ -3104,7 +3104,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2145,
@@ -3122,7 +3122,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TexasAAndMCorpusChristiLogoLight,
   },
   {
@@ -3140,7 +3140,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FloridaLogoLight,
   },
   {
@@ -3159,7 +3159,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1981,
@@ -3178,7 +3178,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1994,
@@ -3195,7 +3195,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MichiganLogoLight,
   },
   {
@@ -3213,7 +3213,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ColoradoStateLogoLight,
   },
   {
@@ -3232,7 +3232,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1825,
@@ -3250,7 +3250,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1892,
@@ -3267,7 +3267,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EastCarolinaLogoLight,
   },
   {
@@ -3285,7 +3285,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NCStateLogoLight,
   },
   {
@@ -3305,7 +3305,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2172,
@@ -3323,7 +3323,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1993,
@@ -3340,7 +3340,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MiamiLogoLight,
   },
 
@@ -3360,7 +3360,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BethuneCookmanLogoLight,
   },
   {
@@ -3379,7 +3379,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MdEastShoreLogoLight,
   },
   {
@@ -3398,7 +3398,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FisherCollegeLogoLight,
   },
   {
@@ -3416,7 +3416,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WisconsinLogoLight,
   },
   {
@@ -3434,7 +3434,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IllinoisStateLogoLight,
   },
   {
@@ -3453,7 +3453,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 3347,
@@ -3471,7 +3471,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArkansasBaptistLogoLight,
   },
   {
@@ -3490,7 +3490,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PuertoRicoMayaguezLogoLight,
   },
   {
@@ -3509,7 +3509,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1865,
@@ -3527,7 +3527,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1964,
@@ -3545,7 +3545,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1495,
@@ -3562,7 +3562,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MiamiOHLogoLight,
   },
   {
@@ -3581,7 +3581,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2157,
@@ -3598,7 +3598,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TroyLogoLight,
   },
   {
@@ -3617,7 +3617,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NJITLogoLight,
   },
   {
@@ -3635,7 +3635,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UTSALogoLight,
   },
   {
@@ -3653,7 +3653,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HoustonLogoLight,
   },
   {
@@ -3671,7 +3671,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthFloridaLogoLight,
   },
   {
@@ -3690,7 +3690,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1856,
@@ -3708,7 +3708,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CentralConnecticutLogoLight,
   },
   {
@@ -3727,7 +3727,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 200,
@@ -3745,7 +3745,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthDakotaStateLogoLight,
   },
   {
@@ -3763,7 +3763,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MarylandLogoLight,
   },
   {
@@ -3781,7 +3781,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BuffaloLogoLight,
   },
   {
@@ -3800,7 +3800,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1837,
@@ -3819,7 +3819,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2096,
@@ -3836,7 +3836,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RutgersLogoLight,
   },
   {
@@ -3854,7 +3854,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AppStateLogoLight,
   },
   {
@@ -3872,7 +3872,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NavyLogoLight,
   },
   {
@@ -3890,7 +3890,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DelawareLogoLight,
   },
   {
@@ -3909,7 +3909,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 243,
@@ -3927,7 +3927,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SeattleULogoLight,
   },
   {
@@ -3946,7 +3946,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1804,
@@ -3964,7 +3964,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2049,
@@ -3981,7 +3981,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthernIowaLogoLight,
   },
   {
@@ -4000,7 +4000,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CalStateNorthridgeLogoLight,
   },
   {
@@ -4019,7 +4019,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ReinhardtLogoLight,
   },
   {
@@ -4037,7 +4037,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IowaStateLogoLight,
   },
   {
@@ -4056,7 +4056,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SEMissouriStateLogoLight,
   },
   {
@@ -4075,7 +4075,7 @@ export const cbbTeams: Team[] = [
     city: "",
     location: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1838,
@@ -4092,7 +4092,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BowlingGreenLogoLight,
   },
   {
@@ -4110,7 +4110,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SanDiegoStateLogoLight,
   },
   {
@@ -4128,7 +4128,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArizonaLogoLight,
   },
   {
@@ -4146,7 +4146,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthDakotaLogoLight,
   },
   {
@@ -4164,7 +4164,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthFloridaLogoLight,
   },
   {
@@ -4183,7 +4183,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FloridaGulfCoastLogoLight,
   },
   {
@@ -4202,7 +4202,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FortLauderdaleLogoLight,
   },
   {
@@ -4222,7 +4222,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2507,
@@ -4240,7 +4240,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StMarysMDLogoLight,
   },
   {
@@ -4258,7 +4258,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MarshallLogoLight,
   },
   {
@@ -4276,7 +4276,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorfolkStateLogoLight,
   },
   {
@@ -4295,7 +4295,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1850,
@@ -4313,7 +4313,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2163,
@@ -4331,7 +4331,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UCRiversideLogoLight,
   },
   {
@@ -4350,7 +4350,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UCSantaBarbaraLogoLight,
   },
   {
@@ -4369,7 +4369,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SantaClaraLogoLight,
   },
   {
@@ -4388,7 +4388,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UCSanDiegoLogoLight,
   },
   {
@@ -4407,7 +4407,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1828,
@@ -4424,7 +4424,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BethesdaLogoLight,
   },
   {
@@ -4442,7 +4442,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthAlabamaLogoLight,
   },
   {
@@ -4462,7 +4462,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2037,
@@ -4479,7 +4479,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NichollsLogoLight,
   },
   {
@@ -4497,7 +4497,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TexasStateLogoLight,
   },
   {
@@ -4515,7 +4515,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgiaSouthernLogoLight,
   },
   {
@@ -4533,7 +4533,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MorganStateLogoLight,
   },
   {
@@ -4551,7 +4551,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OhioLogoLight,
   },
   {
@@ -4569,7 +4569,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: JMULogoLight,
   },
   {
@@ -4588,7 +4588,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MiddleTennesseeLogoLight,
   },
   {
@@ -4607,7 +4607,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1494,
@@ -4624,7 +4624,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MercerLogoLight,
   },
   {
@@ -4642,7 +4642,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ElonLogoLight,
   },
   {
@@ -4661,7 +4661,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1498,
@@ -4678,7 +4678,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthDakotaLogoLight,
   },
   {
@@ -4696,7 +4696,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CoastalCarolinaLogoLight,
   },
   {
@@ -4714,7 +4714,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArmyLogoLight,
   },
   {
@@ -4732,7 +4732,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BloomfieldLogoLight,
   },
   {
@@ -4750,7 +4750,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthernMissLogoLight,
   },
   {
@@ -4768,7 +4768,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LibertyLogoLight,
   },
   {
@@ -4786,7 +4786,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TulaneLogoLight,
   },
   {
@@ -4804,7 +4804,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UMassLogoLight,
   },
   {
@@ -4823,7 +4823,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SetonHallLogoLight,
   },
   {
@@ -4842,7 +4842,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FairfieldLogoLight,
   },
   {
@@ -4861,7 +4861,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IonaLogoLight,
   },
   {
@@ -4880,7 +4880,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PresbyterianLogoLight,
   },
   {
@@ -4899,7 +4899,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ClintonCollegeLogoLight,
   },
   {
@@ -4918,7 +4918,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KansasCityLogoLight,
   },
   {
@@ -4937,7 +4937,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UMassLowellLogoLight,
   },
   {
@@ -4956,7 +4956,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EmersonLogoLight,
   },
   {
@@ -4975,7 +4975,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SaintJosephsLogoLight,
   },
   {
@@ -4994,7 +4994,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HaskellLogoLight,
   },
   {
@@ -5013,7 +5013,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SaintPetersLogoLight,
   },
   {
@@ -5032,7 +5032,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CentenaryNJLogoLight,
   },
   {
@@ -5051,7 +5051,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SaintLouisLogoLight,
   },
   {
@@ -5070,7 +5070,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UCIrvineLogoLight,
   },
   {
@@ -5089,7 +5089,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LaSalleLogoLight,
   },
   {
@@ -5108,7 +5108,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UMBCLogoLight,
   },
   {
@@ -5126,7 +5126,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LouisianaLogoLight,
   },
   {
@@ -5144,7 +5144,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SELouisianaLogoLight,
   },
   {
@@ -5162,7 +5162,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArkansasStateLogoLight,
   },
   {
@@ -5180,7 +5180,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GramblingLogoLight,
   },
   {
@@ -5199,7 +5199,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MississippiStateLogoLight,
   },
   {
@@ -5217,7 +5217,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MemphisLogoLight,
   },
   {
@@ -5236,7 +5236,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1925,
@@ -5253,7 +5253,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgiaStateLogoLight,
   },
   {
@@ -5273,7 +5273,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2099,
@@ -5290,7 +5290,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SMULogoLight,
   },
   {
@@ -5308,7 +5308,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StanfordLogoLight,
   },
   {
@@ -5327,7 +5327,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2146,
@@ -5344,7 +5344,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TexasTechLogoLight,
   },
   {
@@ -5362,7 +5362,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MurrayStateLogoLight,
   },
   {
@@ -5381,7 +5381,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NebraskaOLogoLight,
   },
   {
@@ -5400,7 +5400,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 236,
@@ -5417,7 +5417,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ULMonroeLogoLight,
   },
   {
@@ -5436,7 +5436,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1840,
@@ -5453,7 +5453,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BrevardLogoLight,
   },
   {
@@ -5471,7 +5471,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DakotaWesleyanLogoLight,
   },
   {
@@ -5489,7 +5489,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WilliamPeaceLogoLight,
   },
   {
@@ -5507,7 +5507,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LouisvilleLogoLight,
   },
   {
@@ -5525,7 +5525,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NewMexicoLogoLight,
   },
   {
@@ -5543,7 +5543,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MaineLogoLight,
   },
   {
@@ -5563,7 +5563,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1942,
@@ -5580,7 +5580,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IdahoLogoLight,
   },
   {
@@ -5598,7 +5598,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OregonStateLogoLight,
   },
   {
@@ -5617,7 +5617,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RegisCollegeLogoLight,
   },
   {
@@ -5636,7 +5636,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ToccoaFallsLogoLight,
   },
   {
@@ -5654,7 +5654,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BoiseStateLogoLight,
   },
   {
@@ -5673,7 +5673,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 235,
@@ -5690,7 +5690,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KentStateLogoLight,
   },
   {
@@ -5709,7 +5709,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1926,
@@ -5727,7 +5727,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 180,
@@ -5745,7 +5745,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2106,
@@ -5762,7 +5762,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SamfordLogoLight,
   },
   {
@@ -5780,7 +5780,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FurmanLogoLight,
   },
   {
@@ -5798,7 +5798,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BobJonesLogoLight,
   },
   {
@@ -5817,7 +5817,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ColumbiaInternationalLogoLight,
   },
   {
@@ -5835,7 +5835,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthernUtahLogoLight,
   },
   {
@@ -5854,7 +5854,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CharlestonSouthernLogoLight,
   },
   {
@@ -5873,7 +5873,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CharlestonLogoLight,
   },
   {
@@ -5892,7 +5892,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CentralArkansasLogoLight,
   },
   {
@@ -5911,7 +5911,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LaSierraLogoLight,
   },
   {
@@ -5930,7 +5930,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KingTNLogoLight,
   },
   {
@@ -5948,7 +5948,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WesternIllinoisLogoLight,
   },
   {
@@ -5966,7 +5966,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LafayetteLogoLight,
   },
   {
@@ -5984,7 +5984,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WichitaStateLogoLight,
   },
   {
@@ -6003,7 +6003,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KennesawStateLogoLight,
   },
   {
@@ -6021,7 +6021,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IndianaStateLogoLight,
   },
   {
@@ -6039,7 +6039,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WagnerLogoLight,
   },
   {
@@ -6058,7 +6058,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthernColoradoLogoLight,
   },
   {
@@ -6076,7 +6076,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AlabamaStateLogoLight,
   },
   {
@@ -6094,7 +6094,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IncarnateWordLogoLight,
   },
   {
@@ -6112,7 +6112,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HolyCrossLogoLight,
   },
   {
@@ -6130,7 +6130,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RobertMorrisLogoLight,
   },
   {
@@ -6150,7 +6150,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1922,
@@ -6167,7 +6167,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GardnerWebbLogoLight,
   },
   {
@@ -6185,7 +6185,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WesternCarolinaLogoLight,
   },
   {
@@ -6203,7 +6203,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WeberStateLogoLight,
   },
   {
@@ -6221,7 +6221,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AlcornStateLogoLight,
   },
   {
@@ -6240,7 +6240,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LamarLogoLight,
   },
   {
@@ -6259,7 +6259,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TexasAAndMSALogoLight,
   },
   {
@@ -6277,7 +6277,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HowardLogoLight,
   },
   {
@@ -6296,7 +6296,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StephenFAustinLogoLight,
   },
   {
@@ -6314,7 +6314,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthernLogoLight,
   },
   {
@@ -6332,7 +6332,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BowieStateLogoLight,
   },
   {
@@ -6351,7 +6351,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UtahValleyLogoLight,
   },
   {
@@ -6369,7 +6369,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EcclesiaLogoLight,
   },
   {
@@ -6387,7 +6387,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TexasSouthernLogoLight,
   },
   {
@@ -6405,7 +6405,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: McNeeseLogoLight,
   },
   {
@@ -6425,7 +6425,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 3299,
@@ -6442,7 +6442,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthwoodLogoLight,
   },
   {
@@ -6461,7 +6461,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MorrisCollegeLogoLight,
   },
   {
@@ -6479,7 +6479,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LeMoyneLogoLight,
   },
   {
@@ -6498,7 +6498,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArkansasPineBluffLogoLight,
   },
   {
@@ -6516,7 +6516,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NobelLogoLight,
   },
   {
@@ -6535,7 +6535,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: YoungstownStateLogoLight,
   },
   {
@@ -6554,7 +6554,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LongwoodLogoLight,
   },
   {
@@ -6573,7 +6573,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MissouriStateLogoLight,
   },
   {
@@ -6591,7 +6591,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WoffordLogoLight,
   },
   {
@@ -6609,7 +6609,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AbileneChristianLogoLight,
   },
   {
@@ -6629,7 +6629,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 6645,
@@ -6647,7 +6647,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IUColumbusLogoLight,
   },
   {
@@ -6666,7 +6666,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IUIndianapolisLogoLight,
   },
   {
@@ -6685,7 +6685,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UNCAshevilleLogoLight,
   },
   {
@@ -6703,7 +6703,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VillanovaLogoLight,
   },
   {
@@ -6721,7 +6721,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SouthernIllinoisLogoLight,
   },
   {
@@ -6739,7 +6739,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TowsonLogoLight,
   },
   {
@@ -6757,7 +6757,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NotreDameMDLogoLight,
   },
   {
@@ -6775,7 +6775,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BucknellLogoLight,
   },
   {
@@ -6794,7 +6794,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WilliamAndMaryLogoLight,
   },
   {
@@ -6812,7 +6812,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RadfordLogoLight,
   },
   {
@@ -6830,7 +6830,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StonyBrookLogoLight,
   },
   {
@@ -6849,7 +6849,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BrownLogoLight,
   },
   {
@@ -6867,7 +6867,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UTMartinLogoLight,
   },
   {
@@ -6886,7 +6886,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UTRioGrandeValleyLogoLight,
   },
   {
@@ -6905,7 +6905,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UTArlingtonLogoLight,
   },
   {
@@ -6924,7 +6924,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AlaskaAnchorageLogoLight,
   },
   {
@@ -6943,7 +6943,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: KentuckyChristianLogoLight,
   },
   {
@@ -6962,7 +6962,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthCarolinaAAndTLogoLight,
   },
   {
@@ -6980,7 +6980,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CampbellLogoLight,
   },
   {
@@ -6999,7 +6999,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BelmontLogoLight,
   },
   {
@@ -7017,7 +7017,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: JaxStateLogoLight,
   },
   {
@@ -7036,7 +7036,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthwesternStateLogoLight,
   },
   {
@@ -7055,7 +7055,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TennesseeStateLogoLight,
   },
   {
@@ -7073,7 +7073,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MontanaStateLogoLight,
   },
   {
@@ -7091,7 +7091,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthDakotaStateLogoLight,
   },
   {
@@ -7109,7 +7109,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ChattanoogaLogoLight,
   },
   {
@@ -7128,7 +7128,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CalStateFullertonLogoLight,
   },
   {
@@ -7147,7 +7147,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CalStateBakersfieldLogoLight,
   },
   {
@@ -7165,7 +7165,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RhodeIslandLogoLight,
   },
   {
@@ -7183,7 +7183,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RhodesLogoLight,
   },
   {
@@ -7201,7 +7201,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CampbellsvilleLogoLight,
   },
   {
@@ -7220,7 +7220,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MinnesotaCrookstonLogoLight,
   },
   {
@@ -7239,7 +7239,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PiedmontLogoLight,
   },
   {
@@ -7258,7 +7258,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FordhamLogoLight,
   },
   {
@@ -7277,7 +7277,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PurdueFortWayneLogoLight,
   },
   {
@@ -7296,7 +7296,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SacramentoStateLogoLight,
   },
   {
@@ -7315,7 +7315,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HoustonChristianLogoLight,
   },
   {
@@ -7335,7 +7335,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 6663,
@@ -7353,7 +7353,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NewHampshireLogoLight,
   },
   {
@@ -7372,7 +7372,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NewOrleansLogoLight,
   },
   {
@@ -7391,7 +7391,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WrightStateLogoLight,
   },
   {
@@ -7410,7 +7410,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OhioWesleyanLogoLight,
   },
   {
@@ -7429,7 +7429,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EastTennesseeStateLogoLight,
   },
   {
@@ -7448,7 +7448,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthAlabamaLogoLight,
   },
   {
@@ -7467,7 +7467,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UtahTechLogoLight,
   },
   {
@@ -7486,7 +7486,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MoreheadStateLogoLight,
   },
   {
@@ -7505,7 +7505,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MisericordiaEspn111902LogoLight,
   },
   {
@@ -7524,7 +7524,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthGreenvilleLogoLight,
   },
   {
@@ -7543,7 +7543,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MonmouthLogoLight,
   },
   {
@@ -7562,7 +7562,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MississippiValleyStLogoLight,
   },
   {
@@ -7581,7 +7581,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ArlingtonBaptistLogoLight,
   },
   {
@@ -7600,7 +7600,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PennStateShenangoLogoLight,
   },
   {
@@ -7619,7 +7619,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: RiponLogoLight,
   },
   {
@@ -7638,7 +7638,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WesternOregonLogoLight,
   },
   {
@@ -7657,7 +7657,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MerrimackLogoLight,
   },
   {
@@ -7677,7 +7677,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2125,
@@ -7696,7 +7696,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1502,
@@ -7714,7 +7714,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UICLogoLight,
   },
   {
@@ -7733,7 +7733,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BradleyLogoLight,
   },
   {
@@ -7752,7 +7752,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MaristLogoLight,
   },
   {
@@ -7771,7 +7771,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgetownLogoLight,
   },
   {
@@ -7790,7 +7790,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SacredHeartLogoLight,
   },
   {
@@ -7809,7 +7809,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ButlerLogoLight,
   },
   {
@@ -7828,7 +7828,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DavidsonLogoLight,
   },
   {
@@ -7847,7 +7847,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DelawareStateLogoLight,
   },
   {
@@ -7866,7 +7866,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WinthropLogoLight,
   },
   {
@@ -7885,7 +7885,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StonehillLogoLight,
   },
   {
@@ -7905,7 +7905,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1889,
@@ -7923,7 +7923,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DrexelLogoLight,
   },
   {
@@ -7942,7 +7942,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DrakeLogoLight,
   },
   {
@@ -7961,7 +7961,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StetsonLogoLight,
   },
   {
@@ -7980,7 +7980,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: AmericanUniversityLogoLight,
   },
   {
@@ -8000,7 +8000,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2114,
@@ -8019,7 +8019,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 193,
@@ -8037,7 +8037,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UNCGreensboroLogoLight,
   },
   {
@@ -8056,7 +8056,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PortlandLogoLight,
   },
   {
@@ -8075,7 +8075,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PortlandStateLogoLight,
   },
   {
@@ -8094,7 +8094,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: StThomasMinnesotaLogoLight,
   },
   {
@@ -8113,7 +8113,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ProvidenceLogoLight,
   },
   {
@@ -8132,7 +8132,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PennStateYorkLogoLight,
   },
   {
@@ -8151,7 +8151,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: OaklandLogoLight,
   },
   {
@@ -8171,7 +8171,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2184,
@@ -8188,7 +8188,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ValparaisoLogoLight,
   },
   {
@@ -8207,7 +8207,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PrairieViewLogoLight,
   },
   {
@@ -8226,7 +8226,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DallasLogoLight,
   },
   {
@@ -8246,7 +8246,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 299,
@@ -8263,7 +8263,7 @@ export const cbbTeams: Team[] = [
     location: "",
     established: 0,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: IndianaWesleyanLogoLight,
   },
   {
@@ -8281,7 +8281,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SanDiegoLogoLight,
   },
 
@@ -8301,7 +8301,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthCarolinaCentralLogoLight,
   },
   {
@@ -8320,7 +8320,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: JohnsonAndWalesRILogoLight,
   },
   {
@@ -8339,7 +8339,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MitchellCollegeLogoLight,
   },
   {
@@ -8358,7 +8358,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SUNYOneontaLogoLight,
   },
   {
@@ -8377,7 +8377,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SUNYMaritimeLogoLight,
   },
   {
@@ -8396,7 +8396,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CaliforniaBaptistLogoLight,
   },
   {
@@ -8416,7 +8416,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1952,
@@ -8434,7 +8434,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: JacksonStateLogoLight,
   },
   {
@@ -8453,7 +8453,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: VirginiaLynchburgLogoLight,
   },
   {
@@ -8472,7 +8472,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LindenwoodLogoLight,
   },
   {
@@ -8491,7 +8491,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: QueensLogoLight,
   },
   {
@@ -8510,7 +8510,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LynchburgLogoLight,
   },
   {
@@ -8528,7 +8528,7 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PlaceholderLogo,
   },
   {
@@ -8546,7 +8546,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HarvardLogoLight,
   },
   {
@@ -8564,7 +8564,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PrincetonLogoLight,
   },
   {
@@ -8582,7 +8582,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PennsylvaniaLogoLight,
   },
   {
@@ -8600,7 +8600,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CornellLogoLight,
   },
   {
@@ -8619,7 +8619,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DartmouthLogoLight,
   },
   {
@@ -8638,7 +8638,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: YaleLogoLight,
   },
   {
@@ -8657,7 +8657,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: FairleighDickinsonLogoLight,
   },
   {
@@ -8676,7 +8676,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: LehighLogoLight,
   },
   {
@@ -8696,7 +8696,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2017,
@@ -8714,7 +8714,7 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1871,
@@ -8732,7 +8732,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ColumbiaLogoLight,
   },
   {
@@ -8751,7 +8751,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TarletonStateLogoLight,
   },
   {
@@ -8769,7 +8769,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: QuinnipiacLogoLight,
   },
   {
@@ -8788,7 +8788,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TennesseeSouthernLogoLight,
   },
   {
@@ -8807,7 +8807,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 374,
@@ -8824,7 +8824,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HiramCollegeLogoLight,
   },
   {
@@ -8842,7 +8842,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DepauwLogoLight,
   },
   {
@@ -8861,7 +8861,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DePaulLogoLight,
   },
   {
@@ -8880,7 +8880,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: DetroitMercyLogoLight,
   },
 
@@ -8900,7 +8900,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MercyLogoLight,
   },
   {
@@ -8919,7 +8919,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NorthernKentuckyLogoLight,
   },
 
@@ -8939,7 +8939,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NCWesleyanLogoLight,
   },
   {
@@ -8958,7 +8958,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BridgewaterVALogoLight,
   },
   {
@@ -8977,7 +8977,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BridgewaterStateLogoLight,
   },
   {
@@ -8995,7 +8995,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: NicholsLogoLight,
   },
   {
@@ -9014,7 +9014,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     espnId: null,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CentralWashingtonLogoLight,
   },
   {
@@ -9032,7 +9032,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WestGeorgiaLogoLight,
   },
   {
@@ -9050,7 +9050,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BethanyWVLogoLight,
   },
   {
@@ -9069,7 +9069,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: UAlbanyLogoLight,
   },
   {
@@ -9088,7 +9088,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SUNYDelhiLogoLight,
   },
   {
@@ -9107,7 +9107,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: SamHoustonLogoLight,
   },
   {
@@ -9127,7 +9127,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 814,
@@ -9145,7 +9145,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     espnId: null,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: PlaceholderLogo,
   },
   {
@@ -9165,7 +9165,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 2155,
@@ -9183,7 +9183,7 @@ export const cbbTeams: Team[] = [
     color: "",
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: TrinityCollegeOfJacksonvilleLogoLight,
   },
   {
@@ -9202,7 +9202,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: EastTexasAAndMLogoLight,
   },
   {
@@ -9221,7 +9221,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GonzagaLogoLight,
   },
   {
@@ -9240,7 +9240,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GeorgeWashingtonLogoLight,
   },
   {
@@ -9259,7 +9259,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MountStMarysLogoLight,
   },
   {
@@ -9278,7 +9278,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CreightonLogoLight,
   },
   {
@@ -9298,7 +9298,7 @@ export const cbbTeams: Team[] = [
     isActive: true,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1863,
@@ -9316,7 +9316,7 @@ export const cbbTeams: Team[] = [
     isAllStar: false,
     secondaryColor: "",
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ChicagoStateLogoLight,
   },
   {
@@ -9335,7 +9335,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MolloyLogoLight,
   },
   {
@@ -9354,7 +9354,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ClevelandStateLogoLight,
   },
   {
@@ -9373,7 +9373,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: HowardPayneLogoLight,
   },
   {
@@ -9392,7 +9392,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: ManorCollegeLogoLight,
   },
   {
@@ -9411,7 +9411,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: WarrenWilsonLogoLight,
   },
   {
@@ -9430,7 +9430,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: BarberScotiaLogoLight,
   },
   {
@@ -9449,7 +9449,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MidAtlanticChristianLogoLight,
   },
   {
@@ -9468,7 +9468,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: MercyhurstLogoLight,
   },
   {
@@ -9487,7 +9487,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: CityCollegeNYLogoLight,
   },
   {
@@ -9507,7 +9507,7 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
   },
   {
     id: 1923,
@@ -9525,25 +9525,25 @@ export const cbbTeams: Team[] = [
     isActive: false,
     isAllStar: false,
     isNational: false,
-    league: "cbb",
+    league: "mcbb",
     logoLight: GenevaLogoLight,
   },
 ];
 
-export const getCBBTeam = (id: number | string | undefined) => {
+export const getMCBBTeam = (id: number | string | undefined) => {
   if (id == null) return undefined;
 
-  return cbbTeams.find((t) => String(t.id) === String(id));
+  return mcbbTeams.find((t) => String(t.id) === String(id));
 };
 
-export const getCBBTeamByESPNId = (espnId: number | string) => {
-  return cbbTeams.find((t) => String(t.espnId) === String(espnId));
+export const getMCBBTeamByESPNId = (espnId: number | string) => {
+  return mcbbTeams.find((t) => String(t.espnId) === String(espnId));
 };
 
-export const getCBBTeamLogo = (id?: number | string, isDark = false) => {
+export const getMCBBTeamLogo = (id?: number | string, isDark = false) => {
   if (!id) return PlaceholderLogo;
 
-  let team = cbbTeams.find((t) => String(t.id) === String(id));
+  let team = mcbbTeams.find((t) => String(t.id) === String(id));
 
   if (!team) return PlaceholderLogo;
   return isDark ? (team.logoLight ?? team.logo) : team.logo;

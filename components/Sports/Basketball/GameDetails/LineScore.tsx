@@ -97,7 +97,7 @@ export default function LineScore({
   const baseColumns =
     normalizedLeague === "soccer"
       ? 2
-      : normalizedLeague === "cbb"
+      : normalizedLeague === "mcbb"
         ? 2
         : normalizedLeague === "nhl"
           ? 3
@@ -130,7 +130,7 @@ export default function LineScore({
       return `${index - 2}OT`;
     }
 
-    if (normalizedLeague === "cbb") {
+    if (normalizedLeague === "mcbb") {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "OT";

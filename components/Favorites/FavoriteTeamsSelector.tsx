@@ -1,7 +1,7 @@
 import { getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
@@ -27,7 +27,7 @@ type Props = {
   loading?: boolean;
 };
 
-const COLLEGE_LEAGUES = new Set(["cfb", "cbb", "wcbb", "cb", "sb"]);
+const COLLEGE_LEAGUES = new Set(["cfb", "mcbb", "wcbb", "cb", "sb"]);
 
 const getTeamLogo = (
   league: string,
@@ -38,8 +38,8 @@ const getTeamLogo = (
     case "cfb":
       return getCFBTeamLogo(id, useAltLogo);
 
-    case "cbb":
-      return getCBBTeamLogo(id, useAltLogo);
+    case "mcbb":
+      return getMCBBTeamLogo(id, useAltLogo);
 
     case "wcbb":
       return getWCBBTeamLogo(id, useAltLogo);

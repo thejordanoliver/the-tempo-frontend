@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { StandingsSkeleton } from "components/Skeletons/StandingsSkeleton";
+import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { LEAGUE_CONFIG } from "constants/leagues";
 import { Colors, Fonts, activeOpacity } from "constants/styles";
 import { getNBATeamLogo, getTeamByESPNId } from "constants/teams";
@@ -13,21 +13,26 @@ import { getUFLTeamByESPNId, getUFLTeamLogo } from "constants/teamsUFL";
 import { getWNBATeamByESPNId, getWNBATeamLogo } from "constants/teamsWNBA";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   type StandingsTeam,
   useLeagueStandings,
 } from "hooks/LeagueHooks/useLeagueStandings";
 import { useCallback, useMemo, useState } from "react";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { collegePollWidgetStyles } from "styles/ExploreStyles/CollegePollWidgetStyles";
 import type {
   ExploreStandingsLeague,
   ExploreWidgetSize,
 } from "types/widgets";
 import {
   buildStandingsPreviewGroups,
+  buildStandingsSlides,
   formatStandingsMetric,
   formatStandingsRecord,
 } from "utils/standingsWidget";
+import WidgetCarousel from "./WidgetCarousel";
 import StandingsLeagueModal from "../StandingsLeagueModal";
 import { WidgetEditControls } from "./WidgetSlider";
 
@@ -61,6 +66,8 @@ type StandingsConferenceProps = Pick<
   compact: boolean;
   group: ReturnType<typeof buildStandingsPreviewGroups>[number];
   showConferenceName: boolean;
+  isEditing: boolean;
+  onOpenTeam: (team: StandingsTeam) => void;
 };
 
 function StandingsConference({
@@ -69,6 +76,8 @@ function StandingsConference({
   isDark,
   league,
   showConferenceName,
+  isEditing,
+  onOpenTeam,
 }: StandingsConferenceProps) {
   const styles = useMemo(
     () => standingsWidgetStyles(isDark, compact),
@@ -100,7 +109,15 @@ function StandingsConference({
         const logo = getLocalTeamLogo(team, league, isDark);
 
         return (
-          <View key={`${conference}:${team.id}`} style={styles.row}>
+          <Pressable
+            key={`${conference}:${team.id}`}
+            disabled={isEditing}
+            onPress={() => onOpenTeam(team)}
+            style={({ pressed }) => [styles.row, pressed && !isEditing && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel={`Open ${team.name} team page`}
+            accessibilityState={{ disabled: isEditing }}
+          >
             <Text style={[styles.position, styles.positionColumn]}>
               {position}
             </Text>
@@ -135,7 +152,7 @@ function StandingsConference({
                 {formatStandingsMetric(team, league)}
               </Text>
             ) : null}
-          </View>
+          </Pressable>
         );
       })}
     </View>
@@ -175,6 +192,18 @@ function getLocalTeamLogo(
   }
 }
 
+function getLocalTeam(team: StandingsTeam, league: ExploreStandingsLeague) {
+  const lookup = {
+    nba: getTeamByESPNId,
+    wnba: getWNBATeamByESPNId,
+    nfl: getNFLTeamByESPNId,
+    ufl: getUFLTeamByESPNId,
+    mlb: getMLBTeamByEspnId,
+    nhl: getNHLTeamByEspnId,
+  };
+  return lookup[league](team.id);
+}
+
 function StandingsTable({
   height,
   isDark,
@@ -183,12 +212,23 @@ function StandingsTable({
   size,
   width,
 }: StandingsTableProps) {
+  const router = useScopedRouter();
+  const openTeam = useCallback((team: StandingsTeam) => {
+    const teamId = getLocalTeam(team, league)?.id ?? team.id;
+    router.push({
+      pathname: "/(tabs)/(explore)/team/[teamType]/[teamId]",
+      params: { teamType: league, teamId: String(teamId), league },
+    });
+  }, [league, router]);
   const { standings, seasonDisplayName, loading, error, refetch } =
     useLeagueStandings(league);
   const compact = size === "small" || width < 240;
   const styles = useMemo(
-    () => standingsWidgetStyles(isDark, compact),
-    [compact, isDark],
+    () => ({
+      ...standingsWidgetStyles(isDark, compact),
+      ...(size === "small" ? collegePollWidgetStyles(isDark, size) : {}),
+    }),
+    [compact, isDark, size],
   );
   const populatedConferenceCount = standings.filter(
     (conference) => conference.standings.length > 0,
@@ -203,8 +243,14 @@ function StandingsTable({
     [rowLimit, standings],
   );
 
+  const slides = useMemo(() => buildStandingsSlides(standings), [standings]);
+
   if (loading) {
-    return <StandingsSkeleton variant="widget" />;
+    return (
+      <View style={styles.state}>
+        <CustomActivityIndicator />
+      </View>
+    );
   }
 
   if (error) {
@@ -243,6 +289,69 @@ function StandingsTable({
     );
   }
 
+  if (size === "small") {
+    return (
+      <View style={[styles.carousel, isEditing && styles.tableEditing]}>
+        <WidgetCarousel
+          items={slides}
+          initialWidth={Math.max(width - StyleSheet.hairlineWidth * 2, 1)}
+          isDark={isDark}
+          autoPlay
+          disabled={isEditing}
+          keyExtractor={(slide) => slide.key}
+          accessibilityLabel={(index, count) => `Standings, slide ${index + 1} of ${count}`}
+          renderItem={(slide) => {
+            if (slide.type === "conference") {
+              return (
+                <View style={styles.compactSlide}>
+                  <Ionicons name="podium-outline" size={40} color={isDark ? Colors.white : Colors.black} />
+                  <Text style={styles.compactConferenceName}>{slide.name}</Text>
+                </View>
+              );
+            }
+
+            const { team, position } = slide.row;
+            const logo = getLocalTeamLogo(team, league, isDark);
+            return (
+              <Pressable
+                disabled={isEditing}
+                onPress={() => openTeam(team)}
+                style={({ pressed }) => [styles.compactSlide, pressed && !isEditing && styles.pressed]}
+                accessibilityRole="button"
+                accessibilityLabel={`Open ${team.name} team page`}
+                accessibilityState={{ disabled: isEditing }}
+              >
+                <LinearGradient
+                  colors={[(getLocalTeam(team, league)?.color || Colors.midTone), isDark ? Colors.black : Colors.white]}
+                  locations={[0, 0.8]}
+                  start={{ x: 0.5, y: 0 }}
+                  end={{ x: 0.5, y: 1 }}
+                  style={[StyleSheet.absoluteFill, styles.compactTeamGlow]}
+                />
+                <BlurView intensity={100} style={styles.compactRankContainer}>
+                  <Text style={styles.compactRank}>#{position}</Text>
+                </BlurView>
+                {logo ? (
+                  <Image source={logo} style={styles.compactLogo} contentFit="contain" />
+                ) : (
+                  <Text style={styles.compactConferenceName}>{team.code || team.shortName || team.name}</Text>
+                )}
+                <View style={styles.compactCopy}>
+                  <Text style={styles.compactTeamName} numberOfLines={1}>{team.shortName || team.name}</Text>
+                  <View style={styles.compactStatsContainer}>
+                    <Text style={styles.compactStats} numberOfLines={1}>{formatStandingsRecord(team, league)}</Text>
+                    <View style={styles.compactStatsDivider} />
+                    <Text style={styles.compactStats} numberOfLines={1}>{formatStandingsMetric(team, league)} {league === "nhl" ? "PTS" : "PCT"}</Text>
+                  </View>
+                </View>
+              </Pressable>
+            );
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.table, isEditing && styles.tableEditing]}>
       <View style={styles.conferenceGrid}>
@@ -254,6 +363,8 @@ function StandingsTable({
             isDark={isDark}
             league={league}
             showConferenceName={!compact || groups.length === 1}
+            isEditing={isEditing}
+            onOpenTeam={openTeam}
           />
         ))}
       </View>
@@ -287,8 +398,11 @@ export default function StandingsWidget({
   const [pickerVisible, setPickerVisible] = useState(false);
   const compact = size === "small" || width < 240;
   const styles = useMemo(
-    () => standingsWidgetStyles(isDark, compact),
-    [compact, isDark],
+    () => ({
+      ...standingsWidgetStyles(isDark, compact),
+      ...(size === "small" ? collegePollWidgetStyles(isDark, size) : {}),
+    }),
+    [compact, isDark, size],
   );
   const leagueConfig = LEAGUE_CONFIG[league];
 
@@ -302,14 +416,33 @@ export default function StandingsWidget({
   return (
     <>
       <BlurView intensity={100} style={[styles.container, { width, height }]}>
-        <View style={styles.header}>
-          <View style={styles.headingCopy}>
-            <Text style={styles.title}>Standings</Text>
-            {!compact ? (
-              <Text style={styles.subtitle}>By conference</Text>
-            ) : null}
-          </View>
-
+        {size === "small" ? (
+          <Pressable
+            disabled={isEditing}
+            onPress={() => setPickerVisible(true)}
+            style={({ pressed }) => [
+              styles.leagueButton,
+              pressed && !isEditing && styles.pressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={`Change standings league. Currently ${leagueConfig.label}`}
+            accessibilityState={{ disabled: isEditing }}
+          >
+            {size === "small" ? <BlurView intensity={100} style={StyleSheet.absoluteFill} /> : null}
+            <Image
+              source={isDark ? leagueConfig.logoLight : leagueConfig.logo}
+              style={styles.leagueLogo}
+              contentFit="contain"
+            />
+            <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
+            <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
+          </Pressable>
+        ) : (
+          <View style={styles.header}>
+            <View style={styles.headingCopy}>
+              <Text style={styles.title}>Standings</Text>
+              {!compact ? <Text style={styles.subtitle}>By conference</Text> : null}
+            </View>
           <Pressable
             disabled={isEditing}
             onPress={() => setPickerVisible(true)}
@@ -329,7 +462,8 @@ export default function StandingsWidget({
             <Text style={styles.leagueLabel}>{league.toUpperCase()}</Text>
             <Ionicons name="chevron-down" size={13} color={Colors.midTone} />
           </Pressable>
-        </View>
+          </View>
+        )}
 
         <StandingsTable
           key={league}
@@ -422,6 +556,47 @@ const standingsWidgetStyles = (isDark: boolean, compact: boolean) =>
       fontSize: 12,
       color: isDark ? Colors.white : Colors.black,
     },
+    carousel: { flex: 1, minHeight: 0 },
+    compactSlide: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 10,
+      paddingHorizontal: 8,
+      paddingTop: 8,
+      paddingBottom: 18,
+      overflow: "hidden",
+    },
+    compactTeamGlow: { zIndex: -1, width: "150%", height: "120%" },
+    compactRank: {
+      position: "absolute",
+      top: 8,
+      left: 9,
+      fontFamily: Fonts.BOLD,
+      fontSize: 16,
+      color: isDark ? Colors.white : Colors.black,
+    },
+    compactLogo: { width: "48%", height: "48%" },
+    compactCopy: { alignItems: "center", gap: 4, maxWidth: "100%" },
+    compactConferenceName: {
+      fontFamily: Fonts.SEMIBOLD,
+      fontSize: 22,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    compactTeamName: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 16,
+      lineHeight: 20,
+      color: isDark ? Colors.white : Colors.black,
+      textAlign: "center",
+    },
+    compactStats: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 12,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    compactConferenceLabel: { fontFamily: Fonts.MEDIUM, fontSize: 10, color: Colors.midTone },
     table: {
       flex: 1,
       minHeight: 0,

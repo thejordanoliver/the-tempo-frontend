@@ -19,7 +19,7 @@ const PLAYER_TARGETS: Record<
   mlb: { screen: "baseball", league: "mlb" },
   nba: { screen: "basketball", league: "nba" },
   wnba: { screen: "basketball", league: "wnba" },
-  "mens-college-basketball": { screen: "basketball", league: "cbb" },
+  "mens-college-basketball": { screen: "basketball", league: "mcbb" },
   "womens-college-basketball": { screen: "basketball", league: "wcbb" },
   nfl: { screen: "football", league: "nfl" },
   "college-football": { screen: "football", league: "cfb" },

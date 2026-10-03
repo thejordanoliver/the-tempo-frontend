@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -84,6 +85,12 @@ export function useArticle(articleId: number | string) {
       }
     } catch (err: any) {
       if (requestId !== requestIdRef.current) return;
+
+      if (isAxiosError(err) && err.response?.status === 404) {
+        setArticle(null);
+        setError(null);
+        return;
+      }
       setError(err.message || "Error fetching article");
     } finally {
       if (requestId === requestIdRef.current) setLoading(false);

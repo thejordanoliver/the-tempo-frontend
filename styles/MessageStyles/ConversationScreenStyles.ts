@@ -13,11 +13,13 @@ export const ConversationScreenStyles = (isDark: boolean) =>
       backgroundColor: isDark ? Colors.black : Colors.white,
     },
 
+    messagesList: {
+      flex: 1,
+    },
+
     messagesContent: {
       flexGrow: 1,
-      paddingHorizontal: 12,
-      paddingTop: 120,
-      paddingBottom: 12,
+      padding: 12,
     },
 
     olderMessagesLoader: {
@@ -193,10 +195,6 @@ export const ConversationScreenStyles = (isDark: boolean) =>
     },
 
     composerOuter: {
-      position: "absolute",
-      right: 0,
-      bottom: 0,
-      left: 0,
       zIndex: 20,
       paddingHorizontal: 12,
       paddingTop: 8,

@@ -31,6 +31,8 @@ export type LeagueType =
   | "cfb"
   | "ufl"
   | "epl"
+  | "msoc"
+  | "wsoc"
   | "mls"
   | "champions"
   | "europa"
@@ -42,7 +44,7 @@ export type LeagueType =
   | "ligue2"
   | "cb"
   | "sb"
-  | "cbb"
+  | "mcbb"
   | "wcbb"
   | "mlb"
   | "nhl"
@@ -169,7 +171,7 @@ export type AwardCategory =
   | "apcoy"
   | "afca"
 
-  // CBB & WCBB
+  // MCBB & WCBB
   | "apoy"
   | "naismith"
   | "cousy"
@@ -317,7 +319,7 @@ export const AWARD_CONFIG: Partial<
     },
   ],
 
-  cbb: [
+  mcbb: [
     { label: "All Awards", value: "all", title: "" },
     {
       label: "Men's AP Player of the Year",

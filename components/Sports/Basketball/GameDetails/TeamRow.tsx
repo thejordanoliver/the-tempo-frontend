@@ -57,8 +57,8 @@ export const TeamRow = ({
     if (normalizedLeague === "wnba") {
       router.push(`/team/wnba/${id}`);
     }
-    if (normalizedLeague === "cbb") {
-      router.push(`/team/cbb/${id}`);
+    if (normalizedLeague === "mcbb") {
+      router.push(`/team/mcbb/${id}`);
     }
     if (normalizedLeague === "wcbb") {
       router.push(`/team/wcbb/${id}`);

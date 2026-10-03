@@ -280,7 +280,7 @@ function UserProfileContent() {
     initialFollowingCount === undefined &&
     !routeUsername
   ) {
-    return <SkeletonProfileScreen isDark={isDark} />;
+    return <SkeletonProfileScreen isDark={isDark} isCurrentUser={isCurrentUser} />;
   }
 
   return (

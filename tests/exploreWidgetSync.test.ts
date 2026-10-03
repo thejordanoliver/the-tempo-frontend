@@ -158,3 +158,22 @@ test("failed explicit reload preserves pending edits", async () => {
   assert.equal(stored.pending, true);
   sync.stop();
 });
+
+test("stopping during local persistence prevents a save under the next account's token", async () => {
+  let blockWrites = false;
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  let puts = 0;
+  const sync = new ExploreWidgetSync({ load: async () => null,
+    persist: async () => { if (blockWrites) await gate; }, get: async () => remote(),
+    put: async () => { puts++; return remote(); }, onChange: () => {} });
+  await sync.start();
+  blockWrites = true;
+  sync.edit(() => [widget("pending-account-a")]);
+  const saving = sync.refresh();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  sync.stop();
+  release();
+  await saving;
+  assert.equal(puts, 0);
+});

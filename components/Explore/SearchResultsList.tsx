@@ -35,7 +35,7 @@ function getTeamLeagueKey(item: TeamResult) {
   if (item.isMLB) return "mlb";
   if (item.isNHL) return "nhl";
   if (item.isCFB) return "cfb";
-  if (item.isCBB) return "cbb";
+  if (item.isMCBB) return "mcbb";
   if (item.isWCBB) return "wcbb";
   if (item.isNBA) return "nba";
 

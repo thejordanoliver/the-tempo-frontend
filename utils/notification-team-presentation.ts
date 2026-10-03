@@ -4,7 +4,7 @@ import {
   getTeamBySummerId,
 } from "@/constants/teams";
 import { getCBTeam } from "@/constants/teamsCB";
-import { getCBBTeam, getCBBTeamByESPNId } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamByESPNId } from "@/constants/teamsCFB";
 import { getMLBTeam, getMLBTeamByEspnId } from "@/constants/teamsMLB";
 import { getNFLTeam, getNFLTeamByESPNId } from "@/constants/teamsNFL";
@@ -53,8 +53,8 @@ const resolveTeam = (
       return getNBATeam(teamId) ?? getTeamByESPNId(teamId);
     case "wnba":
       return getWNBATeam(teamId) ?? getWNBATeamByESPNId(teamId);
-    case "cbb":
-      return getCBBTeam(teamId) ?? getCBBTeamByESPNId(teamId);
+    case "mcbb":
+      return getMCBBTeam(teamId) ?? getMCBBTeamByESPNId(teamId);
     case "wcbb":
       return getWCBBTeam(teamId) ?? getWCBBTeamByESPNId(teamId);
     case "nfl":

@@ -68,10 +68,6 @@ export default function TeamScoringSummary({
     return null;
   }
 
-  if (!loading && plays.length === 0) {
-    return null;
-  }
-
   return (
     <View>
       <HeadingTwo isDark={isDark}>Scoring Summary</HeadingTwo>
@@ -95,9 +91,9 @@ export default function TeamScoringSummary({
         />
 
         {!loading && filteredPlays.length === 0 ? (
-          <View style={global.emptyContainer}>
+          <View style={[global.emptyContainer, styles.emptyContainer]}>
             <Text style={global.emptyText}>
-              {selectedTab === "all"
+              {plays.length === 0
                 ? "No scoring plays available."
                 : "No scoring plays for this team."}
             </Text>
@@ -164,6 +160,13 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
 
     listContainer: {
       marginTop: 4,
+    },
+
+    emptyContainer: {
+      // This card has intrinsic height; the shared full-screen flex collapses here.
+      flex: 0,
+      flexShrink: 0,
+      minHeight: 72,
     },
 
     playRow: {

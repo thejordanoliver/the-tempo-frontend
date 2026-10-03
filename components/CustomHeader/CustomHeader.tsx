@@ -1,10 +1,10 @@
-import { resolveCBBConferenceselection } from "@/constants/conferences/cbbConferences";
+import { resolveMCBBConferenceselection } from "@/constants/conferences/mcbbConferences";
 import {
   cfbConferences,
   resolveCFBConferenceSelection,
 } from "@/constants/conferences/cfbConferences";
 import { resolveWCBBConferenceselection } from "@/constants/conferences/wcbbConferences";
-import { cbbTeams, getCBBTeam } from "@/constants/teamsCBB";
+import { mcbbTeams, getMCBBTeam } from "@/constants/teamsMCBB";
 import { getWCBBTeam, wcbbTeams } from "@/constants/teamsWCBB";
 import { resolveLeagueConfig } from "constants/leagues";
 import { Colors, Fonts } from "constants/styles";
@@ -233,7 +233,7 @@ export function CustomHeader({
     }
 
     if (tabName === "Men's College Basketball") {
-      return resolveCBBConferenceselection(selectedConferenceName) ?? null;
+      return resolveMCBBConferenceselection(selectedConferenceName) ?? null;
     }
     if (tabName === "Women's College Basketball") {
       return resolveWCBBConferenceselection(selectedConferenceName) ?? null;
@@ -298,8 +298,8 @@ export function CustomHeader({
       case "CFB":
         return getCFBTeam(teamId ?? 0) as HeaderTeamLike;
 
-      case "CBB":
-        return getCBBTeam(teamId ?? 0) as HeaderTeamLike;
+      case "MCBB":
+        return getMCBBTeam(teamId ?? 0) as HeaderTeamLike;
 
       case "WCBB":
         return getWCBBTeam(teamId ?? 0) as HeaderTeamLike;
@@ -324,8 +324,8 @@ export function CustomHeader({
       case "CFB":
         return cfbTeams as HeaderTeamLike[];
 
-      case "CBB":
-        return cbbTeams as HeaderTeamLike[];
+      case "MCBB":
+        return mcbbTeams as HeaderTeamLike[];
 
       case "WCBB":
         return wcbbTeams as HeaderTeamLike[];

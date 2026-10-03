@@ -46,7 +46,6 @@ export const useDirectMessages = (
 
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTypingRef = useRef(false);
-  const didRequestInitialLoadRef = useRef<Record<string, boolean>>({});
 
   const socket = useMemo(() => getMessagesSocket(token), [token]);
   const messageAccent = useMemo(
@@ -71,19 +70,17 @@ export const useDirectMessages = (
   }, [conversation?.messageThemePreference]);
 
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId || !isVisible || !token) return;
 
-    const hasCachedMessages = messageState.messages.length > 0;
-    const hasRequested = didRequestInitialLoadRef.current[conversationId];
-
-    if (hasRequested) return;
-
-    didRequestInitialLoadRef.current[conversationId] = true;
-
-    void loadConversationMessages(conversationId, {
-      background: hasCachedMessages,
-    });
-  }, [conversationId, loadConversationMessages, messageState.messages.length]);
+    const resync = () => {
+      void loadConversationMessages(conversationId, { background: true });
+    };
+    // Visibility includes screen focus and AppState, so this also catches
+    // foregrounding while the socket is still reconnecting.
+    resync();
+    socket?.on("connect", resync);
+    return () => { socket?.off("connect", resync); };
+  }, [conversationId, isVisible, loadConversationMessages, socket, token]);
 
   useEffect(() => {
     if (

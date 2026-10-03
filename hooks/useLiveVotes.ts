@@ -1,4 +1,6 @@
 // hooks/useLiveVotes.ts
+import { castRankedPrediction } from "services/fanPredictionsApi";
+import type { RankedPredictionContext } from "types/fanPredictions";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { apiClient, getAccessToken } from "utils/apiClient";
@@ -64,7 +66,7 @@ function getVoteErrorMessage(error: unknown): string {
   return "Your vote didn't go through. Try again.";
 }
 
-export function useLiveVotes(gameId: number) {
+export function useLiveVotes(gameId: number, predictionContext?: RankedPredictionContext) {
   const [votes, setVotes] = useState<PollResult[] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket<
@@ -172,8 +174,22 @@ export function useLiveVotes(gameId: number) {
     [gameId],
   );
 
+  const sport = predictionContext?.sport;
+  const league = predictionContext?.league;
+  const date = predictionContext?.date;
+  const state = predictionContext?.state;
+
   const castVote = useCallback(
     async (teamId: string | number): Promise<CastVoteAck> => {
+      if (sport && league && state === "pre") {
+        try {
+          await castRankedPrediction(gameId, teamId, { sport, league, date });
+          try {
+            setVotes((await fetchVoteResults(gameId)).votes);
+          } catch (error) { console.warn("Vote result refresh error", error); }
+          return { ok: true };
+        } catch (error) { return { ok: false, error: getVoteErrorMessage(error) }; }
+      }
       const socket = socketRef.current;
 
       if (!socket || !socket.connected) {
@@ -204,7 +220,7 @@ export function useLiveVotes(gameId: number) {
 
       return response;
     },
-    [castVoteOverHttp, gameId],
+    [castVoteOverHttp, gameId, sport, league, date, state],
   );
 
   return { votes, castVote, isConnected };

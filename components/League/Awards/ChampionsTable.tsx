@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import AwardSeasonTableSkeleton from "components/Skeletons/AwardSeasonTableSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
@@ -71,8 +71,8 @@ export default function ChampionsTable({
                     ? getMLBTeamLogo(row.team.id, isDark)
                     : row.team && league === "nhl"
                       ? getNHLTeamLogo(row.team.id, isDark)
-                      : row.team && league === "cbb"
-                        ? getCBBTeamLogo(row.team.id, isDark)
+                      : row.team && league === "mcbb"
+                        ? getMCBBTeamLogo(row.team.id, isDark)
                         : row.team && league === "wcbb"
                           ? getWCBBTeamLogo(row.team.id, isDark)
                           : getNFLTeamLogo(row.team?.id ?? 0, isDark);

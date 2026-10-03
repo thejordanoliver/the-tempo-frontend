@@ -27,7 +27,7 @@ const TEAM_LEAGUE_ROUTES: TeamLeagueRoute[] = [
   { flag: "isWNBA", teamType: "wnba" },
   { flag: "isNHL", teamType: "nhl" },
   { flag: "isCFB", teamType: "cfb" },
-  { flag: "isCBB", teamType: "cbb" },
+  { flag: "isMCBB", teamType: "mcbb" },
   {
     flag: "isSOCC",
     teamType: "soccer",
@@ -73,9 +73,9 @@ const PLAYER_LEAGUE_ROUTES: PlayerLeagueRoute[] = [
     league: "gleague",
   },
   {
-    flag: "isCBB",
+    flag: "isMCBB",
     sport: "basketball",
-    league: "cbb",
+    league: "mcbb",
   },
   {
     flag: "isWCBB",
@@ -98,7 +98,7 @@ const PLAYER_SPORT_BY_AFFILIATION: Record<SearchAffiliation, string> = {
   nba: "basketball",
   gleague: "basketball",
   wnba: "basketball",
-  cbb: "basketball",
+  mcbb: "basketball",
   wcbb: "basketball",
   mlb: "baseball",
   nfl: "football",
@@ -143,7 +143,7 @@ export function getExploreRouteForResult(
     return `/(tabs)/(explore)/team/${teamRoute.teamType}/${routeId}`;
   }
 
-  if (item.isCBB || item.isWCBB) {
+  if (item.isMCBB || item.isWCBB) {
     return {
       pathname: "/(tabs)/(explore)/player/[sport]/[id]",
       params: {

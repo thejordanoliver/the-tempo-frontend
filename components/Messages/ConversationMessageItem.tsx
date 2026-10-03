@@ -21,6 +21,7 @@ interface ConversationMessageItemProps {
   secondaryAccent: string;
   usesCustomMessageAccent: boolean;
   usesGradient: boolean;
+  onRetry?: (item: DirectMessageItem) => void;
   onBlocked?: () => void;
 }
 
@@ -34,6 +35,7 @@ function ConversationMessageItem({
   secondaryAccent,
   usesCustomMessageAccent,
   usesGradient,
+  onRetry,
   onBlocked,
 }: ConversationMessageItemProps) {
   const hasText = item.text.trim().length > 0;
@@ -151,7 +153,15 @@ function ConversationMessageItem({
           {bubbleContent}
         </Pressable>
 
-        {item.isCurrentUser && Boolean(receiptLabel) && (
+        {item.isCurrentUser && item.status === "pending" && (
+          <Text style={styles.messageReceiptText}>Sending...</Text>
+        )}
+        {item.isCurrentUser && item.status === "failed" && (
+          <Pressable accessibilityRole="button" accessibilityLabel="Retry failed message" onPress={() => onRetry?.(item)}>
+            <Text style={styles.messageReceiptText}>Failed to send. Tap to retry</Text>
+          </Pressable>
+        )}
+        {item.isCurrentUser && item.status !== "pending" && item.status !== "failed" && Boolean(receiptLabel) && (
           <Text style={styles.messageReceiptText}>{receiptLabel}</Text>
         )}
       </View>

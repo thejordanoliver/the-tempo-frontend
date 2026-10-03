@@ -2,7 +2,7 @@ import { CustomHeader } from "@/components/CustomHeader";
 import OfferList from "@/components/League/Recruiting/OfferLists";
 import PredictionRing from "@/components/League/Recruiting/PredictionRing";
 import RecruitHeader from "@/components/League/Recruiting/RecruitHeader";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useRecruit } from "@/hooks/RecruitHooks/useRecruit";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
@@ -30,13 +30,13 @@ export default function RecruitDetailScreen() {
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const navigation = useNavigation();
   const { data: player, loading, error } = useRecruit(recruitId, league);
-  const team = league === "cfb" ? getCFBTeam(teamId) : getCBBTeam(teamId);
+  const team = league === "cfb" ? getCFBTeam(teamId) : getMCBBTeam(teamId);
   const teamCode = team?.code;
   const teamColor = team?.color ?? Colors.midTone;
   const teamLogo =
     league === "cfb"
       ? getCFBTeamLogo(teamId, true)
-      : getCBBTeamLogo(teamId, true);
+      : getMCBBTeamLogo(teamId, true);
 
   const predictionPercentage = useMemo(() => {
     const rawPercentage = player?.prediction_percentage;

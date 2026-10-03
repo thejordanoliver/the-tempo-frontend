@@ -53,6 +53,8 @@ const SOCCER_FORUM_LEAGUES = new Set([
   "fifaw",
   "leaguescup",
   "mls",
+  "msoc",
+  "wsoc",
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════════

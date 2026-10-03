@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { subscribeAuthSession } from "utils/apiClient";
 import { AppState } from "react-native";
 import { getExploreWidgetSettings, saveExploreWidgetSettings } from "services/exploreWidgetsApi";
 import { ExploreWidgetSync, type WidgetSyncState } from "utils/exploreWidgetSync";
@@ -31,31 +33,78 @@ export function useExploreWidgetConfiguration(userId: number | null) {
   const [state, setState] = useState<WidgetSyncState>({ widgets: [], ready: false, pending: false, error: null, conflict: false });
   const [configurationUserId, setConfigurationUserId] = useState<number | null>(null);
   const syncRef = useRef<ExploreWidgetSync | null>(null);
-  const currentWidgets = useMemo(() => configurationUserId === userId ? state.widgets : [], [configurationUserId, userId, state.widgets]);
-  const currentReady = configurationUserId === userId && state.ready;
+  const stopSyncRef = useRef<(() => void) | null>(null);
+  const [sessionIdentity, setSessionIdentity] = useState<{
+    userId: number | null;
+    ready: boolean;
+    generation: number;
+  }>({ userId: null, ready: false, generation: 0 });
+  const activeUserId = sessionIdentity.ready && sessionIdentity.userId === userId
+    ? userId
+    : null;
+  const identityMatches = sessionIdentity.ready && sessionIdentity.userId === userId;
+
+  useEffect(() => {
+    let generation = 0;
+    let disposed = false;
+    const readIdentity = async (signedOut = false) => {
+      const request = ++generation;
+      // Tokens change before FavoriteTeamsContext finishes reading the new ID.
+      // Stop all work immediately, rather than waiting for its next render.
+      stopSyncRef.current?.();
+      setSessionIdentity({ userId: null, ready: false, generation: request });
+      try {
+        const storedUserId = signedOut ? null : await AsyncStorage.getItem("userId");
+        if (disposed || request !== generation) return;
+        const parsedUserId = storedUserId === null ? null : Number(storedUserId);
+        const nextUserId = parsedUserId !== null && Number.isSafeInteger(parsedUserId) && parsedUserId > 0
+          ? parsedUserId
+          : null;
+        setSessionIdentity({ userId: nextUserId, ready: true, generation: request });
+      } catch {
+        if (!disposed && request === generation) {
+          setState({ widgets: [], ready: false, pending: false, conflict: false,
+            error: "Unable to read the signed-in account. Please sign in again." });
+        }
+      }
+    };
+    const unsubscribe = subscribeAuthSession(({ accessToken }) => {
+      void readIdentity(!accessToken);
+    });
+    void readIdentity();
+    return () => { disposed = true; generation += 1; unsubscribe(); };
+  }, []);
+  const currentWidgets = useMemo(() => identityMatches && configurationUserId === activeUserId ? state.widgets : [], [configurationUserId, activeUserId, identityMatches, state.widgets]);
+  const currentReady = identityMatches && configurationUserId === activeUserId && state.ready;
 
   useEffect(() => {
     let disposed = false;
     const controller = new AbortController();
-    const sync = userId ? new ExploreWidgetSync({
-      load: () => loadExploreWidgetSettingsCache(String(userId)),
-      persist: (cache) => saveExploreWidgetSettingsCache(String(userId), cache),
-      get: () => getExploreWidgetSettings(controller.signal),
-      put: (widgets, revision) => saveExploreWidgetSettings(widgets, revision, controller.signal),
+    const sync = activeUserId ? new ExploreWidgetSync({
+      load: () => loadExploreWidgetSettingsCache(String(activeUserId)),
+      persist: (cache) => saveExploreWidgetSettingsCache(String(activeUserId), cache),
+      get: () => getExploreWidgetSettings(activeUserId, controller.signal),
+      put: (widgets, revision) => saveExploreWidgetSettings(activeUserId, widgets, revision, controller.signal),
       onChange: (next) => { if (!disposed) setState(next); },
     }) : null;
+    const stop = () => { disposed = true; sync?.stop(); controller.abort(); };
+    stopSyncRef.current = stop;
     syncRef.current = sync;
     void Promise.resolve().then(() => {
       if (disposed) return;
-      setConfigurationUserId(userId);
-      setState({ widgets: [], ready: !userId, pending: false, error: null, conflict: false });
+      setConfigurationUserId(activeUserId);
+      setState({ widgets: [], ready: !activeUserId, pending: false, error: null, conflict: false });
       void sync?.start();
     });
     const subscription = AppState.addEventListener("change", (next) => {
       if (next === "active") void sync?.refresh();
     });
-    return () => { disposed = true; sync?.stop(); controller.abort(); subscription.remove(); };
-  }, [userId]);
+    return () => {
+      stop();
+      subscription.remove();
+      if (stopSyncRef.current === stop) stopSyncRef.current = null;
+    };
+  }, [activeUserId, sessionIdentity.generation]);
 
   const setWidgets = useCallback((update: (previous: ExploreWidgetConfig[]) => ExploreWidgetConfig[]) => {
     syncRef.current?.edit(update);
@@ -261,9 +310,9 @@ export function useExploreWidgetConfiguration(userId: number | null) {
   return {
     widgets: currentWidgets,
     ready: currentReady,
-    settingsError: configurationUserId === userId ? state.error : null,
-    settingsPending: configurationUserId === userId && state.pending,
-    settingsConflict: configurationUserId === userId && state.conflict,
+    settingsError: identityMatches && configurationUserId === activeUserId ? state.error : null,
+    settingsPending: identityMatches && configurationUserId === activeUserId && state.pending,
+    settingsConflict: identityMatches && configurationUserId === activeUserId && state.conflict,
     refreshSettings,
     reloadAccountSettings,
     addWidget,

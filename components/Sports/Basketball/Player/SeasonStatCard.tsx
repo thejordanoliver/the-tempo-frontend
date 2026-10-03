@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { Text, View } from "react-native";
 import type { PlayerSeasonRankings } from "types/playerSeasonRankings";
 
-type BasketballLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+type BasketballLeague = "NBA" | "WNBA" | "MCBB" | "WCBB";
 
 type Props = {
   seasons: PlayerSeason[];

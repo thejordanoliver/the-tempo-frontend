@@ -2,7 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 
 import NBATeamScreen from "app/(tabs)/(home)/team/[teamId]";
 import CBTeamScreen from "app/(tabs)/(home)/team/cb/[teamId]";
-import CBBTeamScreen from "app/(tabs)/(home)/team/cbb/[teamId]";
+import MCBBTeamScreen from "app/(tabs)/(home)/team/mcbb/[teamId]";
 import CFBTeamScreen from "app/(tabs)/(home)/team/cfb/[teamId]";
 import GLeagueTeamScreen from "app/(tabs)/(home)/team/gleague/[teamId]";
 import MLBTeamScreen from "app/(tabs)/(home)/team/mlb/[teamId]";
@@ -17,7 +17,7 @@ import WNBATeamScreen from "app/(tabs)/(home)/team/wnba/[teamId]";
 const TEAM_SCREENS = {
   nba: NBATeamScreen,
   cb: CBTeamScreen,
-  cbb: CBBTeamScreen,
+  mcbb: MCBBTeamScreen,
   cfb: CFBTeamScreen,
   gleague: GLeagueTeamScreen,
   mlb: MLBTeamScreen,

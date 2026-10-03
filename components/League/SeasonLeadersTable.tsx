@@ -3,7 +3,7 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import placeholder from "@/assets/Placeholders/playerPlaceholder.png";
 import { Colors, activeOpacity, globalStyles } from "@/constants/styles";
 import { getNBATeam } from "@/constants/teams";
-import { getCBBTeam } from "@/constants/teamsCBB";
+import { getMCBBTeam } from "@/constants/teamsMCBB";
 import { getCFBTeam } from "@/constants/teamsCFB";
 import { getMLBTeam } from "@/constants/teamsMLB";
 import { getNFLTeam } from "@/constants/teamsNFL";
@@ -33,7 +33,7 @@ type PlayerRoutePathname =
 const PLAYER_ROUTES: Record<string, PlayerRoutePathname> = {
   nba: "/player/basketball/[id]",
   wnba: "/player/basketball/[id]",
-  cbb: "/player/basketball/[id]",
+  mcbb: "/player/basketball/[id]",
   wcbb: "/player/basketball/[id]",
   mlb: "/player/baseball/[id]",
   nfl: "/player/football/[id]",
@@ -47,8 +47,8 @@ const getTeam = (league: string, teamId: number) => {
       return getNBATeam(teamId);
     case "wnba":
       return getWNBATeam(teamId);
-    case "cbb":
-      return getCBBTeam(teamId);
+    case "mcbb":
+      return getMCBBTeam(teamId);
     case "wcbb":
       return getWCBBTeam(teamId);
     case "mlb":

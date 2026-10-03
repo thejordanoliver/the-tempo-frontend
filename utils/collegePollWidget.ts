@@ -12,7 +12,7 @@ const CFB_POLL_OPTIONS: readonly CollegePollOption[] = [
   { label: "FCS Coaches Poll", shortLabel: "FCS", value: "fcs" },
 ];
 
-const CBB_POLL_OPTIONS: readonly CollegePollOption[] = [
+const MCBB_POLL_OPTIONS: readonly CollegePollOption[] = [
   { label: "AP Poll", shortLabel: "AP", value: "ap" },
   { label: "Coaches Poll", shortLabel: "Coaches", value: "coaches" },
 ];
@@ -20,7 +20,7 @@ const CBB_POLL_OPTIONS: readonly CollegePollOption[] = [
 export function getCollegePollOptions(
   league: ExploreCollegePollLeague,
 ): readonly CollegePollOption[] {
-  return league === "cfb" ? CFB_POLL_OPTIONS : CBB_POLL_OPTIONS;
+  return league === "cfb" ? CFB_POLL_OPTIONS : MCBB_POLL_OPTIONS;
 }
 
 export function isCollegePollTypeAvailable(

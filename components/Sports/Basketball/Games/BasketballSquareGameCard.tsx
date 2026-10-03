@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
@@ -15,7 +15,7 @@ import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 export default function BasketballSquareGameCard({
   game,
-  isCBB,
+  isMCBB,
   isWCBB,
   isWNBA,
 }: BasketballGameCardProps) {
@@ -51,16 +51,16 @@ export default function BasketballSquareGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isCBB
-    ? getCBBTeam(homeId)
+  const homeTeam = isMCBB
+    ? getMCBBTeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
 
-  const awayTeam = isCBB
-    ? getCBBTeam(awayId)
+  const awayTeam = isMCBB
+    ? getMCBBTeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
       : isWNBA
@@ -70,16 +70,16 @@ export default function BasketballSquareGameCard({
   const homeName = homeTeam?.code || game.home?.code;
   const awayName = awayTeam?.code || game.away?.code;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -104,7 +104,7 @@ export default function BasketballSquareGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;

@@ -1,7 +1,7 @@
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
 import { getCBTeam, getCBTeamLogo } from "constants/teamsCB";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeam, getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
@@ -17,7 +17,7 @@ export type FavoriteTeamRoute =
   | "/team/wnba/[teamId]"
   | "/team/nfl/[teamId]"
   | "/team/cfb/[teamId]"
-  | "/team/cbb/[teamId]"
+  | "/team/mcbb/[teamId]"
   | "/team/wcbb/[teamId]"
   | "/team/mlb/[teamId]"
   | "/team/cb/[teamId]"
@@ -45,8 +45,8 @@ export function getFavoriteBaseTeam(
       return getNFLTeam(teamId);
     case "cfb":
       return getCFBTeam(teamId);
-    case "cbb":
-      return getCBBTeam(teamId);
+    case "mcbb":
+      return getMCBBTeam(teamId);
     case "wcbb":
       return getWCBBTeam(teamId);
     case "mlb":
@@ -84,8 +84,8 @@ export function getFavoriteTeamLogo(
     case "cfb":
       return getCFBTeamLogo(teamId, true);
 
-    case "cbb":
-      return getCBBTeamLogo(teamId, true);
+    case "mcbb":
+      return getMCBBTeamLogo(teamId, true);
 
     case "wcbb":
       return team.logo ?? getWCBBTeamLogo(teamId, true);
@@ -124,8 +124,8 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
     case "cfb":
       return "/team/cfb/[teamId]";
 
-    case "cbb":
-      return "/team/cbb/[teamId]";
+    case "mcbb":
+      return "/team/mcbb/[teamId]";
 
     case "wcbb":
       return "/team/wcbb/[teamId]";
@@ -153,7 +153,7 @@ export function getFavoriteTeamRoute(league: string): FavoriteTeamRoute {
 export function isCollegeFavoriteLeague(league: string): boolean {
   return (
     league === "cfb" ||
-    league === "cbb" ||
+    league === "mcbb" ||
     league === "wcbb" ||
     league === "cb" ||
     league === "sb"

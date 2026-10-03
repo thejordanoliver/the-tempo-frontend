@@ -24,7 +24,7 @@ type BaseProps = {
   loading?: boolean;
 
   isNBA?: boolean;
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isWNBA?: boolean;
   isWCBB?: boolean;
 
@@ -42,7 +42,7 @@ type BaseProps = {
 };
 
 type BasketballProps = BaseProps & {
-  league: "nba" | "cbb" | "wcbb" | "wnba";
+  league: "nba" | "mcbb" | "wcbb" | "wnba";
   game: BasketballGame | null;
 };
 
@@ -69,7 +69,7 @@ export default function LatestGame(props: Props) {
     loading = false,
     isDark,
     isNBA = false,
-    isCBB = false,
+    isMCBB = false,
     isWNBA = false,
     isWCBB = false,
     isNFL = false,
@@ -115,8 +115,8 @@ export default function LatestGame(props: Props) {
       case "nba":
         return <BasketballGameCard game={game} isNBA={isNBA} />;
 
-      case "cbb":
-        return <BasketballGameCard game={game} isCBB={isCBB} />;
+      case "mcbb":
+        return <BasketballGameCard game={game} isMCBB={isMCBB} />;
 
       case "wcbb":
         return <BasketballGameCard game={game} isWCBB={isWCBB} />;
@@ -170,20 +170,20 @@ export default function LatestGame(props: Props) {
             visible={modalVisible}
             onClose={handleCloseModal}
             isSL={false}
-            isCBB={false}
+            isMCBB={false}
             isWCBB={false}
             isWNBA={false}
           />
         );
 
-      case "cbb":
+      case "mcbb":
         return (
           <BasketballGamePreviewModal
             game={game}
             visible={modalVisible}
             onClose={handleCloseModal}
             isSL={false}
-            isCBB={isCBB}
+            isMCBB={isMCBB}
             isWCBB={false}
             isWNBA={false}
           />
@@ -196,7 +196,7 @@ export default function LatestGame(props: Props) {
             visible={modalVisible}
             onClose={handleCloseModal}
             isSL={false}
-            isCBB={false}
+            isMCBB={false}
             isWCBB={isWCBB}
             isWNBA={false}
           />
@@ -209,7 +209,7 @@ export default function LatestGame(props: Props) {
             visible={modalVisible}
             onClose={handleCloseModal}
             isSL={false}
-            isCBB={false}
+            isMCBB={false}
             isWCBB={false}
             isWNBA={isWNBA}
           />

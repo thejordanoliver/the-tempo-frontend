@@ -23,7 +23,7 @@ const {
   getSourceGameDisplayTeams,
 } = require(path.join(
   process.cwd(),
-  "components/Sports/Basketball/tournamentBracket.utils.ts",
+  "utils/tournamentBracket.utils.ts",
 ));
 
 const team = (id, name, seed, homeAway, winner = null) => ({
@@ -46,7 +46,7 @@ const game = ({
   winnerTeamId = null,
 }) => ({
   id,
-  tournamentId: "2026-cbb",
+  tournamentId: "2026-mcbb",
   regionId: "east",
   regionName: "East",
   round,

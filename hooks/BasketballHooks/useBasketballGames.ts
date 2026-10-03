@@ -19,8 +19,8 @@ type ConferenceId = number | string | null | undefined;
 
 function getBasketballEndpoint(league: string) {
   switch (league) {
-    case "cbb":
-      return "api/games/basketball/cbb";
+    case "mcbb":
+      return "api/games/basketball/mcbb";
 
     case "wcbb":
       return "api/games/basketball/wcbb";
@@ -61,7 +61,7 @@ export function useBasketballGames(
 
   const endpoint = getBasketballEndpoint(league);
 
-  const isCollegeBasketball = league === "cbb" || league === "wcbb";
+  const isCollegeBasketball = league === "mcbb" || league === "wcbb";
 
   const normalizedConferenceId = useMemo(() => {
     if (!isCollegeBasketball) {

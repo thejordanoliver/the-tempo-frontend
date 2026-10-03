@@ -50,7 +50,7 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  cbb: [
+  mcbb: [
     "scores",
     "news",
     "standings",
@@ -72,6 +72,10 @@ export const LEAGUE_TABS = {
   atp: ["scores", "news", "forum"],
 
   wta: ["scores", "news", "forum"],
+
+  msoc: ["scores", "news", "forum"],
+
+  wsoc: ["scores", "news", "forum"],
 
   mls: ["scores", "news", "standings", "forum"],
 
@@ -104,7 +108,7 @@ export const TEAM_TABS = {
   // Basketball
   nba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   gleague: ["schedule", "news", "roster", "forum"],
-  cbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
+  mcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wnba: ["schedule", "news", "roster", "stats", "standings", "forum"],
   wcbb: ["schedule", "news", "roster", "stats", "standings", "forum"],
 

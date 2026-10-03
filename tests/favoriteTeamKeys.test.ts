@@ -105,3 +105,7 @@ test("teams reorder only within the teams area", () => {
     favoriteRailItems.map((item) => item.key),
   );
 });
+
+test("upgrades saved men's college basketball favorites without changing women's favorites", () => {
+  assert.deepEqual(normalizeFavoriteTeamKeys(["CBB:017", "mcbb:17", "wcbb:17"]), ["mcbb:17", "wcbb:17"]);
+});

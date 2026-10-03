@@ -6,6 +6,7 @@ import type {
 } from "../hooks/LeagueHooks/useLeagueStandings";
 import {
   buildStandingsPreviewGroups,
+  buildStandingsSlides,
   buildStandingsPreviewRows,
   formatStandingsMetric,
   formatStandingsRecord,
@@ -119,4 +120,16 @@ test("formats league-specific records and metrics", () => {
   assert.equal(formatStandingsRecord(nhlTeam, "nhl"), "20-10-4");
   assert.equal(formatStandingsMetric(nhlTeam, "nhl"), "44");
   assert.equal(formatStandingsMetric(team("nba", 3, 1), "nba"), ".750");
+});
+
+
+test("small slides introduce each populated conference before all its teams", () => {
+  const conferences: ConferenceStandings[] = [
+    { id: "west", name: "Western Conference", abbreviation: "W", standings: [team("a", 10, 2), team("b", 9, 3), team("c", 8, 4)] },
+    { id: "empty", name: "Empty", abbreviation: "", standings: [] },
+    { id: "east", name: "Eastern Conference", abbreviation: "E", standings: [team("d", 11, 1)] },
+  ];
+  assert.deepEqual(buildStandingsSlides(conferences).map((slide) =>
+    slide.type === "conference" ? slide.name : `${slide.row.position}:${slide.row.team.id}`,
+  ), ["Western Conference", "1:a", "2:b", "3:c", "Eastern Conference", "1:d"]);
 });

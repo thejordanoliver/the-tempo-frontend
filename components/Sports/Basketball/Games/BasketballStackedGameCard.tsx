@@ -1,5 +1,5 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
@@ -20,7 +20,7 @@ import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
 
 export default function BasketballStackedGameCard({
   game,
-  isCBB,
+  isMCBB,
   isWCBB,
   isWNBA,
 }: BasketballGameCardProps) {
@@ -50,16 +50,16 @@ export default function BasketballStackedGameCard({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isCBB
-    ? getCBBTeam(homeId)
+  const homeTeam = isMCBB
+    ? getMCBBTeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
 
-  const awayTeam = isCBB
-    ? getCBBTeam(awayId)
+  const awayTeam = isMCBB
+    ? getMCBBTeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
       : isWNBA
@@ -69,16 +69,16 @@ export default function BasketballStackedGameCard({
   const homeName = homeTeam?.fullName || game.home?.name;
   const awayName = awayTeam?.fullName || game.away?.name;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -103,7 +103,7 @@ export default function BasketballStackedGameCard({
 
   const period = formatPeriod({
     period: game.status.period,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
   const clock = game.status.displayClock;
   const gameStatusDescription = game.status?.description;

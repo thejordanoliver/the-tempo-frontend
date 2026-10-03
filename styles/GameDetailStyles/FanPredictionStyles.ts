@@ -3,19 +3,36 @@ import { StyleSheet } from "react-native";
 
 export const FanPredictionStyles = (isDark: boolean) =>
   StyleSheet.create({
-    wrapper: {
+    container: {
       width: "100%",
-      height: 112,
+    },
+    wrapper: {
+      padding: 12,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: Colors.midTone,
+      borderRadius: 8,
+      overflow: "hidden",
+    },
+    cardsRow: {
+      width: "100%",
+      minHeight: 128,
       flexDirection: "row",
       gap: 8,
-      justifyContent: "space-evenly",
+      alignItems: "stretch",
+    },
+    statusRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: 8,
     },
     subtitle: {
-      marginTop: 4,
-      marginBottom: 2,
+      flexShrink: 1,
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
-      color: Colors.midTone,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     totalVotesText: {
       fontFamily: Fonts.REGULAR,
@@ -23,36 +40,27 @@ export const FanPredictionStyles = (isDark: boolean) =>
       color: Colors.midTone,
       fontVariant: ["tabular-nums"],
     },
-    skeletonRow: {
+    footer: {
+      gap: 4,
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: isDark ? Colors.darkGray : Colors.lightGray,
+    },
+    rankingHint: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      lineHeight: 18,
+      color: Colors.midTone,
+    },
+    rankingsButton: {
+      alignSelf: "flex-start",
+      paddingHorizontal: 0,
+      paddingVertical: 8,
+      borderRadius: 8,
+    },
+    skeletonStatusCopy: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      gap: 10,
-      padding: 12,
-      minHeight: 100,
-      borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 12,
-      overflow: "hidden",
-    },
-
-    skeletonBadgeLogo: {
-      width: 36,
-      height: 36,
-    },
-
-    skeletonTeamName: {
-      width: 60,
-      height: 15,
-      borderRadius: 6,
-    },
-
-    skeletonSubtitle: {
-      width: 180,
-      height: 14,
-      marginTop: 4,
-      marginBottom: 2,
-      borderRadius: 6,
+      minWidth: 0,
     },
 
     predictionCard: {
@@ -61,15 +69,45 @@ export const FanPredictionStyles = (isDark: boolean) =>
       alignItems: "center",
       padding: 12,
       borderWidth: 1,
-      borderColor: Colors.midTone,
-      borderRadius: 12,
+      borderColor: "transparent",
+      borderRadius: 8,
       gap: 10,
-      height: 112,
+      minHeight: 128,
       overflow: "hidden",
     },
 
     predictionCardSelected: {
-      borderColor: isDark ? Colors.white : Colors.black,
+      borderColor: isDark ? Colors.dark.green : Colors.light.green,
+    },
+    selectedBadge: {
+      position: "absolute",
+      top: 8,
+      right: 8,
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDark ? Colors.dark.green : Colors.light.green,
+      zIndex: 2,
+    },
+    teamGradient: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      opacity: 0.2,
+    },
+    teamGradientSelected: {
+      opacity: 0.35,
+    },
+    gradientFill: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
     },
 
     voteFill: {
@@ -85,7 +123,6 @@ export const FanPredictionStyles = (isDark: boolean) =>
     cardContent: {
       position: "relative",
       width: "100%",
-      height: "100%",
       alignItems: "center",
       justifyContent: "center",
       gap: 8,

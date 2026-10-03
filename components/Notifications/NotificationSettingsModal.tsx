@@ -102,7 +102,7 @@ function getOptions(
     );
   } else if (sport === "basketball") {
     const periodOptions: SettingOption[] = [];
-    if (league.toLowerCase() !== "cbb") {
+    if (league.toLowerCase() !== "mcbb") {
       periodOptions.push({
         key: "quarterEndEnabled",
         label: "End of quarter",

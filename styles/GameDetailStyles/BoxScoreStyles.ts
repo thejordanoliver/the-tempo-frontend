@@ -7,9 +7,6 @@ const PLAYER_ROW_HEIGHT = 40;
 
 export const BoxScoreStyles = (isDark: boolean) => {
   const textColor = isDark ? Colors.white : Colors.black;
-  const surfaceColor = isDark
-    ? Colors.dark.transparentItemBackground
-    : Colors.light.transparentItemBackground;
   const alternatingRowColor = isDark
     ? Colors.dark.itemBackground
     : Colors.light.itemBackground;
@@ -40,7 +37,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
       paddingVertical: 10,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: Colors.midTone,
-      backgroundColor: surfaceColor,
+      backgroundColor: alternatingRowColor,
     },
     teamIdentity: {
       flex: 1,
@@ -117,7 +114,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
       height: PLAYER_ROW_HEIGHT,
       borderBottomWidth: 1,
       borderBottomColor: isDark ? Colors.lightGray : Colors.darkGray,
-      backgroundColor: surfaceColor,
+      backgroundColor: alternatingRowColor,
     },
     tableRow: {
       flexDirection: "row",
@@ -132,7 +129,7 @@ export const BoxScoreStyles = (isDark: boolean) => {
     totalsRow: {
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: Colors.midTone,
-      backgroundColor: surfaceColor,
+      backgroundColor: alternatingRowColor,
     },
     playerLink: {
       flex: 1,

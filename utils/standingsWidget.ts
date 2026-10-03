@@ -51,6 +51,25 @@ export function buildStandingsPreviewGroups(
     .filter((conference) => conference.rows.length > 0);
 }
 
+export type StandingsSlide =
+  | { type: "conference"; key: string; name: string }
+  | { type: "team"; key: string; row: StandingsPreviewRow };
+
+export function buildStandingsSlides(
+  conferences: readonly ConferenceStandings[],
+): StandingsSlide[] {
+  return buildStandingsPreviewGroups(conferences, Infinity).flatMap(
+    (group): StandingsSlide[] => [
+      { type: "conference", key: `conference:${group.id}`, name: group.name },
+      ...group.rows.map((row): StandingsSlide => ({
+        type: "team",
+        key: `${group.id}:${row.team.id}`,
+        row,
+      })),
+    ],
+  );
+}
+
 export function buildStandingsPreviewRows(
   conferences: readonly ConferenceStandings[],
   limit: number,

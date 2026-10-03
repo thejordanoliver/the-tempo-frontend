@@ -5,13 +5,13 @@ import Roster from "@/components/Sports/Basketball/Team/Roster";
 import RosterStats from "@/components/Sports/Basketball/Team/RosterStats";
 import TeamInfoModal from "@/components/Sports/Basketball/Team/TeamInfoModal";
 import { Colors } from "@/constants/styles";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { useBasketballTeamGames } from "@/hooks/BasketballHooks/useBasketballTeamGames";
 import { useConferenceStandings } from "@/hooks/BasketballHooks/useConferenceStandings";
 import { useTeamStats } from "@/hooks/BasketballHooks/useTeamStats";
 import useRoster from "@/hooks/LeagueHooks/useRoster";
 import useTeamDetails from "@/hooks/useTeams";
-import { getCBBSeason } from "@/utils/dateUtils";
+import { getMCBBSeason } from "@/utils/dateUtils";
 import MonthSelector from "components/League/MonthSelector";
 import NewsList from "components/News/NewsList";
 import SharedTeamDetailScreen from "components/Team/TeamDetailScreen";
@@ -23,13 +23,13 @@ import { View } from "react-native";
 import { TeamDetailStyles } from "styles/TeamStyles/TeamDetailsStyles";
 
 export default function TeamDetailScreen() {
-  const league = "cbb";
-  const currentSeason = getCBBSeason();
+  const league = "mcbb";
+  const currentSeason = getMCBBSeason();
   const styles = TeamDetailStyles;
   const { teamId } = useLocalSearchParams();
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number.parseInt(teamIdStr ?? "", 10);
-  const team = getCBBTeam(teamIdNum);
+  const team = getMCBBTeam(teamIdNum);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.white;
   const {
@@ -40,7 +40,7 @@ export default function TeamDetailScreen() {
   const conferenceId = teamDetails?.conferenceId;
   const teamName = team?.name;
   const espnId = team?.espnId ?? 0;
-  const teamLogo = getCBBTeamLogo(teamIdNum, true);
+  const teamLogo = getMCBBTeamLogo(teamIdNum, true);
   const screen = useTeamDetailScreen({
     tabLeague: league,
     header: {

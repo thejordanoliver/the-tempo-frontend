@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native";
 export const DriveListStyles = (isDark: boolean) =>
   StyleSheet.create({
     listContainer: {
-      maxHeight: 400,
       marginVertical: 8,
     },
     driveCard: {

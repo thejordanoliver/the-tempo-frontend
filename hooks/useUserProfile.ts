@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { teams } from "constants/teams";
 import { cbTeams } from "constants/teamsCB";
-import { cbbTeams } from "constants/teamsCBB";
+import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
@@ -251,7 +251,7 @@ export function useUserProfile(
       wnba: createTeamLookup(wnbaTeams),
       nfl: createTeamLookup(nflTeams),
       cfb: createTeamLookup(cfbTeams),
-      cbb: createTeamLookup(cbbTeams),
+      mcbb: createTeamLookup(mcbbTeams),
       wcbb: createTeamLookup(wcbbTeams),
       mlb: createTeamLookup(mlbTeams),
       cb: createTeamLookup(cbTeams),

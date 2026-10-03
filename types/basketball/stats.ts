@@ -1,4 +1,4 @@
-export type BasketballRosterLeague = "NBA" | "WNBA" | "CBB" | "WCBB";
+export type BasketballRosterLeague = "NBA" | "WNBA" | "MCBB" | "WCBB";
 export type BasketballStatValue = string | number | null | undefined;
 export type BasketballStatMap = Record<string, BasketballStatValue>;
 

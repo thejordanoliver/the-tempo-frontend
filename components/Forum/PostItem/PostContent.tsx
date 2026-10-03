@@ -1,7 +1,8 @@
 // components/Forum/PostContent.tsx
-import { Colors } from "constants/styles";
+import { activeOpacity, Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo, useMemo } from "react";
-import { Text, TextInput, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { PostItemStyles } from "styles/ForumStyles/PostItemStyles";
 import type { ForumDisplayMediaItem, ForumPost } from "types/forum";
 import PollBlock from "../PollBlock";
@@ -15,6 +16,7 @@ type PostContentProps = {
   isEditing: boolean;
   editText: string;
   onChangeEditText: (text: string) => void;
+  showFullText?: boolean;
 };
 
 export const PostContent = memo(function PostContent({
@@ -24,8 +26,12 @@ export const PostContent = memo(function PostContent({
   isEditing,
   editText,
   onChangeEditText,
+  showFullText = false,
 }: PostContentProps) {
   const styles = PostItemStyles(isDark);
+  const router = useScopedRouter();
+  const previewText = item.text.slice(0, 280).split("\n").slice(0, 4).join("\n");
+  const isTruncated = !showFullText && previewText.length < item.text.length;
 
   /* -------------------------------------------------------------------------- */
   /*                                   Media                                    */
@@ -73,7 +79,28 @@ export const PostContent = memo(function PostContent({
 
   return (
     <View style={styles.postTextWrapper}>
-      {!!item.text && <Text style={styles.postText}>{item.text}</Text>}
+      {!!item.text && (
+        <Text style={styles.postText}>
+          {isTruncated ? `${previewText.trimEnd()}…` : item.text}
+        </Text>
+      )}
+
+      {isTruncated && (
+        <TouchableOpacity
+          style={styles.readMoreButton}
+          activeOpacity={activeOpacity}
+          accessibilityRole="button"
+          accessibilityLabel="Read full post and comments"
+          onPress={() =>
+            router.push({
+              pathname: "/post/[postId]",
+              params: { postId: item.id },
+            })
+          }
+        >
+          <Text style={styles.readMoreText}>Read more</Text>
+        </TouchableOpacity>
+      )}
 
       {media.length > 0 && (
         <PostImages media={media} item={item} currentUserId={currentUserId} />

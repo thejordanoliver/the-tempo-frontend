@@ -1,3 +1,5 @@
+import { reconcileDirectMessages } from "utils/reconcileDirectMessages";
+import { deliverDirectMessage } from "services/directMessageDelivery";
 import {
   createContext,
   useCallback,
@@ -165,7 +167,7 @@ const upsertMessageInList = (
     return sortMessages(
       messages.map((message, index) =>
         index === byClientId
-          ? { ...message, ...nextMessage, status: "sent" }
+          ? { ...message, ...nextMessage, status: nextMessage.status ?? "sent" }
           : message,
       ),
     );
@@ -328,9 +330,11 @@ export function MessagesProvider({
   const conversationListsRef = useRef(conversationLists);
   const messageCacheRef = useRef(messageCache);
   const socketRef = useRef<ReturnType<typeof getMessagesSocket>>(null);
+  const activeMessageSendsRef = useRef(new Set<string>());
   const conversationRequestIdsRef = useRef<Record<string, number>>({});
   const activeConversationLoadsRef = useRef<Record<string, number>>({});
   const messageRequestIdsRef = useRef<Record<string, number>>({});
+  const snapshotDeletionsRef = useRef<Record<string, Set<string>>>({});
   const loadingMoreConversationsRef = useRef<Record<string, boolean>>({});
   const loadingOlderMessagesRef = useRef<Record<string, boolean>>({});
 
@@ -931,19 +935,40 @@ export function MessagesProvider({
         messageCacheRef.current[normalizedConversationId] ??
         createMessageCacheState();
       const hasCachedMessages = currentState.messages.length > 0;
+      const snapshotDeletions = new Set<string>();
+      snapshotDeletionsRef.current[normalizedConversationId] = snapshotDeletions;
 
       updateMessageState(normalizedConversationId, (state) => ({
         ...state,
-        isLoading: !background && state.messages.length === 0,
+        isLoading: state.messages.length === 0,
         isRefreshing: background && state.messages.length > 0,
         error: null,
       }));
 
       try {
+        const initialMessages = currentState.messages;
+        // Revalidate the entire retained window so offline deletions also
+        // disappear from older pages, while keeping the cache bounded.
+        const fetchSnapshot = async () => {
+          const target = Math.max(MESSAGE_PAGE_SIZE, initialMessages.length);
+          const messages: DirectMessageItem[] = [];
+          let cursor: string | null = null;
+          do {
+            const page = await getMessagesPage(normalizedConversationId, {
+              limit: MESSAGE_PAGE_SIZE,
+              ...(cursor ? { cursor } : {}),
+            });
+            messages.push(...page.messages);
+            cursor = page.nextCursor;
+          } while (
+            cursor &&
+            messages.length < target &&
+            messages.length < MESSAGE_CACHE_LIMIT
+          );
+          return { messages, nextCursor: cursor };
+        };
         const [messagePage, conversation] = await Promise.all([
-          getMessagesPage(normalizedConversationId, {
-            limit: MESSAGE_PAGE_SIZE,
-          }),
+          fetchSnapshot(),
           getConversation(normalizedConversationId, userId),
         ]);
 
@@ -959,7 +984,11 @@ export function MessagesProvider({
 
         updateMessageState(normalizedConversationId, (state) => ({
           ...state,
-          messages: mergeMessages(state.messages, messagePage.messages),
+          messages: sortMessages(
+            reconcileDirectMessages(
+              initialMessages, state.messages, messagePage.messages, snapshotDeletions,
+            ),
+          ).slice(-MESSAGE_CACHE_LIMIT),
           nextCursor: messagePage.nextCursor,
           hasMore: Boolean(messagePage.nextCursor),
           isLoading: false,
@@ -968,6 +997,7 @@ export function MessagesProvider({
           loaded: true,
         }));
       } catch (error: any) {
+        if (messageRequestIdsRef.current[normalizedConversationId] !== requestId) return;
         updateMessageState(normalizedConversationId, (state) => ({
           ...state,
           isLoading: false,
@@ -977,6 +1007,10 @@ export function MessagesProvider({
               ? null
               : getErrorMessage(error, "Messages failed to load."),
         }));
+      } finally {
+        if (snapshotDeletionsRef.current[normalizedConversationId] === snapshotDeletions) {
+          delete snapshotDeletionsRef.current[normalizedConversationId];
+        }
       }
     },
     [enabled, token, updateMessageState, upsertConversation, userId],
@@ -996,12 +1030,15 @@ export function MessagesProvider({
         !normalizedConversationId ||
         !cursor ||
         !state.hasMore ||
+        state.isLoading ||
+        state.isRefreshing ||
         state.isLoadingMore ||
         loadingOlderMessagesRef.current[normalizedConversationId]
       ) {
         return;
       }
 
+      const requestId = messageRequestIdsRef.current[normalizedConversationId];
       loadingOlderMessagesRef.current[normalizedConversationId] = true;
       updateMessageState(normalizedConversationId, (current) => ({
         ...current,
@@ -1014,6 +1051,7 @@ export function MessagesProvider({
           cursor,
         });
 
+        if (messageRequestIdsRef.current[normalizedConversationId] !== requestId) return;
         updateMessageState(normalizedConversationId, (current) => ({
           ...current,
           messages: mergeMessages(messagePage.messages, current.messages),
@@ -1027,6 +1065,7 @@ export function MessagesProvider({
           isLoadingMore: false,
         }));
       } finally {
+        updateMessageState(normalizedConversationId, (current) => ({ ...current, isLoadingMore: false }));
         loadingOlderMessagesRef.current[normalizedConversationId] = false;
       }
     },
@@ -1104,7 +1143,9 @@ export function MessagesProvider({
         throw new Error("Attachment is not ready to send.");
       }
 
-      const clientId = createClientId();
+      const clientId = payload.clientId ?? createClientId();
+      if (activeMessageSendsRef.current.has(clientId)) return false;
+      activeMessageSendsRef.current.add(clientId);
       const optimisticMessage: DirectMessageItem = {
         id: clientId,
         conversationId: normalizedConversationId,
@@ -1147,46 +1188,26 @@ export function MessagesProvider({
       const handleFailure = (message: string) => {
         updateMessageState(normalizedConversationId, (state) => ({
           ...state,
-          messages: state.messages.filter(
-            (item) => normalizeId(item.clientId) !== clientId,
+          messages: state.messages.map((item) =>
+            normalizeId(item.clientId) === clientId && item.status === "pending"
+              ? { ...item, status: "failed" as const }
+              : item,
           ),
         }));
 
         throw new Error(message);
       };
 
-      if (socketRef.current?.connected) {
-        return new Promise<boolean>((resolve, reject) => {
-          emitMessageSend(requestPayload, (response: any) => {
-            if (response?.error) {
-              try {
-                handleFailure(response.error);
-              } catch (error) {
-                reject(error);
-              }
-              return;
-            }
-
-            const rawMessage =
-              response?.message ??
-              response?.data?.message ??
-              response?.data ??
-              response;
-
-            if (rawMessage) {
-              handleSavedMessage(rawMessage);
-            }
-
-            resolve(true);
-          });
-        });
-      }
-
       try {
-        const savedMessage = await sendMessageRest(normalizedConversationId, {
-          text,
-          ...(attachmentId ? { attachmentId } : {}),
-          clientId,
+        const savedMessage = await deliverDirectMessage<DirectMessageItem>({
+          socketSend: socketRef.current?.connected
+            ? (ack) => emitMessageSend(requestPayload, (response: any) => ack(response))
+            : undefined,
+          restSend: () => sendMessageRest(normalizedConversationId, {
+            text,
+            ...(attachmentId ? { attachmentId } : {}),
+            clientId,
+          }),
         });
 
         handleSavedMessage(savedMessage);
@@ -1196,6 +1217,8 @@ export function MessagesProvider({
         handleFailure(getErrorMessage(error, "Message failed to send."));
 
         return false;
+      } finally {
+        activeMessageSendsRef.current.delete(clientId);
       }
     },
     [updateConversationPreviewFromMessage, updateMessageState],
@@ -1275,6 +1298,7 @@ export function MessagesProvider({
       const messageId = normalizeId(payload?.messageId ?? payload?.id);
 
       if (!conversationId || !messageId) return;
+      snapshotDeletionsRef.current[conversationId]?.add(messageId);
 
       updateMessageState(conversationId, (state) => ({
         ...state,
@@ -1282,6 +1306,10 @@ export function MessagesProvider({
       }));
     };
 
+    const handleConnect = () => {
+      void loadConversations({ background: true }).catch(() => {});
+    };
+    socket.on("connect", handleConnect);
     socket.on("conversation:update", handleConversationUpdate);
     socket.on("conversation:deleted", handleConversationDeleted);
     socket.on("conversation:delete", handleConversationDeleted);
@@ -1293,6 +1321,7 @@ export function MessagesProvider({
     void loadConversations({ background: true }).catch(() => {});
 
     return () => {
+      socket.off("connect", handleConnect);
       socket.off("conversation:update", handleConversationUpdate);
       socket.off("conversation:deleted", handleConversationDeleted);
       socket.off("conversation:delete", handleConversationDeleted);

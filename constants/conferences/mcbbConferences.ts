@@ -14,7 +14,7 @@ import BIG10Logo from "../../assets/College_Logos/Conference_Logos/BigTen.png";
 import BIG10Logolight from "../../assets/College_Logos/Conference_Logos/BIGTenLight.png";
 import BigWestLogo from "../../assets/College_Logos/Conference_Logos/BigWest.png";
 import CAALogo from "../../assets/College_Logos/Conference_Logos/CAA.png";
-import CBBLogo from "../../assets/College_Logos/Conference_Logos/CBB.png";
+import MCBBLogo from "../../assets/College_Logos/Conference_Logos/MCBB.png";
 import CUSALogo from "../../assets/College_Logos/Conference_Logos/CUSA.png";
 import CUSALogoLight from "../../assets/College_Logos/Conference_Logos/CUSALight.png";
 import IvyLeagueLogo from "../../assets/College_Logos/Conference_Logos/IvyLeague.png";
@@ -33,17 +33,17 @@ import SWACLogo from "../../assets/College_Logos/Conference_Logos/SWAC.png";
 import WACLogo from "../../assets/College_Logos/Conference_Logos/WAC.png";
 import type { Conference } from "./cfbConferences";
 
-export type CBBConferenceSelection = number | string | null | undefined;
+export type MCBBConferenceSelection = number | string | null | undefined;
 
-export const cbbConferences: Conference[] = [
+export const mcbbConferences: Conference[] = [
   {
     id: 0,
     uid: "top25",
     groupId: null,
     name: "Top 25",
     shortName: "Top 25",
-    logo: CBBLogo,
-    logoLight: CBBLogo,
+    logo: MCBBLogo,
+    logoLight: MCBBLogo,
     parentGroupId: 80,
     color: "#009CDE",
     secondaryColor: "#000000",
@@ -422,26 +422,26 @@ export const cbbConferences: Conference[] = [
   },
 ];
 
-function normalizeCBBConferenceselection(selection: CBBConferenceSelection) {
+function normalizeMCBBConferenceselection(selection: MCBBConferenceSelection) {
   return String(selection ?? "").trim();
 }
 
 export const getCFBConference = (groupId: number | string | null) => {
   if (groupId == null) return undefined;
-  return cbbConferences.find((c) => String(c.groupId) === String(groupId));
+  return mcbbConferences.find((c) => String(c.groupId) === String(groupId));
 };
 
 export const getCFBConferenceName = (groupId: number | string | null) => {
   if (groupId == null) return undefined;
-  const conference = cbbConferences.find(
+  const conference = mcbbConferences.find(
     (c) => String(c.groupId) === String(groupId),
   );
 
   return conference?.shortName || conference?.name;
 };
 
-export const resolveCBBConferenceselection = (selection: CBBConferenceSelection) => {
-  const normalizedSelection = normalizeCBBConferenceselection(selection);
+export const resolveMCBBConferenceselection = (selection: MCBBConferenceSelection) => {
+  const normalizedSelection = normalizeMCBBConferenceselection(selection);
 
   if (!normalizedSelection) {
     return undefined;
@@ -453,7 +453,7 @@ export const resolveCBBConferenceselection = (selection: CBBConferenceSelection)
     return getCFBConference(50);
   }
 
-  return cbbConferences.find((conference) => {
+  return mcbbConferences.find((conference) => {
     return (
       conference.uid.toLowerCase() === lowerSelection ||
       conference.shortName.toLowerCase() === lowerSelection ||
@@ -464,8 +464,8 @@ export const resolveCBBConferenceselection = (selection: CBBConferenceSelection)
   });
 };
 
-export const getCBBConferenceSelectionName = (selection: CBBConferenceSelection) => {
-  const conference = resolveCBBConferenceselection(selection);
+export const getMCBBConferenceSelectionName = (selection: MCBBConferenceSelection) => {
+  const conference = resolveMCBBConferenceselection(selection);
 
   if (!conference) {
     return undefined;
@@ -478,11 +478,11 @@ export const getCBBConferenceSelectionName = (selection: CBBConferenceSelection)
   return conference.shortName || conference.name;
 };
 
-export function getCBBConferenceLogo(
+export function getMCBBConferenceLogo(
   groupId: number | string | null,
   isDark: boolean,
 ) {
-  const conference = cbbConferences.find(
+  const conference = mcbbConferences.find(
     (t) => String(t.groupId) === String(groupId),
   );
 

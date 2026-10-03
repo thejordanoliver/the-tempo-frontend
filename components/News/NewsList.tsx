@@ -48,6 +48,15 @@ export default function NewsList({
     );
   }
 
+
+   if (items.length === 0) {
+     return (
+       <View style={global.emptyContainer}>
+         <Text style={global.emptyTitle}>No news available.</Text>
+       </View>
+     );
+   }
+
   return (
     <FlatList
       style={styles.list}
@@ -68,6 +77,11 @@ export default function NewsList({
       alwaysBounceVertical
       contentContainerStyle={navigationContentStyle(styles.container)}
       renderItem={({ item }) => <NewsCard content={item} isDark={isDark} />}
+      ListEmptyComponent={
+        <View style={global.emptyContainer}>
+          <Text style={global.emptyTitle}>No news available.</Text>
+        </View>
+      }
       ListFooterComponent={loadingMore ? <NewsCardSkeleton /> : null}
     />
   );

@@ -354,10 +354,10 @@ export const TeamRowStyles = (isDark: boolean, _isTie?: boolean) =>
 
     possessionIcon: {
       position: "absolute",
-      bottom: "-35%",
+      bottom: -10,
       alignSelf: "center",
-      width: 25,
-      height: 40,
+      width: 20,
+      height: 20,
       resizeMode: "contain",
     },
 

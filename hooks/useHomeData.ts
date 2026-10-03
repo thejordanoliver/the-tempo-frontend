@@ -88,14 +88,14 @@ export function useHomeData(selectedTab: "scores" | "for you") {
 
   const {
     games: mensBasketballGames,
-    loading: mensCBBLoading,
-    refreshGames: refreshMensCBB,
-  } = useBasketballGames(selectedDate, "cbb");
+    loading: mensMCBBLoading,
+    refreshGames: refreshMensMCBB,
+  } = useBasketballGames(selectedDate, "mcbb");
 
   const {
     games: womensBasketballGames,
-    loading: womensCBBLoading,
-    refreshGames: refreshWomensCBB,
+    loading: womensMCBBLoading,
+    refreshGames: refreshWomensMCBB,
   } = useBasketballGames(selectedDate, "wcbb");
 
   const {
@@ -186,6 +186,18 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     refreshGames: refreshLigue2Games,
   } = useSoccerGames(selectedDate, "ligue2");
 
+  const {
+    games: msocGames,
+    loading: msocLoading,
+    refreshGames: refreshMensSoccerGames,
+  } = useSoccerGames(selectedDate, "msoc");
+
+  const {
+    games: wsocGames,
+    loading: wsocLoading,
+    refreshGames: refreshWomensSoccerGames,
+  } = useSoccerGames(selectedDate, "wsoc");
+
   const normalizedNBA = useMemo(
     () => normalizeGames(nbaGames, "nba"),
     [nbaGames],
@@ -210,11 +222,11 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => normalizeGames(cfbGames, "cfb"),
     [cfbGames],
   );
-  const normalizedMensCBB = useMemo(
-    () => normalizeGames(mensBasketballGames, "cbb"),
+  const normalizedMensMCBB = useMemo(
+    () => normalizeGames(mensBasketballGames, "mcbb"),
     [mensBasketballGames],
   );
-  const normalizedWomensCBB = useMemo(
+  const normalizedWomensMCBB = useMemo(
     () => normalizeGames(womensBasketballGames, "wcbb"),
     [womensBasketballGames],
   );
@@ -262,6 +274,14 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => normalizeGames(ligue2Games, "ligue2"),
     [ligue2Games],
   );
+  const normalizedMensSoccer = useMemo(
+    () => normalizeGames(msocGames, "msoc"),
+    [msocGames],
+  );
+  const normalizedWomensSoccer = useMemo(
+    () => normalizeGames(wsocGames, "wsoc"),
+    [wsocGames],
+  );
   const normalizedMMA = useMemo(
     () => normalizeGames(mmaGames, "ufc"),
     [mmaGames],
@@ -307,13 +327,13 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedCFB, true),
     [normalizedCFB, safeFilterByDate],
   );
-  const filteredMensCBB = useMemo(
-    () => safeFilterByDate(normalizedMensCBB),
-    [normalizedMensCBB, safeFilterByDate],
+  const filteredMensMCBB = useMemo(
+    () => safeFilterByDate(normalizedMensMCBB),
+    [normalizedMensMCBB, safeFilterByDate],
   );
-  const filteredWomensCBB = useMemo(
-    () => safeFilterByDate(normalizedWomensCBB),
-    [normalizedWomensCBB, safeFilterByDate],
+  const filteredWomensMCBB = useMemo(
+    () => safeFilterByDate(normalizedWomensMCBB),
+    [normalizedWomensMCBB, safeFilterByDate],
   );
   const filteredWNBA = useMemo(
     () => safeFilterByDate(normalizedWNBA),
@@ -359,6 +379,14 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     () => safeFilterByDate(normalizedLigue2),
     [normalizedLigue2, safeFilterByDate],
   );
+  const filteredMensSoccer = useMemo(
+    () => safeFilterByDate(normalizedMensSoccer),
+    [normalizedMensSoccer, safeFilterByDate],
+  );
+  const filteredWomensSoccer = useMemo(
+    () => safeFilterByDate(normalizedWomensSoccer),
+    [normalizedWomensSoccer, safeFilterByDate],
+  );
   const filteredMMA = useMemo(
     () => safeFilterByDate(normalizedMMA, true),
     [normalizedMMA, safeFilterByDate],
@@ -372,6 +400,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       mlb: filteredMLB,
       nhl: filteredNHL,
       cfb: filteredCFB,
+      msoc: filteredMensSoccer,
+      wsoc: filteredWomensSoccer,
       mls: filteredMLS,
       leaguescup: filteredLeaguesCup,
       fifa: filteredFIFA,
@@ -382,8 +412,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
       laliga: filteredLaliga,
       ligue1: filteredLigue1,
       ligue2: filteredLigue2,
-      cbb: filteredMensCBB,
-      wcbb: filteredWomensCBB,
+      mcbb: filteredMensMCBB,
+      wcbb: filteredWomensMCBB,
       wnba: filteredWNBA,
       ufc: filteredMMA,
       atp: atpMatches,
@@ -401,6 +431,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     filteredMLB,
     filteredNHL,
     filteredCFB,
+    filteredMensSoccer,
+    filteredWomensSoccer,
     filteredMLS,
     filteredLeaguesCup,
     filteredFIFA,
@@ -411,8 +443,8 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     filteredLaliga,
     filteredLigue1,
     filteredLigue2,
-    filteredMensCBB,
-    filteredWomensCBB,
+    filteredMensMCBB,
+    filteredWomensMCBB,
     filteredWNBA,
     filteredMMA,
     atpMatches,
@@ -454,9 +486,11 @@ export function useHomeData(selectedTab: "scores" | "for you") {
           refreshNFLGames(),
           refreshUFLGames(),
           refreshCFBGames(),
-          refreshMensCBB(),
-          refreshWomensCBB(),
+          refreshMensMCBB(),
+          refreshWomensMCBB(),
           refreshWNBA(),
+          refreshMensSoccerGames(),
+          refreshWomensSoccerGames(),
           refreshMLSGames(),
           refreshLeaguesCupGames(),
           refreshEPLGames(),
@@ -494,9 +528,11 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     nflLoading ||
     uflLoading ||
     cfbLoading ||
-    mensCBBLoading ||
-    womensCBBLoading ||
+    mensMCBBLoading ||
+    womensMCBBLoading ||
     wnbaLoading ||
+    msocLoading ||
+    wsocLoading ||
     mlsLoading ||
     leaguesCupLoading ||
     fifaLoading ||

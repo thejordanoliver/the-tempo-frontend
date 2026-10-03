@@ -111,6 +111,7 @@ export class ExploreWidgetSync {
       }
       while (this.cache.pending && !this.stopped) {
         await this.persist(); // Do not acknowledge a save before its local snapshot is durable.
+        if (this.stopped) return;
         const snapshot = this.cache;
         const edits = this.edits;
         const saved = await this.dependencies.put(snapshot.widgets, snapshot.revision!);
@@ -137,6 +138,7 @@ export class ExploreWidgetSync {
   /** Explicit user action discards pending local edits only after a successful read. */
   async reloadAccountSettings() {
     if (this.syncing) await this.syncing;
+    if (this.stopped) return;
     try {
       const edits = this.edits;
       const remote = await this.dependencies.get();

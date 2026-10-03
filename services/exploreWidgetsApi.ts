@@ -88,13 +88,13 @@ function parseWidgetSettingsResponse(value: unknown): WidgetSettings | null {
     widgets: normalizeStoredWidgets({ version: 2, widgets: settings.widgets }) };
 }
 
-export async function getExploreWidgetSettings(signal?: AbortSignal): Promise<WidgetSettings | null> {
-  const response = await apiClient.get<unknown>(WIDGET_SETTINGS_ENDPOINT, { signal, timeout: 15000 });
+export async function getExploreWidgetSettings(userId: number, signal?: AbortSignal): Promise<WidgetSettings | null> {
+  const response = await apiClient.get<unknown>(WIDGET_SETTINGS_ENDPOINT, { signal, timeout: 15000, headers: { "X-Tempo-User-Id": String(userId) } });
   return parseWidgetSettingsResponse(response.data);
 }
 
-export async function saveExploreWidgetSettings(widgets: ExploreWidgetConfig[], revision: number, signal?: AbortSignal): Promise<WidgetSettings> {
-  const response = await apiClient.put<unknown>(WIDGET_SETTINGS_ENDPOINT, { schemaVersion: 2, widgets, revision }, { signal, timeout: 15000 });
+export async function saveExploreWidgetSettings(userId: number, widgets: ExploreWidgetConfig[], revision: number, signal?: AbortSignal): Promise<WidgetSettings> {
+  const response = await apiClient.put<unknown>(WIDGET_SETTINGS_ENDPOINT, { schemaVersion: 2, widgets, revision }, { signal, timeout: 15000, headers: { "X-Tempo-User-Id": String(userId) } });
   const settings = parseWidgetSettingsResponse(response.data);
   if (!settings) throw new Error("Missing saved widget settings");
   return settings;

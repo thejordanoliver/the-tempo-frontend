@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
@@ -98,6 +99,13 @@ export function useLeaguesNews(
         setHasMore(data.hasMore ?? nextArticles.length === limit);
       } catch (err: unknown) {
         if (requestId !== requestIdRef.current) return;
+
+        if (isAxiosError(err) && err.response?.status === 404) {
+          if (offset === 0) setArticles([]);
+          setHasMore(false);
+          setError(null);
+          return;
+        }
 
         const message =
           err instanceof Error

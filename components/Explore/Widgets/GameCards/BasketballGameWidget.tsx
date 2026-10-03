@@ -1,7 +1,7 @@
 import { activeOpacity } from "@/constants/styles";
 import { BasketballGame } from "@/types/basketball/basketball";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "constants/teamsWNBA";
 import { router } from "expo-router";
@@ -21,7 +21,7 @@ type GameWidgetProps = {
   isDark: boolean;
   loading?: boolean;
   isWCBB?: boolean;
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isWNBA?: boolean;
 };
 
@@ -30,11 +30,11 @@ export default function BasketballGameWidget({
   height = 150,
   width = 150,
   isDark,
-  isCBB,
+  isMCBB,
   isWCBB,
   isWNBA,
 }: GameWidgetProps) {
-  const league = isCBB ? "cbb" : isWCBB ? "wcbb" : isWNBA ? "wnba" : "nba";
+  const league = isMCBB ? "mcbb" : isWCBB ? "wcbb" : isWNBA ? "wnba" : "nba";
   const handlePress = () => {
     router.push({
       pathname: "/(tabs)/(explore)/game/[sport]/[game]",
@@ -56,16 +56,16 @@ export default function BasketballGameWidget({
   const homeId = home?.id;
   const awayId = away?.id;
 
-  const homeTeam = isCBB
-    ? getCBBTeam(homeId)
+  const homeTeam = isMCBB
+    ? getMCBBTeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
       : isWNBA
         ? getWNBATeam(homeId)
         : getNBATeam(homeId);
 
-  const awayTeam = isCBB
-    ? getCBBTeam(awayId)
+  const awayTeam = isMCBB
+    ? getMCBBTeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
       : isWNBA
@@ -75,16 +75,16 @@ export default function BasketballGameWidget({
   const homeName = homeTeam?.code || game.home?.code;
   const awayName = awayTeam?.code || game.away?.code;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
         ? getWNBATeamLogo(homeId, isDark)
         : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -111,7 +111,7 @@ export default function BasketballGameWidget({
   const clock = game?.status.clock;
   const period = formatPeriod({
     period: game?.status.period ?? 0,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
 
   const state = game.status.state ?? "";

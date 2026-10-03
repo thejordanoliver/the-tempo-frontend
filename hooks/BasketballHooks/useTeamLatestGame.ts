@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
 
-export type BasketballLeague = "nba" | "cbb" | "wcbb" | "wnba";
+export type BasketballLeague = "nba" | "mcbb" | "wcbb" | "wnba";
 
 export interface LastBasketballTeamGameResponse {
   success: boolean;

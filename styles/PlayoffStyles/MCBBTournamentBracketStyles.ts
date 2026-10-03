@@ -5,7 +5,7 @@ import { BRACKET_LAYOUT } from "../../utils/tournamentBracket.utils";
 export const CARD_WIDTH = 176;
 export const CARD_HEIGHT = 142;
 
-export const CBBTournamentBracketStyles = (isDark: boolean) => {
+export const MCBBTournamentBracketStyles = (isDark: boolean) => {
   const textColor = isDark ? Colors.dark.text : Colors.light.text;
   const mutedTextColor = isDark ? Colors.lightGray : Colors.darkGray;
   const cardBackground = isDark

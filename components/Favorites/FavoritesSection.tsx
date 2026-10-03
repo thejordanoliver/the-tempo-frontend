@@ -14,7 +14,7 @@ import PreviewModal, {
 import { Colors } from "constants/styles";
 import { getNBATeamLogo } from "constants/teams";
 import { getCBTeamLogo } from "constants/teamsCB";
-import { getCBBTeamLogo } from "constants/teamsCBB";
+import { getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getCFBTeamLogo } from "constants/teamsCFB";
 import { getMLBTeamLogo } from "constants/teamsMLB";
 import { getNFLTeamLogo } from "constants/teamsNFL";
@@ -83,7 +83,7 @@ const getLeagueBadgeColor = (league: string) => {
   switch (league) {
     case "cfb":
       return "#228B22";
-    case "cbb":
+    case "mcbb":
       return "#1E90FF";
     case "wcbb":
       return "#C2185B";
@@ -112,8 +112,8 @@ const getTeamLogo = (team: Team) => {
     case "cfb":
       return getCFBTeamLogo(id, true);
 
-    case "cbb":
-      return getCBBTeamLogo(id, true);
+    case "mcbb":
+      return getMCBBTeamLogo(id, true);
 
     case "wcbb":
       return getWCBBTeamLogo(id, true);
@@ -372,7 +372,7 @@ export default function FavoritesSection({
 
     const teamBackgroundColor = team.color ?? Colors.midTone;
 
-    const showLeagueBadge = ["cfb", "cbb", "wcbb", "cb", "sb"].includes(league);
+    const showLeagueBadge = ["cfb", "mcbb", "wcbb", "cb", "sb"].includes(league);
 
     const teamName = team.name ?? team.shortName ?? String(id);
 

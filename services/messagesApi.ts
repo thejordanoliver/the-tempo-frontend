@@ -596,6 +596,7 @@ export const sendMessageRest = async (
   const response = await apiClient.post(
     `/api/messages/conversations/${conversationId}/messages`,
     payload,
+    { timeout: 15000 },
   );
 
   return normalizeMessage(

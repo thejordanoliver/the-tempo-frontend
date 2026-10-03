@@ -1,6 +1,6 @@
 import PillTabs from "@/components/TabBars/PillTabs";
 import { getTeamByESPNId } from "@/constants/teams";
-import { getCBBTeamByESPNId } from "@/constants/teamsCBB";
+import { getMCBBTeamByESPNId } from "@/constants/teamsMCBB";
 import { getWNBATeamByESPNId } from "@/constants/teamsWNBA";
 import Dropdown from "components/Dropdown";
 import HeadingTwo from "components/Headings/HeadingTwo";
@@ -386,7 +386,7 @@ const getTeamCodeFromSeason = (season: Season, league: BasketballLeague) => {
         ? getWNBATeamByESPNId(teamId)
         : league === "wcbb"
           ? getWCBBTeamByESPNId(teamId)
-          : getCBBTeamByESPNId(teamId);
+          : getMCBBTeamByESPNId(teamId);
 
   return team?.code ?? fallbackTeamCode;
 };
@@ -1029,7 +1029,7 @@ export default function PlayerStatTable({
     activeCareerView === "college"
       ? league === "wnba"
         ? "wcbb"
-        : "cbb"
+        : "mcbb"
       : league;
   const showCareerViewTabs = hasCollegeStats;
   const careerViewOptions = useMemo(

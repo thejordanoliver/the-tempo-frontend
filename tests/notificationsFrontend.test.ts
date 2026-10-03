@@ -140,7 +140,7 @@ test("game notifications preserve supported league labels in their routes", () =
     ["football", "nfl"],
     ["basketball", "nba"],
     ["basketball", "wcbb"],
-    ["basketball", "cbb"],
+    ["basketball", "mcbb"],
   ] as const) {
     const gameNotification = notification("game_final", {
       entityId: "401234567",

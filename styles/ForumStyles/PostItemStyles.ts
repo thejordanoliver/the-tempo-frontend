@@ -77,6 +77,18 @@ export function PostItemStyles(isDark: boolean) {
       color: textColor,
     },
 
+    readMoreButton: {
+      alignSelf: "flex-start",
+      minHeight: 44,
+      justifyContent: "center",
+    },
+
+    readMoreText: {
+      fontFamily: Fonts.MEDIUM,
+      fontSize: 14,
+      color: isDark ? Colors.dark.blue : Colors.light.blue,
+    },
+
     singleImageWrapper: {
       marginTop: 12,
     },

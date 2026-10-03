@@ -2,7 +2,7 @@ import { Recruit } from "@/types/recruiting/players";
 import { useEffect, useState } from "react";
 import { apiClient } from "utils/apiClient";
 
-export function useRecruit(id: number, league: "CBB" | "CFB") {
+export function useRecruit(id: number, league: "MCBB" | "CFB") {
   const [data, setData] = useState<Recruit | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

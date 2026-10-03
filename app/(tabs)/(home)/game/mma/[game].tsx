@@ -112,7 +112,7 @@ export default function GameDetailsScreen(
   const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id ?? 0;
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "mma", league: game?.league?.code ?? "ufc", state: game?.status?.state, date: game?.date ?? undefined });
 
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];

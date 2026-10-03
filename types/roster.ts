@@ -84,6 +84,8 @@ export type SupportedRosterLeague =
   | "libertadores"
   | "ligue1"
   | "ligue2"
+  | "msoc"
+  | "wsoc"
   | "mls"
   | "nations"
   | "norway"

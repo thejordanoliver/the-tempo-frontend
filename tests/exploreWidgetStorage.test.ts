@@ -101,3 +101,14 @@ test("accepts UFL and college baseball Favorite Games selections", () => {
 test("rejects future schema versions instead of dropping settings", () => {
   assert.throws(() => normalizeStoredWidgets({ version: EXPLORE_WIDGETS_SCHEMA_VERSION + 1, widgets: [] }), /Unsupported/);
 });
+
+test("preserves saved men's basketball widgets during the MCBB rename", () => {
+  const widgets = normalizeStoredWidgets([
+    { type: "favorite_games", favoriteGameLeagues: ["cbb", "wcbb"], order: 0 },
+    { type: "college_polls", collegePollLeague: "cbb", collegePollType: "coaches", order: 2 },
+  ]);
+  assert.deepEqual(widgets[0].favoriteGameLeagues, ["mcbb", "wcbb"]);
+  assert.equal(widgets[1].collegePollLeague, "mcbb");
+  assert.equal(widgets[1].collegePollType, "coaches");
+  assert.deepEqual(normalizeStoredWidgets([{ type: "cbb_games" }])[0].favoriteGameLeagues, ["mcbb"]);
+});

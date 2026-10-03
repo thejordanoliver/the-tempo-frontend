@@ -99,6 +99,7 @@ export const PostItem = memo(function PostItem({
           isEditing={isEditing}
           editText={editText}
           onChangeEditText={setEditText}
+          showFullText={disableCommentNavigation}
         />
 
         {/* Footer */}

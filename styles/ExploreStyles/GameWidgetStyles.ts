@@ -43,7 +43,7 @@ export const gameWidgetStyles = (
   const nameFz = isSmallLayout
     ? clamp(Math.min(w * 0.09, h * 0.12), 14, 18)
     : isLargeLayout
-      ? clamp(w * 0.045, 16, 18)
+      ? clamp(w * 0.045, 16, 16)
       : clamp(constrained * 0.065, 16, 20);
   const rankFz = isSmallLayout
     ? clamp(Math.min(w * 0.055, h * 0.08), 10, 13)
@@ -58,7 +58,7 @@ export const gameWidgetStyles = (
   const metaFz = isSmallLayout
     ? clamp(Math.min(w * 0.055, h * 0.085), 10, 13)
     : isLargeLayout
-      ? clamp(w * 0.034, 12, 14)
+      ? clamp(w * 0.034, 12, 12)
       : clamp(constrained * 0.045, 10, 15);
   const gap = isSmallLayout
     ? clamp(w * 0.035, 6, 10)
@@ -79,7 +79,7 @@ export const gameWidgetStyles = (
     : clamp(w * 0.035, 12, 24);
   const teamNameMaxWidth = Math.max(w - logo - scoreFz * 3 - paddingH * 2, 64);
   const wideTeamNameMaxWidth = Math.max(
-    (w - paddingH * 2) * 0.3 - gap - recordFz * 2.5,
+    (w - paddingH * 2) * 0.3 - gap - recordFz * 1.5,
     48,
   );
 
@@ -146,7 +146,11 @@ export const gameWidgetStyles = (
       width: logo * 0.52,
       height: logo * 0.52,
       marginTop: isSmallLayout ? 2 : 0,
-      marginLeft: logo * 0.2,
+      marginLeft: isSmallLayout
+        ? logo * -0.2
+        : isLargeLayout
+          ? logo * 0.3
+          : logo * 0.6,
       resizeMode: "contain",
     },
 
@@ -157,7 +161,11 @@ export const gameWidgetStyles = (
       width: logo * 0.52,
       height: logo * 0.52,
       marginTop: isSmallLayout ? 2 : 0,
-      marginRight: isSmallLayout ? 0 : logo * 0.2,
+      marginRight: isSmallLayout
+        ? logo * -0.2
+        : isLargeLayout
+          ? logo * 0.3
+          : logo * 0.6,
       resizeMode: "contain",
     },
 

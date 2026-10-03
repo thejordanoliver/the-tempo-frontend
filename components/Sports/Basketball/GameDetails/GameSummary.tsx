@@ -3,7 +3,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts, globalStyles } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, teams as nbaTeams } from "constants/teams";
-import { cbbTeams, getCBBTeam, getCBBTeamLogo } from "constants/teamsCBB";
+import { mcbbTeams, getMCBBTeam, getMCBBTeamLogo } from "constants/teamsMCBB";
 import { getWCBBTeamLogo, wcbbTeams } from "constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo, wnbaTeams } from "constants/teamsWNBA";
 import { usePreferences } from "contexts/PreferencesContext";
@@ -118,7 +118,7 @@ export default function GameSummary({
   >("All");
 
   const quarterTabs =
-    league === "CBB"
+    league === "MCBB"
       ? ["All", "1st Half", "2nd Half"]
       : ["All", "1st", "2nd", "3rd", "4th"];
 
@@ -133,7 +133,7 @@ export default function GameSummary({
 
   const teamPlays = useMemo(() => {
     const quarterMap: Record<string, number[] | number> =
-      league === "CBB"
+      league === "MCBB"
         ? { "1st Half": [1], "2nd Half": [2] }
         : { "1st": 1, "2nd": 2, "3rd": 3, "4th": 4 };
 
@@ -184,8 +184,8 @@ export default function GameSummary({
             const playTeamId = play.team?.id;
 
             const allTeams: Team[] =
-              league === "CBB"
-                ? cbbTeams
+              league === "MCBB"
+                ? mcbbTeams
                 : league === "WCBB"
                   ? wcbbTeams
                   : league === "WNBA"
@@ -208,8 +208,8 @@ export default function GameSummary({
                 : league === "NBA"
                   ? getNBATeam(teamObj?.id ?? 0)
                   : null;
-            const cbbTeam =
-              league === "CBB" ? getCBBTeam(teamObj?.id ?? 0) : null;
+            const mcbbTeam =
+              league === "MCBB" ? getMCBBTeam(teamObj?.id ?? 0) : null;
 
             const teamLogo =
               league === "NBA"
@@ -218,7 +218,7 @@ export default function GameSummary({
                   ? getWNBATeamLogo(team?.id, isDark)
                   : league === "WCBB"
                     ? getWCBBTeamLogo(teamObj?.id, isDark)
-                    : getCBBTeamLogo(cbbTeam?.id ?? undefined, isDark);
+                    : getMCBBTeamLogo(mcbbTeam?.id ?? undefined, isDark);
 
             const isLatest = play.id === latestPlayId;
 

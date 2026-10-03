@@ -1,8 +1,8 @@
 import {
-  cbbConferences,
-  getCBBConferenceLogo,
-  getCBBConferenceSelectionName,
-} from "@/constants/conferences/cbbConferences";
+  mcbbConferences,
+  getMCBBConferenceLogo,
+  getMCBBConferenceSelectionName,
+} from "@/constants/conferences/mcbbConferences";
 import {
   cfbConferences,
   getCFBConferenceLogo,
@@ -19,7 +19,7 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import CBBLogo from "assets/College_Logos/Conference_Logos/CBB.png";
+import MCBBLogo from "assets/College_Logos/Conference_Logos/MCBB.png";
 import CFBLogo from "assets/College_Logos/Conference_Logos/CFB.png";
 import WCBBLogo from "assets/College_Logos/Conference_Logos/WCBB.png";
 import { Colors } from "constants/styles";
@@ -36,7 +36,7 @@ export type ConferenceListModalRef = {
   close: () => void;
 };
 
-type ConferenceLeague = "cfb" | "cbb" | "wcbb";
+type ConferenceLeague = "cfb" | "mcbb" | "wcbb";
 
 type ConferenceOption = {
   label: string;
@@ -56,7 +56,7 @@ type FBSConference = (typeof cfbConferences)[number] & {
   groupId: number;
 };
 
-type CBBConference = (typeof cbbConferences)[number] & {
+type MCBBConference = (typeof mcbbConferences)[number] & {
   groupId: number;
 };
 type WCBBConference = (typeof wcbbConferences)[number] & {
@@ -73,9 +73,9 @@ function isFBSConferenceOption(
       conference.groupId === 35)
   );
 }
-function isCBBConferenceOption(
-  conference: (typeof cbbConferences)[number],
-): conference is CBBConference {
+function isMCBBConferenceOption(
+  conference: (typeof mcbbConferences)[number],
+): conference is MCBBConference {
   return conference.groupId !== null;
 }
 
@@ -98,7 +98,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
     const modalRef = useRef<BottomSheetModal>(null);
 
     const isCFB = league === "cfb";
-    const isCBB = league === "cbb";
+    const isMCBB = league === "mcbb";
     const isWCBB = league === "wcbb";
 
     useImperativeHandle(ref, () => ({
@@ -115,7 +115,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         return WCBBLogo;
       }
 
-      return CBBLogo;
+      return MCBBLogo;
     }, [isCFB, isWCBB]);
 
     const conferences = useMemo<ConferenceOption[]>(() => {
@@ -138,7 +138,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
         ];
       }
 
-      if (isCBB) {
+      if (isMCBB) {
         return [
           {
             label: "Top 25",
@@ -146,13 +146,13 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
             logo: defaultLeagueLogo,
           },
 
-          ...cbbConferences.filter(isCBBConferenceOption).map((conference) => ({
+          ...mcbbConferences.filter(isMCBBConferenceOption).map((conference) => ({
             label:
-              getCBBConferenceSelectionName(conference.groupId) ||
+              getMCBBConferenceSelectionName(conference.groupId) ||
               conference.shortName ||
               conference.name,
             value: conference.groupId,
-            logo: getCBBConferenceLogo(conference.groupId, isDark),
+            logo: getMCBBConferenceLogo(conference.groupId, isDark),
           })),
         ];
       }
@@ -178,7 +178,7 @@ const ConferenceListModal = forwardRef<ConferenceListModalRef, Props>(
       }
 
       return [];
-    }, [defaultLeagueLogo, isCBB, isCFB, isDark, isWCBB]);
+    }, [defaultLeagueLogo, isMCBB, isCFB, isDark, isWCBB]);
 
     const fallbackIcon = isCFB
       ? "american-football-outline"

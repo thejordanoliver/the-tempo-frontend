@@ -37,8 +37,8 @@ test("creates a team destination only for a valid numeric team ID", () => {
 
 test("builds the correct endpoint for each destination kind", () => {
   assert.equal(
-    getForumPostCreateEndpoint({ kind: "league", league: "cbb" }),
-    "/api/forum/league/cbb",
+    getForumPostCreateEndpoint({ kind: "league", league: "mcbb" }),
+    "/api/forum/league/mcbb",
   );
   assert.equal(
     getForumPostCreateEndpoint({

@@ -243,7 +243,7 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "football", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
   const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 

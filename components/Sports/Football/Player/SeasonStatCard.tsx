@@ -479,18 +479,6 @@ export default function SeasonStatCard({
     "passing yards",
   ]);
 
-  const passingAvg = getAverageDisplay(
-    passingStats,
-    [
-      "yardsPerPassAttempt",
-      "yards per pass attempt",
-      "yardsPerAttempt",
-      "passingAverage",
-    ],
-    ["passingYards", "passing yards"],
-    ["passingAttempts", "attempts", "passAttempts", "passing attempts"],
-  );
-
   const passingTDs = getStatDisplay(passingStats, [
     "passingTouchdowns",
     "passing touchdowns",
@@ -717,7 +705,6 @@ export default function SeasonStatCard({
     passing: [
       rankedItem("CMP/ATT", cmpAtt),
       rankedItem("PASS YDS", passingYards),
-      rankedItem("YDS AVG", passingAvg),
       rankedItem("PASS TD", passingTDs),
       rankedItem("INT", passingInterceptions),
     ],

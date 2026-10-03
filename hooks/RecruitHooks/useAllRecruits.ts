@@ -98,7 +98,7 @@ function normalizeRecruit(recruit: Recruit): Recruit {
 
 export function useAllRecruits(
   year: number,
-  league: "cbb" | "cfb",
+  league: "mcbb" | "cfb",
 ): useRecruitsResult {
   const [data, setData] = useState<Recruit[]>([]);
   const [loading, setLoading] = useState(false);

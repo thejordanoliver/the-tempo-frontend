@@ -24,15 +24,11 @@ export const exploreStyles = (isDark: boolean) =>
       fontSize: 16,
       color: isDark ? Colors.white : Colors.black,
     },
-    tag: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
+
     subtext: {
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
+      color: Colors.midTone,
     },
     playerRow: {
       flexDirection: "row",
@@ -50,10 +46,7 @@ export const exploreStyles = (isDark: boolean) =>
       borderRadius: 100,
       overflow: "hidden",
     },
-    playerAvatar: {
-      width: 40,
-      height: 40,
-    },
+  
     avatarContainer: {
       width: 44,
       height: 44,
@@ -66,12 +59,9 @@ export const exploreStyles = (isDark: boolean) =>
     avatar: {
       width: 44,
       height: 44,
+      resizeMode: "contain"
     },
-    playerTeam: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-    },
+
     emptyText: {
       marginTop: 20,
       fontFamily: Fonts.LIGHT,

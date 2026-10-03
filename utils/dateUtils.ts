@@ -95,7 +95,7 @@ export function getWNBASeason(): number {
   return year - 1;
 }
 
-export function getCBBSeason(): number {
+export function getMCBBSeason(): number {
   const today = dayjs();
   const year = today.year();
   const month = today.month() + 1; // 1–12

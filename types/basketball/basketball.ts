@@ -96,7 +96,7 @@ export type BasketballGameCardProps = {
   game: BasketballGame;
   isSL?: boolean;
   isNBA?: boolean;
-  isCBB?: boolean;
+  isMCBB?: boolean;
   isWCBB?: boolean;
   isWNBA?: boolean;
   isGLEAGUE?: boolean;

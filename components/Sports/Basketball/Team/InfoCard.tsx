@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 
 import { soccerTeams } from "@/constants/teamsSOCC";
 import { teams } from "constants/teams";
-import { cbbTeams } from "constants/teamsCBB";
+import { mcbbTeams } from "constants/teamsMCBB";
 import { cfbTeams } from "constants/teamsCFB";
 import { mlbTeams } from "constants/teamsMLB";
 import { nflTeams } from "constants/teamsNFL";
@@ -34,7 +34,7 @@ const allTeams: TeamColors[] = [
   ...cfbTeams,
   ...mlbTeams,
   ...nhlTeams,
-  ...cbbTeams,
+  ...mcbbTeams,
   ...soccerTeams,
 ];
 

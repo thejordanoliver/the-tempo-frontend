@@ -1,4 +1,5 @@
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
+import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
@@ -162,7 +163,7 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
   const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
 
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "soccer", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
@@ -185,7 +186,7 @@ export default function GameDetailsScreen(
   const isForfeited = gameStatusDescription === "Forfeit";
   const dontShowDetails =
     isCanceled || isPostponed || isSuspended || isForfeited;
-  const GameTeamStats = score?.GameTeamStats;
+  const teamStats = score?.teamStats;
   const lineScore = score?.periodScores?.length
     ? {
         home: score.periodScores.map((p) => p.home.toString()),
@@ -378,7 +379,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={GameTeamStats}
+              stats={teamStats}
               homeLogo={homeLogo}
               awayLogo={awayLogo}
               homeCode={homeCode}

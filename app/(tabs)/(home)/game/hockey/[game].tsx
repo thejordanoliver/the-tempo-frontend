@@ -143,7 +143,6 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
   const homeLastGames = useLastFiveGames(homeId, "hockey", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "hockey", LEAGUE).games;
 
@@ -151,6 +150,7 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "hockey", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.status?.gameStatusDescription ?? "";

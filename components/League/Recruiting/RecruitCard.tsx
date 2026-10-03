@@ -1,6 +1,6 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
 // components/CFB/RecruitCard.tsx
-import { getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { RecruitPredictedSchool } from "@/hooks/RecruitHooks/useAllRecruits";
 import { Recruit } from "@/types/recruiting/players";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,7 +23,7 @@ import {
 
 type Props = {
   recruit: Recruit;
-  league: "cbb" | "cfb";
+  league: "mcbb" | "cfb";
   index: number;
 };
 
@@ -111,7 +111,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
       const logo =
         league === "cfb"
           ? getCFBTeamLogo(committedTeamId, isDark)
-          : getCBBTeamLogo(committedTeamId, isDark);
+          : getMCBBTeamLogo(committedTeamId, isDark);
 
       if (!logo) {
         return [];
@@ -158,7 +158,7 @@ export default function RecruitCard({ recruit, index, league }: Props) {
     const logo =
       league === "cfb"
         ? getCFBTeamLogo(teamId, isDark)
-        : getCBBTeamLogo(teamId, isDark);
+        : getMCBBTeamLogo(teamId, isDark);
 
     if (!logo) {
       return [];

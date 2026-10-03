@@ -30,7 +30,7 @@ export type ExploreWidgetConfig = {
   favoriteGamesAutoPlay?: boolean;
 };
 
-export const EXPLORE_COLLEGE_POLL_LEAGUES = ["cfb", "cbb"] as const;
+export const EXPLORE_COLLEGE_POLL_LEAGUES = ["cfb", "mcbb"] as const;
 
 export type ExploreCollegePollLeague =
   (typeof EXPLORE_COLLEGE_POLL_LEAGUES)[number];
@@ -60,7 +60,7 @@ export type ExploreStandingsLeague =
 export const EXPLORE_WIDGET_LEAGUES = [
   "nba",
   "wnba",
-  "cbb",
+  "mcbb",
   "wcbb",
   "mlb",
   "cb",
@@ -81,7 +81,7 @@ type ExploreWidgetGameBase = {
 export type ExploreWidgetGame =
   | (ExploreWidgetGameBase & {
       sport: "basketball";
-      league: "nba" | "wnba" | "cbb" | "wcbb";
+      league: "nba" | "wnba" | "mcbb" | "wcbb";
       game: BasketballGame;
     })
   | (ExploreWidgetGameBase & {

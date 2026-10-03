@@ -1,5 +1,5 @@
 // components/CFB/TeamRankCard.tsx
-import { getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { RecruitTeamRanking } from "@/hooks/RecruitHooks/useTeamRecruitingRankings";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors, Fonts } from "constants/styles";
@@ -11,7 +11,7 @@ import { Animated, Easing, Image, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   item: RecruitTeamRanking;
-  league: "cbb" | "cfb";
+  league: "mcbb" | "cfb";
   index: number;
 };
 
@@ -59,8 +59,8 @@ export default function TeamRankCard({ item, index, league }: Props) {
   const logo =
     league === "cfb"
       ? getCFBTeamLogo(teamId, isDark)
-      : league === "cbb"
-        ? getCBBTeamLogo(teamId, isDark)
+      : league === "mcbb"
+        ? getMCBBTeamLogo(teamId, isDark)
         : null;
 
   const rankChange =

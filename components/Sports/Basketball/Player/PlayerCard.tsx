@@ -2,7 +2,7 @@ import { activeOpacity } from "@/constants/styles";
 import { getWCBBTeam } from "@/constants/teamsWCBB";
 import placeholder from "assets/Placeholders/playerPlaceholder.png";
 import { getNBATeam } from "constants/teams";
-import { getCBBTeam } from "constants/teamsCBB";
+import { getMCBBTeam } from "constants/teamsMCBB";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
@@ -38,7 +38,7 @@ type PlayerRoutePathname =
 const LEAGUE_ROUTES: Partial<Record<LeagueType, PlayerRoutePathname>> = {
   nba: "/player/basketball/[id]",
   wnba: "/player/basketball/[id]",
-  cbb: "/player/basketball/[id]",
+  mcbb: "/player/basketball/[id]",
   wcbb: "/player/basketball/[id]",
   mlb: "/player/baseball/[id]",
   cb: "/player/baseball/[id]",
@@ -74,7 +74,7 @@ export default function PlayerCard({
   const isMLB = league === "mlb";
   const isNFL = league === "nfl";
   const isCFB = league === "cfb";
-  const isCBB = league === "cbb";
+  const isMCBB = league === "mcbb";
   const isWCBB = league === "wcbb";
   const isNHL = league === "nhl";
 
@@ -90,8 +90,8 @@ export default function PlayerCard({
             ? getCFBTeam(teamId)
             : isWNBA
               ? getWNBATeam(teamId)
-              : isCBB
-                ? getCBBTeam(teamId)
+              : isMCBB
+                ? getMCBBTeam(teamId)
                 : isWCBB
                   ? getWCBBTeam(teamId)
                   : null;

@@ -32,7 +32,7 @@ export type TeamRank = {
   lastUpdated: string;
 };
 
-export type CBBTeamRank = TeamRank;
+export type MCBBTeamRank = TeamRank;
 
 export type RankPoll = {
   type: "ap" | "coaches";
@@ -51,9 +51,9 @@ const CACHE_TTL = 6 * 60 * 60 * 1000;
    HOOK
 ===================================================== */
 
-export const useCBBRankings = (league: "cbb" | "wcbb") => {
-  const CACHE_KEY = `cbb_rankings_cache_${league}`;
-  const LAST_REFRESH_KEY = `cbb_rankings_last_refresh_${league}`;
+export const useMCBBRankings = (league: "mcbb" | "wcbb") => {
+  const CACHE_KEY = `mcbb_rankings_cache_${league}`;
+  const LAST_REFRESH_KEY = `mcbb_rankings_last_refresh_${league}`;
 
   const [rankings, setRankings] = useState<RankPoll[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,7 +72,7 @@ export const useCBBRankings = (league: "cbb" | "wcbb") => {
           JSON.stringify({ timestamp: Date.now(), data }),
         );
       } catch (err) {
-        console.warn("⚠️ Failed to cache CBB rankings:", err);
+        console.warn("⚠️ Failed to cache MCBB rankings:", err);
       }
     },
     [CACHE_KEY],
@@ -101,7 +101,7 @@ export const useCBBRankings = (league: "cbb" | "wcbb") => {
 
   const fetchLatest = useCallback(async () => {
     try {
-      const res = await apiClient.get(`api/standings/cbb/rankings`, {
+      const res = await apiClient.get(`api/standings/mcbb/rankings`, {
         params: { league },
       });
 

@@ -58,7 +58,7 @@ export default function TeamDrives({
   league = "nfl",
   state,
 }: Props) {
-  const styles = TeamDrivesStyles(isDark);
+  const styles = TeamDrivesStyles();
 
   const [selectedTab, setSelectedTab] = useState<TeamTab>("away");
 
@@ -152,13 +152,15 @@ export default function TeamDrives({
           error={error}
           isDark={isDark}
           league={league}
+          teamCode={teams[selectedTab].label}
+          teamLogo={teams[selectedTab].logo}
         />
       </View>
     </View>
   );
 }
 
-const TeamDrivesStyles = (isDark: boolean) =>
+const TeamDrivesStyles = () =>
   StyleSheet.create({
     wrapper: {
       borderWidth: 1,

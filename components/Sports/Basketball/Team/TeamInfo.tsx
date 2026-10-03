@@ -4,7 +4,7 @@ import { getWCBBTeam } from "@/constants/teamsWCBB";
 import { TeamDetails } from "@/hooks/useTeams";
 import { Team } from "@/types/football/football";
 import { getNBATeam } from "constants/teams";
-import { getCBBTeam } from "constants/teamsCBB";
+import { getMCBBTeam } from "constants/teamsMCBB";
 import { getCFBTeam } from "constants/teamsCFB";
 import { getMLBTeam } from "constants/teamsMLB";
 import { getNFLTeam } from "constants/teamsNFL";
@@ -27,8 +27,8 @@ export default function TeamInfo({ teamId, teamDetails, league }: Props) {
         return getNBATeam(teamId);
       case "cfb":
         return getCFBTeam(teamId);
-      case "cbb":
-        return getCBBTeam(teamId);
+      case "mcbb":
+        return getMCBBTeam(teamId);
       case "wcbb":
         return getWCBBTeam(teamId);
       case "nfl":
@@ -53,7 +53,7 @@ export default function TeamInfo({ teamId, teamDetails, league }: Props) {
     teamDetails?.coach?.lastName ?? ""
   }`.trim();
 
-  const showConference = ["cfb", "cbb", "wcbb"].includes(league);
+  const showConference = ["cfb", "mcbb", "wcbb"].includes(league);
 
   return (
     <View style={styles.infoCardContainer}>

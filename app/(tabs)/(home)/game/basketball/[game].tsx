@@ -20,7 +20,7 @@ import {
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
-import { getCBBTeam, getCBBTeamLogo } from "@/constants/teamsCBB";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
@@ -141,7 +141,7 @@ export default function GameDetailsScreen(
   ).toLowerCase();
   const isWNBA = LEAGUE === "wnba";
   const isWCBB = LEAGUE === "wcbb";
-  const isCBB = LEAGUE === "cbb";
+  const isMCBB = LEAGUE === "mcbb";
   const isGLEAGUE = LEAGUE === "gleague";
 
   const rawGameId = routeGame?.id ?? getRouteGameId(params.game);
@@ -193,8 +193,8 @@ export default function GameDetailsScreen(
     ? getWNBATeam(homeId)
     : isWCBB
       ? getWCBBTeam(homeId)
-      : isCBB
-        ? getCBBTeam(homeId)
+      : isMCBB
+        ? getMCBBTeam(homeId)
         : isGLEAGUE
           ? getGLeagueTeam(homeId)
           : getNBATeam(homeId);
@@ -203,8 +203,8 @@ export default function GameDetailsScreen(
     ? getWNBATeam(awayId)
     : isWCBB
       ? getWCBBTeam(awayId)
-      : isCBB
-        ? getCBBTeam(awayId)
+      : isMCBB
+        ? getMCBBTeam(awayId)
         : isGLEAGUE
           ? getGLeagueTeam(awayId)
           : getNBATeam(awayId);
@@ -231,7 +231,7 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId);
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "basketball", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
@@ -248,8 +248,8 @@ export default function GameDetailsScreen(
     home?.secondaryColor ??
     Colors.midTone;
 
-  const homeLogo = isCBB
-    ? getCBBTeamLogo(homeId, isDark)
+  const homeLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(homeId, isDark)
       : isWNBA
@@ -258,8 +258,8 @@ export default function GameDetailsScreen(
           ? getGLeagueTeamLogo(homeId, isDark)
           : getNBATeamLogo(homeId, isDark);
 
-  const awayLogo = isCBB
-    ? getCBBTeamLogo(awayId, isDark)
+  const awayLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, isDark)
     : isWCBB
       ? getWCBBTeamLogo(awayId, isDark)
       : isWNBA
@@ -268,8 +268,8 @@ export default function GameDetailsScreen(
           ? getGLeagueTeamLogo(awayId, isDark)
           : getNBATeamLogo(awayId, isDark);
 
-  const homeHeaderLogo = isCBB
-    ? getCBBTeamLogo(homeId, true)
+  const homeHeaderLogo = isMCBB
+    ? getMCBBTeamLogo(homeId, true)
     : isWCBB
       ? getWCBBTeamLogo(homeId, true)
       : isWNBA
@@ -278,8 +278,8 @@ export default function GameDetailsScreen(
           ? getGLeagueTeamLogo(homeId, true)
           : getNBATeamLogo(homeId, true);
 
-  const awayHeaderLogo = isCBB
-    ? getCBBTeamLogo(awayId, true)
+  const awayHeaderLogo = isMCBB
+    ? getMCBBTeamLogo(awayId, true)
     : isWCBB
       ? getWCBBTeamLogo(awayId, true)
       : isWNBA
@@ -312,7 +312,7 @@ export default function GameDetailsScreen(
   const gameStatusDetail = score?.status.gameStatusDetail ?? "";
   const period = formatPeriod({
     period: score?.status.period ?? 0,
-    isCBB: isCBB || isWCBB,
+    isMCBB: isMCBB || isWCBB,
   });
   const clock = score?.status.displayClock ?? "0:00";
   const isCanceled = gameStatusDescription === "Canceled";
