@@ -99,7 +99,7 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
-    teamId: espnId,
+    teamId: teamIdNum,
     league,
   });
 

@@ -1,3 +1,4 @@
+import { usePredictionScoring } from "./usePredictionScoring";
 // hooks/useLiveVotes.ts
 import { castRankedPrediction } from "services/fanPredictionsApi";
 import type { RankedPredictionContext } from "types/fanPredictions";
@@ -67,6 +68,7 @@ function getVoteErrorMessage(error: unknown): string {
 }
 
 export function useLiveVotes(gameId: number, predictionContext?: RankedPredictionContext) {
+  const { scoring, scoringError, retryScoring } = usePredictionScoring(gameId, predictionContext);
   const [votes, setVotes] = useState<PollResult[] | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const socketRef = useRef<Socket<
@@ -182,6 +184,7 @@ export function useLiveVotes(gameId: number, predictionContext?: RankedPredictio
   const castVote = useCallback(
     async (teamId: string | number): Promise<CastVoteAck> => {
       if (sport && league && state === "pre") {
+        if (!scoring) return { ok: false, error: "Wait for prediction points to load before picking." };
         try {
           await castRankedPrediction(gameId, teamId, { sport, league, date });
           try {
@@ -220,8 +223,8 @@ export function useLiveVotes(gameId: number, predictionContext?: RankedPredictio
 
       return response;
     },
-    [castVoteOverHttp, gameId, sport, league, date, state],
+    [castVoteOverHttp, gameId, sport, league, date, state, scoring],
   );
 
-  return { votes, castVote, isConnected };
+  return { votes, castVote, isConnected, scoring, scoringError, retryScoring };
 }

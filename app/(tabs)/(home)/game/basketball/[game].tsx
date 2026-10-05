@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
   BoxScore,
@@ -47,7 +48,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "utils/dateUtils";
 import {
   formatPeriod,
@@ -183,7 +183,7 @@ export default function GameDetailsScreen(
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
   const home = game?.home;
   const away = game?.away;
   const homeId = home?.id ?? 0;
@@ -231,7 +231,7 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
     sport: "basketball",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -507,6 +507,9 @@ export default function GameDetailsScreen(
                 state={state}
               />
               <FanPrediction
+                scoring={scoring}
+                scoringError={scoringError}
+                retryScoring={retryScoring}
                 votes={liveVotes}
                 castVote={castLiveVote}
                 gameId={gameId}

@@ -15,9 +15,9 @@ type Props = {
 };
 
 const RANKING_RULES = [
-  "Pick a winner before the game starts. Each correct pregame pick earns one point.",
+  "Pick a winner before the game starts. Each correct pregame pick earns one point, or two for playoffs, championships, tournament knockout rounds, or matchups with both teams ranked.",
   "Picks close when the game goes live. Team pick percentages and your selected team remain visible.",
-  "Fans with the same number of correct picks share a rank. Accuracy is based on scored picks only.",
+  "Fans with the same number of points share a rank. Accuracy is based on scored picks only.",
   "Draws, canceled games, and fights without a winner don’t affect accuracy.",
   "Only new verified pregame picks count. Ranking points and accuracy update after games finish.",
 ];
@@ -104,7 +104,7 @@ export default function FanRankingsHeader({
       {showLeaderboard ? (
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Leaderboard</Text>
-          <Text style={styles.sectionNote}>Ranked by correct picks</Text>
+          <Text style={styles.sectionNote}>Ranked by points</Text>
         </View>
       ) : null}
     </View>

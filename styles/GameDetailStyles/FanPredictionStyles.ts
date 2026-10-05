@@ -14,6 +14,17 @@ export const FanPredictionStyles = (isDark: boolean) =>
       borderRadius: 8,
       overflow: "hidden",
     },
+    bonusRow: { alignItems: "center", paddingBottom: 8 },
+    bonusBadge: {
+      fontFamily: Fonts.BOLD,
+      fontSize: 13,
+      color: isDark ? Colors.dark.green : Colors.light.green,
+      backgroundColor: isDark ? Colors.dark.transparentGreen : Colors.light.transparentGreen,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 8,
+      overflow: "hidden",
+    },
     cardsRow: {
       width: "100%",
       minHeight: 128,

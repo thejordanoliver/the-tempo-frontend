@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -9,7 +10,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
@@ -125,7 +125,7 @@ export default function GameDetailsScreen(
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
   const headline = game?.headline ?? holidayLabel;
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const home = game?.home;
   const away = game?.away;
@@ -193,7 +193,7 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
     sport: "baseball",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -435,6 +435,9 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              scoring={scoring}
+              scoringError={scoringError}
+              retryScoring={retryScoring}
               votes={liveVotes}
               castVote={castLiveVote}
               gameId={gameId}

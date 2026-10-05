@@ -11,6 +11,7 @@ export type FanPredictionRanking = {
   username: string;
   profileImage: string | null;
   rank: number | null;
+  points?: number;
   correct: number;
   graded: number;
   pending: number;
@@ -34,4 +35,9 @@ export type FanPredictionPick = {
 export type FanPredictionPicksResponse = {
   record: FanPredictionRanking | null;
   picks: FanPredictionPick[];
+};
+
+export type FanPredictionScoring = {
+  pointsValue: 1 | 2;
+  bonusReason: "ranked" | "playoff" | "championship" | "knockout" | null;
 };

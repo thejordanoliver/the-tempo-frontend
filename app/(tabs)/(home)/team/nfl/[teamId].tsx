@@ -29,7 +29,6 @@ export default function TeamDetailScreen() {
   const { teamId } = useLocalSearchParams();
   const teamIdNum = Number(teamId);
   const team = getNFLTeam(teamIdNum);
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getNFLTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
@@ -93,7 +92,7 @@ export default function TeamDetailScreen() {
   } = useRosterStats(teamIdNum, league, { enabled: hasVisitedTab("stats") });
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    espnId,
+    teamIdNum,
     league,
     { enabled: hasVisitedTab("stats") },
   );

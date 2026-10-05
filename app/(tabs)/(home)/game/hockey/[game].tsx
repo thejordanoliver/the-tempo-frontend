@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { CustomHeader } from "@/components/CustomHeader";
 import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
@@ -27,7 +28,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { getNHLTeam, getNHLTeamLogo } from "constants/teamsNHL";
@@ -115,7 +115,7 @@ export default function GameDetailsScreen(
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const LEAGUE = game?.league?.code ?? "nhl";
   const gameId = game?.id ?? 0;
@@ -150,7 +150,7 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
     sport: "hockey",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -331,6 +331,9 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              scoring={scoring}
+              scoringError={scoringError}
+              retryScoring={retryScoring}
               votes={liveVotes}
               castVote={castLiveVote}
               gameId={gameId}

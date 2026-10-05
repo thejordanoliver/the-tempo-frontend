@@ -36,7 +36,6 @@ export default function TeamDetailScreen() {
     error: teamDetailsError,
   } = useTeamDetails(league, teamIdNum);
   const conferenceId = teamDetails?.conferenceId;
-  const espnId = team?.espnId ?? 0;
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
@@ -106,7 +105,7 @@ export default function TeamDetailScreen() {
   } = useRosterStats(teamIdNum, league, { enabled: hasVisitedTab("stats") });
 
   const { teamStats, teamStatsLoading, teamStatsError, refresh } = useTeamStats(
-    espnId,
+    teamIdNum,
     league,
     { enabled: hasVisitedTab("stats") },
   );

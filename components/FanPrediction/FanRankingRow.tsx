@@ -18,6 +18,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
   const accuracy = entry.accuracy == null ? "—" : `${entry.accuracy}%`;
+  const points = entry.points ?? entry.correct;
   const incorrect = Math.max(0, entry.graded - entry.correct);
   const rankBadge =
     entry.rank === 1
@@ -32,7 +33,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${entry.username}${isCurrentUser ? ", your record" : ""}, rank ${entry.rank ?? "unranked"}, ${entry.correct} correct picks, ${incorrect} incorrect picks, ${entry.accuracy == null ? "no scored accuracy yet" : `${accuracy} accuracy`}, ${entry.graded} scored, ${entry.pending} pending`}
+      accessibilityLabel={`${entry.username}${isCurrentUser ? ", your record" : ""}, rank ${entry.rank ?? "unranked"}, ${points} points, ${entry.correct} correct picks, ${incorrect} incorrect picks, ${entry.accuracy == null ? "no scored accuracy yet" : `${accuracy} accuracy`}, ${entry.graded} scored, ${entry.pending} pending`}
       style={({ pressed }) => [
         styles.row,
         isCurrentUser && styles.currentUser,
@@ -66,6 +67,10 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
         </View>
 
         <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{points.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Points</Text>
+          </View>
           <View style={styles.stat}>
             <Text style={styles.statValue}>
               {entry.correct.toLocaleString()}/{entry.graded.toLocaleString()}

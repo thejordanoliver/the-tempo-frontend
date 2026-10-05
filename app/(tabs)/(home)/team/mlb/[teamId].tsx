@@ -30,7 +30,6 @@ export default function TeamDetailScreen() {
   const teamIdStr = Array.isArray(teamId) ? teamId[0] : teamId;
   const teamIdNum = Number(teamIdStr);
   const team = getMLBTeam(teamIdNum);
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getMLBTeamLogo(teamIdNum, true);
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
@@ -78,7 +77,7 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats({
     enabled: screen.hasVisitedTab("stats"),
-    teamId: espnId,
+    teamId: teamIdNum,
     league,
   });
 

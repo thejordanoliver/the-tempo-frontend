@@ -46,7 +46,7 @@ export const exploreStyles = (isDark: boolean) =>
       borderRadius: 100,
       overflow: "hidden",
     },
-  
+
     avatarContainer: {
       width: 44,
       height: 44,
@@ -57,34 +57,16 @@ export const exploreStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
     avatar: {
-      width: 44,
-      height: 44,
-      resizeMode: "contain"
+      width: 48,
+      height: 48,
+      resizeMode: "contain",
     },
 
-    emptyText: {
-      marginTop: 20,
-      fontFamily: Fonts.LIGHT,
-      fontSize: 16,
-      color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
-    },
-    errorText: {
-      marginTop: 20,
-      fontFamily: Fonts.REGULAR,
-      fontSize: 16,
-      color: isDark ? Colors.dark.lightRed : Colors.light.red,
-      textAlign: "center",
-    },
     centerPrompt: {
       flex: 1,
       justifyContent: "flex-start",
     },
-    promptText: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 24,
-      color: isDark ? Colors.white : Colors.black,
-    },
+
     teamLogo: {
       width: 40,
       height: 40,

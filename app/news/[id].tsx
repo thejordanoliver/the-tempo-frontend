@@ -13,7 +13,6 @@ import { useScopedRouter } from "hooks/useScopedRouter";
 import { useLayoutEffect, useMemo, useState } from "react";
 import {
   Image,
-  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -76,7 +75,7 @@ export default function ArticleScreen() {
     setIsPlaying(true);
   };
 
-  const handleOpenLink = async (link: string | null | undefined) => {
+  const handleOpenLink = (link: string | null | undefined) => {
     if (!link) return;
 
     const gameTarget = getNewsGameTarget(link);
@@ -118,12 +117,6 @@ export default function ArticleScreen() {
           router.push({ pathname: "/player/soccer/[id]", params });
           return;
       }
-    }
-
-    try {
-      await Linking.openURL(link);
-    } catch {
-      // Keep the article readable if the device cannot open the source URL.
     }
   };
 
@@ -272,7 +265,10 @@ export default function ArticleScreen() {
           {storyParagraphs.map((paragraph, paragraphIndex) => (
             <Text key={paragraphIndex} style={styles.content}>
               {paragraph.segments.map((segment, segmentIndex) =>
-                segment.link || segment.target ? (
+                segment.target ||
+                (segment.link &&
+                  (getNewsGameTarget(segment.link) ||
+                    getNewsPlayerTarget(segment.link))) ? (
                   <Text
                     key={segmentIndex}
                     accessibilityRole="link"
@@ -281,7 +277,7 @@ export default function ArticleScreen() {
                         handleOpenTarget(segment.target);
                         return;
                       }
-                      void handleOpenLink(segment.link);
+                      handleOpenLink(segment.link);
                     }}
                     style={styles.inlineLink}
                   >

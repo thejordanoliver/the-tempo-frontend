@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import {
   GameLiveChatOverlay,
@@ -5,7 +6,6 @@ import {
 } from "@/components/Sports/Basketball/GameDetails";
 import DriversHeader from "@/components/Sports/Racing/GameDetails/DriversHeader";
 import { RacingEventCardProps } from "@/types/racing/racing";
-import { shouldShowGameChat } from "@/utils/dateUtils";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
 import { useLayoutEffect, useMemo } from "react";
@@ -87,7 +87,7 @@ export default function GameDetailsScreen(
 
   const gameId = game?.id;
   const drivers = game?.drivers ?? [];
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const gameStatusDescription = game?.status?.description ?? "";
   const state = game?.status.state ?? "";

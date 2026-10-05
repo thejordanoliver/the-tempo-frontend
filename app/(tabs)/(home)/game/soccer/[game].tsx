@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
@@ -12,7 +13,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { CustomHeader } from "components/CustomHeader";
@@ -117,7 +117,7 @@ export default function GameDetailsScreen(
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
 
   const home = score?.home;
   const away = score?.away;
@@ -163,7 +163,7 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
   const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
 
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
     sport: "soccer",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,
@@ -351,6 +351,9 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              scoring={scoring}
+              scoringError={scoringError}
+              retryScoring={retryScoring}
               votes={liveVotes}
               castVote={castLiveVote}
               gameId={gameId}

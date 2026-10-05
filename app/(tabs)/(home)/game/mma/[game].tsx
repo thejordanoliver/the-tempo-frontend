@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { CustomHeader } from "@/components/CustomHeader";
 import {
@@ -13,7 +14,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "@/utils/dateUtils";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import GameHeader from "components/Sports/MMA/GameDetails/GameHeader";
@@ -108,11 +108,11 @@ export default function GameDetailsScreen(
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const gameId = game?.id ?? 0;
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "mma", league: game?.league?.code ?? "ufc", state: game?.status?.state, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, { sport: "mma", league: game?.league?.code ?? "ufc", state: game?.status?.state, date: game?.date ?? undefined });
 
   const firstFighter = game?.competitors?.[0];
   const secondFighter = game?.competitors?.[1];
@@ -278,6 +278,9 @@ export default function GameDetailsScreen(
         {!dontShowDetails && (
           <View style={styles.innerContainer}>
             <FanPrediction
+              scoring={scoring}
+              scoringError={scoringError}
+              retryScoring={retryScoring}
               votes={liveVotes}
               castVote={castLiveVote}
               gameId={gameId}

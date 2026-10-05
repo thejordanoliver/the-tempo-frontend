@@ -16,10 +16,8 @@ export function shouldShowGameChat(gameDate: Date | null): boolean {
     return false;
   }
 
-  // Start at midnight on the calendar day of the game.
-  const chatStart = new Date(gameDate);
-  chatStart.setHours(0, 0, 0, 0);
-  chatStart.setDate(chatStart.getDate() - 0);
+  // Open 15 minutes before the scheduled start, including across midnight.
+  const chatStart = gameDate.getTime() - 15 * 60 * 1000;
 
   // End at midnight on the calendar day after the game.
   const chatEnd = new Date(gameDate);
@@ -28,7 +26,7 @@ export function shouldShowGameChat(gameDate: Date | null): boolean {
 
   const currentTime = Date.now();
 
-  return currentTime >= chatStart.getTime() && currentTime < chatEnd.getTime();
+  return currentTime >= chatStart && currentTime < chatEnd.getTime();
 }
 
 export function formatDateToUTCYYYYMMDD(

@@ -7,7 +7,7 @@ import {
   type FanPredictionInput,
 } from "hooks/useFanPrediction";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 import { formatPercentage, isSameTeamId } from "utils/fanPredictionVotes";
 import FanPredictionSection from "./FanPredictionSection";
@@ -36,6 +36,9 @@ function FanPredictionContent(props: Props) {
     homeLogo,
     homeColor,
     state,
+    scoring,
+    scoringError,
+    retryScoring,
   } = props;
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
@@ -56,7 +59,7 @@ function FanPredictionContent(props: Props) {
     handleHomeVote,
   } = useFanPrediction(props);
   const isLive = state === "in";
-  const voteDisabled = !canVote || userVote != null || submittingTeamId != null;
+  const voteDisabled = (canVote && !scoring) || !canVote || userVote != null || submittingTeamId != null;
 
   if (phase === "loading") {
     return <FanPredictionSkeleton isDark={isDark} isLive={isLive} />;
@@ -75,6 +78,21 @@ function FanPredictionContent(props: Props) {
 
   return (
     <FanPredictionSection>
+      {canVote && (
+        <View style={styles.bonusRow}>
+          {scoring ? (
+            <Text style={scoring.pointsValue === 2 ? styles.bonusBadge : styles.subtitle}>
+              {scoring.pointsValue === 2
+                ? `2× points · ${{ ranked: "Both teams ranked", playoff: "Playoff game", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
+                : "1 point for a correct pick"}
+            </Text>
+          ) : scoringError ? (
+            <Pressable onPress={retryScoring} accessibilityRole="button">
+              <Text style={global.errorText}>Couldn’t load points. Tap to retry.</Text>
+            </Pressable>
+          ) : <Text style={styles.subtitle}>Checking prediction points…</Text>}
+        </View>
+      )}
       <View style={styles.cardsRow}>
         <PredictionCard
           code={awayCode}
@@ -121,7 +139,7 @@ function FanPredictionContent(props: Props) {
           </View>
           <View style={styles.footer}>
             <Text style={styles.rankingHint}>
-              Pregame picks earn 1 point for a correct prediction.
+              Correct picks earn 1 point, or 2 for qualifying important matchups.
             </Text>
             <FanRankingsLink />
           </View>

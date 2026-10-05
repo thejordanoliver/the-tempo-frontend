@@ -1,3 +1,4 @@
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
@@ -53,7 +54,6 @@ import {
   formatTime,
   getHolidayLabel,
   safeDate,
-  shouldShowGameChat,
 } from "utils/dateUtils";
 
 type RouteParams = {
@@ -178,7 +178,7 @@ export default function GameDetailsScreen(
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const showGameChat = shouldShowGameChat(gameDateObj);
+  const showGameChat = useGameChatAvailability(gameDateObj);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const home = game?.home;
@@ -243,7 +243,7 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "football", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, { sport: "football", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
   const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 
@@ -501,6 +501,9 @@ export default function GameDetailsScreen(
             />
 
             <FanPrediction
+              scoring={scoring}
+              scoringError={scoringError}
+              retryScoring={retryScoring}
               votes={liveVotes}
               castVote={castLiveVote}
               gameId={gameId}

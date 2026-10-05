@@ -33,7 +33,6 @@ export default function TeamDetailScreen() {
   const teamColor = team?.color ?? Colors.midTone;
   const teamSecondaryColor = team?.secondaryColor ?? Colors.midTone;
   const teamName = team?.name;
-  const espnId = team?.espnId ?? 0;
   const teamLogo = getWCBBTeamLogo(teamIdNum, true);
   const screen = useTeamDetailScreen({
     tabLeague: league,
@@ -99,7 +98,7 @@ export default function TeamDetailScreen() {
     error: teamStatsError,
   } = useTeamStats({
     enabled: hasVisitedTab("stats"),
-    teamId: espnId,
+    teamId: teamIdNum,
     league,
   });
 

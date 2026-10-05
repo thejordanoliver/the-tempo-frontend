@@ -2,7 +2,7 @@ import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchVoteResults, type PollResult } from "hooks/useGameVotes";
 import type { CastVoteAck } from "hooks/useLiveVotes";
-import type { FanPredictionTeamId as TeamId } from "types/fanPredictions";
+import type { FanPredictionScoring, FanPredictionTeamId as TeamId } from "types/fanPredictions";
 import {
   getErrorMessage,
   getVoteCount,
@@ -16,6 +16,9 @@ type OptimisticVote = {
 };
 
 export type FanPredictionInput = {
+  scoring?: FanPredictionScoring | null;
+  scoringError?: boolean;
+  retryScoring?: () => void;
   votes: PollResult[] | null;
   castVote: (teamId: TeamId) => Promise<CastVoteAck>;
   gameId: number;

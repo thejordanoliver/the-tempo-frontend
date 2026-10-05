@@ -41,7 +41,7 @@ import { rosterStatsStyles } from "styles/TeamStyles/RosterStatStyles";
 
 export default function RosterStats({
   rosterStats,
-  GameTeamStats,
+  teamStats,
   league,
   loading = false,
   error = null,
@@ -362,7 +362,7 @@ export default function RosterStats({
     );
   };
 
-  const renderGameTeamStatsSection = (
+  const renderteamStatsSection = (
     title: string,
     rows: readonly { label: string; value: string | number }[],
   ) => (
@@ -396,8 +396,8 @@ export default function RosterStats({
     </View>
   );
 
-  const renderGameTeamStats = () => {
-    if (!GameTeamStats) {
+  const renderteamStats = () => {
+    if (!teamStats) {
       return (
         <View style={styles.center}>
           <Text style={global.emptyText}>No team stats available.</Text>
@@ -405,25 +405,25 @@ export default function RosterStats({
       );
     }
 
-    const categories = buildFootballStatCategories(GameTeamStats);
+    const categories = buildFootballStatCategories(teamStats);
 
     const statsToDisplay = category
       ? categories.filter((statCategory) => statCategory.key === category)
       : categories;
 
     const summaryRows = [
-      { label: "Record", value: GameTeamStats.team.recordSummary },
-      { label: "Standing", value: GameTeamStats.team.standingSummary },
-      { label: "Season", value: GameTeamStats.season.displayName },
+      { label: "Record", value: teamStats.team.recordSummary },
+      { label: "Standing", value: teamStats.team.standingSummary },
+      { label: "Season", value: teamStats.season.displayName },
     ];
 
     return (
       <View style={styles.teamTableContainer}>
-        {!category && renderGameTeamStatsSection("Team Summary", summaryRows)}
+        {!category && renderteamStatsSection("Team Summary", summaryRows)}
 
         {statsToDisplay.map((cat) => (
           <React.Fragment key={cat.key}>
-            {renderGameTeamStatsSection(
+            {renderteamStatsSection(
               cat.name,
               cat.stats.map((stat: StatRow) => ({
                 label: stat.displayName,
@@ -444,7 +444,7 @@ export default function RosterStats({
     );
   }
 
-  if (error && !roster.length && !GameTeamStats) {
+  if (error && !roster.length && !teamStats) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
     return (
@@ -454,7 +454,7 @@ export default function RosterStats({
     );
   }
 
-  if (!roster.length && !GameTeamStats) {
+  if (!roster.length && !teamStats) {
     return (
       <View style={global.emptyContainer}>
         <Text style={global.emptyText}>No stats available</Text>
@@ -496,7 +496,7 @@ export default function RosterStats({
           ]}
           pointerEvents={selectedTab === "Team Stats" ? "auto" : "none"}
         >
-          {renderGameTeamStats()}
+          {renderteamStats()}
         </View>
       )}
     </ScrollView>
