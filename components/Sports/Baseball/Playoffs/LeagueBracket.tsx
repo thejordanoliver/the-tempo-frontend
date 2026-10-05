@@ -1,22 +1,27 @@
+import { RoundHeader } from "@/components/Sports/Basketball/Playoffs/NBAPlayoffs/RoundHeader";
 import { View } from "react-native";
-import { RoundHeader } from "components/Sports/Playoffs/RoundHeader";
-import { getMLBBracketLayoutStyles, MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
+import {
+  getMLBBracketLayoutStyles,
+  MLBPlayoffBracketStyles,
+} from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffBracketResponse } from "types/baseball/baseball";
-import { findSeries, seededMatchup, lowestKnownSeed, type Matchup } from "./mlbBracketUtils";
+import {
+  findSeries,
+  lowestKnownSeed,
+  seededMatchup,
+} from "../../../../utils/mlbBracketUtils";
+import { BracketConnectors } from "./BracketConnectors";
 import { ByeTeamCard } from "./ByeTeamCard";
 import { MatchupCard } from "./MatchupCard";
-import { BracketConnectors } from "./BracketConnectors";
 
 export function LeagueBracket({
   bracket,
   league,
   isDark,
-  onSelectSeries,
 }: {
   bracket: MLBPlayoffBracketResponse;
   league: "american" | "national";
   isDark: boolean;
-  onSelectSeries: (matchup: Matchup) => void;
 }) {
   const styles = MLBPlayoffBracketStyles(isDark);
   const wildCard = findSeries(bracket, league, "wild-card");
@@ -56,7 +61,7 @@ export function LeagueBracket({
     },
     {
       key: "championship",
-      title: "Championship",
+      title: "Conference Championship",
       matchups: championshipMatchups,
     },
   ];
@@ -66,7 +71,11 @@ export function LeagueBracket({
   return (
     <View style={styles.section}>
       <View style={styles.leagueBoard}>
-        <BracketConnectors league={league} matchups={wildCardMatchups} isDark={isDark} />
+        <BracketConnectors
+          league={league}
+          matchups={wildCardMatchups}
+          isDark={isDark}
+        />
         {orderedColumns.map((column) => (
           <View key={column.title} style={styles.column}>
             <RoundHeader title={column.title} isDark={isDark} />
@@ -82,7 +91,7 @@ export function LeagueBracket({
 
                 return (
                   <View key={matchup.id} style={position}>
-                    <MatchupCard matchup={matchup} isDark={isDark} onPress={() => onSelectSeries(matchup)} />
+                    <MatchupCard matchup={matchup} isDark={isDark} />
                   </View>
                 );
               })}

@@ -23,7 +23,7 @@ import type {
 import { BracketConnectors } from "./BracketConnectors";
 import { ByeTeamCard } from "./ByeTeamCard";
 import { CFPChampionshipCard } from "./CFPChampionshipCard";
-import { GameCard } from "./GameCard";
+import { MatchupCard } from "./MatchupCard";
 import { RoundLabel } from "./RoundLabel";
 
 type CFPBracketCanvasProps = {
@@ -93,7 +93,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <GameCard
+                <MatchupCard
                   key={`first-round-${game.id}`}
                   game={game}
                   x={FIRST_ROUND_X}
@@ -132,7 +132,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <GameCard
+                <MatchupCard
                   key={`quarterfinal-${game.id}`}
                   game={game}
                   x={QUARTERFINAL_X}
@@ -150,7 +150,7 @@ export function CFPBracketCanvas({
               }
 
               return (
-                <GameCard
+                <MatchupCard
                   key={`semifinal-${game.id}`}
                   game={game}
                   x={SEMIFINAL_X}

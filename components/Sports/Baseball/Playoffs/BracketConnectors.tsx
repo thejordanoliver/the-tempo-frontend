@@ -1,6 +1,9 @@
 import { View } from "react-native";
-import { getMLBBracketLayoutStyles, MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
-import type { Matchup } from "./mlbBracketUtils";
+import {
+  getMLBBracketLayoutStyles,
+  MLBPlayoffBracketStyles,
+} from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
+import type { Matchup } from "../../../../utils/mlbBracketUtils";
 
 type Props = {
   league: "american" | "national";
@@ -16,7 +19,10 @@ export function BracketConnectors({ league, matchups, isDark }: Props) {
       {matchups.map((matchup, index) => {
         const opening = getMLBBracketLayoutStyles(league, index);
         return (
-          <View key={`bye-connector-${matchup.id}`} style={styles.connectorLayer}>
+          <View
+            key={`bye-connector-${matchup.id}`}
+            style={styles.connectorLayer}
+          >
             <View style={[styles.connectorVertical, opening.byeBranch]} />
             <View style={[styles.connectorVertical, opening.wildCardBranch]} />
             <View style={[styles.connectorHorizontal, opening.byeLeg]} />

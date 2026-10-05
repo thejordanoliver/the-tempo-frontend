@@ -61,7 +61,7 @@ export const snapBracketOffsets = [
 export const NBAPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: {
-      paddingHorizontal: 12,
+      paddingBottom: 100,
     },
 
     canvas: {
@@ -72,7 +72,6 @@ export const NBAPlayoffBracketStyles = (isDark: boolean) =>
 
     roundHeader: {
       position: "absolute",
-      top: 0,
       alignItems: "center",
     },
 

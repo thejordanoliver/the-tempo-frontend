@@ -1,18 +1,17 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
+import { RoundHeader } from "@/components/Sports/Basketball/Playoffs/NBAPlayoffs/RoundHeader";
 import { globalStyles } from "@/constants/styles";
-import { useMemo, useState } from "react";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
+import { useMemo } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import {
   getMLBBracketLayoutStyles,
   MLBPlayoffBracketStyles,
 } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffBracketResponse } from "types/baseball/baseball";
+import { findSeries } from "../../../../utils/mlbBracketUtils";
 import { LeagueBracket } from "./LeagueBracket";
-import { RoundHeader } from "components/Sports/Playoffs/RoundHeader";
 import { MatchupCard } from "./MatchupCard";
-import { SeriesGamesSheet } from "./SeriesGamesSheet";
-import { findSeries, type Matchup } from "./mlbBracketUtils";
 
 type Props = {
   bracket: MLBPlayoffBracketResponse | null;
@@ -31,9 +30,6 @@ export function MLBPlayoffBracket({
   isDark,
   onRefresh,
 }: Props) {
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string | null>(null);
-  const selectedSeries = bracket?.series.find((series) => series.id === selectedSeriesId) ?? null;
-  const selectSeries = (matchup: Matchup) => setSelectedSeriesId(matchup.id);
   const navigationContentStyle = useNavigationBarContentStyle();
   const styles = useMemo(() => MLBPlayoffBracketStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
@@ -48,7 +44,8 @@ export function MLBPlayoffBracket({
 
   if (!bracket) {
     return (
-      <ScrollView contentContainerStyle={navigationContentStyle()}
+      <ScrollView
+        contentContainerStyle={navigationContentStyle()}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -93,33 +90,22 @@ export function MLBPlayoffBracket({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.content}
         >
-          <LeagueBracket
-            bracket={bracket}
-            league="american"
-            onSelectSeries={selectSeries}
-            isDark={isDark}
-          />
+          <LeagueBracket bracket={bracket} league="american" isDark={isDark} />
           <View style={styles.section}>
             <View style={styles.column}>
               <RoundHeader title="World Series" isDark={isDark} />
               <View style={styles.roundBody}>
                 <View
-                  style={getMLBBracketLayoutStyles("american").championshipCard}
+                  style={getMLBBracketLayoutStyles("american").worldSeriesCard}
                 >
-                  <MatchupCard matchup={worldSeries} isDark={isDark} onPress={() => selectSeries(worldSeries)} />
+                  <MatchupCard matchup={worldSeries} finals isDark={isDark} />
                 </View>
               </View>
             </View>
           </View>
-          <LeagueBracket
-            bracket={bracket}
-            league="national"
-            onSelectSeries={selectSeries}
-            isDark={isDark}
-          />
+          <LeagueBracket bracket={bracket} league="national" isDark={isDark} />
         </ScrollView>
       </ScrollView>
-      <SeriesGamesSheet series={selectedSeries} isDark={isDark} onClose={() => setSelectedSeriesId(null)} />
     </>
   );
 }

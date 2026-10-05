@@ -1,6 +1,6 @@
+import FanPredictionSection from "@/components/FanPrediction/FanPredictionSection";
+import PredictionGradient from "@/components/FanPrediction/PredictionGradient";
 import { SkeletonBlock, SkeletonCircle } from "components/Skeletons/primitives";
-import FanPredictionSection from "components/Sports/Basketball/GameDetails/FanPrediction/FanPredictionSection";
-import PredictionGradient from "components/Sports/Basketball/GameDetails/FanPrediction/PredictionGradient";
 import { Colors } from "constants/styles";
 import { useMemo } from "react";
 import { View } from "react-native";
@@ -29,7 +29,10 @@ export default function FanPredictionSkeleton({
             <View style={styles.cardContent}>
               <SkeletonCircle size={styles.teamLogo.width} />
               <SkeletonBlock width={60} height={styles.teamLabel.lineHeight} />
-              <SkeletonBlock width={36} height={styles.votePercentage.lineHeight} />
+              <SkeletonBlock
+                width={36}
+                height={styles.votePercentage.lineHeight}
+              />
             </View>
           </View>
         ))}

@@ -25,7 +25,7 @@ import { TeamRow } from "./TeamRow";
 |--------------------------------------------------------------------------
 */
 
-export function GameCard({
+export function MatchupCard({
   game,
   x,
   y,

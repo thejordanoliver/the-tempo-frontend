@@ -202,21 +202,25 @@ export const safeDate = (date?: string | null) => {
   return isNaN(d.getTime()) ? new Date() : d;
 };
 
-export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("en-US", {
+export const formatDate = (date: Date | string): string => {
+  const parsedDate = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  return parsedDate.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
   });
 };
 
-export const formatTime = (date: Date) => {
-  return (
-    date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || ""
-  );
+export const formatTime = (date: Date | string): string => {
+  const parsedDate = typeof date === "string" ? new Date(date) : date;
+  if (Number.isNaN(parsedDate.getTime())) return "";
+
+  return parsedDate.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 };
 
 export function filterByDate<

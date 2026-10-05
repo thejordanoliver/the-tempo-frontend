@@ -1,8 +1,8 @@
 import { isExploreWidgetType } from "constants/exploreWidgets";
 import { normalizeStoredWidgets } from "utils/exploreWidgetStorage";
 import type { WidgetSettings } from "utils/exploreWidgetSync";
-import type { ExploreWidgetConfig } from "types/widgets";
 import type {
+  ExploreWidgetConfig,
   ExploreWidgetLeague,
   ExploreWidgetsResponse,
 } from "types/widgets";

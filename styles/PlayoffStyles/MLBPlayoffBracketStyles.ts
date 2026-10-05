@@ -1,12 +1,13 @@
+import { ROUND_HEADER_HEIGHT } from "@/components/Sports/Basketball/Playoffs/NBAPlayoffs/RoundHeader";
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, type ViewStyle } from "react-native";
 import { BYE_CARD_HEIGHT } from "./ByeTeamCardStyles";
-import { ROUND_HEADER_HEIGHT } from "components/Sports/Playoffs/RoundHeader";
 
 export const MLB_BRACKET_COLUMN_WIDTH = 176;
 
 const ROUND_HEADER_GAP = 14;
 const MATCHUP_HEIGHT = 142;
+const FINALS_HEIGHT = 178;
 const MATCHUP_ROW_GAP = 150;
 const COLUMN_GAP = 80;
 const SECOND_MATCHUP_TOP = MATCHUP_HEIGHT + MATCHUP_ROW_GAP;
@@ -39,7 +40,8 @@ export function getMLBBracketLayoutStyles(
   const openingLegLeft = fromLeft ? directGapLeft : openingMidpoint;
   const rowOffset = index * SECOND_MATCHUP_TOP;
   const mergeY = connectorTop + rowOffset;
-  const wildCardY = headerOffset + rowOffset + WILD_CARD_TOP + MATCHUP_HEIGHT / 2;
+  const wildCardY =
+    headerOffset + rowOffset + WILD_CARD_TOP + MATCHUP_HEIGHT / 2;
   const byeY = headerOffset + rowOffset + BYE_CARD_TOP + BYE_CARD_HEIGHT / 2;
   const cardPosition: ViewStyle = { position: "absolute", left: 0, right: 0 };
 
@@ -48,8 +50,16 @@ export function getMLBBracketLayoutStyles(
     wildCardCard: { ...cardPosition, top: rowOffset + WILD_CARD_TOP },
     divisionCard: { ...cardPosition, top: rowOffset + DIVISION_SERIES_TOP },
     championshipCard: { ...cardPosition, top: CHAMPIONSHIP_TOP },
+    worldSeriesCard: {
+      ...cardPosition,
+      top: CHAMPIONSHIP_TOP - (FINALS_HEIGHT - MATCHUP_HEIGHT) / 2,
+    },
     byeBranch: { left: openingMidpoint, top: byeY, height: mergeY - byeY },
-    wildCardBranch: { left: openingMidpoint, top: mergeY, height: wildCardY - mergeY },
+    wildCardBranch: {
+      left: openingMidpoint,
+      top: mergeY,
+      height: wildCardY - mergeY,
+    },
     byeLeg: { left: openingLegLeft, top: byeY, width: halfGap },
     wildCardLeg: { left: openingLegLeft, top: wildCardY, width: halfGap },
     openingOutput: {
@@ -89,14 +99,16 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
     container: { flex: 1 },
     sheetBackground: {
-      backgroundColor: isDark ? Colors.dark.itemBackground : Colors.light.itemBackground,
+      backgroundColor: isDark
+        ? Colors.dark.itemBackground
+        : Colors.light.itemBackground,
     },
     seriesGames: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },
     seriesGame: { gap: 6 },
     section: { gap: 12 },
     roundHeader: { height: ROUND_HEADER_HEIGHT },
     roundBody: { height: ROUND_BODY_HEIGHT, position: "relative" },
-    content: { paddingHorizontal: 40, paddingTop: 16, gap: 18 },
+    content: { paddingHorizontal: 40, paddingTop: 16, gap: COLUMN_GAP },
     leagueTitle: {
       color: isDark ? Colors.white : Colors.black,
       fontFamily: Fonts.BOLD,
@@ -109,7 +121,11 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
       gap: COLUMN_GAP,
       alignItems: "flex-start",
     },
-    column: { width: MLB_BRACKET_COLUMN_WIDTH, gap: ROUND_HEADER_GAP, zIndex: 1 },
+    column: {
+      width: MLB_BRACKET_COLUMN_WIDTH,
+      gap: ROUND_HEADER_GAP,
+      zIndex: 1,
+    },
     roundTitle: {
       color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.MEDIUM,
@@ -148,6 +164,11 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
         ? Colors.dark.itemBackground
         : Colors.light.itemBackground,
       elevation: 5,
+    },
+    finalsMatchup: {
+      height: FINALS_HEIGHT,
+      borderWidth: 1.5,
+      borderColor: isDark ? Colors.dark.gold : Colors.light.gold,
     },
     seriesLabel: {
       color: Colors.midTone,

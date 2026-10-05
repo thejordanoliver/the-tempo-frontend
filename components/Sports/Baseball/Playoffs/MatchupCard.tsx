@@ -1,18 +1,17 @@
-import { Text, TouchableOpacity } from "react-native";
-import { activeOpacity } from "constants/styles";
+import { Text, View } from "react-native";
 import { MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffTeam } from "types/baseball/baseball";
-import type { Matchup } from "./mlbBracketUtils";
+import type { Matchup } from "../../../../utils/mlbBracketUtils";
 import { TeamRow, isKnownBracketTeam } from "./TeamRow";
 
 export function MatchupCard({
   matchup,
   isDark,
-  onPress,
+  finals = false,
 }: {
   matchup: Matchup;
   isDark: boolean;
-  onPress: () => void;
+  finals?: boolean;
 }) {
   const styles = MLBPlayoffBracketStyles(isDark);
   const rows: (MLBPlayoffTeam | null)[] = [
@@ -37,15 +36,7 @@ export function MatchupCard({
         : `Best of ${matchup.bestOf}`;
 
   return (
-    <TouchableOpacity
-      style={styles.matchup}
-      activeOpacity={activeOpacity}
-      onPress={onPress}
-      disabled={!matchup.games.length}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !matchup.games.length }}
-      accessibilityLabel={`${matchup.label}. ${footer}${matchup.games.length ? ". View series games." : ""}`}
-    >
+    <View style={[styles.matchup, finals && styles.finalsMatchup]}>
       {rows.map((team, index) => {
         const isKnownTeam = isKnownBracketTeam(team);
         const isWinner = isKnownTeam && team?.id === winner?.id;
@@ -64,7 +55,6 @@ export function MatchupCard({
       <Text numberOfLines={1} style={styles.seriesLabel}>
         {footer}
       </Text>
-    </TouchableOpacity>
+    </View>
   );
 }
-

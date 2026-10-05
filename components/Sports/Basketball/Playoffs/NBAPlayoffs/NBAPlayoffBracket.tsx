@@ -1,7 +1,6 @@
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 
 import {
   getColCenter,
@@ -32,7 +31,7 @@ import {
   WEST_ROUND2_LAYOUTS,
   WEST_ROUND3_LAYOUTS,
 } from "./ConnectorLayer";
-import { GameCard } from "./GameCard";
+import { MatchupCard } from "./MatchupCard";
 import { RoundLabel } from "./RoundLabel";
 
 type Conference = "east" | "west";
@@ -713,7 +712,6 @@ export function NBAPlayoffBracket({
   refreshing: boolean;
   onRefresh: () => void;
 }) {
-  const navigationContentStyle = useNavigationBarContentStyle();
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
 
@@ -753,7 +751,7 @@ export function NBAPlayoffBracket({
 
   return (
     <ScrollView
-      contentContainerStyle={navigationContentStyle()}
+      contentContainerStyle={styles.container}
       snapToOffsets={snapBracketOffsets}
       snapToAlignment="start"
       decelerationRate="fast"
@@ -822,7 +820,7 @@ export function NBAPlayoffBracket({
           <ConnectorLayer isDark={isDark} />
 
           {bracket.west[0].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND1_LAYOUTS[index]}
@@ -831,7 +829,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.west[1].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND2_LAYOUTS[index]}
@@ -840,7 +838,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.west[2].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={WEST_ROUND3_LAYOUTS[index]}
@@ -849,7 +847,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[2].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND3_LAYOUTS[index]}
@@ -858,7 +856,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[1].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND2_LAYOUTS[index]}
@@ -867,7 +865,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.east[0].map((matchup, index) => (
-            <GameCard
+            <MatchupCard
               key={matchup.id}
               matchup={matchup}
               layout={EAST_ROUND1_LAYOUTS[index]}
@@ -876,7 +874,7 @@ export function NBAPlayoffBracket({
           ))}
 
           {bracket.finals ? (
-            <GameCard
+            <MatchupCard
               matchup={bracket.finals}
               layout={FINALS_LAYOUT}
               isDark={isDark}

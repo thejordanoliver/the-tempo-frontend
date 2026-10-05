@@ -33,38 +33,51 @@ export default function FanRankingsHeader({
   const styles = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
-  const nextScore = me
-    ? rankings.reduce<number | null>((next, entry) =>
-        entry.correct > me.correct && (next == null || entry.correct < next)
-          ? entry.correct : next, null)
-    : null;
+ 
 
   return (
     <View style={styles.header}>
       <View style={styles.intro}>
         <View style={styles.introHeader}>
           <View style={styles.trophy}>
-            <Ionicons name="trophy-outline" size={24} color={isDark ? Colors.gold : Colors.light.gold} accessible={false} />
+            <Ionicons
+              name="trophy-outline"
+              size={24}
+              color={isDark ? Colors.gold : Colors.light.gold}
+              accessible={false}
+            />
           </View>
           <View style={styles.introCopy}>
             <Text style={styles.eyebrow}>ALL-TIME</Text>
             <Text style={styles.title}>Fan predictions</Text>
           </View>
         </View>
-        <Text style={styles.description}>Pick the winners. Earn points. See where you stand.</Text>
+        <Text style={styles.description}>
+          Pick the winners. Earn points. See where you stand.
+        </Text>
         <Pressable
-          onPress={() => setRulesExpanded(expanded => !expanded)}
+          onPress={() => setRulesExpanded((expanded) => !expanded)}
           accessibilityRole="button"
           accessibilityState={{ expanded: rulesExpanded }}
-          style={({ pressed }) => [styles.rulesToggle, pressed && global.pressed]}
+          style={({ pressed }) => [
+            styles.rulesToggle,
+            pressed && global.pressed,
+          ]}
         >
           <Text style={styles.rulesLabel}>How rankings work</Text>
-          <Ionicons name={rulesExpanded ? "chevron-up" : "chevron-down"} size={16} color={colors.icon} accessible={false} />
+          <Ionicons
+            name={rulesExpanded ? "chevron-up" : "chevron-down"}
+            size={16}
+            color={colors.icon}
+            accessible={false}
+          />
         </Pressable>
         {rulesExpanded ? (
           <View style={styles.rules}>
-            {RANKING_RULES.map(rule => (
-              <Text key={rule} style={styles.description}>{rule}</Text>
+            {RANKING_RULES.map((rule) => (
+              <Text key={rule} style={styles.description}>
+                {rule}
+              </Text>
             ))}
           </View>
         ) : null}
@@ -79,16 +92,7 @@ export default function FanRankingsHeader({
             isCurrentUser
             onPress={() => onOpenUser(me.userId)}
           />
-          <Text style={styles.note}>
-            {me.correct.toLocaleString()} ranking points · {me.correct.toLocaleString()} correct / {me.graded.toLocaleString()} scored picks
-          </Text>
-          {nextScore != null ? (
-            <Text style={styles.description}>
-              {(nextScore - me.correct).toLocaleString()} more correct {nextScore - me.correct === 1 ? "pick" : "picks"} to tie the next rank above you.
-            </Text>
-          ) : me.rank === 1 ? (
-            <Text style={styles.description}>You’re at the top of the leaderboard. Keep making pregame picks to build your lead.</Text>
-          ) : null}
+
           {me.rank == null ? (
             <Text style={styles.note}>
               Your rank appears after your first scored prediction.

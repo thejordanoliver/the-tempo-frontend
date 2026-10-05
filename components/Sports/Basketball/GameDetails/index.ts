@@ -1,9 +1,9 @@
 // components/GameDetails/index.ts
 export { default as TeamInjuries } from "components/Sports/Baseball/GameDetails/InjuryReport/TeamInjuries";
 export { default as ChatButton } from "../../../Buttons/FloatingButton";
+export { default as FanPrediction } from "../../../FanPrediction/FanPrediction";
 export { default as BoxScore } from "./BoxScore";
 export { CenterInfo } from "./CenterInfo";
-export { default as FanPrediction } from "./FanPrediction/FanPrediction";
 export { default as GameLiveChatOverlay } from "./GameChat/GameLiveChatOverlay";
 export { default as LiveChat } from "./GameChat/LiveChat";
 export { default as GameHeader } from "./GameHeader";

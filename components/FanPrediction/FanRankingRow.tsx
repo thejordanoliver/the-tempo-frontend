@@ -19,9 +19,14 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
   const colors = isDark ? Colors.dark : Colors.light;
   const accuracy = entry.accuracy == null ? "—" : `${entry.accuracy}%`;
   const incorrect = Math.max(0, entry.graded - entry.correct);
-  const rankBadge = entry.rank === 1 ? styles.goldBadge
-    : entry.rank === 2 ? styles.silverBadge
-      : entry.rank === 3 ? styles.bronzeBadge : null;
+  const rankBadge =
+    entry.rank === 1
+      ? styles.goldBadge
+      : entry.rank === 2
+        ? styles.silverBadge
+        : entry.rank === 3
+          ? styles.bronzeBadge
+          : null;
 
   return (
     <Pressable
@@ -52,32 +57,30 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
               <Text style={styles.youLabel}>You</Text>
             </View>
           ) : null}
-          <Ionicons name="chevron-forward" size={16} color={colors.icon} accessible={false} />
+          <Ionicons
+            name="chevron-forward"
+            size={16}
+            color={colors.icon}
+            accessible={false}
+          />
         </View>
 
         <View style={styles.stats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{entry.correct.toLocaleString()}/{(entry.graded + entry.pending).toLocaleString()}</Text>
-            <Text style={styles.statLabel}>Correct/Total picks</Text>
+            <Text style={styles.statValue}>
+              {entry.correct.toLocaleString()}/{entry.graded.toLocaleString()}
+            </Text>
+            <Text style={styles.statLabel}>Record</Text>
           </View>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{accuracy}</Text>
             <Text style={styles.statLabel}>Accuracy</Text>
           </View>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{entry.graded.toLocaleString()}</Text>
-            <Text style={styles.statLabel}>Scored</Text>
-          </View>
-        </View>
-
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{entry.pending.toLocaleString()}</Text>
+            <Text style={styles.statValue}>
+              {entry.pending.toLocaleString()}
+            </Text>
             <Text style={styles.statLabel}>Pending</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statValue}>{(entry.graded + entry.pending).toLocaleString()}</Text>
-            <Text style={styles.statLabel}>Total picks</Text>
           </View>
         </View>
       </View>

@@ -14,21 +14,26 @@ export function useFanPredictionAnalytics() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const controller = useRef<AbortController | null>(null);
-  const refresh = useCallback(async () => {
+  const load = useCallback(() => {
     controller.current?.abort();
     const request = new AbortController();
     controller.current = request;
+    return apiClient.get<PredictionAnalytics>("/api/predictions/analytics", { signal: request.signal })
+      .then((response) => {
+        if (!request.signal.aborted) setData(response.data);
+      })
+      .catch(() => {
+        if (!request.signal.aborted) setError("We couldn’t load your prediction analysis.");
+      })
+      .finally(() => {
+        if (!request.signal.aborted) setLoading(false);
+      });
+  }, []);
+  useEffect(() => { void load(); return () => controller.current?.abort(); }, [load]);
+  const refresh = useCallback(() => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await apiClient.get<PredictionAnalytics>("/api/predictions/analytics", { signal: request.signal });
-      if (!request.signal.aborted) setData(response.data);
-    } catch {
-      if (!request.signal.aborted) setError("We couldn’t load your prediction analysis.");
-    } finally {
-      if (!request.signal.aborted) setLoading(false);
-    }
-  }, []);
-  useEffect(() => { void refresh(); return () => controller.current?.abort(); }, [refresh]);
+    return load();
+  }, [load]);
   return { data, loading, error, refresh };
 }

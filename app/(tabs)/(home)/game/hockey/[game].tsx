@@ -1,4 +1,5 @@
 import { CustomHeader } from "@/components/CustomHeader";
+import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
   GameLiveChatOverlay,
   GameLocation,
@@ -10,7 +11,6 @@ import {
   MatchupPredictor,
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
-import FanPrediction from "@/components/Sports/Basketball/GameDetails/FanPrediction/FanPrediction";
 import Officials from "@/components/Sports/Basketball/GameDetails/Officials";
 import GameHeader from "@/components/Sports/Hockey/GameDetails/GameHeader";
 import GameSummary from "@/components/Sports/Hockey/GameDetails/GameSummary";
@@ -150,7 +150,12 @@ export default function GameDetailsScreen(
   const awayCoach = awayTeamDetails?.coach;
 
   const { details, score } = useHockeyGameDetails(LEAGUE, gameId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "hockey", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+    sport: "hockey",
+    league: LEAGUE,
+    state: score?.status?.state ?? undefined,
+    date: game?.date ?? undefined,
+  });
 
   const isLoading = !score || !details || !homeLastGames || !awayLastGames;
   const gameStatusDescription = score?.status?.gameStatusDescription ?? "";

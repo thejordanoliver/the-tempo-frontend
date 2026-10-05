@@ -27,8 +27,11 @@ export function useConversationComposer({
   const [attachmentMenuVisible, setAttachmentMenuVisible] = useState(false);
   const [gifModalVisible, setGifModalVisible] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const sendInFlightRef = useRef(false);
 
   const isSendDisabled =
+    isSending ||
     isUploadingImage ||
     (draftMessage.trim().length === 0 && selectedAttachment === null);
 
@@ -155,24 +158,39 @@ export function useConversationComposer({
   const handleSend = useCallback(async () => {
     const trimmedMessage = draftMessage.trim();
 
-    if (!trimmedMessage && !selectedAttachment) return;
+    // Both the keyboard and button can submit before React updates the UI.
+    if (
+      sendInFlightRef.current ||
+      isUploadingImage ||
+      (!trimmedMessage && !selectedAttachment)
+    ) return;
 
-    const didSend = await sendMessage({
-      text: trimmedMessage,
-      attachment: selectedAttachment,
-    });
+    sendInFlightRef.current = true;
+    setIsSending(true);
 
-    if (!didSend) return;
+    try {
+      const didSend = await sendMessage({
+        text: trimmedMessage,
+        attachment: selectedAttachment,
+      });
 
-    setDraftMessage("");
-    setSelectedAttachment(null);
-    setAttachmentMenuVisible(false);
-    scrollToBottom();
+      if (!didSend) return;
 
-    requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
-  }, [draftMessage, scrollToBottom, selectedAttachment, sendMessage]);
+      setDraftMessage((current) => current === draftMessage ? "" : current);
+      setSelectedAttachment((current) =>
+        current === selectedAttachment ? null : current,
+      );
+      setAttachmentMenuVisible(false);
+      scrollToBottom();
+
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+    } finally {
+      sendInFlightRef.current = false;
+      setIsSending(false);
+    }
+  }, [draftMessage, isUploadingImage, scrollToBottom, selectedAttachment, sendMessage]);
 
   return {
     inputRef,
