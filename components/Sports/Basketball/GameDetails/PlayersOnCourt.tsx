@@ -8,7 +8,6 @@ import {
 } from "@/hooks/BasketballHooks/useBasketballGameDetails";
 import Placeholder from "assets/Placeholders/playerPlaceholder.png";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScopedRouter } from "hooks/useScopedRouter";
 import { useMemo, useState } from "react";
 import {
@@ -21,7 +20,7 @@ import {
   UIManager,
   View,
 } from "react-native";
-import { playerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
+import { PlayerOnCourtStyles } from "styles/GameDetailStyles/PlayerOnCourtStyles";
 
 if (
   Platform.OS === "android" &&
@@ -71,8 +70,7 @@ export default function PlayersOnCourt({
   league,
   state,
 }: Props) {
-  const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = playerOnCourtStyles(isDark);
+  const styles = PlayerOnCourtStyles(isDark);
   const router = useScopedRouter();
   const leagueId = league.toUpperCase();
 
@@ -179,7 +177,7 @@ export default function PlayersOnCourt({
   }
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle()}>
+    <ScrollView>
       <HeadingTwo isDark={isDark}>On The Court</HeadingTwo>
 
       <View style={styles.wrapper}>

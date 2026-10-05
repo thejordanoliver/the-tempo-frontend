@@ -6,7 +6,7 @@ import HeadingTwo from "components/Headings/HeadingTwo";
 import BoxScoreSkeleton from "components/Skeletons/GameDetails/BoxScoreSkeleton";
 import { activeOpacity, globalStyles } from "constants/styles";
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import {
   Image,
   ImageSourcePropType,
@@ -17,6 +17,12 @@ import {
   View,
 } from "react-native";
 import { BoxScoreStyles } from "styles/GameDetailStyles/BoxScoreStyles";
+
+import {
+  getFootballBoxScoreLabels,
+  hasFootballBoxScoreData,
+  resolveFootballBoxScoreTeams,
+} from "utils/footballBoxScore";
 
 const COLLAPSED_ROWS = 5;
 const COLUMN_WIDTH = 52;
@@ -42,18 +48,6 @@ const normalizeIdentifier = (value: unknown) =>
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
 
-const getTeamIdentifiers = (block: BoxScorePlayerTeam) =>
-  [
-    block.team.id,
-    block.team.espnId,
-    block.team.name,
-    block.team.shortName,
-    block.team.code,
-    block.team.location,
-  ]
-    .map(normalizeIdentifier)
-    .filter(Boolean);
-
 const getCategoryTitle = (category: BoxScoreStatCategory) => {
   const categoryNames: Record<string, string> = {
     defensive: "Defense",
@@ -77,8 +71,168 @@ const getCategoryTitle = (category: BoxScoreStatCategory) => {
   );
 };
 
-const hasCategoryData = (category: BoxScoreStatCategory) =>
-  Boolean(category.athletes?.length || category.totals?.length);
+const FootballBoxScoreCategory = memo(function FootballBoxScoreCategory({
+  category,
+  teamId,
+  isExpanded,
+  styles,
+  onPlayerPress,
+}: {
+  category: BoxScoreStatCategory;
+  teamId: number | string;
+  isExpanded: boolean;
+  styles: ReturnType<typeof BoxScoreStyles>;
+  onPlayerPress: (
+    playerId: number | string | null | undefined,
+    teamId: number | string,
+  ) => void;
+}) {
+  const [statsViewportWidth, setStatsViewportWidth] = useState(0);
+  const handleStatsLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextWidth = Math.round(event.nativeEvent.layout.width);
+    setStatsViewportWidth((currentWidth) =>
+      currentWidth === nextWidth ? currentWidth : nextWidth,
+    );
+  }, []);
+
+  const athletes = category.athletes ?? [];
+  const labels = useMemo(() => getFootballBoxScoreLabels(category), [category]);
+  const visibleAthletes = isExpanded
+    ? athletes
+    : athletes.slice(0, COLLAPSED_ROWS);
+  const totals = category.totals ?? [];
+  const categoryKey = category.name;
+  const columnCount = Math.max(labels.length, totals.length, 1);
+  const columnWidth = Math.max(
+    COLUMN_WIDTH,
+    statsViewportWidth / columnCount,
+  );
+  const tableWidth = columnCount * columnWidth;
+
+  return (
+    <View key={categoryKey} style={styles.section}>
+      <View style={styles.categoryHeader}>
+        <Text selectable style={styles.categoryLabel}>
+          {getCategoryTitle(category)}
+        </Text>
+      </View>
+
+      <View style={styles.playerColumn}>
+        <View style={styles.playerNameColumn}>
+          <View style={styles.tableHeader}>
+            <Text selectable style={styles.cellName}>
+              Player
+            </Text>
+          </View>
+
+          {visibleAthletes.map(({ athlete }, athleteIndex) => {
+            const playerId = athlete.id ?? athlete.espnId;
+            const playerName =
+              athlete.shortName ??
+              athlete.displayName ??
+              athlete.fullName ??
+              "Unknown Player";
+
+            return (
+              <View
+                key={`${categoryKey}-name-${playerId ?? athleteIndex}`}
+                style={[
+                  styles.tableRow,
+                  athleteIndex % 2 === 1 && styles.rowAlt,
+                ]}
+              >
+                <TouchableOpacity
+                  activeOpacity={activeOpacity}
+                  onPress={() => onPlayerPress(playerId, teamId)}
+                  style={styles.playerLink}
+                  disabled={playerId === null || playerId === undefined}
+                >
+                  <Text selectable style={styles.cellName} numberOfLines={1}>
+                    {playerName}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+
+          {totals.length > 0 && (
+            <View style={[styles.tableRow, styles.totalsRow]}>
+              <Text selectable style={[styles.cellName, styles.totalText]}>
+                Totals
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.statsScroller}
+          contentContainerStyle={styles.statsScrollerContent}
+          onLayout={handleStatsLayout}
+        >
+          <View style={[styles.statsTable, { width: tableWidth }]}>
+            <View style={styles.tableHeader}>
+              {labels.map((label, labelIndex) => (
+                <Text
+                  selectable
+                  key={`${categoryKey}-label-${label}-${labelIndex}`}
+                  style={[
+                    styles.cell,
+                    styles.cellHeader,
+                    { width: columnWidth },
+                  ]}
+                >
+                  {label}
+                </Text>
+              ))}
+            </View>
+
+            {visibleAthletes.map(({ athlete, stats }, athleteIndex) => {
+              const playerId = athlete.id ?? athlete.espnId;
+
+              return (
+                <View
+                  key={`${categoryKey}-stats-${playerId ?? athleteIndex}`}
+                  style={[
+                    styles.tableRow,
+                    athleteIndex % 2 === 1 && styles.rowAlt,
+                  ]}
+                >
+                  {labels.map((label, statIndex) => (
+                    <View
+                      key={`${categoryKey}-${label}-${statIndex}`}
+                      style={[styles.cellContainer, { width: columnWidth }]}
+                    >
+                      <Text selectable style={[styles.cell, { width: columnWidth }]}>
+                        {stats?.[statIndex] ?? "—"}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              );
+            })}
+
+            {totals.length > 0 && (
+              <View style={[styles.tableRow, styles.totalsRow]}>
+                {labels.map((label, statIndex) => (
+                  <View
+                    key={`${categoryKey}-total-${label}-${statIndex}`}
+                    style={[styles.cellContainer, { width: columnWidth }]}
+                  >
+                    <Text selectable style={[styles.cell, styles.totalText, { width: columnWidth }]}>
+                      {totals[statIndex] ?? "—"}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </View>
+    </View>
+  );
+});
 
 export default function BoxScore({
   playerStats,
@@ -100,39 +254,26 @@ export default function BoxScore({
   const [expandedTeams, setExpandedTeams] = useState<Record<string, boolean>>(
     {},
   );
-  const [statsViewportWidth, setStatsViewportWidth] = useState(0);
 
   const teamBlocks = useMemo(
     () => (Array.isArray(playerStats) ? playerStats.filter(Boolean) : []),
     [playerStats],
   );
 
-  const findTeamBlock = useCallback(
-    (teamId: number | string, teamName: string, fallbackIndex: number) => {
-      const targets = new Set(
-        [teamId, teamName].map(normalizeIdentifier).filter(Boolean),
-      );
-
-      return (
-        teamBlocks.find((block) =>
-          getTeamIdentifiers(block).some((identifier) =>
-            targets.has(identifier),
-          ),
-        ) ??
-        teamBlocks[fallbackIndex] ??
-        null
-      );
-    },
-    [teamBlocks],
+  const { away: awayTeamBlock, home: homeTeamBlock } = useMemo(
+    () =>
+      resolveFootballBoxScoreTeams(
+        teamBlocks, awayId, homeId, awayName, homeName,
+      ),
+    [teamBlocks, awayId, homeId, awayName, homeName],
   );
-
-  const awayTeamBlock = useMemo(
-    () => findTeamBlock(awayId, awayName, 0),
-    [awayId, awayName, findTeamBlock],
+  const awayCategories = useMemo(
+    () => awayTeamBlock?.statistics?.filter(hasFootballBoxScoreData) ?? [],
+    [awayTeamBlock],
   );
-  const homeTeamBlock = useMemo(
-    () => findTeamBlock(homeId, homeName, 1),
-    [findTeamBlock, homeId, homeName],
+  const homeCategories = useMemo(
+    () => homeTeamBlock?.statistics?.filter(hasFootballBoxScoreData) ?? [],
+    [homeTeamBlock],
   );
 
   const handlePlayerPress = useCallback(
@@ -158,159 +299,6 @@ export default function BoxScore({
     }));
   }, []);
 
-  const handleStatsLayout = useCallback((event: LayoutChangeEvent) => {
-    const nextWidth = Math.round(event.nativeEvent.layout.width);
-    setStatsViewportWidth((currentWidth) =>
-      currentWidth === nextWidth ? currentWidth : nextWidth,
-    );
-  }, []);
-
-  const renderCategory = (
-    category: BoxScoreStatCategory,
-    teamKey: "away" | "home",
-    teamId: number | string,
-    categoryIndex: number,
-  ) => {
-    const athletes = category.athletes ?? [];
-    const labels = category.labels ?? category.keys ?? [];
-    const isExpanded = expandedTeams[teamKey] ?? false;
-    const visibleAthletes = isExpanded
-      ? athletes
-      : athletes.slice(0, COLLAPSED_ROWS);
-    const totals = category.totals ?? [];
-    const categoryKey = `${teamKey}-${category.name}-${categoryIndex}`;
-    const columnCount = Math.max(labels.length, totals.length, 1);
-    const columnWidth = Math.max(
-      COLUMN_WIDTH,
-      statsViewportWidth / columnCount,
-    );
-    const tableWidth = columnCount * columnWidth;
-
-    return (
-      <View key={categoryKey} style={styles.section}>
-        <View style={styles.categoryHeader}>
-          <Text selectable style={styles.categoryLabel}>
-            {getCategoryTitle(category)}
-          </Text>
-        </View>
-
-        <View style={styles.playerColumn}>
-          <View style={styles.playerNameColumn}>
-            <View style={styles.tableHeader}>
-              <Text selectable style={styles.cellName}>
-                Player
-              </Text>
-            </View>
-
-            {visibleAthletes.map(({ athlete }, athleteIndex) => {
-              const playerId = athlete.id ?? athlete.espnId;
-              const playerName =
-                athlete.shortName ??
-                athlete.displayName ??
-                athlete.fullName ??
-                "Unknown Player";
-
-              return (
-                <View
-                  key={`${categoryKey}-name-${playerId ?? athleteIndex}`}
-                  style={[
-                    styles.tableRow,
-                    athleteIndex % 2 === 1 && styles.rowAlt,
-                  ]}
-                >
-                  <TouchableOpacity
-                    activeOpacity={activeOpacity}
-                    onPress={() => handlePlayerPress(playerId, teamId)}
-                    style={styles.playerLink}
-                    disabled={playerId === null || playerId === undefined}
-                  >
-                    <Text selectable style={styles.cellName} numberOfLines={1}>
-                      {playerName}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-
-            {totals.length > 0 && (
-              <View style={[styles.tableRow, styles.totalsRow]}>
-                <Text selectable style={[styles.cellName, styles.totalText]}>
-                  Totals
-                </Text>
-              </View>
-            )}
-          </View>
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.statsScroller}
-            contentContainerStyle={styles.statsScrollerContent}
-            onLayout={handleStatsLayout}
-          >
-            <View style={[styles.statsTable, { width: tableWidth }]}>
-              <View style={styles.tableHeader}>
-                {labels.map((label, labelIndex) => (
-                  <Text
-                    selectable
-                    key={`${categoryKey}-label-${label}-${labelIndex}`}
-                    style={[
-                      styles.cell,
-                      styles.cellHeader,
-                      { width: columnWidth },
-                    ]}
-                  >
-                    {label}
-                  </Text>
-                ))}
-              </View>
-
-              {visibleAthletes.map(({ athlete, stats }, athleteIndex) => {
-                const playerId = athlete.id ?? athlete.espnId;
-
-                return (
-                  <View
-                    key={`${categoryKey}-stats-${playerId ?? athleteIndex}`}
-                    style={[
-                      styles.tableRow,
-                      athleteIndex % 2 === 1 && styles.rowAlt,
-                    ]}
-                  >
-                    {labels.map((label, statIndex) => (
-                      <View
-                        key={`${categoryKey}-${label}-${statIndex}`}
-                        style={[styles.cellContainer, { width: columnWidth }]}
-                      >
-                        <Text selectable style={styles.cell}>
-                          {stats[statIndex] ?? "—"}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                );
-              })}
-
-              {totals.length > 0 && (
-                <View style={[styles.tableRow, styles.totalsRow]}>
-                  {labels.map((label, statIndex) => (
-                    <View
-                      key={`${categoryKey}-total-${label}-${statIndex}`}
-                      style={[styles.cellContainer, { width: columnWidth }]}
-                    >
-                      <Text selectable style={[styles.cell, styles.totalText]}>
-                        {totals[statIndex] ?? "—"}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </View>
-          </ScrollView>
-        </View>
-      </View>
-    );
-  };
-
   const renderTeam = ({
     teamKey,
     teamId,
@@ -326,7 +314,7 @@ export default function BoxScore({
   }) => {
     if (!teamBlock) return null;
 
-    const categories = teamBlock.statistics.filter(hasCategoryData);
+    const categories = teamKey === "away" ? awayCategories : homeCategories;
     if (categories.length === 0) return null;
 
     const resolvedTeamId = teamBlock.team.id ?? teamId;
@@ -350,7 +338,14 @@ export default function BoxScore({
         </View>
 
         {categories.map((category, categoryIndex) =>
-          renderCategory(category, teamKey, resolvedTeamId, categoryIndex),
+          <FootballBoxScoreCategory
+            key={`${teamKey}-${category.name}-${categoryIndex}`}
+            category={category}
+            teamId={resolvedTeamId}
+            isExpanded={isExpanded}
+            styles={styles}
+            onPlayerPress={handlePlayerPress}
+          />,
         )}
 
         {canExpand && (
@@ -390,7 +385,7 @@ export default function BoxScore({
     );
   }
 
-  if (!awayTeamBlock && !homeTeamBlock) return null;
+  if (awayCategories.length === 0 && homeCategories.length === 0) return null;
 
   return (
     <View>

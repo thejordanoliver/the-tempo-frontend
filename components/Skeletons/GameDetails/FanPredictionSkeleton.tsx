@@ -6,7 +6,13 @@ import { useMemo } from "react";
 import { View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
 
-export default function FanPredictionSkeleton({ isDark }: { isDark: boolean }) {
+export default function FanPredictionSkeleton({
+  isDark,
+  isLive = false,
+}: {
+  isDark: boolean;
+  isLive?: boolean;
+}) {
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
 
   return (
@@ -21,9 +27,9 @@ export default function FanPredictionSkeleton({ isDark }: { isDark: boolean }) {
               isDark={isDark}
             />
             <View style={styles.cardContent}>
-              <SkeletonCircle size={40} />
-              <SkeletonBlock width={60} height={18} />
-              <SkeletonBlock width={36} height={18} />
+              <SkeletonCircle size={styles.teamLogo.width} />
+              <SkeletonBlock width={60} height={styles.teamLabel.lineHeight} />
+              <SkeletonBlock width={36} height={styles.votePercentage.lineHeight} />
             </View>
           </View>
         ))}
@@ -31,17 +37,29 @@ export default function FanPredictionSkeleton({ isDark }: { isDark: boolean }) {
 
       <View style={styles.statusRow}>
         <View style={styles.skeletonStatusCopy}>
-          <SkeletonBlock width="80%" height={18} />
+          <SkeletonBlock width="80%" height={styles.subtitle.fontSize} />
         </View>
-        <SkeletonBlock width={56} height={18} />
+        {!isLive && (
+          <SkeletonBlock width={56} height={styles.totalVotesText.fontSize} />
+        )}
       </View>
 
-      <View style={styles.footer}>
-        <SkeletonBlock width="90%" height={18} />
-        <View style={styles.rankingsButton}>
-          <SkeletonBlock width={132} height={24} />
+      {!isLive && (
+        <View style={styles.footer}>
+          <View
+            style={{
+              height: styles.rankingHint.lineHeight,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SkeletonBlock width="90%" height={styles.rankingHint.fontSize} />
+          </View>
+          <View style={styles.rankingsButton}>
+            <SkeletonBlock width={110} height={styles.textLink.fontSize} />
+          </View>
         </View>
-      </View>
+      )}
     </FanPredictionSection>
   );
 }

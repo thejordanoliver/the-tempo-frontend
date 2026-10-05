@@ -10,7 +10,7 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import { formatDate, formatTime, getHolidayLabel } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
@@ -131,16 +131,9 @@ export default function BasketballGameWidget({
   const broadcast = getBroadcastDisplay(game.broadcasts);
   const showBroadcast = Boolean(broadcast) && (!isSmallLayout || height >= 180);
 
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const gameDateObj = new Date(game.date);
+  const formattedDate = formatDate(gameDateObj);
+  const formattedTime = formatTime(gameDateObj);
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT

@@ -3,7 +3,7 @@ import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
 import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
-import TeamScoringSummary from "@/components/Sports/Football/GameDetails/TeamScoringSummary";
+import ScoringSummary from "@/components/Sports/Football/GameDetails/ScoringSummary";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -555,19 +555,6 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <GameTeamStats
-              stats={teamStats}
-              awayName={awayCode}
-              awayLogo={awayLogo}
-              awayColor={awayColor}
-              homeName={homeCode}
-              homeLogo={homeLogo}
-              homeColor={homeColor}
-              league={LEAGUE}
-              state={state}
-              isDark={isDark}
-            />
-
             <GameLeaders
               leaders={leaders}
               awayId={awayId}
@@ -579,6 +566,19 @@ export default function GameDetailsScreen(
               isDark={isDark}
               state={state}
               league={LEAGUE}
+            />
+
+            <GameTeamStats
+              stats={teamStats}
+              awayName={awayCode}
+              awayLogo={awayLogo}
+              awayColor={awayColor}
+              homeName={homeCode}
+              homeLogo={homeLogo}
+              homeColor={homeColor}
+              league={LEAGUE}
+              state={state}
+              isDark={isDark}
             />
 
             <BoxScore
@@ -608,7 +608,7 @@ export default function GameDetailsScreen(
               state={state}
             />
 
-            <TeamScoringSummary
+            <ScoringSummary
               scoringPlays={scoringPlays}
               homeId={homeId}
               awayId={awayId}

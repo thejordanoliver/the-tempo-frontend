@@ -417,7 +417,7 @@ export type Score = {
 
   lastPlay: BaseballPlay | null;
 
-  GameTeamStats: {
+  teamStats: {
     team: any;
     stats: TeamStat[];
   }[];

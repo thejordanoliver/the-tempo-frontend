@@ -1,9 +1,7 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
-import NBAPlayoffsDark from "assets/NBA/Logos/NBAPlayoffs.png";
-import NBAPlayoffsLight from "assets/NBA/Logos/NBAPlayoffsLight.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 
 import {
   getColCenter,
@@ -20,7 +18,7 @@ import type {
   PlayoffBracket,
 } from "@/types/basketball/basketball";
 import { useMemo } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 
 import {
@@ -753,10 +751,9 @@ export function NBAPlayoffBracket({
     );
   }
 
-  const PlayoffsLogo = isDark ? NBAPlayoffsLight : NBAPlayoffsDark;
-
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle()}
+    <ScrollView
+      contentContainerStyle={navigationContentStyle()}
       snapToOffsets={snapBracketOffsets}
       snapToAlignment="start"
       decelerationRate="fast"
@@ -820,12 +817,6 @@ export function NBAPlayoffBracket({
             title="First Round"
             x={getColCenter(COLS.EAST_R1)}
             isDark={isDark}
-          />
-
-          <Image
-            source={PlayoffsLogo}
-            style={styles.playoffsLogo}
-            resizeMode="contain"
           />
 
           <ConnectorLayer isDark={isDark} />

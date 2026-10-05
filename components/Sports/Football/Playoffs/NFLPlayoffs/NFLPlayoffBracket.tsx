@@ -1,14 +1,20 @@
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { snapBracketOffsets } from "@/styles/PlayoffStyles/CFPBracketStyles";
 import { NFLPlayoffBracketStyles } from "@/styles/PlayoffStyles/NFLPlayoffBracketStyles";
 import type { BracketApiResponse } from "@/types/football/football";
-import NFLPlayoffsLogo from "assets/Football/NFL_Logos/NFLPlayoffsLogo.png";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors, globalStyles } from "constants/styles";
 import { getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
+import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useCallback, useMemo } from "react";
 import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
+import { BYE_CARD_HEIGHT } from "styles/PlayoffStyles/ByeTeamCardStyles";
+import {
+  selectNFLByeTeam,
+  selectNFLSuperBowl,
+} from "utils/nflPlayoffSelection";
+import { ByeTeamCard } from "./ByeTeamCard";
+import { RoundHeader } from "components/Sports/Playoffs/RoundHeader";
 
 /* ---------------- TYPES ---------------- */
 
@@ -47,8 +53,6 @@ const FINALS_HEIGHT = 178;
 const COL_WIDTH = 220;
 const COL_GAP = 20;
 
-const LABEL_WIDTH = 200;
-const LABEL_TOP = 28;
 
 const COLS = {
   AFC_R1: 0,
@@ -358,14 +362,14 @@ const MatchupCard = ({
   isDark,
   finals = false,
 }: {
-  game: PlayoffGame;
+  game: PlayoffGame | null;
   layout: CardLayout;
   isDark: boolean;
   finals?: boolean;
 }) => {
   const styles = NFLPlayoffBracketStyles(isDark);
 
-  const gameCompleted = game.status?.completed ?? false;
+  const gameCompleted = game?.status?.completed ?? false;
 
   return (
     <View
@@ -393,46 +397,30 @@ const MatchupCard = ({
         },
       ]}
     >
-      <TeamRow team={game.away} gameCompleted={gameCompleted} isDark={isDark} />
+      <TeamRow
+        team={game?.away}
+        gameCompleted={gameCompleted}
+        isDark={isDark}
+      />
 
       <View style={styles.divider} />
 
-      <TeamRow team={game.home} gameCompleted={gameCompleted} isDark={isDark} />
+      <TeamRow
+        team={game?.home}
+        gameCompleted={gameCompleted}
+        isDark={isDark}
+      />
     </View>
   );
 };
 
 /* ---------------- ROUND LABEL ---------------- */
 
-const RoundLabel = ({
-  title,
-  x,
-  isDark,
-}: {
+const RoundLabel = ({ title, x, isDark }: {
   title: string;
   x: number;
   isDark: boolean;
-}) => {
-  const styles = NFLPlayoffBracketStyles(isDark);
-
-  return (
-    <View style={styles.roundHeader}>
-      <Text
-        style={[
-          styles.roundTitle,
-          {
-            top: LABEL_TOP,
-            left: x - LABEL_WIDTH / 2,
-            width: LABEL_WIDTH,
-            textAlign: "center",
-          },
-        ]}
-      >
-        {title}
-      </Text>
-    </View>
-  );
-};
+}) => <RoundHeader title={title} centerX={x} width={200} isDark={isDark} />;
 
 /* ---------------- CONNECTORS ---------------- */
 
@@ -447,64 +435,55 @@ const ConnectorLayer = ({
 
   const lineColor = isDark ? Colors.darkGray : Colors.lightGray;
 
-  const connectOneToOne = useCallback(
-    (key: string, source?: CardLayout, target?: CardLayout) => {
-      if (!source || !target) {
-        return null;
-      }
-
-      const sourceRight = source.x + source.width;
-
-      const sourceLeft = source.x;
-
-      const targetRight = target.x + target.width;
-
-      const targetLeft = target.x;
-
-      const sourceIsRightOfTarget = source.x > target.x;
-
-      const x1 = sourceIsRightOfTarget ? sourceLeft : sourceRight;
-
-      const x2 = sourceIsRightOfTarget ? targetRight : targetLeft;
-
-      const y1 = centerY(source);
-      const y2 = centerY(target);
-
-      const middleX = (x1 + x2) / 2;
+  const renderConnectionGroup = useCallback(
+    (key: string, sources: CardLayout[], target: CardLayout) => {
+      const sourceIsRight = sources[0].x > target.x;
+      const targetEdge = sourceIsRight ? target.x + target.width : target.x;
+      const sourceEdge = sourceIsRight
+        ? sources[0].x
+        : sources[0].x + sources[0].width;
+      const branchX = (sourceEdge + targetEdge) / 2;
+      const mergeY = centerY(target);
 
       return (
-        <View key={key}>
+        <View key={key} pointerEvents="none">
+          {sources.map((source, index) => {
+            const edge = sourceIsRight ? source.x : source.x + source.width;
+            const y = centerY(source);
+            return (
+              <View key={index}>
+                <View
+                  style={[
+                    styles.connectorH,
+                    {
+                      left: Math.min(edge, branchX),
+                      top: y,
+                      width: Math.abs(branchX - edge),
+                      backgroundColor: lineColor,
+                    },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.connectorV,
+                    {
+                      left: branchX,
+                      top: Math.min(y, mergeY),
+                      height: Math.abs(mergeY - y),
+                      backgroundColor: lineColor,
+                    },
+                  ]}
+                />
+              </View>
+            );
+          })}
           <View
             style={[
               styles.connectorH,
               {
-                left: Math.min(x1, middleX),
-                top: y1,
-                width: Math.abs(middleX - x1),
-                backgroundColor: lineColor,
-              },
-            ]}
-          />
-
-          <View
-            style={[
-              styles.connectorV,
-              {
-                left: middleX,
-                top: Math.min(y1, y2),
-                height: Math.abs(y1 - y2),
-                backgroundColor: lineColor,
-              },
-            ]}
-          />
-
-          <View
-            style={[
-              styles.connectorH,
-              {
-                left: Math.min(middleX, x2),
-                top: y2,
-                width: Math.abs(x2 - middleX),
+                left: Math.min(branchX, targetEdge),
+                top: mergeY,
+                width: Math.abs(targetEdge - branchX),
                 backgroundColor: lineColor,
               },
             ]}
@@ -515,14 +494,23 @@ const ConnectorLayer = ({
     [lineColor, styles.connectorH, styles.connectorV],
   );
 
+  // Sources feeding the same card share one horizontal output.
+  const groups = new Map<
+    string,
+    { target: CardLayout; sources: CardLayout[] }
+  >();
+  connections.forEach(({ source, target }) => {
+    if (!source || !target) return;
+    const key = `${target.x}:${target.y}:${target.width}:${target.height}`;
+    const group = groups.get(key) ?? { target, sources: [] };
+    group.sources.push(source);
+    groups.set(key, group);
+  });
+
   return (
     <>
-      {connections.map((connection, index) =>
-        connectOneToOne(
-          `connection-${index}`,
-          connection.source,
-          connection.target,
-        ),
+      {[...groups].map(([key, { sources, target }]) =>
+        renderConnectionGroup(key, sources, target),
       )}
     </>
   );
@@ -554,10 +542,7 @@ export function NFLPlayoffBracket({
 
   const conferenceGames = useMemo(() => getGamesByWeek(bracket, 3), [bracket]);
 
-  const superBowlGame = useMemo(
-    () => getGamesByWeek(bracket, 5)[0] ?? null,
-    [bracket],
-  );
+  const superBowlGame = useMemo(() => selectNFLSuperBowl(bracket), [bracket]);
 
   /* ---------------- AFC DATA ---------------- */
 
@@ -605,6 +590,19 @@ export function NFLPlayoffBracket({
 
   /* ---------------- CARD LAYOUTS ---------------- */
 
+  const afcByeTeam = selectNFLByeTeam(rawAfcWildCard, afcDivisional);
+  const nfcByeTeam = selectNFLByeTeam(rawNfcWildCard, nfcDivisional);
+  const AFC_BYE = useMemo(
+    () => ({
+      x: getX(COLS.AFC_R1),
+      y: 50,
+      width: CARD_WIDTH,
+      height: BYE_CARD_HEIGHT,
+    }),
+    [],
+  );
+  const NFC_BYE = { ...AFC_BYE, x: getX(COLS.NFC_R1) };
+
   const AFC_R1 = useMemo(() => {
     const startingY = 120;
     const gap = 170;
@@ -630,7 +628,7 @@ export function NFLPlayoffBracket({
     () => [
       {
         x: getCenteredX(COLS.AFC_R2, CARD_WIDTH),
-        y: AFC_R1[0].y,
+        y: (centerY(AFC_BYE) + centerY(AFC_R1[0])) / 2 - CARD_HEIGHT / 2,
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
       },
@@ -641,7 +639,7 @@ export function NFLPlayoffBracket({
         height: CARD_HEIGHT,
       },
     ],
-    [AFC_R1],
+    [AFC_R1, AFC_BYE],
   );
 
   const NFC_R2 = useMemo(
@@ -717,7 +715,7 @@ export function NFLPlayoffBracket({
       }
     });
 
-    if (afcConference && superBowlGame) {
+    if (afcConference) {
       connections.push({
         source: AFC_R3,
         target: FINALS_LAYOUT,
@@ -729,7 +727,6 @@ export function NFLPlayoffBracket({
     afcWildCard,
     afcDivisional,
     afcConference,
-    superBowlGame,
     AFC_R1,
     AFC_R2,
     AFC_R3,
@@ -770,7 +767,7 @@ export function NFLPlayoffBracket({
       }
     });
 
-    if (nfcConference && superBowlGame) {
+    if (nfcConference) {
       connections.push({
         source: NFC_R3,
         target: FINALS_LAYOUT,
@@ -782,7 +779,6 @@ export function NFLPlayoffBracket({
     nfcWildCard,
     nfcDivisional,
     nfcConference,
-    superBowlGame,
     NFC_R1,
     NFC_R2,
     NFC_R3,
@@ -888,11 +884,50 @@ export function NFLPlayoffBracket({
             isDark={isDark}
           />
 
-          <ConnectorLayer isDark={isDark} connections={afcConnections} />
+          <ConnectorLayer
+            isDark={isDark}
+            connections={[
+              ...afcConnections,
+              {
+                source: AFC_BYE,
+                target:
+                  AFC_R2[
+                    Math.max(
+                      0,
+                      afcDivisional.findIndex(
+                        (game) =>
+                          afcByeTeam &&
+                          gameContainsTeam(game, Number(afcByeTeam.id)),
+                      ),
+                    )
+                  ],
+              },
+            ]}
+          />
 
-          <ConnectorLayer isDark={isDark} connections={nfcConnections} />
+          <ConnectorLayer
+            isDark={isDark}
+            connections={[
+              ...nfcConnections,
+              {
+                source: NFC_BYE,
+                target:
+                  NFC_R2[
+                    Math.max(
+                      0,
+                      nfcDivisional.findIndex(
+                        (game) =>
+                          nfcByeTeam &&
+                          gameContainsTeam(game, Number(nfcByeTeam.id)),
+                      ),
+                    )
+                  ],
+              },
+            ]}
+          />
 
-          <Image source={NFLPlayoffsLogo} style={styles.playoffsLogo} />
+          <ByeTeamCard team={afcByeTeam} layout={AFC_BYE} isDark={isDark} />
+          <ByeTeamCard team={nfcByeTeam} layout={NFC_BYE} isDark={isDark} />
 
           <Text style={[styles.sideLabel, styles.afcLabel]}>AFC</Text>
 
@@ -960,15 +995,12 @@ export function NFLPlayoffBracket({
             />
           ) : null}
 
-          {superBowlGame ? (
-            <MatchupCard
-              key={`super-bowl-${superBowlGame.id}`}
-              game={superBowlGame}
-              layout={FINALS_LAYOUT}
-              isDark={isDark}
-              finals
-            />
-          ) : null}
+          <MatchupCard
+            game={superBowlGame}
+            layout={FINALS_LAYOUT}
+            isDark={isDark}
+            finals
+          />
         </View>
       </ScrollView>
     </ScrollView>

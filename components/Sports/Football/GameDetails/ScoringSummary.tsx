@@ -4,7 +4,6 @@ import HomeAwayTabBar, {
 import { ScoringPlays } from "@/hooks/FootballHooks/useFootballGameDetails";
 import { formatPeriod } from "@/utils/games";
 import { Colors, Fonts, globalStyles } from "constants/styles";
-import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import HeadingTwo from "../../../Headings/HeadingTwo";
@@ -26,7 +25,7 @@ type Props = {
   state?: string;
 };
 
-export default function TeamScoringSummary({
+export default function ScoringSummary({
   scoringPlays = [],
   loading = false,
   homeId,
@@ -38,8 +37,7 @@ export default function TeamScoringSummary({
   isDark,
   state,
 }: Props) {
-  const navigationContentStyle = useNavigationBarContentStyle();
-  const styles = TeamScoringSummaryStyles(isDark);
+  const styles = ScoringSummaryStyles(isDark);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
 
   const [selectedTab, setSelectedTab] = useState<HomeAwayTabValue>("away");
@@ -99,10 +97,7 @@ export default function TeamScoringSummary({
             </Text>
           </View>
         ) : (
-          <ScrollView
-            contentContainerStyle={navigationContentStyle()}
-            style={styles.listContainer}
-          >
+          <ScrollView>
             {filteredPlays.map((play, index) => {
               const period = formatPeriod({
                 period: play.period?.number,
@@ -147,7 +142,7 @@ export default function TeamScoringSummary({
   );
 }
 
-const TeamScoringSummaryStyles = (isDark: boolean) =>
+const ScoringSummaryStyles = (isDark: boolean) =>
   StyleSheet.create({
     wrapper: {
       maxHeight: 400,
@@ -158,12 +153,7 @@ const TeamScoringSummaryStyles = (isDark: boolean) =>
       overflow: "hidden",
     },
 
-    listContainer: {
-      marginTop: 4,
-    },
-
     emptyContainer: {
-      // This card has intrinsic height; the shared full-screen flex collapses here.
       flex: 0,
       flexShrink: 0,
       minHeight: 72,

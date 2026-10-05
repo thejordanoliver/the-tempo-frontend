@@ -73,6 +73,20 @@ export default function LineScore({
     normalizedLeague === "cb" ||
     normalizedLeague === "sb";
 
+  const isSoccer =
+    normalizedLeague === "mls" ||
+    normalizedLeague === "msoc" ||
+    normalizedLeague === "wsoc" ||
+    normalizedLeague === "fifa" ||
+    normalizedLeague === "bundesliga" ||
+    normalizedLeague === "ligue1" ||
+    normalizedLeague === "ligue2" ||
+    normalizedLeague === "laliga" ||
+    normalizedLeague === "champions" ||
+    normalizedLeague === "europa" ||
+    normalizedLeague === "leaguescup" ||
+    normalizedLeague === "epl";
+
   const renderScore = (score: ScoreValue) =>
     score !== null && score !== undefined ? String(score) : "-";
 
@@ -137,7 +151,7 @@ export default function LineScore({
       return `${index - 1}OT`;
     }
 
-    if (normalizedLeague === "soccer") {
+    if (isSoccer) {
       if (index === 0) return "1";
       if (index === 1) return "2";
       if (index === 2) return "ET";

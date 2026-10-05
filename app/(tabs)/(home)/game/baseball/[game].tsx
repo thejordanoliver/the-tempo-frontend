@@ -18,6 +18,7 @@ import {
   FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
+  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -192,7 +193,12 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "baseball", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+    sport: "baseball",
+    league: LEAGUE,
+    state: score?.status?.state ?? undefined,
+    date: game?.date ?? undefined,
+  });
   const homeLastGames = useLastFiveGames(homeId, "baseball", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "baseball", LEAGUE).games;
 
@@ -265,7 +271,7 @@ export default function GameDetailsScreen(
     );
   }, [score?.lastPlay, score?.plays]);
 
-  const GameTeamStats = score?.GameTeamStats ?? [];
+  const teamStats = score?.teamStats ?? [];
   const leaders = score?.leaders ?? [];
   const playerStats = score?.playerStats ?? [];
   const officials = details?.officials ?? [];
@@ -424,6 +430,7 @@ export default function GameDetailsScreen(
               play={fieldPlay}
               plays={plays}
               situation={situation}
+              state={state}
               isDark={isDark}
             />
 
@@ -476,7 +483,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={GameTeamStats}
+              stats={teamStats}
               awayName={awayCode}
               awayLogo={awayLogo}
               awayColor={awayColor}

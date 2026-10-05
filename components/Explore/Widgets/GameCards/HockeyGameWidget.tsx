@@ -5,7 +5,12 @@ import {
   gameWidgetStyles,
   isSmallGameWidgetLayout,
 } from "styles/ExploreStyles/GameWidgetStyles";
-import { getHolidayLabel } from "utils/dateUtils";
+import {
+  formatDate,
+  formatTime,
+  getHolidayLabel,
+  safeDate,
+} from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay } from "utils/games";
 import displayeValue from "utils/widgetUtils";
 
@@ -40,18 +45,17 @@ export default function HockeyGameWidget({
   const homeLogo = getNHLTeamLogo(homeId, isDark);
   const awayLogo = getNHLTeamLogo(awayId, isDark);
 
-  const safeDate = (date?: string | null) => {
-    if (!date) return new Date();
-    const d = new Date(date);
-    return isNaN(d.getTime()) ? new Date() : d;
-  };
-  const gameDate = safeDate(game?.date);
+  const gameDate = safeDate(game.date);
+  const formattedDate = formatDate(gameDate);
+  const formattedTime = formatTime(gameDate);
   const holidayLabel = getHolidayLabel(gameDate);
 
   const period = formatPeriod({ period: game.status.period, isNHL: true });
-  const displayClock = game?.status.clock;
+  const clock = game?.status.clock;
   const homeScore = game?.home.score;
   const awayScore = game?.away.score;
+  const homeRecord = game?.home.record ?? "0-0";
+  const awayRecord = game.away.record ?? "0-0";
 
   const state = game.status.state ?? "";
   const gameStatusDescription = game.status.description ?? "";
@@ -68,23 +72,8 @@ export default function HockeyGameWidget({
   const headlineText = game?.headline;
   const headline = headlineText || holidayLabel;
 
-  const homeRecord = game?.home.record ?? "0-0";
-  const awayRecord = game.away.record ?? "0-0";
-
-  const broadcastText = getBroadcastDisplay(game?.broadcasts);
-  const showBroadcast =
-    Boolean(broadcastText) && (!isSmallLayout || height >= 180);
-
-  const formattedDate = gameDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-  const formattedTime =
-    gameDate?.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }) || "";
+  const broadcast = getBroadcastDisplay(game.broadcasts);
+  const showBroadcast = Boolean(broadcast) && (!isSmallLayout || height >= 180);
 
   // -----------------------------------------------------
   // SCORE TEXT COMPONENT
@@ -136,6 +125,41 @@ export default function HockeyGameWidget({
     </View>
   );
 
+  const renderStatus = () => {
+    if (inProgress)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.period}>{period}</Text>
+          <View style={styles.divider} />
+          <Text style={styles.clock}>{clock}</Text>
+        </View>
+      );
+
+    if (isDelayed || isCanceled || isPostponed || isForfeited)
+      return <Text style={styles.finalText}>{gameStatusDescription}</Text>;
+
+    if (isHalftime) return <Text style={styles.finalText}>Halftime</Text>;
+
+    if (endOfPeriod) return <Text style={styles.clock}>End of {period}</Text>;
+
+    if (isFinal)
+      return (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalDivder} />
+          <Text style={styles.finalText}>{formattedDate}</Text>
+        </View>
+      );
+
+    return (
+      <View style={styles.infoWrapper}>
+        <Text style={styles.dateTime}>{formattedDate}</Text>
+        <View style={styles.divider} />
+        <Text style={styles.dateTime}>{formattedTime}</Text>
+      </View>
+    );
+  };
+
   // -------------------------
   // Render widget
   // -------------------------
@@ -167,73 +191,10 @@ export default function HockeyGameWidget({
         {/* ---------------------- */}
         {!isSmallLayout && (
           <View style={styles.gameInfo}>
-            {isScheduled && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedDate}
-                </Text>
-                <View style={styles.divider} />
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedTime}
-                </Text>
-              </View>
-            )}
-
-            {isFinal && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDetail}
-              </Text>
-            )}
-
-            {isPostponed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isCanceled && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isDelayed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isForfeited && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && endOfPeriod && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                End of {period}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && !endOfPeriod && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.period} numberOfLines={1}>
-                  {period}
-                </Text>
-                <View style={styles.divider} />
-                {displayClock && (
-                  <Text style={styles.clock} numberOfLines={1}>
-                    {displayClock}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {isHalftime && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                Halftime
-              </Text>
-            )}
+            {renderStatus()}
             {showBroadcast && (
               <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcastText}
+                {broadcast}
               </Text>
             )}
           </View>
@@ -257,73 +218,10 @@ export default function HockeyGameWidget({
         </View>
         {isSmallLayout && (
           <View style={styles.gameInfo}>
-            {isScheduled && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedDate}
-                </Text>
-                <View style={styles.divider} />
-                <Text style={styles.dateTime} numberOfLines={1}>
-                  {formattedTime}
-                </Text>
-              </View>
-            )}
-
-            {isFinal && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDetail}
-              </Text>
-            )}
-
-            {isPostponed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isCanceled && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isDelayed && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-            {isForfeited && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                {gameStatusDescription}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && endOfPeriod && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                End of {period}
-              </Text>
-            )}
-
-            {inProgress && !isHalftime && !endOfPeriod && (
-              <View style={styles.infoWrapper}>
-                <Text style={styles.period} numberOfLines={1}>
-                  {period}
-                </Text>
-                <View style={styles.divider} />
-                {displayClock && (
-                  <Text style={styles.clock} numberOfLines={1}>
-                    {displayClock}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {isHalftime && (
-              <Text style={styles.finalText} numberOfLines={1}>
-                Halftime
-              </Text>
-            )}
+            {renderStatus()}
             {showBroadcast && (
               <Text style={styles.broadcast} numberOfLines={1}>
-                {broadcastText}
+                {broadcast}
               </Text>
             )}
           </View>

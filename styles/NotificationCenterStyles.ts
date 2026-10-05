@@ -57,21 +57,15 @@ export const NotificationsCenterStyles = (isDark: boolean) =>
 
     notificationRow: {
       flexDirection: "row",
-      alignItems: "flex-start",
+      alignItems: "center",
       gap: 10,
       paddingVertical: 14,
       paddingHorizontal: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
+      borderBottomColor: Colors.midTone,
     },
 
-    notificationRowUnread: {
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
-    },
+    notificationRowUnread: {},
 
     notificationRowPressed: {
       opacity: 0.55,

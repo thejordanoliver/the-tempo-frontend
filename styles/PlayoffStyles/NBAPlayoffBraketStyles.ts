@@ -70,14 +70,6 @@ export const NBAPlayoffBracketStyles = (isDark: boolean) =>
       height: CANVAS_HEIGHT,
     },
 
-    playoffsLogo: {
-      position: "absolute",
-      top: LOGO_TOP,
-      left: CANVAS_WIDTH / 2 - LOGO_WIDTH / 2,
-      width: LOGO_WIDTH,
-      height: LOGO_HEIGHT,
-    },
-
     roundHeader: {
       position: "absolute",
       top: 0,

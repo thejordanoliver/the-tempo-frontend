@@ -10,6 +10,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveSportsSubscription } from "hooks/useLiveSportsSubscription";
 import { apiClient } from "utils/apiClient";
+import { resolvePlayoffSeason } from "utils/playoffSeasonFallback";
 
 const ROUND_ORDER: RoundDefinition[] = [
   {
@@ -429,6 +430,7 @@ export function useNBAPlayoffGames({
   const [leagueInfo, setLeagueInfo] = useState<any>(null);
   const [count, setCount] = useState(0);
   const [roundCount, setRoundCount] = useState(0);
+  const [resolvedSeason, setResolvedSeason] = useState(season);
 
   const [loading, setLoading] = useState(enabled);
   const [refreshingGames, setRefreshingGames] = useState(false);
@@ -460,17 +462,26 @@ export function useNBAPlayoffGames({
           setLoading(true);
         }
 
-        const { data } = await apiClient.get(
-          "/api/games/basketball/nba/playoffs",
-          {
-            params,
-          },
-        );
+        const fetchSeason = async (year: number) => {
+          const { data } = await apiClient.get(
+            "/api/games/basketball/nba/playoffs",
+            { params: dates ? params : { ...params, season: year } },
+          );
+          return data;
+        };
+        const result = dates
+          ? { data: await fetchSeason(Number(season)), season }
+          : await resolvePlayoffSeason(Number(season), fetchSeason, (data) => {
+              const games = getAllGamesFromResponse(data);
+              return games.length > 0 || getRoundsFromResponse(data, games).length > 0;
+            });
+        const { data } = result;
 
         const normalizedGames = getAllGamesFromResponse(data);
         const normalizedRounds = getRoundsFromResponse(data, normalizedGames);
 
         setGames(normalizedGames);
+        setResolvedSeason(result.season);
         setRounds(normalizedRounds);
         setSeasonData(data?.season ?? null);
         setLeagueInfo(data?.leagueInfo ?? null);
@@ -492,7 +503,7 @@ export function useNBAPlayoffGames({
         }
       }
     },
-    [enabled, params],
+    [enabled, params, dates, season],
   );
 
   const refreshGames = useCallback(async () => {
@@ -535,7 +546,7 @@ export function useNBAPlayoffGames({
       sport: "basketball",
       league: "nba",
       feed: "nbaPlayoffs",
-      season,
+      season: resolvedSeason,
       dates,
     },
     onUpdate: (payload) => {

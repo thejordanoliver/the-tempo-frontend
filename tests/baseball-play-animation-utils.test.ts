@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { BaseballPlay } from "../hooks/BaseballHooks/useBaseballGameDetails.ts";
-import * as animationUtils from "../components/Sports/Baseball/GameDetails/PlayByPlay/baseball-play-animation-utils.js";
+import * as animationUtils from "../utils/baseball-play-animation-utils.js";
 
 const { mapEspnHitCoordinate, resolveBaseballPlayAnimation } = animationUtils;
 

@@ -1,5 +1,5 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   BaseballProps,
@@ -23,9 +23,20 @@ export const TeamRow = ({
   const router = useScopedRouter();
   const styles = TeamRowStyles(isDark);
 
+  const isScheduled = state === "pre";
   const inProgress = state === "in";
-  const isFinal = gameStatusDescription === "Final";
+  const isFinal = state === "post";
 
+  const handleTeamPress = () => {
+    if (id && league === "mlb") router.push(`/team/mlb/${id}`);
+    if (id && league === "cb") router.push(`/team/cb/${id}`);
+    if (id && league === "sb") router.push(`/team/mlb/${id}`);
+  };
+
+  const showRecordInsteadOfScore = state === "pre";
+  /* -----------------------------------------------------
+   * Styles
+   * --------------------------------------------------- */
   const getScoreStyle = () => {
     if (score == null) {
       return { color: Colors.midTone, opacity: 0.5 };
@@ -48,30 +59,24 @@ export const TeamRow = ({
     return { color: Colors.midTone };
   };
 
-  const handleTeamPress = () => {
-    if (id && league === "mlb") router.push(`/team/mlb/${id}`);
-    if (id && league === "cb") router.push(`/team/cb/${id}`);
-    if (id && league === "sb") router.push(`/team/mlb/${id}`);
-  };
-
-  const showRecordInsteadOfScore = state === "pre";
+  const renderScore = () => (
+    <View style={styles.scoreWrapper}>
+      <Text
+        style={[
+          isScheduled
+            ? [styles.preGameRecord]
+            : [styles.score, getScoreStyle()],
+        ]}
+      >
+        {showRecordInsteadOfScore ? (record ?? "0-0") : score}
+      </Text>
+    </View>
+  );
 
   return (
     <View style={styles.row}>
-      {/* Home Score */}
-      {isHome && (
-        <Text
-          style={
-            showRecordInsteadOfScore
-              ? styles.preGameRecord
-              : [styles.score, getScoreStyle()]
-          }
-        >
-          {showRecordInsteadOfScore ? record : score}
-        </Text>
-      )}
+      {isHome && renderScore()}
 
-      {/* Team Info */}
       <View style={styles.teamInfoContainer}>
         <Pressable onPress={handleTeamPress}>
           <Image source={logo} style={styles.logo} />
@@ -94,20 +99,7 @@ export const TeamRow = ({
         </View>
       </View>
 
-      {/* Away Score */}
-      {!isHome && (
-        <View style={styles.scoreWrapper}>
-          <Text
-            style={
-              showRecordInsteadOfScore
-                ? [styles.preGameRecord]
-                : [styles.score, getScoreStyle()]
-            }
-          >
-            {showRecordInsteadOfScore ? record : (score ?? "")}
-          </Text>
-        </View>
-      )}
+      {!isHome && renderScore()}
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-const ROW_HEIGHT = 80;
+export const GAME_TEAM_STATS_ROW_HEIGHT = 80;
 
 export const GameTeamStatsStyles = (isDark: boolean) =>
   StyleSheet.create({
@@ -12,6 +12,13 @@ export const GameTeamStatsStyles = (isDark: boolean) =>
       borderColor: Colors.midTone,
       borderBottomRightRadius: 12,
       borderBottomLeftRadius: 12,
+    },
+    wrapper: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      opacity: 0,
     },
     logosRow: {
       flexDirection: "row",
@@ -41,51 +48,29 @@ export const GameTeamStatsStyles = (isDark: boolean) =>
       color: isDark ? Colors.white : Colors.black,
     },
     statSection: {
-      height: ROW_HEIGHT,
-      paddingVertical: 8,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderColor: Colors.midTone,
-    },
-
-    statLabel: {
-      fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-      color: isDark ? Colors.white : Colors.black,
-      textAlign: "center",
-    },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      flex: 1,
+      height: GAME_TEAM_STATS_ROW_HEIGHT,
       paddingHorizontal: 12,
     },
-
-    barContainerLeft: {
+    statLabel: {
+      fontSize: 12,
+      textAlign: "center",
+      fontFamily: Fonts.MEDIUM,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
+    },
+    row: {
       flex: 1,
-      alignItems: "flex-start",
-      marginLeft: 12,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexDirection: "row",
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: Colors.midTone,
     },
-    barContainerRight: {
-      flex: 1,
-      alignItems: "flex-end",
-      marginRight: 12,
-      backgroundColor: isDark
-        ? Colors.dark.transparentItemBackground
-        : Colors.light.transparentItemBackground,
+    lastRow: {
+      borderBottomWidth: 0,
     },
-    bar: {
-      justifyContent: "center",
-      height: 8,
-      borderRadius: 100,
-    },
-
     barText: {
       fontFamily: Fonts.SEMIBOLD,
-      fontSize: 14,
+      fontSize: 20,
       color: isDark ? Colors.white : Colors.black,
       textAlign: "center",
     },

@@ -5,6 +5,7 @@ import type { HockeyGame } from "./hockey/hockey";
 
 export type ExploreWidgetType =
   | "favorite_games"
+  | "my_picks"
   | "favorite_teams"
   | "create_post"
   | "college_polls"

@@ -1,6 +1,45 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getNewsPlayerTarget } from "../utils/newsArticleLinks";
+import { getNewsGameTarget, getNewsPlayerTarget } from "../utils/newsArticleLinks";
+
+test("opens the article's college football game in Tempo", () => {
+  assert.deepEqual(
+    getNewsGameTarget("https://www.espn.com/college-football/game/_/gameId/401856821/texas-tech-colorado"),
+    { screen: "football", league: "cfb", gameId: "401856821" },
+  );
+});
+
+test("maps game detail links to the correct sport and league", () => {
+  for (const [section, screen, league] of [
+    ["nfl", "football", "nfl"],
+    ["ufl", "football", "ufl"],
+    ["nba", "basketball", "nba"],
+    ["wnba", "basketball", "wnba"],
+    ["mens-college-basketball", "basketball", "mcbb"],
+    ["womens-college-basketball", "basketball", "wcbb"],
+    ["nba-g-league", "basketball", "gleague"],
+  ]) {
+    for (const page of ["game", "summary", "boxscore", "playbyplay", "recap"]) {
+      assert.deepEqual(
+        getNewsGameTarget(`https://espn.com/${section}/${page}/_/gameId/123?source=news#details`),
+        { screen, league, gameId: "123" },
+      );
+    }
+  }
+});
+
+test("keeps unsupported and malformed game URLs external", () => {
+  for (const link of [
+    "not a URL",
+    "https://example.com/nfl/game/_/gameId/123",
+    "https://espn.com.evil.com/nfl/game/_/gameId/123",
+    "ftp://espn.com/nfl/game/_/gameId/123",
+    "https://espn.com/nfl/game/_/gameId/no-id",
+    "https://espn.com/nfl/game/_/gameId/0",
+    "https://espn.com/nfl/player/_/id/123",
+    "https://espn.com/unknown/game/_/gameId/123",
+  ]) assert.equal(getNewsGameTarget(link), null);
+});
 
 test("maps ESPN football player links to Tempo football profiles", () => {
   assert.deepEqual(

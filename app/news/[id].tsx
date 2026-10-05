@@ -22,7 +22,7 @@ import {
   View,
 } from "react-native";
 import { newsArticleStyles } from "styles/NewsStyles/NewsArticleStyle";
-import { getNewsPlayerTarget } from "utils/newsArticleLinks";
+import { getNewsGameTarget, getNewsPlayerTarget } from "utils/newsArticleLinks";
 
 export default function ArticleScreen() {
   const navigationContentStyle = useNavigationBarContentStyle();
@@ -78,6 +78,17 @@ export default function ArticleScreen() {
 
   const handleOpenLink = async (link: string | null | undefined) => {
     if (!link) return;
+
+    const gameTarget = getNewsGameTarget(link);
+    if (gameTarget) {
+      const params = { game: gameTarget.gameId, league: gameTarget.league };
+      if (gameTarget.screen === "football") {
+        router.push({ pathname: "/game/football/[game]", params });
+      } else {
+        router.push({ pathname: "/game/basketball/[game]", params });
+      }
+      return;
+    }
 
     const playerTarget = getNewsPlayerTarget(link);
 

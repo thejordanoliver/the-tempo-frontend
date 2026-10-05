@@ -362,6 +362,25 @@ export default function SortableWidgetGrid({
   const [containerWidth, setContainerWidth] = useState(0);
   const [temporaryOrder, setTemporaryOrder] = useState<string[] | null>(null);
   const [activeDrag, setActiveDrag] = useState<ActiveWidgetDrag | null>(null);
+  const [pullRefreshing, setPullRefreshing] = useState(false);
+  const pullRefreshPendingRef = useRef(false);
+  const handleRefresh = useCallback(async () => {
+    if (pullRefreshPendingRef.current) return;
+    pullRefreshPendingRef.current = true;
+    setPullRefreshing(true);
+    // Give the native control a rendered true -> false transition even when
+    // there is no game widget or no favorite team to fetch.
+    const minimumDisplay = new Promise<void>((resolve) =>
+      setTimeout(resolve, 150),
+    );
+    try {
+      await onRefresh();
+    } finally {
+      await minimumDisplay;
+      pullRefreshPendingRef.current = false;
+      setPullRefreshing(false);
+    }
+  }, [onRefresh]);
   const scrollRef = useRef<ScrollView | null>(null);
   const viewportRef = useRef<View | null>(null);
   const activeDragRef = useRef<ActiveWidgetDrag | null>(null);
@@ -647,10 +666,10 @@ export default function SortableWidgetGrid({
         }}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
+            refreshing={pullRefreshing || refreshing}
             enabled={!activeDrag}
             onRefresh={() => {
-              void onRefresh();
+              void handleRefresh();
             }}
           />
         }

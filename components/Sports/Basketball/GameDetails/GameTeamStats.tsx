@@ -1,10 +1,7 @@
-import { GameTeamStatsStyles } from "@/styles/GameDetailStyles/TeamStatsStyles";
+import { GameTeamStatsStyles } from "@/styles/GameDetailStyles/GameTeamStatsStyles";
 import HeadingTwo from "components/Headings/HeadingTwo";
-import { activeOpacity, Colors } from "constants/styles";
-import { useEffect, useMemo, useState } from "react";
-import type { DimensionValue } from "react-native";
-import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
-import Svg, { Defs, Path, Pattern, Rect } from "react-native-svg";
+import { useMemo } from "react";
+import { Image, Text, View } from "react-native";
 
 type StatType = "text" | "percent" | "number" | "time";
 type BaseballStatCategory = "batting" | "pitching" | "fielding";
@@ -70,8 +67,6 @@ type StatRow = {
   max: number;
 };
 
-const COLLAPSED_ROWS = 5;
-const ROW_HEIGHT = 64;
 const EMPTY_DISPLAY = "-";
 
 const BASKETBALL_STAT_KEYS: StatConfig[] = [
@@ -249,6 +244,149 @@ const BASEBALL_STAT_KEYS: StatConfig[] = [
   { category: "fielding", key: "fieldingPct", label: "Fielding Pct" },
 ];
 
+const SOCCER_STAT_KEYS: StatConfig[] = [
+  {
+    key: "foulsCommitted",
+    type: "text",
+    label: "Fouls",
+  },
+  {
+    key: "yellowCards",
+    type: "text",
+    label: "Yellow Cards",
+  },
+  {
+    key: "redCards",
+    type: "text",
+    label: "Red Cards",
+  },
+  {
+    key: "offsides",
+    type: "text",
+    label: "Offsides",
+  },
+  {
+    key: "wonCorners",
+    type: "text",
+    label: "Corner Kicks",
+  },
+  {
+    key: "saves",
+    type: "text",
+    label: "Saves",
+  },
+  {
+    key: "possessionPct",
+    type: "percent",
+    label: "Possession",
+  },
+  {
+    key: "totalShots",
+    type: "text",
+    label: "Shots",
+  },
+  {
+    key: "shotsOnTarget",
+    type: "text",
+    label: "On Goal",
+  },
+  {
+    key: "shotPct",
+    type: "percent",
+    label: "On Target %",
+  },
+  {
+    key: "penaltyKickGoals",
+    type: "text",
+    label: "Penalty Goals",
+  },
+  {
+    key: "penaltyKickShots",
+    type: "text",
+    label: "Penalty Kicks Taken",
+  },
+  {
+    key: "accuratePasses",
+    type: "text",
+    label: "Accurate Passes",
+  },
+  {
+    key: "totalPasses",
+    type: "text",
+    label: "Passes",
+  },
+  {
+    key: "passPct",
+    type: "percent",
+    label: "Pass Completion %",
+  },
+  {
+    key: "accurateCrosses",
+    type: "text",
+    label: "Accurate Crosses",
+  },
+  {
+    key: "totalCrosses",
+    type: "text",
+    label: "Crosses",
+  },
+  {
+    key: "crossPct",
+    type: "percent",
+    label: "Cross %",
+  },
+  {
+    key: "totalLongBalls",
+    type: "text",
+    label: "Long Balls",
+  },
+  {
+    key: "accurateLongBalls",
+    type: "text",
+    label: "Accurate Long Balls",
+  },
+  {
+    key: "longballPct",
+    type: "percent",
+    label: "Long Balls %",
+  },
+  {
+    key: "blockedShots",
+    type: "text",
+    label: "Blocked Shots",
+  },
+  {
+    key: "effectiveTackles",
+    type: "text",
+    label: "Effective Tackles",
+  },
+  {
+    key: "totalTackles",
+    type: "text",
+    label: "Tackles",
+  },
+  {
+    key: "tacklePct",
+    type: "percent",
+    label: "Tackle %",
+  },
+  {
+    key: "interceptions",
+    type: "text",
+    label: "Interceptions",
+  },
+  {
+    key: "effectiveClearance",
+    type: "text",
+    label: "Effective Clearances",
+  },
+  {
+    key: "totalClearance",
+    type: "text",
+    label: "Clearances",
+  },
+];
+
 function isBaseballLeague(league?: string) {
   return league === "mlb" || league === "cb" || league === "sb";
 }
@@ -257,10 +395,53 @@ function isFootballLeague(league?: string) {
   return league === "nfl" || league === "cfb" || league === "ufl";
 }
 
-function getStatConfig(league?: string) {
+function isSoccerLeague(league?: string) {
+  return (
+    league === "msoc" ||
+    league === "wsoc" ||
+    league === "mls" ||
+    league === "fifa" ||
+    league === "bundesliga" ||
+    league === "laliga" ||
+    league === "ligue1" ||
+    league === "ligue2" ||
+    league === "champions" ||
+    league === "europa" ||
+    league === "leaguescup" ||
+    league === "epl"
+  );
+}
+
+function getStatConfig(league?: string, state?: string | null) {
   if (isBaseballLeague(league)) return BASEBALL_STAT_KEYS;
-  if (league === "nhl") return HOCKEY_STAT_KEYS;
+  if (isSoccerLeague(league)) return SOCCER_STAT_KEYS;
   if (isFootballLeague(league)) return FOOTBALL_STAT_KEYS;
+  if (league === "nhl") return HOCKEY_STAT_KEYS;
+  if (state === "pre") {
+    // Lead with season comparisons instead of unplayed game totals.
+    const seasonKeys = [
+      "avgPoints",
+      "avgPointsAgainst",
+      "avgRebounds",
+      "avgAssists",
+      "fieldGoalPct",
+      "threePointFieldGoalPct",
+      "freeThrowPct",
+      "avgBlocks",
+      "avgSteals",
+      "avgTeamTurnovers",
+      "avgTotalTurnovers",
+      "streak",
+    ];
+    return [
+      ...seasonKeys.flatMap((key) =>
+        BASKETBALL_STAT_KEYS.filter((config) => config.key === key),
+      ),
+      ...BASKETBALL_STAT_KEYS.filter(
+        (config) => !seasonKeys.includes(config.key),
+      ),
+    ];
+  }
   return BASKETBALL_STAT_KEYS;
 }
 
@@ -373,6 +554,7 @@ function hasStatValue(stat?: StatItem) {
 }
 
 function getDisplayValue(stat: StatItem | undefined, type?: StatType) {
+  if (!hasStatValue(stat)) return EMPTY_DISPLAY;
   const value = stat?.displayValue ?? stat?.value;
   if (value === undefined || value === null || value === "") {
     return EMPTY_DISPLAY;
@@ -444,13 +626,6 @@ function extractNumber(
   return Number(cleaned) || 0;
 }
 
-function getBarWidth(value: number, max: number): DimensionValue {
-  const safeMax = Math.max(max, 1);
-  const percentage = Math.max(0, Math.min((value / safeMax) * 100, 100));
-
-  return `${percentage}%` as DimensionValue;
-}
-
 function buildRows(
   away: GameTeamStatsEntry | undefined,
   home: GameTeamStatsEntry | undefined,
@@ -515,8 +690,6 @@ export default function GameTeamStats({
   state,
   awayLogo,
   homeLogo,
-  awayColor,
-  homeColor,
   awayName,
   homeName,
   awayCode,
@@ -525,12 +698,6 @@ export default function GameTeamStats({
   league,
 }: GameTeamStatsProps) {
   const styles = GameTeamStatsStyles(isDark);
-  const [expanded, setExpanded] = useState(false);
-  const [fullHeight, setFullHeight] = useState(0);
-  const [heightAnim] = useState(
-    () => new Animated.Value(COLLAPSED_ROWS * ROW_HEIGHT),
-  );
-
   const teams = useMemo(
     () => getTeams(stats, GameTeamStats),
     [stats, GameTeamStats],
@@ -538,8 +705,9 @@ export default function GameTeamStats({
   const away = getSideTeam(teams, "away") ?? teams[0];
   const home = getSideTeam(teams, "home") ?? teams[1];
   const isBaseball = isBaseballLeague(league);
+
   const rows = useMemo(() => {
-    const configs = getStatConfig(league);
+    const configs = getStatConfig(league, state);
 
     if (!isBaseball) {
       return buildRows(away, home, configs, false);
@@ -549,12 +717,12 @@ export default function GameTeamStats({
     return groupedRows.length > 0
       ? groupedRows
       : buildRows(away, home, configs, false);
-  }, [away, home, isBaseball, league]);
+  }, [away, home, isBaseball, league, state]);
 
   const hasMeaningfulStats = useMemo(() => {
     if (rows.length === 0) return false;
 
-    // Pregame ESPN payloads can contain placeholder rows such as "-" and
+    // Pregame payloads can contain placeholder rows such as "-" and
     // synthetic 0/0.0 values even when no real team stats are available yet.
     // Hide the entire section until at least one real pregame stat exists.
     if (state === "pre") {
@@ -577,19 +745,6 @@ export default function GameTeamStats({
     return true;
   }, [rows, state]);
 
-  const canExpand = rows.length > COLLAPSED_ROWS;
-  const collapsedHeight =
-    Math.min(rows.length || COLLAPSED_ROWS, COLLAPSED_ROWS) * ROW_HEIGHT;
-
-  useEffect(() => {
-    const toValue = expanded ? fullHeight : collapsedHeight;
-    Animated.timing(heightAnim, {
-      toValue,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [collapsedHeight, expanded, fullHeight, heightAnim]);
-
   if (
     teams.length < 2 ||
     !away ||
@@ -602,77 +757,25 @@ export default function GameTeamStats({
 
   const awayLabel = awayName ?? awayCode ?? away.team?.abbreviation ?? "";
   const homeLabel = homeName ?? homeCode ?? home.team?.abbreviation ?? "";
-  const awayPatternColor = isDark ? Colors.white : awayColor;
 
   const renderStatRow = (
     row: StatRow,
     index: number,
-    renderKey: "measure" | "visible",
   ) => {
     const awayOpacity = row.isTie || row.awayWins ? 1 : 0.4;
     const homeOpacity = row.isTie || row.homeWins ? 1 : 0.4;
-    const patternId = `GameTeamStatsHatch-${renderKey}-${row.id}-${index}`;
+    const isLastRow = index === rows.length - 1;
 
     return (
-      <View key={`${renderKey}-${row.id}`} style={styles.statSection}>
-        <Text style={styles.statLabel}>{row.label}</Text>
-        <View style={styles.row}>
+      <View key={row.id} style={styles.statSection}>
+        <View style={[styles.row, isLastRow && styles.lastRow]}>
           <Text style={[styles.barText, { opacity: awayOpacity }]}>
             {row.awayDisplay}
           </Text>
 
-          <View style={styles.barContainerLeft}>
-            <View
-              style={[
-                styles.bar,
-                {
-                  width: getBarWidth(row.awayNum, row.max),
-                  opacity: awayOpacity,
-                  borderRadius: 6,
-                  overflow: "hidden",
-                },
-              ]}
-            >
-              <Svg width="100%" height="100%">
-                <Defs>
-                  <Pattern
-                    id={patternId}
-                    patternUnits="userSpaceOnUse"
-                    width="6"
-                    height="6"
-                  >
-                    <Path
-                      d="M-1,1 l2,-2 M0,6 l6,-6 M5,7 l2,-2"
-                      stroke={awayPatternColor}
-                      strokeWidth={2}
-                    />
-                  </Pattern>
-                </Defs>
-
-                <Rect
-                  width="100%"
-                  height="100%"
-                  fill={isDark ? Colors.black : Colors.white}
-                />
-                <Rect width="100%" height="100%" fill={`url(#${patternId})`} />
-              </Svg>
-            </View>
-          </View>
-
-          <View style={styles.barContainerRight}>
-            <View
-              style={[
-                styles.bar,
-                {
-                  width: getBarWidth(row.homeNum, row.max),
-                  backgroundColor: homeColor,
-                  borderWidth: row.homeNum === 0 ? 0 : 1,
-                  borderColor: isDark ? Colors.white : "transparent",
-                  opacity: homeOpacity,
-                },
-              ]}
-            />
-          </View>
+          <Text style={styles.statLabel} numberOfLines={1}>
+            {row.label}
+          </Text>
 
           <Text style={[styles.barText, { opacity: homeOpacity }]}>
             {row.homeDisplay}
@@ -701,35 +804,7 @@ export default function GameTeamStats({
       </View>
 
       <View style={styles.container}>
-        <View
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            opacity: 0,
-          }}
-          onLayout={(event) => setFullHeight(event.nativeEvent.layout.height)}
-        >
-          {rows.map((row, index) => renderStatRow(row, index, "measure"))}
-        </View>
-
-        <Animated.View style={{ maxHeight: heightAnim, overflow: "hidden" }}>
-          {rows.map((row, index) => renderStatRow(row, index, "visible"))}
-        </Animated.View>
-
-        {canExpand ? (
-          <View style={styles.showMoreLessContainer}>
-            <TouchableOpacity
-              activeOpacity={activeOpacity}
-              onPress={() => setExpanded((prev) => !prev)}
-            >
-              <Text style={styles.showMoreLess}>
-                {expanded ? "Show Less" : "Show More"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        ) : null}
+        {rows.map((row, index) => renderStatRow(row, index))}
       </View>
     </View>
   );

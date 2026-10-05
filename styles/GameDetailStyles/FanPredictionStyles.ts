@@ -38,7 +38,6 @@ export const FanPredictionStyles = (isDark: boolean) =>
       fontFamily: Fonts.REGULAR,
       fontSize: 14,
       color: Colors.midTone,
-      fontVariant: ["tabular-nums"],
     },
     footer: {
       gap: 4,
@@ -51,18 +50,23 @@ export const FanPredictionStyles = (isDark: boolean) =>
       fontSize: 12,
       lineHeight: 18,
       color: Colors.midTone,
+      textAlign: "center"
     },
     rankingsButton: {
-      alignSelf: "flex-start",
-      paddingHorizontal: 0,
+      alignItems: "center",
+      justifyContent: "center",
       paddingVertical: 8,
       borderRadius: 8,
+    },
+    textLink: {
+      fontFamily: Fonts.REGULAR,
+      fontSize: 12,
+      color: isDark ? Colors.dark.text : Colors.light.text,
     },
     skeletonStatusCopy: {
       flex: 1,
       minWidth: 0,
     },
-
     predictionCard: {
       flex: 1,
       justifyContent: "center",
@@ -75,7 +79,6 @@ export const FanPredictionStyles = (isDark: boolean) =>
       minHeight: 128,
       overflow: "hidden",
     },
-
     predictionCardSelected: {
       borderColor: isDark ? Colors.dark.green : Colors.light.green,
     },

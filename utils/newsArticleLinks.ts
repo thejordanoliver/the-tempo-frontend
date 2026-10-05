@@ -35,6 +35,53 @@ function isEspnHost(hostname: string): boolean {
   return normalizedHost === "espn.com" || normalizedHost.endsWith(".espn.com");
 }
 
+export interface NewsGameTarget {
+  screen: "football" | "basketball";
+  gameId: string;
+  league: string;
+}
+
+// These screens can load a complete game from just its ID and league.
+const GAME_TARGETS: Record<string, Pick<NewsGameTarget, "screen" | "league">> = {
+  nfl: { screen: "football", league: "nfl" },
+  "college-football": { screen: "football", league: "cfb" },
+  ufl: { screen: "football", league: "ufl" },
+  nba: { screen: "basketball", league: "nba" },
+  wnba: { screen: "basketball", league: "wnba" },
+  "mens-college-basketball": { screen: "basketball", league: "mcbb" },
+  "womens-college-basketball": { screen: "basketball", league: "wcbb" },
+  "nba-g-league": { screen: "basketball", league: "gleague" },
+};
+
+export function getNewsGameTarget(link: string): NewsGameTarget | null {
+  try {
+    const url = new URL(link);
+    if (
+      (url.protocol !== "http:" && url.protocol !== "https:") ||
+      !isEspnHost(url.hostname)
+    ) {
+      return null;
+    }
+
+    const segments = url.pathname.split("/").filter(Boolean);
+    const target = GAME_TARGETS[segments[0]];
+    if (
+      !target ||
+      !["game", "summary", "boxscore", "playbyplay", "recap"].includes(segments[1]) ||
+      segments[2] !== "_" ||
+      segments[3] !== "gameId"
+    ) {
+      return null;
+    }
+
+    const gameId = segments[4];
+    if (!gameId || !/^[1-9]\d*$/.test(gameId)) return null;
+    return { ...target, gameId };
+  } catch {
+    return null;
+  }
+}
+
 export function getNewsPlayerTarget(link: string): NewsPlayerTarget | null {
   try {
     const url = new URL(link);

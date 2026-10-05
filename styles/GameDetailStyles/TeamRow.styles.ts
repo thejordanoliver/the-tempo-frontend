@@ -48,29 +48,22 @@ export type BasketballProps = {
   logo: any;
   name: string;
   record: string;
-
   timeouts?: number;
   bonusState: string | undefined | null;
-
   rank: number | null;
   score?: number;
-
   isDark: boolean;
   isHome?: boolean;
   isWinner?: boolean;
   hideRecord?: boolean;
-
-  size?: SizeType;
-
   colors?: {
     text: string;
     record: string;
     score: string;
     winnerScore: string;
   };
-
   gameStatusDescription?: string;
-
+  state: string | null;
   league: string;
 };
 

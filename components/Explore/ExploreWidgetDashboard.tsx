@@ -45,6 +45,7 @@ import SortableWidgetGrid, {
 } from "./SortableWidgetGrid";
 import CollegePollWidget from "./Widgets/CollegePollWidget";
 import CreatePostWidget from "./Widgets/CreatePostWidget";
+import MyPicksWidget from "./Widgets/MyPicksWidget";
 import FavoriteTeamsWidget from "./Widgets/FavoriteTeamsWidget";
 import FavoriteGamesWidget from "./Widgets/FavoriteGamesWidget";
 import StandingsWidget from "./Widgets/StandingsWidget";
@@ -354,6 +355,12 @@ export default function ExploreWidgetDashboard({
             containerHeight={height}
             {...editProps}
           />
+        </View>
+      );
+    } else if (widget.type === "my_picks") {
+      content = (
+        <View style={dashboardStyles.section}>
+          <MyPicksWidget isDark={isDark} size={widget.size} width={width} height={height} {...editProps} />
         </View>
       );
     } else if (widget.type === "create_post") {

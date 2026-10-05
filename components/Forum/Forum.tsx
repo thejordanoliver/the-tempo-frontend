@@ -3,7 +3,6 @@ import { Colors, activeOpacity, globalStyles } from "constants/styles";
 import { NavigationBarInsetContext } from "contexts/NavigationBarInsetContext";
 import { ForumStyles } from "styles/ForumStyles/ForumStyles";
 import { useCallback, useContext, useMemo } from "react";
-import type { ListRenderItem } from "react-native";
 import {
   ActivityIndicator,
   FlatList,
@@ -56,7 +55,6 @@ export default function Forum({
     [isDark, bottomInset, shouldShowCreateButton],
   );
   const global = useMemo(() => globalStyles(isDark), [isDark]);
-
   const isInitialLoading = loading || (refreshing && posts.length === 0);
   const loadMoreDisabled = loading || refreshing;
   const effectiveLoadMoreMode =
@@ -64,9 +62,10 @@ export default function Forum({
   const shouldRenderLoadMoreButton =
     hasMore && !!onLoadMore && effectiveLoadMoreMode === "button";
 
-  const renderPostItem = useCallback<ListRenderItem<ForumPost>>(
-    ({ item }) => (
+  const renderPost = useCallback(
+    (item: ForumPost) => (
       <PostItem
+        key={String(item.id)}
         item={item}
         isDark={isDark}
         currentUserId={currentUserId}
@@ -156,8 +155,6 @@ export default function Forum({
       return <Text style={global.errorText}>{error}</Text>;
     }
 
-    const retryDisabled = loading || refreshing;
-
     return (
       <View style={global.emptyContainer}>
         <Ionicons
@@ -169,86 +166,56 @@ export default function Forum({
         <Text style={global.errorText}>{error}</Text>
 
         <Button
-          disabled={retryDisabled}
+          disabled={loadMoreDisabled}
           onPress={onRetry}
           isDark={isDark}
           variant="outline"
         >
-          {retryDisabled ? "Retrying..." : "Retry"}
+          {loadMoreDisabled ? "Retrying..." : "Retry"}
         </Button>
       </View>
     );
   };
 
   if (isInitialLoading) {
-    if (scrollEnabled) {
-      return (
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-        >
-          {renderSkeletons()}
-        </ScrollView>
-      );
-    }
-  }
-
-  if (error) {
-    return renderErrorState();
-  }
-
-  if (!scrollEnabled) {
-    return (
-      <>
-        <View style={styles.embeddedContent}>
-          {posts.length === 0
-            ? renderEmptyState()
-            : posts.map((post) => (
-                <PostItem
-                  key={String(post.id)}
-                  item={post}
-                  isDark={isDark}
-                  currentUserId={currentUserId}
-                  deletePost={onDeletePost}
-                  editPost={onEditPost}
-                  onBookmarkChange={onBookmarkChange}
-                  onImagePress={onImagePress}
-                />
-              ))}
-
-          {renderLoadMoreButton()}
-        </View>
-
-        {shouldShowCreateButton && (
-          <FloatingButton
-            isOpen={false}
-            onPress={onCreatePost}
-            icon={"create"}
-          />
-        )}
-      </>
+    return scrollEnabled ? (
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {renderSkeletons()}
+      </ScrollView>
+    ) : (
+      <View style={styles.embeddedContent}>{renderSkeletons()}</View>
     );
   }
 
+  if (error) return renderErrorState();
+
   return (
     <>
-      <FlatList
-        data={posts}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.scrollContainer}
-        renderItem={renderPostItem}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        refreshControl={
-          onRefresh ? (
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          ) : undefined
-        }
-        ListEmptyComponent={renderEmptyState}
-        ListFooterComponent={renderLoadMoreButton}
-      />
+      {scrollEnabled ? (
+        <FlatList
+          data={posts}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={styles.scrollContainer}
+          renderItem={({ item }) => renderPost(item)}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          refreshControl={
+            onRefresh ? (
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            ) : undefined
+          }
+          ListEmptyComponent={renderEmptyState}
+          ListFooterComponent={renderLoadMoreButton}
+        />
+      ) : (
+        <View style={styles.embeddedContent}>
+          {posts.length ? posts.map(renderPost) : renderEmptyState()}
+          {renderLoadMoreButton()}
+        </View>
+      )}
 
       {shouldShowCreateButton && (
-        <FloatingButton isOpen={false} onPress={onCreatePost} icon={"create"} />
+        <FloatingButton isOpen={false} onPress={onCreatePost} icon="create" />
       )}
     </>
   );

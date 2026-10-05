@@ -9,6 +9,7 @@ import {
 } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffBracketResponse } from "types/baseball/baseball";
 import { LeagueBracket } from "./LeagueBracket";
+import { RoundHeader } from "components/Sports/Playoffs/RoundHeader";
 import { MatchupCard } from "./MatchupCard";
 import { SeriesGamesSheet } from "./SeriesGamesSheet";
 import { findSeries, type Matchup } from "./mlbBracketUtils";
@@ -100,9 +101,7 @@ export function MLBPlayoffBracket({
           />
           <View style={styles.section}>
             <View style={styles.column}>
-              <View style={styles.roundHeader}>
-                <Text style={styles.roundTitle}>World Series</Text>
-              </View>
+              <RoundHeader title="World Series" isDark={isDark} />
               <View style={styles.roundBody}>
                 <View
                   style={getMLBBracketLayoutStyles("american").championshipCard}

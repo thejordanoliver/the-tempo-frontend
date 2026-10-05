@@ -9,20 +9,23 @@ import FanRankingRow from "./FanRankingRow";
 type Props = {
   isDark: boolean;
   me: FanPredictionRanking | null;
+  rankings: FanPredictionRanking[];
   showLeaderboard: boolean;
   onOpenUser: (userId: number) => void;
 };
 
 const RANKING_RULES = [
-  "Each correct pregame pick earns one point. Picks lock when the game starts.",
+  "Pick a winner before the game starts. Each correct pregame pick earns one point.",
+  "Picks close when the game goes live. Team pick percentages and your selected team remain visible.",
   "Fans with the same number of correct picks share a rank. Accuracy is based on scored picks only.",
   "Draws, canceled games, and fights without a winner don’t affect accuracy.",
-  "Only new verified pregame picks count. Live votes don’t earn points, and results appear after games finish.",
+  "Only new verified pregame picks count. Ranking points and accuracy update after games finish.",
 ];
 
 export default function FanRankingsHeader({
   isDark,
   me,
+  rankings,
   showLeaderboard,
   onOpenUser,
 }: Props) {
@@ -30,6 +33,11 @@ export default function FanRankingsHeader({
   const styles = useMemo(() => fanPredictionRankingsStyles(isDark), [isDark]);
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
+  const nextScore = me
+    ? rankings.reduce<number | null>((next, entry) =>
+        entry.correct > me.correct && (next == null || entry.correct < next)
+          ? entry.correct : next, null)
+    : null;
 
   return (
     <View style={styles.header}>
@@ -71,6 +79,16 @@ export default function FanRankingsHeader({
             isCurrentUser
             onPress={() => onOpenUser(me.userId)}
           />
+          <Text style={styles.note}>
+            {me.correct.toLocaleString()} ranking points · {me.correct.toLocaleString()} correct / {me.graded.toLocaleString()} scored picks
+          </Text>
+          {nextScore != null ? (
+            <Text style={styles.description}>
+              {(nextScore - me.correct).toLocaleString()} more correct {nextScore - me.correct === 1 ? "pick" : "picks"} to tie the next rank above you.
+            </Text>
+          ) : me.rank === 1 ? (
+            <Text style={styles.description}>You’re at the top of the leaderboard. Keep making pregame picks to build your lead.</Text>
+          ) : null}
           {me.rank == null ? (
             <Text style={styles.note}>
               Your rank appears after your first scored prediction.

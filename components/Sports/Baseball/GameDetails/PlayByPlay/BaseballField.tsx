@@ -24,7 +24,7 @@ import {
   type BaseballBase,
   type BaseballPlayAnimation,
   type BaseballRunnerMovement,
-} from "./baseball-play-animation-utils";
+} from "../../../../../utils/baseball-play-animation-utils";
 
 export const BASEBALL_FIELD_IMAGE_WIDTH = 780;
 export const BASEBALL_FIELD_IMAGE_HEIGHT = 376;

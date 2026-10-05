@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/styles";
 import { FanPredictionStyles } from "@/styles/GameDetailStyles/FanPredictionStyles";
 import { Image, type ImageProps } from "expo-image";
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -10,7 +10,17 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import Animated, {
+  cancelAnimation,
+  Easing,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import PredictionGradient from "./PredictionGradient";
+
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 type PredictionCardProps = {
   code: string;
@@ -41,16 +51,35 @@ function PredictionCard({
 }: PredictionCardProps) {
   const styles = useMemo(() => FanPredictionStyles(isDark), [isDark]);
   const teamLabel = code || "team";
+  const selectionProgress = useSharedValue(isSelected ? 1 : 0);
+  const selectedBorderColor = styles.predictionCardSelected.borderColor;
+
+  useEffect(() => {
+    selectionProgress.value = withTiming(isSelected ? 1 : 0, {
+      duration: 250,
+      easing: Easing.inOut(Easing.cubic),
+    });
+
+    return () => cancelAnimation(selectionProgress);
+  }, [isSelected, selectionProgress]);
+
+  const animatedBorderStyle = useAnimatedStyle(() => ({
+    borderColor: interpolateColor(
+      selectionProgress.value,
+      [0, 1],
+      ["transparent", selectedBorderColor],
+    ),
+  }));
 
   return (
-    <TouchableOpacity
+    <AnimatedTouchableOpacity
       onPress={onPress}
       disabled={disabled}
       activeOpacity={disabled ? 1 : 0.7}
       style={[
         styles.predictionCard,
-        isSelected && styles.predictionCardSelected,
         style,
+        animatedBorderStyle,
       ]}
       accessibilityRole="button"
       accessibilityLabel={`${isSelected ? "Your pick: " : ""}${
@@ -96,7 +125,7 @@ function PredictionCard({
           <Text style={styles.votePercentage}>{percentText}</Text>
         ) : null}
       </View>
-    </TouchableOpacity>
+    </AnimatedTouchableOpacity>
   );
 }
 

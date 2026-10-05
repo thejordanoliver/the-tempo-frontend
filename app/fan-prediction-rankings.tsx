@@ -4,6 +4,8 @@ import { CustomHeader } from "components/CustomHeader";
 import FanPredictionRankingsSkeleton from "components/Skeletons/FanPredictionRankingsSkeleton";
 import FanRankingRow from "components/Sports/Basketball/GameDetails/FanPrediction/FanRankingRow";
 import FanRankingsHeader from "components/Sports/Basketball/GameDetails/FanPrediction/FanRankingsHeader";
+import FanPredictionAnalysis from "components/Sports/Basketball/GameDetails/FanPrediction/FanPredictionAnalysis";
+import { useFanPredictionAnalytics } from "hooks/useFanPredictionAnalytics";
 import { Colors } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useNavigation } from "expo-router";
@@ -23,6 +25,12 @@ export default function FanPredictionRankingsScreen() {
   const router = useScopedRouter();
   const contentStyle = useNavigationBarContentStyle();
   const { data, loading, refreshing, error, refresh } = useFanPredictionRankings();
+  const analytics = useFanPredictionAnalytics();
+  const refreshAnalytics = analytics.refresh;
+  const refreshAll = useCallback(() => {
+    refresh();
+    void refreshAnalytics();
+  }, [refresh, refreshAnalytics]);
   const rankings = data?.rankings ?? [];
   const me = data?.me ?? null;
 
@@ -53,13 +61,21 @@ export default function FanPredictionRankingsScreen() {
       keyExtractor={entry => String(entry.userId)}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.text} />
+        <RefreshControl refreshing={refreshing || (analytics.loading && analytics.data != null)} onRefresh={refreshAll} tintColor={colors.text} />
       }
       ListHeaderComponent={
         <>
+          <FanPredictionAnalysis
+            isDark={isDark}
+            data={analytics.data}
+            loading={analytics.loading}
+            error={analytics.error}
+            onRetry={() => { void analytics.refresh(); }}
+          />
           <FanRankingsHeader
             isDark={isDark}
             me={me}
+            rankings={rankings}
             showLeaderboard={loading || rankings.length > 0}
             onOpenUser={openUser}
           />

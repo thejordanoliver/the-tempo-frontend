@@ -1,8 +1,11 @@
 import FanPredictionSkeleton from "components/Skeletons/GameDetails/FanPredictionSkeleton";
 import { Colors, globalStyles } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import { useFanPrediction, type FanPredictionInput } from "hooks/useFanPrediction";
 import type { ImageProps } from "expo-image";
+import {
+  useFanPrediction,
+  type FanPredictionInput,
+} from "hooks/useFanPrediction";
 import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { FanPredictionStyles } from "styles/GameDetailStyles/FanPredictionStyles";
@@ -19,14 +22,6 @@ type Props = FanPredictionInput & {
 };
 
 export default function FanPrediction(props: Props) {
-  if (props.state === "post") {
-    return (
-      <FanPredictionSection>
-        <FanRankingsLink />
-      </FanPredictionSection>
-    );
-  }
-
   return <FanPredictionContent {...props} />;
 }
 
@@ -60,10 +55,11 @@ function FanPredictionContent(props: Props) {
     handleAwayVote,
     handleHomeVote,
   } = useFanPrediction(props);
+  const isLive = state === "in";
   const voteDisabled = !canVote || userVote != null || submittingTeamId != null;
 
   if (phase === "loading") {
-    return <FanPredictionSkeleton isDark={isDark} />;
+    return <FanPredictionSkeleton isDark={isDark} isLive={isLive} />;
   }
 
   if (phase === "error") {
@@ -106,30 +102,31 @@ function FanPredictionContent(props: Props) {
           isDark={isDark}
         />
       </View>
-
-      <View style={styles.statusRow}>
-        <Text style={styles.subtitle}>{subtitle}</Text>
-        {resultsRevealed ? (
-          <Text style={styles.totalVotesText}>
-            {`${totalVotes.toLocaleString()} ${
-              totalVotes === 1 ? "vote" : "votes"
-            }`}
-          </Text>
-        ) : null}
-      </View>
-
-      {errorMessage ? (
-        <Text style={global.errorText}>{errorMessage}</Text>
-      ) : null}
-
-      <View style={styles.footer}>
-        <Text style={styles.rankingHint}>
-          {state === "pre"
-            ? "Pregame picks earn 1 point for a correct prediction."
-            : "Live votes don’t earn ranking points."}
-        </Text>
-        <FanRankingsLink />
-      </View>
+      {isLive && userVote != null && (
+        <View style={styles.statusRow}>
+          <Text style={styles.subtitle}>{subtitle}</Text>
+        </View>
+      )}
+      {!isLive && (
+        <>
+          <View style={styles.statusRow}>
+            <Text style={styles.subtitle}>{subtitle}</Text>
+            {resultsRevealed && (
+              <Text style={styles.totalVotesText}>
+                {`${totalVotes.toLocaleString()} ${
+                  totalVotes === 1 ? "vote" : "votes"
+                }`}
+              </Text>
+            )}
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.rankingHint}>
+              Pregame picks earn 1 point for a correct prediction.
+            </Text>
+            <FanRankingsLink />
+          </View>
+        </>
+      )}
     </FanPredictionSection>
   );
 }

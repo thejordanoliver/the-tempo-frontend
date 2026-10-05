@@ -28,7 +28,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { getActiveAtBatPlays } from "./baseball-play-animation-utils";
+import { getActiveAtBatPlays } from "../../../../../utils/baseball-play-animation-utils";
 import BaseballFieldPlay, {
   BASEBALL_FIELD_ASPECT_RATIO,
 } from "./BaseballField";
@@ -57,21 +57,17 @@ const PARTICIPANT_LABELS: Record<string, string> = {
 
 export type PlayByPlayProps = {
   width?: number;
-
   awayCode?: string;
   homeCode?: string;
   venueId?: string | number | null;
-
   awayTeamId?: string | number | null;
   homeTeamId?: string | number | null;
-
   homeLogo?: ImageSourcePropType;
-  awayLogo?: ImageSourcePropType;
-
+  awayLogo?: ImageSourcePropType; 
   play?: BaseballPlay | null;
   plays?: BaseballPlay[];
   situation?: BaseballSituation | null;
-
+  state: string | null;
   isDark?: boolean;
 };
 
@@ -380,21 +376,17 @@ function PlayStatusBadge({
 
 function PlayByPlay({
   width = VIEWBOX_WIDTH,
-
   awayCode = "AWAY",
   homeCode = "HOME",
   venueId,
-
   awayTeamId,
   homeTeamId,
-
   homeLogo,
   awayLogo,
-
   play,
   plays = [],
   situation,
-
+  state,
   isDark = true,
 }: PlayByPlayProps) {
   const styles = PlayByPlayStyles(isDark);
@@ -492,6 +484,9 @@ function PlayByPlay({
   }, [awayLogo, awayTeamId, homeLogo, homeTeamId, play]);
 
   if (!playInfo) {
+    return null;
+  }
+  if (state === "pre" || state === "post") {
     return null;
   }
 

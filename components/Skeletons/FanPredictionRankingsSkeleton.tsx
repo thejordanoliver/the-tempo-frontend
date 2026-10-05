@@ -30,6 +30,14 @@ export default function FanPredictionRankingsSkeleton({ isDark }: { isDark: bool
                   </View>
                 ))}
               </View>
+              <View style={row.stats}>
+                {[0, 1].map(stat => (
+                  <View key={stat} style={row.stat}>
+                    <SkeletonBlock width="65%" height={26} />
+                    <SkeletonBlock width="80%" height={16} />
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
         </View>

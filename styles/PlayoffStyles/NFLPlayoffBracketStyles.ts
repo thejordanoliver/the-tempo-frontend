@@ -2,14 +2,10 @@ import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
 const CARD_WIDTH = 176;
-const CANVAS_SIDE_PADDING = 12;
+const CANVAS_SIDE_PADDING = 40;
 
 const COL_WIDTH = 220;
 const COL_GAP = 20;
-
-const LOGO_WIDTH = 360;
-const LOGO_HEIGHT = 92;
-const LOGO_TOP = 112;
 
 const COLS = {
   AFC_R1: 0,
@@ -21,8 +17,7 @@ const COLS = {
   NFC_R1: 6,
 } as const;
 
-const getX = (col: number) =>
-  CANVAS_SIDE_PADDING + col * (COL_WIDTH + COL_GAP);
+const getX = (col: number) => CANVAS_SIDE_PADDING + col * (COL_WIDTH + COL_GAP);
 
 const BRACKET_RIGHT_EDGE = getX(COLS.NFC_R1) + CARD_WIDTH;
 
@@ -32,9 +27,8 @@ const CANVAS_HEIGHT = 840;
 
 export const NFLPlayoffBracketStyles = (isDark: boolean) =>
   StyleSheet.create({
-
     container: {
-      paddingHorizontal: 12,
+      paddingHorizontal: CANVAS_SIDE_PADDING,
     },
 
     canvas: {
@@ -42,20 +36,6 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
     },
-
-
-    playoffsLogo: {
-      position: "absolute",
-
-      top: LOGO_TOP,
-      left: CANVAS_WIDTH / 2 - LOGO_WIDTH / 2,
-
-      width: LOGO_WIDTH,
-      height: LOGO_HEIGHT,
-
-      resizeMode: "contain",
-    },
-
 
     cardShell: {
       position: "absolute",
@@ -70,8 +50,6 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
     finalsShell: {
       borderWidth: 1.5,
     },
-
-
     roundHeader: {
       position: "absolute",
       top: 0,
@@ -79,22 +57,18 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
     },
 
     roundTitle: {
-      color: isDark ? Colors.white : Colors.black,
-      fontSize: 16,
+      color: isDark ? Colors.lightGray : Colors.darkGray,
       fontFamily: Fonts.MEDIUM,
-      textTransform: "uppercase",
+      fontSize: 15,
       textAlign: "center",
+      textTransform: "uppercase",
     },
-
 
     sideLabel: {
       position: "absolute",
-
-      top: 300,
-
+      top: 250,
       fontFamily: Fonts.BOLD,
       fontSize: 28,
-
       color: isDark ? Colors.dark.lightRed : Colors.light.red,
     },
 
@@ -104,16 +78,13 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
 
     nfcLabel: {
       right: CANVAS_SIDE_PADDING + 300,
-
       color: isDark ? Colors.dark.blue : Colors.light.blue,
     },
-
 
     teamRow: {
       flexDirection: "row",
       alignItems: "center",
     },
-
 
     seedText: {
       width: 20,
@@ -126,12 +97,10 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
       textAlign: "center",
     },
 
-
     teamLogo: {
       width: 34,
       height: 34,
     },
-
 
     teamCode: {
       flex: 1,
@@ -143,7 +112,6 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
 
       color: isDark ? Colors.white : Colors.black,
     },
-
 
     winsBadge: {
       minWidth: 30,
@@ -173,7 +141,6 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
       textAlign: "center",
     },
 
-
     divider: {
       height: StyleSheet.hairlineWidth,
 
@@ -181,7 +148,6 @@ export const NFLPlayoffBracketStyles = (isDark: boolean) =>
 
       backgroundColor: Colors.midTone,
     },
-
 
     connectorH: {
       position: "absolute",

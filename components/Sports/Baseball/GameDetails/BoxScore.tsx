@@ -1353,7 +1353,7 @@ export default function BoxScore({
   }
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle()}>
+    <ScrollView>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
       <TeamBox

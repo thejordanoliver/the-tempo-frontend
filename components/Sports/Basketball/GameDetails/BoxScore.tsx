@@ -563,16 +563,15 @@ export default function BoxScore({
 
   if (isError) {
     return (
-      <ScrollView contentContainerStyle={navigationContentStyle()}>
+      <ScrollView>
         <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
-
         <Text style={global.errorText}>Failed to load box score.</Text>
       </ScrollView>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={navigationContentStyle()}>
+    <ScrollView>
       <HeadingTwo isDark={isDark}>Box Score</HeadingTwo>
 
       {!hasPlayerStats ? (

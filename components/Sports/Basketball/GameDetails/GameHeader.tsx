@@ -10,7 +10,7 @@ type Props = {
   awayName: string;
   awayLogo: any;
   homeLogo: any;
-  homeRank: number| null;
+  homeRank: number | null;
   awayRank: number | null;
   homeScore: number;
   awayScore: number;
@@ -29,6 +29,7 @@ type Props = {
   broadcast: string | null;
   homeRecord: string;
   awayRecord: string;
+  state: string | null;
   gameStatusDetail: string;
   gameStatusDescription: string | undefined;
   league: string;
@@ -60,6 +61,7 @@ export default function GameHeader({
   broadcast,
   homeRecord,
   awayRecord,
+  state,
   gameStatusDetail,
   gameStatusDescription,
   league = "nba",
@@ -70,7 +72,7 @@ export default function GameHeader({
     <View style={styles.container}>
       {headline && (
         <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText} numberOfLines={2}>
+          <Text style={styles.headlineText} numberOfLines={1}>
             {headline}
           </Text>
         </View>
@@ -88,10 +90,11 @@ export default function GameHeader({
           record={awayRecord}
           isWinner={awayWins}
           timeouts={awayTimeouts}
+          state={state}
           gameStatusDescription={gameStatusDescription}
           isDark={isDark}
-          isHome={false}
           league={league}
+          isHome={false}
         />
 
         {/* Game Info */}
@@ -102,6 +105,7 @@ export default function GameHeader({
           period={period}
           isDark={isDark}
           broadcast={broadcast}
+          state={state}
           gameStatusShortDescription={gameStatusDetail}
           gameStatusDescription={gameStatusDescription}
         />
@@ -116,10 +120,11 @@ export default function GameHeader({
           bonusState={homeBonusState}
           isWinner={homeWins}
           timeouts={homeTimeouts}
+          state={state}
           gameStatusDescription={gameStatusDescription}
           isDark={isDark}
-          isHome={true}
           league={league}
+          isHome={true}
         />
       </View>
     </View>

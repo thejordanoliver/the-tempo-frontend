@@ -20,8 +20,8 @@ import {
   TeamInjuries,
 } from "@/components/Sports/Basketball/GameDetails";
 import { getNBATeam, getNBATeamLogo } from "@/constants/teams";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWCBBTeam, getWCBBTeamLogo } from "@/constants/teamsWCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -231,7 +231,12 @@ export default function GameDetailsScreen(
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "basketball", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+    sport: "basketball",
+    league: LEAGUE,
+    state: score?.status?.state ?? undefined,
+    date: game?.date ?? undefined,
+  });
 
   const homeCoach = homeTeamDetails?.coach;
   const awayCoach = awayTeamDetails?.coach;
@@ -444,7 +449,6 @@ export default function GameDetailsScreen(
         contentContainerStyle={navigationContentStyle(styles.container)}
         onScrollBeginDrag={handleScrollStart}
         onMomentumScrollEnd={handleScrollEnd}
-        onScrollEndDrag={handleScrollEnd}
         stickyHeaderIndices={[0]}
       >
         <GameHeader
@@ -481,6 +485,7 @@ export default function GameDetailsScreen(
           // Status
           gameStatusDescription={gameStatusDescription}
           gameStatusDetail={gameStatusDetail}
+          state={state}
         />
 
         <View style={styles.innerContainer}>

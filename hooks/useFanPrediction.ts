@@ -49,7 +49,7 @@ export function useFanPrediction({
   );
 
   const submittingRef = useRef(false);
-  const canVote = state === "pre" || state === "in";
+  const canVote = state === "pre";
 
   // Restore the saved pick and totals when the game or voting availability changes.
   useEffect(() => {
@@ -81,7 +81,7 @@ export function useFanPrediction({
         setResults(fetchedVotes);
         setUserVote(fetchedUserVote);
 
-        // Hide results until the user picks a team or voting closes.
+        // Reveal results to everyone once pregame voting closes.
         setResultsRevealed(fetchedUserVote != null || !canVote);
 
         setPhase("ready");
@@ -104,7 +104,7 @@ export function useFanPrediction({
       active = false;
       controller.abort();
     };
-  }, [gameId, canVote]);
+  }, [gameId, canVote, state]);
 
   // Keep REST totals until the socket supplies results, avoiding a temporary 0–0.
   const activeVotes = useMemo(() => {
@@ -241,6 +241,10 @@ export function useFanPrediction({
   }, [userVote, awayId, awayCode, homeId, homeCode]);
 
   const subtitle = useMemo(() => {
+    if (state === "in") {
+      return userVote != null && pickedName ? `You picked ${pickedName}` : "";
+    }
+
     if (!canVote) {
       if (userVote != null && pickedName) {
         return `Final results — you picked ${pickedName}`;
@@ -254,7 +258,7 @@ export function useFanPrediction({
     }
 
     return "Tap a team to cast your prediction";
-  }, [canVote, userVote, pickedName]);
+  }, [canVote, userVote, pickedName, state]);
 
   return {
     phase,

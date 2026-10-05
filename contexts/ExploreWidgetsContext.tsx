@@ -69,6 +69,7 @@ type ExploreWidgetsContextValue = {
 };
 
 const WIDGET_DATA_STALE_TIME_MS = 5 * 60 * 1000;
+const WIDGET_DATA_DEADLINE_MS = 30_000;
 
 const ExploreWidgetsContext = createContext<ExploreWidgetsContextValue | null>(
   null,
@@ -265,18 +266,30 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
       const requestIdentity = dataKey;
       const controller = new AbortController();
 
-      if (hasCurrentCache || cache?.response.games.length) {
+      if (forceRefresh) {
         setRefreshing(true);
-      } else {
+      } else if (!hasCurrentCache && !cache?.response.games.length) {
         setLoading(true);
       }
       setError(null);
 
-      const promise = getExploreWidgets({
-        forceRefresh,
-        leagues: requestedLeagues,
-        signal: controller.signal,
-      })
+      let deadline: ReturnType<typeof setTimeout>;
+      // Axios's timeout covers a network attempt, not time spent in auth
+      // interceptors or a token-refresh retry. Bound the whole operation.
+      const timeout = new Promise<never>((_, reject) => {
+        deadline = setTimeout(() => {
+          controller.abort();
+          reject(new Error("Widget refresh timed out. Pull down to try again."));
+        }, WIDGET_DATA_DEADLINE_MS);
+      });
+      const promise = Promise.race([
+        getExploreWidgets({
+          forceRefresh,
+          leagues: requestedLeagues,
+          signal: controller.signal,
+        }),
+        timeout,
+      ])
         .then((response) => {
           if (
             requestGeneration !== requestGenerationRef.current ||
@@ -308,6 +321,7 @@ export function ExploreWidgetsProvider({ children }: { children: ReactNode; }) {
           setError(getErrorMessage(requestError));
         })
         .finally(() => {
+          clearTimeout(deadline);
           if (pendingRequestRef.current?.promise !== promise) return;
 
           pendingRequestRef.current = null;

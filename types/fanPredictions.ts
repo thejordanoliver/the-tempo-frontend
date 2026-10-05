@@ -20,3 +20,18 @@ export type FanPredictionRankingsResponse = {
   rankings: FanPredictionRanking[];
   me: FanPredictionRanking | null;
 };
+
+export type FanPredictionPick = {
+  sport: RankedPredictionContext["sport"];
+  league: string;
+  gameId: string;
+  startsAt: string;
+  pickedName: string;
+  matchup: string;
+  outcome: "pending" | "void" | "correct" | "incorrect";
+};
+
+export type FanPredictionPicksResponse = {
+  record: FanPredictionRanking | null;
+  picks: FanPredictionPick[];
+};

@@ -24,9 +24,7 @@ export default function ForumFeed({
   const isDark = resolvedColorScheme === "dark";
   const setGlobalImage = useImagePreviewStore((state) => state.setImages);
   const clearGlobalImage = useImagePreviewStore((state) => state.clearImages);
-  const [alertConfig, setAlertConfig] = useState<ForumAlertConfig | null>(
-    null,
-  );
+  const [alertConfig, setAlertConfig] = useState<ForumAlertConfig | null>(null);
 
   const {
     posts,
@@ -55,46 +53,48 @@ export default function ForumFeed({
 
   const closeAlert = useCallback(() => setAlertConfig(null), []);
 
-  const handleDeletePost = useCallback(
-    async (postId: string) => {
+  const runPostAction = useCallback(
+    async (
+      action: () => Promise<void>,
+      title: string,
+      message: string,
+      errorMessage: string,
+    ) => {
       try {
-        await deletePost(postId);
-        setAlertConfig({
-          title: "Deleted",
-          message: "Post deleted.",
-          confirmText: "OK",
-        });
+        await action();
+        setAlertConfig({ title, message, confirmText: "OK" });
       } catch {
         setAlertConfig({
           title: "Error",
-          message: "Failed to delete post.",
+          message: errorMessage,
           confirmText: "OK",
           variant: "danger",
         });
       }
     },
-    [deletePost],
+    [],
+  );
+
+  const handleDeletePost = useCallback(
+    (postId: string) =>
+      runPostAction(
+        () => deletePost(postId),
+        "Deleted",
+        "Post deleted.",
+        "Failed to delete post.",
+      ),
+    [deletePost, runPostAction],
   );
 
   const handleEditPost = useCallback(
-    async (postId: string, text: string) => {
-      try {
-        await editPost(postId, text);
-        setAlertConfig({
-          title: "Updated",
-          message: "Post updated.",
-          confirmText: "OK",
-        });
-      } catch {
-        setAlertConfig({
-          title: "Error",
-          message: "Failed to update post.",
-          confirmText: "OK",
-          variant: "danger",
-        });
-      }
-    },
-    [editPost],
+    (postId: string, text: string) =>
+      runPostAction(
+        () => editPost(postId, text),
+        "Updated",
+        "Post updated.",
+        "Failed to update post.",
+      ),
+    [editPost, runPostAction],
   );
 
   const handleCreatePost = useCallback(() => {

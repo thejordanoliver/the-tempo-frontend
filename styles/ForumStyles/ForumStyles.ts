@@ -1,10 +1,16 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet } from "react-native";
 
-export function ForumStyles(isDark: boolean, bottomInset: number, showCreateButton: boolean) {
+export function ForumStyles(
+  isDark: boolean,
+  bottomInset: number,
+  showCreateButton: boolean,
+) {
+  
   const bottomSpacing = showCreateButton
-    ? Math.max(120, bottomInset + 16) + 64 + 24
+    ? Math.max(120, bottomInset + 16) + 88
     : bottomInset + 24;
+  const foregroundColor = isDark ? Colors.white : Colors.black;
 
   return StyleSheet.create({
     scrollContainer: {
@@ -27,7 +33,7 @@ export function ForumStyles(isDark: boolean, bottomInset: number, showCreateButt
       paddingHorizontal: 18,
       paddingVertical: 9,
       borderWidth: 1,
-      borderColor: isDark ? Colors.white : Colors.black,
+      borderColor: foregroundColor,
       borderRadius: 8,
     },
     loadMoreButton: {
@@ -39,7 +45,7 @@ export function ForumStyles(isDark: boolean, bottomInset: number, showCreateButt
     actionButtonText: {
       fontFamily: Fonts.BOLD,
       fontSize: 14,
-      color: isDark ? Colors.white : Colors.black,
+      color: foregroundColor,
     },
   });
 }

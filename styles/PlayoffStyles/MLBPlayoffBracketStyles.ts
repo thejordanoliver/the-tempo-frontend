@@ -1,16 +1,16 @@
 import { Colors, Fonts } from "constants/styles";
 import { StyleSheet, type ViewStyle } from "react-native";
+import { BYE_CARD_HEIGHT } from "./ByeTeamCardStyles";
+import { ROUND_HEADER_HEIGHT } from "components/Sports/Playoffs/RoundHeader";
 
 export const MLB_BRACKET_COLUMN_WIDTH = 176;
 
-const ROUND_HEADER_HEIGHT = 32;
 const ROUND_HEADER_GAP = 14;
 const MATCHUP_HEIGHT = 142;
 const MATCHUP_ROW_GAP = 150;
-const COLUMN_GAP = 18;
+const COLUMN_GAP = 80;
 const SECOND_MATCHUP_TOP = MATCHUP_HEIGHT + MATCHUP_ROW_GAP;
 const CHAMPIONSHIP_TOP = SECOND_MATCHUP_TOP / 2;
-const BYE_CARD_HEIGHT = 58;
 const BYE_CARD_TOP = 0;
 const WILD_CARD_TOP = BYE_CARD_HEIGHT + 24;
 const ROUND_BODY_HEIGHT = SECOND_MATCHUP_TOP + WILD_CARD_TOP + MATCHUP_HEIGHT;
@@ -152,24 +152,6 @@ export const MLBPlayoffBracketStyles = (isDark: boolean) =>
     seriesLabel: {
       color: Colors.midTone,
       fontFamily: Fonts.REGULAR,
-      fontSize: 12,
-    },
-    byeCard: {
-      height: BYE_CARD_HEIGHT,
-      flexDirection: "row",
-      alignItems: "center",
-      paddingHorizontal: 12,
-      borderRadius: 16,
-      borderWidth: 1,
-      borderColor: isDark ? Colors.darkGray : Colors.lightGray,
-      backgroundColor: isDark
-        ? Colors.dark.itemBackground
-        : Colors.light.itemBackground,
-      elevation: 5,
-    },
-    byeLabel: {
-      color: Colors.midTone,
-      fontFamily: Fonts.MEDIUM,
       fontSize: 12,
     },
     teamRow: {

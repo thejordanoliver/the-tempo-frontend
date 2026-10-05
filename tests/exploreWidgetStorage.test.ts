@@ -6,6 +6,15 @@ import {
   serializeExploreWidgets,
 } from "../utils/exploreWidgetStorage";
 
+test("preserves My Picks widgets in all sizes", () => {
+  for (const size of ["small", "medium", "large"] as const) {
+    const widgets = normalizeStoredWidgets([{ id: "my-picks", type: "my_picks", title: "My Picks", createdAt: 1, size, order: 0 }]);
+    assert.equal(widgets[0]?.type, "my_picks");
+    assert.equal(widgets[0]?.size, size);
+    assert.deepEqual(normalizeStoredWidgets(JSON.parse(serializeExploreWidgets(widgets))), widgets);
+  }
+});
+
 test("migrates legacy league game widgets into one Favorite Games widget", () => {
   const widgets = normalizeStoredWidgets([
     {

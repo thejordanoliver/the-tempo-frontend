@@ -37,9 +37,9 @@ export function CenterInfo({
 }: CenterInfoProps) {
   const styles = gameInfoStyles(isDark);
 
-  const isScheduled = gameStatusDescription === "Scheduled";
+  const isScheduled = state === "pre";
+  const isFinal = state === "post";
   const inProgress = gameStatusDescription === "In Progress";
-  const isFinal = gameStatusDescription === "Final";
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
@@ -59,107 +59,103 @@ export function CenterInfo({
     />
   ));
 
-  const renderStatus = () => {
-    return (
-      <View style={styles.container}>
-        {/* ⚾ Scheduled */}
-        {isScheduled && (
+  return (
+    <View style={styles.container}>
+      {/* ⚾ Scheduled */}
+      {isScheduled && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.date}>{date}</Text>
+          <View style={styles.statusDivider} />
+          <Text style={styles.date}>{time}</Text>
+        </View>
+      )}
+
+      {/* 🕒 In Progress */}
+      {inProgress && !isDelayed && !endOfInning && (
+        <View>
           <View style={styles.infoWrapper}>
-            <Text style={styles.date}>{date}</Text>
+            {isTopInning && (
+              <Ionicons
+                name={"caret-up"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
+            {isBottomInning && (
+              <Ionicons
+                name={"caret-down"}
+                size={10}
+                color={isDark ? Colors.white : Colors.black}
+              />
+            )}
+            <Text style={styles.date}>{gameStatusDetail}</Text>
+
             <View style={styles.statusDivider} />
-            <Text style={styles.date}>{time}</Text>
+            <View style={styles.outsContainer}>{getOuts}</View>
           </View>
-        )}
-
-        {/* 🕒 In Progress */}
-        {inProgress && !isDelayed && !endOfInning && (
-          <View>
-            <View style={styles.infoWrapper}>
-              {isTopInning && (
-                <Ionicons
-                  name={"caret-up"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
-              {isBottomInning && (
-                <Ionicons
-                  name={"caret-down"}
-                  size={10}
-                  color={isDark ? Colors.white : Colors.black}
-                />
-              )}
-              <Text style={styles.date}>{gameStatusDetail}</Text>
-
-              <View style={styles.statusDivider} />
-              <View style={styles.outsContainer}>{getOuts}</View>
-            </View>
-            <View style={styles.basesContainer}>
-              <BasesIndicator size={8} bases={bases} isDark={isDark} />
-            </View>
+          <View style={styles.basesContainer}>
+            <BasesIndicator size={8} bases={bases} isDark={isDark} />
           </View>
-        )}
+        </View>
+      )}
 
-        {/* 🕒 In Progress */}
-        {endOfInning && (
-          <View>
-            <View style={styles.infoWrapper}>
-              <Text style={styles.finalText}>{gameStatusDetail}</Text>
-            </View>
-          </View>
-        )}
-
-        {/* 🏁 Final */}
-        {isFinal && (
+      {/* 🕒 In Progress */}
+      {endOfInning && (
+        <View>
           <View style={styles.infoWrapper}>
             <Text style={styles.finalText}>{gameStatusDetail}</Text>
-            <View style={styles.finalStatusDivider} />
-            <Text style={styles.finalText}>{date}</Text>
           </View>
-        )}
+        </View>
+      )}
 
-        {/* ❌ Canceled */}
-        {isCanceled && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Canceled</Text>
-          </View>
-        )}
+      {/* 🏁 Final */}
+      {isFinal && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>{gameStatusDetail}</Text>
+          <View style={styles.finalStatusDivider} />
+          <Text style={styles.finalText}>{date}</Text>
+        </View>
+      )}
 
-        {/* ❌ Forfeited */}
-        {isForfeited && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Forfeited</Text>
-          </View>
-        )}
+      {/* ❌ Canceled */}
+      {isCanceled && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Canceled</Text>
+        </View>
+      )}
 
-        {/* ⏸️ Suspended */}
-        {isSuspended && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Suspended</Text>
-          </View>
-        )}
+      {/* ❌ Forfeited */}
+      {isForfeited && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Forfeited</Text>
+        </View>
+      )}
 
-        {/* ⏸️ Postponed */}
-        {isPostponed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Postponed</Text>
-          </View>
-        )}
+      {/* ⏸️ Suspended */}
+      {isSuspended && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Suspended</Text>
+        </View>
+      )}
 
-        {/* ⏸️ Delayed */}
-        {isDelayed && (
-          <View style={styles.infoWrapper}>
-            <Text style={styles.finalText}>Delayed</Text>
-          </View>
-        )}
+      {/* ⏸️ Postponed */}
+      {isPostponed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Postponed</Text>
+        </View>
+      )}
 
-        {/* 📺 Broadcast */}
-        {!isFinal && broadcast && (
-          <Text style={styles.broadcasts}>{broadcast}</Text>
-        )}
-      </View>
-    );
-  };
+      {/* ⏸️ Delayed */}
+      {isDelayed && (
+        <View style={styles.infoWrapper}>
+          <Text style={styles.finalText}>Delayed</Text>
+        </View>
+      )}
 
-  return <View>{renderStatus()}</View>;
+      {/* 📺 Broadcast */}
+      {!isFinal && broadcast && (
+        <Text style={styles.broadcasts}>{broadcast}</Text>
+      )}
+    </View>
+  );
 }

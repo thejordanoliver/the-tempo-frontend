@@ -1,5 +1,4 @@
 import GameHeader from "@/components/Sports/Soccer/GameDetails/GameHeader";
-import GameTeamStats from "@/components/Sports/Soccer/GameDetails/GameTeamStats";
 import SoccerShotMap from "@/components/Sports/Soccer/GameDetails/SoccerField";
 import SoccerKeyEvents from "@/components/Sports/Soccer/GameDetails/SoccerKeyEvents";
 import { getSOCCTeam, getSOCCTeamLogo } from "@/constants/teamsSOCC";
@@ -22,6 +21,7 @@ import {
   FanPrediction,
   GameLiveChatOverlay,
   GameLocation,
+  GameTeamStats,
   Highlights,
   LastFiveGames,
   LineScore,
@@ -109,7 +109,7 @@ export default function GameDetailsScreen(
     return game?.date ? new Date(game.date) : null;
   }, [game]);
 
-  const LEAGUE = game?.league?.code ?? "epl";
+  const LEAGUE = game?.league?.code ?? "soccer";
   const gameId = game?.id ?? 0;
 
   const { details, score } = useSoccerGameDetails(LEAGUE, gameId);
@@ -163,7 +163,12 @@ export default function GameDetailsScreen(
   const homeHeaderLogo = getSOCCTeamLogo(homeId, true);
   const awayHeaderLogo = getSOCCTeamLogo(awayId, true);
 
-  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, { sport: "soccer", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const { votes: liveVotes, castVote: castLiveVote } = useLiveVotes(gameId, {
+    sport: "soccer",
+    league: LEAGUE,
+    state: score?.status?.state ?? undefined,
+    date: game?.date ?? undefined,
+  });
   const homeLastGames = useLastFiveGames(homeId, "soccer", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "soccer", LEAGUE).games;
 
@@ -342,7 +347,7 @@ export default function GameDetailsScreen(
               awayCode={awayCode}
               isDark={isDark}
               state={state}
-              league={"soccer"}
+              league={LEAGUE}
             />
 
             <FanPrediction
@@ -388,6 +393,7 @@ export default function GameDetailsScreen(
               homeColor={homeColor}
               isDark={isDark}
               state={state}
+              league={LEAGUE}
             />
 
             <SoccerShotMap

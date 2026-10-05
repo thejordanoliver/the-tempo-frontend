@@ -397,7 +397,7 @@ function NFLLeagueScreen() {
           </View>
 
           <View key="awards" style={styles.contentArea}>
-            {hasVisitedTab("awards") ? <AwardSeasons league="NFL" /> : null}
+            {hasVisitedTab("awards") ? <AwardSeasons league="nfl" /> : null}
           </View>
 
           <View key="forum" style={styles.contentArea}>

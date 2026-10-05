@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { RoundHeader } from "components/Sports/Playoffs/RoundHeader";
 import { getMLBBracketLayoutStyles, MLBPlayoffBracketStyles } from "styles/PlayoffStyles/MLBPlayoffBracketStyles";
 import type { MLBPlayoffBracketResponse } from "types/baseball/baseball";
 import { findSeries, seededMatchup, lowestKnownSeed, type Matchup } from "./mlbBracketUtils";
@@ -68,9 +69,7 @@ export function LeagueBracket({
         <BracketConnectors league={league} matchups={wildCardMatchups} isDark={isDark} />
         {orderedColumns.map((column) => (
           <View key={column.title} style={styles.column}>
-            <View style={styles.roundHeader}>
-              <Text style={styles.roundTitle}>{column.title}</Text>
-            </View>
+            <RoundHeader title={column.title} isDark={isDark} />
             <View style={styles.matchups}>
               {column.matchups.map((matchup, index) => {
                 const positions = getMLBBracketLayoutStyles(league, index);
@@ -112,4 +111,3 @@ export function LeagueBracket({
     </View>
   );
 }
-

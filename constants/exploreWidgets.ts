@@ -40,6 +40,15 @@ export const EXPLORE_WIDGET_REGISTRY: Record<
   ExploreWidgetType,
   ExploreWidgetRegistryEntry
 > = {
+  my_picks: {
+    title: "My Picks",
+    description: "Your prediction record and recent picks with results.",
+    badge: "Predictions",
+    icon: "checkmark-circle-outline",
+    defaultSize: "medium",
+    sizes: EXPLORE_WIDGET_SIZES,
+    emptyCopy: "Pick a winner before a game starts to track your predictions here.",
+  },
   favorite_games: {
     title: "Favorite Games",
     description: "Combine all favorite-team games into one slider.",

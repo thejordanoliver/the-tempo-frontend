@@ -35,8 +35,8 @@ type GameHeaderProps = {
   gameStatusShortDetail: string;
   gameStatusDescription: string;
   league: string;
-  isCFB: boolean;
   redzone: boolean | undefined;
+  isCFB: boolean;
 };
 
 export default function GameHeader({
@@ -48,43 +48,43 @@ export default function GameHeader({
   awayName,
   homeRank,
   awayRank,
-  homeWins,
-  awayWins,
-  isTie,
   homeScore,
   awayScore,
-  awayPossession,
-  homePossession,
   homeTimeouts = 0,
   awayTimeouts = 0,
+  awayPossession,
+  homePossession,
   period,
   clock,
   downDistance,
+  homeWins,
+  awayWins,
+  isTie,
   isDark,
   homeRecord,
   awayRecord,
-  broadcast = "",
   date = "",
   time = "",
+  broadcast,
   headline,
   state,
   gameStatusShortDetail,
   gameStatusDescription,
   league,
-  isCFB = false,
   redzone = false,
+  isCFB,
 }: GameHeaderProps) {
   const styles = gameHeaderStyles(isDark);
 
   return (
     <View style={styles.container}>
-      {headline ? (
+      {headline && (
         <View style={styles.headlineContainer}>
-          <Text style={styles.headlineText} numberOfLines={2}>
+          <Text style={styles.headlineText} numberOfLines={1}>
             {headline}
           </Text>
         </View>
-      ) : null}
+      )}
       <View style={styles.teamsContainer}>
         <TeamRow
           id={awayId}

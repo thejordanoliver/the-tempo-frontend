@@ -1,15 +1,15 @@
+import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import {
   GameLocation,
+  GameTeamStats,
   LastFiveGames,
   LineScore,
   Officials,
-} from "@/components/Sports/Basketball/GameDetails";
-import { GamePreviewModalStyles } from "@/styles/ModalsStyles/GamePreviewModalStyles";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+} from "components/Sports/Basketball/GameDetails";
 import React from "react";
 import { View } from "react-native";
 import { LastFiveGame } from "../../Basketball/GameDetails/LastFiveGames";
-import GameTeamStats from "../GameDetails/GameTeamStats";
 
 type GamePreviewContentProps = {
   homeId: any;

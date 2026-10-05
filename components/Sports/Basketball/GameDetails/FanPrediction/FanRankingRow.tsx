@@ -18,6 +18,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const colors = isDark ? Colors.dark : Colors.light;
   const accuracy = entry.accuracy == null ? "—" : `${entry.accuracy}%`;
+  const incorrect = Math.max(0, entry.graded - entry.correct);
   const rankBadge = entry.rank === 1 ? styles.goldBadge
     : entry.rank === 2 ? styles.silverBadge
       : entry.rank === 3 ? styles.bronzeBadge : null;
@@ -26,7 +27,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${entry.username}${isCurrentUser ? ", your record" : ""}, rank ${entry.rank ?? "unranked"}, ${entry.correct} correct picks, ${entry.accuracy == null ? "no scored accuracy yet" : `${accuracy} accuracy`}, ${entry.graded} scored, ${entry.pending} pending`}
+      accessibilityLabel={`${entry.username}${isCurrentUser ? ", your record" : ""}, rank ${entry.rank ?? "unranked"}, ${entry.correct} correct picks, ${incorrect} incorrect picks, ${entry.accuracy == null ? "no scored accuracy yet" : `${accuracy} accuracy`}, ${entry.graded} scored, ${entry.pending} pending`}
       style={({ pressed }) => [
         styles.row,
         isCurrentUser && styles.currentUser,
@@ -56,8 +57,8 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
 
         <View style={styles.stats}>
           <View style={styles.stat}>
-            <Text style={styles.statValue}>{entry.correct.toLocaleString()}</Text>
-            <Text style={styles.statLabel}>Correct</Text>
+            <Text style={styles.statValue}>{entry.correct.toLocaleString()}/{(entry.graded + entry.pending).toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Correct/Total picks</Text>
           </View>
           <View style={styles.stat}>
             <Text style={styles.statValue}>{accuracy}</Text>
@@ -69,11 +70,16 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
           </View>
         </View>
 
-        {entry.pending > 0 ? (
-          <Text style={styles.pending}>
-            {entry.pending.toLocaleString()} {entry.pending === 1 ? "pick awaiting a result" : "picks awaiting results"}
-          </Text>
-        ) : null}
+        <View style={styles.stats}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{entry.pending.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Pending</Text>
+          </View>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{(entry.graded + entry.pending).toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Total picks</Text>
+          </View>
+        </View>
       </View>
     </Pressable>
   );
