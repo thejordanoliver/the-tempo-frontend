@@ -754,3 +754,343 @@ export function getNFLTeamLogo(
 export const getNFLTeamByESPNId = (espnId: number | string) => {
   return nflTeams.find((t) => t.espnId?.toString() === espnId?.toString());
 };
+
+export type NFLRivalryGroup = "division" | "national";
+export type NFLRivalry = {
+  id: string;
+  name: string;
+  teamIds: readonly [number, number];
+  group: NFLRivalryGroup;
+};
+
+export const NFL_RIVALRIES = [
+  {
+    id: "packers-bears",
+    name: "Packers–Bears",
+    teamIds: [15, 16],
+    group: "division",
+  },
+  {
+    id: "packers-vikings",
+    name: "Packers–Vikings",
+    teamIds: [15, 32],
+    group: "division",
+  },
+  {
+    id: "bears-lions",
+    name: "Bears–Lions",
+    teamIds: [16, 7],
+    group: "division",
+  },
+  {
+    id: "bears-vikings",
+    name: "Bears–Vikings",
+    teamIds: [16, 32],
+    group: "division",
+  },
+  {
+    id: "packers-lions",
+    name: "Packers–Lions",
+    teamIds: [15, 7],
+    group: "division",
+  },
+  {
+    id: "lions-vikings",
+    name: "Lions–Vikings",
+    teamIds: [7, 32],
+    group: "division",
+  },
+  {
+    id: "steelers-ravens",
+    name: "Steelers–Ravens",
+    teamIds: [22, 5],
+    group: "division",
+  },
+  {
+    id: "steelers-browns",
+    name: "Steelers–Browns",
+    teamIds: [22, 9],
+    group: "division",
+  },
+  {
+    id: "steelers-bengals",
+    name: "Steelers–Bengals",
+    teamIds: [22, 10],
+    group: "division",
+  },
+  {
+    id: "bengals-browns",
+    name: "Battle of Ohio",
+    teamIds: [10, 9],
+    group: "division",
+  },
+  {
+    id: "ravens-bengals",
+    name: "Ravens–Bengals",
+    teamIds: [5, 10],
+    group: "division",
+  },
+  {
+    id: "ravens-browns",
+    name: "Ravens–Browns",
+    teamIds: [5, 9],
+    group: "division",
+  },
+  {
+    id: "cowboys-eagles",
+    name: "Cowboys–Eagles",
+    teamIds: [29, 12],
+    group: "division",
+  },
+  {
+    id: "cowboys-commanders",
+    name: "Cowboys–Commanders",
+    teamIds: [29, 18],
+    group: "division",
+  },
+  {
+    id: "cowboys-giants",
+    name: "Cowboys–Giants",
+    teamIds: [29, 4],
+    group: "division",
+  },
+  {
+    id: "eagles-giants",
+    name: "Eagles–Giants",
+    teamIds: [12, 4],
+    group: "division",
+  },
+  {
+    id: "eagles-commanders",
+    name: "Eagles–Commanders",
+    teamIds: [12, 18],
+    group: "division",
+  },
+  {
+    id: "giants-commanders",
+    name: "Giants–Commanders",
+    teamIds: [4, 18],
+    group: "division",
+  },
+  {
+    id: "chiefs-raiders",
+    name: "Chiefs–Raiders",
+    teamIds: [17, 1],
+    group: "division",
+  },
+  {
+    id: "chiefs-broncos",
+    name: "Chiefs–Broncos",
+    teamIds: [17, 28],
+    group: "division",
+  },
+  {
+    id: "raiders-broncos",
+    name: "Raiders–Broncos",
+    teamIds: [1, 28],
+    group: "division",
+  },
+  {
+    id: "raiders-chargers",
+    name: "Raiders–Chargers",
+    teamIds: [1, 30],
+    group: "division",
+  },
+  {
+    id: "chiefs-chargers",
+    name: "Chiefs–Chargers",
+    teamIds: [17, 30],
+    group: "division",
+  },
+  {
+    id: "broncos-chargers",
+    name: "Broncos–Chargers",
+    teamIds: [28, 30],
+    group: "division",
+  },
+  {
+    id: "patriots-jets",
+    name: "Patriots–Jets",
+    teamIds: [3, 13],
+    group: "division",
+  },
+  {
+    id: "bills-dolphins",
+    name: "Bills–Dolphins",
+    teamIds: [20, 25],
+    group: "division",
+  },
+  {
+    id: "patriots-bills",
+    name: "Patriots–Bills",
+    teamIds: [3, 20],
+    group: "division",
+  },
+  {
+    id: "patriots-dolphins",
+    name: "Patriots–Dolphins",
+    teamIds: [3, 25],
+    group: "division",
+  },
+  {
+    id: "jets-dolphins",
+    name: "Jets–Dolphins",
+    teamIds: [13, 25],
+    group: "division",
+  },
+  {
+    id: "bills-jets",
+    name: "Bills–Jets",
+    teamIds: [20, 13],
+    group: "division",
+  },
+  {
+    id: "saints-falcons",
+    name: "Saints–Falcons",
+    teamIds: [27, 8],
+    group: "division",
+  },
+  {
+    id: "saints-buccaneers",
+    name: "Saints–Buccaneers",
+    teamIds: [27, 24],
+    group: "division",
+  },
+  {
+    id: "saints-panthers",
+    name: "Saints–Panthers",
+    teamIds: [27, 19],
+    group: "division",
+  },
+  {
+    id: "falcons-panthers",
+    name: "Falcons–Panthers",
+    teamIds: [8, 19],
+    group: "division",
+  },
+  {
+    id: "falcons-buccaneers",
+    name: "Falcons–Buccaneers",
+    teamIds: [8, 24],
+    group: "division",
+  },
+  {
+    id: "panthers-buccaneers",
+    name: "Panthers–Buccaneers",
+    teamIds: [19, 24],
+    group: "division",
+  },
+  {
+    id: "49ers-seahawks",
+    name: "49ers–Seahawks",
+    teamIds: [14, 23],
+    group: "division",
+  },
+  {
+    id: "49ers-rams",
+    name: "49ers–Rams",
+    teamIds: [14, 31],
+    group: "division",
+  },
+  {
+    id: "49ers-cardinals",
+    name: "49ers–Cardinals",
+    teamIds: [14, 11],
+    group: "division",
+  },
+  {
+    id: "rams-seahawks",
+    name: "Rams–Seahawks",
+    teamIds: [31, 23],
+    group: "division",
+  },
+  {
+    id: "rams-cardinals",
+    name: "Rams–Cardinals",
+    teamIds: [31, 11],
+    group: "division",
+  },
+  {
+    id: "seahawks-cardinals",
+    name: "Seahawks–Cardinals",
+    teamIds: [23, 11],
+    group: "division",
+  },
+  {
+    id: "texans-titans",
+    name: "Texans–Titans",
+    teamIds: [26, 6],
+    group: "division",
+  },
+  {
+    id: "colts-titans",
+    name: "Colts–Titans",
+    teamIds: [21, 6],
+    group: "division",
+  },
+  {
+    id: "colts-texans",
+    name: "Colts–Texans",
+    teamIds: [21, 26],
+    group: "division",
+  },
+  {
+    id: "colts-jaguars",
+    name: "Colts–Jaguars",
+    teamIds: [21, 2],
+    group: "division",
+  },
+  {
+    id: "jaguars-titans",
+    name: "Jaguars–Titans",
+    teamIds: [2, 6],
+    group: "division",
+  },
+  {
+    id: "jaguars-texans",
+    name: "Jaguars–Texans",
+    teamIds: [2, 26],
+    group: "division",
+  },
+  {
+    id: "cowboys-49ers",
+    name: "Cowboys–49ers",
+    teamIds: [29, 14],
+    group: "national",
+  },
+  {
+    id: "patriots-colts",
+    name: "Patriots–Colts",
+    teamIds: [3, 21],
+    group: "national",
+  },
+] as const satisfies readonly NFLRivalry[];
+
+function createRivalryKey(teamA: number, teamB: number): string {
+  return teamA < teamB ? `${teamA}:${teamB}` : `${teamB}:${teamA}`;
+}
+
+const NFL_RIVALRY_MAP = new Map<string, NFLRivalry>(
+  NFL_RIVALRIES.map((rivalry) => [
+    createRivalryKey(rivalry.teamIds[0], rivalry.teamIds[1]),
+    rivalry,
+  ]),
+);
+
+export function getNFLRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): NFLRivalry | undefined {
+  if (homeTeamId == null || awayTeamId == null) return undefined;
+  const homeId = Number(homeTeamId);
+  const awayId = Number(awayTeamId);
+  if (!Number.isFinite(homeId) || !Number.isFinite(awayId)) return undefined;
+  return NFL_RIVALRY_MAP.get(createRivalryKey(homeId, awayId));
+}
+
+export function isNFLRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): boolean {
+  return getNFLRivalry(homeTeamId, awayTeamId) !== undefined;
+}

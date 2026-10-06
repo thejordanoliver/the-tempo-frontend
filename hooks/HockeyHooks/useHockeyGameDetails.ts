@@ -145,12 +145,12 @@ export type TeamStat = {
   displayValue: string;
 };
 
-export type GameTeamStatsGroup = {
+export type TeamStatsGroup = {
   team: StatsTeam;
   stats: TeamStat[];
 };
 
-export type GameTeamStats = GameTeamStatsGroup[];
+export type TeamStats = TeamStatsGroup[];
 
 /* ---------------------------------- */
 /* Play participant types             */
@@ -293,7 +293,7 @@ export type Score = {
   away: Team;
   plays: Play[];
   lastPlay: Play;
-  GameTeamStats: GameTeamStats;
+  teamStats: TeamStats;
   playerStats: PlayerStats;
   leaders: Leaders[];
 };

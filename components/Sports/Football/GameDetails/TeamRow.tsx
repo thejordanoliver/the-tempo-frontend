@@ -1,12 +1,12 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
 import { Colors } from "constants/styles";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Image, Pressable, Text, View } from "react-native";
 import {
   FootballProps,
   TeamRowStyles,
 } from "styles/GameDetailStyles/TeamRow.styles";
-import Football from "../../../../assets/icons8/Football.png";
-import FootballLight from "../../../../assets/icons8/FootballLight.png";
+import Football from "../../../../assets/icons/Football.png";
+import FootballLight from "../../../../assets/icons/FootballLight.png";
 
 export const TeamRow = ({
   id,

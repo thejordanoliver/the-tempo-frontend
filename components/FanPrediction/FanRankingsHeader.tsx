@@ -15,7 +15,7 @@ type Props = {
 };
 
 const RANKING_RULES = [
-  "Pick a winner before the game starts. Each correct pregame pick earns one point, or two for playoffs, championships, tournament knockout rounds, or matchups with both teams ranked.",
+  "Pick a winner before the game starts. Each correct pregame pick earns one point, or two for rivalry games, playoffs, championships, tournament knockout rounds, or matchups with both teams ranked.",
   "Picks close when the game goes live. Team pick percentages and your selected team remain visible.",
   "Fans with the same number of points share a rank. Accuracy is based on scored picks only.",
   "Draws, canceled games, and fights without a winner don’t affect accuracy.",

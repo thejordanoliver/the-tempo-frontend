@@ -9,11 +9,11 @@ export const editProfileSchema = z.object({
     .trim()
     .min(
       1,
-      `Full name must be 1-${EDIT_PROFILE_FULL_NAME_MAX_LENGTH} characters`,
+      `Display name must be 1-${EDIT_PROFILE_FULL_NAME_MAX_LENGTH} characters`,
     )
     .max(
       EDIT_PROFILE_FULL_NAME_MAX_LENGTH,
-      `Full name must be 1-${EDIT_PROFILE_FULL_NAME_MAX_LENGTH} characters`,
+      `Display name must be 1-${EDIT_PROFILE_FULL_NAME_MAX_LENGTH} characters`,
     ),
   bio: z
     .string()

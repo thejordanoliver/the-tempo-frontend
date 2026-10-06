@@ -544,6 +544,5 @@ export const DriverRowStyles = (isDark: boolean, _isTie?: boolean) =>
       fontFamily: Fonts.REGULAR,
       fontSize: 12,
       color: isDark ? Colors.lightGray : Colors.darkGray,
-      textAlign: "center",
     },
   });

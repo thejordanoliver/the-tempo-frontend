@@ -1,7 +1,7 @@
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { FootballGame } from "@/types/football/football";
-import Football from "assets/icons8/Football.png";
-import FootballLight from "assets/icons8/FootballLight.png";
+import Football from "assets/icons/Football.png";
+import FootballLight from "assets/icons/FootballLight.png";
 import { activeOpacity, Colors } from "constants/styles";
 import { getCFBTeam, getCFBTeamLogo } from "constants/teamsCFB";
 import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";

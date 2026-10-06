@@ -30,7 +30,7 @@ export function getTabGroup(segments: readonly string[]): TabGroup | null {
 }
 
 const TAB_ROUTE_FAMILIES = new Set([
-  "badges", "fan-prediction-rankings", "create-post", "edit-favorites", "edit-profile", "followers",
+  "badges", "fan-prediction-rankings", "fan-prediction-picks", "create-post", "edit-favorites", "edit-profile", "followers",
   "game", "league", "messages", "news", "notification-center", "player",
   "post", "recruit", "season-leaders", "settings", "team", "user",
 ]);

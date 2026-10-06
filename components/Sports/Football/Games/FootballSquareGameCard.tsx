@@ -1,5 +1,8 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getCFBRivalry, getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  getCFBRivalry,
+  getCFBTeam,
+  getCFBTeamLogo,
+} from "@/constants/teamsCFB";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { FootballGameCardProps } from "@/types/football/football";
 import { Colors, activeOpacity } from "constants/styles";
@@ -7,6 +10,7 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { memo } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import {
@@ -16,8 +20,8 @@ import {
   safeDate,
 } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
-import Football from "../../../../assets/icons8/Football.png";
-import FootballLight from "../../../../assets/icons8/FootballLight.png";
+import Football from "../../../../assets/icons/Football.png";
+import FootballLight from "../../../../assets/icons/FootballLight.png";
 
 function FootballSquareGameCard({
   game,

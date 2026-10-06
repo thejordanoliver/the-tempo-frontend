@@ -12,6 +12,9 @@ export const Colors = {
     text: "#1d1d1d",
     transparentText: "#1d1d1d50",
 
+    gray: "#aaaaaa",
+    transparentGray: "#aaaaaa88",
+
     itemBackground: "#eee",
     transparentItemBackground: "#eeeeee50",
 
@@ -59,6 +62,9 @@ export const Colors = {
   dark: {
     text: "#fff",
     transparentText: "#ffffff50",
+
+    gray: "#555555",
+    transparentGray: "#55555588",
 
     lightRed: "#ff4444",
     transparentLightRed: "#ff444450",

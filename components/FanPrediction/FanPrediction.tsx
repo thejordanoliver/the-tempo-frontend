@@ -61,7 +61,7 @@ function FanPredictionContent(props: Props) {
   const isLive = state === "in";
   const voteDisabled = (canVote && !scoring) || !canVote || userVote != null || submittingTeamId != null;
 
-  if (phase === "loading") {
+  if (phase === "loading" || (phase === "ready" && canVote && !scoring && !scoringError)) {
     return <FanPredictionSkeleton isDark={isDark} isLive={isLive} />;
   }
 
@@ -83,7 +83,7 @@ function FanPredictionContent(props: Props) {
           {scoring ? (
             <Text style={scoring.pointsValue === 2 ? styles.bonusBadge : styles.subtitle}>
               {scoring.pointsValue === 2
-                ? `2× points · ${{ ranked: "Both teams ranked", playoff: "Playoff game", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
+                ? `2× points · ${{ rivalry: "Rivalry game", ranked: "Both teams ranked", playoff: "Playoff game", championship: "Championship", knockout: "Tournament knockout" }[scoring.bonusReason!]}`
                 : "1 point for a correct pick"}
             </Text>
           ) : scoringError ? (

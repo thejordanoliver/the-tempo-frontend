@@ -1,10 +1,10 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { CustomHeader } from "@/components/CustomHeader";
 import BoxScore from "@/components/Sports/Football/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Football/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Football/GameDetails/PlayByPlay/PlayByPlay";
-import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
 import ScoringSummary from "@/components/Sports/Football/GameDetails/ScoringSummary";
+import TeamDrives from "@/components/Sports/Football/GameDetails/TeamDrives";
+import { Colors } from "@/constants/styles";
 import {
   getCFBRivalry,
   getCFBTeam,
@@ -27,9 +27,9 @@ import { isGameFinalStatus } from "@/utils/gameStatus";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import {
   FanPrediction,
-  GameTeamStats,
   GameLiveChatOverlay,
   GameLocation,
+  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -43,6 +43,7 @@ import { getNFLTeam, getNFLTeamLogo } from "constants/teamsNFL";
 import { usePreferences } from "contexts/PreferencesContext";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { goBack } from "expo-router/build/global-state/routing";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
 import { useWeather } from "hooks/useWeather";
@@ -238,12 +239,32 @@ export default function GameDetailsScreen(
     [awayTeam?.fullName, away?.name],
   );
 
-  const awayColor = useMemo(() => awayTeam?.color ?? "", [awayTeam?.color]);
-  const homeColor = useMemo(() => homeTeam?.color ?? "", [homeTeam?.color]);
+  const awayColor =
+    awayTeam?.color ??
+    away?.primaryColor ??
+    away?.secondaryColor ??
+    Colors.midTone;
+
+  const homeColor =
+    homeTeam?.color ??
+    home?.primaryColor ??
+    home?.secondaryColor ??
+    Colors.midTone;
 
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, { sport: "football", league: LEAGUE, state: score?.status?.state ?? undefined, date: game?.date ?? undefined });
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
+    sport: "football",
+    league: LEAGUE,
+    state: score?.status?.state ?? undefined,
+    date: game?.date ?? undefined,
+  });
   const homeLastGames = useLastFiveGames(homeId, "football", LEAGUE).games;
   const awayLastGames = useLastFiveGames(awayId, "football", LEAGUE).games;
 

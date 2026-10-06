@@ -1002,7 +1002,7 @@ function UFLLeagueScreen() {
               refreshing={screenRefreshing || gamesRefreshing}
               onRefresh={handleRefresh}
               showHeaders={false}
-              isNFL={true}
+              isNFL={false}
             />
           </View>
           <View key="news" style={styles.contentArea}>

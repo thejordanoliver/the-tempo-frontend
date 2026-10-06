@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { FeedPrediction } from "types/fanPredictions";
 import type { ForumPost } from "types/forum";
 import { apiClient } from "utils/apiClient";
 
@@ -20,63 +21,49 @@ type ForYouResponse = {
   favoriteLeagues: string[];
   articles: ForYouArticle[];
   posts: ForumPost[];
+  predictions?: FeedPrediction[];
 };
 
-export function useForYouFeed(enabled: boolean) {
-  const [articles, setArticles] = useState<ForYouArticle[]>([]);
-  const [posts, setPosts] = useState<ForumPost[]>([]);
-  const [favoriteLeagues, setFavoriteLeagues] = useState<string[]>([]);
-  const [loading, setLoading] = useState(enabled);
-  const [error, setError] = useState<string | null>(null);
-  const [hasLoaded, setHasLoaded] = useState(false);
+const emptyFeed = { articles: [] as ForYouArticle[], posts: [] as ForumPost[], predictions: [] as FeedPrediction[], favoriteLeagues: [] as string[] };
+
+export function useForYouFeed(enabled: boolean, userId: number | null) {
+  const [feed, setFeed] = useState({ ...emptyFeed, owner: null as number | null, loading: false, loaded: false, error: null as string | null });
+  const request = useRef<AbortController | null>(null);
+  const belongsToUser = userId != null && feed.owner === userId;
+  const hasLoaded = belongsToUser && feed.loaded;
 
   const fetchFeed = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
+    if (userId == null) return;
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
+    setFeed(previous => ({ ...(previous.owner === userId ? previous : { ...emptyFeed, loaded: false }), owner: userId, loading: true, error: null }));
     try {
-      const { data } = await apiClient.get<ForYouResponse>(
-        "/api/feed/for-you",
-        {
-          params: { newsLimit: 20, postsLimit: 20 },
-        },
-      );
-
-      if (!data.success) {
-        throw new Error("Failed to load your personalized feed");
-      }
-
-      setArticles(data.articles ?? []);
-      setPosts(data.posts ?? []);
-      setFavoriteLeagues(data.favoriteLeagues ?? []);
-      setHasLoaded(true);
-    } catch (requestError: unknown) {
-      const message =
-        requestError instanceof Error
-          ? requestError.message
-          : "Failed to load your personalized feed";
-      setError(message);
-    } finally {
-      setLoading(false);
+      const { data } = await apiClient.get<ForYouResponse>("/api/feed/for-you", {
+        params: { newsLimit: 20, postsLimit: 20 }, signal: controller.signal,
+      });
+      if (!data.success) throw new Error("Failed to load your personalized feed");
+      if (controller.signal.aborted) return;
+      setFeed({ owner: userId, articles: data.articles ?? [], posts: data.posts ?? [], predictions: data.predictions ?? [],
+        favoriteLeagues: data.favoriteLeagues ?? [], loading: false, loaded: true, error: null });
+    } catch (error: unknown) {
+      if (controller.signal.aborted) return;
+      setFeed(previous => ({ ...previous, loading: false, error: error instanceof Error ? error.message : "Failed to load your personalized feed" }));
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
-    if (!enabled || hasLoaded) return;
+    if (!enabled || hasLoaded || userId == null) return;
+    const timeout = setTimeout(() => { void fetchFeed(); }, 0);
+    return () => clearTimeout(timeout);
+  }, [enabled, fetchFeed, hasLoaded, userId]);
 
-    const timeoutId = setTimeout(() => {
-      void fetchFeed();
-    }, 0);
-
-    return () => clearTimeout(timeoutId);
-  }, [enabled, fetchFeed, hasLoaded]);
+  useEffect(() => () => { request.current?.abort(); }, [userId]);
 
   return {
-    articles,
-    posts,
-    favoriteLeagues,
-    loading,
-    error,
+    ...(belongsToUser ? feed : emptyFeed),
+    loading: belongsToUser ? feed.loading : enabled && userId != null,
+    error: belongsToUser ? feed.error : null,
     refresh: fetchFeed,
   };
 }

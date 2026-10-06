@@ -185,3 +185,99 @@ test("a media-like response arriving after unmount cannot update shared likes", 
   response.resolve({ post: { liked_by_current_user: true, likes: 99 } }); await pending;
   assert.equal(store.likes["post-1"].count, 4);
 });
+
+function shareHarness({ authorId = 7, smsResult = "sent", available = true, send = async () => true, search = async () => [] } = {}) {
+  let shares = 0, smsCalls = 0;
+  const hook = hookHarness("hooks/ForumHooks/useForumPostShare.ts", "useForumPostShare", {
+    "contexts/MessagesContext": { useMessagesContext: () => ({ createOrGetConversation: async () => ({ conversationId: "dm-1" }), sendDirectMessage: send, getConversationList: () => ({ items: [], loaded: true }), loadConversations: async () => {} }) },
+    "react-native": { Share: { sharedAction: "sharedAction", share: async () => ({ action: "sharedAction" }) } },
+    "expo-sms": { isAvailableAsync: async () => available, sendSMSAsync: async () => { smsCalls++; return { result: smsResult }; } },
+    "hooks/useDebounce": { useDebounce: (value) => value },
+    "services/usersApi": { searchUsers: search },
+    "utils/getErrorMessage": { getErrorMessage: (error, fallback) => error.message || fallback },
+    "services/defaultMessagingApp": { getDefaultMessagingApp: async () => null },
+    "utils/forumShareRecipients": { getForumShareRecipients: () => [] },
+    "utils/forumPostShare": { getForumPostShareText: () => "Post from @fan on Tempo\nnbascorestracker://post/post-1" },
+  });
+  const render = () => hook.render({ id: "post-1", username: "fan", text: "Preview", user_id: authorId }, 1, async () => { shares++; });
+  return { render, send: async (user) => { render().requestSend(user); return render().confirmSend(); }, get shares() { return shares; }, get smsCalls() { return smsCalls; } };
+}
+
+test("opening the share sheet and cancelled or unknown SMS results never count a share", async () => {
+  for (const smsResult of ["cancelled", "unknown"]) {
+    const harness = shareHarness({ smsResult });
+    harness.render().open();
+    assert.equal(harness.shares, 0);
+    assert.equal(await harness.render().sendSms(), smsResult !== "cancelled");
+    assert.equal(harness.shares, 0);
+  }
+  const sent = shareHarness();
+  await sent.render().sendSms();
+  assert.equal(sent.shares, 1);
+});
+
+test("unavailable SMS surfaces feedback and never opens a composer", async () => {
+  const harness = shareHarness({ available: false });
+  assert.equal(await harness.render().sendSms(), false);
+  assert.match(harness.render().error, /unavailable/);
+  assert.equal(harness.smsCalls, 0);
+  assert.equal(harness.shares, 0);
+});
+
+test("failed DMs retain their identifier on retry and only successful sends count", async () => {
+  const ids = [];
+  const harness = shareHarness({ send: async (_conversation, payload) => {
+    ids.push(payload.clientId);
+    if (ids.length === 1) throw new Error("DM privacy does not allow this message");
+    return true;
+  } });
+  await harness.send({ id: 2, username: "recipient" });
+  assert.match(harness.render().error, /privacy/);
+  assert.equal(harness.shares, 0);
+  await harness.send({ id: 2, username: "recipient" });
+  assert.equal(ids[0], ids[1]);
+  assert.equal(harness.shares, 1);
+  assert.equal(harness.render().sentTo, "recipient");
+});
+
+test("recipient search excludes the current user and ignores stale search responses", async () => {
+  const older = defer();
+  const harness = shareHarness({ search: async (query) => query === "old" ? older.promise : [{ id: 1, username: "self" }, { id: 2, username: "new" }] });
+  harness.render().open();
+  harness.render().setQuery("old"); harness.render();
+  harness.render().setQuery("new"); harness.render();
+  await flush();
+  older.resolve([{ id: 3, username: "old" }]);
+  await flush();
+  assert.deepEqual(Array.from(harness.render().users, (user) => user.username), ["new"]);
+});
+
+
+test("recipient selection waits for confirmation and cancelling sends nothing", async () => {
+  let sends = 0;
+  const harness = shareHarness({ send: async () => { sends++; return true; } });
+  harness.render().requestSend({ id: 2, username: "recipient" });
+  assert.equal(harness.render().confirmRecipient.username, "recipient");
+  assert.equal(sends, 0);
+  harness.render().cancelSend();
+  await harness.render().confirmSend();
+  assert.equal(sends, 0);
+  assert.equal(harness.render().confirmRecipient, null);
+  harness.render().requestSend({ id: 2, username: "recipient" });
+  const first = harness.render().confirmSend();
+  await harness.render().confirmSend();
+  await first;
+  assert.equal(sends, 1);
+  assert.equal(harness.shares, 1);
+});
+
+test("sharing own post still sends DMs and opens SMS but never records a share", async () => {
+  let sends = 0;
+  const harness = shareHarness({ authorId: 1, send: async () => { sends++; return true; } });
+  await harness.send({ id: 2, username: "recipient" });
+  assert.equal(sends, 1);
+  assert.equal(harness.render().sentTo, "recipient");
+  await harness.render().sendSms();
+  assert.equal(harness.smsCalls, 1);
+  assert.equal(harness.shares, 0);
+});

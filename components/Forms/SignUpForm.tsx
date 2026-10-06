@@ -213,7 +213,7 @@ export default function SignUpForm({
             <FormInput
               control={control}
               name="fullName"
-              placeholder="Name (optional)"
+              placeholder="Display name"
               autoComplete="name"
               textContentType="name"
               returnKeyType="next"
@@ -395,7 +395,7 @@ export default function SignUpForm({
                 />
               )}
             </View>
-            <Text style={styles.heading}>Name</Text>
+            <Text style={styles.heading}>Display name</Text>
             <View style={styles.reviewInput}>
               <Text style={styles.reviewText}>{fullName}</Text>
             </View>

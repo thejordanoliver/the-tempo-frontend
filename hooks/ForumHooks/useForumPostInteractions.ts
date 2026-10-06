@@ -230,6 +230,7 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
   };
 
   const handleSharePress = async () => {
+    if (currentUserId == null || String(currentUserId) === String(item.user_id)) return;
     if (sharePendingRef.current) {
       return;
     }
@@ -261,8 +262,8 @@ export function useForumPostInteractions({ item, currentUserId, onBookmarkChange
           : "Failed to share post";
 
       setFeedbackModal({
-        title: "Share failed",
-        message,
+        title: "Post shared",
+        message: `Your post was shared, but the share count could not be updated. ${message}`,
       });
     } finally {
       sharePendingRef.current = false;

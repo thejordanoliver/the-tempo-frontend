@@ -387,7 +387,7 @@ export type Score = {
 
   boxScore?: BoxScore;
 
-  GameTeamStats?: {
+  teamStats?: {
     team: Team;
     stats: TeamBoxScoreStat[];
   }[];

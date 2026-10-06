@@ -5,10 +5,22 @@ import BaseSearchInput from "./BaseSearchInput";
 type Props = {
   value: string;
   onChangeText: (t: string) => void;
+  editable?: boolean;
   placeholder?: string;
+  autoCorrect?: boolean;
+  accessibilityLabel?: string;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters" | undefined;
 };
 
-export default function SearchBar({ value, onChangeText, placeholder }: Props) {
+export default function SearchBar({
+  value,
+  onChangeText,
+  placeholder,
+  accessibilityLabel,
+  autoCorrect = false,
+  autoCapitalize = "none",
+  editable,
+}: Props) {
   const inputRef = useRef<TextInput>(null); // ← ref for auto-blur
   return (
     <View>
@@ -17,7 +29,10 @@ export default function SearchBar({ value, onChangeText, placeholder }: Props) {
         placeholder={placeholder}
         value={value}
         onChangeText={onChangeText}
-        autoCapitalize="none"
+        accessibilityLabel={accessibilityLabel}
+        autoCorrect={autoCorrect}
+        autoCapitalize={autoCapitalize}
+        editable={editable}
       />
     </View>
   );

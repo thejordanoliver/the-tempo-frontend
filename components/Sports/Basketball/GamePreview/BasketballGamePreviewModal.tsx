@@ -1,5 +1,9 @@
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import {
+  getMCBBRivalry,
+  getMCBBTeam,
+  getMCBBTeamLogo,
+} from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useBasketballGameDetails } from "@/hooks/BasketballHooks/useBasketballGameDetails";
@@ -13,7 +17,11 @@ import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import CustomActivityIndicator from "components/CustomActivityIndicator";
 import { Colors } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import {
+  getWCBBRivalry,
+  getWCBBTeam,
+  getWCBBTeamLogo,
+} from "constants/teamsWCBB";
 import { BlurView } from "expo-blur";
 import React, { useEffect, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
@@ -70,8 +78,6 @@ export default function GamePreviewModal({
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const holidayLabel = getHolidayLabel(gameDate);
-  const headline = game.headline || holidayLabel;
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "mcbb";
@@ -151,8 +157,14 @@ export default function GamePreviewModal({
         ? getWNBATeamLogo(awayId, true)
         : getNBATeamLogo(awayId, true);
 
+  const holidayLabel = getHolidayLabel(gameDate);
+  const rivalry = isMCBB
+    ? getMCBBRivalry(homeId, awayId)?.name
+    : isMCBB
+      ? getWCBBRivalry(homeId, awayId)?.name
+      : null;
+  const headline = game?.headline || rivalry || holidayLabel;
   const isChampionship =
-    headline?.includes("NBA Summer League - Final") ||
     headline?.includes("NBA Finals") ||
     headline?.includes(
       "Men's Basketball Championship - National Championship",
@@ -294,6 +306,7 @@ export default function GamePreviewModal({
                   record={awayRecord}
                   isWinner={awayWins}
                   timeouts={awayTimeouts}
+                  state={state}
                   gameStatusDescription={gameStatusDescription}
                   isHome={false}
                   league={LEAGUE}
@@ -307,6 +320,7 @@ export default function GamePreviewModal({
                   clock={clock}
                   period={period}
                   broadcast={broadcast}
+                  state={state}
                   gameStatusShortDescription={gameStatusDetail}
                   gameStatusDescription={gameStatusDescription}
                   isDark={isDark}
@@ -323,6 +337,7 @@ export default function GamePreviewModal({
                   bonusState={homeBonus}
                   isWinner={homeWins}
                   timeouts={homeTimeouts}
+                  state={state}
                   gameStatusDescription={gameStatusDescription}
                   isHome={true}
                   league={LEAGUE}

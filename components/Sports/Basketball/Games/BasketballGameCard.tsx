@@ -1,14 +1,22 @@
-import { useScopedRouter } from "hooks/useScopedRouter";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getGLeagueTeam, getGLeagueTeamLogo } from "@/constants/teamsGLeague";
+import {
+  getMCBBRivalry,
+  getMCBBTeam,
+  getMCBBTeamLogo,
+} from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo, getTeamBySummerId } from "constants/teams";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import {
+  getWCBBRivalry,
+  getWCBBTeam,
+  getWCBBTeamLogo,
+} from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useScopedRouter } from "hooks/useScopedRouter";
 import { Text, TouchableOpacity, View } from "react-native";
 import { gameCardStyles } from "styles/GamecardStyles/GameCardStyles";
 import {
@@ -102,7 +110,13 @@ export default function BasketballGameCard({
           ? getGLeagueTeamLogo(awayId, isDark)
           : getNBATeamLogo(awayId, isDark);
 
-  const headline = game?.headline || holidayLabel;
+  const rivalry = isMCBB
+    ? getMCBBRivalry(homeId, awayId)?.name
+    : isMCBB
+      ? getWCBBRivalry(homeId, awayId)?.name
+      : null;
+
+  const headline = game?.headline || rivalry || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes("NBA Finals") ||

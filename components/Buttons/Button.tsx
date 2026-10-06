@@ -1,6 +1,7 @@
 import { activeOpacity, Colors, Fonts } from "constants/styles";
 import React, { ReactNode } from "react";
 import {
+  AccessibilityRole,
   Pressable,
   StyleProp,
   StyleSheet,
@@ -17,6 +18,8 @@ type ButtonProps = {
   isDark: boolean;
   variant?: ButtonVariant;
   children?: ReactNode;
+  accessibilityRole: AccessibilityRole | undefined;
+  accessibilityLabel: string | undefined;
 };
 
 export default function Button({
@@ -26,6 +29,8 @@ export default function Button({
   isDark,
   variant = "filled",
   children,
+  accessibilityRole,
+  accessibilityLabel = "Button",
 }: ButtonProps) {
   const styles = buttonStyles(isDark, variant);
 
@@ -33,7 +38,8 @@ export default function Button({
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      accessibilityRole="button"
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={accessibilityLabel}
       style={({ pressed }) => [
         styles.button,
         {
@@ -65,8 +71,7 @@ const buttonStyles = (isDark: boolean, variant: ButtonVariant) => {
       padding: 12,
       borderRadius: 12,
 
-      backgroundColor:
-        variant === "filled" ? primary : "transparent",
+      backgroundColor: variant === "filled" ? primary : "transparent",
 
       borderWidth: variant === "outline" ? 1 : 0,
       borderColor: primary,

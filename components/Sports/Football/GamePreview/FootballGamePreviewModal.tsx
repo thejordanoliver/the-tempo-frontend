@@ -1,7 +1,11 @@
 // ./NFL/GamePreview/NFLGamePreviewModal.tsx
 import CustomActivityIndicator from "@/components/CustomActivityIndicator";
 import { Colors } from "@/constants/styles";
-import { getCFBTeam, getCFBTeamLogo } from "@/constants/teamsCFB";
+import {
+  getCFBRivalry,
+  getCFBTeam,
+  getCFBTeamLogo,
+} from "@/constants/teamsCFB";
 import { getUFLTeam, getUFLTeamLogo } from "@/constants/teamsUFL";
 import { usePreferences } from "@/contexts/PreferencesContext";
 import { useFootballGameDetails } from "@/hooks/FootballHooks/useFootballGameDetails";
@@ -64,10 +68,6 @@ export default function FootballGamePreviewModal({
   const gameDate = safeDate(game?.date);
   const formattedDate = formatDate(gameDate);
   const formattedTime = formatTime(gameDate);
-  const holidayLabel = getHolidayLabel(gameDate);
-  const isChampionship =
-    game?.headline?.includes("Super Bowl") ??
-    game?.headline?.includes("Championship");
 
   const gameId = game.id;
   const LEAGUE = game?.league?.code ?? "nfl";
@@ -117,6 +117,13 @@ export default function FootballGamePreviewModal({
   const homeColor = homeTeam?.color ?? Colors.midTone;
   const awayColor = awayTeam?.color ?? Colors.midTone;
 
+  const holidayLabel = getHolidayLabel(gameDate);
+  const rivalry = isCFB ? getCFBRivalry(homeId, awayId)?.name : null;
+  const headline = game.headline ?? rivalry ?? holidayLabel;
+  const isChampionship =
+    game?.headline?.includes("Super Bowl") ??
+    game?.headline?.includes("Championship");
+
   const styles = GamePreviewModalStyles({
     isDark: isDark,
     isChampionship: isChampionship,
@@ -148,7 +155,6 @@ export default function FootballGamePreviewModal({
     isDelayed || isCanceled || isPostponed || isSuspended || isForfeited;
   const clock = score?.status.displayClock ?? "0:00";
   const period = formatPeriod({ period: score?.status.period });
-  const headline = details?.headline ?? holidayLabel;
   const broadcast = getBroadcastDisplay(details?.broadcasts) ?? "";
   const homeHasPossession = score?.home?.possession ?? false;
   const awayHasPossession = score?.away?.possession ?? false;

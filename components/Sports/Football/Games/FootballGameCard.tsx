@@ -21,8 +21,8 @@ import {
   safeDate,
 } from "utils/dateUtils";
 import { formatPeriod, getBroadcastDisplay, winnerStyle } from "utils/games";
-import Football from "../../../../assets/icons8/Football.png";
-import FootballLight from "../../../../assets/icons8/FootballLight.png";
+import Football from "../../../../assets/icons/Football.png";
+import FootballLight from "../../../../assets/icons/FootballLight.png";
 
 function FootballGameCard({
   game,

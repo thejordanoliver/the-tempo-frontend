@@ -9548,3 +9548,175 @@ export const getMCBBTeamLogo = (id?: number | string, isDark = false) => {
   if (!team) return PlaceholderLogo;
   return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
+
+export type MCBBRivalryGroup = "national" | "regional";
+export type MCBBRivalry = {
+  id: string;
+  name: string;
+  teamIds: readonly [number, number];
+  group: MCBBRivalryGroup;
+};
+
+export const MCBB_RIVALRIES = [
+  {
+    id: "duke-north-carolina",
+    name: "The Battle of the Blues",
+    teamIds: [1890, 2039],
+    group: "regional",
+  },
+  {
+    id: "kentucky-louisville",
+    name: "Battle for the Bluegrass",
+    teamIds: [1964, 1977],
+    group: "regional",
+  },
+  {
+    id: "indiana-purdue",
+    name: "Indiana–Purdue",
+    teamIds: [189, 2085],
+    group: "regional",
+  },
+  {
+    id: "kansas-kansas-state",
+    name: "Sunflower Showdown",
+    teamIds: [1959, 1960],
+    group: "regional",
+  },
+  {
+    id: "kansas-missouri",
+    name: "Border War",
+    teamIds: [1959, 2006],
+    group: "regional",
+  },
+  {
+    id: "michigan-michigan-state",
+    name: "Michigan–Michigan State",
+    teamIds: [1994, 1995],
+    group: "regional",
+  },
+  {
+    id: "cincinnati-xavier",
+    name: "Crosstown Shootout",
+    teamIds: [1865, 207],
+    group: "regional",
+  },
+  {
+    id: "georgetown-syracuse",
+    name: "Georgetown–Syracuse",
+    teamIds: [186, 2137],
+    group: "national",
+  },
+  {
+    id: "gonzaga-saint-mary-s",
+    name: "Gonzaga–Saint Mary’s",
+    teamIds: [1927, 2130],
+    group: "national",
+  },
+  {
+    id: "ucla-usc",
+    name: "Crosstown Rivalry",
+    teamIds: [2166, 2172],
+    group: "regional",
+  },
+  {
+    id: "arizona-arizona-state",
+    name: "Arizona–Arizona State",
+    teamIds: [1815, 1816],
+    group: "regional",
+  },
+  {
+    id: "north-carolina-nc-state",
+    name: "North Carolina–NC State",
+    teamIds: [2039, 194],
+    group: "regional",
+  },
+  {
+    id: "duke-nc-state",
+    name: "Duke–NC State",
+    teamIds: [1890, 194],
+    group: "regional",
+  },
+  {
+    id: "marquette-wisconsin",
+    name: "Marquette–Wisconsin",
+    teamIds: [1983, 2214],
+    group: "regional",
+  },
+  {
+    id: "iowa-iowa-state",
+    name: "Cy-Hawk Rivalry",
+    teamIds: [1950, 1951],
+    group: "regional",
+  },
+  {
+    id: "oregon-oregon-state",
+    name: "Oregon–Oregon State",
+    teamIds: [2065, 2066],
+    group: "regional",
+  },
+  {
+    id: "washington-washington-state",
+    name: "Washington–Washington State",
+    teamIds: [2193, 2195],
+    group: "regional",
+  },
+  {
+    id: "new-mexico-new-mexico-state",
+    name: "Rio Grande Rivalry",
+    teamIds: [2034, 2035],
+    group: "regional",
+  },
+  {
+    id: "byu-utah",
+    name: "Holy War",
+    teamIds: [1841, 2181],
+    group: "regional",
+  },
+  {
+    id: "unlv-nevada",
+    name: "Silver State Rivalry",
+    teamIds: [2171, 2032],
+    group: "regional",
+  },
+  {
+    id: "kentucky-tennessee",
+    name: "Kentucky–Tennessee",
+    teamIds: [1964, 2141],
+    group: "regional",
+  },
+  {
+    id: "texas-oklahoma",
+    name: "Red River Rivalry",
+    teamIds: [203, 2059],
+    group: "regional",
+  },
+] as const satisfies readonly MCBBRivalry[];
+
+function createRivalryKey(teamA: number, teamB: number): string {
+  return teamA < teamB ? `${teamA}:${teamB}` : `${teamB}:${teamA}`;
+}
+
+const MCBB_RIVALRY_MAP = new Map<string, MCBBRivalry>(
+  MCBB_RIVALRIES.map((rivalry) => [
+    createRivalryKey(rivalry.teamIds[0], rivalry.teamIds[1]),
+    rivalry,
+  ]),
+);
+
+export function getMCBBRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): MCBBRivalry | undefined {
+  if (homeTeamId == null || awayTeamId == null) return undefined;
+  const homeId = Number(homeTeamId);
+  const awayId = Number(awayTeamId);
+  if (!Number.isFinite(homeId) || !Number.isFinite(awayId)) return undefined;
+  return MCBB_RIVALRY_MAP.get(createRivalryKey(homeId, awayId));
+}
+
+export function isMCBBRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): boolean {
+  return getMCBBRivalry(homeTeamId, awayTeamId) !== undefined;
+}

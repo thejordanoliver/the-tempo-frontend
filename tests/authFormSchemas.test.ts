@@ -31,14 +31,11 @@ test("signup schema normalizes submitted identity fields", () => {
   assert.equal(result.email, "fan@example.com");
 });
 
-test("signup schema allows an empty display name", () => {
-  const result = signupSchema.parse({
-    ...validSignup,
-    fullName: "   ",
-  });
-
-  assert.equal(result.fullName, "");
-  assert.equal(result.username, "tempo.fan");
+test("signup schema requires a nonblank display name", () => {
+  for (const fullName of [undefined, null, "", "   ", "a".repeat(81)]) {
+    assert.equal(signupSchema.safeParse({ ...validSignup, fullName }).success, false);
+  }
+  assert.equal(signupSchema.parse({ ...validSignup, fullName: "  Fan  " }).fullName, "Fan");
 });
 
 test("signup schema enforces backend limits and matching passwords", () => {

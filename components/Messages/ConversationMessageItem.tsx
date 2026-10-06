@@ -2,6 +2,8 @@ import AuthorizedMessageImage from "@/components/Messages/AuthorizedMessageImage
 import SafetyActionsModal from "components/SafetyActionsModal";
 import { ConversationScreenStyles } from "@/styles/MessageStyles/ConversationScreenStyles";
 import { Image } from "expo-image";
+import { useScopedRouter } from "hooks/useScopedRouter";
+import { getSharedForumPostId } from "utils/forumPostShare";
 import { memo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafetyActions } from "hooks/useSafetyActions";
@@ -38,7 +40,12 @@ function ConversationMessageItem({
   onRetry,
   onBlocked,
 }: ConversationMessageItemProps) {
-  const hasText = item.text.trim().length > 0;
+  const router = useScopedRouter();
+  const sharedPostId = getSharedForumPostId(item.text);
+  const messageText = sharedPostId
+    ? item.text.trim().split("\n").slice(0, -1).join("\n").trim()
+    : item.text;
+  const hasText = messageText.trim().length > 0;
   const hasAttachment = Boolean(item.attachment);
   const safety = useSafetyActions({
     userId: item.senderId,
@@ -98,8 +105,22 @@ function ConversationMessageItem({
             },
           ]}
         >
-          {item.text}
+          {messageText}
         </Text>
+      )}
+
+      {sharedPostId && (
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel="Open shared forum post"
+          onPress={() => router.push({ pathname: "/post/[postId]", params: { postId: sharedPostId } })}
+          style={{ paddingVertical: 8 }}
+        >
+          <Text style={[styles.messageText, { textDecorationLine: "underline" },
+            item.isCurrentUser && !usesCustomMessageAccent && styles.currentUserMessageText,
+            (usesCustomMessageAccent || usesGradient) && { color: customTextColor },
+          ]}>View post in Tempo →</Text>
+        </Pressable>
       )}
 
       <Text

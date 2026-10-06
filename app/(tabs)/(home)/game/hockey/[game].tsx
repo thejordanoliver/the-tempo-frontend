@@ -4,6 +4,7 @@ import FanPrediction from "@/components/FanPrediction/FanPrediction";
 import {
   GameLiveChatOverlay,
   GameLocation,
+  GameTeamStats,
   HeadCoaches,
   Highlights,
   LastFiveGames,
@@ -164,7 +165,7 @@ export default function GameDetailsScreen(
   const plays = score?.plays;
   const lastPlay = score?.lastPlay;
   // const playerStats = score?.playerStats ?? [];
-  const GameTeamStats = score?.GameTeamStats ?? [];
+  const teamStats = score?.teamStats ?? [];
   const isCanceled = gameStatusDescription === "Canceled";
   const isPostponed = gameStatusDescription === "Postponed";
   const isSuspended = gameStatusDescription === "Suspended";
@@ -381,7 +382,7 @@ export default function GameDetailsScreen(
             />
 
             <GameTeamStats
-              stats={GameTeamStats}
+              stats={teamStats}
               awayName={awayCode}
               awayLogo={awayLogo}
               awayColor={awayColor}

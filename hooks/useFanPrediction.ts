@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchVoteResults, type PollResult } from "hooks/useGameVotes";
+import { fetchVoteResults, type PollResult, type VoteResponse } from "hooks/useGameVotes";
 import type { CastVoteAck } from "hooks/useLiveVotes";
 import type { FanPredictionScoring, FanPredictionTeamId as TeamId } from "types/fanPredictions";
 import {
@@ -16,6 +16,7 @@ type OptimisticVote = {
 };
 
 export type FanPredictionInput = {
+  initialState?: VoteResponse;
   scoring?: FanPredictionScoring | null;
   scoringError?: boolean;
   retryScoring?: () => void;
@@ -40,6 +41,7 @@ export function useFanPrediction({
   homeCode = "HME",
   onVoteCast,
   state,
+  initialState,
 }: FanPredictionInput) {
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -56,6 +58,13 @@ export function useFanPrediction({
 
   // Restore the saved pick and totals when the game or voting availability changes.
   useEffect(() => {
+    if (initialState) {
+      setResults(initialState.votes);
+      if (initialState.userVote != null) setUserVote(initialState.userVote);
+      setResultsRevealed(previous => previous || initialState.userVote != null || !canVote);
+      setPhase("ready");
+      return;
+    }
     let active = true;
 
     const controller = new AbortController();
@@ -107,7 +116,7 @@ export function useFanPrediction({
       active = false;
       controller.abort();
     };
-  }, [gameId, canVote, state]);
+  }, [gameId, canVote, state, initialState]);
 
   // Keep REST totals until the socket supplies results, avoiding a temporary 0–0.
   const activeVotes = useMemo(() => {

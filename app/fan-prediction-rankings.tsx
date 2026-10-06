@@ -49,7 +49,7 @@ export default function FanPredictionRankingsScreen() {
 
   const openUser = useCallback(
     (userId: number) => {
-      router.push({ pathname: "/user/[id]", params: { id: String(userId) } });
+      router.push({ pathname: "/fan-prediction-picks", params: { userId: String(userId) } });
     },
     [router],
   );
@@ -95,6 +95,8 @@ export default function FanPredictionRankingsScreen() {
             <View accessibilityRole="alert" style={styles.status}>
               <Text style={styles.description}>{error}</Text>
               <Button
+                accessibilityRole="button"
+                accessibilityLabel="Retry loading rankings"
                 onPress={refresh}
                 isDark={isDark}
                 style={styles.retry}

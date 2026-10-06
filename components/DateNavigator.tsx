@@ -31,7 +31,7 @@ export default function DateNavigator({
         activeOpacity={0.7}
       >
         <Image
-          source={require("../assets/icons8/back.png")}
+          source={require("../assets/icons/back.png")}
           style={{
             width: 20,
             height: 20,
@@ -56,7 +56,7 @@ export default function DateNavigator({
         activeOpacity={0.7}
       >
         <Image
-          source={require("../assets/icons8/forward.png")}
+          source={require("../assets/icons/forward.png")}
           style={{
             width: 20,
             height: 20,

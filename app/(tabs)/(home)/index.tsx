@@ -63,6 +63,7 @@ export default function HomeScreen() {
     homeGameSections,
     forYouArticles,
     forYouPosts,
+    forYouPredictions,
     favoriteLeagues,
     currentUserId,
     forYouError,
@@ -153,6 +154,7 @@ export default function HomeScreen() {
               <ForYouFeed
                 articles={forYouArticles}
                 posts={forYouPosts}
+                predictions={forYouPredictions}
                 favoriteLeagues={favoriteLeagues}
                 currentUserId={currentUserId}
                 isDark={isDark}

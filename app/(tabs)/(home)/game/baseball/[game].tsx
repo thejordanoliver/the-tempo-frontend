@@ -1,4 +1,3 @@
-import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import BoxScore from "@/components/Sports/Baseball/GameDetails/BoxScore";
 import GameLeaders from "@/components/Sports/Baseball/GameDetails/GameLeaders";
 import PlayByPlay from "@/components/Sports/Baseball/GameDetails/PlayByPlay/PlayByPlay";
@@ -39,6 +38,7 @@ import {
   type BaseballPlay,
   useBaseballGameDetails,
 } from "hooks/BaseballHooks/useBaseballGameDetails";
+import { useGameChatAvailability } from "hooks/useGameChatAvailability";
 import { useLastFiveGames } from "hooks/useLastFiveGames";
 import { useNavigationBarContentStyle } from "hooks/useNavigationBarContentStyle";
 import { useScrollFade } from "hooks/useScrollFade";
@@ -145,26 +145,21 @@ export default function GameDetailsScreen(
       ? getCBTeam(awayId)
       : getMLBTeam(awayId);
 
-  const awayCode = useMemo(() => awayTeam?.code ?? "", [awayTeam?.code]);
-  const homeCode = useMemo(() => homeTeam?.code ?? "", [homeTeam?.code]);
-
-  const awayName = useMemo(
-    () => awayTeam?.fullName ?? "",
-    [awayTeam?.fullName],
+  const homeCode = useMemo(
+    () => homeTeam?.code ?? home?.code ?? "",
+    [homeTeam?.code, home?.code],
+  );
+  const awayCode = useMemo(
+    () => awayTeam?.code ?? away?.code ?? "",
+    [awayTeam?.code, away?.code],
   );
   const homeName = useMemo(
-    () => homeTeam?.fullName ?? "",
-    [homeTeam?.fullName],
+    () => homeTeam?.fullName ?? home?.name ?? "",
+    [homeTeam?.fullName, home?.name],
   );
-
-  const awayColor = useMemo(
-    () => awayTeam?.color ?? Colors.midTone,
-    [awayTeam?.color],
-  );
-
-  const homeColor = useMemo(
-    () => homeTeam?.color ?? Colors.midTone,
-    [homeTeam?.color],
+  const awayName = useMemo(
+    () => awayTeam?.fullName ?? away?.name ?? "",
+    [awayTeam?.fullName, away?.name],
   );
 
   const homeLogo = isSB
@@ -191,9 +186,27 @@ export default function GameDetailsScreen(
       ? getCBTeamLogo(awayId, true)
       : getMLBTeamLogo(awayId, true);
 
+  const awayColor =
+    awayTeam?.color ??
+    away?.primaryColor ??
+    away?.secondaryColor ??
+    Colors.midTone;
+
+  const homeColor =
+    homeTeam?.color ??
+    home?.primaryColor ??
+    home?.secondaryColor ??
+    Colors.midTone;
+
   const { teamDetails: homeTeamDetails } = useTeamDetails(LEAGUE, homeId);
   const { teamDetails: awayTeamDetails } = useTeamDetails(LEAGUE, awayId);
-  const { votes: liveVotes, castVote: castLiveVote, scoring, scoringError, retryScoring } = useLiveVotes(gameId, {
+  const {
+    votes: liveVotes,
+    castVote: castLiveVote,
+    scoring,
+    scoringError,
+    retryScoring,
+  } = useLiveVotes(gameId, {
     sport: "baseball",
     league: LEAGUE,
     state: score?.status?.state ?? undefined,

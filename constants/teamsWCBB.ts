@@ -8,10 +8,10 @@ import AirForceLogo from "assets/College_Logos/AirForceLogo.png";
 import AirForceLogoLight from "assets/College_Logos/AirForceLogoLight.png";
 import AkronLogo from "assets/College_Logos/AkronLogo.png";
 import AkronLogoLight from "assets/College_Logos/AkronLogoLight.png";
-import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
-import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaAAndMLogo from "assets/College_Logos/AlabamaAAndMLogo.png";
 import AlabamaAAndMLogoLight from "assets/College_Logos/AlabamaAAndMLogoLight.png";
+import AlabamaLogo from "assets/College_Logos/AlabamaLogo.png";
+import AlabamaLogoLight from "assets/College_Logos/AlabamaLogoLight.png";
 import AlabamaStateLogo from "assets/College_Logos/AlabamaStateLogo.png";
 import AlabamaStateLogoLight from "assets/College_Logos/AlabamaStateLogoLight.png";
 import AlaskaAnchorageLogo from "assets/College_Logos/AlaskaAnchorageLogo.png";
@@ -28,10 +28,10 @@ import ArizonaLogo from "assets/College_Logos/ArizonaLogo.png";
 import ArizonaLogoLight from "assets/College_Logos/ArizonaLogoLight.png";
 import ArizonaStateLogo from "assets/College_Logos/ArizonaStateLogo.png";
 import ArizonaStateLogoLight from "assets/College_Logos/ArizonaStateLogoLight.png";
-import ArkansasLogo from "assets/College_Logos/ArkansasLogo.png";
-import ArkansasLogoLight from "assets/College_Logos/ArkansasLogoLight.png";
 import ArkansasBaptistLogo from "assets/College_Logos/ArkansasBaptistLogo.png";
 import ArkansasBaptistLogoLight from "assets/College_Logos/ArkansasBaptistLogoLight.png";
+import ArkansasLogo from "assets/College_Logos/ArkansasLogo.png";
+import ArkansasLogoLight from "assets/College_Logos/ArkansasLogoLight.png";
 import ArkansasPineBluffLogo from "assets/College_Logos/ArkansasPineBluffLogo.png";
 import ArkansasPineBluffLogoLight from "assets/College_Logos/ArkansasPineBluffLogoLight.png";
 import ArkansasStateLogo from "assets/College_Logos/ArkansasStateLogo.png";
@@ -102,10 +102,10 @@ import ButlerLogo from "assets/College_Logos/ButlerLogo.png";
 import ButlerLogoLight from "assets/College_Logos/ButlerLogoLight.png";
 import BYULogo from "assets/College_Logos/BYULogo.png";
 import BYULogoLight from "assets/College_Logos/BYULogoLight.png";
-import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
-import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CaliforniaBaptistLogo from "assets/College_Logos/CaliforniaBaptistLogo.png";
 import CaliforniaBaptistLogoLight from "assets/College_Logos/CaliforniaBaptistLogoLight.png";
+import CaliforniaLogo from "assets/College_Logos/CaliforniaLogo.png";
+import CaliforniaLogoLight from "assets/College_Logos/CaliforniaLogoLight.png";
 import CalPolyLogo from "assets/College_Logos/CalPolyLogo.png";
 import CalPolyLogoLight from "assets/College_Logos/CalPolyLogoLight.png";
 import CalStateBakersfieldLogo from "assets/College_Logos/CalStateBakersfieldLogo.png";
@@ -164,10 +164,10 @@ import ColoradoLogo from "assets/College_Logos/ColoradoLogo.png";
 import ColoradoLogoLight from "assets/College_Logos/ColoradoLogoLight.png";
 import ColoradoStateLogo from "assets/College_Logos/ColoradoStateLogo.png";
 import ColoradoStateLogoLight from "assets/College_Logos/ColoradoStateLogoLight.png";
-import ColumbiaLogo from "assets/College_Logos/ColumbiaLogo.png";
-import ColumbiaLogoLight from "assets/College_Logos/ColumbiaLogoLight.png";
 import ColumbiaInternationalLogo from "assets/College_Logos/ColumbiaInternationalLogo.png";
 import ColumbiaInternationalLogoLight from "assets/College_Logos/ColumbiaInternationalLogoLight.png";
+import ColumbiaLogo from "assets/College_Logos/ColumbiaLogo.png";
+import ColumbiaLogoLight from "assets/College_Logos/ColumbiaLogoLight.png";
 import CoppinStateLogo from "assets/College_Logos/CoppinStateLogo.png";
 import CoppinStateLogoLight from "assets/College_Logos/CoppinStateLogoLight.png";
 import CornellLogo from "assets/College_Logos/CornellLogo.png";
@@ -238,12 +238,12 @@ import FisherCollegeLogo from "assets/College_Logos/FisherCollegeLogo.png";
 import FisherCollegeLogoLight from "assets/College_Logos/FisherCollegeLogoLight.png";
 import FIULogo from "assets/College_Logos/FIULogo.png";
 import FIULogoLight from "assets/College_Logos/FIULogoLight.png";
-import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
-import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaAAndMLogo from "assets/College_Logos/FloridaAAndMLogo.png";
 import FloridaAAndMLogoLight from "assets/College_Logos/FloridaAAndMLogoLight.png";
 import FloridaGulfCoastLogo from "assets/College_Logos/FloridaGulfCoastLogo.png";
 import FloridaGulfCoastLogoLight from "assets/College_Logos/FloridaGulfCoastLogoLight.png";
+import FloridaLogo from "assets/College_Logos/FloridaLogo.png";
+import FloridaLogoLight from "assets/College_Logos/FloridaLogoLight.png";
 import FloridaStateLogo from "assets/College_Logos/FloridaStateLogo.png";
 import FloridaStateLogoLight from "assets/College_Logos/FloridaStateLogoLight.png";
 import FordhamLogo from "assets/College_Logos/FordhamLogo.png";
@@ -298,10 +298,10 @@ import HofstraLogo from "assets/College_Logos/HofstraLogo.png";
 import HofstraLogoLight from "assets/College_Logos/HofstraLogoLight.png";
 import HolyCrossLogo from "assets/College_Logos/HolyCrossLogo.png";
 import HolyCrossLogoLight from "assets/College_Logos/HolyCrossLogoLight.png";
-import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
-import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HoustonChristianLogo from "assets/College_Logos/HoustonChristianLogo.png";
 import HoustonChristianLogoLight from "assets/College_Logos/HoustonChristianLogoLight.png";
+import HoustonLogo from "assets/College_Logos/HoustonLogo.png";
+import HoustonLogoLight from "assets/College_Logos/HoustonLogoLight.png";
 import HowardLogo from "assets/College_Logos/HowardLogo.png";
 import HowardLogoLight from "assets/College_Logos/HowardLogoLight.png";
 import HowardPayneLogo from "assets/College_Logos/HowardPayneLogo.png";
@@ -342,22 +342,22 @@ import JMULogo from "assets/College_Logos/JMULogo.png";
 import JMULogoLight from "assets/College_Logos/JMULogoLight.png";
 import JohnsonAndWalesRILogo from "assets/College_Logos/JohnsonAndWalesRILogo.png";
 import JohnsonAndWalesRILogoLight from "assets/College_Logos/JohnsonAndWalesRILogoLight.png";
-import KansasLogo from "assets/College_Logos/KansasLogo.png";
-import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasChristianLogo from "assets/College_Logos/KansasChristianLogo.png";
 import KansasChristianLogoLight from "assets/College_Logos/KansasChristianLogoLight.png";
 import KansasCityLogo from "assets/College_Logos/KansasCityLogo.png";
 import KansasCityLogoLight from "assets/College_Logos/KansasCityLogoLight.png";
+import KansasLogo from "assets/College_Logos/KansasLogo.png";
+import KansasLogoLight from "assets/College_Logos/KansasLogoLight.png";
 import KansasStateLogo from "assets/College_Logos/KansasStateLogo.png";
 import KansasStateLogoLight from "assets/College_Logos/KansasStateLogoLight.png";
 import KennesawStateLogo from "assets/College_Logos/KennesawStateLogo.png";
 import KennesawStateLogoLight from "assets/College_Logos/KennesawStateLogoLight.png";
 import KentStateLogo from "assets/College_Logos/KentStateLogo.png";
 import KentStateLogoLight from "assets/College_Logos/KentStateLogoLight.png";
-import KentuckyLogo from "assets/College_Logos/KentuckyLogo.png";
-import KentuckyLogoLight from "assets/College_Logos/KentuckyLogoLight.png";
 import KentuckyChristianLogo from "assets/College_Logos/KentuckyChristianLogo.png";
 import KentuckyChristianLogoLight from "assets/College_Logos/KentuckyChristianLogoLight.png";
+import KentuckyLogo from "assets/College_Logos/KentuckyLogo.png";
+import KentuckyLogoLight from "assets/College_Logos/KentuckyLogoLight.png";
 import KingTNLogo from "assets/College_Logos/KingTNLogo.png";
 import KingTNLogoLight from "assets/College_Logos/KingTNLogoLight.png";
 import LafayetteLogo from "assets/College_Logos/LafayetteLogo.png";
@@ -386,10 +386,10 @@ import LongIslandLogo from "assets/College_Logos/LongIslandLogo.png";
 import LongIslandLogoLight from "assets/College_Logos/LongIslandLogoLight.png";
 import LongwoodLogo from "assets/College_Logos/LongwoodLogo.png";
 import LongwoodLogoLight from "assets/College_Logos/LongwoodLogoLight.png";
-import LouisianaLogo from "assets/College_Logos/LouisianaLogo.png";
-import LouisianaLogoLight from "assets/College_Logos/LouisianaLogoLight.png";
 import LouisianaChristianLogo from "assets/College_Logos/LouisianaChristianLogo.png";
 import LouisianaChristianLogoLight from "assets/College_Logos/LouisianaChristianLogoLight.png";
+import LouisianaLogo from "assets/College_Logos/LouisianaLogo.png";
+import LouisianaLogoLight from "assets/College_Logos/LouisianaLogoLight.png";
 import LouisianaTechLogo from "assets/College_Logos/LouisianaTechLogo.png";
 import LouisianaTechLogoLight from "assets/College_Logos/LouisianaTechLogoLight.png";
 import LouisvilleLogo from "assets/College_Logos/LouisvilleLogo.png";
@@ -426,18 +426,18 @@ import MemphisLogo from "assets/College_Logos/MemphisLogo.png";
 import MemphisLogoLight from "assets/College_Logos/MemphisLogoLight.png";
 import MercerLogo from "assets/College_Logos/MercerLogo.png";
 import MercerLogoLight from "assets/College_Logos/MercerLogoLight.png";
-import MercyLogo from "assets/College_Logos/MercyLogo.png";
-import MercyLogoLight from "assets/College_Logos/MercyLogoLight.png";
 import MercyhurstLogo from "assets/College_Logos/MercyhurstLogo.png";
 import MercyhurstLogoLight from "assets/College_Logos/MercyhurstLogoLight.png";
+import MercyLogo from "assets/College_Logos/MercyLogo.png";
+import MercyLogoLight from "assets/College_Logos/MercyLogoLight.png";
 import MerrimackLogo from "assets/College_Logos/MerrimackLogo.png";
 import MerrimackLogoLight from "assets/College_Logos/MerrimackLogoLight.png";
 import MiamiLogo from "assets/College_Logos/MiamiLogo.png";
 import MiamiLogoLight from "assets/College_Logos/MiamiLogoLight.png";
-import MiamiOHLogo from "assets/College_Logos/MiamiOHLogo.png";
-import MiamiOHLogoLight from "assets/College_Logos/MiamiOHLogoLight.png";
 import MiamiOHHamiltonLogo from "assets/College_Logos/MiamiOHHamiltonLogo.png";
 import MiamiOHHamiltonLogoLight from "assets/College_Logos/MiamiOHHamiltonLogoLight.png";
+import MiamiOHLogo from "assets/College_Logos/MiamiOHLogo.png";
+import MiamiOHLogoLight from "assets/College_Logos/MiamiOHLogoLight.png";
 import MichiganLogo from "assets/College_Logos/MichiganLogo.png";
 import MichiganLogoLight from "assets/College_Logos/MichiganLogoLight.png";
 import MichiganStateLogo from "assets/College_Logos/MichiganStateLogo.png";
@@ -450,10 +450,10 @@ import MilliganLogo from "assets/College_Logos/MilliganLogo.png";
 import MilliganLogoLight from "assets/College_Logos/MilliganLogoLight.png";
 import MilwaukeeLogo from "assets/College_Logos/MilwaukeeLogo.png";
 import MilwaukeeLogoLight from "assets/College_Logos/MilwaukeeLogoLight.png";
-import MinnesotaLogo from "assets/College_Logos/MinnesotaLogo.png";
-import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLogoLight.png";
 import MinnesotaCrookstonLogo from "assets/College_Logos/MinnesotaCrookstonLogo.png";
 import MinnesotaCrookstonLogoLight from "assets/College_Logos/MinnesotaCrookstonLogoLight.png";
+import MinnesotaLogo from "assets/College_Logos/MinnesotaLogo.png";
+import MinnesotaLogoLight from "assets/College_Logos/MinnesotaLogoLight.png";
 import MisericordiaEspn111902Logo from "assets/College_Logos/MisericordiaEspn111902Logo.png";
 import MisericordiaEspn111902LogoLight from "assets/College_Logos/MisericordiaEspn111902LogoLight.png";
 import MississippiStateLogo from "assets/College_Logos/MississippiStateLogo.png";
@@ -520,12 +520,12 @@ import NorfolkStateLogo from "assets/College_Logos/NorfolkStateLogo.png";
 import NorfolkStateLogoLight from "assets/College_Logos/NorfolkStateLogoLight.png";
 import NorthAlabamaLogo from "assets/College_Logos/NorthAlabamaLogo.png";
 import NorthAlabamaLogoLight from "assets/College_Logos/NorthAlabamaLogoLight.png";
-import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
-import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthCarolinaAAndTLogo from "assets/College_Logos/NorthCarolinaAAndTLogo.png";
 import NorthCarolinaAAndTLogoLight from "assets/College_Logos/NorthCarolinaAAndTLogoLight.png";
 import NorthCarolinaCentralLogo from "assets/College_Logos/NorthCarolinaCentralLogo.png";
 import NorthCarolinaCentralLogoLight from "assets/College_Logos/NorthCarolinaCentralLogoLight.png";
+import NorthCarolinaLogo from "assets/College_Logos/NorthCarolinaLogo.png";
+import NorthCarolinaLogoLight from "assets/College_Logos/NorthCarolinaLogoLight.png";
 import NorthDakotaLogo from "assets/College_Logos/NorthDakotaLogo.png";
 import NorthDakotaLogoLight from "assets/College_Logos/NorthDakotaLogoLight.png";
 import NorthDakotaStateLogo from "assets/College_Logos/NorthDakotaStateLogo.png";
@@ -596,10 +596,10 @@ import PepperdineLogo from "assets/College_Logos/PepperdineLogo.png";
 import PepperdineLogoLight from "assets/College_Logos/PepperdineLogoLight.png";
 import PiedmontLogo from "assets/College_Logos/PiedmontLogo.png";
 import PiedmontLogoLight from "assets/College_Logos/PiedmontLogoLight.png";
-import PittsburghLogo from "assets/College_Logos/PittsburghLogo.png";
-import PittsburghLogoLight from "assets/College_Logos/PittsburghLogoLight.png";
 import PittsburghGreensburgLogo from "assets/College_Logos/PittsburghGreensburgLogo.png";
 import PittsburghGreensburgLogoLight from "assets/College_Logos/PittsburghGreensburgLogoLight.png";
+import PittsburghLogo from "assets/College_Logos/PittsburghLogo.png";
+import PittsburghLogoLight from "assets/College_Logos/PittsburghLogoLight.png";
 import PortlandLogo from "assets/College_Logos/PortlandLogo.png";
 import PortlandLogoLight from "assets/College_Logos/PortlandLogoLight.png";
 import PortlandStateLogo from "assets/College_Logos/PortlandStateLogo.png";
@@ -614,10 +614,10 @@ import ProvidenceLogo from "assets/College_Logos/ProvidenceLogo.png";
 import ProvidenceLogoLight from "assets/College_Logos/ProvidenceLogoLight.png";
 import PuertoRicoMayaguezLogo from "assets/College_Logos/PuertoRicoMayaguezLogo.png";
 import PuertoRicoMayaguezLogoLight from "assets/College_Logos/PuertoRicoMayaguezLogoLight.png";
-import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
-import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import PurdueFortWayneLogo from "assets/College_Logos/PurdueFortWayneLogo.png";
 import PurdueFortWayneLogoLight from "assets/College_Logos/PurdueFortWayneLogoLight.png";
+import PurdueLogo from "assets/College_Logos/PurdueLogo.png";
+import PurdueLogoLight from "assets/College_Logos/PurdueLogoLight.png";
 import QueensLogo from "assets/College_Logos/QueensLogo.png";
 import QueensLogoLight from "assets/College_Logos/QueensLogoLight.png";
 import QuinnipiacLogo from "assets/College_Logos/QuinnipiacLogo.png";
@@ -700,12 +700,12 @@ import SouthDakotaLogo from "assets/College_Logos/SouthDakotaLogo.png";
 import SouthDakotaLogoLight from "assets/College_Logos/SouthDakotaLogoLight.png";
 import SouthDakotaStateLogo from "assets/College_Logos/SouthDakotaStateLogo.png";
 import SouthDakotaStateLogoLight from "assets/College_Logos/SouthDakotaStateLogoLight.png";
-import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
-import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernIllinoisLogo from "assets/College_Logos/SouthernIllinoisLogo.png";
 import SouthernIllinoisLogoLight from "assets/College_Logos/SouthernIllinoisLogoLight.png";
 import SouthernIndianaLogo from "assets/College_Logos/SouthernIndianaLogo.png";
 import SouthernIndianaLogoLight from "assets/College_Logos/SouthernIndianaLogoLight.png";
+import SouthernLogo from "assets/College_Logos/SouthernLogo.png";
+import SouthernLogoLight from "assets/College_Logos/SouthernLogoLight.png";
 import SouthernMissLogo from "assets/College_Logos/SouthernMissLogo.png";
 import SouthernMissLogoLight from "assets/College_Logos/SouthernMissLogoLight.png";
 import SouthernUtahLogo from "assets/College_Logos/SouthernUtahLogo.png";
@@ -757,14 +757,14 @@ import TennesseeStateLogo from "assets/College_Logos/TennesseeStateLogo.png";
 import TennesseeStateLogoLight from "assets/College_Logos/TennesseeStateLogoLight.png";
 import TennesseeTechLogo from "assets/College_Logos/TennesseeTechLogo.png";
 import TennesseeTechLogoLight from "assets/College_Logos/TennesseeTechLogoLight.png";
-import TexasLogo from "assets/College_Logos/TexasLogo.png";
-import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
-import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
-import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
 import TexasAAndMCorpusChristiLogo from "assets/College_Logos/TexasAAndMCorpusChristiLogo.png";
 import TexasAAndMCorpusChristiLogoLight from "assets/College_Logos/TexasAAndMCorpusChristiLogoLight.png";
+import TexasAAndMLogo from "assets/College_Logos/TexasAAndMLogo.png";
+import TexasAAndMLogoLight from "assets/College_Logos/TexasAAndMLogoLight.png";
 import TexasAAndMSALogo from "assets/College_Logos/TexasAAndMSALogo.png";
 import TexasAAndMSALogoLight from "assets/College_Logos/TexasAAndMSALogoLight.png";
+import TexasLogo from "assets/College_Logos/TexasLogo.png";
+import TexasLogoLight from "assets/College_Logos/TexasLogoLight.png";
 import TexasSouthernLogo from "assets/College_Logos/TexasSouthernLogo.png";
 import TexasSouthernLogoLight from "assets/College_Logos/TexasSouthernLogoLight.png";
 import TexasStateLogo from "assets/College_Logos/TexasStateLogo.png";
@@ -9422,3 +9422,163 @@ export const getWCBBTeamLogo = (id?: number | string, isDark = false) => {
   if (!team) return PlaceholderLogo;
   return isDark ? (team.logoLight ?? team.logo) : team.logo;
 };
+
+export type WCBBRivalryGroup = "national" | "regional";
+export type WCBBRivalry = {
+  id: string;
+  name: string;
+  teamIds: readonly [number, number];
+  group: WCBBRivalryGroup;
+};
+
+export const WCBB_RIVALRIES = [
+  {
+    id: "uconn-tennessee",
+    name: "UConn–Tennessee",
+    teamIds: [7219, 7188],
+    group: "national",
+  },
+  {
+    id: "uconn-notre-dame",
+    name: "UConn–Notre Dame",
+    teamIds: [7219, 7072],
+    group: "national",
+  },
+  {
+    id: "uconn-south-carolina",
+    name: "UConn–South Carolina",
+    teamIds: [7219, 7149],
+    group: "national",
+  },
+  {
+    id: "tennessee-vanderbilt",
+    name: "Tennessee–Vanderbilt",
+    teamIds: [7188, 7244],
+    group: "regional",
+  },
+  {
+    id: "duke-north-carolina",
+    name: "Tobacco Road",
+    teamIds: [6867, 7056],
+    group: "regional",
+  },
+  {
+    id: "north-carolina-nc-state",
+    name: "North Carolina–NC State",
+    teamIds: [7056, 7037],
+    group: "regional",
+  },
+  {
+    id: "duke-nc-state",
+    name: "Duke–NC State",
+    teamIds: [6867, 7037],
+    group: "regional",
+  },
+  {
+    id: "kentucky-louisville",
+    name: "Battle for the Bluegrass",
+    teamIds: [6957, 6986],
+    group: "regional",
+  },
+  {
+    id: "iowa-iowa-state",
+    name: "Cy-Hawk Rivalry",
+    teamIds: [6943, 6944],
+    group: "regional",
+  },
+  {
+    id: "indiana-purdue",
+    name: "Indiana–Purdue",
+    teamIds: [6940, 7106],
+    group: "regional",
+  },
+  {
+    id: "ucla-usc",
+    name: "Crosstown Rivalry",
+    teamIds: [7218, 7228],
+    group: "regional",
+  },
+  {
+    id: "stanford-california",
+    name: "Battle of the Bay",
+    teamIds: [7173, 6800],
+    group: "regional",
+  },
+  {
+    id: "texas-baylor",
+    name: "Texas–Baylor",
+    teamIds: [7194, 6759],
+    group: "regional",
+  },
+  {
+    id: "texas-oklahoma",
+    name: "Red River Rivalry",
+    teamIds: [7194, 7082],
+    group: "regional",
+  },
+  {
+    id: "oregon-oregon-state",
+    name: "Oregon–Oregon State",
+    teamIds: [7089, 7088],
+    group: "regional",
+  },
+  {
+    id: "washington-washington-state",
+    name: "Washington–Washington State",
+    teamIds: [7258, 7257],
+    group: "regional",
+  },
+  {
+    id: "michigan-michigan-state",
+    name: "Michigan–Michigan State",
+    teamIds: [7011, 7010],
+    group: "regional",
+  },
+  {
+    id: "kansas-kansas-state",
+    name: "Sunflower Showdown",
+    teamIds: [6954, 6953],
+    group: "regional",
+  },
+  {
+    id: "arizona-arizona-state",
+    name: "Arizona–Arizona State",
+    teamIds: [6746, 6745],
+    group: "regional",
+  },
+  {
+    id: "byu-utah",
+    name: "Holy War",
+    teamIds: [6756, 7240],
+    group: "regional",
+  },
+] as const satisfies readonly WCBBRivalry[];
+
+function createRivalryKey(teamA: number, teamB: number): string {
+  return teamA < teamB ? `${teamA}:${teamB}` : `${teamB}:${teamA}`;
+}
+
+const WCBB_RIVALRY_MAP = new Map<string, WCBBRivalry>(
+  WCBB_RIVALRIES.map((rivalry) => [
+    createRivalryKey(rivalry.teamIds[0], rivalry.teamIds[1]),
+    rivalry,
+  ]),
+);
+
+export function getWCBBRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): WCBBRivalry | undefined {
+  if (homeTeamId == null || awayTeamId == null) return undefined;
+  const homeId = Number(homeTeamId);
+  const awayId = Number(awayTeamId);
+  if (!Number.isFinite(homeId) || !Number.isFinite(awayId)) return undefined;
+  return WCBB_RIVALRY_MAP.get(createRivalryKey(homeId, awayId));
+}
+
+export function isWCBBRivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): boolean {
+  return getWCBBRivalry(homeTeamId, awayTeamId) !== undefined;
+}

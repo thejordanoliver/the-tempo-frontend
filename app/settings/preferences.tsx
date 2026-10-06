@@ -17,6 +17,11 @@ import { settingsStyles } from "styles/SettingsStyles";
 const PreferencesScreen = () => {
   const navigationContentStyle = useNavigationBarContentStyle();
   const {
+    leagueLayout,
+    setLeagueLayout,
+    leagueLayoutLoading,
+    leagueLayoutSaving,
+    leagueLayoutError,
     viewMode,
     setViewMode,
     colorScheme,
@@ -160,6 +165,34 @@ const PreferencesScreen = () => {
           </View>
         </View>
 
+        <View style={styles.seperator} />
+
+        <HeadingTwo isDark={isDark}>League Screen Layout</HeadingTwo>
+        <View>
+          {(["carousel", "list"] as const).map(layout => (
+            <View key={layout} style={[
+              styles.optionButtonContainer,
+              leagueLayout === layout && { borderBottomColor: selectedBorderColor },
+            ]}>
+              <TouchableOpacity
+                accessibilityRole="radio"
+                accessibilityState={{ checked: leagueLayout === layout, disabled: leagueLayoutLoading || leagueLayoutSaving }}
+                disabled={leagueLayoutLoading || leagueLayoutSaving}
+                onPress={() => { void setLeagueLayout(layout); }}
+                style={styles.optionButton}
+              >
+                <Text style={[styles.optionText, { color: leagueLayout === layout ? textColor : notSelected }]}>
+                  {layout === "carousel" ? "Carousel" : "Default list"}
+                </Text>
+                {leagueLayout === layout && <Ionicons name="checkmark" size={24} color={textColor} />}
+              </TouchableOpacity>
+            </View>
+          ))}
+          {(leagueLayoutLoading || leagueLayoutSaving) && (
+            <Text style={styles.optionText}>{leagueLayoutSaving ? "Saving…" : "Loading…"}</Text>
+          )}
+          {leagueLayoutError && <Text accessibilityRole="alert" style={[styles.optionText, { color: isDark ? Colors.dark.lightRed : Colors.light.red }]}>{leagueLayoutError}</Text>}
+        </View>
         <View style={styles.seperator} />
 
         <HeadingTwo isDark={isDark}>Theme</HeadingTwo>

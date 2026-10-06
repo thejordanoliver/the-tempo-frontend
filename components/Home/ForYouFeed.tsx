@@ -1,4 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import PredictionFeedCard from "./PredictionFeedCard";
+import type { FeedPrediction } from "types/fanPredictions";
+import { interleavePredictions } from "utils/forYouFeed";
 import NewsCard from "components/News/NewsCard";
 import NewsCardSkeleton from "components/Skeletons/NewsCardSkeleton";
 import PostItemSkeleton from "components/Forum/PostItemSkeleton";
@@ -11,6 +14,7 @@ import type { ForumPost } from "types/forum";
 
 type ForYouFeedProps = {
   articles: ForYouArticle[];
+  predictions: FeedPrediction[];
   posts: ForumPost[];
   favoriteLeagues: string[];
   currentUserId: number | null;
@@ -20,6 +24,7 @@ type ForYouFeedProps = {
 };
 
 type FeedItem =
+  | { kind: "prediction"; prediction: FeedPrediction }
   | { kind: "article"; date: string; article: ForYouArticle }
   | { kind: "post"; date: string; post: ForumPost };
 
@@ -32,6 +37,7 @@ const getTimestamp = (date: string) => {
 
 export default function ForYouFeed({
   articles,
+  predictions,
   posts,
   favoriteLeagues,
   currentUserId,
@@ -43,7 +49,7 @@ export default function ForYouFeed({
   const global = useMemo(() => globalStyles(isDark), [isDark]);
   const feed = useMemo<FeedItem[]>(
     () =>
-      [
+      interleavePredictions<FeedItem>([
         ...articles.map((article) => ({
           kind: "article" as const,
           date: article.published,
@@ -57,11 +63,11 @@ export default function ForYouFeed({
       ].sort(
         (first, second) =>
           getTimestamp(second.date) - getTimestamp(first.date),
-      ),
-    [articles, posts],
+      ), predictions.map(prediction => ({ kind: "prediction", prediction }))),
+    [articles, posts, predictions],
   );
 
-  if (loading || feed.length === 0) {
+  if (loading && feed.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <NewsCardSkeleton />
@@ -71,7 +77,7 @@ export default function ForYouFeed({
     );
   }
 
-  if (error) {
+  if (error && feed.length === 0) {
     return (
       <View style={global.emptyContainer}>
         <Ionicons
@@ -109,6 +115,9 @@ export default function ForYouFeed({
   return (
     <View style={styles.container}>
       {feed.map((item) => {
+        if (item.kind === "prediction") {
+          return <PredictionFeedCard key={`prediction-${item.prediction.sport}-${item.prediction.league}-${item.prediction.gameId}`} game={item.prediction} isDark={isDark} />;
+        }
         if (item.kind === "article") {
           return (
             <View key={`article-${item.article.keyId}`} style={styles.feedItem}>

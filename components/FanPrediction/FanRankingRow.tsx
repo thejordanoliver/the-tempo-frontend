@@ -33,6 +33,7 @@ function FanRankingRow({ entry, isDark, isCurrentUser, onPress }: Props) {
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
+      accessibilityHint="View all games this fan predicted"
       accessibilityLabel={`${entry.username}${isCurrentUser ? ", your record" : ""}, rank ${entry.rank ?? "unranked"}, ${points} points, ${entry.correct} correct picks, ${incorrect} incorrect picks, ${entry.accuracy == null ? "no scored accuracy yet" : `${accuracy} accuracy`}, ${entry.graded} scored, ${entry.pending} pending`}
       style={({ pressed }) => [
         styles.row,

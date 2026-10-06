@@ -1,11 +1,11 @@
 import { useScopedRouter } from "hooks/useScopedRouter";
-import { getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
+import { getMCBBRivalry, getMCBBTeam, getMCBBTeamLogo } from "@/constants/teamsMCBB";
 import { getWNBATeam, getWNBATeamLogo } from "@/constants/teamsWNBA";
 import { squareGameCardStyles } from "@/styles/GamecardStyles/SquareGameCardStyles";
 import { BasketballGameCardProps } from "@/types/basketball/basketball";
 import { activeOpacity } from "constants/styles";
 import { getNBATeam, getNBATeamLogo } from "constants/teams";
-import { getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
+import { getWCBBRivalry, getWCBBTeam, getWCBBTeamLogo } from "constants/teamsWCBB";
 import { usePreferences } from "contexts/PreferencesContext";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -86,7 +86,13 @@ export default function BasketballSquareGameCard({
         ? getWNBATeamLogo(awayId, isDark)
         : getNBATeamLogo(awayId, isDark);
 
-  const headline = game?.headline || holidayLabel;
+  const rivalry = isMCBB
+    ? getMCBBRivalry(homeId, awayId)?.name
+    : isMCBB
+      ? getWCBBRivalry(homeId, awayId)?.name
+      : null;
+
+  const headline = game?.headline || rivalry || holidayLabel;
   const isChampionship =
     headline?.includes("NBA Summer League - Final") ||
     headline?.includes("NBA Finals") ||

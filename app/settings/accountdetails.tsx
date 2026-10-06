@@ -130,7 +130,7 @@ export default function AccountDetailsScreen() {
       extraScrollHeight={20}
       keyboardShouldPersistTaps="handled"
     >
-      <HeadingTwo isDark={isDark}>Full Name</HeadingTwo>
+      <HeadingTwo isDark={isDark}>Display name</HeadingTwo>
       <Text style={styles.text}>{userData.fullName}</Text>
 
       <HeadingTwo isDark={isDark}>Username</HeadingTwo>

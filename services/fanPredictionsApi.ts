@@ -1,5 +1,5 @@
 import { apiClient } from "utils/apiClient";
-import type { FanPredictionScoring, FanPredictionPicksResponse, FanPredictionRankingsResponse, RankedPredictionContext } from "types/fanPredictions";
+import type { FanPredictionSortOrder, FanPredictionScoring, FanPredictionPicksResponse, FanPredictionRankingsResponse, RankedPredictionContext } from "types/fanPredictions";
 export async function fetchCurrentUserPicks(signal?: AbortSignal) {
   const { data } = await apiClient.get<FanPredictionPicksResponse>("/api/predictions/me/picks", { signal });
   return data;
@@ -15,6 +15,13 @@ export async function castRankedPrediction(gameId: number, teamId: string | numb
 export async function fetchPredictionScoring(gameId: number, context: RankedPredictionContext, signal?: AbortSignal) {
   const { data } = await apiClient.get<FanPredictionScoring>("/api/predictions/scoring", {
     params: { gameId, sport: context.sport, league: context.league, date: context.date }, signal,
+  });
+  return data;
+}
+
+export async function fetchUserPredictionPicks(userId: number, offset: number, signal?: AbortSignal, sort: FanPredictionSortOrder = "newest") {
+  const { data } = await apiClient.get<FanPredictionPicksResponse>(`/api/predictions/users/${userId}/picks`, {
+    params: { offset, sort }, signal,
   });
   return data;
 }

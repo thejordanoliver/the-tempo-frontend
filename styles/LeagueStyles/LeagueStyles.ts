@@ -9,6 +9,10 @@ export const LeagueScreenStyles = (isDark: boolean) =>
     contentArea: {
       flex: 1,
     },
+    carouselContent: {
+      paddingHorizontal: 12,
+      paddingBottom: 80,
+    },
     scrollContent: {
       paddingBottom: 20,
       paddingHorizontal: 12,

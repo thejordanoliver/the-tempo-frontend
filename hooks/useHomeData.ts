@@ -36,7 +36,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getStartOfToday);
 
-  const forYouFeed = useForYouFeed(selectedTab === "for you");
+  const forYouFeed = useForYouFeed(selectedTab === "for you", userId);
 
   const {
     games: nbaGames,
@@ -560,6 +560,7 @@ export function useHomeData(selectedTab: "scores" | "for you") {
     forYouLoading: forYouFeed.loading,
     forYouArticles: forYouFeed.articles,
     forYouPosts: forYouFeed.posts,
+    forYouPredictions: forYouFeed.predictions,
     favoriteLeagues: forYouFeed.favoriteLeagues,
     loading:
       selectedTab === "scores"

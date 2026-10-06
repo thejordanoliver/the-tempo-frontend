@@ -25,7 +25,7 @@ export const LEAGUE_TABS = {
     "forum",
   ],
 
-  ufl: ["scores", "news", "standings", "stats", "forum"],
+  ufl: ["scores", "news", "standings",  "forum"],
 
   mlb: [
     "scores",

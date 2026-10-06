@@ -37,7 +37,6 @@ type Props = {
   awayCode: string;
   homeCode: string;
   playerStats: PlayerStats;
-  GameTeamStats?: unknown[];
   isLoading?: boolean;
   isError?: boolean;
   isDark: boolean;

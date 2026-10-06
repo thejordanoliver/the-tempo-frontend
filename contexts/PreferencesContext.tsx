@@ -1,3 +1,4 @@
+import { useLeagueLayoutPreference } from "hooks/useLeagueLayoutPreference";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {
   createContext,
@@ -13,7 +14,7 @@ export type ViewMode = "list" | "grid" | "stacked";
 export type ColorSchemePreference = "light" | "dark" | "system";
 export type ResolvedColorScheme = "light" | "dark";
 
-type PreferencesContextType = {
+type PreferencesContextType = ReturnType<typeof useLeagueLayoutPreference> & {
   viewMode: ViewMode;
   setViewMode: (mode: ViewMode) => void;
   toggleViewMode: () => void;
@@ -34,6 +35,7 @@ const COLOR_SCHEME_KEY = "@color_scheme_preference";
 export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const leaguePreference = useLeagueLayoutPreference();
   const [viewMode, setViewModeState] = useState<ViewMode>("list");
   const [colorScheme, setColorSchemeState] =
     useState<ColorSchemePreference>("system");
@@ -156,6 +158,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value = useMemo<PreferencesContextType>(
     () => ({
+      ...leaguePreference,
       viewMode,
       setViewMode,
       toggleViewMode,
@@ -165,6 +168,7 @@ export const PreferencesProvider: React.FC<{ children: React.ReactNode }> = ({
       toggleColorScheme,
     }),
     [
+      leaguePreference,
       colorScheme,
       resolvedColorScheme,
       setColorScheme,

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TabBar from "components/TabBars/TabBar";
 import { Colors, Fonts } from "constants/styles";
 import { usePreferences } from "contexts/PreferencesContext";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -35,12 +35,14 @@ export default function SearchBar({
   selectedTab,
   onTabPress,
 }: Props) {
+  const inputRef = useRef<TextInput>(null);
   const [inputAnim] = useState(() => new Animated.Value(0));
   const { resolvedColorScheme } = usePreferences();
   const isDark = resolvedColorScheme === "dark";
   const styles = searchBarStyles(isDark);
 
   useEffect(() => {
+    if (!visible) inputRef.current?.blur();
     Animated.timing(inputAnim, {
       toValue: visible ? 1 : 0,
       duration: 300,
@@ -52,6 +54,9 @@ export default function SearchBar({
   return (
     <View>
       <Animated.View
+        pointerEvents={visible ? "auto" : "none"}
+        accessibilityElementsHidden={!visible}
+        importantForAccessibility={visible ? "auto" : "no-hide-descendants"}
         style={[
           styles.searchBarWrapper,
           {
@@ -73,11 +78,15 @@ export default function SearchBar({
       >
         <View style={styles.inputContainer}>
           <TextInput
+            ref={inputRef}
+            editable={visible}
             placeholder={placeholder ?? "Search..."}
             placeholderTextColor={Colors.midTone}
             style={styles.searchInput}
             value={value}
-            onChangeText={onChangeText}
+            onChangeText={(text) => {
+              if (visible) onChangeText(text);
+            }}
             autoCapitalize="none"
             autoCorrect={false}
             onFocus={onFocus}

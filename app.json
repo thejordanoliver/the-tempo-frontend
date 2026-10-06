@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/appIcon.png",
-    "scheme": "nbascorestracker",
+    "scheme": ["tempo", "nbascorestracker"],
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,

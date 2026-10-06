@@ -729,3 +729,154 @@ export function getNBATeamLogo(
     ? (team.logoLight ?? team.logo ?? placeholderLogo)
     : (team.logo ?? placeholderLogo);
 }
+
+
+export type NBARivalryGroup = "national" | "regional";
+export type NBARivalry = {
+  id: string;
+  name: string;
+  teamIds: readonly [number, number];
+  group: NBARivalryGroup;
+};
+
+// Curated rivalries use local team IDs, matching the CFB registry.
+// Background reference: https://www.nba.com/news/viewers-guide-for-nbas-first-ever-rivals-week
+export const NBA_RIVALRIES = [
+  {
+    id: "celtics-lakers",
+    name: "Celtics–Lakers",
+    teamIds: [2, 17],
+    group: "national",
+  },
+  {
+    id: "celtics-76ers",
+    name: "Celtics–76ers",
+    teamIds: [2, 27],
+    group: "regional",
+  },
+  {
+    id: "celtics-knicks",
+    name: "Celtics–Knicks",
+    teamIds: [2, 24],
+    group: "regional",
+  },
+  {
+    id: "knicks-nets",
+    name: "Battle of the Boroughs",
+    teamIds: [24, 4],
+    group: "regional",
+  },
+  {
+    id: "lakers-clippers",
+    name: "Battle of Los Angeles",
+    teamIds: [17, 16],
+    group: "regional",
+  },
+  {
+    id: "warriors-lakers",
+    name: "Warriors–Lakers",
+    teamIds: [11, 17],
+    group: "regional",
+  },
+  {
+    id: "bulls-pistons",
+    name: "Bulls–Pistons",
+    teamIds: [6, 10],
+    group: "regional",
+  },
+  {
+    id: "bulls-knicks",
+    name: "Bulls–Knicks",
+    teamIds: [6, 24],
+    group: "national",
+  },
+  {
+    id: "knicks-pacers",
+    name: "Knicks–Pacers",
+    teamIds: [24, 15],
+    group: "national",
+  },
+  {
+    id: "knicks-heat",
+    name: "Knicks–Heat",
+    teamIds: [24, 20],
+    group: "national",
+  },
+  {
+    id: "celtics-heat",
+    name: "Celtics–Heat",
+    teamIds: [2, 20],
+    group: "national",
+  },
+  {
+    id: "warriors-cavaliers",
+    name: "Warriors–Cavaliers",
+    teamIds: [11, 7],
+    group: "national",
+  },
+  {
+    id: "mavericks-spurs",
+    name: "Mavericks–Spurs",
+    teamIds: [8, 31],
+    group: "regional",
+  },
+  {
+    id: "rockets-spurs",
+    name: "Rockets–Spurs",
+    teamIds: [14, 31],
+    group: "regional",
+  },
+  {
+    id: "mavericks-rockets",
+    name: "Mavericks–Rockets",
+    teamIds: [8, 14],
+    group: "regional",
+  },
+  {
+    id: "lakers-kings",
+    name: "Lakers–Kings",
+    teamIds: [17, 30],
+    group: "regional",
+  },
+  {
+    id: "lakers-suns",
+    name: "Lakers–Suns",
+    teamIds: [17, 28],
+    group: "regional",
+  },
+  {
+    id: "warriors-clippers",
+    name: "Warriors–Clippers",
+    teamIds: [11, 16],
+    group: "regional",
+  },
+] as const satisfies readonly NBARivalry[];
+
+function createRivalryKey(teamA: number, teamB: number): string {
+  return teamA < teamB ? `${teamA}:${teamB}` : `${teamB}:${teamA}`;
+}
+
+const NBA_RIVALRY_MAP = new Map<string, NBARivalry>(
+  NBA_RIVALRIES.map((rivalry) => [
+    createRivalryKey(rivalry.teamIds[0], rivalry.teamIds[1]),
+    rivalry,
+  ]),
+);
+
+export function getNBARivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): NBARivalry | undefined {
+  if (homeTeamId == null || awayTeamId == null) return undefined;
+  const homeId = Number(homeTeamId);
+  const awayId = Number(awayTeamId);
+  if (!Number.isFinite(homeId) || !Number.isFinite(awayId)) return undefined;
+  return NBA_RIVALRY_MAP.get(createRivalryKey(homeId, awayId));
+}
+
+export function isNBARivalry(
+  homeTeamId: number | string | null | undefined,
+  awayTeamId: number | string | null | undefined,
+): boolean {
+  return getNBARivalry(homeTeamId, awayTeamId) !== undefined;
+}

@@ -78,8 +78,8 @@ type ReactNativeFormDataFile = {
 };
 
 const FULL_NAME_SERVER_ERRORS = new Set([
-  "Full name is required",
-  "Full name must be 1-80 characters",
+  "Display name is required",
+  "Display name must be 1-80 characters",
 ]);
 
 const BIO_SERVER_ERRORS = new Set([
@@ -569,7 +569,7 @@ export default function EditProfileScreen() {
             name="fullName"
             render={({ field, fieldState }) => (
               <LabeledInput
-                label="Name"
+                label="Display name"
                 value={field.value}
                 hint={fieldState.error?.message}
                 onBlur={field.onBlur}
